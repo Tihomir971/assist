@@ -82,7 +82,14 @@
 									<section class="grid grid-cols-2 gap-2">
 										<div class="wrapper">
 											<label for="id">ID</label>
-											<input id="id" name="id" type="text" class="input" value={product.id} />
+											<input
+												id="id"
+												name="id"
+												type="text"
+												class="input"
+												readonly
+												value={product.id}
+											/>
 										</div>
 										<div class="wrapper">
 											<label for="sku">SKU</label>
@@ -91,6 +98,7 @@
 												name="sku"
 												type="text"
 												class="input"
+												readonly
 												bind:value={product.sku}
 											/>
 										</div>
@@ -142,7 +150,7 @@
 												name="created"
 												type="text"
 												class="input"
-												disabled
+												readonly
 												value={DateTimeFormat(product.created)}
 											/>
 										</div>
@@ -153,7 +161,7 @@
 												name="updated"
 												type="text"
 												class="input"
-												disabled
+												readonly
 												value={DateTimeFormat(product.updated)}
 											/>
 										</div>
@@ -167,11 +175,12 @@
 														bind:value={product.m_product_category_id}
 													/>
 													<input
-														autocomplete="off"
-														class="input autocomplete"
+														class="input"
 														type="search"
+														name="label"
 														bind:value={inputPopupLabel}
 														placeholder="Choose category..."
+														autocomplete="off"
 														use:popup={{
 															event: 'focus-click',
 															target: 'categories',

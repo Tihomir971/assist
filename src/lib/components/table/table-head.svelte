@@ -9,12 +9,13 @@
 </script>
 
 <th class={cn('px-1 py-2', className)} {...$$restProps}>
-	<!-- <th
-	class={cn(
-		"h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
-		className
-	)}
-	{...$$restProps}
-> -->
 	<slot />
 </th>
+
+<!-- <th
+class={cn(
+	"h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
+	className
+)}
+{...$$restProps}
+> -->

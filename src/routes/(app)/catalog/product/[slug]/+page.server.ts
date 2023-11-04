@@ -72,6 +72,7 @@ export const actions = {
 		if (!session) {
 			throw error(401, { message: 'Unauthorized' });
 		}
+		console.log('Snimanje proizvoda');
 		const product: Partial<Tables<'m_product'>> = {};
 		/* let temporary: FormDataEntryValue | null; */
 		const formData = await request.formData();

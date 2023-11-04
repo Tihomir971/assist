@@ -32,11 +32,7 @@ export const load = (async ({ parent, depends, url }) => {
 	const onStock = paramsOnStock === 'true' ? true : false;
 
 	/* const activeWarehouseId = url.searchParams.get('wh') ? Number(url.searchParams.get('wh')) : null; */
-	const categoryParams = url.searchParams.get('cat')?.split(',').map(Number);
-	console.log('categoryParams', categoryParams);
-
-	const activeCategoryId = url.searchParams.get('cat') ? Number(url.searchParams.get('cat')) : null;
-	console.log('activeCategoryId', activeCategoryId);
+	const categoryIds = url.searchParams.get('cat')?.split(',').map(Number);
 
 	const columns =
 		'id,barcode,mpn,sku,name,c_taxcategory_id,c_uom_id,m_storageonhand(qtyonhand),qPriceRetail:m_productprice(pricestd),qPricePurchase:m_productprice(pricestd),qPriceMarket:m_productprice(pricelist),c_taxcategory(c_tax(rate)),isactive,isselfservice,discontinued';
@@ -50,9 +46,9 @@ export const load = (async ({ parent, depends, url }) => {
 		.eq('qPriceRetail.m_pricelist_version_id', 13)
 		.eq('qPricePurchase.m_pricelist_version_id', 5)
 		.eq('qPriceMarket.m_pricelist_version_id', 15);
-	query = categoryParams
+	query = categoryIds
 		? //typeof activeCategoryId === 'number'
-		  query.in('m_product_category_id', categoryParams)
+		  query.in('m_product_category_id', categoryIds)
 		: query.is('m_product_category_id', null);
 
 	const { data } = await query;

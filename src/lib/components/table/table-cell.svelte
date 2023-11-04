@@ -9,6 +9,7 @@
 </script>
 
 <td class={cn('p-1', className)} {...$$restProps}>
-	<!-- <td class={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)} {...$$restProps}> -->
 	<slot />
 </td>
+
+<!-- <td class={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)} {...$$restProps}> -->

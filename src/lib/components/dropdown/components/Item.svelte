@@ -12,6 +12,23 @@
 	const dispatch = createDispatcher();
 </script>
 
-<svelte:element this={href ? 'a' : 'div'} {href} use:melt={builder} on:m-click={dispatch}>
+<svelte:element
+	this={href ? 'a' : 'div'}
+	{href}
+	use:melt={builder}
+	on:m-click={dispatch}
+	class="item"
+>
 	<slot />
 </svelte:element>
+
+<style lang="postcss">
+	.item {
+		@apply relative h-6 min-h-[24px] select-none rounded-sm pl-6 pr-1;
+		@apply z-20 outline-none;
+		@apply data-[highlighted]:bg-primary-200 data-[highlighted]:text-primary-900;
+		@apply data-[disabled]:text-neutral-300;
+		@apply flex items-center text-sm leading-none;
+		@apply ring-0 !important;
+	}
+</style>
