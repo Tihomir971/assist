@@ -5,6 +5,7 @@
 
 	import { createDropdownMenu, melt } from '@melt-ui/svelte';
 	import { fly } from 'svelte/transition';
+	import { DropdownMenu, Content, Triger, Item } from '$lib/components/dropdown';
 	const {
 		elements: { menu, item, trigger, arrow }
 	} = createDropdownMenu();
@@ -43,6 +44,16 @@
 	<AlignJustify class="opacity-80 hover:opacity-50 focus:opacity-100"></AlignJustify>
 </button>
  -->
+<DropdownMenu>
+	<Triger>
+		<AlignJustify />
+		<span class="sr-only">Open Row Actions</span>
+	</Triger>
+	<Content>
+		<Item on:click={() => goto(`/catalog/product/${id}`)}>Edit</Item>
+		<Item>Delete</Item>
+	</Content>
+</DropdownMenu>
 
 <button type="button" class="trigger" use:melt={$trigger} aria-label="Update dimensions">
 	<AlignJustify class="square-4" />
