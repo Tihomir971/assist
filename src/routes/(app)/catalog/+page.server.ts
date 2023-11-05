@@ -1,5 +1,5 @@
+import type { PageServerLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
-import type { PageLoad } from './$types';
 import type { Tables } from '$lib/types/database.types';
 type Product = Partial<Tables<'m_product'>> & {
 	id: number;
@@ -12,11 +12,13 @@ type Product = Partial<Tables<'m_product'>> & {
 	m_storageonhand: { qtyonhand: number }[];
 };
 
-export const load = (async ({ parent, depends, url }) => {
-	const { session, supabase } = await parent();
+export const load = (async ({ url, depends, locals: { supabase, getSession } }) => {
+	const session = await getSession();
 	if (!session) {
-		throw redirect(303, '/');
+		throw redirect(303, '/auth');
 	}
+
+	depends('catalog:products');
 
 	//Get searchParams
 	const paramsOnStock = url.searchParams.get('onStock');
@@ -125,6 +127,5 @@ export const load = (async ({ parent, depends, url }) => {
 		});
 	});
 
-	depends('catalog:products');
 	return { products };
-}) satisfies PageLoad;
+}) satisfies PageServerLoad;

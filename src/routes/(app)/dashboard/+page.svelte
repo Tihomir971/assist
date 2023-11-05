@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Tabs } from '$lib/components/tabs';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -12,3 +13,4 @@
 <pre>{JSON.stringify(profile, null, 2)}</pre>
 
 Dashboard
+<Tabs tabs={['Jedan', 'Dva', 'Tri']}></Tabs>
