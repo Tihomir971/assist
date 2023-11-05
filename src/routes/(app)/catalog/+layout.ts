@@ -3,6 +3,7 @@ import type { LayoutLoad } from './$types';
 
 export const load = (async ({ parent, depends }) => {
 	const { supabase, session } = await parent();
+	console.log('session', session);
 	if (!session) {
 		throw redirect(303, '/auth');
 	}

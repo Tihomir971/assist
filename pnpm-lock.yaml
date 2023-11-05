@@ -9,8 +9,8 @@ dependencies:
     specifier: 1.5.3
     version: 1.5.3
   '@supabase/ssr':
-    specifier: ^0.0.7
-    version: 0.0.7(@supabase/supabase-js@2.38.4)
+    specifier: ^0.0.9
+    version: 0.0.9(@supabase/supabase-js@2.38.4)
   '@supabase/supabase-js':
     specifier: ^2.38.4
     version: 2.38.4
@@ -27,10 +27,10 @@ dependencies:
 devDependencies:
   '@melt-ui/pp':
     specifier: ^0.1.2
-    version: 0.1.2(@melt-ui/svelte@0.57.3)(svelte@4.2.2)
+    version: 0.1.2(@melt-ui/svelte@0.58.0)(svelte@4.2.2)
   '@melt-ui/svelte':
-    specifier: ^0.57.3
-    version: 0.57.3(svelte@4.2.2)
+    specifier: ^0.58.0
+    version: 0.58.0(svelte@4.2.2)
   '@skeletonlabs/skeleton':
     specifier: 2.4.0
     version: 2.4.0(svelte@4.2.2)
@@ -432,19 +432,19 @@ packages:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  /@melt-ui/pp@0.1.2(@melt-ui/svelte@0.57.3)(svelte@4.2.2):
+  /@melt-ui/pp@0.1.2(@melt-ui/svelte@0.58.0)(svelte@4.2.2):
     resolution: {integrity: sha512-GZeqp7UWLNZUC2dJpREnZrWMR88vy27WO7C3cIBz4KW3/CFD19FjNkd3VbSRfcRryrMkdnEs9nu2VUa8/0u58w==}
     engines: {pnpm: '>=8.6.3'}
     peerDependencies:
       '@melt-ui/svelte': '>= 0.29.0'
       svelte: ^3.55.0 || ^4.0.0
     dependencies:
-      '@melt-ui/svelte': 0.57.3(svelte@4.2.2)
+      '@melt-ui/svelte': 0.58.0(svelte@4.2.2)
       svelte: 4.2.2
     dev: true
 
-  /@melt-ui/svelte@0.57.3(svelte@4.2.2):
-    resolution: {integrity: sha512-2nGZmoaaaikLF+sDx7XU5cUsOzN2chY0QrIRJAngtT88bXw8MHRNvErG+YdFgLGsR3N5qnEw2D9XV1BgWKrSYw==}
+  /@melt-ui/svelte@0.58.0(svelte@4.2.2):
+    resolution: {integrity: sha512-2sArcYRoMBzFi3dXa6fWyoXe9JR0MSxSjvswJiVLfidip9rJ0X+I7shdVY42m6Agu/3SEaNcxNVzPsnc8G60bA==}
     peerDependencies:
       svelte: '>=3 <5'
     dependencies:
@@ -534,8 +534,8 @@ packages:
       - supports-color
     dev: false
 
-  /@supabase/ssr@0.0.7(@supabase/supabase-js@2.38.4):
-    resolution: {integrity: sha512-dURmbn6GeqWCHh9ihRDjRuMUJPFk9IPKjzjRLeA5f2FcJ7pbrxdD+hoC4I3vGO5YQO4sLtWhPs2ueoBdsNuqdQ==}
+  /@supabase/ssr@0.0.9(@supabase/supabase-js@2.38.4):
+    resolution: {integrity: sha512-ywCC5nOrv4HYjUhnYOGE8wMkG/6vsyb1YlP3SNbeJxxniYNLSvBcbTAM7sNLMnhlDrACLBXDgukrabCI8tnNMw==}
     peerDependencies:
       '@supabase/supabase-js': ^2.33.1
     dependencies:

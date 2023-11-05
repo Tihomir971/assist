@@ -4,6 +4,7 @@ import {
 	type CreateDropdownMenuProps,
 	type DropdownMenu
 } from '@melt-ui/svelte';
+import { removeUndefined } from '../internal';
 
 const NAME = 'dropdown-menu';
 
@@ -11,8 +12,8 @@ export function getCtx() {
 	return getContext<DropdownMenu>(NAME);
 }
 
-export function setCtx(props: CreateDropdownMenuProps | undefined) {
-	const dropdownMenu = createDropdownMenu({ ...props, forceVisible: true });
+export function setCtx(props: CreateDropdownMenuProps) {
+	const dropdownMenu = createDropdownMenu({ ...removeUndefined(props), forceVisible: true });
 	setContext(NAME, dropdownMenu);
 	return {
 		...dropdownMenu

@@ -25,40 +25,42 @@
 		}
 	];
 
-	const toOption = (options: ComboboxOptions): ComboboxOptionProps<ComboboxOptions> => ({
-		value: options,
-		label: options.label
+	const toOption = (option: ComboboxOptions): ComboboxOptionProps<ComboboxOptions> => ({
+		value: option,
+		label: option.label,
+		disabled: option.disabled
 	});
 
-	/* 	$: if (!$open) {
+	$: if (!$open) {
 		$inputValue = $selected?.label ?? '';
 	}
-	let filteredOptions: ComboboxOptions[];
 	$: filteredOptions = $touchedInput
-		? options.filter(({ label }) => {
+		? options.filter(({ id, label }) => {
 				const normalizedInput = $inputValue.toLowerCase();
-				return label?.toLowerCase().includes(normalizedInput);
+				return (
+					id?.toLowerCase().includes(normalizedInput) ||
+					label?.toLowerCase().includes(normalizedInput)
+				);
 		  })
-		: options; */
+		: options;
 </script>
 
 <div class="flex max-h-full flex-col gap-0 overflow-y-auto bg-white px-2 py-2 text-black">
-	{#each options as option, index (index)}
+	{#each filteredOptions as singleOption, index (index)}
+		<!-- use:melt={$option(toOption(singleoption))} -->
 		<li
-			use:melt={$option(toOption(option))}
-			class="relative cursor-pointer scroll-my-2 rounded-md py-2 pl-4 pr-4
-  hover:bg-primary-100
-  data-[highlighted]:bg-primary-200 data-[highlighted]:text-primary-900
-    data-[disabled]:opacity-50"
+			use:melt={$option(toOption(singleOption))}
+			class="relative cursor-pointer scroll-my-2 rounded-md py-2 pl-4 pr-4 hover:bg-primary-100
+  data-[highlighted]:bg-primary-200 data-[highlighted]:text-primary-900 data-[disabled]:opacity-50"
 		>
-			{#if $isSelected(option)}
+			{#if $isSelected(singleOption)}
 				<div class="check absolute left-2 top-1/2 z-10 text-primary-900">
 					<Check class="square-4" />
 				</div>
 			{/if}
 			<div class="pl-4">
-				<span class="font-medium">{option.id}</span>
-				<span class="block text-sm opacity-75">{option.label}</span>
+				<span class="font-medium">{singleOption.id}</span>
+				<span class="block text-sm opacity-75">{singleOption.label}</span>
 			</div>
 		</li>
 	{:else}

@@ -1,17 +1,20 @@
 <script lang="ts">
-	import { Combobox, Input, Menu, Options } from '$lib/components/combobox';
+	import { Combobox, Input, Label, Menu, Options } from '$lib/components/combobox';
 </script>
 
 <!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
 
 <div class="container h-full mx-auto flex justify-center items-center">
 	<div class="space-y-10 text-center flex flex-col items-center">
-		<Combobox>
-			<Input></Input>
-			<Menu>
-				<Options></Options>
-			</Menu>
-		</Combobox>
+		<div>
+			<Combobox>
+				<Label></Label>
+				<Input></Input>
+				<Menu>
+					<Options></Options>
+				</Menu>
+			</Combobox>
+		</div>
 		<h2 class="h2">Welcome to Skeleton.</h2>
 		<!-- Animated Logo -->
 		<figure>
