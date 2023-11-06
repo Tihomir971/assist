@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { melt } from '@melt-ui/svelte';
-	import { getCtx } from './ctx';
+	import { getContext } from 'svelte';
+	import { melt, type Tabs } from '@melt-ui/svelte';
+	import { getTabsContext } from './tabs-list.svelte';
 
 	/**
 	 * Provide the key of the tab content.
@@ -8,7 +9,7 @@
 	 * */
 	export let key: string;
 
-	const { content } = getCtx();
+	const { content } = getTabsContext();
 </script>
 
 <div use:melt={$content(key)}>

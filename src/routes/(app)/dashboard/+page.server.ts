@@ -8,9 +8,7 @@ export const load = (async ({ locals: { supabase, getSession } }) => {
 		throw redirect(303, '/auth');
 	}
 
-	const { data: profile, error } = await supabase.from('ad_user').select();
-	console.log('profile', profile);
-	console.log('error', error);
+	const { data: profile } = await supabase.from('ad_user').select();
 
 	return { session, profile };
 }) satisfies PageServerLoad;

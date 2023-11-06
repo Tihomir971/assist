@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { cn } from '$lib/scripts/tailwind';
 	import { melt } from '@melt-ui/svelte';
-	import { getTabsContext } from './root.svelte';
 	import Tab from './tab.svelte';
+	import { getCtx } from './ctx';
 
-	const { list, tabs } = getTabsContext();
+	const { list, tabs } = getCtx();
 
 	let className = '';
 	export { className as class };
