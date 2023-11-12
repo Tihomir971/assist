@@ -8,7 +8,7 @@
 	export { className as class };
 </script>
 
-<th class={cn('px-1 py-2', className)} {...$$restProps}>
+<th class={cn('px-1 !py-1', className)} {...$$restProps}>
 	<slot />
 </th>
 

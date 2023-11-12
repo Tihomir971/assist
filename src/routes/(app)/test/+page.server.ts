@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import type { LayoutServerLoad } from './$types';
+import type { PageServerLoad } from './$types';
 
 export const load = (async ({ depends, locals: { supabase, getSession } }) => {
 	const session = await getSession();
@@ -17,4 +17,4 @@ export const load = (async ({ depends, locals: { supabase, getSession } }) => {
 		.order('name');
 
 	return { categories };
-}) satisfies LayoutServerLoad;
+}) satisfies PageServerLoad;

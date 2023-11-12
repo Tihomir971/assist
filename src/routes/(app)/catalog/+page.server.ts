@@ -9,7 +9,7 @@ type Product = Partial<Tables<'m_product'>> & {
 	priceRetail: number;
 	priceRecommended: number;
 	taxRate: number;
-	m_storageonhand: { qtyonhand: number }[];
+	m_storageonhand: { warehouse_id: number; qtyonhand: number }[];
 };
 
 export const load = (async ({ url, depends, locals: { supabase, getSession } }) => {
@@ -22,29 +22,30 @@ export const load = (async ({ url, depends, locals: { supabase, getSession } }) 
 
 	//Get searchParams
 	const paramsOnStock = url.searchParams.get('onStock');
-	const paramsWarehouse = url.searchParams.get('wh');
-	if (!paramsOnStock || !paramsWarehouse) {
+	//	const paramsWarehouse = url.searchParams.get('wh');
+	//	if (!paramsOnStock || !paramsWarehouse) {
+	if (!paramsOnStock) {
 		const newUrl = new URL(url);
-		newUrl?.searchParams?.set('onStock', paramsOnStock ?? 'true');
-		newUrl?.searchParams?.set('wh', paramsWarehouse ?? '5');
+		newUrl?.searchParams?.set('onStock', paramsOnStock ?? 'false');
+		//		newUrl?.searchParams?.set('wh', paramsWarehouse ?? '5');
 		throw redirect(303, newUrl);
 	}
 
-	const activeWarehouseId = Number(paramsWarehouse);
+	/* const activeWarehouseId = Number(paramsWarehouse); */
 	const onStock = paramsOnStock === 'true' ? true : false;
 
 	/* const activeWarehouseId = url.searchParams.get('wh') ? Number(url.searchParams.get('wh')) : null; */
 	const categoryIds = url.searchParams.get('cat')?.split(',').map(Number);
 
 	const columns =
-		'id,barcode,mpn,sku,name,c_taxcategory_id,c_uom_id,m_storageonhand(qtyonhand),qPriceRetail:m_productprice(pricestd),qPricePurchase:m_productprice(pricestd),qPriceMarket:m_productprice(pricelist),c_taxcategory(c_tax(rate)),isactive,isselfservice,discontinued';
+		'id,barcode,mpn,sku,name,c_taxcategory_id,c_uom_id,m_storageonhand(warehouse_id,qtyonhand),qPriceRetail:m_productprice(pricestd),qPricePurchase:m_productprice(pricestd),qPriceMarket:m_productprice(pricelist),c_taxcategory(c_tax(rate)),isactive,isselfservice,discontinued';
 
 	let query = supabase
 		.from('m_product')
 		.select(columns)
 		.order('name', { ascending: true })
 		.eq('producttype', 'I')
-		.eq('m_storageonhand.warehouse_id', activeWarehouseId)
+		/* .eq('m_storageonhand.warehouse_id', activeWarehouseId) */
 		.eq('qPriceRetail.m_pricelist_version_id', 13)
 		.eq('qPricePurchase.m_pricelist_version_id', 5)
 		.eq('qPriceMarket.m_pricelist_version_id', 15);
@@ -63,7 +64,13 @@ export const load = (async ({ url, depends, locals: { supabase, getSession } }) 
 			({ qtyonhand } = product.m_storageonhand[0]);
 		}
 
-		if (onStock === true && qtyonhand === 0) {
+		// Assign quantity  for experiment
+		/* 		let experiment = undefined;
+		if (Array.isArray(product.m_storageonhand) && product.m_storageonhand?.length !== 0) {
+			experiment = product.m_storageonhand[0];
+		} */
+
+		if (onStock === true && product.m_storageonhand.every((item) => item.qtyonhand === 0)) {
 			return;
 		}
 

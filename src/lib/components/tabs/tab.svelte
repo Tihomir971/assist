@@ -10,11 +10,11 @@
 
 <button
 	use:melt={$trigger(tab)}
-	class="rounded-lg border border-transparent bg-neutral-800 px-3 py-2 text-neutral-400 transition
-        hover:opacity-100 focus-visible:!border-primary-400 focus-visible:!text-primary-400 focus-visible:!ring-0
-        data-[state=active]:border-primary-700 data-[state=active]:py-2 data-[state=active]:text-primary-600 data-[state=active]:opacity-100"
+	class="text-center cursor-pointer transition-colors duration-100 flex-none px-4 py-2 rounded-tl-container-token rounded-tr-container-token
+        hover:variant-soft focus-visible:!border-primary-400 focus-visible:!ring-0
+        data-[state=active]:!border-primary-900-50-token data-[state=active]:py-2 data-[state=active]:border-b-2 data-[state=active]:opacity-100"
 >
 	<div class="flex items-center gap-2 px-1">
-		<span class="font-mono text-sm font-semibold">{tab}</span>
+		<span>{tab}</span>
 	</div>
 </button>

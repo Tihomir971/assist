@@ -1,11 +1,28 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { Combobox, Input, Label, Menu, Options } from '$lib/components/combobox';
+	import {
+		Select,
+		SelectLabel,
+		SelectMenu,
+		SelectOption,
+		SelectTrigger
+	} from '$lib/components/select';
 </script>
-
-<!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
 
 <div class="container h-full mx-auto flex justify-center items-center">
 	<div class="space-y-10 text-center flex flex-col items-center">
+		<form
+			method="POST"
+			use:enhance={() => {
+				return async ({ update }) => {
+					await update({ reset: false });
+				};
+			}}
+		>
+			<Select label="Warehouse"></Select>
+			<button type="submit">Test</button>
+		</form>
 		<div>
 			<Combobox>
 				<Label></Label>
@@ -15,6 +32,7 @@
 				</Menu>
 			</Combobox>
 		</div>
+
 		<h2 class="h2">Welcome to Skeleton.</h2>
 		<!-- Animated Logo -->
 		<figure>

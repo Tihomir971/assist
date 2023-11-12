@@ -10,7 +10,10 @@
 	export { className as class };
 </script>
 
-<div class={cn('flex items-center gap-3', className)} use:melt={$list}>
+<div
+	class={cn('flex justify-start overflow-x-auto border-b border-surface-400-500-token', className)}
+	use:melt={$list}
+>
 	{#each $tabs as tab}
 		<Tab {tab} />
 	{/each}

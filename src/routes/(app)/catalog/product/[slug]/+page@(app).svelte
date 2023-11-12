@@ -1,12 +1,13 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { applyAction, enhance } from '$app/forms';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { base } from '$app/paths';
 	import { Gallery, Thumbnails } from '$lib/components/gallery';
-	// import { Combobox } from '$lib/components/melt-ui';
 	import { DateTimeFormat } from '$lib/scripts/format';
-	import { Autocomplete, popup, TabGroup, type PopupSettings, Tab } from '@skeletonlabs/skeleton';
+	import { Autocomplete, popup } from '@skeletonlabs/skeleton';
 	import type { PageData } from './$types';
+	import { Tabs, TabsContent } from '$lib/components/tabs';
+	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 
 	export let data: PageData;
 	$: ({ product, categories, streamed } = data);
@@ -30,39 +31,35 @@
 	let tabSet: number = 0;
 </script>
 
-<div class="card container overflow-auto">
-	<TabGroup>
-		<Tab bind:group={tabSet} name="tab1" value={0}>
-			<span>Profile</span>
-		</Tab>
-		<Tab bind:group={tabSet} name="tab2" value={1}>Stock</Tab>
-		<Tab bind:group={tabSet} name="tab3" value={2}>(label 3)</Tab>
-		<!-- Tab Panels --->
-		<svelte:fragment slot="panel">
-			{#if tabSet === 0}
-				<form
+<div class="flex justify-center items-center h-full">
+	<div class="card w-1/2 overflow-auto">
+		<header class="flex justify-between items-center px-4 py-2">
+			<h2>Edit product</h2>
+		</header>
+		<Tabs tabs={['Profile', 'Stock', 'Tab 3']}>
+			<TabsContent key={'Profile'}
+				><form
 					method="POST"
 					action="?/setProduct"
 					use:enhance={() => {
-						return async ({ update }) => {
+						return async ({ update, result }) => {
+							if (result.type === 'success') {
+								// do something...
+								// do something...
+								addToast({
+									data: {
+										title: 'Success',
+										description: 'Product updated!',
+										color: 'bg-green-500'
+									}
+								});
+								// use the default behavior for this result type
+								await applyAction(result);
+							}
 							update({ reset: false });
 						};
 					}}
 				>
-					<header class="flex justify-between">
-						<h3 class="title">Edit product</h3>
-						<div class="flex gap-2">
-							<button
-								type="reset"
-								class="btn variant-filled-surface"
-								on:click={() => history.back()}>Back</button
-							>
-							{modified}
-							<button type="submit" class="btn variant-filled-primary" disabled={!modified}
-								>Save</button
-							>
-						</div>
-					</header>
 					<div class="space-y-4 p-4">
 						{previousPage}
 						{#if product}
@@ -208,20 +205,20 @@
 													</div>
 												</div>
 												<!-- <Combobox
-											name="m_product_category_id"
-											labelText="Product category"
-											placeholder="Choose category"
-											options={categories}
-											bind:value={product.m_product_category_id}
-										></Combobox> -->
+									name="m_product_category_id"
+									labelText="Product category"
+									placeholder="Choose category"
+									options={categories}
+									bind:value={product.m_product_category_id}
+								></Combobox> -->
 											{/if}
 											<!-- 	<input
-												id="m_product_category_id"
-												name="m_product_category_id"
-												type="text"
-												class="w-full"
-												bind:value={product.m_product_category_id}
-											/> -->
+										id="m_product_category_id"
+										name="m_product_category_id"
+										type="text"
+										class="w-full"
+										bind:value={product.m_product_category_id}
+									/> -->
 										</div>
 										<div class="wrapper">
 											<label for="condition">Condition</label>
@@ -273,12 +270,19 @@
 							</div>
 						{/if}
 					</div>
-				</form>
-			{:else if tabSet === 1}
-				(tab panel 2 contents)
-			{:else if tabSet === 2}
-				(tab panel 3 contents)
-			{/if}
-		</svelte:fragment>
-	</TabGroup>
+					<div class="flex justify-end w-full gap-2 px-4 py-2 border-t">
+						<button type="reset" class="btn variant-filled-surface" on:click={() => history.back()}
+							>Back</button
+						>
+						<!-- on:click={() => (previousPage ? goto(previousPage) : history.back())}>Back</button -->
+						<button type="submit" class="btn variant-filled-primary" disabled={!modified}
+							>Save</button
+						>
+					</div>
+				</form></TabsContent
+			>
+			<TabsContent key={'Stock'}>Stock</TabsContent>
+			<TabsContent key={'Tab 3'}>Tab 3</TabsContent>
+		</Tabs>
+	</div>
 </div>

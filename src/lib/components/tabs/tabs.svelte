@@ -2,7 +2,7 @@
 	import List from './list.svelte';
 	import Root from './root.svelte';
 
-	export let tabs: string[] = [];
+	export let tabs: string[];
 </script>
 
 <Root {tabs} let:tab>

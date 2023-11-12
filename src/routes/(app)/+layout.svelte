@@ -6,18 +6,20 @@
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import { browser } from '$app/environment';
+	import { Toaster } from '$lib/components/toaster';
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 	let activePath: string | undefined = undefined;
 	$: if (browser) activePath = $page.url.pathname;
 </script>
 
 <!-- App Shell -->
+<Toaster />
 <AppShell>
 	<svelte:fragment slot="header">
 		<!-- App Bar -->
 		<AppBar padding="px-4 py-2">
 			<svelte:fragment slot="lead">
-				<strong class="text-xl uppercase">Kalisi</strong>
+				<a href="/"><strong class="text-xl uppercase">Kalisi</strong></a>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
 				<a

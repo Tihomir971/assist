@@ -18,6 +18,6 @@
 			<ChevronDown />
 		{/if}
 	</div>
-	<p>InputValue: {$inputValue}</p>
-	<p>Selected: {JSON.stringify($selected, null, 2)}</p>
 </div>
+<p>InputValue: {$inputValue}</p>
+<p>Selected: {JSON.stringify($selected, null, 2)}</p>

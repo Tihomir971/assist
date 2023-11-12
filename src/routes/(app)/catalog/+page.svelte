@@ -33,6 +33,18 @@
 		select: addSelectedRows(),
 		hide: addHiddenColumns()
 	});
+
+	function getQtyOnHand(
+		warehouse_id: number,
+		productStorage: {
+			warehouse_id: number;
+			qtyonhand: number;
+		}[]
+	): number {
+		const item = productStorage.find((item) => item.warehouse_id === warehouse_id);
+		return item ? item.qtyonhand : 0;
+	}
+
 	let columns = table.createColumns([
 		table.column({
 			accessor: 'id',
@@ -81,7 +93,8 @@
 		}),
 		table.column({ header: 'Name', accessor: 'name' }),
 
-		table.column({
+		//Extracted Qty фро њарехоусе
+		/* 		table.column({
 			header: createRender(TextRight, { text: 'Qty.' }),
 			accessor: 'qtyonhand',
 			cell: ({ value }) =>
@@ -91,63 +104,98 @@
 					style: 'decimal',
 					fractionDigits: 2
 				})
-		}),
-		table.column({
-			id: 'purchase',
-			header: createRender(TextRight, { text: 'Purch.' }),
-			accessor: 'pricePurchase',
-			cell: ({ value }) =>
-				createRender(NumberFormat, {
-					value: value,
-					locales: 'sr-Latn',
-					style: 'decimal',
-					fractionDigits: 2
+		}), */
+		//Еџперимент
+		table.group({
+			header: 'Stock',
+			columns: [
+				table.column({
+					id: 'wholesale',
+					header: createRender(TextRight, { text: 'Wholesale' }),
+					accessor: (item) => getQtyOnHand(2, item.m_storageonhand),
+					cell: ({ value }) =>
+						createRender(NumberFormat, {
+							value: value,
+							locales: 'sr-Latn',
+							style: 'decimal',
+							fractionDigits: 2
+						})
+				}),
+				table.column({
+					id: 'retail',
+					header: createRender(TextRight, { text: 'Retail' }),
+					accessor: (item) => getQtyOnHand(5, item.m_storageonhand),
+					cell: ({ value }) =>
+						createRender(NumberFormat, {
+							value: value,
+							locales: 'sr-Latn',
+							style: 'decimal',
+							fractionDigits: 2
+						})
 				})
+			]
 		}),
-		table.column({
-			id: 'ruc',
-			accessor: (item) => item,
-			header: 'RuC',
-			cell: ({ value }) =>
-				createRender(NumberFormat, {
-					value: value.priceRetail / value.pricePurchase - 1,
-					locales: 'sr-Latn',
-					style: 'percent',
-					fractionDigits: 1
+		table.group({
+			header: 'Price',
+			columns: [
+				table.column({
+					id: 'purchase',
+					header: createRender(TextRight, { text: 'Purch.' }),
+					accessor: 'pricePurchase',
+					cell: ({ value }) =>
+						createRender(NumberFormat, {
+							value: value,
+							locales: 'sr-Latn',
+							style: 'decimal',
+							fractionDigits: 2
+						})
+				}),
+				table.column({
+					id: 'ruc',
+					accessor: (item) => item,
+					header: 'RuC',
+					cell: ({ value }) =>
+						createRender(NumberFormat, {
+							value: value.priceRetail / value.pricePurchase - 1,
+							locales: 'sr-Latn',
+							style: 'percent',
+							fractionDigits: 1
+						})
+				}),
+				table.column({
+					header: createRender(TextRight, { text: 'Retail' }),
+					accessor: 'priceRetail',
+					cell: ({ value }) =>
+						createRender(NumberFormat, {
+							value: value,
+							locales: 'sr-Latn',
+							style: 'decimal',
+							fractionDigits: 2
+						})
+				}),
+				table.column({
+					header: createRender(TextRight, { text: 'Market' }),
+					accessor: 'priceMarket',
+					cell: ({ value }) =>
+						createRender(NumberFormat, {
+							value: value,
+							locales: 'sr-Latn',
+							style: 'decimal',
+							fractionDigits: 2
+						})
+				}),
+				table.column({
+					header: createRender(TextRight, { text: 'Recom.' }),
+					accessor: 'priceRecommended',
+					cell: ({ value }) =>
+						createRender(NumberFormat, {
+							value: value,
+							locales: 'sr-Latn',
+							style: 'decimal',
+							fractionDigits: 2
+						})
 				})
-		}),
-		table.column({
-			header: createRender(TextRight, { text: 'Retail' }),
-			accessor: 'priceRetail',
-			cell: ({ value }) =>
-				createRender(NumberFormat, {
-					value: value,
-					locales: 'sr-Latn',
-					style: 'decimal',
-					fractionDigits: 2
-				})
-		}),
-		table.column({
-			header: createRender(TextRight, { text: 'Market' }),
-			accessor: 'priceMarket',
-			cell: ({ value }) =>
-				createRender(NumberFormat, {
-					value: value,
-					locales: 'sr-Latn',
-					style: 'decimal',
-					fractionDigits: 2
-				})
-		}),
-		table.column({
-			header: createRender(TextRight, { text: 'Recom.' }),
-			accessor: 'priceRecommended',
-			cell: ({ value }) =>
-				createRender(NumberFormat, {
-					value: value,
-					locales: 'sr-Latn',
-					style: 'decimal',
-					fractionDigits: 2
-				})
+			]
 		}),
 		table.column({
 			header: '',
@@ -166,13 +214,13 @@
 	$: strSelectedDataIds = Object.keys($selectedDataIds).map(Number);
 </script>
 
-<div class="grid max-h-screen grid-rows-[auto_1fr]">
-	<div class="grid h-full grid-rows-[1fr_auto] overflow-auto px-2">
+<div class="grid h-full overflow-hidden grid-rows-[auto_1fr]">
+	<div class="flex h-full flex-col overflow-hidden px-2">
 		<div class="h-12 w-full border-b border-layer-3 bg-layer-2">
 			<PageHeader selectedProducts={strSelectedDataIds} />
 		</div>
 		<!-- SkeletonLab .table-container -->
-		<Table.Root {...$tableAttrs}>
+		<Table.Root {...$tableAttrs} class="flex-grow h-full overflow-y-auto">
 			<Table.Header class="table-auto bg-layer-1">
 				{#each $headerRows as headerRow}
 					<Subscribe rowAttrs={headerRow.attrs()}>

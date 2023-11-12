@@ -1,10 +1,11 @@
 //import type { TreeItem } from '$lib/components/melt-ui';
 
-import type { TreeViewNode } from "@skeletonlabs/skeleton";
+import type { TreeItem } from '$lib/components/treeview';
+//import type { TreeViewNode } from '@skeletonlabs/skeleton';
 
 interface DataTableRow {
 	id: number;
-	content: string;
+	title: string;
 	parent_id: number | null;
 }
 
@@ -17,7 +18,7 @@ function arrayToTree(items: Array<DataTableRow>) {
 	});
 
 	// Create the tree structure
-	const result: Array<TreeViewNode> = [];
+	const result: Array<TreeItem> = [];
 	items.forEach((item) => {
 		if (item.parent_id === null) {
 			const newItem = itemMap.get(item.id);
@@ -44,7 +45,7 @@ function arrayToTree(items: Array<DataTableRow>) {
 
 	return result;
 }
-export function convertToTreeStructure(data: Array<DataTableRow> | null): TreeViewNode[] {
+export function convertToTreeStructure(data: Array<DataTableRow> | null): TreeItem[] {
 	if (!data) return [];
 	//return createTree(data);
 	return arrayToTree(data);
