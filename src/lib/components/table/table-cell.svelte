@@ -8,7 +8,7 @@
 	export { className as class };
 </script>
 
-<td class={cn('p-1', className)} {...$$restProps}>
+<td class={cn('p-1 !align-middle', className)} {...$$restProps}>
 	<slot />
 </td>
 

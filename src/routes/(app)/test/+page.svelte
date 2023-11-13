@@ -1,31 +1,61 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
-	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
-	import { TreeView } from '$lib/components/treeview';
-	import type { TreeItem } from '$lib/components/treeview';
-	import { convertToTreeStructure } from '$lib/scripts/tree';
-	import type { PageData } from './$types';
+	import { DataTable } from '$lib/components/datatable';
+	import { createTable, Subscribe, Render } from 'svelte-headless-table';
+	import { readable } from 'svelte/store';
 
-	export let data: PageData;
-	let { categories } = data;
-	$: ({ categories } = data);
-	$: myTreeViewNodes = convertToTreeStructure(categories);
+	const data = readable([
+		{ name: 'Ada Lovelace', age: 21 },
+		{ name: 'Barbara Liskov', age: 52 },
+		{ name: 'Richard Hamming', age: 38 }
+	]);
 
-	function rerunLoadFunction(id: string) {
-		const newUrl = new URL($page.url);
-		if (id) {
-			newUrl?.searchParams?.set('cat', id);
-		} else {
-			newUrl?.searchParams?.delete('cat');
-		}
-		if (browser) {
-			goto(newUrl);
-		}
-		return;
-	}
+	const table = createTable(data);
+
+	const columns = table.createColumns([
+		table.column({
+			header: 'Name',
+			accessor: 'name'
+		}),
+		table.column({
+			header: 'Age',
+			accessor: 'age'
+		})
+	]);
+
+	const { headerRows, rows, tableAttrs, tableBodyAttrs } = table.createViewModel(columns);
 </script>
 
-<div class="flex h-full items-center justify-center">
-	<TreeView treeItems={myTreeViewNodes} on:select={(e) => rerunLoadFunction(e.detail)}></TreeView>
-</div>
+<DataTable {...$tableAttrs}>
+	<!-- <table {...$tableAttrs}> -->
+	<thead>
+		{#each $headerRows as headerRow (headerRow.id)}
+			<Subscribe rowAttrs={headerRow.attrs()} let:rowAttrs>
+				<tr {...rowAttrs}>
+					{#each headerRow.cells as cell (cell.id)}
+						<Subscribe attrs={cell.attrs()} let:attrs>
+							<th {...attrs}>
+								<Render of={cell.render()} />
+							</th>
+						</Subscribe>
+					{/each}
+				</tr>
+			</Subscribe>
+		{/each}
+	</thead>
+	<tbody {...$tableBodyAttrs}>
+		{#each $rows as row (row.id)}
+			<Subscribe rowAttrs={row.attrs()} let:rowAttrs>
+				<tr {...rowAttrs}>
+					{#each row.cells as cell (cell.id)}
+						<Subscribe attrs={cell.attrs()} let:attrs>
+							<td {...attrs}>
+								<Render of={cell.render()} />
+							</td>
+						</Subscribe>
+					{/each}
+				</tr>
+			</Subscribe>
+		{/each}
+	</tbody>
+	<!-- </table> -->
+</DataTable>
