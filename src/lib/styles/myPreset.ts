@@ -70,8 +70,8 @@ export const myPreset: Config = {
 				/* ...getColors(openPropsColors), */
 
 				text: {
-					1: 'hsl(var(--text-1) / <alpha-value>)',
-					2: 'hsl(var(--text-2) / <alpha-value>)'
+					1: 'rgb(var(--text-1) / <alpha-value>)',
+					2: 'rgb(var(--text-2) / <alpha-value>)'
 				},
 				theme: {
 					DEFAULT: 'hsl(var(--theme) / <alpha-value>)',
@@ -81,10 +81,10 @@ export const myPreset: Config = {
 				surface: {
 					/* Floating: 'var(--neutralLayerFloating) / <alpha-value>)', */
 					/* Card: 'var(--cardLayer) / <alpha-value>)', */
-					1: 'hsl(var(--surface-1) / <alpha-value>)',
-					2: 'hsl(var(--surface-2) / <alpha-value>)',
-					3: 'hsl(var(--surface-3) / <alpha-value>)',
-					4: 'hsl(var(--surface-4) / <alpha-value>)'
+					1: 'rgb(var(--surface-1) / <alpha-value>)',
+					2: 'rgb(var(--surface-2) / <alpha-value>)',
+					3: 'rgb(var(--surface-3) / <alpha-value>)',
+					4: 'rgb(var(--surface-4) / <alpha-value>)'
 				}
 			}
 		}

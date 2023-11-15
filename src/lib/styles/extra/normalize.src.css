@@ -175,7 +175,7 @@
 }
 
 :where(textarea, select, input:not([type='button'], [type='submit'], [type='reset'])) {
-	background-color: hsl(var(--surface-2));
+	background-color: rgb(var(--surface-2));
 	border-radius: var(--radius-2);
 }
 
@@ -209,7 +209,7 @@
 
 :where(:not(pre) > code) {
 	padding: var(--size-1) var(--size-2);
-	background: hsl(var(--surface-2));
+	background: rgb(var(--surface-2));
 	border-radius: var(--radius-2);
 	writing-mode: lr;
 }
@@ -217,7 +217,7 @@
 :where(kbd, var) {
 	padding: var(--size-1) var(--size-2);
 	border-width: var(--border-size-1);
-	border-color: hsl(var(--surface-4));
+	border-color: rgb(var(--surface-4));
 	border-radius: var(--radius-2);
 }
 
@@ -255,7 +255,7 @@
 :where(hr) {
 	margin-block: var(--size-fluid-5);
 	height: var(--border-size-2);
-	background-color: hsl(var(--surface-3));
+	background-color: rgb(var(--surface-3));
 }
 
 :where(figure) {
@@ -286,7 +286,7 @@
 }
 
 :where(summary) {
-	background: hsl(var(--surface-3));
+	background: rgb(var(--surface-3));
 	padding: var(--size-2) var(--size-3);
 	margin: calc(var(--size-2) * -1) calc(var(--size-3) * -1);
 	border-radius: var(--radius-2);
@@ -295,7 +295,7 @@
 :where(details) {
 	padding-inline: var(--size-3);
 	padding-block: var(--size-2);
-	background: (var(--surface-2));
+	background: rgb(var(--surface-2));
 	border-radius: var(--radius-2);
 }
 
@@ -307,7 +307,7 @@
 
 :where(fieldset) {
 	border-radius: var(--radius-2);
-	border: var(--border-size-1) solid hsl(var(--surface-4));
+	border: var(--border-size-1) solid rgb(var(--surface-4));
 }
 
 :where(del) {
@@ -325,7 +325,7 @@
 }
 
 :where(dialog) {
-	background-color: hsl(var(--surface-1));
+	background-color: rgb(var(--surface-1));
 	color: inherit;
 	border-radius: var(--radius-3);
 	box-shadow: var(--shadow-6);
@@ -351,8 +351,8 @@
 
 :where(table) {
 	width: fit-content;
-	border: 1px solid hsl(var(--surface-2));
-	background: hsl(var(--surface-2));
+	border: 1px solid rgb(var(--surface-2));
+	background: rgb(var(--surface-2));
 	border-radius: var(--radius-3);
 
 	--nice-inner-radius: calc(var(--radius-3) - 2px);
@@ -383,8 +383,8 @@
 }
 
 :where(th) {
-	color: var(--text-1);
-	background-color: hsl(var(--surface-2));
+	color: rgb(var(--text-1));
+	background-color: rgb(var(--surface-2));
 }
 
 :where(table :is(a, button, [contenteditable]):is(:focus-visible)) {
@@ -392,7 +392,7 @@
 }
 
 :where(td) {
-	background: hsl(var(--surface-1));
+	background: rgb(var(--surface-1));
 	max-inline-size: var(--size-content-2);
 	text-wrap: pretty;
 }

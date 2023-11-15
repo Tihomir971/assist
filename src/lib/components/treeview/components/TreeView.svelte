@@ -18,10 +18,9 @@
 <div class="flex flex-col bg-surface-54 text-text-1 h-full">
 	<div class="flex flex-col gap-1 px-4 pt-4">
 		<h3 class="text-lg font-medium">Categories</h3>
-		<hr />
 	</div>
 
-	<ul class="overflow-auto px-4 pb-4 pt-2 w-full flex-grow" {...$tree}>
+	<ul class="overflow-auto pb-4 pt-2 w-full flex-grow" {...$tree}>
 		<Tree {treeItems} on:select />
 	</ul>
 </div>

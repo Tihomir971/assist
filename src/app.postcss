@@ -1,72 +1,71 @@
 /* @import "lib/styles/open-props/split-button.css"; */
-@import "lib/styles/open-props/props.gray-hsl.css";
-@import "lib/styles/table.css";
+@import 'lib/styles/index.css';
+@import 'lib/styles/extra/normalize.css';
 /* @tailwind base; */
 @tailwind components;
 @tailwind utilities;
 @tailwind variants;
 
 html {
-	--theme:        220 75% 50%;
-	--theme-hover:  220 75% 45%;
+	--theme: 220 75% 50%;
+	--theme-hover: 220 75% 45%;
 	--theme-active: 220 75% 40%;
-	--theme-text:   220 75% 25%;
+	--theme-text: 220 75% 25%;
 	--theme-border: 220 50% 75%;
-	--ontheme:      220 90% 98%;
+	--ontheme: 220 90% 98%;
 
 	--link: var(--indigo-7);
 	--link-visited: var(--purple-7);
-  
-	--text-1: var(--gray-12-hsl);
-	--text-2: var(--gray-7-hsl);
-  
-	--surface-1: var(--gray-0-hsl);
-	--surface-2: var(--gray-2-hsl);
-	--surface-3: var(--gray-3-hsl);
-	--surface-4: var(--gray-4-hsl);
-  
-	--scrollthumb-color: var(--gray-7-hsl);
+
+	--text-1: var(--gray-12);
+	--text-2: var(--gray-7);
+
+	--surface-1: var(--gray-0);
+	--surface-2: var(--gray-2);
+	--surface-3: var(--gray-3);
+	--surface-4: var(--gray-4);
+
+	--scrollthumb-color: var(--gray-7);
 	--shadow-color: 220 3% 15%;
 	--shadow-strength: 1%;
-	
+}
 
-  }
-  
-  @media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) {
 	html {
-		--theme:        220 50% 60%;
-		--theme-hover:  220 50% 65%;
+		--theme: 220 50% 60%;
+		--theme-hover: 220 50% 65%;
 		--theme-active: 220 75% 70%;
-		--theme-text:   220 10% 85%;
+		--theme-text: 220 10% 85%;
 		--theme-border: 220 20% 70%;
-		--ontheme:      220 90% 5%;
-		
+		--ontheme: 220 90% 5%;
+
 		--link: var(--indigo-3);
 		--link-visited: var(--purple-3);
-	  
-		--text-1: var(--gray-0-hsl);
-		--text-2: var(--gray-4-hsl);
-	  
-		--surface-1: var(--gray-9-hsl);
-		--surface-2: var(--gray-8-hsl);
-		--surface-3: var(--gray-7-hsl);
-		--surface-4: var(--gray-6-hsl);
-	  
-		--scrollthumb-color: var(--gray-6-hsl);
+
+		--text-1: var(--gray-0);
+		--text-2: var(--gray-4);
+
+		--surface-1: var(--gray-9);
+		--surface-2: var(--gray-8);
+		--surface-3: var(--gray-7);
+		--surface-4: var(--gray-6);
+
+		--scrollthumb-color: var(--gray-6);
 		--shadow-strength: 10%;
 		--shadow-color: 220 40% 2%;
-
 	}
-  }
+}
 
 html,
 body {
 	@apply h-full overflow-hidden bg-surface-1 text-text-1 font-sans;
 }
 li {
-	@apply list-none m-0 p-0
+	@apply list-none m-0 p-0;
 }
-ul {@apply ps-0}
+ul {
+	@apply ps-0;
+}
 :root {
 	--icon-error: url(https://api.iconify.design/ic:baseline-error.svg?color=%23ff6b6b);
 	--icon-search: url(https://api.iconify.design/ic:search.svg?color=%2300000077);
@@ -81,26 +80,23 @@ ul {@apply ps-0}
 	--icon-no-edit: url(https://api.iconify.design/ic:baseline-edit-off.svg?color=%2300000077);
 	--icon-arrow-down: url(https://api.iconify.design/ic:keyboard-arrow-down.svg?color=%2300000077);
 	--icon-arrow-up: url(https://api.iconify.design/ic:keyboard-arrow-up.svg?color=%2300000077);
-	
+
 	@media (prefers-color-scheme: dark) {
-	  --icon-error: url(https://api.iconify.design/ic:baseline-error.svg?color=%23ff6b6b);
-	  --icon-search: url(https://api.iconify.design/ic:search.svg?color=%23ffffff77);
-	  --icon-email: url(https://api.iconify.design/ic:email.svg?color=%23ffffff77);
-	  --icon-url: url(https://api.iconify.design/ic:link.svg?color=%23ffffff77);
-	  --icon-user: url(https://api.iconify.design/ic:person.svg?color=%23ffffff77);
-	  --icon-user-editing: url(https://api.iconify.design/ic:person-outline.svg?color=%23ffffff77);
-	  --icon-tel: url(https://api.iconify.design/ic:phone.svg?color=%23ffffff77);
-	  --icon-tel-editing: url(https://api.iconify.design/ic:phone-in-talk.svg?color=%23ffffff77);
-	  --icon-password: url(https://api.iconify.design/ic:baseline-lock.svg?color=%23ffffff77);
-	  --icon-password-editing: url(https://api.iconify.design/ic:baseline-lock-open.svg?color=%23ffffff77);
-	  --icon-no-edit: url(https://api.iconify.design/ic:baseline-edit-off.svg?color=%23ffffff77);
-	  --icon-arrow-down: url(https://api.iconify.design/ic:keyboard-arrow-down.svg?color=%23ffffff77);
-	  --icon-arrow-up: url(https://api.iconify.design/ic:keyboard-arrow-up.svg?color=%23ffffff77);
+		--icon-error: url(https://api.iconify.design/ic:baseline-error.svg?color=%23ff6b6b);
+		--icon-search: url(https://api.iconify.design/ic:search.svg?color=%23ffffff77);
+		--icon-email: url(https://api.iconify.design/ic:email.svg?color=%23ffffff77);
+		--icon-url: url(https://api.iconify.design/ic:link.svg?color=%23ffffff77);
+		--icon-user: url(https://api.iconify.design/ic:person.svg?color=%23ffffff77);
+		--icon-user-editing: url(https://api.iconify.design/ic:person-outline.svg?color=%23ffffff77);
+		--icon-tel: url(https://api.iconify.design/ic:phone.svg?color=%23ffffff77);
+		--icon-tel-editing: url(https://api.iconify.design/ic:phone-in-talk.svg?color=%23ffffff77);
+		--icon-password: url(https://api.iconify.design/ic:baseline-lock.svg?color=%23ffffff77);
+		--icon-password-editing: url(https://api.iconify.design/ic:baseline-lock-open.svg?color=%23ffffff77);
+		--icon-no-edit: url(https://api.iconify.design/ic:baseline-edit-off.svg?color=%23ffffff77);
+		--icon-arrow-down: url(https://api.iconify.design/ic:keyboard-arrow-down.svg?color=%23ffffff77);
+		--icon-arrow-up: url(https://api.iconify.design/ic:keyboard-arrow-up.svg?color=%23ffffff77);
 	}
-  
-
 }
-
 
 fieldset {
 	counter-reset: errors;
@@ -221,7 +217,7 @@ legend {
 		box-shadow:
 			var(--inner-shadow-2),
 			0 1px 0px 0px var(--dark-surface) inset,
-			0 -0.5px 0px 0px var(--surface-2)) inset;
+			0 -0.5px 0px 0px var(--surface-2) inset;
 	}
 }
 
@@ -637,7 +633,7 @@ search {
 		position: absolute;
 		inset-block-start: 50%;
 		inset-inline-start: 50%;
-		background: 0 0% 50% / 20%);
+		background: 0 0% 50% / 20%;
 		transform-origin: center center;
 		transform: translateX(calc(var(--isRTL) * 50%)) translateY(-50%) translateZ(-1px)
 			scale(var(--thumb-scale));

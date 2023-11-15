@@ -12,7 +12,7 @@
 
 <!-- <div class="m-1 block max-h-full overflow-auto"> -->
 <div class="table-container">
-	<table class={cn('table table-compact table-hover', className)} {...$$restProps}>
+	<table class={cn(className)} {...$$restProps}>
 		<slot />
 	</table>
 </div>
