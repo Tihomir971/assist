@@ -19,7 +19,7 @@
 		use:melt={builder}
 		{...$$restProps}
 		class={cn(
-			'card z-10 flex max-h-[300px] min-w-[220px] flex-col bg-surface-50-900-token p-1 lg:max-h-none ring-0 !important',
+			'card z-10 flex max-h-[300px] min-w-[220px] flex-col bg-surface-4 p-1 lg:max-h-none ring-0 !important',
 			className
 		)}
 		transition:fly={{ duration: 150, y: -10 }}

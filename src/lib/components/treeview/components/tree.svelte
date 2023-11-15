@@ -36,8 +36,9 @@
 
 	<li class={level !== 1 ? 'pl-4' : ''}>
 		<button
-			class="flex items-center gap-1 rounded-md p-1 w-full hover:bg-surface-300-600-token"
-			class:bg-surface-200-700-token={$isSelected(itemId)}
+			class="flex bg-transparent text-text-2 items-center gap-1 rounded-md p-1 w-full hover:bg-theme-hover border-none"
+			class:!bg-theme-active={$isSelected(itemId)}
+			class:!text-text-1={$isSelected(itemId)}
 			class:m4={$isSelected(itemId)}
 			use:melt={$item({
 				id: itemId,
@@ -53,7 +54,7 @@
 					<svelte:component this={icons['folder']} class="h-4 w-4" />
 				{/if}
 			{:else}
-				<svelte:component this={icons['child']} class="h-4 w-4 text-primary-900-50-token" />
+				<svelte:component this={icons['child']} class="h-4 w-4 text-text-1" />
 			{/if}
 
 			{#if icon}

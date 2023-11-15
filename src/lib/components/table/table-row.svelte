@@ -10,11 +10,11 @@
 	export { className as class };
 </script>
 
-<tr class={cn('data-[state=selected]:bg-white', className)} {...$$restProps}>
+<tr class={cn('data-[state=selected]:bg-theme-active', className)} {...$$restProps}>
 	<!-- <tr class={cn('data-[state=selected]:bg-pink-4', className)} {...$$restProps}> -->
 	<!-- <tr
 	class={cn(
-		"border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+		"border-b transition-colors hover:bg-theme data-[state=selected]:bg-muted",
 		className
 	)}
 	{...$$restProps}

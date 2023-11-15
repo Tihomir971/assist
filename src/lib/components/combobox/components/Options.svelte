@@ -50,11 +50,11 @@
 		<!-- use:melt={$option(toOption(singleoption))} -->
 		<li
 			use:melt={$option(toOption(singleOption))}
-			class="relative cursor-pointer scroll-my-2 rounded-md py-2 pl-4 pr-4 hover:bg-primary-100
-  data-[highlighted]:bg-primary-200 data-[highlighted]:text-primary-900 data-[disabled]:opacity-50"
+			class="relative cursor-pointer scroll-my-2 rounded-md py-2 pl-4 pr-4 hover:bg-theme-hover
+  data-[highlighted]:bg-theme-active data-[highlighted]:text-text-1 data-[disabled]:opacity-50"
 		>
 			{#if $isSelected(singleOption)}
-				<div class="check absolute left-2 top-1/2 z-10 text-primary-900">
+				<div class="check absolute left-2 top-1/2 z-10 text-text-1">
 					<Check class="square-4" />
 				</div>
 			{/if}

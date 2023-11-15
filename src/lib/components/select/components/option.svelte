@@ -18,10 +18,10 @@
 
 {#each options as item}
 	<div
-		class="relative cursor-pointer rounded-lg py-1 pl-8 pr-4 text-neutral-800 hover:bg-primary-100 focus:z-10
+		class="relative cursor-pointer rounded-lg py-1 pl-8 pr-4 text-neutral-800 hover:bg-theme-hover focus:z-10
       focus:text-primary-700
-      data-[highlighted]:bg-primary-200
-      data-[highlighted]:text-primary-900
+      data-[highlighted]:bg-theme-active
+      data-[highlighted]:text-text-1
       data-[disabled]:opacity-50"
 		use:melt={$option({ value: item.value, label: item.label })}
 	>

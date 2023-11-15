@@ -15,7 +15,7 @@
 	} = setCtx({ forceVisible, defaultExpanded, expanded, onExpandedChange });
 </script>
 
-<div class="flex flex-col bg-surface-50-900-token text-primary-900-50-token h-full">
+<div class="flex flex-col bg-surface-54 text-text-1 h-full">
 	<div class="flex flex-col gap-1 px-4 pt-4">
 		<h3 class="text-lg font-medium">Categories</h3>
 		<hr />
