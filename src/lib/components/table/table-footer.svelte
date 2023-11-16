@@ -8,7 +8,15 @@
 	export { className as class };
 </script>
 
-<tfoot class={cn('sticky bottom-0', className)} {...$$restProps}>
+<tfoot class={cn(className)} {...$$restProps}>
 	<slot />
 </tfoot>
+
 <!-- "bg-primary font-medium text-primary-foreground" -->
+
+<style lang="postcss">
+	tfoot {
+		position: sticky;
+		inset-block-start: 0;
+	}
+</style>

@@ -214,7 +214,7 @@
 	$: strSelectedDataIds = Object.keys($selectedDataIds).map(Number);
 </script>
 
-<div class="grid h-full overflow-hidden grid-rows-[auto_1fr]">
+<div class="grid h-full overflow-hidden grid-rows-[auto_1fr] w-full">
 	<div class="flex h-full flex-col overflow-hidden px-2">
 		<div class="h-12 w-full border-b border-layer-3 bg-layer-2">
 			<PageHeader selectedProducts={strSelectedDataIds} />

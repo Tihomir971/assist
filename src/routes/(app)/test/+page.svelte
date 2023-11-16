@@ -25,6 +25,7 @@
 	const { headerRows, rows, tableAttrs, tableBodyAttrs } = table.createViewModel(columns);
 </script>
 
+<button>Test</button>
 <DataTable {...$tableAttrs}>
 	<!-- <table {...$tableAttrs}> -->
 	<thead>

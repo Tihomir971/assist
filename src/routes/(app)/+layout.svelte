@@ -14,8 +14,8 @@
 
 <!-- App Shell -->
 <Toaster />
-<AppShell>
-	<svelte:fragment slot="header">
+<div class="main-grid">
+	<header>
 		<!-- App Bar -->
 		<AppBar padding="px-4 py-2">
 			<svelte:fragment slot="lead">
@@ -50,9 +50,9 @@
 				</div>
 			</svelte:fragment>
 		</AppBar>
-	</svelte:fragment>
-	<svelte:fragment slot="sidebarLeft"
-		><AppRail width="w-12">
+	</header>
+	<aside>
+		<AppRail width="w-12">
 			<AppRailAnchor
 				href="/dashboard"
 				selected={activePath === '/dashboard'}
@@ -68,7 +68,27 @@
 				<Tag size="20" strokeWidth={1.75} />
 			</AppRailAnchor>
 		</AppRail>
-	</svelte:fragment>
+	</aside>
 	<!-- Page Route Content -->
-	<slot />
-</AppShell>
+	<main>
+		<slot />
+	</main>
+</div>
+
+<style lang="postcss">
+	.main-grid {
+		display: grid;
+		grid-template: auto 1fr / auto 1fr;
+		width: 100%;
+		height: 100vh;
+	}
+	header {
+		grid-column: 1 / 3;
+	}
+	aside {
+		grid-column: 1/2;
+	}
+	main {
+		grid-column: 2/2;
+	}
+</style>

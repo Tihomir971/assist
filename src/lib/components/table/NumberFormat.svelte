@@ -7,4 +7,10 @@
 	export let fractionDigits: number;
 </script>
 
-<div class="text-right">{numberFormat(value, locales, style, fractionDigits)}</div>
+<div class="format-number">{numberFormat(value, locales, style, fractionDigits)}</div>
+
+<style lang="postcss">
+	.format-number {
+		text-align: right;
+	}
+</style>
