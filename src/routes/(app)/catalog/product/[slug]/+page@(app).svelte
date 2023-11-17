@@ -33,9 +33,10 @@
 
 <div class="flex justify-center items-center h-full">
 	<div class="card w-1/2 overflow-auto">
-		<header class="flex justify-between items-center px-4 py-2">
-			<h2>Edit product</h2>
-		</header>
+		<hgroup>
+			<h1>Edit product</h1>
+			<p>Some information about product</p>
+		</hgroup>
 		<Tabs tabs={['Profile', 'Stock', 'Tab 3']}>
 			<TabsContent key={'Profile'}>
 				<form
