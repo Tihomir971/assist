@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { AppShell, AppBar, AppRail, AppRailAnchor } from '@skeletonlabs/skeleton';
-	import { LayoutDashboard, Package, Tag } from 'lucide-svelte';
+	import { AlignJustify, LayoutDashboard, Package, Palette, Tag, TestTube2 } from 'lucide-svelte';
 	// Floating UI for Popups
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
@@ -17,7 +17,7 @@
 <div class="main-grid">
 	<header>
 		<!-- App Bar -->
-		<AppBar padding="px-4 py-2">
+		<AppBar padding="px-4 py-2 bg-sur">
 			<svelte:fragment slot="lead">
 				<a href="/"><strong class="text-xl uppercase">Kalisi</strong></a>
 			</svelte:fragment>
@@ -51,23 +51,32 @@
 			</svelte:fragment>
 		</AppBar>
 	</header>
-	<aside>
-		<AppRail width="w-12">
-			<AppRailAnchor
-				href="/dashboard"
-				selected={activePath === '/dashboard'}
-				regionLabel="flex justify-center items-center"
-			>
-				<LayoutDashboard size={20} strokeWidth={1.75} />
-			</AppRailAnchor>
-			<AppRailAnchor
-				href="/catalog"
-				selected={activePath === '/catalog'}
-				regionLabel="flex justify-center items-center"
-			>
-				<Tag size="20" strokeWidth={1.75} />
-			</AppRailAnchor>
-		</AppRail>
+	<aside class="w-12 grid grid-rows-[auto_1fr_auto] bg-surface-2">
+		<div class="w-full aspect-square flex justify-center items-center"><AlignJustify /></div>
+		<!-- <AppRail width=""> -->
+		<div>
+			<div class:bg-surface-3={activePath === '/dashboard'}>
+				<a href="/dashboard" class="w-full aspect-square flex justify-center items-center">
+					<LayoutDashboard size={20} strokeWidth={1.75} />
+				</a>
+			</div>
+			<div class:bg-surface-3={activePath === '/catalog'}>
+				<a href="/catalog" class="w-full aspect-square flex justify-center items-center">
+					<Tag size="20" strokeWidth={1.75} />
+				</a>
+			</div>
+			<div class:bg-surface-3={activePath === '/palette'}>
+				<a href="/palette" class="w-full aspect-square flex justify-center items-center">
+					<Palette size="20" strokeWidth={1.75} />
+				</a>
+			</div>
+			<div class:bg-surface-3={activePath === '/test'}>
+				<a href="/test" class="w-full aspect-square flex justify-center items-center">
+					<TestTube2 size="20" strokeWidth={1.75} />
+				</a>
+			</div>
+		</div>
+		<!-- </AppRail> -->
 	</aside>
 	<!-- Page Route Content -->
 	<main>

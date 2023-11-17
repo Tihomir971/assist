@@ -11,7 +11,6 @@
 </script>
 
 <div class="space-y-10 text-center flex-col items-center justify-center">
-	<h2 class="h2">Welcome to Skeleton.</h2>
 	<form
 		method="POST"
 		use:enhance={() => {

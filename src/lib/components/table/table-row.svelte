@@ -10,7 +10,7 @@
 	export { className as class };
 </script>
 
-<tr class={cn('data-[state=selected]:bg-theme-active', className)} {...$$restProps}>
+<tr class={cn('data-[state=selected]:bg-accent', className)} {...$$restProps}>
 	<!-- <tr class={cn('data-[state=selected]:bg-pink-4', className)} {...$$restProps}> -->
 	<!-- <tr
 	class={cn(

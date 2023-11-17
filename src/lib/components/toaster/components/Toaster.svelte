@@ -46,7 +46,7 @@
 				<button
 					use:melt={$close(id)}
 					class="absolute right-4 top-4 grid place-items-center rounded-full text-primary-500 square-6
-        hover:bg-theme-hover"
+        hover:bg-accent/75"
 				>
 					<X class="square-4" />
 				</button>

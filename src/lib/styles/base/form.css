@@ -1,0 +1,25 @@
+/* @layer base { */
+/* fieldset counts errors and places required dots */
+::placeholder {
+	@apply bg-accent-16;
+	color: var(--text-1);
+	font-style: italic;
+
+	@media (prefers-color-scheme: dark) {
+		@apply bg-accent-1;
+		color: var(--surface-4);
+	}
+}
+
+:where(fieldset) {
+	@apply border border-surface-2 border-solid m-2;
+
+	& label {
+		@apply block text-sm font-medium leading-6;
+	}
+	& input {
+		@apply bg-surface-document w-full rounded-md border-0 px-3 py-2 shadow-sm ring-1 ring-inset ring-accent-5 focus:ring-accent-4  focus:ring-inset  text-sm leading-6;
+		/* @apply block w-full rounded-md border-0 dark:bg-accent-950/30 py-1.5 shadow-sm ring-1 ring-inset ring-accent-200 dark:ring-accent-700 dark:focus:ring-accent-400 focus:ring-2 focus:ring-inset focus:ring-accent-500 sm:text-sm sm:leading-6; */
+	}
+}
+/* } */

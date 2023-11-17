@@ -1,10 +1,21 @@
 /* import { join } from 'path'; */
 import type { Config } from 'tailwindcss';
-/* import forms from '@tailwindcss/forms'; */
+import forms from '@tailwindcss/forms';
 /* import typography from '@tailwindcss/typography'; */
 /* import { skeleton } from '@skeletonlabs/tw-plugin'; */
 /* import { myCustomTheme } from './skeleton-theme'; */
 /* import { myPreset } from './src/lib/styles/myPreset'; */
+const getColor = (color: string, scale: number) => {
+	const colors = Array.from(Array(scale).keys()).reduce(
+		(acc, _, i) => {
+			acc[i + 1] = `oklch(var(--${color}-${i + 1}) / <alpha-value>)`;
+			return acc;
+		},
+		{} as Record<number | string, string>
+	) as Record<string | number, string>;
+	colors['DEFAULT'] = `oklch(var(--${color}-max) / <alpha-value>)`;
+	return colors;
+};
 
 export default {
 	darkMode: 'class',
@@ -12,32 +23,31 @@ export default {
 	theme: {
 		extend: {
 			colors: {
+				accent: getColor('color', 16),
+				max: 'oklch(var(--color-max) / <alpha-value>)',
+				surface: {
+					1: 'oklch(var(--surface-1) / <alpha-value>)',
+					2: 'oklch(var(--surface-2) / <alpha-value>)',
+					3: 'oklch(var(--surface-3) / <alpha-value>)',
+					document: 'oklch(var(--surface-document) / <alpha-value>)'
+				},
+				well: {
+					1: 'oklch(var(--well-1) / <alpha-value>)',
+					2: 'oklch(var(--well-2) / <alpha-value>)'
+				},
+				text: {
+					1: 'oklch(var(--text-1) / <alpha-value>)',
+					2: 'oklch(var(--text-2) / <alpha-value>)'
+				}
 				/* transparent: 'transparent', */
 				/* current: 'currentColor', */
-				/*	indigo: getColor('indigo', colorScale)
-			 ...getColors(radixGrayColors, true),
-gray: getGrayColor('gray', colorScale),*/
-				/* ...getColors(openPropsColors), */
-				text: {
-					1: 'hsl(var(--text-1) / <alpha-value>)',
-					2: 'hsl(var(--text-2) / <alpha-value>)'
-				},
-				theme: {
-					DEFAULT: 'hsl(var(--theme) / <alpha-value>)',
-					hover: 'hsl(var(--theme-hover) / <alpha-value>)',
-					active: 'hsl(var(--theme-active) / <alpha-value>)'
-				},
-				surface: {
-					1: 'hsl(var(--surface-1) / <alpha-value>)',
-					2: 'hsl(var(--surface-2) / <alpha-value>)',
-					3: 'hsl(var(--surface-3) / <alpha-value>)',
-					4: 'hsl(var(--surface-4) / <alpha-value>)'
-				}
+				/* indigo: getColor('indigo', colorScale)
+				/* ...getColors(radixGrayColors, true), */
 			}
 		}
 	},
 	plugins: [
-		/* forms */
+		forms
 		/* typography */
 		/* skeleton({
 			themes: {

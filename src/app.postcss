@@ -1,11 +1,6 @@
 /* @import 'open-props/style'; */
 /* @import '$lib/styles/base.css'; */
-
-@import 'open-props/gray-hsl';
-@import 'open-props/indigo';
-@import 'open-props/purple';
-@import 'open-props/sizes';
-@import 'open-props/shadows';
+@import '$lib/styles/index.css';
 
 /* @import 'open-props/buttons'; */
 /* @import 'open-props/normalize'; */
@@ -13,7 +8,8 @@
 /* @import "lib/styles/open-props/split-button.css"; */
 /* @import 'lib/styles/index.css'; */
 /* @import 'lib/styles/extra/normalize.css'; */
-@tailwind base;
+/* @import '$lib/styles/inputs.css'; */
+
 @tailwind components;
 @tailwind utilities;
 @tailwind variants;
@@ -22,51 +18,46 @@
 	--brand: your-brand-color-here;
 }
 :root {
-	--theme: 220 75% 50%;
-	--theme-hover: 220 75% 45%;
-	--theme-active: 220 75% 40%;
-	--theme-text: 220 75% 25%;
-	--theme-border: 220 50% 75%;
-	--ontheme: 220 90% 98%;
+	--gray-0: 99% var(--gray-chroma, none) var(--gray-hue, none);
+	--gray-1: 95% var(--gray-chroma, none) var(--gray-hue, none);
+	--gray-2: 88% var(--gray-chroma, none) var(--gray-hue, none);
+	--gray-3: 80% var(--gray-chroma, none) var(--gray-hue, none);
+	--gray-4: 74% var(--gray-chroma, none) var(--gray-hue, none);
+	--gray-5: 68% var(--gray-chroma, none) var(--gray-hue, none);
+	--gray-6: 63% var(--gray-chroma, none) var(--gray-hue, none);
+	--gray-7: 58% var(--gray-chroma, none) var(--gray-hue, none);
+	--gray-8: 53% var(--gray-chroma, none) var(--gray-hue, none);
+	--gray-9: 49% var(--gray-chroma, none) var(--gray-hue, none);
+	--gray-10: 43% var(--gray-chroma, none) var(--gray-hue, none);
+	--gray-11: 37% var(--gray-chroma, none) var(--gray-hue, none);
+	--gray-12: 31% var(--gray-chroma, none) var(--gray-hue, none);
+	--gray-13: 25% var(--gray-chroma, none) var(--gray-hue, none);
+	--gray-14: 18% var(--gray-chroma, none) var(--gray-hue, none);
+	--gray-15: 10% var(--gray-chroma, none) var(--gray-hue, none);
 
-	--link: var(--indigo-7);
-	--link-visited: var(--purple-7);
+	--palette-hue: 270; /* <angle */
+	--palette-hue-rotate-by: -5; /* +- deg : warm or cool the palette */
+	--palette-chroma: 0.1; /* 0-1 : lower to mute and pastel, over 2 at own risk */
 
-	--text-1: var(--gray-12-hsl);
-	--text-2: var(--gray-7-hsl);
-
-	--surface-1: var(--gray-0-hsl);
-	--surface-2: var(--gray-2-hsl);
-	--surface-3: var(--gray-3-hsl);
-	--surface-4: var(--gray-4-hsl);
-
-	--scrollthumb-color: var(--gray-7-hsl);
-	--shadow-color: 220 3% 15%;
-	--shadow-strength: 1%;
+	--surface-1: white;
+	--surface-2: var(--color-1);
+	--surface-3: var(--color-3);
+	--surface-document: var(--color-4);
+	--well-1: var(--color-5);
+	--well-2: var(--color-6);
+	--text-1: var(--color-16);
+	--text-2: var(--color-12);
 }
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--theme: 220 50% 60%;
-		--theme-hover: 220 50% 65%;
-		--theme-active: 220 75% 70%;
-		--theme-text: 220 10% 85%;
-		--theme-border: 220 20% 70%;
-		--ontheme: 220 90% 5%;
-
-		--link: var(--indigo-3);
-		--link-visited: var(--purple-3);
-
-		--text-1: var(--gray-0-hsl);
-		--text-2: var(--gray-4-hsl);
-
-		--surface-1: var(--gray-9-hsl);
-		--surface-2: var(--gray-8-hsl);
-		--surface-3: var(--gray-7-hsl);
-		--surface-4: var(--gray-6-hsl);
-
-		--scrollthumb-color: var(--gray-6-hsl);
-		--shadow-strength: 10%;
-		--shadow-color: 220 40% 2%;
+		--surface-1: var(--color-11);
+		--surface-2: var(--color-12);
+		--surface-3: var(--color-13);
+		--surface-document: var(--color-14);
+		--well-1: var(--color-15);
+		--well-2: var(--color-16);
+		--text-1: var(--color-1);
+		--text-2: var(--color-5);
 	}
 }
