@@ -10,31 +10,13 @@
 /* @import 'lib/styles/extra/normalize.css'; */
 /* @import '$lib/styles/inputs.css'; */
 
+/* @import 'tailwindcss/base'; */
+@import '$lib/styles/base/index.css';
 @tailwind components;
 @tailwind utilities;
 @tailwind variants;
 
-:where(html) {
-	--brand: your-brand-color-here;
-}
 :root {
-	--gray-0: 99% var(--gray-chroma, none) var(--gray-hue, none);
-	--gray-1: 95% var(--gray-chroma, none) var(--gray-hue, none);
-	--gray-2: 88% var(--gray-chroma, none) var(--gray-hue, none);
-	--gray-3: 80% var(--gray-chroma, none) var(--gray-hue, none);
-	--gray-4: 74% var(--gray-chroma, none) var(--gray-hue, none);
-	--gray-5: 68% var(--gray-chroma, none) var(--gray-hue, none);
-	--gray-6: 63% var(--gray-chroma, none) var(--gray-hue, none);
-	--gray-7: 58% var(--gray-chroma, none) var(--gray-hue, none);
-	--gray-8: 53% var(--gray-chroma, none) var(--gray-hue, none);
-	--gray-9: 49% var(--gray-chroma, none) var(--gray-hue, none);
-	--gray-10: 43% var(--gray-chroma, none) var(--gray-hue, none);
-	--gray-11: 37% var(--gray-chroma, none) var(--gray-hue, none);
-	--gray-12: 31% var(--gray-chroma, none) var(--gray-hue, none);
-	--gray-13: 25% var(--gray-chroma, none) var(--gray-hue, none);
-	--gray-14: 18% var(--gray-chroma, none) var(--gray-hue, none);
-	--gray-15: 10% var(--gray-chroma, none) var(--gray-hue, none);
-
 	--palette-hue: 270; /* <angle */
 	--palette-hue-rotate-by: -5; /* +- deg : warm or cool the palette */
 	--palette-chroma: 0.1; /* 0-1 : lower to mute and pastel, over 2 at own risk */

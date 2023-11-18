@@ -1,5 +1,5 @@
 .card {
-	@apply bg-surface-2 border-surface-3 border-solid border rounded-[--radius-conditional-3];
+	@apply bg-surface-3 border-surface-3 border-solid border rounded-[--radius-conditional-2];
 	padding-inline: var(--size-4);
 	padding-block: var(--size-3);
 	margin: var(--size-2) 0;

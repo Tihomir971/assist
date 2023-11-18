@@ -64,13 +64,12 @@
 					{previousPage}
 					{#if product}
 						<fieldset>
+							<legend>Hello</legend>
+							<div>
+								<label for="name">Name</label>
+								<input id="name" name="name" type="text" required bind:value={product.name} />
+							</div>
 							<div class="grid grid-cols-6 gap-x-6 gap-y-8">
-								<div class="col-span-full">
-									<div>
-										<label for="name">Name</label>
-										<input id="name" name="name" type="text" required bind:value={product.name} />
-									</div>
-								</div>
 								<div class="col-span-3">
 									<label for="id">ID</label>
 									<input id="id" name="id" type="text" readonly value={product.id} />
