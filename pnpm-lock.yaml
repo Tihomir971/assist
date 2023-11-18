@@ -20,6 +20,9 @@ dependencies:
   lucide-svelte:
     specifier: ^0.292.0
     version: 0.292.0(svelte@4.2.5)
+  open-props:
+    specifier: ^1.6.12
+    version: 1.6.12
   tailwind-merge:
     specifier: ^2.0.0
     version: 2.0.0
@@ -1969,6 +1972,10 @@ packages:
     dependencies:
       wrappy: 1.0.2
     dev: true
+
+  /open-props@1.6.12:
+    resolution: {integrity: sha512-cYbjhnGiYitOa8UgDgIo3fs1qR7Vd/Mtyr1nZC/d1/kdIBPupF/xTcNV6cuWUHsI01oTGykJhgE7gDQMj2nTZg==}
+    dev: false
 
   /optionator@0.9.3:
     resolution: {integrity: sha512-JjCoypp+jKn1ttEFExxhetCKeJt9zhAgAve5FXHixTvFDW/5aEktX9bufBKLRRMdU7bNtpLfcGu94B3cdEJgjg==}

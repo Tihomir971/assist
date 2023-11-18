@@ -6,14 +6,14 @@ body {
 	@apply m-0;
 }
 
-a:-webkit-any-link {
+/* color: -webkit-link; */
+/* a:-webkit-any-link {
 	@apply text-accent;
-	/* color: -webkit-link; */
 	cursor: pointer;
 	text-decoration: none;
-}
+} */
 
-:where(h1, p) {
+/* :where(h1, p) {
 	margin-block-start: 0em;
 	margin-block-end: 0em;
-}
+} */

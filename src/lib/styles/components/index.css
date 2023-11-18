@@ -1,9 +1,12 @@
 .card {
-	@apply bg-surface-3 border-surface-3 border-solid border rounded-[--radius-conditional-2];
-	padding-inline: var(--size-4);
-	padding-block: var(--size-3);
 	margin: var(--size-2) 0;
 	overflow: auto;
+	border-radius: var(--radius-conditional-2);
+	border: var(--border-size-1) solid oklch(var(--surface-1));
+	background: oklch(var(--surface-3));
+	padding-inline: var(--size-5);
+	padding-block: var(--size-4);
+	width: max-content;
 	& hgroup {
 		@apply mb-4;
 		/*  text-2xl font-semibold px-4 py-2 flex flex-col; */

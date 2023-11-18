@@ -32,7 +32,7 @@
 </script>
 
 <div class="flex justify-center items-center h-full">
-	<div class="card w-1/2 overflow-auto">
+	<div class="card overflow-auto w-1/2">
 		<hgroup>
 			<h1>Edit product</h1>
 			<p>Some information about product</p>
@@ -64,92 +64,66 @@
 					{previousPage}
 					{#if product}
 						<fieldset>
-							<legend>Hello</legend>
+							<div class="w-full">
+								<label for="id">ID</label>
+								<input id="id" name="id" type="text" readonly value={product.id} />
+							</div>
+							<div>
+								<label for="sku">SKU</label>
+								<input id="sku" name="sku" type="text" readonly bind:value={product.sku} />
+							</div>
+						</fieldset>
+						<fieldset>
+							<legend>Product details</legend>
 							<div>
 								<label for="name">Name</label>
 								<input id="name" name="name" type="text" required bind:value={product.name} />
 							</div>
 							<div class="grid grid-cols-6 gap-x-6 gap-y-8">
-								<div class="col-span-3">
-									<label for="id">ID</label>
-									<input id="id" name="id" type="text" readonly value={product.id} />
-								</div>
-								<div class="col-span-3">
-									<label for="sku">SKU</label>
-									<input
-										id="sku"
-										name="sku"
-										type="text"
-										class="input"
-										readonly
-										bind:value={product.sku}
-									/>
-								</div>
-								<div class="col-span-3">
+								<!-- <div class="col-span-3">
 									<label for="barcode">Barcode</label>
-									<input
-										id="barcode"
-										name="barcode"
-										type="text"
-										class="input"
-										bind:value={product.barcode}
-									/>
-								</div>
-								<div class="col-span-3">
+									<input id="barcode" name="barcode" type="text" bind:value={product.barcode} />
+								</div> -->
+								<!-- <div class="col-span-3">
 									<label for="c_uom_id">UOM</label>
-									<input
-										id="c_uom_id"
-										name="c_uom_id"
-										type="text"
-										class="input"
-										bind:value={product.c_uom_id}
-									/>
-								</div>
-								<div class="col-span-3">
+									<input id="c_uom_id" name="c_uom_id" type="text" bind:value={product.c_uom_id} />
+								</div> -->
+								<!-- <div class="col-span-3">
 									<label for="brand">Brand</label>
-									<input
-										id="brand"
-										name="brand"
-										type="text"
-										class="input"
-										bind:value={product.brand}
-									/>
-								</div>
-								<div class="col-span-3">
+									<input id="brand" name="brand" type="text" bind:value={product.brand} />
+								</div> -->
+								<!-- <div class="col-span-3">
 									<label for="mpn">MPN</label>
 									<input
 										id="mpn"
 										name="mpn"
 										type="text"
-										class="input"
 										bind:value={product.mpn}
 										autocomplete="off"
 									/>
-								</div>
-								<div class="col-span-3">
+								</div> -->
+								<!-- <div class="col-span-3">
 									<label for="created">Created</label>
 									<input
 										id="created"
 										name="created"
 										type="text"
-										class="input"
 										readonly
 										value={DateTimeFormat(product.created)}
 									/>
-								</div>
-								<div class="col-span-3">
+								</div> -->
+								<!-- <div class="col-span-3">
 									<label for="updated">Updated</label>
 									<input
 										id="updated"
 										name="updated"
 										type="text"
-										class="input"
 										readonly
 										value={DateTimeFormat(product.updated)}
 									/>
-								</div>
+								</div> -->
 								{#if categories}
-									<div class="col-span-3">
+									<!-- <div class="col-span-3">
 										<label for="m_product_category_id">Product category</label>
 										<input
 											name="m_product_category_id"
@@ -157,7 +131,6 @@
 											bind:value={product.m_product_category_id}
 										/>
 										<input
-											class="input"
 											type="search"
 											name="label"
 											bind:value={inputPopupLabel}
@@ -188,7 +161,7 @@
 												}}
 											/>
 										</div>
-									</div>
+									</div> -->
 									<!-- <Combobox
 									name="m_product_category_id"
 									labelText="Product category"
@@ -204,7 +177,7 @@
 										class="w-full"
 										bind:value={product.m_product_category_id}
 									/> -->
-								<div class="col-span-3">
+								<!-- <div class="col-span-3">
 									<label for="condition">Condition</label>
 									<input
 										id="condition"
@@ -213,9 +186,9 @@
 										class="input"
 										bind:value={product.condition}
 									/>
-								</div>
+								</div> -->
 
-								<div class="col-span-2">
+								<!-- <div class="col-span-2">
 									<input
 										type="checkbox"
 										id="isselfservice"
@@ -223,8 +196,8 @@
 										checked={product.isselfservice}
 									/>
 									<label for="isselfservice">Is Self-service?</label>
-								</div>
-								<div class="col-span-2">
+								</div> -->
+								<!-- <div class="col-span-2">
 									<input
 										type="checkbox"
 										id="discontinued"
@@ -232,28 +205,28 @@
 										checked={product.discontinued}
 									/>
 									<label for="discontinued">Is Discontinued?</label>
-								</div>
-								<div class="col-span-2">
+								</div> -->
+								<!-- <div class="col-span-2">
 									<input type="checkbox" id="isactive" name="isactive" checked={product.isactive} />
 									<label for="isactive">Is Active?</label>
-								</div>
-								{#await streamed.images then images}
+								</div> -->
+								<!-- {#await streamed.images then images}
 									{#if images.imageURLs.length > 0}
 										<Gallery images={images.imageURLs} />
 										<Thumbnails images={images.imageURLs}></Thumbnails>
 									{/if}
-								{/await}
-								<div class="flex justify-end w-full gap-2 px-4 py-2 border-t">
+								{/await} -->
+								<!-- on:click={() => (previousPage ? goto(previousPage) : history.back())}>Back</button -->
+								<!-- <div class="flex justify-end w-full gap-2 px-4 py-2 border-t">
 									<button
 										type="reset"
 										class="btn variant-filled-surface"
 										on:click={() => history.back()}>Back</button
 									>
-									<!-- on:click={() => (previousPage ? goto(previousPage) : history.back())}>Back</button -->
 									<button type="submit" class="btn variant-filled-primary" disabled={!modified}
 										>Save</button
 									>
-								</div>
+								</div> -->
 							</div>
 						</fieldset>
 					{/if}

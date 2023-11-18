@@ -26,6 +26,7 @@
 </script>
 
 <button>Test</button>
+<div class="shadow-test w-24 h-24 bg-slate-400"></div>
 <DataTable {...$tableAttrs}>
 	<!-- <table {...$tableAttrs}> -->
 	<thead>

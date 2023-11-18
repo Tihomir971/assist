@@ -22,6 +22,9 @@ export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	theme: {
 		extend: {
+			boxShadow: {
+				test: 'var(--shadow-5)'
+			},
 			colors: {
 				accent: getColor('color', 16),
 				max: 'oklch(var(--color-max) / <alpha-value>)',
