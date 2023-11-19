@@ -1,7 +1,4 @@
-//import type { TreeItem } from '$lib/components/melt-ui';
-
 import type { TreeItem } from '$lib/components/treeview';
-//import type { TreeViewNode } from '@skeletonlabs/skeleton';
 
 interface DataTableRow {
 	id: number;

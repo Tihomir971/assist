@@ -3,7 +3,6 @@ import type { Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Tables } from '$lib/types/database.types';
 import { getBoolean, getNumber, getString } from '$lib/scripts/getForm';
-import type { AutocompleteOption } from '@skeletonlabs/skeleton';
 
 export const load = (async ({ params, locals: { supabase, getSession } }) => {
 	const session = await getSession();
@@ -21,8 +20,8 @@ export const load = (async ({ params, locals: { supabase, getSession } }) => {
 		const { data } = await supabase
 			.from('m_product_category')
 			.select('value:id,label:name')
-			.order('name')
-			.returns<AutocompleteOption<string>[]>();
+			.order('name');
+		/* .returns<AutocompleteOption<string>[]>(); */
 		return data;
 	};
 	const getImages = async (id: number) => {

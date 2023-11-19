@@ -219,7 +219,6 @@
 		<div class="h-12 w-full border-b border-layer-3 bg-layer-2">
 			<PageHeader selectedProducts={strSelectedDataIds} />
 		</div>
-		<!-- SkeletonLab .table-container -->
 		<Table.Root {...$tableAttrs} class="flex-grow h-full overflow-y-auto">
 			<Table.Header class="table-auto bg-layer-1">
 				{#each $headerRows as headerRow}

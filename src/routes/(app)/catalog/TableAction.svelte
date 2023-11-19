@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { AlignJustify } from 'lucide-svelte';
-	//	import { ListBox, ListBoxItem, popup, type PopupSettings } from '@skeletonlabs/skeleton';
 
 	import { createDropdownMenu, melt } from '@melt-ui/svelte';
-	import { fly } from 'svelte/transition';
 	import { DropdownMenu, Content, Triger, Item } from '$lib/components/dropdown';
 	const {
 		elements: { menu, item, trigger, arrow }

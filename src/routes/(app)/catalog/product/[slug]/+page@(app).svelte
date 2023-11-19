@@ -4,7 +4,6 @@
 	import { base } from '$app/paths';
 	import { Gallery, Thumbnails } from '$lib/components/gallery';
 	import { DateTimeFormat } from '$lib/scripts/format';
-	import { Autocomplete, popup } from '@skeletonlabs/skeleton';
 	import type { PageData } from './$types';
 	import { Tabs, TabsContent } from '$lib/components/tabs';
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
@@ -24,11 +23,6 @@
 		previousPage = previousPage + '?' + from?.url.searchParams.toString() || previousPage;
 		localCopy = Object.assign({}, product);
 	});
-
-	let inputPopupLabel: string = '';
-	let inputPopupValue: number | null = null;
-
-	let tabSet: number = 0;
 </script>
 
 <div class="flex justify-center items-center h-full">
@@ -63,6 +57,10 @@
 				>
 					{previousPage}
 					{#if product}
+						<label class="grid gap-x-1 gap-y-2 items-center grid-flow-col">
+							<span>Email</span>
+							<input type="email" placeholder="Email..." />
+						</label>
 						<fieldset>
 							<div class="w-full">
 								<label for="id">ID</label>
@@ -231,6 +229,36 @@
 						</fieldset>
 					{/if}
 				</form>
+				<div class="p-4 flex flex-col space-y-2">
+					<input placeholder="Hello world" type="text" />
+					<fieldset>
+						<input placeholder="Search" type="search" />
+					</fieldset>
+					<div>
+						<label for="select">Pick an option</label>
+						<select id="select">
+							<optgroup label="Option Group">
+								<option>Option One</option>
+								<option>Option Two</option>
+								<option>Option Three</option>
+							</optgroup>
+						</select>
+					</div>
+					<div>
+						<fieldset>
+							<div>
+								<label for="select">Pick an option</label>
+								<select id="select">
+									<optgroup label="Option Group">
+										<option>Option One</option>
+										<option>Option Two</option>
+										<option>Option Three</option>
+									</optgroup>
+								</select>
+							</div>
+						</fieldset>
+					</div>
+				</div>
 			</TabsContent>
 			<TabsContent key={'Stock'}>Stock</TabsContent>
 			<TabsContent key={'Tab 3'}>Tab 3</TabsContent>

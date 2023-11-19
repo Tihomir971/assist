@@ -2,8 +2,6 @@
 import type { Config } from 'tailwindcss';
 /* import forms from '@tailwindcss/forms'; */
 /* import typography from '@tailwindcss/typography'; */
-/* import { skeleton } from '@skeletonlabs/tw-plugin'; */
-/* import { myCustomTheme } from './skeleton-theme'; */
 /* import { myPreset } from './src/lib/styles/myPreset'; */
 const getColor = (color: string, scale: number) => {
 	const colors = Array.from(Array(scale).keys()).reduce(
@@ -52,11 +50,6 @@ export default {
 	plugins: [
 		/* forms */
 		/* typography */
-		/* skeleton({
-			themes: {
-				custom: [myCustomTheme]
-			}
-		}) */
 	]
 	/* presets: [myPreset] */
 } satisfies Config;

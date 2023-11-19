@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { RecursiveTreeView, type TreeViewNode } from '@skeletonlabs/skeleton';
-
 	import type { LayoutData } from './$types';
 	import { convertToTreeStructure } from '$lib/scripts/tree';
 	import { page } from '$app/stores';
