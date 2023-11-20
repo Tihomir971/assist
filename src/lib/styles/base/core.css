@@ -1,6 +1,6 @@
-html {
+/* html {
 	@apply bg-surface-document text-text-1 font-sans;
-}
+} */
 
 body {
 	@apply m-0;

@@ -36,7 +36,7 @@
 
 	<li class={level !== 1 ? 'pl-4' : ''}>
 		<button
-			class="flex bg-transparent gap-1 rounded-md p-1 w-full hover:bg-accent/75 border-none justify-start"
+			class="flex items-center bg-transparent gap-1 rounded-md p-1 w-full hover:bg-accent/20 border-none justify-start"
 			class:!bg-accent={$isSelected(itemId)}
 			class:!text-text-1={$isSelected(itemId)}
 			class:m4={$isSelected(itemId)}
@@ -84,3 +84,9 @@
 		{/if}
 	</li>
 {/each}
+
+<style lang="postcss">
+	button {
+		background-color: var(--accent-bright);
+	}
+</style>

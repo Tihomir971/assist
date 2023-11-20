@@ -8,8 +8,14 @@
 	export { className as class };
 </script>
 
-<td class={cn('p-1 !align-middle', className)} {...$$restProps}>
+<td class={cn('p-1 !align-middle bg-inherit truncate overflow-x-auto', className)} {...$$restProps}>
 	<slot />
 </td>
 
 <!-- <td class={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)} {...$$restProps}> -->
+
+<style lang="postcss">
+	td:not(:has(input)) {
+		text-align: left;
+	}
+</style>

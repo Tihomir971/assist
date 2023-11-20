@@ -1,6 +1,10 @@
-<header class="flex justify-between bg-surface-2 border-b-well-2 px-4 items-center h-12 w-full">
+<header
+	class="flex justify-between bg-surface-2 border-black border-b px-4 items-center h-12 w-full"
+>
 	<div><strong>KALSISI</strong> Assistant</div>
-	<div><input type="search" placeholder="Search..." /></div>
+	<div>
+		<input type="search" placeholder="Search..." class="focus-visible:outline-red-500" />
+	</div>
 	<div>
 		<div class="flex space-x-2 justify-end">
 			<a

@@ -3,7 +3,7 @@ import type { Config } from 'tailwindcss';
 /* import forms from '@tailwindcss/forms'; */
 /* import typography from '@tailwindcss/typography'; */
 /* import { myPreset } from './src/lib/styles/myPreset'; */
-const getColor = (color: string, scale: number) => {
+/* const getColor = (color: string, scale: number) => {
 	const colors = Array.from(Array(scale).keys()).reduce(
 		(acc, _, i) => {
 			acc[i + 1] = `oklch(var(--${color}-${i + 1}) / <alpha-value>)`;
@@ -13,7 +13,18 @@ const getColor = (color: string, scale: number) => {
 	) as Record<string | number, string>;
 	colors['DEFAULT'] = `oklch(var(--${color}-max) / <alpha-value>)`;
 	return colors;
-};
+}; */
+/* const getColorOKLCH = (scale: number) => {
+	const colors = Array.from(Array(scale).keys()).reduce(
+		(acc, _, i) => {
+			acc[i + 1] = `var(--color-${i})`;
+			return acc;
+		},
+		{} as Record<number | string, string>
+	) as Record<string | number, string>;
+	colors['DEFAULT'] = `var(--color-bright)`;
+	return colors;
+}; */
 
 export default {
 	darkMode: 'class',
@@ -24,22 +35,19 @@ export default {
 				test: 'var(--shadow-5)'
 			},
 			colors: {
-				accent: getColor('color', 16),
-				max: 'oklch(var(--color-max) / <alpha-value>)',
-				surface: {
-					1: 'oklch(var(--surface-1) / <alpha-value>)',
-					2: 'oklch(var(--surface-2) / <alpha-value>)',
-					3: 'oklch(var(--surface-3) / <alpha-value>)',
-					document: 'oklch(var(--surface-document) / <alpha-value>)'
-				},
-				well: {
-					1: 'oklch(var(--well-1) / <alpha-value>)',
-					2: 'oklch(var(--well-2) / <alpha-value>)'
-				},
+				/* accent: getColorOKLCH(16), */
+				accent: 'hsl(var(--accent) / <alpha-value>)',
 				text: {
-					1: 'oklch(var(--text-1) / <alpha-value>)',
-					2: 'oklch(var(--text-2) / <alpha-value>)'
+					1: 'var(--text-1)',
+					2: 'var(--text-2)'
+				},
+				surface: {
+					1: 'var(--surface-1)',
+					2: 'var(--surface-2)',
+					3: 'var(--surface-3)',
+					4: 'var(--surface-4)'
 				}
+
 				/* transparent: 'transparent', */
 				/* current: 'currentColor', */
 				/* indigo: getColor('indigo', colorScale)

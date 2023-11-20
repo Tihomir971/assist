@@ -210,7 +210,8 @@
 			rowDataId: (row) => row.id?.toString()
 		});
 
-	const { selectedDataIds } = pluginStates.select;
+	let { selectedDataIds } = pluginStates.select;
+	$: $products, ($selectedDataIds = {});
 	$: strSelectedDataIds = Object.keys($selectedDataIds).map(Number);
 </script>
 
@@ -220,7 +221,7 @@
 			<PageHeader selectedProducts={strSelectedDataIds} />
 		</div>
 		<Table.Root {...$tableAttrs} class="flex-grow h-full overflow-y-auto">
-			<Table.Header class="table-auto bg-layer-1">
+			<Table.Header>
 				{#each $headerRows as headerRow}
 					<Subscribe rowAttrs={headerRow.attrs()}>
 						<Table.Row>
@@ -259,6 +260,9 @@
 			</Table.Footer>
 		</Table.Root>
 	</div>
+</div>
+<div class="flex-1 text-sm text-muted-foreground">
+	{$selectedDataIds}
 </div>
 <!-- <Drawer
 	placement="right"
