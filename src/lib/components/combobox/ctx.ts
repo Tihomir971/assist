@@ -5,16 +5,19 @@ import {
 	type CreateComboboxProps,
 	type ComboboxOptionProps
 } from '@melt-ui/svelte';
-import type { ComboboxOptions } from './types';
 import { removeUndefined } from '../internal';
+//import type { ExtendedComboboxOption } from './types';
 
 const NAME = 'combobox';
 const ITEM_NAME = 'combobox-item';
 
 type GetReturn = Combobox;
 
-export function setCtx(props: CreateComboboxProps<ComboboxOptions>) {
-	const combobox = createCombobox({ ...removeUndefined(props), forceVisible: true });
+export function setCtx(props: CreateComboboxProps<number>) {
+	const combobox = createCombobox<number>({
+		...removeUndefined(props),
+		forceVisible: true
+	});
 	setContext(NAME, combobox);
 	return {
 		...combobox

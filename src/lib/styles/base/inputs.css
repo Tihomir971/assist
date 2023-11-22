@@ -1,3 +1,8 @@
+/* @use postcss-nested;
+@import "https://unpkg.com/open-props";
+@import "https://unpkg.com/open-props/normalize.min.css";
+@import "https://unpkg.com/open-props/buttons.min.css"; */
+
 /* 
 todo:
   - match button hover effects to checkbox/radio?
@@ -54,7 +59,7 @@ body::after {
 
 fieldset {
 	counter-reset: errors;
-	border-color: oklch(var(--surface-2));
+	border-color: var(--surface-2);
 	box-shadow: var(--shadow-3);
 	padding-inline: var(--size-4);
 	padding-block: var(--size-2) var(--size-3);
@@ -86,17 +91,15 @@ fieldset {
 			inline-size: 6px;
 			block-size: 6px;
 			border-radius: var(--radius-round);
-			background-color: oklch(var(--color-max));
-			box-shadow: 0 0 var(--size-2) oklch(var(--color-max));
-			/* box-shadow: 0 0 var(--size-2) var(--red-4); */
+			background-color: var(--red-4);
+			box-shadow: 0 0 var(--size-2) var(--red-4);
 			/*       animation: var(--animation-ping); */
 		}
 	}
 
 	&:has(:not(:placeholder-shown):invalid) legend::after {
 		text-transform: initial;
-		/* color: var(--red-5); */
-		color: oklch(var(--color-max));
+		color: var(--red-5);
 		content: ' (' counter(errors) ' errors)';
 	}
 
@@ -110,7 +113,7 @@ legend {
 	gap: var(--size-2);
 	align-items: center;
 	min-block-size: 3ch;
-	border: 1px solid oklch(var(--surface-2));
+	border: 1px solid var(--surface-2);
 	padding-inline: 1.5ch;
 	border-radius: var(--radius-round);
 	text-transform: uppercase;
@@ -167,13 +170,13 @@ legend {
 	) {
 	box-shadow:
 		var(--shadow-2),
-		0 0 1px 1px oklch(var(--surface-2));
+		0 0 1px 1px var(--surface-2);
 
 	@media (prefers-color-scheme: dark) {
 		box-shadow:
 			var(--inner-shadow-2),
-			0 1px 0px 0px oklch(var(--well-1)) inset,
-			/* 0 1px 0px 0px var(--dark-surface) inset, */ 0 -0.5px 0px 0px oklch(var(--surface-2)) inset;
+			0 1px 0px 0px var(--dark-surface) inset,
+			0 -0.5px 0px 0px var(--surface-2) inset;
 	}
 }
 
@@ -216,7 +219,7 @@ input:not(
 	),
 textarea,
 select {
-	color: oklch(var(--text-1));
+	color: var(--text-1);
 
 	@media (prefers-color-scheme: light) {
 		background-color: white;
@@ -224,7 +227,7 @@ select {
 
 	&:is(:hover, :focus-within) {
 		@media (prefers-color-scheme: dark) {
-			background-color: oklch(var(--well-1));
+			background-color: var(--dark-surface);
 		}
 	}
 
@@ -234,12 +237,10 @@ select {
 	}
 
 	&:not(:focus-within):not(:placeholder-shown):invalid {
-		text-decoration: underline wavy oklch(var(--color-max));
-		/* text-decoration: underline wavy oklch(var(--red-6)) */
+		text-decoration: underline wavy var(--red-6);
 
 		@media (prefers-color-scheme: dark) {
-			text-decoration: underline wavy oklch(var(--color-max));
-			/* text-decoration: underline wavy var(--red-4); */
+			text-decoration: underline wavy var(--red-4);
 		}
 	}
 }
@@ -411,12 +412,12 @@ textarea {
 select {
 	/*  todo: share more with buttons or use a .btn class  */
 	--_bg-light: #fff;
-	--_bg-dark: oklch(var(--surface-3));
+	--_bg-dark: var(--surface-3);
 	--_bg: var(--_bg-light);
 	background-color: var(--_bg);
 	box-shadow:
 		var(--shadow-3),
-		0 1px oklch(var(--surface-3));
+		0 1px var(--surface-3);
 
 	appearance: none;
 	background-image: var(--icon-arrow-down);
@@ -451,18 +452,18 @@ select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
 	/* todo: add checkmark icon */
-	-webkit-text-fill-color: oklch(var(--text-1));
+	-webkit-text-fill-color: var(--text-1);
 	-webkit-box-shadow: 0 0 0px 1e5px var(--gray-11) inset;
 	transition: background-color 5000s ease-in-out 0s;
 }
 
 ::placeholder {
-	color: oklch(var(--text-2));
+	color: var(--text-2);
 	font-style: italic;
 
-	/* 	@media (prefers-color-scheme: dark) {
-		color: oklch(var(--well-1));
-	} */
+	@media (prefers-color-scheme: dark) {
+		color: var(--surface-4);
+	}
 }
 
 ::-moz-placeholder {
@@ -482,7 +483,7 @@ form {
 
 legend {
 	margin-inline-start: -2px;
-	color: oklch(var(--text-2));
+	color: var(--text-2);
 	font-weight: var(--font-weight-6);
 }
 
@@ -494,7 +495,7 @@ fieldset {
 		gap: var(--size-2);
 	}
 
-	& > div {
+	& > label {
 		display: grid;
 		grid-auto-columns: 1fr;
 		gap: var(--size-2) var(--size-3);
@@ -504,9 +505,9 @@ fieldset {
 			grid-template-columns: var(--size-content-1) auto;
 		}
 
-		& > label {
+		/* 	& > label {
 			justify-self: start;
-		}
+		} */
 	}
 
 	& > footer {
@@ -615,7 +616,7 @@ input[type='range'] {
 
 	@media (prefers-color-scheme: light) {
 		--thumb-highlight-color: lch(0 0 0 / 20%);
-		--track-color: oklch(var(--surface-2));
+		--track-color: var(--surface-2);
 	}
 
 	display: block;
@@ -653,7 +654,7 @@ input[type='range'] {
 	&::-webkit-slider-thumb {
 		appearance: none;
 		cursor: ew-resize;
-		border: 3px solid oklch(var(--surface-1));
+		border: 3px solid var(--surface-1);
 		block-size: var(--thumb-size);
 		inline-size: var(--thumb-size);
 		margin-block-start: var(--thumb-offset);
@@ -668,14 +669,14 @@ input[type='range'] {
 		}
 
 		@nest .fieldset-item:focus-within & {
-			border-color: oklch(var(--surface-2));
+			border-color: var(--surface-2);
 		}
 	}
 
 	&::-moz-range-thumb {
 		appearance: none;
 		cursor: ew-resize;
-		border: 3px solid oklch(var(--surface-1));
+		border: 3px solid var(--surface-1);
 		block-size: var(--thumb-size);
 		inline-size: var(--thumb-size);
 		margin-block-start: var(--thumb-offset);
@@ -690,7 +691,7 @@ input[type='range'] {
 		}
 
 		@nest .fieldset-item:focus-within & {
-			border-color: oklch(var(--surface-2));
+			border-color: var(--surface-2);
 		}
 	}
 

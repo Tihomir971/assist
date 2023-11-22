@@ -1,5 +1,6 @@
-export type ComboboxOptions = {
-	id: string;
-	label: string;
+import type { ComboboxOption } from '@melt-ui/svelte';
+
+export type ExtendedComboboxOption<Value = unknown> = ComboboxOption<Value> & {
+	description?: string;
 	disabled?: boolean;
 };

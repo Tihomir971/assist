@@ -35,10 +35,10 @@
 	{@const hasChildren = !!children?.length}
 
 	<li class={level !== 1 ? 'pl-4' : ''}>
+		<!-- class="flex items-center bg-transparent gap-1 p-1 w-full hover:bg-accent/20 border-none justify-start" -->
 		<button
-			class="flex items-center bg-transparent gap-1 rounded-md p-1 w-full hover:bg-accent/20 border-none justify-start"
+			type="button"
 			class:!bg-accent={$isSelected(itemId)}
-			class:!text-text-1={$isSelected(itemId)}
 			class:m4={$isSelected(itemId)}
 			use:melt={$item({
 				id: itemId,
@@ -87,6 +87,13 @@
 
 <style lang="postcss">
 	button {
-		background-color: var(--accent-bright);
+		background-color: inherit;
+		border: none;
+		box-shadow: none;
+		padding-inline: 0px;
+		width: 100%;
+		justify-content: start;
+		text-shadow: none;
+		font-weight: unset;
 	}
 </style>

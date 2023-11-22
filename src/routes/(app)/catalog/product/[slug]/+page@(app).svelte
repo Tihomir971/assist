@@ -1,12 +1,14 @@
 <script lang="ts">
+	import type { PageData } from './$types';
 	import { applyAction, enhance } from '$app/forms';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { base } from '$app/paths';
 	import { Gallery, Thumbnails } from '$lib/components/gallery';
 	import { DateTimeFormat } from '$lib/scripts/format';
-	import type { PageData } from './$types';
 	import { Tabs, TabsContent } from '$lib/components/tabs';
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
+	import { Combobox, Label } from '$lib/components/combobox';
+	import Input from '$lib/components/combobox/components/Input.svelte';
 
 	export let data: PageData;
 	$: ({ product, categories, streamed } = data);
@@ -25,13 +27,13 @@
 	});
 </script>
 
-<div class="flex justify-center items-center h-full">
-	<div class="card overflow-auto w-1/2">
+<div class="grid h-full grid-cols-[1fr_130ch_1fr]">
+	<div class="card overflow-auto col-[2] w-full pt-12">
 		<hgroup>
-			<h1>Edit product</h1>
+			<h3>Edit product</h3>
 			<p>Some information about product</p>
 		</hgroup>
-		<Tabs tabs={['Profile', 'Stock', 'Tab 3']}>
+		<Tabs tabs={['Profile', 'Stock', 'Images']}>
 			<TabsContent key={'Profile'}>
 				<form
 					method="POST"
@@ -55,43 +57,54 @@
 						};
 					}}
 				>
-					{previousPage}
 					{#if product}
-						<label class="grid gap-x-1 gap-y-2 items-center grid-flow-col">
-							<span>Email</span>
-							<input type="email" placeholder="Email..." />
-						</label>
-						<fieldset>
-							<div class="w-full">
-								<label for="id">ID</label>
-								<input id="id" name="id" type="text" readonly value={product.id} />
-							</div>
-							<div>
-								<label for="sku">SKU</label>
-								<input id="sku" name="sku" type="text" readonly bind:value={product.sku} />
-							</div>
-						</fieldset>
-						<fieldset>
-							<legend>Product details</legend>
-							<div>
-								<label for="name">Name</label>
-								<input id="name" name="name" type="text" required bind:value={product.name} />
-							</div>
-							<div class="grid grid-cols-6 gap-x-6 gap-y-8">
-								<!-- <div class="col-span-3">
-									<label for="barcode">Barcode</label>
+						<div class="grid grid-cols-2 gap-2 items-start p-2">
+							<fieldset class="col-span-2">
+								<!-- 	<div class="col-span-6 w-full"> -->
+								<label
+									><span>Name</span><input
+										id="name"
+										name="name"
+										type="text"
+										required
+										bind:value={product.name}
+									/></label
+								>
+								<!-- 	</div> -->
+							</fieldset>
+							<fieldset>
+								<legend>Identification</legend>
+								<label
+									><span>ID</span><input
+										id="id"
+										name="id"
+										type="text"
+										readonly
+										value={product.id}
+									/></label
+								>
+								<label>
+									<span>SKU</span>
+									<input id="sku" name="sku" type="text" readonly bind:value={product.sku} />
+								</label>
+
+								<label
+									><span>Barcode</span>
 									<input id="barcode" name="barcode" type="text" bind:value={product.barcode} />
-								</div> -->
-								<!-- <div class="col-span-3">
-									<label for="c_uom_id">UOM</label>
+								</label>
+							</fieldset>
+							<fieldset>
+								<legend>Vendor</legend>
+								<label>
+									<span>UoM</span>
 									<input id="c_uom_id" name="c_uom_id" type="text" bind:value={product.c_uom_id} />
-								</div> -->
-								<!-- <div class="col-span-3">
-									<label for="brand">Brand</label>
+								</label>
+								<label>
+									<span>Brand</span>
 									<input id="brand" name="brand" type="text" bind:value={product.brand} />
-								</div> -->
-								<!-- <div class="col-span-3">
-									<label for="mpn">MPN</label>
+								</label>
+								<label>
+									<span>MPN</span>
 									<input
 										id="mpn"
 										name="mpn"
@@ -99,30 +112,91 @@
 										bind:value={product.mpn}
 										autocomplete="off"
 									/>
-								</div> -->
-								<!-- <div class="col-span-3">
-									<label for="created">Created</label>
-									<input
+								</label>
+							</fieldset>
+							<fieldset>
+								<legend>Date/Time</legend>
+								<label
+									><span>Created</span><input
 										id="created"
 										name="created"
-										type="text"
+										type="datetime"
 										readonly
 										value={DateTimeFormat(product.created)}
-									/>
-								</div> -->
-								<!-- <div class="col-span-3">
-									<label for="updated">Updated</label>
-									<input
+									/></label
+								><label
+									><span>Updated</span><input
 										id="updated"
 										name="updated"
-										type="text"
+										type="datetime"
 										readonly
 										value={DateTimeFormat(product.updated)}
-									/>
-								</div> -->
+									/></label
+								>
+							</fieldset>
+							<fieldset>
+								<legend>Status</legend>
+								<label
+									><span>Is Self-service?</span><input
+										type="checkbox"
+										id="isselfservice"
+										name="isselfservice"
+										checked={product.isselfservice}
+									/></label
+								>
+								<label
+									><span>Discontinued?</span><input
+										type="checkbox"
+										id="discontinued"
+										name="discontinued"
+										checked={product.discontinued}
+									/></label
+								>
+								<label
+									><span>Is Active?</span><input
+										type="checkbox"
+										id="isactive"
+										name="isactive"
+										checked={product.isactive}
+									/></label
+								>
+							</fieldset>
+							<fieldset>
+								<label
+									><span>Condition</span><input
+										id="condition"
+										name="condition"
+										type="text"
+										class="input"
+										bind:value={product.condition}
+									/></label
+								>
+								<!-- name="m_product_category_id"
+							labelText="Product category"
+							placeholder="Choose category"
+							options={categories}
+							bind:value={product.m_product_category_id} -->
 								{#if categories}
-									<!-- <div class="col-span-3">
-										<label for="m_product_category_id">Product category</label>
+									<Combobox
+										name="m_product_category_id"
+										options={categories}
+										bind:value={product.m_product_category_id}
+									></Combobox>
+								{/if}
+							</fieldset>
+							<footer class="col-start-2 col-end-3 flex justify-between">
+								<menu>
+									<button type="button" on:click={() => history.back()}>Back</button>
+								</menu>
+								<menu>
+									<button type="reset">Cancel</button>
+									<button type="submit" disabled={!modified}>Save</button>
+								</menu>
+							</footer>
+						</div>
+						{#if categories}
+							<!-- <div class="col-span-3">
+										<label for="m_product_category_id"><span>Product category</label>
 										<input
 											name="m_product_category_id"
 											hidden
@@ -160,108 +234,46 @@
 											/>
 										</div>
 									</div> -->
-									<!-- <Combobox
+							<!-- <Combobox
 									name="m_product_category_id"
 									labelText="Product category"
 									placeholder="Choose category"
 									options={categories}
 									bind:value={product.m_product_category_id}
 								></Combobox> -->
-								{/if}
-								<!-- 	<input
+						{/if}
+						<!-- 	<input
 										id="m_product_category_id"
 										name="m_product_category_id"
 										type="text"
 										class="w-full"
 										bind:value={product.m_product_category_id}
 									/> -->
-								<!-- <div class="col-span-3">
-									<label for="condition">Condition</label>
-									<input
-										id="condition"
-										name="condition"
-										type="text"
-										class="input"
-										bind:value={product.condition}
-									/>
-								</div> -->
 
-								<!-- <div class="col-span-2">
-									<input
-										type="checkbox"
-										id="isselfservice"
-										name="isselfservice"
-										checked={product.isselfservice}
-									/>
-									<label for="isselfservice">Is Self-service?</label>
-								</div> -->
-								<!-- <div class="col-span-2">
-									<input
-										type="checkbox"
-										id="discontinued"
-										name="discontinued"
-										checked={product.discontinued}
-									/>
-									<label for="discontinued">Is Discontinued?</label>
-								</div> -->
-								<!-- <div class="col-span-2">
-									<input type="checkbox" id="isactive" name="isactive" checked={product.isactive} />
-									<label for="isactive">Is Active?</label>
-								</div> -->
-								<!-- {#await streamed.images then images}
-									{#if images.imageURLs.length > 0}
-										<Gallery images={images.imageURLs} />
-										<Thumbnails images={images.imageURLs}></Thumbnails>
-									{/if}
-								{/await} -->
-								<!-- on:click={() => (previousPage ? goto(previousPage) : history.back())}>Back</button -->
-								<!-- <div class="flex justify-end w-full gap-2 px-4 py-2 border-t">
-									<button
-										type="reset"
-										class="btn variant-filled-surface"
-										on:click={() => history.back()}>Back</button
-									>
-									<button type="submit" class="btn variant-filled-primary" disabled={!modified}
-										>Save</button
-									>
-								</div> -->
-							</div>
-						</fieldset>
+						<!--  -->
+						<!-- on:click={() => (previousPage ? goto(previousPage) : history.back())}>Back</button -->
 					{/if}
 				</form>
-				<div class="p-4 flex flex-col space-y-2">
-					<input placeholder="Hello world" type="text" />
-					<fieldset>
-						<input placeholder="Search" type="search" />
-					</fieldset>
-					<div>
-						<label for="select">Pick an option</label>
-						<select id="select">
-							<optgroup label="Option Group">
-								<option>Option One</option>
-								<option>Option Two</option>
-								<option>Option Three</option>
-							</optgroup>
-						</select>
-					</div>
-					<div>
-						<fieldset>
-							<div>
-								<label for="select">Pick an option</label>
-								<select id="select">
-									<optgroup label="Option Group">
-										<option>Option One</option>
-										<option>Option Two</option>
-										<option>Option Three</option>
-									</optgroup>
-								</select>
-							</div>
-						</fieldset>
-					</div>
-				</div>
 			</TabsContent>
 			<TabsContent key={'Stock'}>Stock</TabsContent>
-			<TabsContent key={'Tab 3'}>Tab 3</TabsContent>
+			<TabsContent key={'Images'}
+				>{#await streamed.images then images}
+					{#if images.imageURLs.length > 0}
+						<Gallery images={images.imageURLs} />
+						<Thumbnails images={images.imageURLs}></Thumbnails>
+					{/if}
+				{/await}</TabsContent
+			>
 		</Tabs>
 	</div>
+	{JSON.stringify(product, null, 2)}
 </div>
+
+<style lang="postcss">
+	fieldset {
+		max-inline-size: unset;
+	}
+	/* 	label {
+		gap: unset;
+	} */
+</style>

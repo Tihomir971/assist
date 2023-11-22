@@ -22,15 +22,6 @@
 		<Select label="Warehouse"></Select>
 		<button type="submit">Test</button>
 	</form>
-	<fieldset>
-		<Combobox>
-			<Label></Label>
-			<Input></Input>
-			<Menu>
-				<Options></Options>
-			</Menu>
-		</Combobox>
-	</fieldset>
 
 	<!-- Animated Logo -->
 	<figure>

@@ -12,7 +12,7 @@
 
 <tr
 	class={cn(
-		'border-b transition-colors  hover:!bg-surface-3 data-[state=selected]:bg-white',
+		'border-b transition-colors  hover:!bg-surface-2 data-[state=selected]:bg-white',
 		className
 	)}
 	{...$$restProps}

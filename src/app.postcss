@@ -1,11 +1,13 @@
 @import 'open-props/style';
 @import 'open-props/normalize';
+@import 'open-props/buttons';
+
+@import '$lib/styles/base/inputs.css';
 @import 'open-props/gray-hsl';
 @import 'open-props/indigo-hsl';
 @import 'open-props/oklch-hues.min.css';
 @import 'open-props/colors-oklch.min.css';
 /* @import '$lib/styles/base.css'; */
-/* @import '$lib/styles/index.css'; */
 
 /* @import 'open-props/buttons'; */
 /* @import "lib/styles/open-props/split-button.css"; */
@@ -52,7 +54,29 @@
 		padding-inline-start: 0px;
 	}
 }
-
+:where(p, ul, ol, dl, h6) {
+	font-size: unset;
+}
+/* Fix Thead round */
+:where(table thead th:first-child) {
+	border-top-left-radius: unset;
+}
+:where(table thead th:last-child) {
+	border-top-right-radius: unset;
+}
+:where(tfoot th:last-of-type) {
+	border-end-end-radius: unset;
+}
+:where(tfoot th:first-of-type) {
+	border-end-start-radius: unset;
+}
+/* .card {
+	background: var(--surface-2);
+	border: var(--border-size-1) solid var(--surface-3);
+	border-radius: var(--radius-2);
+	box-shadow: var(--shadow-2);
+	padding: var(--size-5);
+} */
 /* :where(:is(td, th):not([align])) {
 	text-align: left;
 } */
