@@ -96,5 +96,3 @@ data-[highlighted]:text-text-1 data-[disabled]:opacity-50 data-[highlighted]:bg-
 		</div>
 	</ul>
 {/if}
-<p>InputValue: {JSON.stringify($inputValue, null, 2)}</p>
-<p>Selected: {JSON.stringify($selected?.value, null, 2)}</p>

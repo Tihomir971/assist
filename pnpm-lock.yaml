@@ -86,8 +86,8 @@ devDependencies:
     specifier: ^3.1.0
     version: 3.1.0
   prettier-plugin-svelte:
-    specifier: ^3.1.1
-    version: 3.1.1(prettier@3.1.0)(svelte@4.2.7)
+    specifier: ^3.1.2
+    version: 3.1.2(prettier@3.1.0)(svelte@4.2.7)
   svelte:
     specifier: ^4.2.7
     version: 4.2.7
@@ -1050,7 +1050,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001564
-      electron-to-chromium: 1.4.590
+      electron-to-chromium: 1.4.591
       node-releases: 2.0.13
       update-browserslist-db: 1.0.13(browserslist@4.22.1)
     dev: true
@@ -1243,8 +1243,8 @@ packages:
       esutils: 2.0.3
     dev: true
 
-  /electron-to-chromium@1.4.590:
-    resolution: {integrity: sha512-hohItzsQcG7/FBsviCYMtQwUSWvVF7NVqPOnJCErWsAshsP/CR2LAXdmq276RbESNdhxiAq5/vRo1g2pxGXVww==}
+  /electron-to-chromium@1.4.591:
+    resolution: {integrity: sha512-vLv/P7wwAPKQoY+CVMyyI6rsTp+A14KGtPXx92oz1FY41AAqa9l6Wkizcixg0LDuJgyeo8xgNN9+9hsnGp66UA==}
     dev: true
 
   /es5-ext@0.10.62:
@@ -2183,8 +2183,8 @@ packages:
     engines: {node: '>= 0.8.0'}
     dev: true
 
-  /prettier-plugin-svelte@3.1.1(prettier@3.1.0)(svelte@4.2.7):
-    resolution: {integrity: sha512-jLzaHfToav527/I5h2BMQfN3G5gylrJm54zFFyoXvUtfscI47877ftacUb+Eyse/3bXrhY+MtkyiuvruiHc+kg==}
+  /prettier-plugin-svelte@3.1.2(prettier@3.1.0)(svelte@4.2.7):
+    resolution: {integrity: sha512-7xfMZtwgAWHMT0iZc8jN4o65zgbAQ3+O32V6W7pXrqNvKnHnkoyQCGCbKeUyXKZLbYE0YhFRnamfxfkEGxm8qA==}
     peerDependencies:
       prettier: ^3.0.0
       svelte: ^3.2.0 || ^4.0.0-next.0 || ^5.0.0-next.0

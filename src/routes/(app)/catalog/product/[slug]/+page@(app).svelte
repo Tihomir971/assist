@@ -266,7 +266,6 @@
 			>
 		</Tabs>
 	</div>
-	{JSON.stringify(product, null, 2)}
 </div>
 
 <style lang="postcss">
