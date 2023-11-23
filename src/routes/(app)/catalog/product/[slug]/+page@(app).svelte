@@ -8,7 +8,6 @@
 	import { Tabs, TabsContent } from '$lib/components/tabs';
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 	import { Combobox, Label } from '$lib/components/combobox';
-	import Input from '$lib/components/combobox/components/Input.svelte';
 
 	export let data: PageData;
 	$: ({ product, categories, streamed } = data);
@@ -40,6 +39,7 @@
 					action="?/setProduct"
 					use:enhance={() => {
 						return async ({ update, result }) => {
+							let start = Date.now();
 							if (result.type === 'success') {
 								// do something...
 								// do something...
@@ -54,6 +54,8 @@
 								await applyAction(result);
 							}
 							update({ reset: false });
+							let timeTaken = Date.now() - start;
+							console.log('Total time taken : ' + timeTaken + ' ms');
 						};
 					}}
 				>
