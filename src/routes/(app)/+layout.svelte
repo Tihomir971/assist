@@ -1,15 +1,12 @@
 <script lang="ts">
-	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
-	import { storePopup } from '@skeletonlabs/skeleton';
 	import { Toaster } from '$lib/components/toaster';
 	import Header from './Header.svelte';
 	import Aside from './Aside.svelte';
-	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 </script>
 
 <!-- App Shell -->
 <Toaster />
-<div class="flex flex-col h-full">
+<div class="flex h-full flex-col">
 	<Header></Header>
 	<div class="flex h-full">
 		<Aside></Aside>

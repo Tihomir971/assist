@@ -7,7 +7,7 @@
 	import { DateTimeFormat } from '$lib/scripts/format';
 	import { Tabs, TabsContent } from '$lib/components/tabs';
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
-	import { Combobox, Label } from '$lib/components/combobox';
+	import { Combobox } from '$lib/components/combobox';
 
 	export let data: PageData;
 	$: ({ product, categories, streamed } = data);
@@ -27,7 +27,7 @@
 </script>
 
 <div class="grid h-full grid-cols-[1fr_130ch_1fr]">
-	<div class="card overflow-auto col-[2] w-full pt-12">
+	<div class="card col-[2] w-full overflow-auto pt-12">
 		<hgroup>
 			<h3>Edit product</h3>
 			<p>Some information about product</p>
@@ -51,6 +51,7 @@
 									}
 								});
 								// use the default behavior for this result type
+								history.back();
 								await applyAction(result);
 							}
 							update({ reset: false });
@@ -60,7 +61,7 @@
 					}}
 				>
 					{#if product}
-						<div class="grid grid-cols-2 gap-2 items-start p-2">
+						<div class="grid grid-cols-2 items-start gap-2 p-2">
 							<fieldset class="col-span-2">
 								<!-- 	<div class="col-span-6 w-full"> -->
 								<label
@@ -180,6 +181,7 @@
 							bind:value={product.m_product_category_id} -->
 								{#if categories}
 									<Combobox
+										labela="Category"
 										name="m_product_category_id"
 										options={categories}
 										bind:value={product.m_product_category_id}

@@ -9,7 +9,7 @@
 </script>
 
 <!-- svelte-ignore a11y-label-has-associated-control -->
-<label use:melt={$label} class="label">
-	<slot />
+<label use:melt={$label}>
+	<span><slot /></span>
 	<Input />
 </label>

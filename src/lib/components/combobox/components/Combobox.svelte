@@ -12,6 +12,7 @@
 	import { Input, Label, Menu, Options } from '..';
 	export let options: ExtendedComboboxOption<number>[];
 	export let value: number | undefined;
+	export let labela: string;
 	//	const def = options.find((obj) => obj.value === value);
 	//let defaultSelected:ComboboxOption<number>;
 	//defaultSelected={value:def.id}
@@ -48,7 +49,7 @@
 		: options;
 </script>
 
-<Label>Label</Label>
+<Label>{labela}</Label>
 <!-- <Input /> -->
 <!-- <div class="relative">
 		<input type="text" use:melt={$input} {...$$restProps} placeholder="Choose..." list="searches" /> -->
@@ -74,12 +75,12 @@
 				<!-- use:melt={$option(toOption(singleoption))} -->
 				<li
 					use:melt={$option(toOption(singleOption))}
-					class="flex py-2 pl-4 items-center data-[highlighted]:bg-accent/30 data-[disabled]:opacity-40"
+					class="flex items-center py-2 pl-4 data-[highlighted]:bg-accent/30 data-[disabled]:opacity-40"
 				>
 					<!-- class="relative cursor-pointer scroll-my-2 rounded-md py-2 pl-4 pr-4
 data-[highlighted]:text-text-1 data-[disabled]:opacity-50 data-[highlighted]:bg-accent" -->
 					{#if $isSelected(singleOption)}
-						<div class="-mx-2 z-10 text-accent">
+						<div class="z-10 -mx-2 text-accent">
 							<Check size="20" />
 						</div>
 					{/if}
