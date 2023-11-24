@@ -1,36 +1,26 @@
-<header
-	class="flex justify-between bg-surface-2 border-black border-b px-4 items-center h-12 w-full"
->
+<script lang="ts">
+	import { Avatar } from '$lib/components/avatar';
+</script>
+
+<header class="flex items-center justify-between border-b border-surface-1 px-4">
 	<div><strong>KALSISI</strong> Assistant</div>
 	<div>
 		<input type="search" placeholder="Search..." class="focus-visible:outline-red-500" />
 	</div>
 	<div>
-		<div class="flex space-x-2 justify-end">
-			<a
-				class="btn btn-sm variant-ghost-surface"
-				href="https://discord.gg/EXqV7W8MtY"
-				target="_blank"
-				rel="noreferrer"
-			>
-				Discord
-			</a>
-			<a
-				class="btn btn-sm variant-ghost-surface"
-				href="https://twitter.com/SkeletonUI"
-				target="_blank"
-				rel="noreferrer"
-			>
-				Twitter
-			</a>
-			<a
-				class="btn btn-sm variant-ghost-surface"
-				href="https://github.com/skeletonlabs/skeleton"
-				target="_blank"
-				rel="noreferrer"
-			>
-				Logout
-			</a>
+		<div class="flex justify-end space-x-2">
+			<Avatar src=""></Avatar>
 		</div>
 	</div>
 </header>
+
+<style lang="postcss">
+	header {
+		grid-area: title-bar;
+		position: relative;
+		max-width: 100%;
+		max-height: 100%;
+		height: 100%;
+		background-color: hsl(var(--gray-11-hsl));
+	}
+</style>
