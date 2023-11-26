@@ -11,10 +11,7 @@
 </script>
 
 <tr
-	class={cn(
-		'border-b transition-colors  hover:!bg-surface-2 data-[state=selected]:bg-white',
-		className
-	)}
+	class={cn('transition-colors  hover:!bg-surface-2 data-[state=selected]:bg-white', className)}
 	{...$$restProps}
 >
 	<slot />

@@ -4,12 +4,12 @@
 	import { Input } from '..';
 
 	const {
-		elements: { label }
+		elements: { label, input }
 	} = getCtx();
 </script>
 
 <!-- svelte-ignore a11y-label-has-associated-control -->
-<label use:melt={$label}>
-	<span><slot /></span>
-	<Input />
-</label>
+<div>
+	<label use:melt={$label}><slot /></label>
+	<input type="text" use:melt={$input} {...$$restProps} placeholder="Choose..." list="searches" />
+</div>

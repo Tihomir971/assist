@@ -31,32 +31,19 @@
 	} */
 	function rerunLoadFunction(id: string) {
 		const newUrl = new URL($page.url);
+
 		if (id) {
 			newUrl?.searchParams?.set('cat', id);
 		} else {
 			newUrl?.searchParams?.delete('cat');
 		}
 		if (browser) {
-			goto(newUrl);
+			goto(`${newUrl.origin}/catalog${newUrl.search}`);
 		}
 		return;
 	}
 </script>
 
-<!-- <div class="grid grid-cols-[auto_1fr] h-full">
-	<div class="w-96 h-full overflow-auto">
-		 	<RecursiveTreeView
-			padding="py-1 px-4"
-			selection
-			multiple
-			relational
-			nodes={myTreeViewNodes}
-			bind:checkedNodes
-			class="overflow-auto"
-		/> 
-	</div>
-	<slot />
-</div> -->
 <div class="app-layout-area--sub-nav flex h-[calc(100vh-3rem)] overflow-hidden">
 	<div class="h-full w-80">
 		<TreeView treeItems={myTreeViewNodes} on:select={(e) => rerunLoadFunction(e.detail)}></TreeView>

@@ -56,9 +56,17 @@ export const load = (async ({ params, locals: { supabase, getSession } }) => {
 
 		return { imageURLs };
 	};
+	const getPricelist = async (id: number) => {
+		const { data } = await supabase
+			.from('m_product_po')
+			.select('id,c_bpartner_id,pricelist,vendorproductno,url,updated,c_bpartner(name)')
+			.eq('m_product_id', id);
+		return data;
+	};
 	return {
 		product: getProduct(productId),
 		categories: getCategories(),
+		pricelists: getPricelist(productId),
 		streamed: {
 			images: getImages(productId)
 		}

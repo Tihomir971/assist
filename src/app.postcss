@@ -2,11 +2,13 @@
 @import 'open-props/normalize';
 @import 'open-props/buttons';
 
-@import '$lib/styles/base/inputs.css';
+/* @import '$lib/styles/base/inputs.css'; */
+@import '$lib/styles/packs/forms';
+@import '$lib/styles/color/palette.oklch.css';
 @import 'open-props/gray-hsl';
 @import 'open-props/indigo-hsl';
 @import 'open-props/oklch-hues.min.css';
-@import 'open-props/colors-oklch.min.css';
+/* @import 'open-props/colors-oklch.min.css'; */
 /* @import '$lib/styles/base.css'; */
 
 /* @import 'open-props/buttons'; */
@@ -23,31 +25,41 @@
 @tailwind variants;
 
 :root {
-	--color-hue: var(--hue-blue);
-	--accent: var(--indigo-6-hsl);
-	--brand: hsl(var(--accent));
-	--palette-hue: 270; /* <angle */
-	--palette-hue-rotate-by: -5; /* +- deg : warm or cool the palette */
-	--palette-chroma: 0.1; /* 0-1 : lower to mute and pastel, over 2 at own risk */
+	--color-hue: var(--hue-indigo);
+	--color-bright: oklch(65% 0.3 var(--color-hue, 0));
+	/* 	--accent: var(--indigo-6-hsl); */
+	/* --accent: oklch(53% 0.2 var(--palette-hue)); */
+	--brand: oklch(53% 0.2 var(--palette-hue));
 
-	--text-1: hsl(var(--gray-12-hsl));
-	--text-2: hsl(var(--gray-7-hsl));
-	--surface-1: hsl(var(--gray-0-hsl));
-	--surface-2: hsl(var(--gray-2-hsl));
-	--surface-3: hsl(var(--gray-3-hsl));
-	--surface-4: hsl(var(--gray-4-hsl));
+	/* --brand: oklch(53% 0.2 var(--palette-hue)); */
+
+	--palette-hue: var(--hue-indigo); /* <angle */
+	/* --palette-hue-rotate-by: -5; */ /* +- deg : warm or cool the palette */
+	--palette-chroma: 1; /* 0-1 : lower to mute and pastel, over 2 at own risk */
+	/* --color-max: oklch(53% 0.2 var(--palette-hue)); */
+
+	/* 	--text-1: var(--color-16);
+	--text-2: var(--color-12);
+	--surface-1: var(--color-3);
+	--surface-2: var(--color-4);
+	--surface-3: var(--color-5);
+	--surface-4: var(--color-6); */
+	--well-1: var(--color-5);
+	--well-2: var(--color-6);
 }
-
 @media (prefers-color-scheme: dark) {
 	:root {
-		--surface-1: hsl(var(--gray-9-hsl));
-		--surface-2: hsl(var(--gray-8-hsl));
-		--surface-3: hsl(var(--gray-7-hsl));
-		--surface-4: hsl(var(--gray-6-hsl));
-		--text-1: hsl(var(--gray-1-hsl));
-		--text-2: hsl(var(--gray-4-hsl));
+		/* 		--surface-1: var(--color-14);
+		--surface-2: var(--color-13);
+		--surface-3: var(--color-12);
+		--surface-4: var(--color-11); */
+		--well-1: var(--color-15);
+		--well-2: var(--color-16);
+		/* --text-1: var(--color-1);
+		--text-2: var(--color-5); */
 	}
 }
+
 :root {
 	ul {
 		list-style-type: none;
@@ -69,6 +81,12 @@
 }
 :where(tfoot th:first-of-type) {
 	border-end-start-radius: unset;
+}
+table thead tr th {
+	border-color: white;
+}
+th {
+	font-weight: 600;
 }
 /* .card {
 	background: var(--surface-2);

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { PUBLIC_BEARER_TOKEN } from '$env/static/public';
+	import { Euro, Factory } from 'lucide-svelte';
 
 	export let selectedProducts: number[];
 
@@ -60,7 +61,16 @@
 <header class="flex h-full items-center justify-between px-4">
 	<button class="btn variant-soft" on:click={getPrices}>Get prices</button>
 	<button class="btn variant-soft" on:click={getERP}>Get ERP</button>
+	<div class="icon-button-group">
+		<button type="button" on:click={getPrices}>
+			<Euro />
+		</button>
+		<button type="button" on:click={getERP}>
+			<Factory />
+		</button>
+	</div>
 </header>
+
 <!-- <script lang="ts">
 //	import { createSelect, melt } from '@melt-ui/svelte';
 //	import type { CreateSelectProps, SelectOption } from '@melt-ui/svelte';
@@ -129,3 +139,11 @@
 	<Switch label="Only on Stock?" bind:checked on:m-click={switchOnStock}></Switch>
 </header>
  -->
+
+<style lang="postcss">
+	.icon-button-group {
+		display: flex;
+		justify-content: space-around;
+		gap: 0.5rem;
+	}
+</style>

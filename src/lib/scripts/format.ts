@@ -14,8 +14,8 @@ export function DateTimeFormat(
 
 export function numberFormat(
 	value: number,
-	locales: string = 'default',
-	/* locales: string = 'sr-Latn', */
+	/* locales: string = 'default', */
+	locales: string = 'sr-Latn',
 	style: 'decimal' | 'currency' | 'percent' = 'decimal',
 	fractionDigits: number = 2
 ): string {

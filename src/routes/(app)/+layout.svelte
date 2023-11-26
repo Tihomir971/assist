@@ -30,7 +30,7 @@
 		grid-template-areas:
 			'title-bar title-bar'
 			'aside main';
-		grid-template-rows: 3rem minmax(0px, 1fr);
+		grid-template-rows: 4rem minmax(0px, 1fr);
 		grid-template-columns: 4rem minmax(0px, 1fr);
 		transition-delay: 0ms, 146ms;
 		transition-duration: 146ms, 0ms;

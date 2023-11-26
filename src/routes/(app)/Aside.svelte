@@ -5,43 +5,34 @@
 	import { AlignJustify, LayoutDashboard, Palette, Tag, TestTube2 } from 'lucide-svelte';
 	let activePath: string | undefined = undefined;
 	$: if (browser) activePath = $page.url.pathname;
-	$: console.log('activePath', activePath);
 </script>
 
 <aside class="grid grid-rows-[auto_1fr_auto]">
-	<div class="flex aspect-square w-full items-center justify-center"><AlignJustify /></div>
+	<div class="tile"><AlignJustify /></div>
 	<!-- <AppRail width=""> -->
 	<div>
-		<div class:bg-surface-2={activePath === '/dashboard'}>
-			<a
-				href="/dashboard"
-				class="m-0 flex aspect-square w-full !max-w-full items-center justify-center p-0"
-			>
-				<LayoutDashboard size={20} strokeWidth={1.75} />
+		<div class="tile" class:bg-surface-2={activePath === '/dashboard'}>
+			<a href="/dashboard">
+				<LayoutDashboard size="24" strokeWidth={1.75} />
+				<span>Dashboard</span>
 			</a>
 		</div>
-		<div class:bg-surface-2={activePath === '/catalog'}>
-			<a
-				href="/catalog"
-				class="m-0 flex aspect-square w-full !max-w-full items-center justify-center p-0"
-			>
-				<Tag size="20" strokeWidth={1.75} />
+		<div class="tile" class:bg-surface-2={activePath === '/catalog'}>
+			<a href="/catalog">
+				<Tag size="24" strokeWidth={1.75} />
+				<span>Catalog</span>
 			</a>
 		</div>
-		<div class:bg-surface-2={activePath === '/palette'}>
-			<a
-				href="/palette"
-				class="m-0 flex aspect-square w-full !max-w-full items-center justify-center p-0"
-			>
-				<Palette size="20" strokeWidth={1.75} />
+		<div class="tile" class:bg-surface-2={activePath === '/palette'}>
+			<a href="/palette">
+				<Palette size="24" strokeWidth={1.75} />
+				<span>Palette</span>
 			</a>
 		</div>
-		<div class:bg-surface-3={activePath === '/test'}>
-			<a
-				href="/test"
-				class="m-0 flex aspect-square w-full !max-w-full items-center justify-center p-0"
-			>
-				<TestTube2 size="20" strokeWidth={1.75} />
+		<div class="tile" class:bg-surface-3={activePath === '/test'}>
+			<a href="/test">
+				<TestTube2 size="24" strokeWidth={1.75} />
+				<span>Test</span>
 			</a>
 		</div>
 	</div>
@@ -55,6 +46,27 @@
 		max-width: 100%;
 		height: 100%;
 		max-height: 100%;
-		background-color: hsl(var(--gray-11-hsl));
+		background-color: var(--well-2);
+	}
+	.tile {
+		font-size: small;
+		display: grid;
+		place-content: center;
+		aspect-ratio: 1 / 1;
+		width: 100%;
+		&:hover {
+			background-color: var(--surface-1);
+		}
+		a {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			margin: 0px;
+			padding: 0px;
+			width: 100%;
+			height: 100%;
+			text-decoration: none;
+		}
 	}
 </style>

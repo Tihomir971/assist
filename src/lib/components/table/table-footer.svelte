@@ -17,6 +17,7 @@
 <style lang="postcss">
 	tfoot {
 		position: sticky;
+		bottom: 0;
 		inset-block-start: 0;
 	}
 </style>

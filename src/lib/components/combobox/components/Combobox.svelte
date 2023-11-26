@@ -11,7 +11,7 @@
 	import type { ExtendedComboboxOption } from '../types';
 	import { Input, Label, Menu, Options } from '..';
 	export let options: ExtendedComboboxOption<number>[];
-	export let value: number | undefined;
+	export let value: number | null | undefined;
 	export let labela: string;
 	//	const def = options.find((obj) => obj.value === value);
 	//let defaultSelected:ComboboxOption<number>;
@@ -35,7 +35,6 @@
 	$: if (!$open) {
 		$inputValue = $selected?.label ?? '';
 		value = $selected?.value;
-		console.log('value', value);
 	}
 
 	$: filteredOptions = $touchedInput

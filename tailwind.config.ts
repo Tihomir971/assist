@@ -14,17 +14,17 @@ import type { Config } from 'tailwindcss';
 	colors['DEFAULT'] = `oklch(var(--${color}-max) / <alpha-value>)`;
 	return colors;
 }; */
-/* const getColorOKLCH = (scale: number) => {
+const getColorOKLCH = (scale: number) => {
 	const colors = Array.from(Array(scale).keys()).reduce(
 		(acc, _, i) => {
-			acc[i + 1] = `var(--color-${i})`;
+			acc[i + 1] = `var(--color-${i + 1})`;
 			return acc;
 		},
 		{} as Record<number | string, string>
 	) as Record<string | number, string>;
-	colors['DEFAULT'] = `var(--color-bright)`;
+	colors['DEFAULT'] = `var(--brand)`;
 	return colors;
-}; */
+};
 
 export default {
 	darkMode: 'class',
@@ -35,8 +35,7 @@ export default {
 				test: 'var(--shadow-5)'
 			},
 			colors: {
-				/* accent: getColorOKLCH(16), */
-				accent: 'hsl(var(--accent) / <alpha-value>)',
+				accent: getColorOKLCH(16),
 				text: {
 					1: 'var(--text-1)',
 					2: 'var(--text-2)'
@@ -46,6 +45,10 @@ export default {
 					2: 'var(--surface-2)',
 					3: 'var(--surface-3)',
 					4: 'var(--surface-4)'
+				},
+				well: {
+					1: 'var(--well-1)',
+					2: 'var(--well-2)'
 				}
 
 				/* transparent: 'transparent', */

@@ -4,13 +4,13 @@
 	import { afterNavigate, goto } from '$app/navigation';
 	import { base } from '$app/paths';
 	import { Gallery, Thumbnails } from '$lib/components/gallery';
-	import { DateTimeFormat } from '$lib/scripts/format';
+	import { DateTimeFormat, numberFormat } from '$lib/scripts/format';
 	import { Tabs, TabsContent } from '$lib/components/tabs';
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 	import { Combobox } from '$lib/components/combobox';
 
 	export let data: PageData;
-	$: ({ product, categories, streamed } = data);
+	$: ({ product, categories, pricelists, streamed } = data);
 	let localCopy: any = undefined;
 	let modified = false;
 	$: if (localCopy && JSON.stringify(product) !== JSON.stringify(localCopy)) {
@@ -32,7 +32,7 @@
 			<h3>Edit product</h3>
 			<p>Some information about product</p>
 		</hgroup>
-		<Tabs tabs={['Profile', 'Stock', 'Images']}>
+		<Tabs tabs={['Profile', 'Pricelist', 'Images']}>
 			<TabsContent key={'Profile'}>
 				<form
 					method="POST"
@@ -64,50 +64,43 @@
 						<div class="grid grid-cols-2 items-start gap-2 p-2">
 							<fieldset class="col-span-2">
 								<!-- 	<div class="col-span-6 w-full"> -->
-								<label
-									><span>Name</span><input
+								<div>
+									<label for="name">Name</label><input
 										id="name"
 										name="name"
 										type="text"
 										required
 										bind:value={product.name}
-									/></label
-								>
-								<!-- 	</div> -->
+									/>
+								</div>
 							</fieldset>
 							<fieldset>
 								<legend>Identification</legend>
-								<label
-									><span>ID</span><input
-										id="id"
-										name="id"
-										type="text"
-										readonly
-										value={product.id}
-									/></label
-								>
-								<label>
-									<span>SKU</span>
+								<div>
+									<label for="id">ID</label>
+									<input id="id" name="id" type="text" readonly value={product.id} />
+								</div>
+								<div>
+									<label for="sku"> SKU</label>
 									<input id="sku" name="sku" type="text" readonly bind:value={product.sku} />
-								</label>
-
-								<label
-									><span>Barcode</span>
+								</div>
+								<div>
+									<label for="barcode">Barcode</label>
 									<input id="barcode" name="barcode" type="text" bind:value={product.barcode} />
-								</label>
+								</div>
 							</fieldset>
 							<fieldset>
 								<legend>Vendor</legend>
-								<label>
-									<span>UoM</span>
-									<input id="c_uom_id" name="c_uom_id" type="text" bind:value={product.c_uom_id} />
-								</label>
-								<label>
-									<span>Brand</span>
+								<div>
+									<label for="uom">UoM</label>
+									<input id="uom" name="c_uom_id" type="text" bind:value={product.c_uom_id} />
+								</div>
+								<div>
+									<label for="brand">Brand</label>
 									<input id="brand" name="brand" type="text" bind:value={product.brand} />
-								</label>
-								<label>
-									<span>MPN</span>
+								</div>
+								<div>
+									<label for="mpn">MPN</label>
 									<input
 										id="mpn"
 										name="mpn"
@@ -115,65 +108,69 @@
 										bind:value={product.mpn}
 										autocomplete="off"
 									/>
-								</label>
+								</div>
 							</fieldset>
 							<fieldset>
 								<legend>Date/Time</legend>
-								<label
-									><span>Created</span><input
+								<div>
+									<label for="created">Created</label>
+									<input
 										id="created"
 										name="created"
 										type="datetime"
 										readonly
 										value={DateTimeFormat(product.created)}
-									/></label
-								><label
-									><span>Updated</span><input
+									/>
+								</div>
+								<div>
+									<label for="updated">Updated</label>
+									<input
 										id="updated"
 										name="updated"
 										type="datetime"
 										readonly
 										value={DateTimeFormat(product.updated)}
-									/></label
-								>
+									/>
+								</div>
 							</fieldset>
 							<fieldset>
 								<legend>Status</legend>
-								<label
-									><span>Is Self-service?</span><input
-										type="checkbox"
+								<div>
+									<label for="isselfservice">Is Self-service?</label>
+									<input
 										id="isselfservice"
 										name="isselfservice"
+										type="checkbox"
 										checked={product.isselfservice}
-									/></label
-								>
-								<label
-									><span>Discontinued?</span><input
+									/>
+								</div>
+								<div>
+									<label for="discontinued">Discontinued?</label><input
 										type="checkbox"
 										id="discontinued"
 										name="discontinued"
 										checked={product.discontinued}
-									/></label
-								>
-								<label
-									><span>Is Active?</span><input
+									/>
+								</div>
+								<div>
+									<label for="isactive">Is Active?</label><input
 										type="checkbox"
 										id="isactive"
 										name="isactive"
 										checked={product.isactive}
-									/></label
-								>
+									/>
+								</div>
 							</fieldset>
 							<fieldset>
-								<label
-									><span>Condition</span><input
+								<div>
+									<label for="condition">Condition</label><input
 										id="condition"
 										name="condition"
 										type="text"
 										class="input"
 										bind:value={product.condition}
-									/></label
-								>
+									/>
+								</div>
 								<!-- name="m_product_category_id"
 							labelText="Product category"
 							placeholder="Choose category"
@@ -259,7 +256,36 @@
 					{/if}
 				</form>
 			</TabsContent>
-			<TabsContent key={'Stock'}>Stock</TabsContent>
+			<TabsContent key={'Pricelist'}>
+				{#if pricelists}
+					<table class="w-full">
+						<thead>
+							<tr>
+								<th>Partner</th>
+								<!-- <th>id</th> -->
+								<!-- <th>c_bpartner_id</th> -->
+								<th>Partner PN</th>
+								<th>Price</th>
+								<th>url</th>
+								<th>updated</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								{#each pricelists as pricelist}
+									<td>{pricelist.c_bpartner?.name}</td>
+									<td>{pricelist.vendorproductno}</td>
+									<!-- <td>{pricelist.id}</td> -->
+									<!-- <td>{pricelist.c_bpartner_id}</td> -->
+									<td>{numberFormat(pricelist.pricelist)}</td>
+									<td><a href={pricelist.url} target="_blank">{pricelist.url} </a></td>
+									<td>{DateTimeFormat(pricelist.updated)}</td>
+								{/each}
+							</tr>
+						</tbody>
+					</table>
+				{/if}
+			</TabsContent>
 			<TabsContent key={'Images'}
 				>{#await streamed.images then images}
 					{#if images.imageURLs.length > 0}

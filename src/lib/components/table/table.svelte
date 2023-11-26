@@ -12,7 +12,10 @@
 
 <!-- <div class="m-1 block max-h-full overflow-auto"> -->
 <div role="region" aria-labelledby="caption" tabindex="-1">
-	<table class={cn('border-collapse w-full h-full overflow-auto bg-inherit', className)} {...$$restProps}>
+	<table
+		class={cn('h-full w-full border-collapse overflow-auto bg-inherit', className)}
+		{...$$restProps}
+	>
 		<slot />
 	</table>
 </div>

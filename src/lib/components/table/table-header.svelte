@@ -16,6 +16,8 @@
 <style lang="postcss">
 	thead {
 		position: sticky;
+		top: 0;
+		z-index: 1;
 		inset-block-start: 0;
 	}
 </style>

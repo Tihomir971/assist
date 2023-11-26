@@ -38,6 +38,7 @@
 		<!-- class="flex items-center bg-transparent gap-1 p-1 w-full hover:bg-accent/20 border-none justify-start" -->
 		<button
 			type="button"
+			class="bg-transparent hover:!bg-surface-3"
 			class:!bg-accent={$isSelected(itemId)}
 			class:m4={$isSelected(itemId)}
 			use:melt={$item({
@@ -87,7 +88,7 @@
 
 <style lang="postcss">
 	button {
-		background-color: inherit;
+		/* background-color: none; */
 		border: none;
 		box-shadow: none;
 		padding-inline: 0px;

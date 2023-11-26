@@ -213,14 +213,15 @@
 	let { selectedDataIds } = pluginStates.select;
 	$: $products, ($selectedDataIds = {});
 	$: strSelectedDataIds = Object.keys($selectedDataIds).map(Number);
+	$: console.log('strSelectedDataIds', strSelectedDataIds);
 </script>
 
-<div class="grid h-full overflow-hidden grid-rows-[auto_1fr] w-full">
+<div class="grid h-full w-full grid-rows-[auto_1fr] overflow-hidden">
 	<div class="flex h-full flex-col overflow-hidden px-2">
-		<div class="h-12 w-full border-b border-layer-3 bg-layer-2">
+		<div class="border-layer-3 bg-layer-2 h-12 w-full border-b">
 			<PageHeader selectedProducts={strSelectedDataIds} />
 		</div>
-		<Table.Root {...$tableAttrs} class="flex-grow h-full overflow-y-auto">
+		<Table.Root {...$tableAttrs} class="h-full flex-grow overflow-y-auto">
 			<Table.Header>
 				{#each $headerRows as headerRow}
 					<Subscribe rowAttrs={headerRow.attrs()}>
@@ -251,7 +252,7 @@
 					</Subscribe>
 				{/each}
 			</Table.Body>
-			<Table.Footer class="w-full min-w-full bg-layer-1 p-1 text-left">
+			<Table.Footer class="bg-layer-1 w-full min-w-full p-1 text-left">
 				<Table.Row>
 					<th colspan="100" class="p-2">
 						{Object.keys($selectedDataIds).length} of{' '}{$rows.length} row(s) selected.
@@ -261,7 +262,7 @@
 		</Table.Root>
 	</div>
 </div>
-<div class="flex-1 text-sm text-muted-foreground">
+<div class="text-muted-foreground flex-1 text-sm">
 	{$selectedDataIds}
 </div>
 <!-- <Drawer
