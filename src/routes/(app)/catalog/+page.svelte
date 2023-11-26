@@ -213,7 +213,6 @@
 	let { selectedDataIds } = pluginStates.select;
 	$: $products, ($selectedDataIds = {});
 	$: strSelectedDataIds = Object.keys($selectedDataIds).map(Number);
-	$: console.log('strSelectedDataIds', strSelectedDataIds);
 </script>
 
 <div class="grid h-full w-full grid-rows-[auto_1fr] overflow-hidden">

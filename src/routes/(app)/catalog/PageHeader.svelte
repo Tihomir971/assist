@@ -2,12 +2,15 @@
 	import { page } from '$app/stores';
 	import { PUBLIC_BEARER_TOKEN } from '$env/static/public';
 	import { Euro, Factory } from 'lucide-svelte';
+	import * as api from '$lib/api';
 
 	export let selectedProducts: number[];
 
 	async function getPrices() {
-		const apiUrl = 'http://192.168.1.10:4443/cenoteka/prods';
-		const myHeaders = new Headers({ Authorization: 'Bearer ' + PUBLIC_BEARER_TOKEN });
+		const data = await api.getPrices(selectedProducts);
+		console.log('clientData', data);
+		/*	const apiUrl = 'http://192.168.1.10:4443/cenoteka/prods';
+	const myHeaders = new Headers({ Authorization: 'Bearer ' + PUBLIC_BEARER_TOKEN });
 		const formData = new FormData();
 		formData.append('prods', JSON.stringify(selectedProducts));
 
@@ -28,7 +31,7 @@
 			} else {
 				console.error('There has been a problem with your fetch operation:', error);
 			}
-		}
+		} */
 	}
 
 	async function getERP() {
