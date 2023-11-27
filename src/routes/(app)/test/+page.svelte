@@ -3,13 +3,17 @@
 	import { createTable, Subscribe, Render } from 'svelte-headless-table';
 	import { readable } from 'svelte/store';
 
-	const data = readable([
+	//export let data;
+	//const { contributions } = data;
+	//console.log('contributions', contributions);
+
+	const tableData = readable([
 		{ name: 'Ada Lovelace', age: 21 },
 		{ name: 'Barbara Liskov', age: 52 },
 		{ name: 'Richard Hamming', age: 38 }
 	]);
 
-	const table = createTable(data);
+	const table = createTable(tableData);
 
 	const columns = table.createColumns([
 		table.column({
@@ -23,10 +27,16 @@
 	]);
 
 	const { headerRows, rows, tableAttrs, tableBodyAttrs } = table.createViewModel(columns);
+
+	async function getPrice() {
+		const contributions = await (await fetch('api')).json();
+
+		console.log('contributions', contributions);
+	}
 </script>
 
-<button>Test</button>
-<div class="shadow-test w-24 h-24 bg-slate-400"></div>
+<button on:click={getPrice}>Test</button>
+<div class="h-24 w-24 bg-slate-400 shadow-test"></div>
 <DataTable {...$tableAttrs}>
 	<!-- <table {...$tableAttrs}> -->
 	<thead>

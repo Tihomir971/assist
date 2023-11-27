@@ -1,7 +1,7 @@
 import { PUBLIC_BEARER_TOKEN } from '$env/static/public';
 
 export async function getPrices(selectedProducts: number[]) {
-	const apiUrl = 'http://192.168.1.10:4443/cenoteka/prods';
+	const apiUrl = 'https://api.kalisi.rs/cenoteka/prods';
 	const myHeaders = new Headers({ Authorization: 'Bearer ' + PUBLIC_BEARER_TOKEN });
 	const formData = new FormData();
 	formData.append('prods', JSON.stringify(selectedProducts));

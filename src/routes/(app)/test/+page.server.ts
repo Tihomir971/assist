@@ -7,8 +7,6 @@ export const load = (async ({ depends, locals: { supabase, getSession } }) => {
 		throw redirect(303, '/auth');
 	}
 
-	//	const categoryIds = url.searchParams.get('cat')?.split(',').map(String);
-
 	depends('catalog:categories');
 	const { data: categories } = await supabase
 		.from('m_product_category')
