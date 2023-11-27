@@ -288,10 +288,10 @@
 			</TabsContent>
 			<TabsContent key={'Images'}
 				>{#await streamed.images then images}
-					{#if images.imageURLs.length > 0}
+					<!-- 	{#if images.imageURLs.length > 0}
 						<Gallery images={images.imageURLs} />
 						<Thumbnails images={images.imageURLs}></Thumbnails>
-					{/if}
+					{/if} -->
 				{/await}</TabsContent
 			>
 		</Tabs>
