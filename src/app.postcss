@@ -1,12 +1,15 @@
-@import 'open-props/style';
-@import 'open-props/normalize';
-@import 'open-props/buttons';
+/* @import 'open-props/style'; */
+@import 'open-props/postcss/style';
+@import 'open-props/postcss/normalize';
+@import 'open-props/postcss/buttons';
+/* @import 'open-props/normalize'; */
+/* @import 'open-props/buttons'; */
 
 /* @import '$lib/styles/base/inputs.css'; */
 @import '$lib/styles/packs/forms';
 @import '$lib/styles/color/palette.oklch.css';
-@import 'open-props/gray-hsl';
-@import 'open-props/indigo-hsl';
+/* @import 'open-props/gray-hsl'; */
+/* @import 'open-props/indigo-hsl'; */
 @import 'open-props/oklch-hues.min.css';
 /* @import 'open-props/colors-oklch.min.css'; */
 /* @import '$lib/styles/base.css'; */
@@ -98,3 +101,6 @@ th {
 /* :where(:is(td, th):not([align])) {
 	text-align: left;
 } */
+:where(:not(:active):focus-visible) {
+	outline-offset: 2px;
+}

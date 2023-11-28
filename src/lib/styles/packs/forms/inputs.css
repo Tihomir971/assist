@@ -9,8 +9,8 @@
 
 /* preload icons that switch upon editing, so they dont flash blank */
 :where(body)::after {
-	content: var(--icon-tel-editing) var(--icon-password-editing)
-		var(--icon-user-editing) var(--icon-arrow-up);
+	content: var(--icon-tel-editing) var(--icon-password-editing) var(--icon-user-editing)
+		var(--icon-arrow-up);
 	opacity: 0;
 	position: absolute;
 	z-index: -1;
@@ -136,7 +136,7 @@
 	font-size: var(--font-size-0);
 	font-weight: var(--font-weight-6);
 	margin-inline-start: -2px;
-	color: var(--text-2);
+	/* color: var(--text-2); */
 
 	@media (prefers-color-scheme: light) {
 		background: white;
@@ -198,15 +198,7 @@
 	}
 }
 
-:where(
-		input:is(
-				[type='text'],
-				[type='password'],
-				[type='url'],
-				[type='email'],
-				[type='tel']
-			)
-	) {
+:where(input:is([type='text'], [type='password'], [type='url'], [type='email'], [type='tel'])) {
 	padding-inline-end: 3.5ch;
 }
 
@@ -517,8 +509,8 @@
 		inset-inline-start: 50%;
 		background: hsl(0 0% 50% / 20%);
 		transform-origin: center center;
-		transform: translateX(calc(var(--isRTL) * 50%)) translateY(-50%)
-			translateZ(-1px) scale(var(--thumb-scale));
+		transform: translateX(calc(var(--isRTL) * 50%)) translateY(-50%) translateZ(-1px)
+			scale(var(--thumb-scale));
 		will-change: transform;
 
 		@media (prefers-reduced-motion: no-preference) {
@@ -559,11 +551,7 @@ input[type='range'] {
 		block-size: var(--track-height);
 		border-radius: 5ex;
 		box-shadow: var(--inner-shadow-2);
-		background: linear-gradient(
-				to right,
-				transparent var(--track-fill),
-				var(--track-color) 0%
-			),
+		background: linear-gradient(to right, transparent var(--track-fill), var(--track-color) 0%),
 			var(--link);
 	}
 
@@ -572,11 +560,7 @@ input[type='range'] {
 		block-size: var(--track-height);
 		border-radius: 5ex;
 		box-shadow: var(--inner-shadow-2);
-		background: linear-gradient(
-				to right,
-				transparent var(--track-fill),
-				var(--track-color) 0%
-			),
+		background: linear-gradient(to right, transparent var(--track-fill), var(--track-color) 0%),
 			var(--link);
 	}
 
