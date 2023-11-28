@@ -3,12 +3,22 @@
 	import { PUBLIC_BEARER_TOKEN } from '$env/static/public';
 	import { Euro, Factory } from 'lucide-svelte';
 	import * as api from '$lib/api';
+	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 
 	export let selectedProducts: number[];
 
 	async function getPrices() {
-		const data = await api.getPrices(selectedProducts);
-		console.log('clientData', data);
+		await api.getPrices(selectedProducts).then((data) => {
+			if (data) {
+				addToast({
+					data: {
+						title: 'Prices updated!',
+						description: data,
+						color: 'bg-green-500'
+					}
+				});
+			}
+		});
 		/*	const apiUrl = 'http://192.168.1.10:4443/cenoteka/prods';
 	const myHeaders = new Headers({ Authorization: 'Bearer ' + PUBLIC_BEARER_TOKEN });
 		const formData = new FormData();
