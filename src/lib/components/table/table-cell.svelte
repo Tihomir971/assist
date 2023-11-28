@@ -8,7 +8,7 @@
 	export { className as class };
 </script>
 
-<td class={cn('overflow-x-auto truncate p-1 !align-middle', className)} {...$$restProps}>
+<td class={cn('h-8 overflow-x-auto truncate  px-1 py-0 !align-middle', className)} {...$$restProps}>
 	<slot />
 </td>
 

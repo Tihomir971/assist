@@ -55,7 +55,7 @@
 					<svelte:component this={icons['folder']} class="h-4 w-4" />
 				{/if}
 			{:else}
-				<svelte:component this={icons['child']} class="h-4 w-4 text-text-1" />
+				<svelte:component this={icons['child']} class="h-4 w-4 text-text-2" />
 			{/if}
 
 			{#if icon}
@@ -96,5 +96,7 @@
 		justify-content: start;
 		text-shadow: none;
 		font-weight: unset;
+		padding-block: 0px;
+		min-height: 32px;
 	}
 </style>
