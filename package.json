@@ -50,7 +50,7 @@
     "cheerio": "1.0.0-rc.12",
     "clsx": "^2.0.0",
     "linkedom": "^0.16.4",
-    "lucide-svelte": "^0.293.0",
+    "lucide-svelte": "^0.294.0",
     "open-props": "^1.6.13",
     "tailwind-merge": "^2.0.0"
   }

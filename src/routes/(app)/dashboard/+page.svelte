@@ -7,9 +7,9 @@
 	$: ({ session, profile } = data);
 </script>
 
-{#await session}
+{#if session}
 	<pre>{JSON.stringify(session, null, 2)}</pre>
-{/await}
+{/if}
 <pre>{JSON.stringify(profile, null, 2)}</pre>
 
 Dashboard
