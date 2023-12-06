@@ -24,9 +24,9 @@ export const load = (async ({ url, depends, locals: { supabase, getSession } }) 
 	const paramsOnStock = url.searchParams.get('onStock');
 	//	const paramsWarehouse = url.searchParams.get('wh');
 	//	if (!paramsOnStock || !paramsWarehouse) {
-	if (!paramsOnStock) {
+	if (paramsOnStock === null) {
 		const newUrl = new URL(url);
-		newUrl?.searchParams?.set('onStock', paramsOnStock ?? 'true');
+		newUrl?.searchParams?.set('onStock', 'true');
 		//		newUrl?.searchParams?.set('wh', paramsWarehouse ?? '5');
 		throw redirect(303, newUrl);
 	}
