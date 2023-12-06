@@ -26,7 +26,7 @@ export const load = (async ({ url, depends, locals: { supabase, getSession } }) 
 	//	if (!paramsOnStock || !paramsWarehouse) {
 	if (!paramsOnStock) {
 		const newUrl = new URL(url);
-		newUrl?.searchParams?.set('onStock', paramsOnStock ?? 'false');
+		newUrl?.searchParams?.set('onStock', paramsOnStock ?? 'true');
 		//		newUrl?.searchParams?.set('wh', paramsWarehouse ?? '5');
 		throw redirect(303, newUrl);
 	}
@@ -134,5 +134,5 @@ export const load = (async ({ url, depends, locals: { supabase, getSession } }) 
 		});
 	});
 
-	return { products };
+	return { products, onStock };
 }) satisfies PageServerLoad;

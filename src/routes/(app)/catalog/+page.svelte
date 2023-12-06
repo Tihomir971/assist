@@ -11,7 +11,7 @@
 	import * as Table from '$lib/components/table';
 
 	export let data: PageData;
-
+	const onStock = data.onStock;
 	import { createTable, createRender, Subscribe, Render } from 'svelte-headless-table';
 	import {
 		addColumnFilters,
@@ -217,8 +217,8 @@
 
 <div class="grid h-full w-full grid-rows-[auto_1fr] overflow-hidden">
 	<div class="flex h-full flex-col overflow-hidden px-2">
-		<div class="border-layer-3 bg-layer-2 h-12 w-full border-b">
-			<PageHeader selectedProducts={strSelectedDataIds} />
+		<div class="border-layer-3 bg-layer-2 h-14 w-full border-b">
+			<PageHeader selectedProducts={strSelectedDataIds} {onStock} />
 		</div>
 		<Table.Root {...$tableAttrs} class="h-full flex-grow overflow-y-auto">
 			<Table.Header>

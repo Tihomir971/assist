@@ -4,8 +4,11 @@
 	import { Euro, Factory } from 'lucide-svelte';
 	import * as api from '$lib/api';
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
+	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 
 	export let selectedProducts: number[];
+	export let onStock: boolean = true;
 
 	async function getPrices() {
 		await api.getPrices(selectedProducts).then((data) => {
@@ -69,11 +72,27 @@
 			}
 		}
 	}
+	const onStockChange = () => {
+		const newUrl = new URL($page.url);
+		onStock = !onStock;
+		newUrl?.searchParams?.set('onStock', onStock.toString());
+
+		if (browser) {
+			goto(`${newUrl.origin}/catalog${newUrl.search}`);
+		}
+		return;
+	};
 </script>
 
 <header class="flex h-full items-center justify-between px-4">
-	<button class="btn variant-soft" on:click={getPrices}>Get prices</button>
-	<button class="btn variant-soft" on:click={getERP}>Get ERP</button>
+	<div class="icon-button-group">
+		<button class="btn variant-soft" on:click={getPrices}>Get prices</button>
+		<button class="btn variant-soft" on:click={getERP}>Get ERP</button>
+	</div>
+	<label class="flex items-center gap-2">
+		<span>On Stock:</span>
+		<input type="checkbox" role="switch" checked={onStock} on:change={onStockChange} />
+	</label>
 	<div class="icon-button-group">
 		<button type="button" on:click={getPrices}>
 			<Euro />
