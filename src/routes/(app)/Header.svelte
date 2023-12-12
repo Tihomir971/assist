@@ -7,9 +7,9 @@
 	<div>
 		<input type="search" placeholder="Search..." />
 	</div>
-	<div class="flex h-full items-center justify-end space-x-2">
+	<a href="/account" class="flex h-full items-center justify-end space-x-2">
 		<Avatar src="" class="h-12"></Avatar>
-	</div>
+	</a>
 </header>
 
 <style lang="postcss">

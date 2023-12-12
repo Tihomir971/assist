@@ -273,7 +273,7 @@
 						<tbody>
 							<tr>
 								{#each pricelists as pricelist}
-									<td>{pricelist.c_bpartner?.name}</td>
+									<td>{pricelist.c_bpartner[0]?.name}</td>
 									<td>{pricelist.vendorproductno}</td>
 									<!-- <td>{pricelist.id}</td> -->
 									<!-- <td>{pricelist.c_bpartner_id}</td> -->
