@@ -13,7 +13,5 @@ export const load = (async ({ locals: { supabase, getSession } }) => {
 		//.select('id,parent_id,content: name')
 		.order('name');
 
-	console.log('data', data);
-
 	return { data };
 }) satisfies PageServerLoad;

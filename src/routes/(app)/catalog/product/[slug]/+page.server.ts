@@ -64,21 +64,24 @@ export const load = (async ({ params, locals: { supabase, getSession } }) => {
 		return data;
 	};
 	return {
-		product: getProduct(productId),
-		categories: getCategories(),
-		pricelists: getPricelist(productId),
+		product: await getProduct(productId),
+		categories: await getCategories(),
+		pricelists: await getPricelist(productId),
 		streamed: {
-			images: getImages(productId)
+			images: await getImages(productId)
 		}
 	};
 }) satisfies PageServerLoad;
 
 export const actions = {
 	setProduct: async ({ request, locals: { supabase, getSession } }) => {
+		const start = Date.now();
 		const session = await getSession();
+		console.log('S1', Date.now() - start);
 		if (!session) {
 			throw error(401, { message: 'Unauthorized' });
 		}
+		console.log('S2', Date.now() - start);
 		const product: Partial<Tables<'m_product'>> = {};
 		/* let temporary: FormDataEntryValue | null; */
 		const formData = await request.formData();
@@ -95,7 +98,7 @@ export const actions = {
 		product.isselfservice = getBoolean(formData, 'isselfservice');
 		product.discontinued = getBoolean(formData, 'discontinued');
 		product.isactive = getBoolean(formData, 'isactive');
-
+		console.log('S3', Date.now() - start);
 		if (productId) {
 			const { error: createPostError } = await supabase
 				.from('m_product')
@@ -106,6 +109,7 @@ export const actions = {
 				return fail(500, { supabaseErrorMessage: createPostError.message });
 			}
 		}
+		console.log('S4', Date.now() - start);
 		return { success: true };
 	}
 } satisfies Actions;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PageData } from './$types';
+	import type { PageData, SubmitFunction } from './$types';
 	import { applyAction, enhance } from '$app/forms';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { base } from '$app/paths';
@@ -24,6 +24,34 @@
 		previousPage = previousPage + '?' + from?.url.searchParams.toString() || previousPage;
 		localCopy = Object.assign({}, product);
 	});
+	const submit: SubmitFunction = ({ form, data, action, cancel }) => {
+		let start = Date.now();
+		return async ({ update, result }) => {
+			console.log('1', Date.now() - start);
+
+			if (result.type === 'success') {
+				console.log('2', Date.now() - start);
+				// do something...
+				// do something...
+				addToast({
+					data: {
+						title: 'Success',
+						description: 'Product updated!',
+						color: 'bg-green-500'
+					}
+				});
+				console.log('3', Date.now() - start);
+				// use the default behavior for this result type
+				await applyAction(result);
+				console.log('4', Date.now() - start);
+				history.back();
+				console.log('5', Date.now() - start);
+			}
+			//await update({ reset: false, invalidateAll: false });
+			//	let timeTaken = Date.now() - start;
+			//	console.log('Total time taken : ' + timeTaken + ' ms');
+		};
+	};
 </script>
 
 <div class="grid h-full grid-cols-[1fr_130ch_1fr]">
@@ -34,43 +62,20 @@
 		</hgroup>
 		<Tabs tabs={['Profile', 'Pricelist', 'Images']}>
 			<TabsContent key={'Profile'}>
-				<form
-					method="POST"
-					action="?/setProduct"
-					use:enhance={() => {
-						return async ({ update, result }) => {
-							let start = Date.now();
-							if (result.type === 'success') {
-								// do something...
-								// do something...
-								addToast({
-									data: {
-										title: 'Success',
-										description: 'Product updated!',
-										color: 'bg-green-500'
-									}
-								});
-								// use the default behavior for this result type
-								history.back();
-								await applyAction(result);
-							}
-							update({ reset: false });
-							let timeTaken = Date.now() - start;
-							console.log('Total time taken : ' + timeTaken + ' ms');
-						};
-					}}
-				>
+				<form method="POST" action="?/setProduct" use:enhance>
 					{#if product}
 						<div class="grid grid-cols-2 items-start gap-2 p-2">
 							<fieldset class="col-span-2">
 								<!-- 	<div class="col-span-6 w-full"> -->
 								<div>
-									<label for="name">Name</label><input
+									<label for="name">Name</label>
+									<input
 										id="name"
 										name="name"
 										type="text"
-										required
+										placeholder="Enter email..."
 										bind:value={product.name}
+										required
 									/>
 								</div>
 							</fieldset>
