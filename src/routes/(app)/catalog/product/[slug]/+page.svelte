@@ -24,13 +24,10 @@
 		previousPage = previousPage + '?' + from?.url.searchParams.toString() || previousPage;
 		localCopy = Object.assign({}, product);
 	});
-	const submit: SubmitFunction = ({ form, data, action, cancel }) => {
+	const submit: SubmitFunction = ({}) => {
 		let start = Date.now();
-		return async ({ update, result }) => {
-			console.log('1', Date.now() - start);
-
+		return async ({ result }) => {
 			if (result.type === 'success') {
-				console.log('2', Date.now() - start);
 				// do something...
 				// do something...
 				addToast({
@@ -40,12 +37,9 @@
 						color: 'bg-green-500'
 					}
 				});
-				console.log('3', Date.now() - start);
 				// use the default behavior for this result type
 				await applyAction(result);
-				console.log('4', Date.now() - start);
 				history.back();
-				console.log('5', Date.now() - start);
 			}
 			//await update({ reset: false, invalidateAll: false });
 			//	let timeTaken = Date.now() - start;
@@ -62,7 +56,7 @@
 		</hgroup>
 		<Tabs tabs={['Profile', 'Pricelist', 'Images']}>
 			<TabsContent key={'Profile'}>
-				<form method="POST" action="?/setProduct" use:enhance>
+				<form method="POST" action="?/setProduct" use:enhance={submit}>
 					{#if product}
 						<div class="grid grid-cols-2 items-start gap-2 p-2">
 							<fieldset class="col-span-2">
