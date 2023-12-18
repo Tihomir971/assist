@@ -29,7 +29,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	// Check if user data already exists in request.locals
 	if (!event.locals.user) {
-		console.log('User is empty');
 		/* event.locals.user={id:"1"}; */
 		/*event.locals.user = await getUserFromDatabase(request.headers.authorization); */
 	}

@@ -211,14 +211,15 @@
 		});
 
 	let { selectedDataIds } = pluginStates.select;
+	const { filterValue } = pluginStates.tableFilter;
 	$: $products, ($selectedDataIds = {});
 	$: strSelectedDataIds = Object.keys($selectedDataIds).map(Number);
 </script>
 
 <div class="grid h-full w-full grid-rows-[auto_1fr] overflow-hidden">
 	<div class="flex h-full flex-col overflow-hidden px-2">
-		<div class="border-layer-3 bg-layer-2 h-14 w-full border-b">
-			<PageHeader selectedProducts={strSelectedDataIds} {onStock} />
+		<div class="border-layer-3 bg-layer-2 flex h-14 w-full flex-col border-b">
+			<PageHeader selectedProducts={strSelectedDataIds} {onStock} bind:filterValue={$filterValue} />
 		</div>
 		<Table.Root {...$tableAttrs} class="h-full flex-grow overflow-y-auto">
 			<Table.Header>
