@@ -25,7 +25,6 @@
 		localCopy = Object.assign({}, product);
 	});
 	const submit: SubmitFunction = ({}) => {
-		let start = Date.now();
 		return async ({ result }) => {
 			if (result.type === 'success') {
 				// do something...
