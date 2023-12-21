@@ -9,7 +9,7 @@
 
 	export let selectedProducts: number[];
 	export let onStock: boolean = true;
-
+	export let filterValue: string;
 	async function getPrices() {
 		await api.getPrices(selectedProducts).then((data) => {
 			if (data) {
@@ -85,6 +85,7 @@
 </script>
 
 <header class="flex h-full items-center justify-between px-4">
+	<input type="text" bind:value={filterValue} placeholder="Search products..." />
 	<div class="icon-button-group">
 		<button class="btn variant-soft" on:click={getPrices}>Get prices</button>
 		<button class="btn variant-soft" on:click={getERP}>Get ERP</button>
