@@ -21,16 +21,16 @@ dependencies:
     specifier: ^1.6.16
     version: 1.6.16
   tailwind-merge:
-    specifier: ^2.1.0
-    version: 2.1.0
+    specifier: ^2.2.0
+    version: 2.2.0
 
 devDependencies:
   '@melt-ui/pp':
     specifier: ^0.2.0
-    version: 0.2.0(@melt-ui/svelte@0.66.1)(svelte@4.2.8)
+    version: 0.2.0(@melt-ui/svelte@0.66.2)(svelte@4.2.8)
   '@melt-ui/svelte':
-    specifier: ^0.66.1
-    version: 0.66.1(svelte@4.2.8)
+    specifier: ^0.66.2
+    version: 0.66.2(svelte@4.2.8)
   '@sveltejs/adapter-auto':
     specifier: ^2.1.1
     version: 2.1.1(@sveltejs/kit@1.30.3)
@@ -831,20 +831,20 @@ packages:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  /@melt-ui/pp@0.2.0(@melt-ui/svelte@0.66.1)(svelte@4.2.8):
+  /@melt-ui/pp@0.2.0(@melt-ui/svelte@0.66.2)(svelte@4.2.8):
     resolution: {integrity: sha512-wrJPtE/Jf+lj7CmLLKMkzsU3msLJNgHgqcdnafnl2er8UqfdqR0B4FMk7DRLx1ooUDI9wddiXuvXKS3jyqVQGA==}
     engines: {pnpm: '>=8.6.3'}
     peerDependencies:
       '@melt-ui/svelte': '>= 0.29.0'
       svelte: ^3.55.0 || ^4.0.0 || ^5.0.0-next.1
     dependencies:
-      '@melt-ui/svelte': 0.66.1(svelte@4.2.8)
+      '@melt-ui/svelte': 0.66.2(svelte@4.2.8)
       estree-walker: 3.0.3
       svelte: 4.2.8
     dev: true
 
-  /@melt-ui/svelte@0.66.1(svelte@4.2.8):
-    resolution: {integrity: sha512-S0PzK94xK0QdXxwonTmT8rJhzL+8u0RWHTNFmqIqu/eTSVoLz0ZYMRHbGTJ6IbR/cLAxCRFuBIyWkH83LvdaKw==}
+  /@melt-ui/svelte@0.66.2(svelte@4.2.8):
+    resolution: {integrity: sha512-ufIhgOYP11A/G3AvW+2Qw74UGudMBJQ2wK+sETpU51VkC63/5D2sctKgXzGl0OUEJBlPHku6LRSry9rIeAVkNw==}
     peerDependencies:
       svelte: '>=3 <5'
     dependencies:
@@ -1295,7 +1295,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.22.2
-      caniuse-lite: 1.0.30001570
+      caniuse-lite: 1.0.30001571
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -1342,7 +1342,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001570
+      caniuse-lite: 1.0.30001571
       electron-to-chromium: 1.4.615
       node-releases: 2.0.14
       update-browserslist-db: 1.0.13(browserslist@4.22.2)
@@ -1362,8 +1362,8 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
-  /caniuse-lite@1.0.30001570:
-    resolution: {integrity: sha512-+3e0ASu4sw1SWaoCtvPeyXp+5PsjigkSt8OXZbF9StH5pQWbxEjLAZE3n8Aup5udop1uRiKA7a4utUk/uoSpUw==}
+  /caniuse-lite@1.0.30001571:
+    resolution: {integrity: sha512-tYq/6MoXhdezDLFZuCO/TKboTzuQ/xR5cFdgXPfDtM7/kchBO3b4VWghE/OAi/DV7tTdhmLjZiZBZi1fA/GheQ==}
     dev: true
 
   /chalk@4.1.2:
@@ -3204,8 +3204,8 @@ packages:
     resolution: {integrity: sha512-Cat63mxsVJlzYvN51JmVXIgNoUokrIaT2zLclCXjRd8boZ0004U4KCs/sToJ75C6sdlByWxpYnb5Boif1VSFew==}
     dev: true
 
-  /tailwind-merge@2.1.0:
-    resolution: {integrity: sha512-l11VvI4nSwW7MtLSLYT4ldidDEUwQAMWuSHk7l4zcXZDgnCRa0V3OdCwFfM7DCzakVXMNRwAeje9maFFXT71dQ==}
+  /tailwind-merge@2.2.0:
+    resolution: {integrity: sha512-SqqhhaL0T06SW59+JVNfAqKdqLs0497esifRrZ7jOaefP3o64fdFNDMrAQWZFMxTLJPiHVjRLUywT8uFz1xNWQ==}
     dependencies:
       '@babel/runtime': 7.23.6
     dev: false

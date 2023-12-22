@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "@melt-ui/pp": "^0.2.0",
-    "@melt-ui/svelte": "^0.66.1",
+    "@melt-ui/svelte": "^0.66.2",
     "@sveltejs/adapter-auto": "^2.1.1",
     "@sveltejs/adapter-cloudflare": "^2.3.4",
     "@sveltejs/kit": "^1.30.3",
@@ -48,6 +48,6 @@
     "clsx": "^2.0.0",
     "lucide-svelte": "^0.299.0",
     "open-props": "^1.6.16",
-    "tailwind-merge": "^2.1.0"
+    "tailwind-merge": "^2.2.0"
   }
 }

@@ -43,10 +43,10 @@
 <div class="grid h-full grid-cols-[1fr_130ch_1fr]">
 	<div class="card col-[2] w-full overflow-auto pt-12">
 		<hgroup>
-			<h3>Edit product</h3>
-			<p>Some information about product</p>
+			<h3>Edit category</h3>
+			<p>Some information about category</p>
 		</hgroup>
-		<form method="POST" action="?/setProduct" use:enhance={submit}>
+		<form method="POST" action="?/setCategory" use:enhance={submit}>
 			{#if category}
 				<div class="grid grid-cols-2 items-start gap-2 p-2">
 					<fieldset class="col-span-2">
@@ -124,7 +124,7 @@
 						{#if categories}
 							<Combobox
 								labela="Category"
-								name="m_product_category_id"
+								name="parent_id"
 								options={categories}
 								bind:value={category.parent_id}
 							></Combobox>
@@ -140,64 +140,6 @@
 						</menu>
 					</footer>
 				</div>
-				{#if categories}
-					<!-- <div class="col-span-3">
-								<label for="m_product_category_id"><span>Product category</label>
-								<input
-									name="m_product_category_id"
-									hidden
-									bind:value={product.m_product_category_id}
-								/>
-								<input
-									type="search"
-									name="label"
-									bind:value={inputPopupLabel}
-									placeholder="Choose category..."
-									autocomplete="off"
-									use:popup={{
-										event: 'focus-click',
-										target: 'categories',
-										placement: 'bottom'
-									}}
-									on:change={() => {
-										if (!inputPopupLabel) {
-											inputPopupValue = null;
-										}
-									}}
-								/>
-								<div
-									data-popup="categories"
-									class="card w-full max-w-sm max-h-48 p-4 overflow-y-auto"
-									tabindex="-1"
-								>
-									<Autocomplete
-										bind:input={inputPopupLabel}
-										options={categories}
-										on:selection={(e) => {
-											inputPopupLabel = e.detail.label;
-											product.m_product_category_id = Number(e.detail.value);
-										}}
-									/>
-								</div>
-							</div> -->
-					<!-- <Combobox
-							name="m_product_category_id"
-							labelText="Product category"
-							placeholder="Choose category"
-							options={categories}
-							bind:value={product.m_product_category_id}
-						></Combobox> -->
-				{/if}
-				<!-- 	<input
-								id="m_product_category_id"
-								name="m_product_category_id"
-								type="text"
-								class="w-full"
-								bind:value={product.m_product_category_id}
-							/> -->
-
-				<!--  -->
-				<!-- on:click={() => (previousPage ? goto(previousPage) : history.back())}>Back</button -->
 			{/if}
 		</form>
 	</div>
