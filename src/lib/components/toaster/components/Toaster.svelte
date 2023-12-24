@@ -37,7 +37,7 @@
 				<div>
 					<h3 use:melt={$title(id)} class="flex items-center gap-2 font-semibold">
 						{data.title}
-						<span class="rounded-full square-1.5 {data.color}" />
+						<span class="square-1.5 rounded-full {data.color}" />
 					</h3>
 					<div use:melt={$description(id)}>
 						{data.description}
@@ -45,8 +45,8 @@
 				</div>
 				<button
 					use:melt={$close(id)}
-					class="absolute right-4 top-4 grid place-items-center rounded-full text-primary-500 square-6
-        hover:bg-accent/75"
+					class="square-6 absolute right-4 top-4 grid place-items-center rounded-full text-neutral-500
+        hover:bg-neutral-500/75"
 				>
 					<X class="square-4" />
 				</button>

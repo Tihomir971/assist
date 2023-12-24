@@ -15,23 +15,11 @@
 </script>
 
 {#if $open}
-	<div
-		use:melt={builder}
-		{...$$restProps}
-		class={cn(
-			'card z-10 flex max-h-[300px] min-w-[220px] flex-col bg-surface-3 p-1 lg:max-h-none ring-0 !important',
-			className
-		)}
-		transition:fly={{ duration: 150, y: -10 }}
-	>
-		<slot />
+	<div use:melt={builder} {...$$restProps} transition:fly={{ duration: 150, y: -10 }}>
+		<ul
+			class={cn('menu dropdown-content z-[1] w-52 rounded-btn bg-base-100 p-2 shadow', className)}
+		>
+			<slot />
+		</ul>
 	</div>
 {/if}
-
-<style lang="postcss">
-	/* .menu {
-		@apply z-10 flex max-h-[300px] min-w-[220px] flex-col shadow-lg;
-		@apply rounded-md bg-surface-900-50-token p-1 shadow-neutral-900/30 lg:max-h-none;
-		@apply ring-0 !important;
-	} */
-</style>

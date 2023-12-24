@@ -17,7 +17,7 @@
 	});
 </script>
 
-<div class={cn('grid aspect-square place-content-center rounded-full bg-surface-4', className)}>
+<div class={cn('grid aspect-square place-content-center rounded-full bg-neutral-400', className)}>
 	<img use:melt={$image} alt="Avatar" class="h-full w-full rounded-[inherit]" />
-	<span use:melt={$fallback} class="font-medium text-accent">RH</span>
+	<span use:melt={$fallback} class="font-medium">RH</span>
 </div>

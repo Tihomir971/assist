@@ -12,9 +12,9 @@
 
 {#if $open}
 	<div
-		class="z-10 flex max-h-[300px] flex-col
-    overflow-y-auto rounded-lg bg-surface-2 p-1
-    shadow focus:!ring-0 h-52"
+		class="z-10 flex h-52 max-h-[300px]
+    flex-col overflow-y-auto rounded-lg bg-neutral-200
+    p-1 shadow focus:!ring-0"
 		use:melt={$menu}
 		transition:fade={{ duration: 150 }}
 	>

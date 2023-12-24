@@ -47,8 +47,8 @@
 	};
 </script>
 
-<div class="grid h-full grid-cols-[1fr_130ch_1fr]">
-	<div class="card col-[2] w-full overflow-auto pt-12">
+<div class="mx-auto max-w-2xl">
+	<div class="card">
 		<hgroup>
 			<h3>Edit product</h3>
 			<p>Some information about product</p>
@@ -56,119 +56,157 @@
 		<Tabs tabs={['Profile', 'Pricelist', 'Images']}>
 			<TabsContent key={'Profile'}>
 				<form method="POST" action="?/setProduct" use:enhance={submit}>
-					{#if product}
-						<div class="grid grid-cols-2 items-start gap-2 p-2">
-							<fieldset class="col-span-2">
-								<!-- 	<div class="col-span-6 w-full"> -->
-								<div>
-									<label for="name">Name</label>
+					<div class="space-y-12">
+						{#if product}
+							<div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
+								<label class="form-control col-span-2 col-start-1">
+									<div class="label">
+										<span class="label-text">ID</span>
+									</div>
 									<input
-										id="name"
+										name="id"
+										type="text"
+										readonly
+										value={product.id}
+										class="input input-bordered w-full"
+									/>
+								</label>
+
+								<label class="form-control col-span-2">
+									<div class="label">
+										<span class="label-text">SKU</span>
+									</div>
+									<input
+										name="sku"
+										type="text"
+										readonly
+										bind:value={product.sku}
+										class="input input-bordered w-full"
+									/>
+								</label>
+								<label class="form-control col-span-2">
+									<div class="label">
+										<span class="label-text">Barcode</span>
+									</div>
+									<input
+										id="barcode"
+										name="barcode"
+										type="text"
+										bind:value={product.barcode}
+										class="input input-bordered w-full"
+									/>
+								</label>
+								<label class="form-control col-span-full">
+									<div class="label">
+										<span class="label-text">Name</span>
+									</div>
+									<input
 										name="name"
 										type="text"
-										placeholder="Enter email..."
+										placeholder="Enter name..."
 										bind:value={product.name}
 										required
+										class="input input-bordered w-full"
 									/>
-								</div>
-							</fieldset>
-							<fieldset>
-								<legend>Identification</legend>
-								<div>
-									<label for="id">ID</label>
-									<input id="id" name="id" type="text" readonly value={product.id} />
-								</div>
-								<div>
-									<label for="sku"> SKU</label>
-									<input id="sku" name="sku" type="text" readonly bind:value={product.sku} />
-								</div>
-								<div>
-									<label for="barcode">Barcode</label>
-									<input id="barcode" name="barcode" type="text" bind:value={product.barcode} />
-								</div>
-							</fieldset>
-							<fieldset>
-								<legend>Vendor</legend>
-								<div>
-									<label for="uom">UoM</label>
-									<input id="uom" name="c_uom_id" type="text" bind:value={product.c_uom_id} />
-								</div>
-								<div>
-									<label for="brand">Brand</label>
-									<input id="brand" name="brand" type="text" bind:value={product.brand} />
-								</div>
-								<div>
-									<label for="mpn">MPN</label>
+								</label>
+								<label class="form-control col-span-full">
+									<div class="label">
+										<span class="label-text">UoM</span>
+									</div>
 									<input
-										id="mpn"
+										name="c_uom_id"
+										type="text"
+										bind:value={product.c_uom_id}
+										class="input input-bordered w-full"
+									/>
+								</label>
+								<label class="form-control col-span-3">
+									<div class="label">
+										<span class="label-text">Brand</span>
+									</div>
+									<input
+										name="brand"
+										type="text"
+										bind:value={product.brand}
+										class="input input-bordered w-full"
+									/>
+								</label>
+								<label class="form-control col-span-3">
+									<div class="label">
+										<span class="label-text">MPN</span>
+									</div>
+									<input
 										name="mpn"
 										type="text"
 										bind:value={product.mpn}
 										autocomplete="off"
+										class="input input-bordered w-full"
 									/>
-								</div>
-							</fieldset>
-							<fieldset>
-								<legend>Date/Time</legend>
-								<div>
-									<label for="created">Created</label>
+								</label>
+								<label class="form-control col-span-3 col-start-1">
+									<div class="label">
+										<span class="label-text">Created</span>
+									</div>
 									<input
-										id="created"
 										name="created"
 										type="datetime"
 										readonly
 										value={DateTimeFormat(product.created)}
+										class="input input-bordered w-full"
 									/>
-								</div>
-								<div>
-									<label for="updated">Updated</label>
+								</label>
+								<label class="form-control col-span-3">
+									<div class="label">
+										<span class="label-text">Updated</span>
+									</div>
 									<input
-										id="updated"
 										name="updated"
 										type="datetime"
 										readonly
 										value={DateTimeFormat(product.updated)}
+										class="input input-bordered w-full"
 									/>
-								</div>
-							</fieldset>
-							<fieldset>
-								<legend>Status</legend>
-								<div>
-									<label for="isselfservice">Is Self-service?</label>
+								</label>
+								<label class="col-span-2 flex cursor-pointer items-center gap-x-3">
 									<input
-										id="isselfservice"
 										name="isselfservice"
 										type="checkbox"
 										checked={product.isselfservice}
+										class="toggle toggle-primary"
 									/>
-								</div>
-								<div>
-									<label for="discontinued">Discontinued?</label><input
+									<span class="label-text">Is Self-service?</span>
+								</label>
+								<label class="col-span-2 flex cursor-pointer items-center gap-x-3">
+									<input
 										type="checkbox"
-										id="discontinued"
 										name="discontinued"
 										checked={product.discontinued}
+										class="toggle toggle-primary"
 									/>
-								</div>
-								<div>
-									<label for="isactive">Is Active?</label><input
+									<span class="label-text">Discontinued?</span>
+								</label>
+								<label class="col-span-2 flex cursor-pointer items-center gap-x-3">
+									<input
 										type="checkbox"
-										id="isactive"
 										name="isactive"
 										checked={product.isactive}
+										class="toggle toggle-primary"
 									/>
-								</div>
-							</fieldset>
-							<fieldset>
-								<div>
-									<label for="condition">Condition</label><input
+									<span class="label-text">Is Active?</span>
+								</label>
+								<label class="form-control col-span-3">
+									<div class="label">
+										<span class="label-text">Condition</span>
+									</div>
+									<input
 										id="condition"
 										name="condition"
 										type="text"
-										class="input"
 										bind:value={product.condition}
+										autocomplete="off"
+										class="input input-bordered w-full"
 									/>
-								</div>
+								</label>
 								<!-- name="m_product_category_id"
 							labelText="Product category"
 							placeholder="Choose category"
@@ -182,19 +220,22 @@
 										bind:value={product.m_product_category_id}
 									></Combobox>
 								{/if}
-							</fieldset>
-							<footer class="col-start-2 col-end-3 flex justify-between">
-								<menu>
-									<button type="button" on:click={() => history.back()}>Back</button>
-								</menu>
-								<menu>
-									<button type="reset">Cancel</button>
-									<button type="submit" disabled={!modified}>Save</button>
-								</menu>
-							</footer>
-						</div>
-						{#if categories}
-							<!-- <div class="col-span-3">
+
+								<footer class="col-span-full flex items-center justify-end gap-x-6">
+									<button type="button" on:click={() => history.back()} class="btn btn-outline"
+										>Back</button
+									>
+									<button
+										type="reset"
+										disabled={!modified}
+										class="btn btn-outline btn-secondary"
+										on:click={() => (product = localCopy)}>Reset</button
+									>
+									<button type="submit" disabled={!modified} class="btn btn-primary">Save</button>
+								</footer>
+							</div>
+							{#if categories}
+								<!-- <div class="col-span-3">
 										<label for="m_product_category_id"><span>Product category</label>
 										<input
 											name="m_product_category_id"
@@ -233,15 +274,15 @@
 											/>
 										</div>
 									</div> -->
-							<!-- <Combobox
+								<!-- <Combobox
 									name="m_product_category_id"
 									labelText="Product category"
 									placeholder="Choose category"
 									options={categories}
 									bind:value={product.m_product_category_id}
 								></Combobox> -->
-						{/if}
-						<!-- 	<input
+							{/if}
+							<!-- 	<input
 										id="m_product_category_id"
 										name="m_product_category_id"
 										type="text"
@@ -249,9 +290,10 @@
 										bind:value={product.m_product_category_id}
 									/> -->
 
-						<!--  -->
-						<!-- on:click={() => (previousPage ? goto(previousPage) : history.back())}>Back</button -->
-					{/if}
+							<!--  -->
+							<!-- on:click={() => (previousPage ? goto(previousPage) : history.back())}>Back</button -->
+						{/if}
+					</div>
 				</form>
 			</TabsContent>
 			<TabsContent key={'Pricelist'}>
@@ -295,12 +337,3 @@
 		</Tabs>
 	</div>
 </div>
-
-<style lang="postcss">
-	fieldset {
-		max-inline-size: unset;
-	}
-	/* 	label {
-		gap: unset;
-	} */
-</style>

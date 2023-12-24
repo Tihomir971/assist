@@ -45,7 +45,7 @@
 	}
 </script>
 
-<div class="app-layout-area--sub-nav flex h-[calc(100vh-4rem)] overflow-hidden">
+<div class="flex h-[calc(100vh-4rem)] overflow-hidden">
 	<div class="h-full w-80">
 		<TreeView treeItems={myTreeViewNodes} on:select={(e) => rerunLoadFunction(e.detail)}></TreeView>
 	</div>
@@ -53,9 +53,3 @@
 		<slot />
 	</div>
 </div>
-
-<style lang="postcss">
-	.app-layout-area--sub-nav {
-		grid-area: sub-nav;
-	}
-</style>

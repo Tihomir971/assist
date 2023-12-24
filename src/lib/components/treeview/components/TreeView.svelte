@@ -24,16 +24,20 @@
 	}
 </script>
 
-<div class="flex h-full flex-col bg-surface-2 text-text-1">
-	<div class="flex gap-2 p-2 *:size-8 *:p-0">
-		<button type="button" on:click={editCategory}><FolderEdit strokeWidth={1.5} /></button>
-		<button type="button"><FolderPlus strokeWidth={1.5} /></button>
-		<button type="button"><FolderMinus strokeWidth={1.5} /></button>
-		<button type="button" on:click={() => ($expanded = [])}><FolderRoot strokeWidth={1.5} /></button
+<div class="h-full">
+	<div class="join">
+		<button class="btn btn-square join-item" type="button" on:click={editCategory}
+			><FolderEdit strokeWidth={1.5} /></button
+		>
+		<button class="btn btn-square join-item" type="button"><FolderPlus strokeWidth={1.5} /></button>
+		<button class="btn btn-square join-item" type="button"><FolderMinus strokeWidth={1.5} /></button
+		>
+		<button class="btn btn-square join-item" type="button" on:click={() => ($expanded = [])}
+			><FolderRoot strokeWidth={1.5} /></button
 		>
 	</div>
-
-	<ul class="w-full flex-grow !list-none overflow-auto pb-4 pt-2" {...$tree}>
+	<div class="h-4"></div>
+	<ul class="menu px-4 py-0" {...$tree}>
 		<Tree {treeItems} on:select />
 	</ul>
 </div>

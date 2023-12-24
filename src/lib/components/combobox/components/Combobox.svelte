@@ -44,55 +44,56 @@
 					label?.toLowerCase().includes(normalizedInput) ||
 					description?.toLowerCase().includes(normalizedInput)
 				);
-		  })
+			})
 		: options;
 </script>
 
 <Label>{labela}</Label>
-<!-- <Input /> -->
-<!-- <div class="relative">
-		<input type="text" use:melt={$input} {...$$restProps} placeholder="Choose..." list="searches" /> -->
-<!-- <div class="absolute right-2 top-1/2 z-10 -translate-y-1/2">
-			{#if $open}
-				<ChevronUp />
-			{:else}
-				<ChevronDown />
-			{/if}
-		</div> -->
-<!-- 	</div> -->
+
 <input hidden {name} type="text" value={$selected?.value} />
 
 {#if $open}
 	<ul
 		id="select"
 		use:melt={$menu}
-		class="z-10 flex max-h-[300px] flex-col overflow-hidden rounded-md"
+		class="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
 	>
 		<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-		<div class="flex max-h-full flex-col gap-0 overflow-y-auto bg-surface-2 px-2 py-2" tabindex="0">
-			{#each filteredOptions as singleOption, index (index)}
-				<!-- use:melt={$option(toOption(singleoption))} -->
-				<li
-					use:melt={$option(toOption(singleOption))}
-					class="flex items-center py-2 pl-4 data-[highlighted]:bg-accent/30 data-[disabled]:opacity-40"
-				>
-					<!-- class="relative cursor-pointer scroll-my-2 rounded-md py-2 pl-4 pr-4
-data-[highlighted]:text-text-1 data-[disabled]:opacity-50 data-[highlighted]:bg-accent" -->
-					{#if $isSelected(singleOption)}
-						<div class="z-10 -mx-2 text-accent">
-							<Check size="20" />
-						</div>
-					{/if}
-					<div class="pl-4">
-						<span>{singleOption.label}</span>
-						{#if singleOption.description}
-							<span class="block text-sm text-text-2">{singleOption.description}</span>
-						{/if}
-					</div>
-				</li>
-			{:else}
-				<li class="relative cursor-pointer rounded-md py-1 pl-8 pr-4">No results found</li>
-			{/each}
-		</div>
+		<!-- 		<div
+			class="flex max-h-full flex-col gap-0 overflow-y-auto bg-neutral-200 px-2 py-2"
+			tabindex="0"
+		> -->
+		{#each filteredOptions as singleOption, index (index)}
+			<li
+				use:melt={$option(toOption(singleOption))}
+				class="data-[disabled]:select-disabled data-[highlighted]:bg-neutral-500/30"
+			>
+				{#if $isSelected(singleOption)}
+					<!-- <div class="z-10 -mx-2"> -->
+					<Check size="20" />
+					<!-- </div> -->
+				{/if}
+				<!-- <div class="pl-4"> -->
+				<span>{singleOption.label}</span>
+				{#if singleOption.description}
+					<span class="block text-sm">{singleOption.description}</span>
+				{/if}
+				<!-- </div> -->
+			</li>
+		{:else}
+			<li class="relative cursor-pointer rounded-md py-1 pl-8 pr-4">No results found</li>
+		{/each}
+		<!-- </div> -->
 	</ul>
 {/if}
+
+<style lang="postcss">
+	.select-disabled {
+		cursor: not-allowed;
+		--tw-border-opacity: 1;
+		border-color: var(--fallback-b2, oklch(var(--b2) / var(--tw-border-opacity)));
+		--tw-bg-opacity: 1;
+		background-color: var(--fallback-b2, oklch(var(--b2) / var(--tw-bg-opacity)));
+		--tw-text-opacity: 0.2;
+	}
+</style>

@@ -11,7 +11,7 @@
 </script>
 
 <div
-	class={cn('flex justify-start overflow-x-auto border-b border-surface-4', className)}
+	class={cn('flex justify-start overflow-x-auto border-b border-neutral-400', className)}
 	use:melt={$list}
 >
 	{#each $tabs as tab}

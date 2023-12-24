@@ -85,16 +85,21 @@
 </script>
 
 <header class="flex h-full items-center justify-between px-4">
-	<input type="text" bind:value={filterValue} placeholder="Search products..." />
-	<div class="icon-button-group">
-		<button class="btn variant-soft" on:click={getPrices}>Get prices</button>
-		<button class="btn variant-soft" on:click={getERP}>Get ERP</button>
+	<input
+		type="text"
+		bind:value={filterValue}
+		placeholder="Search products..."
+		class="input input-bordered input-primary w-full max-w-xs"
+	/>
+	<div>
+		<button class="btn" on:click={getPrices}>Get prices</button>
+		<button class="btn" on:click={getERP}>Get ERP</button>
 	</div>
 	<label class="flex items-center gap-2">
 		<span>On Stock:</span>
 		<input type="checkbox" role="switch" checked={onStock} on:change={onStockChange} />
 	</label>
-	<div class="icon-button-group">
+	<div>
 		<button type="button" on:click={getPrices}>
 			<Euro />
 		</button>
@@ -103,80 +108,3 @@
 		</button>
 	</div>
 </header>
-
-<!-- <script lang="ts">
-//	import { createSelect, melt } from '@melt-ui/svelte';
-//	import type { CreateSelectProps, SelectOption } from '@melt-ui/svelte';
-
-	import { fade } from 'svelte/transition';
-	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
-	import { Select, Switch } from '$lib/components/melt-ui';
-	import { PUBLIC_BEARER_TOKEN } from '$env/static/public';
-	export let selectedProducts: number[];
-	let checked = true;
-	const options: SelectOption<number>[] = [
-		{ value: 5, label: 'Retail T' },
-		{ value: 6, label: 'Service T' },
-		{ value: 2, label: 'Wholesale T' }
-	];
-	const onSelectedChange: CreateSelectProps['onSelectedChange'] = ({ next }) => {
-		const stringValue: string = (next?.value as number)?.toString();
-		if (next !== undefined) {
-			const newUrl = new URL($page.url);
-			newUrl?.searchParams?.set('wh', stringValue);
-			goto(newUrl);
-		}
-		return next;
-	};
-	/* 	const onSelected = ({ next }:{next: SelectOption<number>}) => { */
-	const onSelected = ({ detail }: CustomEvent) => {
-		const next = detail.next;
-		const stringValue: string = (next?.value as number)?.toString();
-		if (next !== undefined) {
-			const newUrl = new URL($page.url);
-			newUrl?.searchParams?.set('wh', stringValue);
-			goto(newUrl);
-		}
-		return;
-	};
-	const {
-		elements: { trigger, menu, option, label },
-		states: { selectedLabel, open, selected },
-		helpers: { isSelected }
-	} = createSelect({
-		defaultSelected: options[0],
-		forceVisible: true,
-		positioning: {
-			placement: 'bottom',
-			fitViewport: true,
-			sameWidth: true
-		},
-		onSelectedChange
-	});
-	const switchOnStock = () => {
-		checked = !checked;
-		const newUrl = new URL($page.url);
-		newUrl?.searchParams?.set('onStock', checked ? 'true' : 'false');
-		goto(newUrl);
-	};
-
-
-	
-</script>
-
-<header class="flex h-full items-center justify-between px-4">
-	<Select {options} defaultSelected={options[0]} on:onSelectedChange={onSelected}></Select>
-	<button class="btn" on:click={getPrices}>Get prices</button>
-	<button class="btn" on:click={getERP}>Get ERP</button>
-	<Switch label="Only on Stock?" bind:checked on:m-click={switchOnStock}></Switch>
-</header>
- -->
-
-<style lang="postcss">
-	.icon-button-group {
-		display: flex;
-		justify-content: space-around;
-		gap: 0.5rem;
-	}
-</style>

@@ -5,9 +5,11 @@
 	export let isSomeSubRowsSelected: Readable<boolean>;
 </script>
 
-<input
-	class="checkbox"
-	type="checkbox"
-	bind:checked={$isSelected}
-	indeterminate={$isSomeSubRowsSelected && !$isSelected}
-/>
+<label>
+	<input
+		class="checkbox checkbox-sm"
+		type="checkbox"
+		bind:checked={$isSelected}
+		indeterminate={$isSomeSubRowsSelected && !$isSelected}
+	/>
+</label>

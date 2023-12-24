@@ -36,9 +36,8 @@
 </script>
 
 <button on:click={getPrice}>Test</button>
-<div class="h-24 w-24 bg-slate-400 shadow-test"></div>
+<div class="shadow-test h-24 w-24 bg-slate-400"></div>
 <DataTable {...$tableAttrs}>
-	<!-- <table {...$tableAttrs}> -->
 	<thead>
 		{#each $headerRows as headerRow (headerRow.id)}
 			<Subscribe rowAttrs={headerRow.attrs()} let:rowAttrs>
@@ -69,5 +68,4 @@
 			</Subscribe>
 		{/each}
 	</tbody>
-	<!-- </table> -->
 </DataTable>

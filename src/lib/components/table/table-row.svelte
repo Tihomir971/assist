@@ -11,7 +11,7 @@
 </script>
 
 <tr
-	class={cn('transition-colors  hover:!bg-surface-2 data-[state=selected]:bg-white', className)}
+	class={cn('hover transition-colors data-[state=selected]:bg-base-200', className)}
 	{...$$restProps}
 >
 	<slot />

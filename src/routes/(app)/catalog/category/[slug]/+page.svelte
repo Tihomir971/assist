@@ -50,7 +50,6 @@
 			{#if category}
 				<div class="grid grid-cols-2 items-start gap-2 p-2">
 					<fieldset class="col-span-2">
-						<!-- 	<div class="col-span-6 w-full"> -->
 						<div>
 							<label for="name">Name</label>
 							<input

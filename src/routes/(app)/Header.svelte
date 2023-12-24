@@ -2,14 +2,19 @@
 	import { Avatar } from '$lib/components/avatar';
 </script>
 
-<header class="flex items-center justify-between border-b border-surface-3 px-4">
+<header class="flex items-center justify-between border-b border-neutral-300 px-4">
 	<div><strong>KALISI</strong> Assistant</div>
-	<div>
-		<input type="search" placeholder="Search..." />
+	<label class="form-control w-full max-w-xs">
+		<input type="search" placeholder="Search..." class="input input-bordered w-full max-w-xs" />
+	</label>
+	<div class="avatar">
+		<div class="w-8 rounded">
+			<img
+				alt="Avatar"
+				src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+			/>
+		</div>
 	</div>
-	<a href="/account" class="flex h-full items-center justify-end space-x-2">
-		<Avatar src="" class="h-12"></Avatar>
-	</a>
 </header>
 
 <style lang="postcss">
@@ -19,6 +24,5 @@
 		max-width: 100%;
 		max-height: 100%;
 		height: 100%;
-		background-color: var(--well-2);
 	}
 </style>

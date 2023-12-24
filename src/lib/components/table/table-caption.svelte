@@ -8,6 +8,7 @@
 	export { className as class };
 </script>
 
-<caption class={cn('mt-4 text-sm', className)} {...$$restProps}>
+<caption class={cn('', className)} {...$$restProps}>
+	<!-- <caption class={cn('mt-4 text-sm', className)} {...$$restProps}> -->
 	<slot />
 </caption>

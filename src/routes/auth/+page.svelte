@@ -10,65 +10,53 @@
 	let loading: true;
 </script>
 
-<!-- <div class="flex h-full items-center justify-center"> -->
-<div class="grid place-content-center p-[--size-5] gap-[--size-7] h-screen content-center">
-	<!-- <div class="card w-96"> -->
-	<form action="?/signin" method="post" use:enhance>
-		<!-- <section class="p-4 space-y-4"> -->
-		<fieldset>
-			<!-- <header class="card-header space-y-4">
-				<h3 class="h2">Log in</h3>
-			</header> -->
-			<!-- 					{#if form?.signinWithPassword?.error}
-						<Alert.Root variant="destructive">
-							<RadixIconsExclamationTriangle></RadixIconsExclamationTriangle>
-							<Alert.Title>Error</Alert.Title>
-							<Alert.Description>
-								{form.signinWithPassword.error}
-							</Alert.Description>
-						</Alert.Root>
-					{/if} -->
-			<div>
-				<label for="email">Email</label>
-				<input
-					id="email"
-					name="email"
-					type="email"
-					placeholder="Enter email..."
-					autocomplete="email"
-					value={form?.values?.email ?? ''}
-					required
-				/>
-			</div>
-			<div>
-				<label for="password"> Password </label>
-				<input
-					id="password"
-					name="password"
-					type="password"
-					placeholder="Enter password"
-					autocomplete="off"
-					required
-				/>
-			</div>
-
-			<!-- <button class="btn variant-filled-primary" type="submit" disabled={false}>Log in</button> -->
-			<footer>
-				<menu>
-					<button type="reset">Reset</button>
-				</menu>
-				<menu>
-					<button type="button">Cancel</button>
-					<button type="submit" disabled={false}>Log in</button>
-				</menu>
-			</footer>
-			<div>
-				<a class="anchor" href="/"> Forgot your Password? </a>
-			</div>
-			<legend>Log in</legend>
-		</fieldset>
-		<!-- </section> -->
-	</form>
-	<footer class="card-footer"></footer>
-	<!-- </div> -->
+<div class="hero min-h-screen bg-base-200">
+	<div class="hero-content max-w-[800px] flex-col lg:flex-row-reverse">
+		<div class="text-center lg:text-left">
+			<h1 class="text-5xl font-bold">Login now!</h1>
+			<p class="py-6">
+				Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
+				quasi. In deleniti eaque aut repudiandae et a id nisi.
+			</p>
+		</div>
+		<div class="card w-full max-w-sm shrink-0 bg-base-100 shadow-2xl">
+			<form class="card-body" action="?/signin" method="post" use:enhance>
+				<div class="form-control">
+					<label class="label">
+						<span class="label-text">Email</span>
+						<input
+							type="email"
+							name="email"
+							placeholder="email"
+							class="input input-bordered"
+							required
+							autocomplete="email"
+							value={form?.values?.email ?? ''}
+						/>
+					</label>
+				</div>
+				<div class="form-control">
+					<label class="label">
+						<span class="label-text">Password</span>
+						<input
+							type="password"
+							name="password"
+							placeholder="password"
+							class="input input-bordered"
+							required
+							autocomplete="off"
+						/>
+					</label>
+				</div>
+				<div class="form-control">
+					<div class="label">
+						<a href="/" class="link-hover link label-text-alt">Forgot password?</a>
+					</div>
+				</div>
+				<div class="form-control mt-6">
+					<button type="submit" class="btn btn-primary">Login</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>

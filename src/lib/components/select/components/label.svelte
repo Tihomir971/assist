@@ -8,4 +8,4 @@
 </script>
 
 <!-- svelte-ignore a11y-label-has-associated-control -->
-<label class="block text-magnum-900" use:melt={$label}><slot /></label>
+<label class="block text-neutral-900" use:melt={$label}><slot /></label>

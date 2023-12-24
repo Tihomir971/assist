@@ -34,12 +34,11 @@
 	{@const itemId = id.toString()}
 	{@const hasChildren = !!children?.length}
 
-	<li class={level !== 1 ? 'pl-4' : ''}>
-		<!-- class="flex items-center bg-transparent gap-1 p-1 w-full hover:bg-accent/20 border-none justify-start" -->
+	<li>
 		<button
 			type="button"
-			class="bg-transparent hover:!bg-surface-3"
-			class:!bg-accent={$isSelected(itemId)}
+			class="title active flex w-full items-center gap-1 px-1.5"
+			class:active={$isSelected(itemId)}
 			class:m4={$isSelected(itemId)}
 			use:melt={$item({
 				id: itemId,
@@ -50,12 +49,12 @@
 			<!-- Add icon. -->
 			{#if hasChildren}
 				{#if $isExpanded(itemId)}
-					<svelte:component this={icons['folderOpen']} class="h-4 w-4" />
+					<svelte:component this={icons['folderOpen']} class="size-5 text-base-content" />
 				{:else}
-					<svelte:component this={icons['folder']} class="h-4 w-4" />
+					<svelte:component this={icons['folder']} class="size-5 text-base-content" />
 				{/if}
 			{:else}
-				<svelte:component this={icons['child']} class="h-4 w-4 text-text-2" />
+				<svelte:component this={icons['child']} class="size-5" />
 			{/if}
 
 			{#if icon}
@@ -85,18 +84,3 @@
 		{/if}
 	</li>
 {/each}
-
-<style lang="postcss">
-	button {
-		/* background-color: none; */
-		border: none;
-		box-shadow: none;
-		padding-inline: 0px;
-		width: 100%;
-		justify-content: start;
-		text-shadow: none;
-		font-weight: unset;
-		padding-block: 0px;
-		min-height: 32px;
-	}
-</style>

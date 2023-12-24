@@ -9,7 +9,16 @@
 </script>
 
 <!-- svelte-ignore a11y-label-has-associated-control -->
-<div>
-	<label use:melt={$label}><slot /></label>
-	<input type="text" use:melt={$input} {...$$restProps} placeholder="Choose..." list="searches" />
-</div>
+<label use:melt={$label} class="form-control col-span-3">
+	<div class="label">
+		<span class="label-text"><slot /></span>
+	</div>
+	<input
+		type="text"
+		use:melt={$input}
+		{...$$restProps}
+		placeholder="Choose..."
+		list="searches"
+		class="select select-bordered w-full"
+	/>
+</label>

@@ -221,7 +221,8 @@
 		<div class="border-layer-3 bg-layer-2 flex h-14 w-full flex-col border-b">
 			<PageHeader selectedProducts={strSelectedDataIds} {onStock} bind:filterValue={$filterValue} />
 		</div>
-		<Table.Root {...$tableAttrs} class="h-full flex-grow overflow-y-auto">
+		<Table.Root {...$tableAttrs}>
+			<!-- <Table.Root {...$tableAttrs} class="h-full flex-grow overflow-y-auto"> -->
 			<Table.Header>
 				{#each $headerRows as headerRow}
 					<Subscribe rowAttrs={headerRow.attrs()}>
@@ -265,41 +266,3 @@
 <div class="text-muted-foreground flex-1 text-sm">
 	{$selectedDataIds}
 </div>
-<!-- <Drawer
-	placement="right"
-	transitionType="fly"
-	{transitionParams}
-	bind:hidden={hidden1}
-	id="sidebar1"
->
-	<div class="flex items-center">
-		<h5
-			id="drawer-label"
-			class="inline-flex items-center mb-6 text-base font-semibold text-gray-500 uppercase dark:text-gray-400"
-		>
-			Contact us
-		</h5>
-		  <CloseButton on:click={() => (hidden3 = true)} class="mb-4 dark:text-white" />
-	</div>
-	<form action="#" class="mb-6">
-		<div class="relative">
-			<input id="email" name="email" required placeholder="name@company.com" />
-			<label for="email" class="block mb-2">Your email</label>
-		</div>
-		<div class="relative">
-			<input id="subject" name="subject" required placeholder="Let us know how we can help you" />
-			<label for="subject" class="block mb-2">Subject</label>
-		</div>
-		<div class="relative">
-			<textarea id="message" placeholder="Your message..." rows="4" name="message" />
-			<label for="message" class="mb-2">Your message</label>
-		</div>
-		<button type="submit" class="w-full">Send message</button>
-	</form>
-	<p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
-		<a href="/" class="text-primary-600 hover:underline dark:text-primary-500">info@company.com</a>
-	</p>
-	<p class="text-sm text-gray-500 dark:text-gray-400">
-		<a href="/" class="text-primary-600 hover:underline dark:text-primary-500">212-456-7890</a>
-	</p>
-</Drawer> -->
