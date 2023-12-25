@@ -84,27 +84,35 @@
 	};
 </script>
 
-<header class="flex h-full items-center justify-between px-4">
-	<input
-		type="text"
-		bind:value={filterValue}
-		placeholder="Search products..."
-		class="input input-bordered input-primary w-full max-w-xs"
-	/>
-	<div>
-		<button class="btn" on:click={getPrices}>Get prices</button>
-		<button class="btn" on:click={getERP}>Get ERP</button>
+<div class="navbar bg-base-100">
+	<div class="flex-1">
+		<div class="form-control">
+			<input
+				type="text"
+				bind:value={filterValue}
+				placeholder="Search products..."
+				class="input input-bordered"
+			/>
+		</div>
 	</div>
-	<label class="flex items-center gap-2">
-		<span>On Stock:</span>
-		<input type="checkbox" role="switch" checked={onStock} on:change={onStockChange} />
-	</label>
-	<div>
-		<button type="button" on:click={getPrices}>
-			<Euro />
+	<div class="flex-none gap-2">
+		<label class="flex items-center gap-2">
+			<span>On Stock:</span>
+			<input
+				type="checkbox"
+				role="switch"
+				checked={onStock}
+				on:change={onStockChange}
+				class="toggle toggle-primary"
+			/>
+		</label>
+		<button on:click={getPrices} class="btn btn-neutral">
+			<Euro size="24" />
+			Get prices
 		</button>
-		<button type="button" on:click={getERP}>
-			<Factory />
+		<button on:click={getERP} class="btn btn-neutral">
+			<Factory class="size-5" />
+			Get ERP
 		</button>
 	</div>
-</header>
+</div>

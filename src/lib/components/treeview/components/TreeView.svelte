@@ -24,18 +24,34 @@
 	}
 </script>
 
-<div class="h-full">
-	<div class="join">
-		<button class="btn btn-square join-item" type="button" on:click={editCategory}
-			><FolderEdit strokeWidth={1.5} /></button
-		>
-		<button class="btn btn-square join-item" type="button"><FolderPlus strokeWidth={1.5} /></button>
-		<button class="btn btn-square join-item" type="button"><FolderMinus strokeWidth={1.5} /></button
-		>
-		<button class="btn btn-square join-item" type="button" on:click={() => ($expanded = [])}
-			><FolderRoot strokeWidth={1.5} /></button
-		>
-	</div>
+<div class="h-full overflow-y-auto">
+	<ul class="menu menu-horizontal rounded-box bg-base-200">
+		<li>
+			<button class="tooltip tooltip-bottom" data-tip="Edit" type="button" on:click={editCategory}
+				><FolderEdit strokeWidth={1.5} /></button
+			>
+		</li>
+		<li>
+			<button class="tooltip tooltip-bottom" data-tip="Add" type="button">
+				<FolderPlus strokeWidth={1.5} />
+			</button>
+		</li>
+		<li>
+			<button class="tooltip tooltip-bottom" data-tip="Delete" type="button">
+				<FolderMinus strokeWidth={1.5} />
+			</button>
+		</li>
+		<li>
+			<button
+				class="tooltip tooltip-bottom"
+				data-tip="Collapse"
+				type="button"
+				on:click={() => ($expanded = [])}
+			>
+				<FolderRoot strokeWidth={1.5} />
+			</button>
+		</li>
+	</ul>
 	<div class="h-4"></div>
 	<ul class="menu px-4 py-0" {...$tree}>
 		<Tree {treeItems} on:select />

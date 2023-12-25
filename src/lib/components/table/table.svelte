@@ -13,7 +13,7 @@
 <div class="overflow-x-auto">
 	<!-- <div role="region" aria-labelledby="caption" tabindex="-1"> -->
 	<!-- <table class={cn('h-full w-full border-collapse overflow-auto', className)} {...$$restProps}> -->
-	<table class="table table-pin-rows" {...$$restProps}>
+	<table class="table table-pin-rows table-sm text-base" {...$$restProps}>
 		<slot />
 	</table>
 </div>

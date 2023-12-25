@@ -21,7 +21,7 @@
 				<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 				<ul
 					tabindex="0"
-					class="menu dropdown-content menu-sm z-[1] mt-3 w-52 rounded-btn bg-base-100 p-2 shadow"
+					class="menu dropdown-content menu-sm z-50 mt-3 w-52 rounded-btn bg-base-100 p-2 shadow"
 				>
 					<li>
 						<button class="justify-between">

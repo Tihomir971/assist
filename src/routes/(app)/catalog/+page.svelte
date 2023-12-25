@@ -92,20 +92,6 @@
 			cell: ({ value }) => `${value ?? ''}`
 		}),
 		table.column({ header: 'Name', accessor: 'name' }),
-
-		//Extracted Qty фро њарехоусе
-		/* 		table.column({
-			header: createRender(TextRight, { text: 'Qty.' }),
-			accessor: 'qtyonhand',
-			cell: ({ value }) =>
-				createRender(NumberFormat, {
-					value: value,
-					locales: 'sr-Latn',
-					style: 'decimal',
-					fractionDigits: 2
-				})
-		}), */
-		//Еџперимент
 		table.group({
 			header: 'Stock',
 			columns: [
@@ -153,7 +139,7 @@
 				table.column({
 					id: 'ruc',
 					accessor: (item) => item,
-					header: 'RuC',
+					header: createRender(TextRight, { text: 'RuC' }),
 					cell: ({ value }) =>
 						createRender(NumberFormat, {
 							value: value.priceRetail / value.pricePurchase - 1,
@@ -218,9 +204,7 @@
 
 <div class="grid h-full w-full grid-rows-[auto_1fr] overflow-hidden">
 	<div class="flex h-full flex-col overflow-hidden px-2">
-		<div class="border-layer-3 bg-layer-2 flex h-14 w-full flex-col border-b">
-			<PageHeader selectedProducts={strSelectedDataIds} {onStock} bind:filterValue={$filterValue} />
-		</div>
+		<PageHeader selectedProducts={strSelectedDataIds} {onStock} bind:filterValue={$filterValue} />
 		<Table.Root {...$tableAttrs}>
 			<!-- <Table.Root {...$tableAttrs} class="h-full flex-grow overflow-y-auto"> -->
 			<Table.Header>
