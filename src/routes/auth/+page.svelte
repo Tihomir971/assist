@@ -21,33 +21,33 @@
 		</div>
 		<div class="card w-full max-w-sm shrink-0 bg-base-100 shadow-2xl">
 			<form class="card-body" action="?/signin" method="post" use:enhance>
-				<div class="form-control">
-					<label class="label">
+				<label class="form-control">
+					<div class="label">
 						<span class="label-text">Email</span>
-						<input
-							type="email"
-							name="email"
-							placeholder="email"
-							class="input input-bordered"
-							required
-							autocomplete="email"
-							value={form?.values?.email ?? ''}
-						/>
-					</label>
-				</div>
-				<div class="form-control">
-					<label class="label">
+					</div>
+					<input
+						type="email"
+						name="email"
+						placeholder="Enter email..."
+						class="input input-bordered"
+						required
+						autocomplete="email"
+						value={form?.values?.email ?? ''}
+					/>
+				</label>
+				<label class="form-control">
+					<div class="label">
 						<span class="label-text">Password</span>
-						<input
-							type="password"
-							name="password"
-							placeholder="password"
-							class="input input-bordered"
-							required
-							autocomplete="off"
-						/>
-					</label>
-				</div>
+					</div>
+					<input
+						type="password"
+						name="password"
+						placeholder="Enter password..."
+						class="input input-bordered"
+						required
+						autocomplete="off"
+					/>
+				</label>
 				<div class="form-control">
 					<div class="label">
 						<a href="/" class="link-hover link label-text-alt">Forgot password?</a>
