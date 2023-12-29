@@ -26,7 +26,7 @@
 					data: {
 						title: 'Success',
 						description: 'Product updated!',
-						color: 'bg-green-500'
+						color: 'alert-error'
 					}
 				});
 				// use the default behavior for this result type

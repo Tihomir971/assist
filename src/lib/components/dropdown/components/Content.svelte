@@ -15,10 +15,13 @@
 </script>
 
 {#if $open}
-	<div use:melt={builder} {...$$restProps} transition:fly={{ duration: 150, y: -10 }}>
-		<ul
-			class={cn('menu dropdown-content z-[1] w-52 rounded-btn bg-base-100 p-2 shadow', className)}
-		>
+	<div
+		use:melt={builder}
+		{...$$restProps}
+		transition:fly={{ duration: 150, y: -10 }}
+		class="z-50 rounded-box"
+	>
+		<ul class={cn('menu dropdown-content w-52 rounded-btn bg-base-300 p-2 shadow', className)}>
 			<slot />
 		</ul>
 	</div>

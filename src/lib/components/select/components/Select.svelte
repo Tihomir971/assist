@@ -1,11 +1,10 @@
 <script lang="ts">
 	import type { SelectOption } from '@melt-ui/svelte';
 	import { setCtx } from '../ctx';
-	import { Label, Menu, Option, Trigger } from '../index';
+	import { Menu, Option, Trigger } from '../index';
 
 	const {} = setCtx({});
 
-	export let label: string | undefined = undefined;
 	export let options: SelectOption[] = [
 		{ value: '1', label: 'Caramel' },
 		{ value: '2', label: 'Chocolate' },
@@ -14,9 +13,6 @@
 	];
 </script>
 
-{#if label}
-	<Label>{label}</Label>
-{/if}
 <Trigger></Trigger>
 <Menu>
 	<Option {options}></Option>

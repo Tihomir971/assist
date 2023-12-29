@@ -51,7 +51,7 @@ export const load = (async ({ url, depends, locals: { supabase, getSession } }) 
 		.eq('qPriceMarket.m_pricelist_version_id', 15);
 	query = categoryIds
 		? //typeof activeCategoryId === 'number'
-		  query.in('m_product_category_id', categoryIds)
+			query.in('m_product_category_id', categoryIds)
 		: query.is('m_product_category_id', null);
 
 	const { data } = await query;
@@ -134,5 +134,6 @@ export const load = (async ({ url, depends, locals: { supabase, getSession } }) 
 		});
 	});
 
+	//	const contributions = await (await fetch('/catalog')).json();
 	return { products, onStock };
 }) satisfies PageServerLoad;

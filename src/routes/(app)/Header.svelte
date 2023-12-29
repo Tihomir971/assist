@@ -1,16 +1,26 @@
 <script lang="ts">
+	import { applyAction, enhance } from '$app/forms';
+	import { goto, invalidate } from '$app/navigation';
 	import { Avatar } from '$lib/components/avatar';
+	import type { SubmitFunction } from '@sveltejs/kit';
+
+	const handleLogout: SubmitFunction = () => {
+		return async ({ result }) => {
+			await invalidate('supabase:auth');
+			await applyAction(result);
+		};
+	};
 </script>
 
-<header class="navbar bg-base-300">
+<div class="navbar bg-base-100">
 	<div class="flex-1">
-		<div class="text-xl"><strong>KALISI</strong> Assistant</div>
+		<a href="/" class="btn btn-ghost text-xl">KALISI Assistant</a>
 	</div>
 	<div class="flex-none gap-2">
-		<label class="form-control">
-			<input type="search" placeholder="Search..." class="input input-bordered w-24 md:w-auto" />
-		</label>
-		<div class="dropdown dropdown-bottom">
+		<div class="form-control">
+			<input type="text" placeholder="Search" class="input input-bordered w-24 md:w-auto" />
+		</div>
+		<div class="dropdown dropdown-end">
 			<div tabindex="0" role="button" class="avatar btn btn-circle btn-ghost">
 				<div class="w-10 rounded-full">
 					<img
@@ -18,31 +28,21 @@
 						src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
 					/>
 				</div>
-				<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-				<ul
-					tabindex="0"
-					class="menu dropdown-content menu-sm z-50 mt-3 w-52 rounded-btn bg-base-100 p-2 shadow"
-				>
-					<li>
-						<button class="justify-between">
-							Profile
-							<span class="badge">New</span>
-						</button>
-					</li>
-					<li><button>Settings</button></li>
-					<li><button>Logout</button></li>
-				</ul>
 			</div>
+			<ul class="menu dropdown-content menu-sm z-50 mt-3 w-52 rounded-box bg-base-100 p-2 shadow">
+				<li>
+					<a href="/account" class="justify-between">
+						Profile
+						<span class="badge">New</span>
+					</a>
+				</li>
+				<li><a href="/">Settings</a></li>
+				<li>
+					<form action="/auth?/signout" method="post" class="p-0">
+						<button type="submit" class="btn-block">Logout</button>
+					</form>
+				</li>
+			</ul>
 		</div>
 	</div>
-</header>
-
-<style lang="postcss">
-	header {
-		grid-area: title-bar;
-		position: relative;
-		max-width: 100%;
-		max-height: 100%;
-		height: 100%;
-	}
-</style>
+</div>

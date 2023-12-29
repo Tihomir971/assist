@@ -1115,6 +1115,100 @@ export interface Database {
           }
         ]
       }
+      m_product_po: {
+        Row: {
+          barcode: string | null
+          c_bpartner_id: number
+          c_currency_id: number | null
+          c_uom_id: number | null
+          created: string
+          discontinued: boolean | null
+          id: number
+          isactive: boolean
+          iscurrentvendor: boolean
+          m_product_id: number
+          manufacturer: string | null
+          priceeffective: string | null
+          pricelastinv: number | null
+          pricelastpo: number | null
+          pricelist: number
+          pricepo: number | null
+          updated: string
+          url: string | null
+          vendorcategory: string | null
+          vendorproductno: string
+        }
+        Insert: {
+          barcode?: string | null
+          c_bpartner_id: number
+          c_currency_id?: number | null
+          c_uom_id?: number | null
+          created?: string
+          discontinued?: boolean | null
+          id?: number
+          isactive?: boolean
+          iscurrentvendor?: boolean
+          m_product_id: number
+          manufacturer?: string | null
+          priceeffective?: string | null
+          pricelastinv?: number | null
+          pricelastpo?: number | null
+          pricelist?: number
+          pricepo?: number | null
+          updated?: string
+          url?: string | null
+          vendorcategory?: string | null
+          vendorproductno: string
+        }
+        Update: {
+          barcode?: string | null
+          c_bpartner_id?: number
+          c_currency_id?: number | null
+          c_uom_id?: number | null
+          created?: string
+          discontinued?: boolean | null
+          id?: number
+          isactive?: boolean
+          iscurrentvendor?: boolean
+          m_product_id?: number
+          manufacturer?: string | null
+          priceeffective?: string | null
+          pricelastinv?: number | null
+          pricelastpo?: number | null
+          pricelist?: number
+          pricepo?: number | null
+          updated?: string
+          url?: string | null
+          vendorcategory?: string | null
+          vendorproductno?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "m_product_po_c_bpartner_id_fkey"
+            columns: ["c_bpartner_id"]
+            referencedRelation: "c_bpartner"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_product_po_c_currency_id_fkey"
+            columns: ["c_currency_id"]
+            referencedRelation: "c_currency"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_product_po_c_uom_id_fkey"
+            columns: ["c_uom_id"]
+            referencedRelation: "c_uom"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_product_po_m_product_id_fkey"
+            columns: ["m_product_id"]
+            referencedRelation: "m_product"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       m_productprice: {
         Row: {
           ad_client_id: number
@@ -1373,7 +1467,19 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      delete_avatar: {
+        Args: {
+          avatar_url: string
+        }
+        Returns: Record<string, unknown>
+      }
+      delete_storage_object: {
+        Args: {
+          bucket: string
+          object: string
+        }
+        Returns: Record<string, unknown>
+      }
     }
     Enums: {
       [_ in never]: never

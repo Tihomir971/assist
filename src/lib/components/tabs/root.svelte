@@ -20,6 +20,6 @@
 	setCtx({ root, content, list, trigger, tabs: tabsStore });
 </script>
 
-<div use:melt={$root}>
+<div use:melt={$root} class="flex flex-col data-[orientation=vertical]:flex-row">
 	<slot tab={$value} />
 </div>

@@ -17,12 +17,26 @@
 					data: {
 						title: 'Prices updated!',
 						description: data,
-						color: 'bg-green-500'
+						color: 'alert-success'
 					}
 				});
 			}
 		});
-		/*	const apiUrl = 'http://192.168.1.10:4443/cenoteka/prods';
+	}
+	async function getERP() {
+		await api.getERP(selectedProducts).then((data) => {
+			if (data) {
+				addToast({
+					data: {
+						title: 'ERP Prices updated!',
+						description: data,
+						color: 'alert-success'
+					}
+				});
+			}
+		});
+	}
+	/*	const apiUrl = 'http://192.168.1.10:4443/cenoteka/prods';
 	const myHeaders = new Headers({ Authorization: 'Bearer ' + PUBLIC_BEARER_TOKEN });
 		const formData = new FormData();
 		formData.append('prods', JSON.stringify(selectedProducts));
@@ -45,9 +59,8 @@
 				console.error('There has been a problem with your fetch operation:', error);
 			}
 		} */
-	}
 
-	async function getERP() {
+	/* 	async function getERP() {
 		const apiUrl = 'http://192.168.1.10:4443/bizsoft/assistant/sync/prods';
 		const myHeaders = new Headers({ Authorization: 'Bearer ' + PUBLIC_BEARER_TOKEN });
 		const formData = new FormData();
@@ -71,7 +84,7 @@
 				console.error('There has been a problem with your fetch operation:', error);
 			}
 		}
-	}
+	} */
 	const onStockChange = () => {
 		const newUrl = new URL($page.url);
 		onStock = !onStock;

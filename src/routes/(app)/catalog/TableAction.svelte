@@ -8,12 +8,12 @@
 	import { Dialog, DialogTitle, getCtx } from '$lib/components/dialog';
 	const {
 		elements: { menu, item, trigger, arrow }
-	} = createDropdownMenu();
+	} = createDropdownMenu({ positioning: { placement: 'top' } });
 
 	export let id: string | undefined;
 
 	const {
-		elements: { trigger: trigger1, overlay, content, title, description, close, portalled },
+		elements: { trigger: triggerDrawer, overlay, content, title, description, close, portalled },
 		states: { open }
 	} = createDialog({
 		forceVisible: true
@@ -42,13 +42,9 @@
 	</Triger>
 	<Content>
 		<Item on:click={() => goto(`/catalog/product/${id}`)}>Edit</Item>
-		<Item on:click={() => goto(`/catalog/product/${id}`)}>Edit2</Item>
-		<li>
-			<button use:melt={$trigger1}>Edit 3</button>
-		</li>
-		<li>
-			<button use:melt={$trigger1}>Edit 4</button>
-		</li>
+		<Item>
+			<button use:melt={$triggerDrawer}>Modal</button>
+		</Item>
 
 		<Item>Delete</Item>
 	</Content>
@@ -71,32 +67,60 @@
 	{/if}
 </div> -->
 
-<div use:melt={$portalled}>
+<div class="" use:melt={$portalled}>
 	{#if $open}
-		<div use:melt={$overlay} class="overlay" />
+		<div
+			use:melt={$overlay}
+			class="fixed inset-0 z-50 bg-black/50"
+			transition:fade={{ duration: 150 }}
+		/>
 		<div
 			use:melt={$content}
-			class="content"
+			class="fixed left-0 top-0 z-50 h-screen w-full max-w-[350px] bg-white p-6
+			  shadow-lg focus:outline-none"
 			transition:fly={{
 				x: -350,
 				duration: 300,
 				opacity: 1
 			}}
 		>
-			<button use:melt={$close} aria-label="Close" class="close">
+			<button
+				use:melt={$close}
+				aria-label="Close"
+				class="text-magnum-800 hover:bg-magnum-100 focus:shadow-magnum-400 focus:ring-magnum-400 absolute right-[10px]
+				  top-[10px] inline-flex h-6 w-6 appearance-none
+				  items-center justify-center rounded-full focus:outline-none
+				  focus:ring-2"
+			>
 				<X class="square-4" />
 			</button>
-			<h2 use:melt={$title} class="title">Notifications</h2>
-			<p use:melt={$description} class="description">Check out your latest updates.</p>
+			<h2 use:melt={$title} class="mb-0 text-lg font-medium text-black">Notifications</h2>
+			<p use:melt={$description} class="mb-5 mt-2 leading-normal text-zinc-600">
+				Check out your latest updates.
+			</p>
 			<section>
-				<div class="invitation">
-					<h3>New invitation</h3>
-					<p>
+				<div class="rounded-md bg-gray-100/80 p-4 text-zinc-800 shadow">
+					<h3 class="mb-3 text-base font-semibold">New invitation</h3>
+					<p class="text-sm">
 						You have been invited to join the <strong>Designers</strong> team.
 					</p>
-					<div class="actions">
-						<button class="secondary"> Reject </button>
-						<button class="primary"> Accept </button>
+					<div class="mt-6 flex justify-end gap-4">
+						<button
+							class="focus:ring-magnum-400 inline-flex h-8 items-center
+							  justify-center rounded-[4px] bg-zinc-100 px-4 font-medium
+							  leading-none text-zinc-600 focus:outline-none
+							  focus:ring-2"
+						>
+							Reject
+						</button>
+						<button
+							class="bg-magnum-100 text-magnum-900 focus:ring-magnum-400 inline-flex
+							  h-8 items-center justify-center rounded-[4px] px-4
+							  font-medium leading-none focus:outline-none
+							  focus:ring-2"
+						>
+							Accept
+						</button>
 					</div>
 				</div>
 			</section>
@@ -140,7 +164,7 @@
 
 	.content {
 		position: fixed;
-		left: 0;
+		right: 0;
 		top: 0;
 		z-index: 50;
 		height: 100vh;

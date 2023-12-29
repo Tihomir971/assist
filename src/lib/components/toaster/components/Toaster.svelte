@@ -20,37 +20,33 @@
 	import { flip } from 'svelte/animate';
 	import { fly } from 'svelte/transition';
 	import { X } from 'lucide-svelte';
+	import { cn } from '$lib/scripts/tailwind';
 </script>
 
-<div class="fixed bottom-0 right-0 z-50 m-4 flex flex-col items-end gap-2" use:portal>
+<div class="toast toast-center toast-top" use:portal>
 	{#each $toasts as { id, data } (id)}
 		<div
 			use:melt={$content(id)}
 			animate:flip={{ duration: 500 }}
 			in:fly={{ duration: 150, x: '100%' }}
 			out:fly={{ duration: 150, x: '100%' }}
-			class="rounded-lg bg-neutral-700 text-white shadow-md"
+			class={cn('alert', data.color)}
+			role="alert"
 		>
-			<div
-				class="relative flex w-[24rem] max-w-[calc(100vw-2rem)] items-center justify-between gap-4 p-5"
-			>
-				<div>
-					<h3 use:melt={$title(id)} class="flex items-center gap-2 font-semibold">
-						{data.title}
-						<span class="square-1.5 rounded-full {data.color}" />
-					</h3>
-					<div use:melt={$description(id)}>
-						{data.description}
-					</div>
+			<article>
+				<div use:melt={$title(id)}>
+					<strong>{data.title}</strong>
+				</div>
+				<div use:melt={$description(id)}>
+					{data.description}
 				</div>
 				<button
 					use:melt={$close(id)}
-					class="square-6 absolute right-4 top-4 grid place-items-center rounded-full text-neutral-500
-        hover:bg-neutral-500/75"
+					class="btn btn-circle btn-ghost btn-xs absolute right-4 top-4"
 				>
-					<X class="square-4" />
+					<X size="12" />
 				</button>
-			</div>
+			</article>
 		</div>
 	{/each}
 </div>

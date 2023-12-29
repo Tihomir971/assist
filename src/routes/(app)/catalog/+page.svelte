@@ -12,6 +12,9 @@
 
 	export let data: PageData;
 	const onStock = data.onStock;
+	//	const contributions = data.contributions;
+	//	$: console.log('contributions', contributions);
+
 	import { createTable, createRender, Subscribe, Render } from 'svelte-headless-table';
 	import {
 		addColumnFilters,

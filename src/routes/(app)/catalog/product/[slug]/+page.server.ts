@@ -63,10 +63,15 @@ export const load = (async ({ params, locals: { supabase, getSession } }) => {
 			.eq('m_product_id', id);
 		return data;
 	};
+	const getBPartners = async () => {
+		const { data } = await supabase.from('c_bpartner').select('value:id,label:name');
+		return data;
+	};
 	return {
 		product: await getProduct(productId),
 		categories: await getCategories(),
 		pricelists: await getPricelist(productId),
+		bpartners: await getBPartners(),
 		streamed: {
 			images: await getImages(productId)
 		}
@@ -74,7 +79,7 @@ export const load = (async ({ params, locals: { supabase, getSession } }) => {
 }) satisfies PageServerLoad;
 
 export const actions = {
-	setProduct: async ({ request, locals: { supabase, getSession } }) => {
+	updateProduct: async ({ request, locals: { supabase, getSession } }) => {
 		const session = await getSession();
 		if (!session) {
 			throw error(401, { message: 'Unauthorized' });
