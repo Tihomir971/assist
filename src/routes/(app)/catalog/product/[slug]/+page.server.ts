@@ -111,5 +111,26 @@ export const actions = {
 			}
 		}
 		return { success: true };
+	},
+	addProductPO: async ({ request, locals: { supabase, getSession } }) => {
+		const session = await getSession();
+		if (!session) {
+			throw error(401, { message: 'Unauthorized' });
+		}
+
+		const formData = await request.formData();
+		const c_bpartner_id = getNumber(formData, 'bpartner');
+		const m_product_id = getNumber(formData, 'm_product_id');
+		const vendorproductno = getString(formData, 'partnerPN');
+		const url = getString(formData, 'url');
+
+		if (m_product_id && c_bpartner_id && vendorproductno && url) {
+			const { error: createPostError } = await supabase
+				.from('m_product_po')
+				.insert({ m_product_id, c_bpartner_id, vendorproductno, url });
+			if (createPostError) {
+				return fail(500, { supabaseErrorMessage: createPostError.message });
+			}
+		}
 	}
 } satisfies Actions;

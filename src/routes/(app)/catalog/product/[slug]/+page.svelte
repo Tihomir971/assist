@@ -12,7 +12,7 @@
 	import { Label, Select } from '$lib/components/select';
 
 	export let data: PageData;
-	$: ({ product, categories, pricelists, streamed, bpartners } = data);
+	$: ({ product, categories, pricelists, supabase, bpartners } = data);
 	let localCopy: any = undefined;
 	let modified = false;
 	$: if (localCopy && JSON.stringify(product) !== JSON.stringify(localCopy)) {
@@ -49,31 +49,34 @@
 	};
 	let columns = ['Partner', 'Partner PN', 'Price', 'URL', 'Updated'];
 	let newRow = [...columns];
+	let addingProductPO = false;
+
 	function addRow() {
 		//		data = [...data, [...newRow]]
 		//		newRow = columns
 	}
-	function deleteRow(rowToBeDeleted) {
-		console.log('rowToBeDeleted', JSON.stringify(rowToBeDeleted, null, 2));
-
-		//	data = data.filter(row => row != rowToBeDeleted)
+	async function deleteProductPORow(rowToBeDeleted: number) {
+		const { error } = await supabase.from('m_product_po').delete().eq('id', rowToBeDeleted);
+		if (error) throw error;
+		return;
 	}
 </script>
 
-<div class="mx-auto mb-4 mt-4 max-w-5xl space-y-4">
-	<div class="flex items-center justify-between">
-		<hgroup>
+<div class="mx-auto mb-4 mt-4 max-w-5xl">
+	<div class="flex w-full items-center justify-between">
+		<hgroup class="prose">
 			<h3>Edit product</h3>
-			<p>Some information about product</p>
+			<p>Detailed information about product</p>
 		</hgroup>
 		<button type="button" on:click={() => history.back()} class="btn btn-outline">Back</button>
 	</div>
-	<div role="tablist" class="tabs tabs-bordered">
-		<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Profile" checked />
-		<div role="tabpanel" class="tab-content my-4">
-			<form method="POST" action="?/updateProduct" use:enhance={updateProduct}>
-				<div class="space-y-12">
-					{#if product}
+	<div class="divider"></div>
+	{#if product}
+		<div role="tablist" class="tabs tabs-bordered">
+			<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Profile" checked />
+			<div role="tabpanel" class="tab-content my-4">
+				<form method="POST" action="?/updateProduct" use:enhance={updateProduct}>
+					<div class="space-y-12">
 						<div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
 							<label class="form-control col-span-2 col-start-1">
 								<div class="label">
@@ -247,65 +250,118 @@
 								<button type="submit" disabled={!modified} class="btn btn-primary">Save</button>
 							</footer>
 						</div>
-					{/if}
-				</div>
-			</form>
-		</div>
-
-		<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Prices" />
-		<div role="tabpanel" class="tab-content my-4">
-			{#if pricelists}
-				<div class="col-span-full w-full">
-					<table class="table">
-						<thead>
-							<tr>
-								{#each columns as column}
-									<th>{column}</th>
-								{/each}
-							</tr>
-						</thead>
-						<tbody>
-							{#each pricelists as pricelist}
-								<tr class="hover">
-									<td> {pricelist.c_bpartner?.name}</td>
-									<td>{pricelist.vendorproductno}</td>
-									<td>{numberFormat(pricelist.pricelist)}</td>
-									<td><a href={pricelist.url} target="_blank">{pricelist.url} </a></td>
-									<td>{DateTimeFormat(pricelist.updated)}</td>
-									<td>
-										<button on:click={() => deleteRow(pricelist)} class="btn btn-ghost btn-sm"
-											><X /></button
-										></td
-									>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-					<div class="flex flex-row items-center justify-start space-x-4 border-t pt-4">
-						<div>Add new:</div>
-						{#if bpartners}
-							<Select options={bpartners} label="Select Partner..."></Select>
-						{/if}
-						<label class="form-control col-span-3">
-							<div class="label">
-								<span class="label-text">Partner PN</span>
-							</div>
-							<input type="text" class="input input-bordered max-w-xs" />
-						</label>
-						<label class="form-control col-span-3">
-							<div class="label">
-								<span class="label-text">Partner PN</span>
-							</div>
-							<input type="url" placeholder="Enter URL..." class="input input-bordered max-w-xs" />
-						</label>
-						<Label label="Partner"></Label>
-						<button type="submit" class="btn btn-secondary">Add</button>
 					</div>
-				</div>
-			{/if}
-		</div>
+				</form>
+			</div>
 
-		<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Images" />
-		<div role="tabpanel" class="tab-content my-4">Tab content 3</div>
-	</div>
+			<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Prices" />
+			<div role="tabpanel" class="tab-content my-4">
+				{#if pricelists}
+					<div class="col-span-full w-full">
+						<table class="table">
+							<thead>
+								<tr>
+									{#each columns as column}
+										<th>{column}</th>
+									{/each}
+								</tr>
+							</thead>
+							<tbody>
+								{#each pricelists as pricelist}
+									<tr class="hover">
+										<td> {pricelist.c_bpartner?.name}</td>
+										<td>{pricelist.vendorproductno}</td>
+										<td>{numberFormat(pricelist.pricelist)}</td>
+										<td>{DateTimeFormat(pricelist.updated)}</td>
+										<td><a href={pricelist.url} target="_blank" class="link">Visit</a></td>
+										<td>
+											<button
+												on:click={() => deleteProductPORow(pricelist.id)}
+												class="btn btn-ghost btn-sm"
+											>
+												<X />
+											</button>
+										</td>
+									</tr>
+								{/each}
+							</tbody>
+						</table>
+						<div class="items-center justify-between space-y-4 border-t pt-4">
+							<div>Add product reference for product</div>
+							<form
+								method="post"
+								action="?/addProductPO"
+								use:enhance={() => {
+									addingProductPO = true;
+
+									return async ({ update }) => {
+										await update();
+										addingProductPO = false;
+									};
+								}}
+							>
+								<input
+									type="text"
+									name="m_product_id"
+									hidden
+									value={product.id}
+									class="input input-bordered w-full"
+									required
+								/>
+								<div class="flex flex-row items-end justify-between">
+									{#if bpartners}
+										<!-- <Select options={bpartners} label="Select Partner..."></Select> -->
+										<label class="form-control">
+											<div class="label">
+												<span class="label-text">Partner</span>
+											</div>
+											<select
+												name="bpartner"
+												class="select select-bordered w-full max-w-xs"
+												required
+											>
+												{#each bpartners as { value, label }}
+													<option {value}>{label}</option>
+												{/each}
+											</select>
+										</label>
+									{/if}
+									<label class="form-control col-span-3">
+										<div class="label">
+											<span class="label-text">Partner PN</span>
+										</div>
+										<input
+											type="text"
+											name="partnerPN"
+											class="input input-bordered max-w-xs"
+											required
+										/>
+									</label>
+									<label class="form-control col-span-3">
+										<div class="label">
+											<span class="label-text">Partner PN</span>
+										</div>
+										<input
+											type="url"
+											name="url"
+											placeholder="Enter URL..."
+											class="input input-bordered max-w-xs"
+											required
+										/>
+									</label>
+									<!-- <Label label="Partner"></Label> -->
+									<button type="submit" disabled={addingProductPO} class="btn btn-secondary"
+										>Add</button
+									>
+								</div>
+							</form>
+						</div>
+					</div>
+				{/if}
+			</div>
+
+			<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Images" />
+			<div role="tabpanel" class="tab-content my-4">Tab content 3</div>
+		</div>
+	{/if}
 </div>
