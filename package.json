@@ -12,13 +12,13 @@
     "format": "prettier --plugin-search-dir . --write ."
   },
   "devDependencies": {
-    "@melt-ui/pp": "^0.2.0",
-    "@melt-ui/svelte": "^0.66.4",
+    "@melt-ui/pp": "^0.3.0",
+    "@melt-ui/svelte": "^0.67.0",
     "@sveltejs/adapter-cloudflare": "^2.3.4",
     "@sveltejs/kit": "^1.30.3",
     "@tailwindcss/forms": "0.5.7",
     "@tailwindcss/typography": "0.5.10",
-    "@types/node": "20.10.5",
+    "@types/node": "20.10.6",
     "@typescript-eslint/eslint-plugin": "^6.16.0",
     "@typescript-eslint/parser": "^6.16.0",
     "autoprefixer": "10.4.16",
@@ -46,7 +46,7 @@
     "cheerio": "1.0.0-rc.12",
     "clsx": "^2.0.0",
     "linkedom": "^0.16.5",
-    "lucide-svelte": "^0.302.0",
+    "lucide-svelte": "^0.303.0",
     "tailwind-merge": "^2.2.0"
   }
 }
