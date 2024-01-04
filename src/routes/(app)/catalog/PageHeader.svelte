@@ -11,7 +11,7 @@
 	export let onStock: boolean = true;
 	export let filterValue: string;
 	async function getPrices() {
-		await api.getPrices(selectedProducts).then((data) => {
+		/* 	await api.getPrices(selectedProducts).then((data) => {
 			if (data) {
 				addToast({
 					data: {
@@ -21,7 +21,19 @@
 					}
 				});
 			}
-		});
+		}); */
+		console.log('selectedProducts', selectedProducts);
+
+		for (let index = 0; index < selectedProducts.length; index++) {
+			const element = selectedProducts[index];
+			let price = await fetch(`/api/gigatron/${element}`, {
+				method: 'POST',
+				headers: {
+					'content-type': 'application/json'
+				}
+			});
+			console.log('price', price);
+		}
 	}
 	async function getERP() {
 		await api.getERP(selectedProducts).then((data) => {

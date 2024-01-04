@@ -1,4 +1,4 @@
-import { redirect } from '@sveltejs/kit';
+import {  redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load = (async ({ locals: { supabase, getSession } }) => {
@@ -15,3 +15,5 @@ export const load = (async ({ locals: { supabase, getSession } }) => {
 
 	return { data };
 }) satisfies PageServerLoad;
+
+

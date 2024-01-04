@@ -3,8 +3,10 @@ import type { Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Tables } from '$lib/types/database.types';
 import { getBoolean, getNumber, getString } from '$lib/scripts/getForm';
+import { invalidate } from '$app/navigation';
 
-export const load = (async ({ params, locals: { supabase, getSession } }) => {
+export const load = (async ({ depends, params, locals: { supabase, getSession } }) => {
+	depends('catalog:product');
 	const session = await getSession();
 	if (!session) {
 		throw error(401, { message: 'Unauthorized' });
@@ -64,7 +66,7 @@ export const load = (async ({ params, locals: { supabase, getSession } }) => {
 		return data;
 	};
 	const getBPartners = async () => {
-		const { data } = await supabase.from('c_bpartner').select('value:id,label:name');
+		const { data } = await supabase.from('c_bpartner').select('value:id,label:name').order('name');
 		return data;
 	};
 	return {
@@ -110,6 +112,7 @@ export const actions = {
 				return fail(500, { supabaseErrorMessage: createPostError.message });
 			}
 		}
+		invalidate('catalog:product');
 		return { success: true };
 	},
 	addProductPO: async ({ request, locals: { supabase, getSession } }) => {
