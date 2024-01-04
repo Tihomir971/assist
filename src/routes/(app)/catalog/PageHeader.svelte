@@ -10,6 +10,7 @@
 	export let selectedProducts: number[];
 	export let onStock: boolean = true;
 	export let filterValue: string;
+
 	async function getPrices() {
 		/* 	await api.getPrices(selectedProducts).then((data) => {
 			if (data) {
@@ -22,17 +23,28 @@
 				});
 			}
 		}); */
-		console.log('selectedProducts', selectedProducts);
 
 		for (let index = 0; index < selectedProducts.length; index++) {
 			const element = selectedProducts[index];
-			let price = await fetch(`/api/gigatron/${element}`, {
-				method: 'POST',
-				headers: {
-					'content-type': 'application/json'
-				}
-			});
-			console.log('price', price);
+			const response = await fetch(`/api/gigatron/${element}`);
+			const serverResponse = await response.json();
+			if (serverResponse !== 'Error') {
+				addToast({
+					data: {
+						title: 'Market Prices updated!',
+						description: `Market  price for "${serverResponse}" updated`,
+						color: 'alert-success'
+					}
+				});
+			} else {
+				addToast({
+					data: {
+						title: 'Market Prices ERROR!',
+						description: `Error: "${serverResponse}"`,
+						color: 'alert-error'
+					}
+				});
+			}
 		}
 	}
 	async function getERP() {

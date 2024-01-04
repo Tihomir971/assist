@@ -1,6 +1,6 @@
 <script lang="ts">
 	async function getPrice() {
-		const price = await (await fetch('/api/gigatron/1230')).json();
+		const price = await (await fetch('/api/gigatron/1230', { method: 'POST' })).json();
 
 		console.log('price', price);
 	}

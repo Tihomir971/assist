@@ -1,12 +1,12 @@
 import { parseHTML } from 'linkedom';
 import type { RequestHandler } from './$types';
-import { redirect } from '@sveltejs/kit';
+import { error, json, redirect } from '@sveltejs/kit';
 
 type ParseFunctions = {
 	[key: string]: (document: Document) => number | undefined;
 };
 
-export const POST: RequestHandler = async ({ params, locals: { supabase, getSession } }) => {
+export const GET: RequestHandler = async ({ params, locals: { supabase, getSession } }) => {
 	const session = await getSession();
 	if (!session) {
 		throw redirect(303, '/auth');
@@ -14,7 +14,7 @@ export const POST: RequestHandler = async ({ params, locals: { supabase, getSess
 
 	const { data } = await supabase
 		.from('m_product_po')
-		.select('id,url,c_bpartner_id')
+		.select('id,url,c_bpartner_id,m_product(name)')
 		//.select('id,parent_id,content: name')
 		.eq('m_product_id', params.slug)
 		.eq('isactive', true);
@@ -44,14 +44,15 @@ export const POST: RequestHandler = async ({ params, locals: { supabase, getSess
 								//.select('id,parent_id,content: name')
 								.eq('id', data[index].id);
 
-							if (error) throw new Error(`Failed to update: ${error.details}`);
+							if (error) {
+								throw new Error(`Failed to update: ${error.details}`);
+							}
 							prices.push(price);
 						}
 					}
 				}
 			}
 		}
-		console.log('prices', prices);
 
 		const smallestPrice = Math.min(...prices);
 		const result = await supabase
@@ -67,15 +68,19 @@ export const POST: RequestHandler = async ({ params, locals: { supabase, getSess
 				pricelist: smallestPrice
 			});
 			//.select('id,parent_id,content: name')
-			if (result.error) throw new Error(`Failed to insert: ${result.error.details}`);
+			if (result.error) {
+				error(400, `Failed to insert: ${result.error.details}`);
+			}
 		}
 
-		if (result.error) throw new Error(`Failed to update: ${result.error.details}`);
-		return new Response('Success');
+		if (result.error) {
+			error(400, `Failed to update: ${result.error.details}`);
+		}
+		return json(data[0].m_product?.name);
 
 		//return json(parsePrice(html));
 	}
-	return new Response('Error');
+	return json('Error');
 };
 
 const vendorPrice: ParseFunctions = {
