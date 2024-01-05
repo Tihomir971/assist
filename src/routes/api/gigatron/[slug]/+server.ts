@@ -3,7 +3,7 @@ import type { RequestHandler } from './$types';
 import { error, json, redirect } from '@sveltejs/kit';
 
 type ParseFunctions = {
-	[key: string]: (document: Document) => number | undefined;
+	[key: string]: (document: Document) => number;
 };
 
 export const GET: RequestHandler = async ({ params, locals: { supabase, getSession } }) => {
@@ -37,18 +37,16 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 						// If it does, call the corresponding function
 						const price = vendorPrice[key](document);
 
-						if (price) {
-							const { error } = await supabase
-								.from('m_product_po')
-								.update({ pricelist: price })
-								//.select('id,parent_id,content: name')
-								.eq('id', data[index].id);
+						const { error } = await supabase
+							.from('m_product_po')
+							.update({ pricelist: price })
+							//.select('id,parent_id,content: name')
+							.eq('id', data[index].id);
 
-							if (error) {
-								throw new Error(`Failed to update: ${error.details}`);
-							}
-							prices.push(price);
+						if (error) {
+							throw new Error(`Failed to update: ${error.details}`);
 						}
+						if (price && price !== 0) prices.push(price);
 					}
 				}
 			}
@@ -86,25 +84,40 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 const vendorPrice: ParseFunctions = {
 	'gigatron.rs': function (document: Document) {
 		const priceElement = document.querySelector<HTMLSpanElement>('.ppra_price-number.snowflake');
-		const priceText = priceElement ? priceElement.innerText : 'Price element not found';
-		const price = parseFloat(priceText.replace('.', ''));
-		return price;
+		const priceText = priceElement ? priceElement.innerText : null;
+		if (priceText) {
+			return parseFloat(priceText.replace('.', ''));
+		}
+		return 0;
 	},
 	'tehnomedia.rs': function (document: Document) {
 		const priceElement = document.querySelector<HTMLElement>('div.price > span > strong');
-		const priceText = priceElement ? priceElement.innerText : 'Price element not found';
-		const price = parseFloat(priceText.replace('.', '').replace(',', '.'));
-		return price;
-	},
-	'uspon.rs': function (document: Document) {
-		let price: number | undefined = undefined;
-		const priceElement = document.querySelector<HTMLElement>('.JSweb_price.price-num.main-price');
-		const priceText = priceElement
-			? priceElement.getAttribute('data-cena')
-			: 'Price element not found';
-		if (priceText) {
-			price = parseFloat(priceText.replace('.', '').replace(',', '.'));
+		const addToCartButton = document.getElementById('add-to-cart-btn');
+		const priceText = priceElement ? priceElement.innerText : null;
+		if (priceText && addToCartButton) {
+			return parseFloat(priceText.replace('.', '').replace(',', '.'));
 		}
-		return price;
+		return 0;
+	},
+	'tehnomanija.rs': function (document: Document) {
+		const priceElement = document.querySelector('[data-price-amount]');
+		const priceAmount = priceElement?.getAttribute('data-price-amount');
+		const priceAvailability = document.querySelector('div.stock.unavailable');
+		if (priceAmount && !priceAvailability) {
+			return Number(priceAmount);
+		} else {
+			return 0;
+		}
+	},
+	'metalac.com': function (document: Document) {
+		const priceElement = document.querySelector<HTMLElement>('span.product-price');
+		const priceText = priceElement ? priceElement.innerText : null;
+		const priceAvailability = document.querySelector('[data-max-qunatity]');
+		const availabilityValue = priceAvailability?.getAttribute('data-max-qunatity');
+		if (priceText && availabilityValue !== '0') {
+			return parseFloat(priceText.replace('.', ''));
+		} else {
+			return 0;
+		}
 	}
 };

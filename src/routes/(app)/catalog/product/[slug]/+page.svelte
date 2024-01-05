@@ -1,15 +1,12 @@
 <script lang="ts">
 	import type { PageData, SubmitFunction } from './$types';
 	import { applyAction, enhance } from '$app/forms';
-	import { afterNavigate, goto } from '$app/navigation';
+	import { afterNavigate, invalidate } from '$app/navigation';
 	import { base } from '$app/paths';
-	import { Gallery, Thumbnails } from '$lib/components/gallery';
 	import { DateTimeFormat, numberFormat } from '$lib/scripts/format';
-	import { Tabs, TabsContent } from '$lib/components/tabs';
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 	import { Combobox } from '$lib/components/combobox';
 	import { X } from 'lucide-svelte';
-	import { Label, Select } from '$lib/components/select';
 
 	export let data: PageData;
 	$: ({ product, categories, pricelists, supabase, bpartners } = data);
@@ -297,6 +294,7 @@
 									return async ({ update }) => {
 										await update();
 										addingProductPO = false;
+										invalidate('catalog:product');
 									};
 								}}
 							>
@@ -304,7 +302,7 @@
 									type="text"
 									name="m_product_id"
 									hidden
-									value={product.id}
+									bind:value={product.id}
 									class="input input-bordered w-full"
 									required
 								/>

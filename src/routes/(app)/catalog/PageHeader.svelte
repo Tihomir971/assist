@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { PUBLIC_BEARER_TOKEN } from '$env/static/public';
 	import { Euro, Factory } from 'lucide-svelte';
 	import * as api from '$lib/api';
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';

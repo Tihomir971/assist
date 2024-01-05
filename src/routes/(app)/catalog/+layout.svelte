@@ -2,7 +2,7 @@
 	import type { LayoutData } from './$types';
 	import { convertToTreeStructure } from '$lib/scripts/tree';
 	import { page } from '$app/stores';
-	import { goto, invalidate } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { TreeView, type TreeItem } from '$lib/components/treeview';
 
