@@ -123,6 +123,7 @@
 									bind:value={product.name}
 									required
 									class="input input-bordered w-full"
+									autocomplete="off"
 								/>
 							</label>
 							<label class="form-control col-span-full">

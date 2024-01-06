@@ -3,7 +3,6 @@ import type { Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Tables } from '$lib/types/database.types';
 import { getBoolean, getNumber, getString } from '$lib/scripts/getForm';
-import { invalidate } from '$app/navigation';
 
 export const load = (async ({ depends, params, locals: { supabase, getSession } }) => {
 	depends('catalog:product');
@@ -73,10 +72,10 @@ export const load = (async ({ depends, params, locals: { supabase, getSession } 
 		product: await getProduct(productId),
 		categories: await getCategories(),
 		pricelists: await getPricelist(productId),
-		bpartners: await getBPartners(),
-		streamed: {
-			images: await getImages(productId)
-		}
+		bpartners: await getBPartners()
+		//		streamed: {
+		//			images: await getImages(productId)
+		//		}
 	};
 }) satisfies PageServerLoad;
 
@@ -102,17 +101,20 @@ export const actions = {
 		product.isselfservice = getBoolean(formData, 'isselfservice');
 		product.discontinued = getBoolean(formData, 'discontinued');
 		product.isactive = getBoolean(formData, 'isactive');
+		console.log('product', JSON.stringify(product, null, 2));
+
 		if (productId) {
 			const { error: createPostError } = await supabase
 				.from('m_product')
 				.update(product)
 				.eq('id', productId);
-
+			console.log('createPostError', createPostError);
 			if (createPostError) {
+				console.log('createPostError', createPostError);
 				return fail(500, { supabaseErrorMessage: createPostError.message });
 			}
 		}
-		invalidate('catalog:product');
+		//		invalidate('catalog:product');
 		return { success: true };
 	},
 	addProductPO: async ({ request, locals: { supabase, getSession } }) => {

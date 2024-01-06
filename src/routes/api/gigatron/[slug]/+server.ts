@@ -52,7 +52,11 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 			}
 		}
 
-		const smallestPrice = Math.min(...prices);
+		let smallestPrice = Math.min(...prices);
+		if (!isFinite(smallestPrice)) {
+			smallestPrice = 0;
+		}
+
 		const result = await supabase
 			.from('m_productprice')
 			.update({ pricelist: smallestPrice })

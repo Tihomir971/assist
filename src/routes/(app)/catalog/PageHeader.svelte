@@ -4,7 +4,7 @@
 	import * as api from '$lib/api';
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 	import { browser } from '$app/environment';
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 
 	export let selectedProducts: number[];
 	export let onStock: boolean = true;
@@ -35,6 +35,7 @@
 						color: 'alert-success'
 					}
 				});
+				invalidate('catalog:products');
 			} else {
 				addToast({
 					data: {
@@ -118,6 +119,10 @@
 		}
 		return;
 	};
+
+	function depends() {
+		throw new Error('Function not implemented.');
+	}
 </script>
 
 <div class="navbar bg-base-100">
