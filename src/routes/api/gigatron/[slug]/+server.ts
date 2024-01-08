@@ -123,5 +123,26 @@ const vendorPrice: ParseFunctions = {
 		} else {
 			return 0;
 		}
+	},
+	'cenoteka.rs': function (document: Document) {
+		//	let tempPrice = [];
+		let bestPrice: number | undefined = undefined;
+		const priceDivs = document.querySelectorAll('.product_prices_offline_col__KZWlc > div');
+		//	const subDivs = parentDiv?.querySelectorAll('div');
+		priceDivs?.forEach((div) => {
+			const imgElement = div.querySelector('img');
+			const sallerName = imgElement?.getAttribute('alt');
+			let priceDiv = div.querySelector('.product_action_tooltip__4tt_0');
+			if (!priceDiv) priceDiv = div.querySelector('.product_product_price__LLwr_');
+			//const price=Number(priceDiv?.replace('.', '').replace(',', '.'));
+			const sallerPrice = Number(priceDiv?.textContent?.replace('.', '').replace(',', '.'));
+
+			const sallers = ['Roda', 'Tempo', 'Idea', 'Dis', 'Maxi'];
+			if (sallerName && sallers.includes(sallerName)) {
+				if (!bestPrice || sallerPrice < bestPrice) bestPrice = sallerPrice;
+			}
+		});
+		if (bestPrice) return bestPrice;
+		return 0;
 	}
 };

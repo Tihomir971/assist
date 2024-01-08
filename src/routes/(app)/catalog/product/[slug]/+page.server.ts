@@ -25,38 +25,38 @@ export const load = (async ({ depends, params, locals: { supabase, getSession } 
 		/* .returns<AutocompleteOption<string>[]>(); */
 		return data;
 	};
-	const getImages = async (id: number) => {
-		const { data: product } = await supabase
-			.from('m_product')
-			.select('imageurl')
-			.eq('id', id)
-			.single();
-
-		// Generate public image URLs from the Supabase bucket
-		const imageURLs: (string | null)[] = [];
-		const imageNames = product?.imageurl?.split(';');
-		if (imageNames) {
-			for (let i = 0; i < imageNames.length; i++) {
-				const { data } = await supabase.storage.from('products').getPublicUrl(imageNames[i]);
-				imageURLs.push(data.publicUrl);
-			}
-		}
-
-		/* 		if (imageNames) {
-			imageURLs = await Promise.all(
-				imageNames.map(async (imageName) => {
-					const { data } = await supabase.storage.from('products').getPublicUrl(imageName);
-					if (error) {
-						console.error('Error getting public URL:', error);
-						return null;
-					}
-					return data.publicUrl;
-				})
-			);
-		} */
-
-		return { imageURLs };
-	};
+	//const getImages = async (id: number) => {
+	//	const { data: product } = await supabase
+	//		.from('m_product')
+	//		.select('imageurl')
+	//		.eq('id', id)
+	//		.single();
+	//
+	//	// Generate public image URLs from the Supabase bucket
+	//	const imageURLs: (string | null)[] = [];
+	//	const imageNames = product?.imageurl?.split(';');
+	//	if (imageNames) {
+	//		for (let i = 0; i < imageNames.length; i++) {
+	//			const { data } = await supabase.storage.from('products').getPublicUrl(imageNames[i]);
+	//			imageURLs.push(data.publicUrl);
+	//		}
+	//	}
+	//
+	//	/* 		if (imageNames) {
+	//		imageURLs = await Promise.all(
+	//			imageNames.map(async (imageName) => {
+	//				const { data } = await supabase.storage.from('products').getPublicUrl(imageName);
+	//				if (error) {
+	//					console.error('Error getting public URL:', error);
+	//					return null;
+	//				}
+	//				return data.publicUrl;
+	//			})
+	//		);
+	//	} */
+	//
+	//	return { imageURLs };
+	//};
 	const getPricelist = async (id: number) => {
 		const { data } = await supabase
 			.from('m_product_po')
@@ -101,16 +101,13 @@ export const actions = {
 		product.isselfservice = getBoolean(formData, 'isselfservice');
 		product.discontinued = getBoolean(formData, 'discontinued');
 		product.isactive = getBoolean(formData, 'isactive');
-		console.log('product', JSON.stringify(product, null, 2));
 
 		if (productId) {
 			const { error: createPostError } = await supabase
 				.from('m_product')
 				.update(product)
 				.eq('id', productId);
-			console.log('createPostError', createPostError);
 			if (createPostError) {
-				console.log('createPostError', createPostError);
 				return fail(500, { supabaseErrorMessage: createPostError.message });
 			}
 		}
