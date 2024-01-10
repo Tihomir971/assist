@@ -1,7 +1,7 @@
 import { parseHTML } from 'linkedom';
 import type { RequestHandler } from './$types';
 import { error, json, redirect } from '@sveltejs/kit';
-import puppeteer from 'puppeteer';
+//import puppeteer from 'puppeteer';
 
 type ParseFunctions = {
 	[key: string]: (document: Document) => number;
@@ -25,19 +25,6 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 		for (let index = 0; index < data.length; index++) {
 			const fetchURL = data[index].url;
 			if (fetchURL) {
-				/* 				if (fetchURL === 'https://cenoteka.rs/') {
-					const browser = await puppeteer.launch();
-					const page = await browser.newPage();
-					await page.goto('https://cenoteka.rs/');
-					await page.type('#nav-search', '123456789012');
-					await page.waitForSelector('.search_search_content_wrap__Ab4ZA.container');
-					fetchURL = await page.evaluate(() => {
-						const anchor = document.querySelector<HTMLAnchorElement>(
-							'.search_search_content_wrap__Ab4ZA.container a'
-						);
-						return anchor ? anchor.href : fetchURL;
-					});
-				} */
 				const response = await fetch(fetchURL);
 				if (!response.ok) {
 					throw new Error(`Failed to fetch: ${response.status}`);

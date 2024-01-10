@@ -1,9 +1,10 @@
 import { json, redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import puppeteer from 'puppeteer-extra';
-import Adblocker from 'puppeteer-extra-plugin-adblocker';
+import puppeteer from 'puppeteer';
+//import puppeteer from 'puppeteer-extra';
+//import Adblocker from 'puppeteer-extra-plugin-adblocker';
 
-puppeteer.use(Adblocker({ blockTrackers: true }));
+//puppeteer.use(Adblocker({ blockTrackers: true }));
 
 type ParseFunctions = {
 	[key: string]: (barcode: string) => Promise<string | undefined>;
