@@ -27,12 +27,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return session;
 	};
 
-	// Check if user data already exists in request.locals
-	if (!event.locals.user) {
-		/* event.locals.user={id:"1"}; */
-		/*event.locals.user = await getUserFromDatabase(request.headers.authorization); */
-	}
-
 	return resolve(event, {
 		filterSerializedResponseHeaders(name) {
 			return name === 'content-range';

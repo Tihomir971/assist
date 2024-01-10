@@ -8,14 +8,14 @@
 <Toaster />
 <!-- <div class="flex h-full flex-col"> -->
 <div class="AppLayout h-full w-full">
-	<div class="h-full [grid-area:title-bar]">
+	<div class="h-full bg-base-300 [grid-area:title-bar]">
 		<Header></Header>
 	</div>
-	<div class="bg-base-100 [grid-area:aside]">
+	<div class="h-full bg-base-300 [grid-area:aside]">
 		<Aside></Aside>
 	</div>
 	<!-- Page Route Content -->
-	<main class="w-full [grid-area:main]">
+	<main class="h-full w-full [grid-area:main]">
 		<slot />
 	</main>
 </div>

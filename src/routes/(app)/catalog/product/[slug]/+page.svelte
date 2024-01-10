@@ -57,6 +57,19 @@
 		if (error) throw error;
 		return;
 	}
+
+	async function findCenoteka() {
+		const response = await fetch('/api/findWeb', {
+			method: 'POST',
+			body: JSON.stringify({ site: 'cenoteka', barcode: product?.barcode }),
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
+
+		const href = await response.json();
+		console.log('component href', href);
+	}
 </script>
 
 <div class="mx-auto mb-4 mt-4 max-w-5xl">
@@ -254,6 +267,7 @@
 
 			<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Prices" />
 			<div role="tabpanel" class="tab-content my-4">
+				<button class="btn btn-secondary" on:click={findCenoteka}>Find on Cenoteka</button>
 				{#if pricelists}
 					<div class="col-span-full w-full">
 						<table class="table">

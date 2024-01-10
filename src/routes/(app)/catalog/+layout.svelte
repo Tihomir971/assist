@@ -46,7 +46,7 @@
 </script>
 
 <div class="flex h-[calc(100vh-4rem)] overflow-hidden">
-	<div class="h-full w-80">
+	<div class="h-full w-80 bg-base-200">
 		<TreeView treeItems={myTreeViewNodes} on:select={(e) => rerunLoadFunction(e.detail)}></TreeView>
 	</div>
 	<div class="flex-grow overflow-hidden">

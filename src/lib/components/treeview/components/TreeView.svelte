@@ -25,7 +25,7 @@
 </script>
 
 <div class="flex h-full flex-col">
-	<div class="join border-b">
+	<div class="join w-full border-b-2 border-base-100">
 		<button
 			class="btn join-item tooltip tooltip-bottom"
 			data-tip="Edit"
