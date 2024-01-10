@@ -10,6 +10,8 @@
 
 	export let data: PageData;
 	$: ({ product, categories, pricelists, supabase, bpartners } = data);
+	let newURL = '';
+	let newPartnerPN = '';
 	let localCopy: any = undefined;
 	let modified = false;
 	$: if (localCopy && JSON.stringify(product) !== JSON.stringify(localCopy)) {
@@ -45,13 +47,8 @@
 		};
 	};
 	let columns = ['Partner', 'Partner PN', 'Price', 'URL', 'Updated'];
-	let newRow = [...columns];
 	let addingProductPO = false;
 
-	function addRow() {
-		//		data = [...data, [...newRow]]
-		//		newRow = columns
-	}
 	async function deleteProductPORow(rowToBeDeleted: number) {
 		const { error } = await supabase.from('m_product_po').delete().eq('id', rowToBeDeleted);
 		if (error) throw error;
@@ -68,7 +65,10 @@
 		});
 
 		const href = await response.json();
-		console.log('component href', href);
+		newURL = href;
+		newPartnerPN = product?.barcode ?? '';
+
+		return;
 	}
 </script>
 
@@ -348,6 +348,7 @@
 											name="partnerPN"
 											class="input input-bordered max-w-xs"
 											required
+											bind:value={newPartnerPN}
 										/>
 									</label>
 									<label class="form-control col-span-3">
@@ -360,6 +361,7 @@
 											placeholder="Enter URL..."
 											class="input input-bordered max-w-xs"
 											required
+											bind:value={newURL}
 										/>
 									</label>
 									<!-- <Label label="Partner"></Label> -->
