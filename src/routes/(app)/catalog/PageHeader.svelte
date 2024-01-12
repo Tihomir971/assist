@@ -119,10 +119,6 @@
 		}
 		return;
 	};
-
-	function depends() {
-		throw new Error('Function not implemented.');
-	}
 </script>
 
 <div class="navbar bg-base-100">

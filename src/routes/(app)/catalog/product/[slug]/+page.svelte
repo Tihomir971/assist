@@ -56,16 +56,16 @@
 	}
 
 	async function findCenoteka() {
-		const response = await fetch('/api/findWeb', {
+		const response = await fetch('https://ass-api.tihomir-d4c.workers.dev', {
 			method: 'POST',
-			body: JSON.stringify({ site: 'cenoteka', barcode: product?.barcode }),
+			body: JSON.stringify({ source: 'cenoteka', barcode: product?.barcode }),
 			headers: {
 				'content-type': 'application/json'
 			}
 		});
 
 		const href = await response.json();
-		newURL = href;
+		newURL = href.path;
 		newPartnerPN = product?.barcode ?? '';
 
 		return;

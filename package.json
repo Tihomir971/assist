@@ -45,7 +45,6 @@
     "clsx": "^2.1.0",
     "linkedom": "^0.16.6",
     "lucide-svelte": "^0.309.0",
-    "puppeteer": "^21.7.0",
     "tailwind-merge": "^2.2.0"
   }
 }
