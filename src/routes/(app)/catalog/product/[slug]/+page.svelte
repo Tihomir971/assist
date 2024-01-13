@@ -7,6 +7,7 @@
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 	import { Combobox } from '$lib/components/combobox';
 	import { X } from 'lucide-svelte';
+	import { findProductOnWeb } from '$lib/server/scraper';
 
 	export let data: PageData;
 	$: ({ product, categories, pricelists, supabase, bpartners } = data);
@@ -69,6 +70,11 @@
 		newPartnerPN = product?.barcode ?? '';
 
 		return;
+	}
+	function handleFindProductOnWeb() {
+		let selectElement = document.getElementsByName('bpartner')[0] as HTMLSelectElement;
+		let selectedValue = selectElement.value;
+		findProductOnWeb(product?.barcode, selectedValue);
 	}
 </script>
 
@@ -364,10 +370,18 @@
 											bind:value={newURL}
 										/>
 									</label>
-									<!-- <Label label="Partner"></Label> -->
-									<button type="submit" disabled={addingProductPO} class="btn btn-secondary"
-										>Add</button
-									>
+									{#if newURL === ''}
+										<button
+											type="submit"
+											formaction="?/"
+											on:click={handleFindProductOnWeb}
+											disabled={addingProductPO}
+											class="btn btn-secondary">Find</button
+										>
+									{:else}
+										<button type="submit" disabled={addingProductPO} class="btn btn-secondary"
+											>Add</button
+										>{/if}
 								</div>
 							</form>
 						</div>
