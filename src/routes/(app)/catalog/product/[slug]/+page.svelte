@@ -218,7 +218,7 @@
 								<input
 									name="isselfservice"
 									type="checkbox"
-									checked={product.isselfservice}
+									bind:checked={product.isselfservice}
 									class="toggle toggle-primary"
 								/>
 								<span class="label-text">Is Self-service?</span>
@@ -227,7 +227,7 @@
 								<input
 									type="checkbox"
 									name="discontinued"
-									checked={product.discontinued}
+									bind:checked={product.discontinued}
 									class="toggle toggle-primary"
 								/>
 								<span class="label-text">Discontinued?</span>
@@ -236,7 +236,7 @@
 								<input
 									type="checkbox"
 									name="isactive"
-									checked={product.isactive}
+									bind:checked={product.isactive}
 									class="toggle toggle-primary"
 								/>
 								<span class="label-text">Is Active?</span>
