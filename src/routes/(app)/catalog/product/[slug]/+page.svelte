@@ -7,7 +7,7 @@
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 	import { Combobox } from '$lib/components/combobox';
 	import { X } from 'lucide-svelte';
-	import { findProductOnWeb } from '$lib/server/scraper';
+	//import { findProductOnWeb } from '$lib/server/scraper';
 
 	export let data: PageData;
 	$: ({ product, categories, pricelists, supabase, bpartners } = data);
@@ -74,7 +74,7 @@
 	function handleFindProductOnWeb() {
 		let selectElement = document.getElementsByName('bpartner')[0] as HTMLSelectElement;
 		let selectedValue = selectElement.value;
-		findProductOnWeb(product?.barcode, selectedValue);
+		//findProductOnWeb(product?.barcode, selectedValue);
 	}
 </script>
 
@@ -145,7 +145,7 @@
 									autocomplete="off"
 								/>
 							</label>
-							<label class="form-control col-span-full">
+							<label class="form-control col-span-3">
 								<div class="label">
 									<span class="label-text">UoM</span>
 								</div>
@@ -153,6 +153,17 @@
 									name="c_uom_id"
 									type="text"
 									bind:value={product.c_uom_id}
+									class="input input-bordered w-full"
+								/>
+							</label>
+							<label class="form-control col-span-3">
+								<div class="label">
+									<span class="label-text">Units per Pack</span>
+								</div>
+								<input
+									name="unitsperpack"
+									type="number"
+									bind:value={product.unitsperpack}
 									class="input input-bordered w-full"
 								/>
 							</label>

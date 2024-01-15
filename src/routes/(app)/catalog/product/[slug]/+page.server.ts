@@ -101,6 +101,7 @@ export const actions = {
 		product.isselfservice = getBoolean(formData, 'isselfservice');
 		product.discontinued = getBoolean(formData, 'discontinued');
 		product.isactive = getBoolean(formData, 'isactive');
+		product.unitsperpack = getNumber(formData, 'unitsperpack') ?? 1;
 
 		if (productId) {
 			const { error: createPostError } = await supabase

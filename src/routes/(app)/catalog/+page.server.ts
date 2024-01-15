@@ -70,7 +70,10 @@ export const load = (async ({ url, depends, locals: { supabase, getSession } }) 
 			experiment = product.m_storageonhand[0];
 		} */
 
-		if (onStock === true && product.m_storageonhand.every((item) => item.qtyonhand === 0)) {
+		if (
+			(onStock === true || product.discontinued) &&
+			product.m_storageonhand.every((item) => item.qtyonhand === 0)
+		) {
 			return;
 		}
 
