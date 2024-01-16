@@ -949,6 +949,7 @@ export interface Database {
           isselfservice: boolean
           m_attributeset_id: number | null
           m_product_category_id: number | null
+          m_product_uu: string | null
           mpn: string | null
           name: string
           producttype: string
@@ -975,6 +976,7 @@ export interface Database {
           isselfservice?: boolean
           m_attributeset_id?: number | null
           m_product_category_id?: number | null
+          m_product_uu?: string | null
           mpn?: string | null
           name: string
           producttype?: string
@@ -1001,6 +1003,7 @@ export interface Database {
           isselfservice?: boolean
           m_attributeset_id?: number | null
           m_product_category_id?: number | null
+          m_product_uu?: string | null
           mpn?: string | null
           name?: string
           producttype?: string
@@ -1035,7 +1038,7 @@ export interface Database {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "m_product_featuredassetid_fkey"
+            foreignKeyName: "m_product_featuredAssetId_fkey"
             columns: ["featuredAssetId"]
             referencedRelation: "asset"
             referencedColumns: ["id"]
@@ -1286,6 +1289,7 @@ export interface Database {
           level_max: number
           level_min: number
           m_product_id: number
+          m_replenish_uu: string | null
           m_warehouse_id: number
           m_warehousesource_id: number | null
           updated: string
@@ -1299,6 +1303,7 @@ export interface Database {
           level_max?: number
           level_min?: number
           m_product_id: number
+          m_replenish_uu?: string | null
           m_warehouse_id: number
           m_warehousesource_id?: number | null
           updated?: string
@@ -1312,6 +1317,7 @@ export interface Database {
           level_max?: number
           level_min?: number
           m_product_id?: number
+          m_replenish_uu?: string | null
           m_warehouse_id?: number
           m_warehousesource_id?: number | null
           updated?: string

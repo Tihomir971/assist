@@ -56,10 +56,22 @@
 		return;
 	}
 
-	async function findCenoteka() {
-		const response = await fetch('https://ass-api.tihomir-d4c.workers.dev', {
+	interface MyRequestBody {
+		source: string;
+		barcode: string;
+	}
+	async function handleFindProductOnWeb() {
+		addingProductPO = true;
+		const apiUrl = '/api/scraper/';
+		let selectElement = document.getElementsByName('bpartner')[0] as HTMLSelectElement;
+		let selectedValue = selectElement.value;
+		let selectedLabel = bpartners?.find(
+			(partner) => partner.value === Number(selectedValue)
+		)?.label;
+		/* const response = fetch('https://ass-api.tihomir-d4c.workers.dev', { */
+		const response = await fetch(apiUrl, {
 			method: 'POST',
-			body: JSON.stringify({ source: 'cenoteka', barcode: product?.barcode }),
+			body: JSON.stringify({ source: selectedLabel, barcode: product?.barcode }),
 			headers: {
 				'content-type': 'application/json'
 			}
@@ -67,13 +79,8 @@
 
 		const href = await response.json();
 		newURL = href.path;
-		newPartnerPN = product?.barcode ?? '';
-
+		addingProductPO = false;
 		return;
-	}
-	function handleFindProductOnWeb() {
-		let selectElement = document.getElementsByName('bpartner')[0] as HTMLSelectElement;
-		let selectedValue = selectElement.value;
 		//findProductOnWeb(product?.barcode, selectedValue);
 	}
 </script>
@@ -284,7 +291,6 @@
 
 			<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Prices" />
 			<div role="tabpanel" class="tab-content my-4">
-				<button class="btn btn-secondary" on:click={findCenoteka}>Find on Cenoteka</button>
 				{#if pricelists}
 					<div class="col-span-full w-full">
 						<table class="table">
@@ -364,27 +370,24 @@
 											type="text"
 											name="partnerPN"
 											class="input input-bordered max-w-xs"
-											required
 											bind:value={newPartnerPN}
 										/>
 									</label>
 									<label class="form-control col-span-3">
 										<div class="label">
-											<span class="label-text">Partner PN</span>
+											<span class="label-text">Partner URL</span>
 										</div>
 										<input
 											type="url"
 											name="url"
 											placeholder="Enter URL..."
 											class="input input-bordered max-w-xs"
-											required
 											bind:value={newURL}
 										/>
 									</label>
 									{#if newURL === ''}
 										<button
 											type="submit"
-											formaction="?/"
 											on:click={handleFindProductOnWeb}
 											disabled={addingProductPO}
 											class="btn btn-secondary">Find</button

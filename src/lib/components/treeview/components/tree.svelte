@@ -37,7 +37,7 @@
 	<li>
 		<button
 			type="button"
-			class="title active flex w-full items-center gap-1 px-1.5"
+			class="active flex w-full items-center gap-1 px-1.5"
 			class:active={$isSelected(itemId)}
 			class:m4={$isSelected(itemId)}
 			use:melt={$item({

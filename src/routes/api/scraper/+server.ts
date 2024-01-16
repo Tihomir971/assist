@@ -1,18 +1,22 @@
+import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+interface MyRequestBody {
+	source: string;
+	barcode: string;
+}
 
-export const GET: RequestHandler = async () => {
-	return new Response();
-};
-export async function findProductOnWeb(barcode: string | null | undefined, source: string) {
-	/*     const apiUrl = 'https://ass-api.tihomir-d4c.workers.dev';
+export const POST: RequestHandler = async ({ request }) => {
+	const apiUrl = 'https://ass-api.tihomir-d4c.workers.dev';
+	const body: MyRequestBody = await request.json();
 	const response = await fetch(apiUrl, {
 		method: 'POST',
-		body: JSON.stringify({ source: source, barcode: barcode }),
+		body: JSON.stringify({ source: body.source, barcode: body.barcode }),
 		headers: {
 			'content-type': 'application/json'
 		}
 	});
 
-	const href = await response.json(); */
-	console.log(barcode, source);
-}
+	const href = await response.json();
+	console.log(JSON.stringify(href, null, 2));
+	return json(href);
+};

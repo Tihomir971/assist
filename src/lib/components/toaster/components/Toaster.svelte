@@ -23,7 +23,7 @@
 	import { cn } from '$lib/scripts/tailwind';
 </script>
 
-<div class="toast toast-center toast-top" use:portal>
+<div class="toast toast-center toast-top z-50" use:portal>
 	{#each $toasts as { id, data } (id)}
 		<div
 			use:melt={$content(id)}
