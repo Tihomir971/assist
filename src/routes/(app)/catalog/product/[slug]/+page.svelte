@@ -77,9 +77,16 @@
 			}
 		});
 
-		const href = await response.json();
-		newURL = href.path;
+		const data = await response.json();
+		console.log('data', JSON.stringify(data, null, 2));
+
+		if (data.status === 400) {
+			newURL = 'Unedfined';
+		} else {
+			newURL = data.path;
+		}
 		addingProductPO = false;
+
 		return;
 		//findProductOnWeb(product?.barcode, selectedValue);
 	}
@@ -389,9 +396,14 @@
 										<button
 											type="submit"
 											on:click={handleFindProductOnWeb}
+											class="btn btn-secondary"
 											disabled={addingProductPO}
-											class="btn btn-secondary">Find</button
 										>
+											{#if addingProductPO}
+												<span class="loading loading-spinner"></span>
+											{/if}
+											Find
+										</button>
 									{:else}
 										<button type="submit" disabled={addingProductPO} class="btn btn-secondary"
 											>Add</button
