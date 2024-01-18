@@ -92,7 +92,7 @@
 	}
 </script>
 
-<div class="mx-auto mb-4 mt-4 max-w-5xl">
+<div class="mx-auto my-4 max-w-5xl">
 	<div class="flex w-full items-center justify-between">
 		<hgroup class="prose">
 			<h3>Edit product</h3>
