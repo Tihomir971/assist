@@ -8,7 +8,7 @@ export const load = (async ({ depends, params, locals: { supabase, getSession } 
 	depends('catalog:product');
 	const session = await getSession();
 	if (!session) {
-		throw error(401, { message: 'Unauthorized' });
+		error(401, { message: 'Unauthorized' });
 	}
 	const productId = params.slug as unknown as number;
 	const getProduct = async (id: number) => {
@@ -83,7 +83,7 @@ export const actions = {
 	updateProduct: async ({ request, locals: { supabase, getSession } }) => {
 		const session = await getSession();
 		if (!session) {
-			throw error(401, { message: 'Unauthorized' });
+			error(401, { message: 'Unauthorized' });
 		}
 		const product: Partial<Tables<'m_product'>> = {};
 		/* let temporary: FormDataEntryValue | null; */
@@ -118,7 +118,7 @@ export const actions = {
 	addProductPO: async ({ request, locals: { supabase, getSession } }) => {
 		const session = await getSession();
 		if (!session) {
-			throw error(401, { message: 'Unauthorized' });
+			error(401, { message: 'Unauthorized' });
 		}
 
 		const formData = await request.formData();

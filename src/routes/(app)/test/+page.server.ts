@@ -4,7 +4,7 @@ import type { PageServerLoad } from './$types';
 export const load = (async ({ locals: { supabase, getSession } }) => {
 	const session = await getSession();
 	if (!session) {
-		throw redirect(303, '/auth');
+		redirect(303, '/auth');
 	}
 
 	const { data } = await supabase

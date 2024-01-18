@@ -4,7 +4,7 @@ import type { LayoutServerLoad } from './$types';
 export const load = (async ({ depends, locals: { supabase, getSession } }) => {
 	const session = await getSession();
 	if (!session) {
-		throw redirect(303, '/auth');
+		redirect(303, '/auth');
 	}
 
 	//	const categoryIds = url.searchParams.get('cat')?.split(',').map(String);

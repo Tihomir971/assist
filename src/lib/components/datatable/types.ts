@@ -1,4 +1,5 @@
-import type { TablePlugin } from 'svelte-headless-table/lib/types/TablePlugin';
+//import type { TablePlugin } from 'svelte-headless-table/lib/types/TablePlugin';
+import type { TablePlugin } from 'svelte-headless-table/plugins';
 import type { Readable, Writable } from 'svelte/store';
 
 export type ReadOrWritable<T> = Readable<T> | Writable<T>;

@@ -10,7 +10,7 @@ type ParseFunctions = {
 export const GET: RequestHandler = async ({ params, locals: { supabase, getSession } }) => {
 	const session = await getSession();
 	if (!session) {
-		throw redirect(303, '/auth');
+		redirect(303, '/auth');
 	}
 
 	const { data } = await supabase

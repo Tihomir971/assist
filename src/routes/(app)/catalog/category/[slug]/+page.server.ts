@@ -6,7 +6,7 @@ import type { Tables } from '$lib/types/database.types';
 export const load = (async ({ params, locals: { supabase, getSession } }) => {
 	const session = await getSession();
 	if (!session) {
-		throw error(401, { message: 'Unauthorized' });
+		error(401, { message: 'Unauthorized' });
 	}
 	const categoryId = params.slug as unknown as number;
 	const getCategory = async (id: number) => {
@@ -34,7 +34,7 @@ export const actions = {
 	setCategory: async ({ request, locals: { supabase, getSession } }) => {
 		const session = await getSession();
 		if (!session) {
-			throw error(401, { message: 'Unauthorized' });
+			error(401, { message: 'Unauthorized' });
 		}
 		const category: Partial<Tables<'m_product_category'>> = {};
 		/* let temporary: FormDataEntryValue | null; */

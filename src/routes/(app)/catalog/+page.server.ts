@@ -15,7 +15,7 @@ type Product = Partial<Tables<'m_product'>> & {
 export const load = (async ({ url, depends, locals: { supabase, getSession } }) => {
 	const session = await getSession();
 	if (!session) {
-		throw redirect(303, '/auth');
+		redirect(303, '/auth');
 	}
 
 	depends('catalog:products');
@@ -28,7 +28,7 @@ export const load = (async ({ url, depends, locals: { supabase, getSession } }) 
 		const newUrl = new URL(url);
 		newUrl?.searchParams?.set('onStock', 'true');
 		//		newUrl?.searchParams?.set('wh', paramsWarehouse ?? '5');
-		throw redirect(303, newUrl);
+		redirect(303, newUrl);
 	}
 
 	/* const activeWarehouseId = Number(paramsWarehouse); */

@@ -5,7 +5,7 @@ export const load = (async ({ url, locals: { getSession } }) => {
 	const session = await getSession();
 	if (!session && url.pathname !== '/auth') {
 		// the user is not signed in
-		throw redirect(303, '/auth');
+		redirect(303, '/auth');
 	}
-	return {};
+	return {session};
 }) satisfies LayoutServerLoad;

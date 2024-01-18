@@ -5,7 +5,7 @@ export const load = (async ({ locals: { supabase, getSession } }) => {
 	const session = await getSession();
 
 	if (!session) {
-		throw redirect(303, '/auth');
+		redirect(303, '/auth');
 	}
 
 	const { data: profile } = await supabase.from('ad_user').select();
