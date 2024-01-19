@@ -59,6 +59,46 @@ export interface Database {
   }
   public: {
     Tables: {
+      _template: {
+        Row: {
+          ad_client_id: number
+          ad_org_id: number
+          created: string
+          id: number
+          isactive: boolean
+          updated: string
+        }
+        Insert: {
+          ad_client_id?: number
+          ad_org_id?: number
+          created?: string
+          id?: number
+          isactive?: boolean
+          updated?: string
+        }
+        Update: {
+          ad_client_id?: number
+          ad_org_id?: number
+          created?: string
+          id?: number
+          isactive?: boolean
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "_template_ad_client_id_fkey"
+            columns: ["ad_client_id"]
+            referencedRelation: "ad_client"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "_template_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       ad_client: {
         Row: {
           ad_language: string | null
@@ -463,6 +503,79 @@ export interface Database {
             foreignKeyName: "c_uom_ad_org_id_fkey"
             columns: ["ad_org_id"]
             referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      c_uom_conversion: {
+        Row: {
+          ad_client_id: number | null
+          ad_org_id: number | null
+          c_uom_id: number | null
+          c_uom_to_id: number | null
+          created: string
+          dividerate: number | null
+          id: number
+          isactive: boolean | null
+          m_product_id: number | null
+          multiplyrate: number | null
+          updated: string | null
+        }
+        Insert: {
+          ad_client_id?: number | null
+          ad_org_id?: number | null
+          c_uom_id?: number | null
+          c_uom_to_id?: number | null
+          created?: string
+          dividerate?: number | null
+          id?: number
+          isactive?: boolean | null
+          m_product_id?: number | null
+          multiplyrate?: number | null
+          updated?: string | null
+        }
+        Update: {
+          ad_client_id?: number | null
+          ad_org_id?: number | null
+          c_uom_id?: number | null
+          c_uom_to_id?: number | null
+          created?: string
+          dividerate?: number | null
+          id?: number
+          isactive?: boolean | null
+          m_product_id?: number | null
+          multiplyrate?: number | null
+          updated?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "c_uom_conversion_ad_client_id_fkey"
+            columns: ["ad_client_id"]
+            referencedRelation: "ad_client"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_uom_conversion_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_uom_conversion_c_uom_id_fkey"
+            columns: ["c_uom_id"]
+            referencedRelation: "c_uom"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_uom_conversion_c_uom_to_id_fkey"
+            columns: ["c_uom_to_id"]
+            referencedRelation: "c_uom"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_uom_conversion_m_product_id_fkey"
+            columns: ["m_product_id"]
+            referencedRelation: "m_product"
             referencedColumns: ["id"]
           }
         ]
