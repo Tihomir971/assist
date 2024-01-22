@@ -1,7 +1,6 @@
 import { parseHTML } from 'linkedom';
 import type { RequestHandler } from './$types';
 import { error, json, redirect } from '@sveltejs/kit';
-//import puppeteer from 'puppeteer';
 
 type ParseFunctions = {
 	[key: string]: (document: Document) => number;
@@ -58,27 +57,29 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 			smallestPrice = 0;
 		}
 
-		const result = await supabase
+		const { count, error: errorUpdate } = await supabase
 			.from('m_productprice')
-			.update({ pricelist: smallestPrice })
+			.update({ pricelist: smallestPrice }, { count: 'estimated' })
 			//.select('id,parent_id,content: name')
 			.eq('m_product_id', Number(params.slug))
 			.eq('m_pricelist_version_id', 15);
+		console.log('count', count);
 
-		if (result.error) {
+		if (count === 0) {
 			const result = await supabase.from('m_productprice').insert({
 				m_product_id: Number(params.slug),
 				m_pricelist_version_id: 15,
 				pricelist: smallestPrice
 			});
+			console.log('result', JSON.stringify(result, null, 2));
 			//.select('id,parent_id,content: name')
 			if (result.error) {
 				error(400, `Failed to insert: ${result.error.details}`);
 			}
 		}
 
-		if (result.error) {
-			error(400, `Failed to update: ${result.error.details}`);
+		if (errorUpdate) {
+			error(400, `Failed to update: ${errorUpdate.details}`);
 		}
 		return json({ name: data[0].m_product?.name });
 
