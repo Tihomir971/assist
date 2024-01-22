@@ -63,7 +63,6 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 			//.select('id,parent_id,content: name')
 			.eq('m_product_id', Number(params.slug))
 			.eq('m_pricelist_version_id', 15);
-		console.log('count', count);
 
 		if (count === 0) {
 			const result = await supabase.from('m_productprice').insert({
@@ -71,8 +70,6 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 				m_pricelist_version_id: 15,
 				pricelist: smallestPrice
 			});
-			console.log('result', JSON.stringify(result, null, 2));
-			//.select('id,parent_id,content: name')
 			if (result.error) {
 				error(400, `Failed to insert: ${result.error.details}`);
 			}
@@ -82,8 +79,6 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 			error(400, `Failed to update: ${errorUpdate.details}`);
 		}
 		return json({ name: data[0].m_product?.name });
-
-		//return json(parsePrice(html));
 	}
 	return json(
 		errorProductPO

@@ -5,6 +5,8 @@
 	import { applyAction, enhance } from '$app/forms';
 	import { Combobox } from '$lib/components/combobox';
 	import { DateTimeFormat, numberFormat } from '$lib/scripts/format';
+	import { afterNavigate } from '$app/navigation';
+	import { base } from '$app/paths';
 
 	export let data: PageData;
 	$: ({ category, categories } = data);
@@ -24,9 +26,9 @@
 				// do something...
 				addToast({
 					data: {
-						title: 'Success',
-						description: 'Product updated!',
-						color: 'alert-error'
+						title: 'Category update',
+						description: `Category: "${category?.name}" successfully updated!`,
+						color: 'alert-success'
 					}
 				});
 				// use the default behavior for this result type
@@ -38,6 +40,12 @@
 			//	console.log('Total time taken : ' + timeTaken + ' ms');
 		};
 	};
+	let previousPage: string = base;
+	afterNavigate(({ from }) => {
+		previousPage = from?.url.pathname || previousPage;
+		previousPage = previousPage + '?' + from?.url.searchParams.toString() || previousPage;
+		localCopy = Object.assign({}, category);
+	});
 </script>
 
 <div class="mx-auto max-w-2xl">

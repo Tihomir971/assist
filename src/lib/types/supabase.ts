@@ -1659,10 +1659,13 @@ export interface Database {
           isactive: boolean
           level_max: number
           level_min: number
+          m_locator_id: number | null
           m_product_id: number
           m_replenish_uu: string | null
           m_warehouse_id: number
           m_warehousesource_id: number | null
+          qtybatchsize: number | null
+          replenishtype: string
           updated: string
         }
         Insert: {
@@ -1673,10 +1676,13 @@ export interface Database {
           isactive?: boolean
           level_max?: number
           level_min?: number
+          m_locator_id?: number | null
           m_product_id: number
           m_replenish_uu?: string | null
           m_warehouse_id: number
           m_warehousesource_id?: number | null
+          qtybatchsize?: number | null
+          replenishtype?: string
           updated?: string
         }
         Update: {
@@ -1687,10 +1693,13 @@ export interface Database {
           isactive?: boolean
           level_max?: number
           level_min?: number
+          m_locator_id?: number | null
           m_product_id?: number
           m_replenish_uu?: string | null
           m_warehouse_id?: number
           m_warehousesource_id?: number | null
+          qtybatchsize?: number | null
+          replenishtype?: string
           updated?: string
         }
         Relationships: [
@@ -1704,6 +1713,12 @@ export interface Database {
             foreignKeyName: "m_replenish_ad_org_id_fkey"
             columns: ["ad_org_id"]
             referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_replenish_m_locator_id_fkey"
+            columns: ["m_locator_id"]
+            referencedRelation: "m_locator"
             referencedColumns: ["id"]
           },
           {
