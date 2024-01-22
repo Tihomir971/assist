@@ -27,23 +27,24 @@
 			const element = selectedProducts[index];
 			const response = await fetch(`/api/gigatron/${element}`);
 			const serverResponse = await response.json();
-			if (serverResponse !== 'Error') {
+
+			if (serverResponse.error) {
+				addToast({
+					data: {
+						title: `${serverResponse.error.message}`,
+						description: `${serverResponse.error.details}`,
+						color: 'alert-error'
+					}
+				});
+			} else {
 				addToast({
 					data: {
 						title: 'Market Prices updated!',
-						description: `Market  price for "${serverResponse}" updated`,
+						description: `Market  price for "${serverResponse.name}" updated`,
 						color: 'alert-success'
 					}
 				});
 				invalidate('catalog:products');
-			} else {
-				addToast({
-					data: {
-						title: 'Market Prices ERROR!',
-						description: `Error: "${serverResponse}"`,
-						color: 'alert-error'
-					}
-				});
 			}
 		}
 	}

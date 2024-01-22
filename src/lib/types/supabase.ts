@@ -180,7 +180,10 @@ export interface Database {
       }
       ad_user: {
         Row: {
+          ad_client_id: number
+          ad_org_id: number
           avatar_url: string | null
+          c_bpartner_id: number | null
           created: string
           full_name: string | null
           id: string
@@ -190,7 +193,10 @@ export interface Database {
           username: string | null
         }
         Insert: {
+          ad_client_id?: number
+          ad_org_id?: number
           avatar_url?: string | null
+          c_bpartner_id?: number | null
           created?: string
           full_name?: string | null
           id: string
@@ -200,7 +206,10 @@ export interface Database {
           username?: string | null
         }
         Update: {
+          ad_client_id?: number
+          ad_org_id?: number
           avatar_url?: string | null
+          c_bpartner_id?: number | null
           created?: string
           full_name?: string | null
           id?: string
@@ -210,6 +219,24 @@ export interface Database {
           username?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "ad_user_ad_client_id_fkey"
+            columns: ["ad_client_id"]
+            referencedRelation: "ad_client"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ad_user_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ad_user_c_bpartner_id_fkey"
+            columns: ["c_bpartner_id"]
+            referencedRelation: "c_bpartner"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "ad_user_id_fkey"
             columns: ["id"]
@@ -606,45 +633,72 @@ export interface Database {
       }
       m_attribute: {
         Row: {
+          ad_client_id: number
+          ad_org_id: number
           attribute_group_id: number
           attribute_type: string | null
           attributevaluetype: string
           backend_type: string | null
           code: string
           created: string
+          description: string | null
           id: number
           isactive: boolean
+          isinstanceattribute: boolean
+          ismandatory: boolean
           label: string | null
           name: string
           updated: string
         }
         Insert: {
+          ad_client_id?: number
+          ad_org_id?: number
           attribute_group_id?: number
           attribute_type?: string | null
-          attributevaluetype: string
+          attributevaluetype?: string
           backend_type?: string | null
           code: string
           created?: string
+          description?: string | null
           id?: number
           isactive?: boolean
+          isinstanceattribute?: boolean
+          ismandatory?: boolean
           label?: string | null
           name: string
           updated?: string
         }
         Update: {
+          ad_client_id?: number
+          ad_org_id?: number
           attribute_group_id?: number
           attribute_type?: string | null
           attributevaluetype?: string
           backend_type?: string | null
           code?: string
           created?: string
+          description?: string | null
           id?: number
           isactive?: boolean
+          isinstanceattribute?: boolean
+          ismandatory?: boolean
           label?: string | null
           name?: string
           updated?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "m_attribute_ad_client_id_fkey"
+            columns: ["ad_client_id"]
+            referencedRelation: "ad_client"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_attribute_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "m_attribute_attribute_group_id_fkey"
             columns: ["attribute_group_id"]
@@ -677,13 +731,90 @@ export interface Database {
         }
         Relationships: []
       }
+      m_attributeinstance: {
+        Row: {
+          ad_client_id: number
+          ad_org_id: number
+          created: string
+          isactive: boolean
+          m_attribute_id: number
+          m_attributesetinstance_id: number
+          m_attributevalue_id: number | null
+          updated: string
+          value: string | null
+          valuedate: string | null
+          valuenumber: number | null
+        }
+        Insert: {
+          ad_client_id?: number
+          ad_org_id?: number
+          created?: string
+          isactive?: boolean
+          m_attribute_id?: number
+          m_attributesetinstance_id: number
+          m_attributevalue_id?: number | null
+          updated?: string
+          value?: string | null
+          valuedate?: string | null
+          valuenumber?: number | null
+        }
+        Update: {
+          ad_client_id?: number
+          ad_org_id?: number
+          created?: string
+          isactive?: boolean
+          m_attribute_id?: number
+          m_attributesetinstance_id?: number
+          m_attributevalue_id?: number | null
+          updated?: string
+          value?: string | null
+          valuedate?: string | null
+          valuenumber?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "m_attributeinstance_ad_client_id_fkey"
+            columns: ["ad_client_id"]
+            referencedRelation: "ad_client"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_attributeinstance_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_attributeinstance_m_attribute_id_fkey"
+            columns: ["m_attribute_id"]
+            referencedRelation: "m_attribute"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_attributeinstance_m_attributesetinstance_id_fkey"
+            columns: ["m_attributesetinstance_id"]
+            referencedRelation: "m_attributesetinstance"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_attributeinstance_m_attributevalue_id_fkey"
+            columns: ["m_attributevalue_id"]
+            referencedRelation: "m_attributevalue"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       m_attributeset: {
         Row: {
           ad_client_id: number
           ad_org_id: number
           created: string
+          description: string | null
           id: number
           isactive: boolean
+          isguaranteedate: boolean
+          isinstanceattribute: boolean
+          mandatorytype: string
           name: string
           updated: string
         }
@@ -691,8 +822,12 @@ export interface Database {
           ad_client_id?: number
           ad_org_id?: number
           created?: string
+          description?: string | null
           id?: number
           isactive?: boolean
+          isguaranteedate?: boolean
+          isinstanceattribute?: boolean
+          mandatorytype?: string
           name: string
           updated?: string
         }
@@ -700,8 +835,12 @@ export interface Database {
           ad_client_id?: number
           ad_org_id?: number
           created?: string
+          description?: string | null
           id?: number
           isactive?: boolean
+          isguaranteedate?: boolean
+          isinstanceattribute?: boolean
+          mandatorytype?: string
           name?: string
           updated?: string
         }
@@ -720,11 +859,128 @@ export interface Database {
           }
         ]
       }
+      m_attributesetinstance: {
+        Row: {
+          ad_client_id: number
+          ad_org_id: number
+          created: string
+          guaranteedate: string | null
+          id: number
+          isactive: boolean
+          lot: string | null
+          m_attributeset_id: number | null
+          serno: string | null
+          updated: string
+        }
+        Insert: {
+          ad_client_id?: number
+          ad_org_id?: number
+          created?: string
+          guaranteedate?: string | null
+          id?: number
+          isactive?: boolean
+          lot?: string | null
+          m_attributeset_id?: number | null
+          serno?: string | null
+          updated?: string
+        }
+        Update: {
+          ad_client_id?: number
+          ad_org_id?: number
+          created?: string
+          guaranteedate?: string | null
+          id?: number
+          isactive?: boolean
+          lot?: string | null
+          m_attributeset_id?: number | null
+          serno?: string | null
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "m_attributesetinstance_ad_client_id_fkey"
+            columns: ["ad_client_id"]
+            referencedRelation: "ad_client"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_attributesetinstance_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_attributesetinstance_m_attributeset_id_fkey"
+            columns: ["m_attributeset_id"]
+            referencedRelation: "m_attributeset"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      m_attributeuse: {
+        Row: {
+          ad_client_id: number
+          ad_org_id: number
+          created: string
+          isactive: boolean
+          m_attribute_id: number
+          m_attributeset_id: number
+          seqno: number | null
+          updated: string
+        }
+        Insert: {
+          ad_client_id?: number
+          ad_org_id?: number
+          created?: string
+          isactive?: boolean
+          m_attribute_id: number
+          m_attributeset_id: number
+          seqno?: number | null
+          updated?: string
+        }
+        Update: {
+          ad_client_id?: number
+          ad_org_id?: number
+          created?: string
+          isactive?: boolean
+          m_attribute_id?: number
+          m_attributeset_id?: number
+          seqno?: number | null
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "m_attributeuse_ad_client_id_fkey"
+            columns: ["ad_client_id"]
+            referencedRelation: "ad_client"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_attributeuse_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_attributeuse_m_attribute_id_fkey"
+            columns: ["m_attribute_id"]
+            referencedRelation: "m_attribute"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_attributeuse_m_attributeset_id_fkey"
+            columns: ["m_attributeset_id"]
+            referencedRelation: "m_attributeset"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       m_attributevalue: {
         Row: {
           ad_client_id: number
           ad_org_id: number
           created: string
+          description: string | null
           id: number
           isactive: boolean
           m_attribute_id: number
@@ -736,6 +992,7 @@ export interface Database {
           ad_client_id?: number
           ad_org_id?: number
           created?: string
+          description?: string | null
           id?: number
           isactive?: boolean
           m_attribute_id: number
@@ -747,6 +1004,7 @@ export interface Database {
           ad_client_id?: number
           ad_org_id?: number
           created?: string
+          description?: string | null
           id?: number
           isactive?: boolean
           m_attribute_id?: number

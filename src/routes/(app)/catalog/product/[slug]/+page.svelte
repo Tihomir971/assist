@@ -40,8 +40,8 @@
 				});
 				// use the default behavior for this result type
 				await applyAction(result);
+				history.back();
 			}
-			history.back();
 			//await update({ reset: false, invalidateAll: false });
 			//	let timeTaken = Date.now() - start;
 			//	console.log('Total time taken : ' + timeTaken + ' ms');

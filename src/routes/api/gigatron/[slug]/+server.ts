@@ -13,14 +13,14 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 		redirect(303, '/auth');
 	}
 
-	const { data } = await supabase
+	const { data, error: errorProductPO } = await supabase
 		.from('m_product_po')
 		.select('id,url,c_bpartner_id,m_product(name)')
 		//.select('id,parent_id,content: name')
 		.eq('m_product_id', params.slug)
 		.eq('isactive', true);
 
-	if (data) {
+	if (data && data?.length > 0) {
 		const prices: number[] = [];
 		for (let index = 0; index < data.length; index++) {
 			const fetchURL = data[index].url;
@@ -64,7 +64,8 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 			//.select('id,parent_id,content: name')
 			.eq('m_product_id', Number(params.slug))
 			.eq('m_pricelist_version_id', 15);
-		if (result.count === null) {
+
+		if (result.error) {
 			const result = await supabase.from('m_productprice').insert({
 				m_product_id: Number(params.slug),
 				m_pricelist_version_id: 15,
@@ -79,11 +80,15 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 		if (result.error) {
 			error(400, `Failed to update: ${result.error.details}`);
 		}
-		return json(data[0].m_product?.name);
+		return json({ name: data[0].m_product?.name });
 
 		//return json(parsePrice(html));
 	}
-	return json('Error');
+	return json(
+		errorProductPO
+			? { error: errorProductPO }
+			: { error: { message: 'No sources', details: 'Sources should be defined first' } }
+	);
 };
 
 const vendorPrice: ParseFunctions = {
@@ -138,7 +143,7 @@ const vendorPrice: ParseFunctions = {
 			//const price=Number(priceDiv?.replace('.', '').replace(',', '.'));
 			const sallerPrice = Number(priceDiv?.textContent?.replace('.', '').replace(',', '.'));
 
-			const sallers = ['Roda', 'Tempo', 'Idea', 'Dis', 'Maxi'];
+			const sallers = ['Roda', 'Tempo', 'Idea', 'Lidl', 'Maxi'];
 			if (sallerName && sallers.includes(sallerName)) {
 				if (!bestPrice || sallerPrice < bestPrice) bestPrice = sallerPrice;
 			}

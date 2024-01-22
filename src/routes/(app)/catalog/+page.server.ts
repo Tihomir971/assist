@@ -114,7 +114,7 @@ export const load = (async ({ url, depends, locals: { supabase, getSession } }) 
 		}
 
 		priceRecommended = Math.ceil(priceRecommended);
-		if (priceRecommended < 2000) {
+		if (priceRecommended < 1000) {
 			priceRecommended = priceRecommended - 0.01;
 		}
 
