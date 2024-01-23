@@ -1,13 +1,30 @@
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 
-export const load = (async ({ depends, locals: { supabase, getSession } }) => {
+export const load = (async ({ url, depends, locals: { supabase, getSession } }) => {
 	const session = await getSession();
 	if (!session) {
 		redirect(303, '/auth');
 	}
 
-	//	const categoryIds = url.searchParams.get('cat')?.split(',').map(String);
+	/* 	const paramsCategory = url.searchParams.get('onStock');
+	const defaultExpanded: number[] = [];
+ */
+	/* 	if (paramsCategory) {
+		defaultExpanded.push(Number(paramsCategory));
+	} */
+
+	/* 	function getParentIds(categories: Category[], startCategoryId: number): number[] {
+    let parentIds: number[] = [];
+    let currentCategory = categories.find(category => category.id === startCategoryId);
+
+    while (currentCategory && currentCategory.parent_id !== null) {
+        parentIds.push(currentCategory.parent_id);
+        currentCategory = categories.find(category => category.id === currentCategory.parent_id);
+    }
+
+    return parentIds;
+} */
 
 	depends('catalog:categories');
 	const { data: categories } = await supabase

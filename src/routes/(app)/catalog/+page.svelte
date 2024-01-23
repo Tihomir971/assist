@@ -2,8 +2,7 @@
 	import type { PageData } from './$types';
 	import { writable } from 'svelte/store';
 
-	/* import Actions from './actions-product.doc'; */
-	import Actions2 from './TableAction.svelte';
+	import TableAction from './TableAction.svelte';
 	import NumberFormat from '$lib/components/table/NumberFormat.svelte';
 	import TextRight from '$lib/components/table/TextRight.svelte';
 	import PageHeader from './PageHeader.svelte';
@@ -12,18 +11,17 @@
 
 	export let data: PageData;
 	const onStock = data.onStock;
-	//	const contributions = data.contributions;
-	//	$: console.log('contributions', contributions);
 
 	import { createTable, createRender, Subscribe, Render } from 'svelte-headless-table';
 	import {
-		addColumnFilters,
 		addHiddenColumns,
 		addSelectedRows,
 		addSortBy,
 		addTableFilter
 	} from 'svelte-headless-table/plugins';
-	import { numberFormat } from '$lib/scripts/format';
+	import { goto, preloadData, pushState } from '$app/navigation';
+	import { page } from '$app/stores';
+
 	const products = writable(data.products);
 	$: $products = data.products;
 
@@ -48,6 +46,7 @@
 		return item ? item.qtyonhand : 0;
 	}
 
+	//Create table columns
 	let columns = table.createColumns([
 		table.column({
 			accessor: 'id',
@@ -190,9 +189,11 @@
 			header: '',
 			accessor: ({ id }) => id,
 			/* cell: ({ value }) => value */
-			cell: ({ value }) => createRender(Actions2, { id: value.toString() })
+			cell: ({ value }) =>
+				createRender(TableAction).on('click', () => goto(`/catalog/product/${value.toString()}`))
 		})
 	]);
+
 	//Create View Model
 	const { headerRows, pageRows, tableAttrs, tableBodyAttrs, flatColumns, pluginStates, rows } =
 		table.createViewModel(columns, {
@@ -209,7 +210,6 @@
 	<div class="flex h-full flex-col overflow-hidden px-2">
 		<PageHeader selectedProducts={strSelectedDataIds} {onStock} bind:filterValue={$filterValue} />
 		<Table.Root {...$tableAttrs}>
-			<!-- <Table.Root {...$tableAttrs} class="h-full flex-grow overflow-y-auto"> -->
 			<Table.Header>
 				{#each $headerRows as headerRow}
 					<Subscribe rowAttrs={headerRow.attrs()}>
