@@ -126,6 +126,7 @@ export const actions = {
 		const m_product_id = getNumber(formData, 'm_product_id');
 		const vendorproductno = getString(formData, 'partnerPN');
 		const url = getString(formData, 'url');
+		console.log('', c_bpartner_id, m_product_id, vendorproductno);
 
 		if (m_product_id && c_bpartner_id && vendorproductno && url) {
 			const { error: createPostError } = await supabase

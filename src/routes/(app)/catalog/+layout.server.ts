@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 
-export const load = (async ({ url, depends, locals: { supabase, getSession } }) => {
+export const load = (async ({ depends, locals: { supabase, getSession } }) => {
 	const session = await getSession();
 	if (!session) {
 		redirect(303, '/auth');

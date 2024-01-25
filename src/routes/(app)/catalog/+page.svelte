@@ -19,8 +19,7 @@
 		addSortBy,
 		addTableFilter
 	} from 'svelte-headless-table/plugins';
-	import { goto, preloadData, pushState } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 
 	const products = writable(data.products);
 	$: $products = data.products;

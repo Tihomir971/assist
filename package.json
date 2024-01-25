@@ -15,7 +15,7 @@
     "@melt-ui/pp": "^0.3.0",
     "@melt-ui/svelte": "^0.70.0",
     "@sveltejs/adapter-cloudflare": "^4.1.0",
-    "@sveltejs/kit": "^2.4.3",
+    "@sveltejs/kit": "^2.5.0",
     "@sveltejs/vite-plugin-svelte": "^3.0.1",
     "@tailwindcss/forms": "0.5.7",
     "@tailwindcss/typography": "0.5.10",
@@ -45,7 +45,7 @@
     "@supabase/supabase-js": "^2.39.3",
     "clsx": "^2.1.0",
     "linkedom": "^0.16.8",
-    "lucide-svelte": "^0.314.0",
+    "lucide-svelte": "^0.315.0",
     "tailwind-merge": "^2.2.1"
   }
 }

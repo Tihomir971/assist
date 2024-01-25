@@ -6,7 +6,7 @@
 	import { DateTimeFormat, numberFormat } from '$lib/scripts/format';
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 	import { Combobox } from '$lib/components/combobox';
-	import { X } from 'lucide-svelte';
+	import { Plus, Search, X } from 'lucide-svelte';
 	//import { findProductOnWeb } from '$lib/server/scraper';
 
 	export let data: PageData;
@@ -62,7 +62,7 @@
 	}
 	async function handleFindProductOnWeb() {
 		addingProductPO = true;
-		const apiUrl = '/api/scraper/';
+		const apiUrl = '/api/scraper/findProduct/';
 		let selectElement = document.getElementsByName('bpartner')[0] as HTMLSelectElement;
 		let selectedValue = selectElement.value;
 		let selectedLabel = bpartners?.find(
@@ -294,123 +294,117 @@
 					</div>
 				</form>
 			</div>
-			<div class="min-h-96 shrink-0 overflow-auto">
+			<div class="h-96 shrink-0 overflow-auto">
 				<div role="tablist" class="tabs tabs-bordered">
 					<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Prices" checked />
 					<div role="tabpanel" class="tab-content">
 						{#if pricelists}
 							<div class="col-span-full w-full">
-								<table class="table">
-									<thead>
-										<tr>
-											{#each columns as column}
-												<th>{column}</th>
-											{/each}
-										</tr>
-									</thead>
-									<tbody>
-										{#each pricelists as pricelist}
-											<tr class="hover">
-												<td> {pricelist.c_bpartner?.name}</td>
-												<td>{pricelist.vendorproductno}</td>
-												<td>{numberFormat(pricelist.pricelist)}</td>
-												<td>{DateTimeFormat(pricelist.updated)}</td>
-												<td><a href={pricelist.url} target="_blank" class="link">Visit</a></td>
-												<td>
-													<button
-														on:click={() => deleteProductPORow(pricelist.id)}
-														class="btn btn-ghost btn-sm"
-													>
-														<X />
-													</button>
-												</td>
-											</tr>
-										{/each}
-									</tbody>
-								</table>
-								<div class="items-center justify-between space-y-4 border-t pt-4">
-									<div>Add product reference for product</div>
-									<form
-										method="post"
-										action="?/addProductPO"
-										use:enhance={() => {
-											addingProductPO = true;
+								<form
+									method="post"
+									action="?/addProductPO"
+									use:enhance={() => {
+										addingProductPO = true;
 
-											return async ({ update }) => {
-												await update();
-												addingProductPO = false;
-												invalidate('catalog:product');
-											};
-										}}
-									>
-										<input
-											type="text"
-											name="m_product_id"
-											hidden
-											bind:value={product.id}
-											class="input input-bordered w-full"
-											required
-										/>
-										<div class="flex flex-row items-end justify-between">
-											{#if bpartners}
-												<!-- <Select options={bpartners} label="Select Partner..."></Select> -->
-												<label class="form-control">
-													<div class="label">
-														<span class="label-text">Partner</span>
-													</div>
+										return async ({ update }) => {
+											await update();
+											addingProductPO = false;
+											invalidate('catalog:product');
+										};
+									}}
+								>
+									<input
+										type="text"
+										name="m_product_id"
+										hidden
+										bind:value={product.id}
+										class="input input-bordered w-full"
+										required
+									/>
+									<table class="table table-sm">
+										<thead>
+											<tr>
+												{#each columns as column}
+													<th>{column}</th>
+												{/each}
+											</tr>
+										</thead>
+										<tbody>
+											{#each pricelists as pricelist}
+												<tr class="hover">
+													<td> {pricelist.c_bpartner?.name}</td>
+													<td>{pricelist.vendorproductno}</td>
+													<td>{numberFormat(pricelist.pricelist)}</td>
+													<td>{DateTimeFormat(pricelist.updated)}</td>
+													<td><a href={pricelist.url} target="_blank" class="link">Visit</a></td>
+													<td>
+														<button
+															on:click={() => deleteProductPORow(pricelist.id)}
+															class="btn btn-ghost btn-sm"
+														>
+															<X />
+														</button>
+													</td>
+												</tr>
+											{/each}
+											<tr>
+												<td>
 													<select
 														name="bpartner"
-														class="select select-bordered w-full max-w-xs"
+														class="select select-bordered select-sm w-full max-w-xs"
 														required
-													>
-														{#each bpartners as { value, label }}
-															<option {value}>{label}</option>
-														{/each}
+														>{#if bpartners}
+															{#each bpartners as { value, label }}
+																<option {value}>{label}</option>
+															{/each}
+														{/if}
 													</select>
-												</label>
-											{/if}
-											<label class="form-control col-span-3">
-												<div class="label">
-													<span class="label-text">Partner PN</span>
-												</div>
-												<input
-													type="text"
-													name="partnerPN"
-													class="input input-bordered max-w-xs"
-													bind:value={newPartnerPN}
-												/>
-											</label>
-											<label class="form-control col-span-3">
-												<div class="label">
-													<span class="label-text">Partner URL</span>
-												</div>
-												<input
-													type="url"
-													name="url"
-													placeholder="Enter URL..."
-													class="input input-bordered max-w-xs"
-													bind:value={newURL}
-												/>
-											</label>
-											{#if newURL === ''}
-												<button
-													type="submit"
-													on:click={handleFindProductOnWeb}
-													class="btn btn-secondary"
-													disabled={addingProductPO}
+												</td>
+												<td
+													><input
+														type="text"
+														name="partnerPN"
+														class="input input-bordered input-sm max-w-xs"
+														bind:value={newPartnerPN}
+													/></td
 												>
-													{#if addingProductPO}
-														<span class="loading loading-spinner"></span>
+												<td></td>
+												<td>
+													<input
+														type="url"
+														name="url"
+														placeholder="Enter URL..."
+														class="input input-bordered input-sm max-w-xs"
+														bind:value={newURL}
+													/>
+												</td>
+												<td> </td>
+												<td>
+													{#if newURL === ''}
+														<button
+															type="submit"
+															on:click={handleFindProductOnWeb}
+															class="btn btn-ghost btn-sm"
+															disabled={addingProductPO}
+														>
+															{#if addingProductPO}
+																<span class="loading loading-spinner"></span>
+															{:else}
+																<Search />
+															{/if}
+														</button>
+													{:else}
+														<button
+															type="submit"
+															disabled={addingProductPO}
+															class="btn btn-ghost btn-sm"><Plus /></button
+														>
 													{/if}
-													Find
-												</button>
-											{:else}
-												<button type="submit" disabled={addingProductPO} class="btn btn-secondary"
-													>Add</button
-												>{/if}
-										</div>
-									</form>
-								</div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</form>
 							</div>
 						{/if}
 					</div>
@@ -421,16 +415,4 @@
 			</div>
 		</div>
 	{/if}
-	<!-- <div>
-		<div role="tablist" class="tabs tabs-bordered">
-			<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Tab 1" />
-			<div role="tabpanel" class="tab-content p-10">Tab content 1</div>
-
-			<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Tab 2" checked />
-			<div role="tabpanel" class="tab-content p-10">Tab content 2</div>
-
-			<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Tab 3" />
-			<div role="tabpanel" class="tab-content p-10">Tab content 3</div>
-		</div>
-	</div> -->
 </div>

@@ -17,6 +17,5 @@ export const POST: RequestHandler = async ({ request }) => {
 	});
 
 	const href = await response.json();
-	console.log(JSON.stringify(href, null, 2));
 	return json(href);
 };

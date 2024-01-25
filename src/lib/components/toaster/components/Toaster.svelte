@@ -3,6 +3,7 @@
 		title: string;
 		description: string;
 		color: string;
+		closeDelay?: number;
 	};
 
 	const {
@@ -10,7 +11,7 @@
 		helpers,
 		states: { toasts },
 		actions: { portal }
-	} = createToaster<ToastData>({ closeDelay: 10000 });
+	} = createToaster<ToastData>({});
 
 	export const addToast = helpers.addToast;
 </script>

@@ -1,6 +1,6 @@
 import { parseHTML } from 'linkedom';
-import type { RequestHandler } from './$types';
 import { error, json, redirect } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 
 type ParseFunctions = {
 	[key: string]: (document: Document) => number;
@@ -30,6 +30,7 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 				}
 
 				const html = await response.text();
+
 				const { document } = parseHTML(html);
 				for (const key in vendorPrice) {
 					// Check if the string contains the current key
