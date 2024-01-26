@@ -2,7 +2,7 @@ import { error, fail } from '@sveltejs/kit';
 import type { Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Tables } from '$lib/types/database.types';
-import { getBoolean, getNumber, getString } from '$lib/scripts/getForm';
+import { getNumber, getString } from '$lib/scripts/getForm';
 
 export const load = (async ({ depends, params, locals: { supabase, getSession } }) => {
 	depends('catalog:product');
@@ -89,32 +89,32 @@ export const actions = {
 		/* let temporary: FormDataEntryValue | null; */
 		const formData = await request.formData();
 
-		const productId = getNumber(formData, 'id');
-		product.sku = getString(formData, 'sku');
-		product.name = getString(formData, 'name') ?? undefined;
-		product.barcode = getString(formData, 'barcode');
-		product.c_uom_id = getNumber(formData, 'c_uom_id') ?? undefined;
-		product.brand = getString(formData, 'brand');
-		product.mpn = getString(formData, 'mpn') ?? undefined;
-		product.m_product_category_id = getNumber(formData, 'm_product_category_id');
-		product.condition = getString(formData, 'condition');
-		product.isselfservice = getBoolean(formData, 'isselfservice');
-		product.discontinued = getBoolean(formData, 'discontinued');
-		product.isactive = getBoolean(formData, 'isactive');
-		product.unitsperpack = getNumber(formData, 'unitsperpack') ?? 1;
+		const productId = Number(formData.get('id'));
+		product.sku = formData.get('sku') as string;
+		product.name = formData.get('name') as string;
+		product.barcode = formData.get('barcode') as string;
+		product.c_uom_id = Number(formData.get('c_uom_id'));
+		product.brand = formData.get('brand') as string;
+		product.mpn = formData.get('mpn') as string;
+		product.m_product_category_id = Number(formData.get('m_product_category_id'));
+		product.condition = formData.get('condition') as string;
+		product.isselfservice = Boolean(formData.get('condition'));
+		product.discontinued = Boolean(formData.get('discontinued'));
+		product.isactive = Boolean(formData.get('isactive'));
+		product.unitsperpack = Number(formData.get('unitsperpack'));
+		console.log('product', JSON.stringify(product));
 
 		if (productId) {
-			const { error: createPostError } = await supabase
+			const { error: updateProductError } = await supabase
 				.from('m_product')
 				.update(product)
 				.eq('id', productId);
-			if (createPostError) {
-				return fail(500, { supabaseErrorMessage: createPostError.message });
+			if (updateProductError) {
+				return fail(400, updateProductError);
 			}
 		}
-		//		invalidate('catalog:product');
-		return { success: true };
 	},
+
 	addProductPO: async ({ request, locals: { supabase, getSession } }) => {
 		const session = await getSession();
 		if (!session) {
@@ -126,14 +126,13 @@ export const actions = {
 		const m_product_id = getNumber(formData, 'm_product_id');
 		const vendorproductno = getString(formData, 'partnerPN');
 		const url = getString(formData, 'url');
-		console.log('', c_bpartner_id, m_product_id, vendorproductno);
 
 		if (m_product_id && c_bpartner_id && vendorproductno && url) {
-			const { error: createPostError } = await supabase
+			const { error: addProductPOError } = await supabase
 				.from('m_product_po')
 				.insert({ m_product_id, c_bpartner_id, vendorproductno, url });
-			if (createPostError) {
-				return fail(500, { supabaseErrorMessage: createPostError.message });
+			if (addProductPOError) {
+				return fail(400, addProductPOError);
 			}
 		}
 	}

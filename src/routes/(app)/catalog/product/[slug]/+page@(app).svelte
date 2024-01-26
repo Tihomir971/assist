@@ -26,8 +26,11 @@
 		previousPage = previousPage + '?' + from?.url.searchParams.toString() || previousPage;
 		localCopy = Object.assign({}, product);
 	});
-	const updateProduct: SubmitFunction = ({}) => {
+	const updateProduct: SubmitFunction = () => {
+		console.time();
+
 		return async ({ result }) => {
+			console.timeLog();
 			if (result.type === 'success') {
 				// do something...
 				// do something...
@@ -38,13 +41,13 @@
 						color: 'alert-success'
 					}
 				});
+				console.timeLog();
 				// use the default behavior for this result type
 				await applyAction(result);
+				console.timeLog();
 				history.back();
+				console.timeEnd();
 			}
-			//await update({ reset: false, invalidateAll: false });
-			//	let timeTaken = Date.now() - start;
-			//	console.log('Total time taken : ' + timeTaken + ' ms');
 		};
 	};
 	let columns = ['Partner', 'Partner PN', 'Price', 'URL', 'Updated'];
@@ -104,7 +107,31 @@
 	{#if product}
 		<div class="flex h-full flex-col justify-between">
 			<div class="overflow-auto">
-				<form method="POST" action="?/updateProduct" use:enhance={updateProduct}>
+				<form
+					method="post"
+					action="?/updateProduct"
+					use:enhance={() => {
+						return async ({ result, update }) => {
+							if (result.type === 'success') {
+								addToast({
+									data: {
+										title: 'Product update',
+										description: `Product: "${product?.name}" successfully updated!`,
+										color: 'alert-success'
+									}
+								});
+							} else {
+								addToast({
+									data: {
+										title: 'Product update',
+										description: `Product: "${product?.name}" successfully updated!`,
+										color: 'alert-success'
+									}
+								});
+							}
+						};
+					}}
+				>
 					<div class="space-y-12">
 						<div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
 							<label class="form-control col-span-2 col-start-1">
@@ -113,7 +140,7 @@
 								</div>
 								<input
 									name="id"
-									type="text"
+									type="number"
 									readonly
 									value={product.id}
 									class="input input-bordered w-full"
@@ -267,11 +294,6 @@
 									class="input input-bordered w-full"
 								/>
 							</label>
-							<!-- name="m_product_category_id"
-				labelText="Product category"
-				placeholder="Choose category"
-				options={categories}
-				bind:value={product.m_product_category_id} -->
 							{#if categories}
 								<Combobox
 									labela="Category"
@@ -309,7 +331,7 @@
 										return async ({ update }) => {
 											await update();
 											addingProductPO = false;
-											invalidate('catalog:product');
+											/* invalidate('catalog:product'); */
 										};
 									}}
 								>
