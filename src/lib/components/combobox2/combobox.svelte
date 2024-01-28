@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { createCombobox, melt, type ComboboxOptionProps } from '@melt-ui/svelte';
 	import { Check, ChevronDown, ChevronUp } from 'lucide-svelte';
 	import { fly } from 'svelte/transition';
 
+	export let name: string;
 	type Manga = {
 		author: string;
 		title: string;
@@ -92,68 +92,65 @@
 		: mangas;
 </script>
 
-<form method="post" use:enhance>
-	<div class="flex flex-col gap-1">
-		<input hidden name="id" type="text" value={$selected?.value.author} />
-		{JSON.stringify($selected)}
-		<!-- svelte-ignore a11y-label-has-associated-control - $label contains the 'for' attribute -->
-		<label use:melt={$label}>
-			<span class="text-sm font-medium text-orange-900">Choose your favorite manga:</span>
-		</label>
+<div class="flex flex-col gap-1">
+	<input {name} use:melt={$hiddenInput} value={$selected?.value.author || undefined} />
+	{JSON.stringify($selected)}
+	<!-- svelte-ignore a11y-label-has-associated-control - $label contains the 'for' attribute -->
+	<label use:melt={$label}>
+		<span class="text-sm font-medium text-orange-900">Choose your favorite manga:</span>
+	</label>
 
-		<div class="relative">
-			<input
-				use:melt={$input}
-				class="flex h-10 items-center justify-between rounded-lg bg-white
+	<div class="relative">
+		<input
+			use:melt={$input}
+			class="flex h-10 items-center justify-between rounded-lg bg-white
 			px-3 pr-12 text-black"
-				placeholder="Best book ever"
-			/>
-			<div class="absolute right-2 top-1/2 z-10 -translate-y-1/2 text-orange-900">
-				{#if $open}
-					<ChevronUp class="size-4" />
-				{:else}
-					<ChevronDown class="size-4" />
-				{/if}
-			</div>
+			placeholder="Best book ever"
+		/>
+		<div class="absolute right-2 top-1/2 z-10 -translate-y-1/2 text-orange-900">
+			{#if $open}
+				<ChevronUp class="size-4" />
+			{:else}
+				<ChevronDown class="size-4" />
+			{/if}
 		</div>
 	</div>
-	{#if $open}
-		<ul
-			class="z-10 flex max-h-[300px] flex-col overflow-hidden rounded-lg"
-			use:melt={$menu}
-			transition:fly={{ duration: 150, y: -5 }}
+</div>
+{#if $open}
+	<ul
+		class="z-10 flex max-h-[300px] flex-col overflow-hidden rounded-lg"
+		use:melt={$menu}
+		transition:fly={{ duration: 150, y: -5 }}
+	>
+		<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+		<div
+			class="flex max-h-full flex-col gap-0 overflow-y-auto bg-white px-2 py-2 text-black"
+			tabindex="0"
 		>
-			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-			<div
-				class="flex max-h-full flex-col gap-0 overflow-y-auto bg-white px-2 py-2 text-black"
-				tabindex="0"
-			>
-				{#each filteredMangas as manga, index (index)}
-					<li
-						use:melt={$option(toOption(manga))}
-						class="relative cursor-pointer scroll-my-2 rounded-md py-2 pl-4 pr-4
+			{#each filteredMangas as manga, index (index)}
+				<li
+					use:melt={$option(toOption(manga))}
+					class="relative cursor-pointer scroll-my-2 rounded-md py-2 pl-4 pr-4
 		  hover:bg-orange-100
 		  data-[highlighted]:bg-orange-200 data-[highlighted]:text-orange-900
 			data-[disabled]:opacity-50"
-					>
-						{#if $isSelected(manga)}
-							<div class="check absolute left-2 top-1/2 z-10 text-orange-900">
-								<Check class="square-4" />
-							</div>
-						{/if}
-						<div class="pl-4">
-							<span class="font-medium">{manga.title}</span>
-							<span class="block text-sm opacity-75">{manga.author}</span>
+				>
+					{#if $isSelected(manga)}
+						<div class="check absolute left-2 top-1/2 z-10 text-orange-900">
+							<Check class="square-4" />
 						</div>
-					</li>
-				{:else}
-					<li class="relative cursor-pointer rounded-md py-1 pl-8 pr-4">No results found</li>
-				{/each}
-			</div>
-		</ul>
-	{/if}
-	<button type="submit" class="btn btn-primary my-4">Submit</button>
-</form>
+					{/if}
+					<div class="pl-4">
+						<span class="font-medium">{manga.title}</span>
+						<span class="block text-sm opacity-75">{manga.author}</span>
+					</div>
+				</li>
+			{:else}
+				<li class="relative cursor-pointer rounded-md py-1 pl-8 pr-4">No results found</li>
+			{/each}
+		</div>
+	</ul>
+{/if}
 
 <style lang="postcss">
 	.check {
