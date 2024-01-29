@@ -1,7 +1,6 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import type { Tables } from '$lib/types/database.types';
 import { getNumber, getString } from '$lib/scripts/getForm';
 
 export const load = (async ({ depends, params, locals: { supabase, getSession } }) => {
@@ -73,9 +72,6 @@ export const load = (async ({ depends, params, locals: { supabase, getSession } 
 		categories: await getCategories(),
 		pricelists: await getPricelist(productId),
 		bpartners: await getBPartners()
-		//		streamed: {
-		//			images: await getImages(productId)
-		//		}
 	};
 }) satisfies PageServerLoad;
 
@@ -85,32 +81,56 @@ export const actions = {
 		if (!session) {
 			error(401, { message: 'Unauthorized' });
 		}
-		const product: Partial<Tables<'m_product'>> = {};
-		/* let temporary: FormDataEntryValue | null; */
 		const formData = await request.formData();
+		let formValue = formData.get('id');
+		if (formValue) {
+			const productId = Number(formValue);
+			formValue = formData.get('sku');
+			const sku = formValue ? formValue.toString() : null;
+			formValue = formData.get('name');
+			const name = formValue ? formValue.toString() : undefined;
+			formValue = formData.get('barcode');
+			const barcode = formValue ? formValue.toString() : null;
+			formValue = formData.get('c_uom_id');
+			const c_uom_id = formValue ? Number(formValue) : undefined;
+			formValue = formData.get('brand');
+			const brand = formValue ? formValue.toString() : null;
+			formValue = formData.get('mpn');
+			const mpn = formValue ? formValue.toString() : null;
+			formValue = formData.get('m_product_category_id');
+			const m_product_category_id = formValue ? Number(formValue) : null;
+			formValue = formData.get('condition');
+			const condition = formValue ? formValue.toString() : null;
+			formValue = formData.get('isselfservice');
+			const isselfservice = formValue ? Boolean(formValue) : undefined;
+			formValue = formData.get('discontinued');
+			const discontinued = formValue ? Boolean(formValue) : undefined;
+			formValue = formData.get('isactive');
+			const isactive = formValue ? Boolean(formValue) : undefined;
+			formValue = formData.get('unitsperpack');
+			const unitsperpack = formValue ? Number(formValue) : undefined;
 
-		const productId = Number(formData.get('id'));
-		product.sku = formData.get('sku') as string;
-		product.name = formData.get('name') as string;
-		product.barcode = formData.get('barcode') as string;
-		product.c_uom_id = Number(formData.get('c_uom_id'));
-		product.brand = formData.get('brand') as string;
-		product.mpn = formData.get('mpn') as string;
-		product.m_product_category_id = Number(formData.get('m_product_category_id'));
-		product.condition = formData.get('condition') as string;
-		product.isselfservice = Boolean(formData.get('condition'));
-		product.discontinued = Boolean(formData.get('discontinued'));
-		product.isactive = Boolean(formData.get('isactive'));
-		product.unitsperpack = Number(formData.get('unitsperpack'));
-		console.log('product', JSON.stringify(product));
-
-		if (productId) {
-			const { error: updateProductError } = await supabase
-				.from('m_product')
-				.update(product)
-				.eq('id', productId);
-			if (updateProductError) {
-				return fail(400, updateProductError);
+			if (productId) {
+				const { error: updateProductError } = await supabase
+					.from('m_product')
+					.update({
+						sku,
+						name,
+						barcode,
+						c_uom_id,
+						brand,
+						mpn,
+						m_product_category_id,
+						condition,
+						isselfservice,
+						discontinued,
+						isactive,
+						unitsperpack
+					})
+					.eq('id', productId);
+				if (updateProductError) {
+					return fail(400, updateProductError);
+				}
 			}
 		}
 	},

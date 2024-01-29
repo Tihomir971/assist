@@ -95,8 +95,8 @@
 	}
 </script>
 
-<div class="mx-auto my-4 h-full max-w-5xl">
-	<div class="flex w-full items-center justify-between">
+<div class="mx-auto h-full max-w-5xl">
+	<div class="flex w-full items-center justify-between px-4">
 		<hgroup class="prose">
 			<h3>Edit product</h3>
 			<p>Detailed information about product</p>
@@ -105,7 +105,7 @@
 	</div>
 	<div class="divider"></div>
 	{#if product}
-		<div class="flex h-full flex-col justify-between">
+		<div class="mx-4 flex h-full flex-col justify-between">
 			<div class="overflow-auto">
 				<form
 					method="post"
@@ -178,11 +178,9 @@
 								<input
 									name="name"
 									type="text"
-									placeholder="Enter name..."
 									bind:value={product.name}
-									required
-									class="input input-bordered w-full"
 									autocomplete="off"
+									class="input input-bordered w-full"
 								/>
 							</label>
 							<label class="form-control col-span-3">
