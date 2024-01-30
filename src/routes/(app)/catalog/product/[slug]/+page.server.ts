@@ -134,7 +134,23 @@ export const actions = {
 			}
 		}
 	},
+	deleteProduct: async ({ request, locals: { supabase, getSession } }) => {
+		const session = await getSession();
+		if (!session) {
+			error(401, { message: 'Unauthorized' });
+		}
+		const formData = await request.formData();
+		const formValue = formData.get('id');
+		const id = formValue ? Number(formValue) : undefined;
+		console.log('Deleting product', id);
 
+		if (id) {
+			const { error } = await supabase.from('m_product').delete().eq('id', id);
+			if (error) {
+				return fail(404, error);
+			}
+		}
+	},
 	addProductPO: async ({ request, locals: { supabase, getSession } }) => {
 		const session = await getSession();
 		if (!session) {

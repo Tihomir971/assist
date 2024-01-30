@@ -15,7 +15,12 @@ export const POST: RequestHandler = async ({ request }) => {
 			'content-type': 'application/json'
 		}
 	});
+	//	console.log('response.status', JSON.stringify(response));
 
-	const href = await response.json();
-	return json(href);
+	if (response.status === 200) {
+		const href = await response.json();
+		return json(href);
+	}
+	//return json(null, { status: 204 });
+	return new Response(null, { status: 204 });
 };

@@ -19,6 +19,6 @@
 		{...$$restProps}
 		placeholder="Choose..."
 		list="searches"
-		class="select select-bordered w-full"
+		class="select select-bordered select-sm w-full"
 	/>
 </label>

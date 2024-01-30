@@ -7,28 +7,10 @@
 	import { TreeView, type TreeItem } from '$lib/components/treeview';
 
 	export let data: LayoutData;
-	let { categories } = data;
-	$: ({ categories } = data);
+	let { categories, defaultExpanded } = data;
+	$: ({ categories, defaultExpanded } = data);
 	$: myTreeViewNodes = convertToTreeStructure(categories);
 
-	//let myTreeViewNodes: TreeItem[];
-	let checkedNodes: string[] = [];
-	//	let indeterminateNodes: string[] = [];
-
-	//	$: checkedNodes, rerunLoadFunction();
-
-	/* 	function rerunLoadFunction() {
-		const newUrl = new URL($page.url);
-		if (checkedNodes.length > 0) {
-			newUrl?.searchParams?.set('cat', checkedNodes.toString());
-		} else {
-			newUrl?.searchParams?.delete('cat');
-		}
-		if (browser) {
-			goto(newUrl);
-		}
-		return;
-	} */
 	function rerunLoadFunction(id: string) {
 		const newUrl = new URL($page.url);
 
@@ -47,7 +29,11 @@
 
 <div class="flex h-[calc(100vh-4rem)] overflow-hidden">
 	<div class="h-full w-80 bg-base-200">
-		<TreeView treeItems={myTreeViewNodes} on:select={(e) => rerunLoadFunction(e.detail)}></TreeView>
+		<TreeView
+			treeItems={myTreeViewNodes}
+			{defaultExpanded}
+			on:select={(e) => rerunLoadFunction(e.detail)}
+		></TreeView>
 	</div>
 	<div class="flex-grow overflow-hidden">
 		<slot />
