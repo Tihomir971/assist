@@ -86,12 +86,8 @@
 				}
 			}
 		}),
-		table.column({ header: 'Barcode', accessor: 'barcode' }),
-		table.column({
-			header: 'MPN',
-			accessor: 'mpn',
-			cell: ({ value }) => `${value ?? ''}`
-		}),
+		table.column({ header: 'Barcode', accessor: 'barcode', cell: ({ value }) => `${value ?? ''}` }),
+		table.column({ header: 'MPN', accessor: 'mpn', cell: ({ value }) => `${value ?? ''}` }),
 		table.column({ header: 'Name', accessor: 'name' }),
 		table.group({
 			header: 'Stock',
