@@ -1428,6 +1428,133 @@ export interface Database {
           }
         ]
       }
+      m_product_2: {
+        Row: {
+          ad_client_id: number
+          ad_org_id: number
+          attributes: Json | null
+          barcode: string | null
+          brand: string | null
+          c_taxcategory_id: number
+          c_uom_id: number
+          condition: string | null
+          created: string
+          discontinued: boolean
+          featuredAssetId: number | null
+          id: number
+          imageurl: string | null
+          isactive: boolean
+          isselfservice: boolean
+          m_attributeset_id: number | null
+          m_product_category_id: number | null
+          m_product_uu: string | null
+          mpn: string | null
+          name: string
+          producttype: string
+          sku: string | null
+          unitsperpack: number
+          unitsperpallet: number | null
+          updated: string
+        }
+        Insert: {
+          ad_client_id?: number
+          ad_org_id?: number
+          attributes?: Json | null
+          barcode?: string | null
+          brand?: string | null
+          c_taxcategory_id?: number
+          c_uom_id?: number
+          condition?: string | null
+          created?: string
+          discontinued?: boolean
+          featuredAssetId?: number | null
+          id?: number
+          imageurl?: string | null
+          isactive?: boolean
+          isselfservice?: boolean
+          m_attributeset_id?: number | null
+          m_product_category_id?: number | null
+          m_product_uu?: string | null
+          mpn?: string | null
+          name: string
+          producttype?: string
+          sku?: string | null
+          unitsperpack?: number
+          unitsperpallet?: number | null
+          updated?: string
+        }
+        Update: {
+          ad_client_id?: number
+          ad_org_id?: number
+          attributes?: Json | null
+          barcode?: string | null
+          brand?: string | null
+          c_taxcategory_id?: number
+          c_uom_id?: number
+          condition?: string | null
+          created?: string
+          discontinued?: boolean
+          featuredAssetId?: number | null
+          id?: number
+          imageurl?: string | null
+          isactive?: boolean
+          isselfservice?: boolean
+          m_attributeset_id?: number | null
+          m_product_category_id?: number | null
+          m_product_uu?: string | null
+          mpn?: string | null
+          name?: string
+          producttype?: string
+          sku?: string | null
+          unitsperpack?: number
+          unitsperpallet?: number | null
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "m_product_2_ad_client_id_fkey"
+            columns: ["ad_client_id"]
+            referencedRelation: "ad_client"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_product_2_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_product_2_c_taxcategory_id_fkey"
+            columns: ["c_taxcategory_id"]
+            referencedRelation: "c_taxcategory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_product_2_c_uom_id_fkey"
+            columns: ["c_uom_id"]
+            referencedRelation: "c_uom"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_product_2_featuredAssetId_fkey"
+            columns: ["featuredAssetId"]
+            referencedRelation: "asset"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_product_2_m_attributeset_id_fkey"
+            columns: ["m_attributeset_id"]
+            referencedRelation: "m_attributeset"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_product_2_m_product_category_id_fkey"
+            columns: ["m_product_category_id"]
+            referencedRelation: "m_product_category"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       m_product_category: {
         Row: {
           ad_client_id: number

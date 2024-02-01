@@ -11,6 +11,9 @@
 
 	export let data: PageData;
 	$: ({ product, categories, pricelists, supabase, bpartners } = data);
+	$: createdLocal = product?.created ? DateTimeFormat(product?.created) : null;
+	$: updatedLocal = product?.updated ? DateTimeFormat(product?.updated) : null;
+
 	let newURL = '';
 	let newPartnerPN = '';
 	let localCopy: any = undefined;
@@ -27,7 +30,7 @@
 		localCopy = Object.assign({}, product);
 	});
 
-	let columns = ['Partner', 'Partner PN', 'Price', 'URL', 'Updated'];
+	let columns = ['Partner', 'Partner PN', 'Price', 'Updated', 'URL'];
 	let addingProductPO = false;
 
 	async function deleteProductPORow(rowToBeDeleted: number) {
@@ -74,7 +77,6 @@
 			newURL = 'Unedefined';
 		} finally {
 			addingProductPO = false;
-			return;
 		}
 
 		//findProductOnWeb(product?.barcode, selectedValue);
@@ -105,7 +107,7 @@
 									color: 'alert-success'
 								}
 							});
-							await applyAction(result);
+							update();
 							localCopy = Object.assign({}, product);
 							/* invalidate('catalog:product'); */
 						} else {
@@ -134,7 +136,7 @@
 					</div>
 				</div>
 				<div
-					class="grid h-full flex-grow grid-cols-1 gap-x-6 gap-y-2 overflow-auto px-2 sm:grid-cols-6"
+					class="grid h-full flex-grow grid-cols-1 gap-x-6 gap-y-2 overflow-auto px-2 py-2 sm:grid-cols-6"
 				>
 					<label class="col-span-2 flex cursor-pointer items-center gap-x-3">
 						<input
@@ -171,7 +173,7 @@
 							name="id"
 							type="number"
 							readonly
-							value={product.id}
+							bind:value={product.id}
 							class="input input-bordered input-sm w-full"
 						/>
 					</label>
@@ -288,7 +290,7 @@
 							name="created"
 							type="datetime"
 							readonly
-							value={DateTimeFormat(product.created)}
+							bind:value={createdLocal}
 							class="input input-bordered input-sm w-full"
 						/>
 					</label>
@@ -300,7 +302,7 @@
 							name="updated"
 							type="datetime"
 							readonly
-							value={DateTimeFormat(product.updated)}
+							bind:value={updatedLocal}
 							class="input input-bordered input-sm w-full"
 						/>
 					</label>
@@ -322,7 +324,7 @@
 								addingProductPO = true;
 
 								return async ({ update }) => {
-									await update();
+									update();
 									addingProductPO = false;
 								};
 							}}
