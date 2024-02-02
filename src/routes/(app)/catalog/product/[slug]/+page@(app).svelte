@@ -16,9 +16,9 @@
 
 	let newURL = '';
 	let newPartnerPN = '';
-	let localCopy: any = undefined;
+	let initialProductForm: any = undefined;
 	let modified = false;
-	$: if (localCopy && JSON.stringify(product) !== JSON.stringify(localCopy)) {
+	$: if (initialProductForm && JSON.stringify(product) !== JSON.stringify(initialProductForm)) {
 		modified = true;
 	} else {
 		modified = false;
@@ -27,7 +27,7 @@
 	afterNavigate(({ from }) => {
 		previousPage = from?.url.pathname || previousPage;
 		previousPage = previousPage + '?' + from?.url.searchParams.toString() || previousPage;
-		localCopy = Object.assign({}, product);
+		initialProductForm = { ...product };
 	});
 
 	let columns = ['Partner', 'Partner PN', 'Price', 'Updated', 'URL'];
@@ -108,7 +108,7 @@
 								}
 							});
 							update();
-							localCopy = Object.assign({}, product);
+							//initialProductForm = Object.assign({}, product);
 							/* invalidate('catalog:product'); */
 						} else {
 							addToast({
@@ -130,7 +130,7 @@
 							type="reset"
 							disabled={!modified}
 							class="btn btn-secondary"
-							on:click={() => (product = localCopy)}>Reset</button
+							on:click={() => (product = { ...initialProductForm })}>Reset</button
 						>
 						<button type="submit" disabled={!modified} class="btn btn-primary">Save</button>
 					</div>

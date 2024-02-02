@@ -18,8 +18,8 @@ dependencies:
     specifier: ^0.16.8
     version: 0.16.8
   lucide-svelte:
-    specifier: ^0.320.0
-    version: 0.320.0(svelte@4.2.9)
+    specifier: ^0.321.0
+    version: 0.321.0(svelte@4.2.9)
   tailwind-merge:
     specifier: ^2.2.1
     version: 2.2.1
@@ -27,10 +27,10 @@ dependencies:
 devDependencies:
   '@melt-ui/pp':
     specifier: ^0.3.0
-    version: 0.3.0(@melt-ui/svelte@0.71.0)(svelte@4.2.9)
+    version: 0.3.0(@melt-ui/svelte@0.71.1)(svelte@4.2.9)
   '@melt-ui/svelte':
-    specifier: ^0.71.0
-    version: 0.71.0(svelte@4.2.9)
+    specifier: ^0.71.1
+    version: 0.71.1(svelte@4.2.9)
   '@sveltejs/adapter-cloudflare':
     specifier: ^4.1.0
     version: 4.1.0(@sveltejs/kit@2.5.0)
@@ -458,21 +458,21 @@ packages:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  /@melt-ui/pp@0.3.0(@melt-ui/svelte@0.71.0)(svelte@4.2.9):
+  /@melt-ui/pp@0.3.0(@melt-ui/svelte@0.71.1)(svelte@4.2.9):
     resolution: {integrity: sha512-b07Bdh8l2KcwKVCXOY+SoBw1dk9eWvQfMSi6SoacpRVyVmmfpi0kV4oGt3HYF0tUCB3sEmVicxse50ZzZxEzEA==}
     engines: {pnpm: '>=8.6.3'}
     peerDependencies:
       '@melt-ui/svelte': '>= 0.29.0'
       svelte: ^3.55.0 || ^4.0.0 || ^5.0.0-next.1
     dependencies:
-      '@melt-ui/svelte': 0.71.0(svelte@4.2.9)
+      '@melt-ui/svelte': 0.71.1(svelte@4.2.9)
       estree-walker: 3.0.3
       magic-string: 0.30.6
       svelte: 4.2.9
     dev: true
 
-  /@melt-ui/svelte@0.71.0(svelte@4.2.9):
-    resolution: {integrity: sha512-Ky1fzK6ZQUC+zPg8P+1lYRkCSlJ8EfmG8AuKHiu8Z2NlQ4S/uJpCajkqZ8+Xn+IwbEsTtxyYfZhqEttGUUcJcw==}
+  /@melt-ui/svelte@0.71.1(svelte@4.2.9):
+    resolution: {integrity: sha512-d1MGWkEi7sgKONyUfJK6/Rbp9XAQSBtk63VALi62HKl9mxn37pOS1Km3rCSYj4SpyZ+CcTWf00ZxlZo8Dat9uA==}
     peerDependencies:
       svelte: '>=3 <5'
     dependencies:
@@ -481,7 +481,7 @@ packages:
       '@internationalized/date': 3.5.1
       dequal: 2.0.3
       focus-trap: 7.5.4
-      nanoid: 5.0.4
+      nanoid: 5.0.5
       svelte: 4.2.9
     dev: true
 
@@ -1942,10 +1942,10 @@ packages:
       yallist: 4.0.0
     dev: true
 
-  /lucide-svelte@0.320.0(svelte@4.2.9):
-    resolution: {integrity: sha512-Xycr1wFIPIEsFMvY6TkVKdzzA2XMdqO4BEy2upvCGmoRUwJQgKrPFW3D5vI7VcN8hy91trZ1levO9pHpu3vlVw==}
+  /lucide-svelte@0.321.0(svelte@4.2.9):
+    resolution: {integrity: sha512-sp5ogKKo8Oth6mcsIwN1HGudeshzSjtTGVwtISD/GdEjBaG4z3fwF6JupnnLEVPXC+TCETwcn6y3Y/Z3ljbs/Q==}
     peerDependencies:
-      svelte: '>=3 <5'
+      svelte: ^3 || ^4 || ^5.0.0-next.42
     dependencies:
       svelte: 4.2.9
     dev: false
@@ -2039,8 +2039,8 @@ packages:
     hasBin: true
     dev: true
 
-  /nanoid@5.0.4:
-    resolution: {integrity: sha512-vAjmBf13gsmhXSgBrtIclinISzFFy22WwCYoyilZlsrRXNIHSwgFQ1bEdjRwMT3aoadeIF6HMuDRlOxzfXV8ig==}
+  /nanoid@5.0.5:
+    resolution: {integrity: sha512-/Veqm+QKsyMY3kqi4faWplnY1u+VuKO3dD2binyPIybP31DRO29bPF+1mszgLnrR2KqSLceFLBNw0zmvDzN1QQ==}
     engines: {node: ^18 || >=20}
     hasBin: true
     dev: true
