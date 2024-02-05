@@ -8,7 +8,7 @@ export type Props = CreateTreeViewProps;
 	}
 >; */
 
-export type GetReturn = TreeView;
+export type GetReturn = TreeView & { class: string };
 
 type Icon = 'svelte' | 'folder' | 'js';
 export type TreeItem = {

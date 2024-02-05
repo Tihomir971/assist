@@ -185,7 +185,9 @@
 			accessor: ({ id }) => id,
 			/* cell: ({ value }) => value */
 			cell: ({ value }) =>
-				createRender(TableAction).on('click', () => goto(`/catalog/product/${value.toString()}`))
+				createRender(TableAction, { id: value }).on('click', (ev) =>
+					goto(`/catalog/product/${ev.detail.id.toString()}`)
+				)
 		})
 	]);
 
@@ -244,7 +246,4 @@
 			</Table.Footer>
 		</Table.Root>
 	</div>
-</div>
-<div class="text-muted-foreground flex-1 text-sm">
-	{$selectedDataIds}
 </div>

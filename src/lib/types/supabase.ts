@@ -1312,6 +1312,7 @@ export interface Database {
           c_uom_id: number
           condition: string | null
           created: string
+          descriptionurl: string | null
           discontinued: boolean
           featuredAssetId: number | null
           id: number
@@ -1339,6 +1340,7 @@ export interface Database {
           c_uom_id?: number
           condition?: string | null
           created?: string
+          descriptionurl?: string | null
           discontinued?: boolean
           featuredAssetId?: number | null
           id?: number
@@ -1366,6 +1368,7 @@ export interface Database {
           c_uom_id?: number
           condition?: string | null
           created?: string
+          descriptionurl?: string | null
           discontinued?: boolean
           featuredAssetId?: number | null
           id?: number

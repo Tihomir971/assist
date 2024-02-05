@@ -5,13 +5,16 @@
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { TreeView, type TreeItem } from '$lib/components/treeview';
+	import { Toolbar } from '$lib/components/toolbar';
+	import { FolderEdit, FolderMinus, FolderPlus, FolderRoot } from 'lucide-svelte';
 
 	export let data: LayoutData;
 	let { categories, defaultExpanded } = data;
 	$: ({ categories, defaultExpanded } = data);
-	$: myTreeViewNodes = convertToTreeStructure(categories);
+	$: treeItems = convertToTreeStructure(categories);
 
-	function rerunLoadFunction(id: string) {
+	function rerunLoadFunction(id: string | null) {
+		if (!id) return;
 		const newUrl = new URL($page.url);
 
 		if (id) {
@@ -25,15 +28,44 @@
 		}
 		return;
 	}
+	let selected: HTMLElement | null | undefined;
+	let expanded: string[] | undefined = undefined;
+
+	function editCategory() {
+		//	const activeCategory = $page.url.searchParams.get('cat');
+		if (selected) goto('/catalog/category/' + selected.getAttribute('data-id'));
+		return;
+	}
+	$: if (selected) {
+		rerunLoadFunction(selected.getAttribute('data-id'));
+	}
 </script>
 
-<div class="flex h-[calc(100vh-4rem)] overflow-hidden">
-	<div class="h-full w-80 bg-base-200">
-		<TreeView
-			treeItems={myTreeViewNodes}
-			{defaultExpanded}
-			on:select={(e) => rerunLoadFunction(e.detail)}
-		></TreeView>
+<div class="flex h-full">
+	<div class="flex h-full w-80 flex-col overflow-hidden bg-base-200">
+		<Toolbar.Root class="join border-b">
+			<Toolbar.Button
+				type="button"
+				data-tip="Edit"
+				on:click={editCategory}
+				class="btn join-item tooltip tooltip-bottom"><FolderEdit /></Toolbar.Button
+			>
+			<Toolbar.Button type="button" data-tip="Add" class="btn join-item tooltip tooltip-bottom"
+				><FolderPlus /></Toolbar.Button
+			>
+			<Toolbar.Button type="button" data-tip="Delete" class="btn join-item tooltip tooltip-bottom"
+				><FolderMinus /></Toolbar.Button
+			>
+			<Toolbar.Button
+				type="button"
+				data-tip="Collapse"
+				class="btn join-item tooltip tooltip-bottom"
+				on:click={() => (expanded = [])}><FolderRoot /></Toolbar.Button
+			>
+		</Toolbar.Root>
+		<div class="menu h-full w-full overflow-y-auto">
+			<TreeView bind:treeItems {defaultExpanded} bind:selected bind:expanded />
+		</div>
 	</div>
 	<div class="flex-grow overflow-hidden">
 		<slot />

@@ -1,16 +1,16 @@
 <script lang="ts">
 	import type { PageData, SubmitFunction } from './$types';
 	import { applyAction, enhance } from '$app/forms';
-	import { afterNavigate, invalidate } from '$app/navigation';
+	import { afterNavigate, goto, invalidate } from '$app/navigation';
 	import { base } from '$app/paths';
 	import { DateTimeFormat, numberFormat } from '$lib/scripts/format';
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 	import { Combobox } from '$lib/components/combobox';
-	import { Plus, Search, X } from 'lucide-svelte';
+	import { Link, Plus, Search, X } from 'lucide-svelte';
 	//import { findProductOnWeb } from '$lib/server/scraper';
 
 	export let data: PageData;
-	$: ({ product, categories, pricelists, supabase, bpartners } = data);
+	$: ({ product, categories, pricelists, supabase, bpartners, replenishes } = data);
 	$: createdLocal = product?.created ? DateTimeFormat(product?.created) : null;
 	$: updatedLocal = product?.updated ? DateTimeFormat(product?.updated) : null;
 
@@ -107,9 +107,9 @@
 									color: 'alert-success'
 								}
 							});
-							update();
 							//initialProductForm = Object.assign({}, product);
 							/* invalidate('catalog:product'); */
+							history.back();
 						} else {
 							addToast({
 								data: {
@@ -136,9 +136,9 @@
 					</div>
 				</div>
 				<div
-					class="grid h-full flex-grow grid-cols-1 gap-x-6 gap-y-2 overflow-auto px-2 py-2 sm:grid-cols-6"
+					class="grid h-full flex-grow grid-cols-1 gap-x-6 gap-y-1 overflow-auto px-2 py-2 sm:grid-cols-12"
 				>
-					<label class="col-span-2 flex cursor-pointer items-center gap-x-3">
+					<label class="col-span-3 flex cursor-pointer items-center gap-x-3">
 						<input
 							name="isselfservice"
 							type="checkbox"
@@ -147,7 +147,7 @@
 						/>
 						<span class="label-text">Is Self-service?</span>
 					</label>
-					<label class="col-span-2 flex cursor-pointer items-center gap-x-3">
+					<label class="col-span-3 flex cursor-pointer items-center gap-x-3">
 						<input
 							type="checkbox"
 							name="discontinued"
@@ -156,7 +156,7 @@
 						/>
 						<span class="label-text">Discontinued?</span>
 					</label>
-					<label class="col-span-2 flex cursor-pointer items-center gap-x-3">
+					<label class="col-span-3 flex cursor-pointer items-center gap-x-3">
 						<input
 							type="checkbox"
 							name="isactive"
@@ -174,7 +174,7 @@
 							type="number"
 							readonly
 							bind:value={product.id}
-							class="input input-bordered input-sm w-full"
+							class="input input-bordered w-full"
 						/>
 					</label>
 
@@ -187,7 +187,19 @@
 							type="text"
 							readonly
 							bind:value={product.sku}
-							class="input input-bordered input-sm w-full"
+							class="input input-bordered w-full"
+						/>
+					</label>
+					<label class="form-control col-span-8">
+						<div class="label">
+							<span class="label-text">Name</span>
+						</div>
+						<input
+							name="name"
+							type="text"
+							bind:value={product.name}
+							autocomplete="off"
+							class="input input-bordered w-full"
 						/>
 					</label>
 					<label class="form-control col-span-2">
@@ -199,45 +211,10 @@
 							name="barcode"
 							type="text"
 							bind:value={product.barcode}
-							class="input input-bordered input-sm w-full"
+							class="input input-bordered w-full"
 						/>
 					</label>
-					<label class="form-control col-span-full">
-						<div class="label">
-							<span class="label-text">Name</span>
-						</div>
-						<input
-							name="name"
-							type="text"
-							bind:value={product.name}
-							autocomplete="off"
-							class="input input-bordered input-sm w-full"
-						/>
-					</label>
-					<label class="form-control col-span-3">
-						<div class="label">
-							<span class="label-text">UoM</span>
-						</div>
-						<input
-							name="c_uom_id"
-							type="text"
-							bind:value={product.c_uom_id}
-							class="input input-bordered input-sm w-full"
-						/>
-					</label>
-					<label class="form-control col-span-3">
-						<div class="label">
-							<span class="label-text">Units per Pack</span>
-						</div>
-						<input
-							name="unitsperpack"
-							type="number"
-							step="0.001"
-							bind:value={product.unitsperpack}
-							class="input input-bordered input-sm w-full"
-						/>
-					</label>
-					<label class="form-control col-span-3">
+					<label class="form-control col-span-2">
 						<div class="label">
 							<span class="label-text">Brand</span>
 						</div>
@@ -245,7 +222,7 @@
 							name="brand"
 							type="text"
 							bind:value={product.brand}
-							class="input input-bordered input-sm w-full"
+							class="input input-bordered w-full"
 						/>
 					</label>
 					<label class="form-control col-span-3">
@@ -257,21 +234,52 @@
 							type="text"
 							bind:value={product.mpn}
 							autocomplete="off"
-							class="input input-bordered input-sm w-full"
+							class="input input-bordered w-full"
 						/>
 					</label>
-
 					<label class="form-control col-span-3">
 						<div class="label">
-							<span class="label-text">Condition</span>
+							<span class="label-text">Manufacturer URL</span>
+						</div>
+						<div class="join">
+							<input
+								id="descriptionurl"
+								name="descriptionurl"
+								type="url"
+								bind:value={product.descriptionurl}
+								autocomplete="off"
+								class="input join-item input-bordered w-full"
+							/>
+							<a
+								type="button"
+								href={product?.descriptionurl}
+								target="_blank"
+								class="btn btn-square join-item"><Link /></a
+							>
+						</div>
+					</label>
+
+					<label class="form-control col-span-2">
+						<div class="label">
+							<span class="label-text">UoM</span>
 						</div>
 						<input
-							id="condition"
-							name="condition"
+							name="c_uom_id"
 							type="text"
-							bind:value={product.condition}
-							autocomplete="off"
-							class="input input-bordered input-sm w-full"
+							bind:value={product.c_uom_id}
+							class="input input-bordered w-full"
+						/>
+					</label>
+					<label class="form-control col-span-2">
+						<div class="label">
+							<span class="label-text">Units per Pack</span>
+						</div>
+						<input
+							name="unitsperpack"
+							type="number"
+							step="0.001"
+							bind:value={product.unitsperpack}
+							class="input input-bordered w-full"
 						/>
 					</label>
 					{#if categories}
@@ -282,6 +290,20 @@
 							bind:value={product.m_product_category_id}
 						></Combobox>
 					{/if}
+					<label class="form-control col-span-3">
+						<div class="label">
+							<span class="label-text">Condition</span>
+						</div>
+						<input
+							id="condition"
+							name="condition"
+							type="text"
+							bind:value={product.condition}
+							autocomplete="off"
+							class="input input-bordered w-full"
+						/>
+					</label>
+
 					<label class="form-control col-span-3 col-start-1">
 						<div class="label">
 							<span class="label-text">Created</span>
@@ -291,7 +313,7 @@
 							type="datetime"
 							readonly
 							bind:value={createdLocal}
-							class="input input-bordered input-sm w-full"
+							class="input input-bordered w-full"
 						/>
 					</label>
 					<label class="form-control col-span-3">
@@ -303,7 +325,7 @@
 							type="datetime"
 							readonly
 							bind:value={updatedLocal}
-							class="input input-bordered input-sm w-full"
+							class="input input-bordered w-full"
 						/>
 					</label>
 				</div>
@@ -352,7 +374,11 @@
 											<td>{pricelist.vendorproductno}</td>
 											<td>{numberFormat(pricelist.pricelist)}</td>
 											<td>{DateTimeFormat(pricelist.updated)}</td>
-											<td><a href={pricelist.url} target="_blank" class="link">Visit</a></td>
+											<td
+												><a href={pricelist.url} target="_blank" class="btn btn-square btn-xs"
+													><Link /></a
+												></td
+											>
 											<td>
 												<button
 													on:click={() => deleteProductPORow(pricelist.id)}
@@ -423,8 +449,33 @@
 				{/if}
 			</div>
 
-			<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Images" />
-			<div role="tabpanel" class="tab-content my-4">Tab content 3</div>
+			<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Replenish" />
+			<div role="tabpanel" class="tab-content my-4">
+				{#if replenishes && product}
+					<table class="table table-sm">
+						<thead
+							><tr>
+								<th>Warehouse</th>
+								<th>Minimum</th>
+								<th>Maximum</th>
+								<th>Batch Size</th>
+								<th>Source</th>
+							</tr>
+						</thead>
+						<tbody>
+							{#each replenishes as replenish}
+								<tr class="hover">
+									<td>{replenish.m_warehouse_id}</td>
+									<td>{replenish.level_min}</td>
+									<td>{replenish.level_max}</td>
+									<td>{replenish.qtybatchsize ?? ''}</td>
+									<td>{replenish.m_warehousesource_id ?? ''}</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				{/if}
+			</div>
 		</div>
 	</div>
 </div>

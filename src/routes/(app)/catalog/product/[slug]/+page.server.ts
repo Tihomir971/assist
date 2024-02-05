@@ -67,11 +67,20 @@ export const load = (async ({ depends, params, locals: { supabase, getSession } 
 		const { data } = await supabase.from('c_bpartner').select('value:id,label:name').order('name');
 		return data;
 	};
+	const getReplenishes = async (id: number) => {
+		const { data } = await supabase
+			.from('m_replenish')
+			.select()
+			.order('m_warehouse_id')
+			.eq('m_product_id', id);
+		return data;
+	};
 	return {
 		product: await getProduct(productId),
 		categories: await getCategories(),
 		pricelists: await getPricelist(productId),
-		bpartners: await getBPartners()
+		bpartners: await getBPartners(),
+		replenishes: await getReplenishes(productId)
 	};
 }) satisfies PageServerLoad;
 
@@ -109,6 +118,8 @@ export const actions = {
 			const isactive = formValue ? Boolean(formValue) : undefined;
 			formValue = formData.get('unitsperpack');
 			const unitsperpack = formValue ? Number(formValue) : undefined;
+			formValue = formData.get('descriptionurl');
+			const descriptionurl = formValue ? formValue.toString() : null;
 
 			if (productId) {
 				const { error: updateProductError } = await supabase
@@ -125,7 +136,8 @@ export const actions = {
 						isselfservice,
 						discontinued,
 						isactive,
-						unitsperpack
+						unitsperpack,
+						descriptionurl
 					})
 					.eq('id', productId);
 				if (updateProductError) {
