@@ -75,12 +75,17 @@ export const load = (async ({ depends, params, locals: { supabase, getSession } 
 			.eq('m_product_id', id);
 		return data;
 	};
+	const getWarehouses = async () => {
+		const { data } = await supabase.from('m_warehouse').select('value:id,label:name').order('name');
+		return data;
+	};
 	return {
 		product: await getProduct(productId),
 		categories: await getCategories(),
 		pricelists: await getPricelist(productId),
 		bpartners: await getBPartners(),
-		replenishes: await getReplenishes(productId)
+		replenishes: await getReplenishes(productId),
+		warehouses: await getWarehouses()
 	};
 }) satisfies PageServerLoad;
 

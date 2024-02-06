@@ -1,4 +1,3 @@
-//https://github.com/TGlide/melt-dialog-registry/
 import { createDialog, type CreateDialogProps, type Dialog as DialogType } from '@melt-ui/svelte';
 import Trigger from './Trigger.svelte';
 import Content from './Content.svelte';

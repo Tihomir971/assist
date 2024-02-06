@@ -7,10 +7,12 @@
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 	import { Combobox } from '$lib/components/combobox';
 	import { Link, Plus, Search, X } from 'lucide-svelte';
+	import { Dialog } from '$lib/components/dialog2';
+	import { melt } from '@melt-ui/svelte';
 	//import { findProductOnWeb } from '$lib/server/scraper';
 
 	export let data: PageData;
-	$: ({ product, categories, pricelists, supabase, bpartners, replenishes } = data);
+	$: ({ product, categories, pricelists, supabase, bpartners, replenishes, warehouses } = data);
 	$: createdLocal = product?.created ? DateTimeFormat(product?.created) : null;
 	$: updatedLocal = product?.updated ? DateTimeFormat(product?.updated) : null;
 
@@ -138,6 +140,7 @@
 				<div
 					class="grid h-full flex-grow grid-cols-1 gap-x-6 gap-y-1 overflow-auto px-2 py-2 sm:grid-cols-12"
 				>
+					<!-- Is Self-service? -->
 					<label class="col-span-3 flex cursor-pointer items-center gap-x-3">
 						<input
 							name="isselfservice"
@@ -147,6 +150,7 @@
 						/>
 						<span class="label-text">Is Self-service?</span>
 					</label>
+					<!-- Discontinued? -->
 					<label class="col-span-3 flex cursor-pointer items-center gap-x-3">
 						<input
 							type="checkbox"
@@ -156,6 +160,7 @@
 						/>
 						<span class="label-text">Discontinued?</span>
 					</label>
+					<!-- Is Active? -->
 					<label class="col-span-3 flex cursor-pointer items-center gap-x-3">
 						<input
 							type="checkbox"
@@ -165,6 +170,7 @@
 						/>
 						<span class="label-text">Is Active?</span>
 					</label>
+					<!-- ID -->
 					<label class="form-control col-span-2 col-start-1">
 						<div class="label">
 							<span class="label-text">ID</span>
@@ -177,7 +183,7 @@
 							class="input input-bordered w-full"
 						/>
 					</label>
-
+					<!-- SKU -->
 					<label class="form-control col-span-2">
 						<div class="label">
 							<span class="label-text">SKU</span>
@@ -190,6 +196,7 @@
 							class="input input-bordered w-full"
 						/>
 					</label>
+					<!-- Name -->
 					<label class="form-control col-span-8">
 						<div class="label">
 							<span class="label-text">Name</span>
@@ -202,7 +209,8 @@
 							class="input input-bordered w-full"
 						/>
 					</label>
-					<label class="form-control col-span-2">
+					<!-- Barcode -->
+					<label class="form-control col-span-3">
 						<div class="label">
 							<span class="label-text">Barcode</span>
 						</div>
@@ -214,7 +222,8 @@
 							class="input input-bordered w-full"
 						/>
 					</label>
-					<label class="form-control col-span-2">
+					<!-- Brand -->
+					<label class="form-control col-span-3">
 						<div class="label">
 							<span class="label-text">Brand</span>
 						</div>
@@ -225,6 +234,7 @@
 							class="input input-bordered w-full"
 						/>
 					</label>
+					<!-- MPN -->
 					<label class="form-control col-span-3">
 						<div class="label">
 							<span class="label-text">MPN</span>
@@ -237,6 +247,7 @@
 							class="input input-bordered w-full"
 						/>
 					</label>
+					<!-- Manufacturer URL -->
 					<label class="form-control col-span-3">
 						<div class="label">
 							<span class="label-text">Manufacturer URL</span>
@@ -258,7 +269,16 @@
 							>
 						</div>
 					</label>
-
+					<!-- Category -->
+					{#if categories}
+						<Combobox
+							labela="Category"
+							name="m_product_category_id"
+							options={categories}
+							bind:value={product.m_product_category_id}
+						></Combobox>
+					{/if}
+					<!-- UoM -->
 					<label class="form-control col-span-2">
 						<div class="label">
 							<span class="label-text">UoM</span>
@@ -270,6 +290,7 @@
 							class="input input-bordered w-full"
 						/>
 					</label>
+					<!-- Units per Pack -->
 					<label class="form-control col-span-2">
 						<div class="label">
 							<span class="label-text">Units per Pack</span>
@@ -282,14 +303,7 @@
 							class="input input-bordered w-full"
 						/>
 					</label>
-					{#if categories}
-						<Combobox
-							labela="Category"
-							name="m_product_category_id"
-							options={categories}
-							bind:value={product.m_product_category_id}
-						></Combobox>
-					{/if}
+					<!-- Condition -->
 					<label class="form-control col-span-3">
 						<div class="label">
 							<span class="label-text">Condition</span>
@@ -303,7 +317,7 @@
 							class="input input-bordered w-full"
 						/>
 					</label>
-
+					<!-- Created -->
 					<label class="form-control col-span-3 col-start-1">
 						<div class="label">
 							<span class="label-text">Created</span>
@@ -316,6 +330,7 @@
 							class="input input-bordered w-full"
 						/>
 					</label>
+					<!-- Updated -->
 					<label class="form-control col-span-3">
 						<div class="label">
 							<span class="label-text">Updated</span>
@@ -452,6 +467,7 @@
 			<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Replenish" />
 			<div role="tabpanel" class="tab-content my-4">
 				{#if replenishes && product}
+					<Dialog.Trigger name="settings">DUGME</Dialog.Trigger>
 					<table class="table table-sm">
 						<thead
 							><tr>
@@ -472,6 +488,61 @@
 									<td>{replenish.m_warehousesource_id ?? ''}</td>
 								</tr>
 							{/each}
+							<tr>
+								<td class="px-0">
+									<select
+										name="m_warehouse_id"
+										class="select select-bordered select-sm w-full max-w-xs"
+										required
+										>{#if warehouses}
+											{#each warehouses as { value, label }}
+												<option {value}>{label}</option>
+											{/each}
+										{/if}
+									</select>
+								</td>
+								<td>
+									<input
+										type="number"
+										name="level_min"
+										value={0}
+										class="input input-bordered input-sm max-w-xs"
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										name="level_max"
+										value={0}
+										class="input input-bordered input-sm max-w-xs"
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										name="qtybatchsize"
+										class="input input-bordered input-sm max-w-xs"
+									/>
+								</td>
+								<td class="px-0">
+									<select
+										name="m_warehousesource_id"
+										class="select select-bordered select-sm w-full max-w-xs"
+										required
+										>{#if warehouses}
+											<option></option>
+											{#each warehouses as { value, label }}
+												<option {value}>{label}</option>
+											{/each}
+										{/if}
+									</select>
+								</td>
+								<td>
+									<button type="submit" disabled={addingProductPO} class="btn btn-ghost btn-sm"
+										><Plus /></button
+									>
+								</td>
+							</tr>
 						</tbody>
 					</table>
 				{/if}
@@ -479,3 +550,11 @@
 		</div>
 	</div>
 </div>
+
+<Dialog.Content name="settings" let:title let:description let:close>
+	<h2 class="font-bold" use:melt={title}>Add replenich quantities</h2>
+	<p use:melt={description}>Placeholder description</p>
+	<div class="flex">
+		<button class="btn ml-auto mt-4" use:melt={close}> Close </button>
+	</div>
+</Dialog.Content>

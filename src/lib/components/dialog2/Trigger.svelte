@@ -1,18 +1,24 @@
 <script lang="ts">
 	import { melt } from '@melt-ui/svelte';
 	import { dialogRegistry, type DialogName } from '.';
-	//	import { capitalize } from '$lib/helpers/capitalize';
+	import { cn } from '$lib/scripts/tailwind';
 
-	export let name: DialogName;
+	import type { Props } from './types';
+	type $$Props = Props;
+	export let name: $$Props['name'];
+	export let closeOnEscape: $$Props['closeOnEscape'] = undefined;
+
+	//export let name: DialogName;
+	//	let className: string = '';
+	//	export { className as class };
 
 	const {
 		elements: { trigger }
 	} = dialogRegistry.get(name);
 </script>
 
-<button class="btn" use:melt={$trigger}>
+<button class={cn('')} use:melt={$trigger}>
 	<slot>
-		<!-- 		Open {capitalize(name)} Dialog -->
 		Open {name} Dialog
 	</slot>
 </button>

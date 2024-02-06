@@ -1,12 +1,10 @@
 <script lang="ts">
-	import { melt } from '@melt-ui/svelte';
-	import { dialogRegistry, type DialogName } from '.';
+	import { melt } from "@melt-ui/svelte";
+	import { dialogRegistry, type DialogName } from ".";
 
-	export let name: DialogName;
+  export let name: DialogName;
 
-	const {
-		elements: { portalled, title, content, description, close, overlay }
-	} = dialogRegistry.get(name);
+  const {elements: {portalled, title, content, description, close, overlay}} = dialogRegistry.get(name);
 </script>
 
 <div use:melt={$portalled}>
