@@ -16,7 +16,7 @@
 		elements: { tree },
 		states
 	} = setCtx({ forceVisible, defaultExpanded, onExpandedChange });
-
+	$: console.log('defaultExpanded', defaultExpanded);
 	const sync = createSync(states);
 	$: sync.expanded(expanded, (v) => (expanded = v));
 	$: sync.selectedItem(selected, (v) => (selected = v));

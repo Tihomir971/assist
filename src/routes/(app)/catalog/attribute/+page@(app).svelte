@@ -105,8 +105,8 @@
 										<div class="drawer-content">
 											<!-- Page content here -->
 											<label for="my-drawer-4" class="btn btn-square btn-ghost drawer-button btn-sm"
-												><FilePenLine size="20" /></label
-											>
+												><FilePenLine size="20" />
+											</label>
 										</div>
 										<div class="drawer-side overflow-x-hidden">
 											<label for="my-drawer-4" aria-label="close sidebar" class="drawer-overlay"

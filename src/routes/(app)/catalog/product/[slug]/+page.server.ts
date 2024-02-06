@@ -188,5 +188,38 @@ export const actions = {
 				return fail(400, addProductPOError);
 			}
 		}
+	},
+	createReplenish: async ({ request, locals: { supabase, getSession } }) => {
+		const session = await getSession();
+		if (!session) {
+			error(401, { message: 'Unauthorized' });
+		}
+		const formData = await request.formData();
+		let formValue = formData.get('m_product_id');
+		const m_product_id = formValue ? Number(formValue) : undefined;
+		formValue = formData.get('m_warehouse_id');
+		const m_warehouse_id = formValue ? Number(formValue) : undefined;
+		formValue = formData.get('level_min');
+		const level_min = formValue ? Number(formValue) : undefined;
+		formValue = formData.get('level_max');
+		const level_max = formValue ? Number(formValue) : undefined;
+		formValue = formData.get('qtybatchsize');
+		const qtybatchsize = formValue ? Number(formValue) : undefined;
+		formValue = formData.get('m_warehousesource_id');
+		const m_warehousesource_id = formValue ? Number(formValue) : undefined;
+
+		if (m_product_id && m_warehouse_id) {
+			const { error: cReplenishError } = await supabase.from('m_replenish').insert({
+				m_product_id,
+				m_warehouse_id,
+				level_min,
+				level_max,
+				qtybatchsize,
+				m_warehousesource_id
+			});
+			if (cReplenishError) {
+				return fail(400, cReplenishError);
+			}
+		}
 	}
 } satisfies Actions;

@@ -11,6 +11,7 @@
 	export let data: LayoutData;
 	let { categories, defaultExpanded } = data;
 	$: ({ categories, defaultExpanded } = data);
+
 	$: treeItems = convertToTreeStructure(categories);
 
 	function rerunLoadFunction(id: string | null) {
@@ -64,7 +65,7 @@
 			>
 		</Toolbar.Root>
 		<div class="menu h-full w-full overflow-y-auto">
-			<TreeView bind:treeItems {defaultExpanded} bind:selected bind:expanded />
+			<TreeView bind:treeItems bind:defaultExpanded bind:selected bind:expanded />
 		</div>
 	</div>
 	<div class="flex-grow overflow-hidden">

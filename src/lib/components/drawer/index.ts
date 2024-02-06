@@ -33,7 +33,7 @@ export const dialogRegistry = createDialogRegistry();
 // If you need to predefine some props for a specific dialog, you can do it like this:
 dialogRegistry.set('delete', createDialog({ role: 'alertdialog', closeOnEscape: false }));
 
-export const Dialog = {
+export const Drawer = {
 	Trigger: Trigger,
 	Content: Content
 };

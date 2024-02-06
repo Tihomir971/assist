@@ -7,8 +7,10 @@
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 	import { Combobox } from '$lib/components/combobox';
 	import { Link, Plus, Search, X } from 'lucide-svelte';
-	import { Dialog } from '$lib/components/dialog2';
+	import { Drawer } from '$lib/components/drawer';
 	import { melt } from '@melt-ui/svelte';
+	import { Dialog } from '$lib/components/dialog';
+	import { findLabelByValue } from '$lib/scripts/objects';
 	//import { findProductOnWeb } from '$lib/server/scraper';
 
 	export let data: PageData;
@@ -374,91 +376,93 @@
 								class="input input-bordered w-full"
 								required
 							/>
-							<table class="table table-sm">
-								<thead>
-									<tr>
-										{#each columns as column}
-											<th>{column}</th>
-										{/each}
-									</tr>
-								</thead>
-								<tbody>
-									{#each pricelists as pricelist}
-										<tr class="hover">
-											<td>{pricelist.c_bpartner?.name}</td>
-											<td>{pricelist.vendorproductno}</td>
-											<td>{numberFormat(pricelist.pricelist)}</td>
-											<td>{DateTimeFormat(pricelist.updated)}</td>
-											<td
-												><a href={pricelist.url} target="_blank" class="btn btn-square btn-xs"
-													><Link /></a
-												></td
-											>
-											<td>
-												<button
-													on:click={() => deleteProductPORow(pricelist.id)}
-													class="btn btn-ghost btn-sm"
+							<div class="overflow-x-auto">
+								<table class="table table-sm">
+									<thead>
+										<tr>
+											{#each columns as column}
+												<th>{column}</th>
+											{/each}
+										</tr>
+									</thead>
+									<tbody class="overflow-auto">
+										{#each pricelists as pricelist}
+											<tr class="hover">
+												<td>{pricelist.c_bpartner?.name}</td>
+												<td>{pricelist.vendorproductno}</td>
+												<td>{numberFormat(pricelist.pricelist)}</td>
+												<td>{DateTimeFormat(pricelist.updated)}</td>
+												<td
+													><a href={pricelist.url} target="_blank" class="btn btn-square btn-xs"
+														><Link /></a
+													></td
 												>
-													<X />
-												</button>
+												<td>
+													<button
+														on:click={() => deleteProductPORow(pricelist.id)}
+														class="btn btn-ghost btn-sm"
+													>
+														<X />
+													</button>
+												</td>
+											</tr>
+										{/each}
+										<tr>
+											<td class="px-0">
+												<select
+													name="bpartner"
+													class="select select-bordered select-sm w-full max-w-xs"
+													required
+													>{#if bpartners}
+														{#each bpartners as { value, label }}
+															<option {value}>{label}</option>
+														{/each}
+													{/if}
+												</select>
+											</td>
+											<td
+												><input
+													type="text"
+													name="partnerPN"
+													class="input input-bordered input-sm max-w-xs"
+													bind:value={newPartnerPN}
+												/></td
+											>
+											<td colspan="3">
+												<input
+													type="url"
+													name="url"
+													placeholder="Enter URL..."
+													class="input input-bordered input-sm w-full"
+													bind:value={newURL}
+												/>
+											</td>
+											<td>
+												{#if newURL === ''}
+													<button
+														type="submit"
+														on:click={handleFindProductOnWeb}
+														class="btn btn-ghost btn-sm"
+														disabled={addingProductPO}
+													>
+														{#if addingProductPO}
+															<span class="loading loading-spinner"></span>
+														{:else}
+															<Search />
+														{/if}
+													</button>
+												{:else}
+													<button
+														type="submit"
+														disabled={addingProductPO}
+														class="btn btn-ghost btn-sm"><Plus /></button
+													>
+												{/if}
 											</td>
 										</tr>
-									{/each}
-									<tr>
-										<td class="px-0">
-											<select
-												name="bpartner"
-												class="select select-bordered select-sm w-full max-w-xs"
-												required
-												>{#if bpartners}
-													{#each bpartners as { value, label }}
-														<option {value}>{label}</option>
-													{/each}
-												{/if}
-											</select>
-										</td>
-										<td
-											><input
-												type="text"
-												name="partnerPN"
-												class="input input-bordered input-sm max-w-xs"
-												bind:value={newPartnerPN}
-											/></td
-										>
-										<td colspan="3">
-											<input
-												type="url"
-												name="url"
-												placeholder="Enter URL..."
-												class="input input-bordered input-sm w-full"
-												bind:value={newURL}
-											/>
-										</td>
-										<td>
-											{#if newURL === ''}
-												<button
-													type="submit"
-													on:click={handleFindProductOnWeb}
-													class="btn btn-ghost btn-sm"
-													disabled={addingProductPO}
-												>
-													{#if addingProductPO}
-														<span class="loading loading-spinner"></span>
-													{:else}
-														<Search />
-													{/if}
-												</button>
-											{:else}
-												<button
-													type="submit"
-													disabled={addingProductPO}
-													class="btn btn-ghost btn-sm"><Plus /></button
-												>
-											{/if}
-										</td>
-									</tr>
-								</tbody>
-							</table>
+									</tbody>
+								</table>
+							</div>
 						</form>
 					</div>
 				{/if}
@@ -467,7 +471,116 @@
 			<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Replenish" />
 			<div role="tabpanel" class="tab-content my-4">
 				{#if replenishes && product}
-					<Dialog.Trigger name="settings">DUGME</Dialog.Trigger>
+					<Dialog.Root>
+						<Dialog.Trigger></Dialog.Trigger>
+						<Dialog.Portalled>
+							<section>
+								<form
+									method="post"
+									action="?/createReplenish"
+									use:enhance={() => {
+										return async ({ result, update }) => {
+											if (result.type === 'success') {
+												addToast({
+													data: {
+														title: 'Product update',
+														description: `Product: "${product?.name}" successfully updated!`,
+														color: 'alert-success'
+													}
+												});
+												//initialProductForm = Object.assign({}, product);
+												/* invalidate('catalog:product'); */
+												history.back();
+											} else {
+												addToast({
+													data: {
+														title: 'Product update',
+														description: `Error updating: "${product?.name}"!`,
+														color: 'alert-error'
+													}
+												});
+											}
+										};
+									}}
+								>
+									<div class="rounded-md bg-base-300 p-4 shadow">
+										<div class="flex flex-col gap-4">
+											<input
+												type="text"
+												name="m_product_id"
+												hidden
+												bind:value={product.id}
+												class="input input-bordered w-full"
+												required
+											/>
+											<label class="form-control">
+												<div class="label">
+													<span class="label-text">Warehouse</span>
+												</div>
+												<select name="m_warehouse_id" class="select select-bordered w-full" required
+													>{#if warehouses}
+														{#each warehouses as { value, label }}
+															<option {value}>{label}</option>
+														{/each}
+													{/if}
+												</select>
+											</label>
+											<label class="form-control">
+												<div class="label">
+													<span class="label-text">Minimum Level</span>
+												</div>
+												<input
+													type="number"
+													name="level_min"
+													value={0}
+													class="input input-bordered w-full"
+												/>
+											</label>
+											<label class="form-control">
+												<div class="label">
+													<span class="label-text">Maximum Level</span>
+												</div>
+												<input
+													type="number"
+													name="level_max"
+													value={0}
+													class="input input-bordered w-full"
+												/>
+											</label>
+											<label class="form-control">
+												<div class="label">
+													<span class="label-text">Batch Size</span>
+												</div>
+												<input
+													type="number"
+													name="qtybatchsize"
+													class="input input-bordered w-full"
+												/>
+											</label>
+											<label class="form-control">
+												<div class="label">
+													<span class="label-text">Source Warehouse</span>
+												</div>
+												<select name="m_warehousesource_id" class="select select-bordered w-full"
+													>{#if warehouses}
+														<option></option>
+														{#each warehouses as { value, label }}
+															<option {value}>{label}</option>
+														{/each}
+													{/if}
+												</select>
+											</label>
+										</div>
+									</div>
+									<div class="mt-6 flex justify-end gap-4">
+										<button class="btn btn-secondary"> Reject </button>
+										<button class="btn btn-primary"> Save </button>
+									</div>
+								</form>
+							</section>
+						</Dialog.Portalled>
+					</Dialog.Root>
+					<!-- <Drawer.Trigger name="settings" class="btn btn-secondary btn-sm">Add</Drawer.Trigger> -->
 					<table class="table table-sm">
 						<thead
 							><tr>
@@ -481,68 +594,13 @@
 						<tbody>
 							{#each replenishes as replenish}
 								<tr class="hover">
-									<td>{replenish.m_warehouse_id}</td>
+									<td>{findLabelByValue(warehouses, replenish.m_warehouse_id)}</td>
 									<td>{replenish.level_min}</td>
 									<td>{replenish.level_max}</td>
 									<td>{replenish.qtybatchsize ?? ''}</td>
-									<td>{replenish.m_warehousesource_id ?? ''}</td>
+									<td>{findLabelByValue(warehouses, replenish.m_warehousesource_id) ?? ''}</td>
 								</tr>
 							{/each}
-							<tr>
-								<td class="px-0">
-									<select
-										name="m_warehouse_id"
-										class="select select-bordered select-sm w-full max-w-xs"
-										required
-										>{#if warehouses}
-											{#each warehouses as { value, label }}
-												<option {value}>{label}</option>
-											{/each}
-										{/if}
-									</select>
-								</td>
-								<td>
-									<input
-										type="number"
-										name="level_min"
-										value={0}
-										class="input input-bordered input-sm max-w-xs"
-									/>
-								</td>
-								<td>
-									<input
-										type="number"
-										name="level_max"
-										value={0}
-										class="input input-bordered input-sm max-w-xs"
-									/>
-								</td>
-								<td>
-									<input
-										type="number"
-										name="qtybatchsize"
-										class="input input-bordered input-sm max-w-xs"
-									/>
-								</td>
-								<td class="px-0">
-									<select
-										name="m_warehousesource_id"
-										class="select select-bordered select-sm w-full max-w-xs"
-										required
-										>{#if warehouses}
-											<option></option>
-											{#each warehouses as { value, label }}
-												<option {value}>{label}</option>
-											{/each}
-										{/if}
-									</select>
-								</td>
-								<td>
-									<button type="submit" disabled={addingProductPO} class="btn btn-ghost btn-sm"
-										><Plus /></button
-									>
-								</td>
-							</tr>
 						</tbody>
 					</table>
 				{/if}
@@ -550,11 +608,12 @@
 		</div>
 	</div>
 </div>
-
-<Dialog.Content name="settings" let:title let:description let:close>
+<!-- 
+<Drawer.Content name="settings" let:title let:description let:close>
 	<h2 class="font-bold" use:melt={title}>Add replenich quantities</h2>
 	<p use:melt={description}>Placeholder description</p>
 	<div class="flex">
 		<button class="btn ml-auto mt-4" use:melt={close}> Close </button>
 	</div>
-</Dialog.Content>
+</Drawer.Content>
+ -->
