@@ -8,6 +8,7 @@ export const load = (async ({ url, depends, locals: { supabase, getSession } }) 
 	}
 	const activeCategory = () => {
 		const param = url.searchParams.get('cat');
+
 		return param ? Number(param) : null;
 	};
 

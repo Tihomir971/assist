@@ -5,18 +5,17 @@
 	import { createSync } from '@melt-ui/svelte';
 
 	export let treeItems: TreeItem[];
+
 	export let forceVisible: Props['forceVisible'] = undefined;
-	export let defaultExpanded: Props['defaultExpanded'] = [];
-	//	export let expanded: Props['expanded'] = undefined;
-	export let onExpandedChange: Props['onExpandedChange'] = undefined;
+	export let defaultExpanded: Props['defaultExpanded'] = undefined;
+	//	export let onExpandedChange: Props['onExpandedChange'] = undefined;
 	export let selected: HTMLElement | null = null;
 	export let expanded: string[] = [];
 
 	const {
 		elements: { tree },
 		states
-	} = setCtx({ forceVisible, defaultExpanded, onExpandedChange });
-	$: console.log('defaultExpanded', defaultExpanded);
+	} = setCtx({ forceVisible, defaultExpanded });
 	const sync = createSync(states);
 	$: sync.expanded(expanded, (v) => (expanded = v));
 	$: sync.selectedItem(selected, (v) => (selected = v));

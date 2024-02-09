@@ -6,8 +6,8 @@ import type { GetReturn } from './types';
 const NAME = 'tree';
 
 export function setCtx(props: CreateTreeViewProps) {
-	/* const treeview = createTreeView({ ...removeUndefined(props) }); */
 	const treeview = createTreeView({ ...props });
+
 	setContext(NAME, treeview);
 	return {
 		...treeview
