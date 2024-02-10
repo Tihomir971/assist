@@ -9,8 +9,8 @@
 	import { FolderEdit, FolderMinus, FolderPlus, FolderRoot } from 'lucide-svelte';
 
 	export let data: LayoutData;
-	let { categories, defaultExpanded } = data;
-	$: ({ categories, defaultExpanded } = data);
+	let { categories, expanded } = data;
+	$: ({ categories } = data);
 
 	$: treeItems = convertToTreeStructure(categories);
 
@@ -30,7 +30,7 @@
 		return;
 	}
 	let selected: HTMLElement | null | undefined;
-	let expanded: string[] | undefined = undefined;
+	//	let expanded: string[] | undefined = undefined;
 
 	function editCategory() {
 		//	const activeCategory = $page.url.searchParams.get('cat');
@@ -38,6 +38,8 @@
 		return;
 	}
 	$: if (selected) {
+		console.log('selected', selected.getAttribute('data-id'));
+
 		rerunLoadFunction(selected.getAttribute('data-id'));
 	}
 </script>
@@ -61,11 +63,11 @@
 				type="button"
 				data-tip="Collapse"
 				class="btn join-item tooltip tooltip-bottom"
-				on:click={() => (expanded = [])}><FolderRoot /></Toolbar.Button
+				on:click={() => goto('/catalog/')}><FolderRoot /></Toolbar.Button
 			>
 		</Toolbar.Root>
 		<div class="menu h-full w-full overflow-y-auto">
-			<TreeView bind:treeItems bind:defaultExpanded bind:selected bind:expanded />
+			<TreeView bind:treeItems bind:selected bind:expanded />
 		</div>
 	</div>
 	<div class="flex-grow overflow-hidden">
