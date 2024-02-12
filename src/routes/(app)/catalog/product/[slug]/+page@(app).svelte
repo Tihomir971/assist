@@ -7,11 +7,8 @@
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 	import { Combobox } from '$lib/components/combobox';
 	import { Link, Plus, Search, X } from 'lucide-svelte';
-	import { Drawer } from '$lib/components/drawer';
-	import { melt } from '@melt-ui/svelte';
 	import { Dialog } from '$lib/components/dialog';
 	import { findLabelByValue } from '$lib/scripts/objects';
-	//import { findProductOnWeb } from '$lib/server/scraper';
 
 	export let data: PageData;
 	$: ({ product, categories, pricelists, supabase, bpartners, replenishes, warehouses } = data);
@@ -424,7 +421,7 @@
 												><input
 													type="text"
 													name="partnerPN"
-													class="input input-bordered input-sm max-w-xs"
+													class="input input-sm input-bordered max-w-xs"
 													bind:value={newPartnerPN}
 												/></td
 											>
@@ -433,7 +430,7 @@
 													type="url"
 													name="url"
 													placeholder="Enter URL..."
-													class="input input-bordered input-sm w-full"
+													class="input input-sm input-bordered w-full"
 													bind:value={newURL}
 												/>
 											</td>
@@ -471,7 +468,7 @@
 			<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Replenish" />
 			<div role="tabpanel" class="tab-content my-4">
 				{#if replenishes && product}
-					<Dialog.Root>
+					<!-- 				<Dialog.Root>
 						<Dialog.Trigger></Dialog.Trigger>
 						<Dialog.Portalled>
 							<section>
@@ -579,7 +576,7 @@
 								</form>
 							</section>
 						</Dialog.Portalled>
-					</Dialog.Root>
+					</Dialog.Root> -->
 					<!-- <Drawer.Trigger name="settings" class="btn btn-secondary btn-sm">Add</Drawer.Trigger> -->
 					<table class="table table-sm">
 						<thead
