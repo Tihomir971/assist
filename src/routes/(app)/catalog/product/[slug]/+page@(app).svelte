@@ -7,7 +7,7 @@
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 	import { Combobox } from '$lib/components/combobox';
 	import { Link, Plus, Search, X } from 'lucide-svelte';
-	//import { Dialog } from '$lib/components/dialog';
+	import { Dialog } from '$lib/components/dialog';
 	import { findLabelByValue } from '$lib/scripts/objects';
 
 	export let data: PageData;
@@ -468,7 +468,7 @@
 			<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Replenish" />
 			<div role="tabpanel" class="tab-content my-4">
 				{#if replenishes && product}
-					<!-- 				<Dialog.Root>
+					<Dialog.Root>
 						<Dialog.Trigger></Dialog.Trigger>
 						<Dialog.Portalled>
 							<section>
@@ -576,7 +576,7 @@
 								</form>
 							</section>
 						</Dialog.Portalled>
-					</Dialog.Root> -->
+					</Dialog.Root>
 					<!-- <Drawer.Trigger name="settings" class="btn btn-secondary btn-sm">Add</Drawer.Trigger> -->
 					<table class="table table-sm">
 						<thead
