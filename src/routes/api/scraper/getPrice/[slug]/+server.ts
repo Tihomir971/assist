@@ -5,6 +5,9 @@ import type { RequestHandler } from './$types';
 type ParseFunctions = {
 	[key: string]: (document: Document) => number;
 };
+type GetApiPrice = {
+	[key: string]: (url: string) => Promise<number>;
+};
 
 export const GET: RequestHandler = async ({ params, locals: { supabase, getSession } }) => {
 	const session = await getSession();
@@ -24,19 +27,19 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 		for (let index = 0; index < data.length; index++) {
 			const fetchURL = data[index].url;
 			if (fetchURL) {
-				const response = await fetch(fetchURL);
-				if (!response.ok) {
-					throw new Error(`Failed to fetch: ${response.status}`);
-				}
-
-				const html = await response.text();
-
-				const { document } = parseHTML(html);
-				for (const key in vendorPrice) {
+				//if(fetchURL.includes(key))
+				for (const key in getWebPrice) {
 					// Check if the string contains the current key
 					if (fetchURL.includes(key)) {
+						const response = await fetch(fetchURL);
+						if (!response.ok) {
+							throw new Error(`Failed to fetch: ${response.status}`);
+						}
+						const html = await response.text();
+						const { document } = parseHTML(html);
+
 						// If it does, call the corresponding function
-						const price = vendorPrice[key](document);
+						const price = getWebPrice[key](document);
 
 						const { error } = await supabase
 							.from('m_product_po')
@@ -44,6 +47,20 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 							//.select('id,parent_id,content: name')
 							.eq('id', data[index].id);
 
+						if (error) {
+							throw new Error(`Failed to update: ${error.details}`);
+						}
+						if (price && price !== 0) prices.push(price);
+					}
+				}
+				for (const key in getApiPrice) {
+					if (fetchURL.includes(key)) {
+						const price = await getApiPrice[key](fetchURL);
+						const { error } = await supabase
+							.from('m_product_po')
+							.update({ pricelist: price })
+							//.select('id,parent_id,content: name')
+							.eq('id', data[index].id);
 						if (error) {
 							throw new Error(`Failed to update: ${error.details}`);
 						}
@@ -88,7 +105,7 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 	);
 };
 
-const vendorPrice: ParseFunctions = {
+const getWebPrice: ParseFunctions = {
 	'gigatron.rs': function (document: Document) {
 		const priceElement = document.querySelector<HTMLSpanElement>('.ppra_price-number.snowflake');
 		const priceText = priceElement ? priceElement.innerText : null;
@@ -146,6 +163,25 @@ const vendorPrice: ParseFunctions = {
 			}
 		});
 		if (bestPrice) return bestPrice;
+		return 0;
+	}
+};
+
+const getApiPrice: GetApiPrice = {
+	'online.idea.rs': async function (url: string) {
+		const parts = url.split('/');
+		const productId = parts[parts.length - 2];
+		const response = await fetch(`https://online.idea.rs/v2/products/${productId}`, {
+			method: 'GET'
+		});
+		if (!response.ok) {
+			throw new Error(`Network response was not OK: ${response.statusText}`);
+		}
+		const data = await response.json();
+		if (data.active && data.price) {
+			return data.price.amount / 100;
+		}
+		console.log('Product ID:', productId, data.active, data.price);
 		return 0;
 	}
 };

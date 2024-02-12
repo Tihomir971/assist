@@ -63,7 +63,7 @@
 				type="button"
 				data-tip="Collapse"
 				class="btn join-item tooltip tooltip-bottom"
-				on:click={() => goto('/catalog/')}><FolderRoot /></Toolbar.Button
+				on:click={() => (expanded = [])}><FolderRoot /></Toolbar.Button
 			>
 		</Toolbar.Root>
 		<div class="menu h-full w-full overflow-y-auto">

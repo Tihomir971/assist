@@ -7,15 +7,16 @@
 	export let treeItems: TreeItem[];
 
 	export let forceVisible: Props['forceVisible'] = undefined;
-	//	export let defaultExpanded: Props['defaultExpanded'] = undefined;
-	//	export let onExpandedChange: Props['onExpandedChange'] = undefined;
+	export let onExpandedChange: Props['onExpandedChange'] = undefined;
+
 	export let selected: HTMLElement | null = null;
 	export let expanded: string[] = [];
+
 	const {
 		elements: { tree },
 		states
-	} = setCtx({ forceVisible });
-	//	$: console.log('expanded', JSON.stringify(states));
+	} = setCtx({ forceVisible, onExpandedChange });
+
 	const sync = createSync(states);
 	$: sync.expanded(expanded, (v) => (expanded = v));
 	$: sync.selectedItem(selected, (v) => (selected = v));

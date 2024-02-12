@@ -57,7 +57,6 @@ export const load = (async ({ url, depends, locals: { supabase, getSession } }) 
 		.select('id,parent_id, title:name')
 		//.select('id,parent_id,content: name')
 		.order('name');
-	console.log(Date(), 'Load category');
 
 	return { categories, expanded: findParents(categories, activeCategory()) };
 }) satisfies LayoutServerLoad;
