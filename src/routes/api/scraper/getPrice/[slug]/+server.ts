@@ -164,26 +164,7 @@ const getWebPrice: ParseFunctions = {
 		});
 		if (bestPrice) return bestPrice;
 		return 0;
-	} /* ,
-	'online.idea.rs': function (document: Document) {
-		let integerPart = 0;
-		let fractionalPart = 0;
-		const priceElement = document.querySelector<HTMLSpanElement>('.cijene-block');
-		console.log('priceElement', JSON.stringify(priceElement));
-
-		if (priceElement?.textContent) {
-			integerPart = parseInt(priceElement.textContent, 10);
-		}
-		console.log('integerPart', integerPart);
-
-		const fractionalElement = document.querySelector('.cijene-block h3 span.decimalni-dio');
-		if (fractionalElement?.textContent) {
-			fractionalPart = parseInt(fractionalElement.textContent, 10) / 100;
-		}
-		console.log('fractionalPart', fractionalPart);
-		const combinedNumber = integerPart + fractionalPart;
-		return combinedNumber;
-	} */
+	}
 };
 
 const getApiPrice: GetApiPrice = {
@@ -211,6 +192,51 @@ const getApiPrice: GetApiPrice = {
 			return data.price.amount / 100;
 		}
 		console.log('Product ID:', productId, data.active, data.price);
+		return 0;
+	},
+	'maxi.rs': async function (url: string) {
+		const parts = url.split('/');
+		const productId = parts[parts.length - 1];
+		const myHeaders = new Headers();
+		/* 	myHeaders.append(
+			'Cookie',
+			'_abck=65C139070F738746E76D7FC8E38AC3E9~-1~YAAQRy0UAiH7GJyNAQAAXSs0ngt8cVSbMjK91SghFY1CMzO+a15X3jOulsK8BG8xXgG46cMavJyHFMXuLTILog8SLLGkSoXlcAKtdNh9nrzWhXpwxJCwGDMjJr1E9EBNRgoYZ29gJxS4rznFeHtuwY4P/DCXjPIjViYr0vXHruGwpRjFxo5hjV+lAIz8GMsjnB02uIUnKielAbfJYxuJNGk4h5bv9EjG2rZAQW1SCE2pqMBHYnxYwv551pmMv7jAkWe3pC2klhLft0kZ2yzcYWHLi+xxolXhRUI4T7J0baaI1G0OUhyydi18tU2+E34PqybWpa1i5C3gA5I3IgYacCwZxWk0E+IS2HABXSTopDotK0nZ5I8=~-1~-1~-1; bm_sz=057DB091750AA8F58C5D6ED8ECDA4D0B~YAAQRy0UAiL7GJyNAQAAXSs0nhaoDecPaedmazpCGO7PLw3Alj0SvAAGIcHFlfvINeWcv86MYj8DLl1wMOJ2RVNcFF/0qORYucNtXLdLukt/oVxdmzCsiWzfjP2UykKnNigFPUAb9jSghiHvub1O2rUIgTULhxnNF2dSuCPRbcqyAtwzFYxVywmOGWgxJPeKNn+4T2fP4QHHKLxV6ihxooBiL4qxLR8axo3y7CBIYF3uRn716hXhbBoHbkbudBKhMNhqbepWuAXm8rptwykQ2de5WZVwIgBdNNr6qsJa/ri0iM2HntGJ7qIVWlj0ycfNtdhkDeBTlSvwzds=~3748678~3360310; AWSALB=WtpR76dMMpOLgIVijkS8GxsCcI3LMwX03fdha7hIWzVdss4n3plRDlifqLSBNLLFnxoUiUp7n2nn6MBIndthM2rbykdU1OYQz/+jibjOClp36ECZNMgdt/zaJpGx; AWSALBCORS=WtpR76dMMpOLgIVijkS8GxsCcI3LMwX03fdha7hIWzVdss4n3plRDlifqLSBNLLFnxoUiUp7n2nn6MBIndthM2rbykdU1OYQz/+jibjOClp36ECZNMgdt/zaJpGx; deviceSessionId=fb01f6a4-d4a4-42c7-a349-8947f5462865; grocery-ccatc=2BrYSjEZ6C5X9mb1T6y6fqd5O3s'
+		);
+		myHeaders.append('Accept', 'application/json');
+		myHeaders.append('Content-Type', 'application/json'); */
+		const requestOptions = {
+			method: 'GET',
+			headers: myHeaders
+		};
+		const variables = { productCode: productId, lang: 'sr' };
+		const extensions = {
+			persistedQuery: {
+				version: 1,
+				sha256Hash: 'dab0c62526aa89fb05ac65971e99961476fc100f31abaf875c32534190a497be'
+			}
+		};
+		const apiUrl = new URL('https://www.maxi.rs/api/v1/');
+		apiUrl.searchParams.set('operationName', 'ProductDetails');
+		apiUrl.searchParams.set('variables', JSON.stringify(variables));
+		apiUrl.searchParams.set('extensions', JSON.stringify(extensions));
+
+		const response = await fetch(apiUrl, requestOptions);
+		if (!response.ok) {
+			throw new Error(`Network response was not OK: ${response.statusText}`);
+		}
+		const { data } = await response.json();
+		const { productDetails } = data;
+
+		if (productDetails.stock.inStock) {
+			if (productDetails.price.discountedPriceFormatted) {
+				const rsdString = productDetails.price.discountedPriceFormatted;
+				const numericValue = parseFloat(rsdString.replace(/[^0-9.]+/g, ''));
+				console.log(numericValue);
+			} else if (productDetails.price.unitPrice) {
+				return productDetails.price.unitPrice;
+			}
+		}
+
 		return 0;
 	}
 };
