@@ -171,9 +171,16 @@ const getApiPrice: GetApiPrice = {
 	'online.idea.rs': async function (url: string) {
 		const parts = url.split('/');
 		const productId = parts[parts.length - 2];
-		const response = await fetch(`https://online.idea.rs/v2/products/${productId}`, {
-			method: 'GET'
-		});
+		const myHeaders = new Headers();
+		myHeaders.append(
+			'Cookie',
+			'TS01ad1b17=01d6e88db1da828dd03c7d648b740e123f7acdd0bc098fb5389c3b9f95ffdec6af6521d0b4455b2a6a0fdbe738300108c421c0eefc9fe1cadeebf9f8498375bf737fce5c913cdca95c85e76e2108ebe727819714d23284584052996e5789433162e479f4f8; XSRF-TOKEN=YKrL8F3vgba2PpDyhPwavoyZRMg9c3IUvkm7%2F%2FeMo8Q%3D; _ws-rails_session_id=BAh7DEkiD3Nlc3Npb25faWQGOgZFVEkiJWNiYmQ1MWE5ZTk4ZGI1MTEyZjk3ZjAyMWVjMTkzNmQxBjsAVEkiFWN1cnJlbnRfbG9jYXRpb24GOwBGSSI8aHR0cHM6Ly9vbmxpbmUuaWRlYS5ycy92Mi9wcm9kdWN0cy82MDAwMjY5OT9pZD02MDAwMjY5OQY7AFRJIhhwcm9kdWN0c19zb3J0X2ZpZWxkBjsARkkiCW5hbWUGOwBUSSIXcHJvZHVjdHNfc29ydF90eXBlBjsARkkiCGFzYwY7AFRJIhx0b3BfcHJvZHVjdHNfc29ydF9maWVsZAY7AEZJIg9wb3B1bGFyaXR5BjsAVEkiG3RvcF9wcm9kdWN0c19zb3J0X3R5cGUGOwBGSSIIYXNjBjsAVEkiEF9jc3JmX3Rva2VuBjsARkkiMVlLckw4RjN2Z2JhMlBwRHloUHdhdm95WlJNZzljM0lVdmttNy8vZU1vOFE9BjsARg%3D%3D--a14aeda622c79db55e0840dc4c6529ca98de498b; idea_=rd104o00000000000000000000ffffac100041o80'
+		);
+		const requestOptions = {
+			method: 'GET',
+			headers: myHeaders
+		};
+		const response = await fetch(`https://online.idea.rs/v2/products/${productId}`, requestOptions);
 		if (!response.ok) {
 			throw new Error(`Network response was not OK: ${response.statusText}`);
 		}
