@@ -7,7 +7,7 @@
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 	import { Combobox } from '$lib/components/combobox';
 	import { Link, Plus, Search, X } from 'lucide-svelte';
-	import { Dialog } from '$lib/components/dialog';
+	import { Dialog } from '$lib/components/dialog2';
 	import { findLabelByValue } from '$lib/scripts/objects';
 
 	export let data: PageData;
