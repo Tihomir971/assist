@@ -45,7 +45,7 @@
     "@supabase/supabase-js": "^2.39.3",
     "clsx": "^2.1.0",
     "linkedom": "^0.16.8",
-    "lucide-svelte": "^0.323.0",
+    "lucide-svelte": "^0.325.0",
     "tailwind-merge": "^2.2.1"
   }
 }
