@@ -61,7 +61,44 @@
 				console.error(`Could not get products: ${error}`);
 			});
 	}
+	async function addToBasket() {
+		const apiUrl = '/api/basket/add/';
+		console.log('selectedProducts', JSON.stringify(selectedProducts));
 
+		for (let index = 0; index < selectedProducts.length; index++) {
+			console.log('selectedProduct', selectedProducts[index]);
+
+			try {
+				const response = await fetch(apiUrl, {
+					method: 'POST',
+					body: JSON.stringify({ id: selectedProducts[index] }),
+					headers: {
+						'content-type': 'application/json'
+					}
+				});
+
+				if (response.status === 200) {
+					addToast({
+						data: {
+							title: 'Add product to basket',
+							description: `Product added to basket!`,
+							color: 'alert-success'
+						}
+					});
+				} else if (response.status === 204) {
+					addToast({
+						data: {
+							title: 'Add product to basket',
+							description: `Error adding to basket`,
+							color: 'alert-info'
+						}
+					});
+				}
+			} catch (error) {
+				console.log('error', error);
+			}
+		}
+	}
 	const onStockChange = () => {
 		const newUrl = new URL($page.url);
 		onStock = !onStock;
@@ -96,9 +133,13 @@
 				class="toggle toggle-primary"
 			/>
 		</label>
+		<button on:click={addToBasket} class="btn btn-neutral">
+			<Euro size="24" />
+			Add to Basket
+		</button>
 		<button on:click={getPrices} class="btn btn-neutral">
 			<Euro size="24" />
-			Get prices
+			Get Prices
 		</button>
 		<button on:click={getERP} class="btn btn-neutral">
 			<Factory class="size-5" />

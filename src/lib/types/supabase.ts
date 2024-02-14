@@ -1984,6 +1984,149 @@ export interface Database {
           }
         ]
       }
+      w_basket: {
+        Row: {
+          ad_client_id: number
+          ad_org_id: number
+          ad_user_id: string
+          c_bpartner_id: number | null
+          created: string
+          id: number
+          isactive: boolean
+          m_pricelist_id: number | null
+          session_id: string | null
+          updated: string
+          w_basket_uu: string
+        }
+        Insert: {
+          ad_client_id?: number
+          ad_org_id?: number
+          ad_user_id: string
+          c_bpartner_id?: number | null
+          created?: string
+          id?: number
+          isactive?: boolean
+          m_pricelist_id?: number | null
+          session_id?: string | null
+          updated?: string
+          w_basket_uu?: string
+        }
+        Update: {
+          ad_client_id?: number
+          ad_org_id?: number
+          ad_user_id?: string
+          c_bpartner_id?: number | null
+          created?: string
+          id?: number
+          isactive?: boolean
+          m_pricelist_id?: number | null
+          session_id?: string | null
+          updated?: string
+          w_basket_uu?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "w_basket_ad_client_id_fkey"
+            columns: ["ad_client_id"]
+            referencedRelation: "ad_client"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "w_basket_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "w_basket_ad_user_id_fkey"
+            columns: ["ad_user_id"]
+            referencedRelation: "ad_user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "w_basket_c_bpartner_id_fkey"
+            columns: ["c_bpartner_id"]
+            referencedRelation: "c_bpartner"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "w_basket_m_pricelist_id_fkey"
+            columns: ["m_pricelist_id"]
+            referencedRelation: "m_pricelist"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      w_basketline: {
+        Row: {
+          ad_client_id: number
+          ad_org_id: number
+          created: string
+          description: string | null
+          id: number
+          isactive: boolean
+          m_product_id: number | null
+          price: number
+          product: string | null
+          qty: number
+          updated: string
+          w_basket_id: number
+        }
+        Insert: {
+          ad_client_id?: number
+          ad_org_id?: number
+          created?: string
+          description?: string | null
+          id?: number
+          isactive?: boolean
+          m_product_id?: number | null
+          price?: number
+          product?: string | null
+          qty?: number
+          updated?: string
+          w_basket_id: number
+        }
+        Update: {
+          ad_client_id?: number
+          ad_org_id?: number
+          created?: string
+          description?: string | null
+          id?: number
+          isactive?: boolean
+          m_product_id?: number | null
+          price?: number
+          product?: string | null
+          qty?: number
+          updated?: string
+          w_basket_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "w_basketline_ad_client_id_fkey"
+            columns: ["ad_client_id"]
+            referencedRelation: "ad_client"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "w_basketline_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "w_basketline_m_product_id_fkey"
+            columns: ["m_product_id"]
+            referencedRelation: "m_product"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "w_basketline_w_basket_id_fkey"
+            columns: ["w_basket_id"]
+            referencedRelation: "w_basket"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never

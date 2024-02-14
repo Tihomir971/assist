@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { writable } from 'svelte/store';
+	import { get, writable } from 'svelte/store';
 
 	import TableAction from './TableAction.svelte';
 	import NumberFormat from '$lib/components/table/NumberFormat.svelte';
@@ -14,6 +14,7 @@
 
 	import { createTable, createRender, Subscribe, Render } from 'svelte-headless-table';
 	import {
+		addDataExport,
 		addHiddenColumns,
 		addSelectedRows,
 		addSortBy,
@@ -31,7 +32,10 @@
 			fn: ({ filterValue, value }) => value.toLowerCase().includes(filterValue.toLowerCase())
 		}),
 		select: addSelectedRows(),
-		hide: addHiddenColumns()
+		hide: addHiddenColumns(),
+		exportCsv: addDataExport({
+			format: 'csv'
+		})
 	});
 
 	function getQtyOnHand(
@@ -70,7 +74,8 @@
 				},
 				tableFilter: {
 					exclude: true
-				}
+				},
+				exportCsv: { exclude: false }
 			}
 		}),
 
@@ -83,12 +88,33 @@
 					getFilterValue(value) {
 						return value.toLowerCase();
 					}
-				}
+				},
+				exportCsv: { exclude: false }
 			}
 		}),
-		table.column({ header: 'Barcode', accessor: 'barcode', cell: ({ value }) => `${value ?? ''}` }),
-		table.column({ header: 'MPN', accessor: 'mpn', cell: ({ value }) => `${value ?? ''}` }),
-		table.column({ header: 'Name', accessor: 'name' }),
+		table.column({
+			header: 'Barcode',
+			accessor: 'barcode',
+			cell: ({ value }) => `${value ?? ''}`,
+			plugins: {
+				exportCsv: { exclude: true }
+			}
+		}),
+		table.column({
+			header: 'MPN',
+			accessor: 'mpn',
+			cell: ({ value }) => `${value ?? ''}`,
+			plugins: {
+				exportCsv: { exclude: true }
+			}
+		}),
+		table.column({
+			header: 'Name',
+			accessor: 'name',
+			plugins: {
+				exportCsv: { exclude: true }
+			}
+		}),
 		table.group({
 			header: 'Stock',
 			columns: [
@@ -102,7 +128,10 @@
 							locales: 'sr-Latn',
 							style: 'decimal',
 							fractionDigits: 2
-						})
+						}),
+					plugins: {
+						exportCsv: { exclude: true }
+					}
 				}),
 				table.column({
 					id: 'retail',
@@ -114,7 +143,10 @@
 							locales: 'sr-Latn',
 							style: 'decimal',
 							fractionDigits: 2
-						})
+						}),
+					plugins: {
+						exportCsv: { exclude: true }
+					}
 				})
 			]
 		}),
@@ -131,7 +163,10 @@
 							locales: 'sr-Latn',
 							style: 'decimal',
 							fractionDigits: 2
-						})
+						}),
+					plugins: {
+						exportCsv: { exclude: true }
+					}
 				}),
 				table.column({
 					id: 'ruc',
@@ -143,7 +178,10 @@
 							locales: 'sr-Latn',
 							style: 'percent',
 							fractionDigits: 1
-						})
+						}),
+					plugins: {
+						exportCsv: { exclude: true }
+					}
 				}),
 				table.column({
 					header: createRender(TextRight, { text: 'Retail' }),
@@ -154,7 +192,10 @@
 							locales: 'sr-Latn',
 							style: 'decimal',
 							fractionDigits: 2
-						})
+						}),
+					plugins: {
+						exportCsv: { exclude: true }
+					}
 				}),
 				table.column({
 					header: createRender(TextRight, { text: 'Market' }),
@@ -165,7 +206,10 @@
 							locales: 'sr-Latn',
 							style: 'decimal',
 							fractionDigits: 2
-						})
+						}),
+					plugins: {
+						exportCsv: { exclude: true }
+					}
 				}),
 				table.column({
 					header: createRender(TextRight, { text: 'Recom.' }),
@@ -176,7 +220,10 @@
 							locales: 'sr-Latn',
 							style: 'decimal',
 							fractionDigits: 2
-						})
+						}),
+					plugins: {
+						exportCsv: { exclude: true }
+					}
 				})
 			]
 		}),
@@ -187,7 +234,10 @@
 			cell: ({ value }) =>
 				createRender(TableAction, { id: value }).on('click', (ev) =>
 					goto(`/catalog/product/${ev.detail.id.toString()}`)
-				)
+				),
+			plugins: {
+				exportCsv: { exclude: true }
+			}
 		})
 	]);
 
@@ -199,17 +249,20 @@
 
 	let { selectedDataIds } = pluginStates.select;
 	const { filterValue } = pluginStates.tableFilter;
+	const { exportedData: exportedCsv } = pluginStates.exportCsv;
+
 	$: $products, ($selectedDataIds = {});
 	$: strSelectedDataIds = Object.keys($selectedDataIds).map(Number);
 </script>
 
 <div class="grid h-full w-full grid-rows-[auto_1fr] overflow-hidden">
 	<div class="flex h-full flex-col overflow-hidden px-2">
+		<button on:click={() => console.log(get(exportedCsv))}>Export as CSV</button>
 		<PageHeader selectedProducts={strSelectedDataIds} {onStock} bind:filterValue={$filterValue} />
 		<Table.Root {...$tableAttrs}>
 			<Table.Header>
 				{#each $headerRows as headerRow}
-					<Subscribe rowAttrs={headerRow.attrs()}>
+					<Subscribe rowAttrs={headerRow.attrs()} rowProps={headerRow.props()} let:rowProps>
 						<Table.Row>
 							{#each headerRow.cells as cell (cell.id)}
 								<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
