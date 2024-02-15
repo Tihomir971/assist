@@ -107,7 +107,7 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 
 const getWebPrice: ParseFunctions = {
 	'gigatron.rs': function (document: Document) {
-		const priceElement = document.querySelector<HTMLSpanElement>('.ppra_price-number.snowflake');
+		const priceElement = document.querySelector<HTMLSpanElement>('.ppra_price-number');
 		const priceText = priceElement ? priceElement.innerText : null;
 		if (priceText) {
 			return parseFloat(priceText.replace('.', ''));
