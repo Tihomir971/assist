@@ -2,6 +2,13 @@ import { error, fail } from '@sveltejs/kit';
 import type { Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getNumber, getString } from '$lib/scripts/getForm';
+import {
+	CategoryService,
+	PartnerService,
+	ProductService,
+	WarehouseService
+} from '$lib/services/supabase/';
+import { ProductInfo } from '$lib/services/scraper';
 
 export const load = (async ({ depends, params, locals: { supabase, getSession } }) => {
 	depends('catalog:product');
@@ -10,82 +17,24 @@ export const load = (async ({ depends, params, locals: { supabase, getSession } 
 		error(401, { message: 'Unauthorized' });
 	}
 	const productId = params.slug as unknown as number;
-	const getProduct = async (id: number) => {
-		const { data } = await supabase.from('m_product').select().eq('id', id).maybeSingle();
 
-		return data;
-	};
+	const [product, categories, partners, replenishes, warehouses, productPurchasing] =
+		await Promise.all([
+			ProductService.getProduct(supabase, productId),
+			CategoryService.getCategories(supabase),
+			PartnerService.getPartners(supabase),
+			ProductService.getReplenishes(supabase, productId),
+			WarehouseService.getWarehouses(supabase),
+			ProductService.getProductPurchasing(supabase, productId)
+		]);
 
-	const getCategories = async () => {
-		const { data } = await supabase
-			.from('m_product_category')
-			.select('value:id,label:name')
-			.order('name');
-		/* .returns<AutocompleteOption<string>[]>(); */
-		return data;
-	};
-	//const getImages = async (id: number) => {
-	//	const { data: product } = await supabase
-	//		.from('m_product')
-	//		.select('imageurl')
-	//		.eq('id', id)
-	//		.single();
-	//
-	//	// Generate public image URLs from the Supabase bucket
-	//	const imageURLs: (string | null)[] = [];
-	//	const imageNames = product?.imageurl?.split(';');
-	//	if (imageNames) {
-	//		for (let i = 0; i < imageNames.length; i++) {
-	//			const { data } = await supabase.storage.from('products').getPublicUrl(imageNames[i]);
-	//			imageURLs.push(data.publicUrl);
-	//		}
-	//	}
-	//
-	//	/* 		if (imageNames) {
-	//		imageURLs = await Promise.all(
-	//			imageNames.map(async (imageName) => {
-	//				const { data } = await supabase.storage.from('products').getPublicUrl(imageName);
-	//				if (error) {
-	//					console.error('Error getting public URL:', error);
-	//					return null;
-	//				}
-	//				return data.publicUrl;
-	//			})
-	//		);
-	//	} */
-	//
-	//	return { imageURLs };
-	//};
-	const getPricelist = async (id: number) => {
-		const { data } = await supabase
-			.from('m_product_po')
-			.select('id,c_bpartner_id,pricelist,vendorproductno,url,updated,c_bpartner(name)')
-			.eq('m_product_id', id);
-		return data;
-	};
-	const getBPartners = async () => {
-		const { data } = await supabase.from('c_bpartner').select('value:id,label:name').order('name');
-		return data;
-	};
-	const getReplenishes = async (id: number) => {
-		const { data } = await supabase
-			.from('m_replenish')
-			.select()
-			.order('m_warehouse_id')
-			.eq('m_product_id', id);
-		return data;
-	};
-	const getWarehouses = async () => {
-		const { data } = await supabase.from('m_warehouse').select('value:id,label:name').order('name');
-		return data;
-	};
 	return {
-		product: await getProduct(productId),
-		categories: await getCategories(),
-		pricelists: await getPricelist(productId),
-		bpartners: await getBPartners(),
-		replenishes: await getReplenishes(productId),
-		warehouses: await getWarehouses()
+		product,
+		categories,
+		productPurchasing,
+		partners,
+		replenishes,
+		warehouses
 	};
 }) satisfies PageServerLoad;
 
@@ -95,56 +44,44 @@ export const actions = {
 		if (!session) {
 			error(401, { message: 'Unauthorized' });
 		}
-		const formData = await request.formData();
-		let formValue = formData.get('id');
-		if (formValue) {
-			const productId = Number(formValue);
-			formValue = formData.get('sku');
-			const sku = formValue ? formValue.toString() : null;
-			formValue = formData.get('name');
-			const name = formValue ? formValue.toString() : undefined;
-			formValue = formData.get('barcode');
-			const barcode = formValue ? formValue.toString() : null;
-			formValue = formData.get('c_uom_id');
-			const c_uom_id = formValue ? Number(formValue) : undefined;
-			formValue = formData.get('brand');
-			const brand = formValue ? formValue.toString() : null;
-			formValue = formData.get('mpn');
-			const mpn = formValue ? formValue.toString() : null;
-			formValue = formData.get('m_product_category_id');
-			const m_product_category_id = formValue ? Number(formValue) : null;
-			formValue = formData.get('condition');
-			const condition = formValue ? formValue.toString() : null;
-			formValue = formData.get('isselfservice');
-			const isselfservice = formValue ? Boolean(formValue) : undefined;
-			formValue = formData.get('discontinued');
-			const discontinued = formValue ? Boolean(formValue) : undefined;
-			formValue = formData.get('isactive');
-			const isactive = formValue ? Boolean(formValue) : undefined;
-			formValue = formData.get('unitsperpack');
-			const unitsperpack = formValue ? Number(formValue) : undefined;
-			formValue = formData.get('descriptionurl');
-			const descriptionurl = formValue ? formValue.toString() : null;
+
+		const formData = Object.fromEntries(await request.formData());
+		if (formData) {
+			const productId = +formData.id;
+
+			const sku = formData.sku ? formData.sku.toString() : null;
+			const name = formData.name ? formData.name.toString() : undefined;
+			const barcode = formData.barcode ? formData.barcode.toString() : null;
+			const c_uom_id = formData.c_uom_id ? +formData.c_uom_id : undefined;
+			const brand = formData.brand ? formData.brand.toString() : null;
+			const mpn = formData.mpn ? formData.mpn.toString() : null;
+			const m_product_category_id = formData.m_product_category_id
+				? +formData.m_product_category_id
+				: null;
+			const condition = formData.condition ? formData.condition.toString() : null;
+			const isselfservice = formData.isselfservice ? Boolean(formData.isselfservice) : undefined;
+			const discontinued = formData.discontinued ? Boolean(formData.discontinued) : undefined;
+			const isactive = formData.isactive ? Boolean(formData.isactive) : undefined;
+			const unitsperpack = formData.unitsperpack ? +formData.unitsperpack : undefined;
+			const descriptionurl = formData.descriptionurl ? formData.descriptionurl.toString() : null;
 
 			if (productId) {
-				const { error: updateProductError } = await supabase
-					.from('m_product')
-					.update({
-						sku,
-						name,
-						barcode,
-						c_uom_id,
-						brand,
-						mpn,
-						m_product_category_id,
-						condition,
-						isselfservice,
-						discontinued,
-						isactive,
-						unitsperpack,
-						descriptionurl
-					})
-					.eq('id', productId);
+				const { error: updateProductError } = await ProductService.updProduct(supabase, productId, {
+					sku,
+					name,
+					barcode,
+					c_uom_id,
+					brand,
+					mpn,
+					m_product_category_id,
+					condition,
+					isselfservice,
+					discontinued,
+					isactive,
+					unitsperpack,
+					descriptionurl
+				});
+
 				if (updateProductError) {
 					return fail(400, updateProductError);
 				}
@@ -158,16 +95,16 @@ export const actions = {
 		}
 		const formData = await request.formData();
 		const formValue = formData.get('id');
-		const id = formValue ? Number(formValue) : undefined;
-		console.log('Deleting product', id);
+		const productId = formValue ? +formValue : undefined;
 
-		if (id) {
-			const { error } = await supabase.from('m_product').delete().eq('id', id);
-			if (error) {
-				return fail(404, error);
+		if (productId) {
+			const { error: delProductError } = await ProductService.delProduct(supabase, productId);
+			if (delProductError) {
+				return fail(404, delProductError);
 			}
 		}
 	},
+
 	addProductPO: async ({ request, locals: { supabase, getSession } }) => {
 		const session = await getSession();
 		if (!session) {
@@ -181,32 +118,36 @@ export const actions = {
 		const url = getString(formData, 'url');
 
 		if (m_product_id && c_bpartner_id && vendorproductno && url) {
-			const { error: addProductPOError } = await supabase
-				.from('m_product_po')
-				.insert({ m_product_id, c_bpartner_id, vendorproductno, url });
-			if (addProductPOError) {
-				return fail(400, addProductPOError);
+			const { error: addProductPurchasingError } = await ProductService.addProductPurchasing(
+				supabase,
+				{
+					m_product_id,
+					c_bpartner_id,
+					vendorproductno,
+					url
+				}
+			);
+
+			if (addProductPurchasingError) {
+				return fail(400, addProductPurchasingError);
 			}
 		}
 	},
-	createReplenish: async ({ request, locals: { supabase, getSession } }) => {
+	addReplenish: async ({ request, locals: { supabase, getSession } }) => {
 		const session = await getSession();
 		if (!session) {
 			error(401, { message: 'Unauthorized' });
 		}
-		const formData = await request.formData();
-		let formValue = formData.get('m_product_id');
-		const m_product_id = formValue ? Number(formValue) : undefined;
-		formValue = formData.get('m_warehouse_id');
-		const m_warehouse_id = formValue ? Number(formValue) : undefined;
-		formValue = formData.get('level_min');
-		const level_min = formValue ? Number(formValue) : undefined;
-		formValue = formData.get('level_max');
-		const level_max = formValue ? Number(formValue) : undefined;
-		formValue = formData.get('qtybatchsize');
-		const qtybatchsize = formValue ? Number(formValue) : undefined;
-		formValue = formData.get('m_warehousesource_id');
-		const m_warehousesource_id = formValue ? Number(formValue) : undefined;
+
+		const formData = Object.fromEntries(await request.formData());
+		const m_product_id = formData.m_product_id ? +formData.m_product_id : undefined;
+		const m_warehouse_id = formData.m_warehouse_id ? +formData.m_warehouse_id : undefined;
+		const level_min = formData.level_min ? +formData.level_min : undefined;
+		const level_max = formData.level_max ? +formData.level_max : undefined;
+		const qtybatchsize = formData.qtybatchsize ? +formData.qtybatchsize : undefined;
+		const m_warehousesource_id = formData.m_warehousesource_id
+			? +formData.m_warehousesource_id
+			: undefined;
 
 		if (m_product_id && m_warehouse_id) {
 			const { error: cReplenishError } = await supabase.from('m_replenish').insert({
@@ -220,6 +161,20 @@ export const actions = {
 			if (cReplenishError) {
 				return fail(400, cReplenishError);
 			}
+		}
+	},
+	getProductInfo: async ({ request, locals: { supabase, getSession } }) => {
+		console.log('in getProductInfo');
+		const session = await getSession();
+		if (!session) {
+			error(401, { message: 'Unauthorized' });
+		}
+		const formData = Object.fromEntries(await request.formData());
+		if (formData) {
+			const productId = +formData.id;
+			console.log('productId', productId);
+
+			ProductInfo.getProductInfo(supabase, productId);
 		}
 	}
 } satisfies Actions;

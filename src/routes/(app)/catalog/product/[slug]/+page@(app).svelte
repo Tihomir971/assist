@@ -11,7 +11,8 @@
 	import { findLabelByValue } from '$lib/scripts/objects';
 
 	export let data: PageData;
-	$: ({ product, categories, pricelists, supabase, bpartners, replenishes, warehouses } = data);
+	$: ({ product, categories, productPurchasing, supabase, partners, replenishes, warehouses } =
+		data);
 	$: createdLocal = product?.created ? DateTimeFormat(product?.created) : null;
 	$: updatedLocal = product?.updated ? DateTimeFormat(product?.updated) : null;
 
@@ -49,9 +50,7 @@
 		const apiUrl = '/api/scraper/findProduct/';
 		let selectElement = document.getElementsByName('bpartner')[0] as HTMLSelectElement;
 		let selectedValue = selectElement.value;
-		let selectedLabel = bpartners?.find(
-			(partner) => partner.value === Number(selectedValue)
-		)?.label;
+		let selectedLabel = partners?.find((partner) => partner.value === Number(selectedValue))?.label;
 		/* const response = fetch('https://ass-api.tihomir-d4c.workers.dev', { */
 		try {
 			const response = await fetch(apiUrl, {
@@ -81,6 +80,10 @@
 		}
 
 		//findProductOnWeb(product?.barcode, selectedValue);
+	}
+
+	function getInfo(event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }) {
+		throw new Error('Function not implemented.');
 	}
 </script>
 
@@ -127,6 +130,7 @@
 				<div class="flex items-center justify-between gap-x-6 pb-2">
 					<button type="submit" formaction="?/deleteProduct" class="btn btn-warning">Delete</button>
 					<div>
+						<button class="btn btn-secondary" formaction="?/getProductInfo">Get Info</button>
 						<button
 							type="reset"
 							disabled={!modified}
@@ -351,7 +355,7 @@
 		<div role="tablist" class="tabs tabs-bordered">
 			<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Prices" checked />
 			<div role="tabpanel" class="tab-content">
-				{#if pricelists && product}
+				{#if productPurchasing && product}
 					<div class="col-span-full w-full">
 						<form
 							method="post"
@@ -383,20 +387,22 @@
 										</tr>
 									</thead>
 									<tbody class="overflow-auto">
-										{#each pricelists as pricelist}
+										{#each productPurchasing as productPurchase}
 											<tr class="hover">
-												<td>{pricelist.c_bpartner?.name}</td>
-												<td>{pricelist.vendorproductno}</td>
-												<td>{numberFormat(pricelist.pricelist)}</td>
-												<td>{DateTimeFormat(pricelist.updated)}</td>
+												<td>{productPurchase.c_bpartner?.name}</td>
+												<td>{productPurchase.vendorproductno}</td>
+												<td>{numberFormat(productPurchase.pricelist)}</td>
+												<td>{DateTimeFormat(productPurchase.updated)}</td>
 												<td
-													><a href={pricelist.url} target="_blank" class="btn btn-square btn-xs"
-														><Link /></a
+													><a
+														href={productPurchase.url}
+														target="_blank"
+														class="btn btn-square btn-xs"><Link /></a
 													></td
 												>
 												<td>
 													<button
-														on:click={() => deleteProductPORow(pricelist.id)}
+														on:click={() => deleteProductPORow(productPurchase.id)}
 														class="btn btn-ghost btn-sm"
 													>
 														<X />
@@ -410,8 +416,8 @@
 													name="bpartner"
 													class="select select-bordered select-sm w-full max-w-xs"
 													required
-													>{#if bpartners}
-														{#each bpartners as { value, label }}
+													>{#if partners}
+														{#each partners as { value, label }}
 															<option {value}>{label}</option>
 														{/each}
 													{/if}
@@ -474,7 +480,7 @@
 							<section>
 								<form
 									method="post"
-									action="?/createReplenish"
+									action="?/addReplenish"
 									use:enhance={() => {
 										return async ({ result, update }) => {
 											if (result.type === 'success') {
