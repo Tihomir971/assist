@@ -49,6 +49,8 @@ type ParseFunctions = {
 						}
 
 						barcodes = [...barcodes, ...data.barcode];
+						console.log('mpns,brands,barcodes', mpns, brands, barcodes);
+
 						/* 	const { error } = await supabase
 							.from('m_product_po')
 							.update({ pricelist: price })
@@ -108,6 +110,7 @@ type ParseFunctions = {
 			? { error: errorProductPO }
 			: { error: { message: 'No sources', details: 'Sources should be defined first' } }
 	); */
+	return { mpns, brands, barcodes };
 };
 
 const getWebPrice: ParseFunctions = {

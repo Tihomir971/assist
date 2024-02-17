@@ -174,7 +174,10 @@ export const actions = {
 			const productId = +formData.id;
 			console.log('productId', productId);
 
-			ProductInfo.getProductInfo(supabase, productId);
+			const data = await ProductInfo.getProductInfo(supabase, productId);
+			console.log('data', data);
+
+			//return data;
 		}
 	}
 } satisfies Actions;
