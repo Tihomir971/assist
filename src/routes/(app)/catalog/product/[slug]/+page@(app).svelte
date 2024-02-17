@@ -104,6 +104,8 @@
 				use:enhance={() => {
 					return async ({ result, update }) => {
 						if (result.type === 'success') {
+							console.log('result', result.data);
+
 							addToast({
 								data: {
 									title: 'Product update',

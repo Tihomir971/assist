@@ -164,7 +164,6 @@ export const actions = {
 		}
 	},
 	getProductInfo: async ({ request, locals: { supabase, getSession } }) => {
-		console.log('in getProductInfo');
 		const session = await getSession();
 		if (!session) {
 			error(401, { message: 'Unauthorized' });
@@ -172,12 +171,10 @@ export const actions = {
 		const formData = Object.fromEntries(await request.formData());
 		if (formData) {
 			const productId = +formData.id;
-			console.log('productId', productId);
 
 			const data = await ProductInfo.getProductInfo(supabase, productId);
-			console.log('data', data);
 
-			//return data;
+			return data;
 		}
 	}
 } satisfies Actions;

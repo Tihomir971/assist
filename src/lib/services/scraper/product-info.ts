@@ -6,21 +6,31 @@ import { OrderService } from '../supabase';
 
 type ParseFunctions = {
 	[key: string]: (document: Document) => Promise<{
-		price: number;
-		mpn: string | undefined;
+		vendorPrice: number;
+		vendorMpn: string | undefined;
+		vendorId: string | undefined;
 		barcode: string[];
+		vendorImages: string[];
 		brand: string | undefined;
+		vendorPriceEnd: Date | undefined;
 	}>;
 };
-/* type GetApiPrice = {
-	[key: string]: (url: string) => Promise<number>;
-} */ export const getProductInfo = async (
-	supabase: SupabaseClient<Database>,
-	productId: number
-) => {
+type GetApiInfo = {
+	[key: string]: (url: string) => Promise<{
+		vendorPrice: number;
+		vendorMpn: string | undefined;
+		vendorId: string | undefined;
+		barcode: string[];
+		vendorImages: string[];
+		brand: string | undefined;
+		vendorPriceEnd: Date | undefined;
+	}>;
+};
+export const getProductInfo = async (supabase: SupabaseClient<Database>, productId: number) => {
 	const mpns: string[] = [];
 	let barcodes: string[] = [];
 	const brands: string[] = [];
+	let images: string[] = [];
 	const productPurchasing = await OrderService.getProductPurchasing(supabase, productId);
 
 	if (productPurchasing && productPurchasing?.length > 0) {
@@ -41,16 +51,15 @@ type ParseFunctions = {
 
 						// If it does, call the corresponding function
 						const data = await getWebPrice[key](document);
-						if (data.mpn) {
-							mpns.push(data.mpn);
+						if (data.vendorMpn) {
+							mpns.push(data.vendorMpn);
 						}
 						if (data.brand) {
 							brands.push(data.brand);
 						}
 
 						barcodes = [...barcodes, ...data.barcode];
-						console.log('mpns,brands,barcodes', mpns, brands, barcodes);
-
+						images = [...images, ...data.vendorImages];
 						/* 	const { error } = await supabase
 							.from('m_product_po')
 							.update({ pricelist: price })
@@ -59,22 +68,31 @@ type ParseFunctions = {
 						/* 		if (error) {
 							throw new Error(`Failed to update: ${error.details}`);
 						} */
-						if (data.price && data.price !== 0) prices.push(data.price);
+						if (data.vendorPrice && data.vendorPrice !== 0) prices.push(data.vendorPrice);
 					}
 				}
-				/* 				for (const key in getApiPrice) {
+				for (const key in getApiInfo) {
 					if (fetchURL.includes(key)) {
-						const price = await getApiPrice[key](fetchURL);
-						const { error } = await supabase
+						const apiData = await getApiInfo[key](fetchURL);
+						if (apiData.vendorMpn) {
+							mpns.push(apiData.vendorMpn);
+						}
+						if (apiData.brand) {
+							brands.push(apiData.brand);
+						}
+
+						barcodes = [...barcodes, ...apiData.barcode];
+						images = [...images, ...apiData.vendorImages];
+						/* 	const { error } = await supabase
 							.from('m_product_po')
-							.update({ pricelist: price })
+							.update({ pricelist: apiData.vendorPrice })
 							.eq('id', productPurchasing[index].id);
 						if (error) {
 							throw new Error(`Failed to update: ${error.details}`);
-						}
-						if (price && price !== 0) prices.push(price);
+						} */
+						if (apiData.vendorPrice && apiData.vendorPrice !== 0) prices.push(apiData.vendorPrice);
 					}
-				} */
+				}
 			}
 		}
 
@@ -110,70 +128,10 @@ type ParseFunctions = {
 			? { error: errorProductPO }
 			: { error: { message: 'No sources', details: 'Sources should be defined first' } }
 	); */
-	return { mpns, brands, barcodes };
+	return { mpns, brands, barcodes, images };
 };
 
 const getWebPrice: ParseFunctions = {
-	'gigatron.rs': async function (document: Document) {
-		//let barcode: string[]=[];
-		let price: number = 0;
-		//		let barcode: string[] = [];
-		//let mpn: string = '';
-		//let brand: string = '';
-		//		let name: string = '';
-		const priceElement = document.querySelector<HTMLSpanElement>('.ppra_price-number');
-		const priceText = priceElement ? priceElement.innerText : null;
-		if (priceText) {
-			price = parseFloat(priceText.replace('.', ''));
-		}
-		const titleDataElement = document.querySelector('.title-data');
-
-		// Function to get value from a span element
-		const getValue = (element: Element | null, index: number) => {
-			const spanElement = element?.querySelector(`span:nth-child(${index})`);
-
-			return spanElement
-				? spanElement.textContent?.trim().split(':')[1].replace(/\s/g, '')
-				: undefined;
-		};
-
-		// Assign values only if the elements exist
-		const mpn = getValue(titleDataElement, 1);
-		//		const barcodeData = getValue(titleDataElement, 2);
-
-		//		if (barcodeData !== undefined && barcodeData !== null) {
-		//			barcode = [barcodeData];
-		//		}
-		//		const brand = getValue(titleDataElement, 3);
-
-		// Log the values to verify
-		console.log('Model:', mpn);
-		//		console.log('EAN:', barcode);
-		//		console.log('Brand:', brand);
-		///
-		const myHeaders = new Headers();
-		/* 	myHeaders.append(
-			'Cookie',
-			'PHPSESSID=drkb2tq4r100f74kqbar30r1qo; gigatron_session=a%3A5%3A%7Bs%3A10%3A%22session_id%22%3Bs%3A32%3A%2227482d9f28e410c739f0eaf031255c29%22%3Bs%3A10%3A%22ip_address%22%3Bs%3A13%3A%22109.198.20.10%22%3Bs%3A10%3A%22user_agent%22%3Bs%3A21%3A%22PostmanRuntime%2F7.36.3%22%3Bs%3A13%3A%22last_activity%22%3Bi%3A1708187413%3Bs%3A9%3A%22user_data%22%3Bs%3A0%3A%22%22%3B%7D1abda5faf81782bfd1d31eabe5a46060'
-		); */
-
-		const requestOptions = {
-			method: 'GET',
-			headers: myHeaders
-		};
-		const response = await fetch(
-			'https://api-v2.gigatron.rs/core/product/index/567764',
-			requestOptions
-		);
-		const { items } = await response.json();
-		//console.log(response);
-		const brand = items.brand.name;
-		const barcode = items.ean;
-		console.log('brand:', brand);
-		console.log('barcode:', [barcode]);
-
-		return { price, mpn, barcode, brand };
-	}
 	/* 	'tehnomedia.rs': function (document: Document) {
 		const priceElement = document.querySelector<HTMLElement>('div.price > span > strong');
 		const addToCartButton = document.getElementById('add-to-cart-btn');
@@ -224,8 +182,72 @@ const getWebPrice: ParseFunctions = {
 	} */
 };
 
-//const getApiPrice: GetApiPrice = {
-/* 	'online.idea.rs': async function (url: string) {
+const getApiInfo: GetApiInfo = {
+	'gigatron.rs': async function () {
+		//let barcode: string[]=[];
+		/* 	let price: number = 0; */
+		//		let barcode: string[] = [];
+		//let mpn: string = '';
+		//let brand: string = '';
+		//		let name: string = '';
+		/* 		const priceElement = document.querySelector<HTMLSpanElement>('.ppra_price-number');
+		const priceText = priceElement ? priceElement.innerText : null;
+		if (priceText) {
+			price = parseFloat(priceText.replace('.', ''));
+		} */
+		//		const titleDataElement = document.querySelector('.title-data');
+
+		// Function to get value from a span element
+		//		const getValue = (element: Element | null, index: number) => {
+		//			const spanElement = element?.querySelector(`span:nth-child(${index})`);
+
+		//			return spanElement
+		//				? spanElement.textContent?.trim().split(':')[1].replace(/\s/g, '')
+		//				: undefined;
+		//		};
+
+		// Assign values only if the elements exist
+		//		const mpn = getValue(titleDataElement, 1);
+		//		const barcodeData = getValue(titleDataElement, 2);
+
+		//		if (barcodeData !== undefined && barcodeData !== null) {
+		//			barcode = [barcodeData];
+		//		}
+		//		const brand = getValue(titleDataElement, 3);
+
+		// Log the values to verify
+		//		console.log('Model:', mpn);
+		//		console.log('EAN:', barcode);
+		//		console.log('Brand:', brand);
+		///
+		const myHeaders = new Headers();
+		/* 	myHeaders.append(
+			'Cookie',
+			'PHPSESSID=drkb2tq4r100f74kqbar30r1qo; gigatron_session=a%3A5%3A%7Bs%3A10%3A%22session_id%22%3Bs%3A32%3A%2227482d9f28e410c739f0eaf031255c29%22%3Bs%3A10%3A%22ip_address%22%3Bs%3A13%3A%22109.198.20.10%22%3Bs%3A10%3A%22user_agent%22%3Bs%3A21%3A%22PostmanRuntime%2F7.36.3%22%3Bs%3A13%3A%22last_activity%22%3Bi%3A1708187413%3Bs%3A9%3A%22user_data%22%3Bs%3A0%3A%22%22%3B%7D1abda5faf81782bfd1d31eabe5a46060'
+		); */
+
+		const requestOptions = {
+			method: 'GET',
+			headers: myHeaders
+		};
+		const response = await fetch(
+			'https://api-v2.gigatron.rs/core/product/index/567764',
+			requestOptions
+		);
+		const { items } = await response.json();
+		const vendorPrice = parseFloat(items.brand.price);
+		const brand = items.brand.name;
+		const barcode: string[] = [items.ean];
+		const vendorMpn: string = items.model;
+		const vendorId: string = items.id;
+		const vendorImages: string[] = items.images.map(
+			(image: { sizes: { large: string } }) => image.sizes.large
+		);
+		const vendorPriceEnd = new Date(items.sticker_db.end);
+
+		return { vendorPrice, barcode, brand, vendorMpn, vendorImages, vendorId, vendorPriceEnd };
+	}
+	/* 	'online.idea.rs': async function (url: string) {
 		const parts = url.split('/');
 		const productId = parts[parts.length - 2];
 		const myHeaders = new Headers();
@@ -251,7 +273,7 @@ const getWebPrice: ParseFunctions = {
 		console.log('Product ID:', productId, data.active, data.price);
 		return 0;
 	}, */
-/* 	'maxi.rs': async function (url: string) {
+	/* 	'maxi.rs': async function (url: string) {
 		const parts = url.split('/');
 		const productId = parts[parts.length - 1];
 		const myHeaders = new Headers();
@@ -291,4 +313,4 @@ const getWebPrice: ParseFunctions = {
 
 		return 0;
 	} */
-//};
+};
