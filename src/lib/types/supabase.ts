@@ -182,39 +182,45 @@ export interface Database {
         Row: {
           ad_client_id: number
           ad_org_id: number
+          auth_user_id: string | null
           avatar_url: string | null
           c_bpartner_id: number | null
           created: string
+          email: string | null
           full_name: string | null
-          id: string
+          id: number
           isactive: boolean
-          supervisor_id: string | null
+          supervisor_id: number | null
           updated: string
           username: string | null
         }
         Insert: {
           ad_client_id?: number
           ad_org_id?: number
+          auth_user_id?: string | null
           avatar_url?: string | null
           c_bpartner_id?: number | null
           created?: string
+          email?: string | null
           full_name?: string | null
-          id: string
+          id?: number
           isactive?: boolean
-          supervisor_id?: string | null
+          supervisor_id?: number | null
           updated?: string
           username?: string | null
         }
         Update: {
           ad_client_id?: number
           ad_org_id?: number
+          auth_user_id?: string | null
           avatar_url?: string | null
           c_bpartner_id?: number | null
           created?: string
+          email?: string | null
           full_name?: string | null
-          id?: string
+          id?: number
           isactive?: boolean
-          supervisor_id?: string | null
+          supervisor_id?: number | null
           updated?: string
           username?: string | null
         }
@@ -232,15 +238,15 @@ export interface Database {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "ad_user_c_bpartner_id_fkey"
-            columns: ["c_bpartner_id"]
-            referencedRelation: "c_bpartner"
+            foreignKeyName: "ad_user_auth_user_id_fkey"
+            columns: ["auth_user_id"]
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "ad_user_id_fkey"
-            columns: ["id"]
-            referencedRelation: "users"
+            foreignKeyName: "ad_user_c_bpartner_id_fkey"
+            columns: ["c_bpartner_id"]
+            referencedRelation: "c_bpartner"
             referencedColumns: ["id"]
           },
           {
@@ -1892,7 +1898,7 @@ export interface Database {
           isactive?: boolean | null
           m_locator_id?: number | null
           m_product_id: number
-          qtyonhand?: number
+          qtyonhand: number
           updated?: string
           warehouse_id: number
         }
@@ -1937,6 +1943,67 @@ export interface Database {
             foreignKeyName: "m_storageonhand_warehouse_id_fkey"
             columns: ["warehouse_id"]
             referencedRelation: "m_warehouse"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      m_substitute: {
+        Row: {
+          ad_client_id: number
+          ad_org_id: number
+          created: string
+          description: string | null
+          isactive: boolean
+          m_product_id: number
+          name: string | null
+          substitute_id: number
+          updated: string
+        }
+        Insert: {
+          ad_client_id?: number
+          ad_org_id?: number
+          created?: string
+          description?: string | null
+          isactive?: boolean
+          m_product_id: number
+          name?: string | null
+          substitute_id: number
+          updated?: string
+        }
+        Update: {
+          ad_client_id?: number
+          ad_org_id?: number
+          created?: string
+          description?: string | null
+          isactive?: boolean
+          m_product_id?: number
+          name?: string | null
+          substitute_id?: number
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "m_substitute_ad_client_id_fkey"
+            columns: ["ad_client_id"]
+            referencedRelation: "ad_client"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_substitute_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_substitute_m_product_id_fkey"
+            columns: ["m_product_id"]
+            referencedRelation: "m_product"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_substitute_substitute_id_fkey"
+            columns: ["substitute_id"]
+            referencedRelation: "m_product"
             referencedColumns: ["id"]
           }
         ]
@@ -1988,7 +2055,7 @@ export interface Database {
         Row: {
           ad_client_id: number
           ad_org_id: number
-          ad_user_id: string
+          ad_user_id: number
           c_bpartner_id: number | null
           created: string
           id: number
@@ -2001,7 +2068,7 @@ export interface Database {
         Insert: {
           ad_client_id?: number
           ad_org_id?: number
-          ad_user_id: string
+          ad_user_id: number
           c_bpartner_id?: number | null
           created?: string
           id?: number
@@ -2014,7 +2081,7 @@ export interface Database {
         Update: {
           ad_client_id?: number
           ad_org_id?: number
-          ad_user_id?: string
+          ad_user_id?: number
           c_bpartner_id?: number | null
           created?: string
           id?: number

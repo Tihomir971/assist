@@ -40,7 +40,6 @@
 		invalidate('catalog:products');
 	}
 	async function getERP() {
-		console.log('selectedProducts', JSON.stringify(selectedProducts));
 		api
 			.getERP(selectedProducts)
 			.then((data) => {
@@ -63,11 +62,8 @@
 	}
 	async function addToBasket() {
 		const apiUrl = '/api/basket/add/';
-		console.log('selectedProducts', JSON.stringify(selectedProducts));
 
 		for (let index = 0; index < selectedProducts.length; index++) {
-			console.log('selectedProduct', selectedProducts[index]);
-
 			try {
 				const response = await fetch(apiUrl, {
 					method: 'POST',

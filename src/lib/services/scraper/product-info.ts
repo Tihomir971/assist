@@ -4,33 +4,25 @@ import type { Database } from '$lib/types/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { OrderService } from '../supabase';
 
+type VendorProduct = {
+	name: string;
+	price: number | null;
+	mpn: string | null;
+	sku: string | null;
+	barcode: string[];
+	images: string[];
+	brand: string | null;
+	vendorPriceEnd: Date | null;
+	onStock: boolean | null;
+};
 type ParseFunctions = {
-	[key: string]: (document: Document) => Promise<{
-		vendorPrice: number;
-		vendorMpn: string | undefined;
-		vendorId: string | undefined;
-		barcode: string[];
-		vendorImages: string[];
-		brand: string | undefined;
-		vendorPriceEnd: Date | undefined;
-	}>;
+	[key: string]: (document: Document) => Promise<VendorProduct>;
 };
 type GetApiInfo = {
-	[key: string]: (url: string) => Promise<{
-		vendorPrice: number;
-		vendorMpn: string | undefined;
-		vendorId: string | undefined;
-		barcode: string[];
-		vendorImages: string[];
-		brand: string | undefined;
-		vendorPriceEnd: Date | undefined;
-	}>;
+	[key: string]: (url: string) => Promise<VendorProduct>;
 };
 export const getProductInfo = async (supabase: SupabaseClient<Database>, productId: number) => {
-	const mpns: string[] = [];
-	let barcodes: string[] = [];
-	const brands: string[] = [];
-	let images: string[] = [];
+	const vendorsProduct: VendorProduct[] = [];
 	const productPurchasing = await OrderService.getProductPurchasing(supabase, productId);
 
 	if (productPurchasing && productPurchasing?.length > 0) {
@@ -50,47 +42,18 @@ export const getProductInfo = async (supabase: SupabaseClient<Database>, product
 						const { document } = parseHTML(html);
 
 						// If it does, call the corresponding function
-						const data = await getWebPrice[key](document);
-						if (data.vendorMpn) {
-							mpns.push(data.vendorMpn);
+						const webData = await getWebPrice[key](document);
+						if (webData) {
+							vendorsProduct.push(webData);
 						}
-						if (data.brand) {
-							brands.push(data.brand);
-						}
-
-						barcodes = [...barcodes, ...data.barcode];
-						images = [...images, ...data.vendorImages];
-						/* 	const { error } = await supabase
-							.from('m_product_po')
-							.update({ pricelist: price })
-							.eq('id', productPurchasing[index].id); */
-
-						/* 		if (error) {
-							throw new Error(`Failed to update: ${error.details}`);
-						} */
-						if (data.vendorPrice && data.vendorPrice !== 0) prices.push(data.vendorPrice);
 					}
 				}
 				for (const key in getApiInfo) {
 					if (fetchURL.includes(key)) {
 						const apiData = await getApiInfo[key](fetchURL);
-						if (apiData.vendorMpn) {
-							mpns.push(apiData.vendorMpn);
+						if (apiData) {
+							vendorsProduct.push(apiData);
 						}
-						if (apiData.brand) {
-							brands.push(apiData.brand);
-						}
-
-						barcodes = [...barcodes, ...apiData.barcode];
-						images = [...images, ...apiData.vendorImages];
-						/* 	const { error } = await supabase
-							.from('m_product_po')
-							.update({ pricelist: apiData.vendorPrice })
-							.eq('id', productPurchasing[index].id);
-						if (error) {
-							throw new Error(`Failed to update: ${error.details}`);
-						} */
-						if (apiData.vendorPrice && apiData.vendorPrice !== 0) prices.push(apiData.vendorPrice);
 					}
 				}
 			}
@@ -128,126 +91,320 @@ export const getProductInfo = async (supabase: SupabaseClient<Database>, product
 			? { error: errorProductPO }
 			: { error: { message: 'No sources', details: 'Sources should be defined first' } }
 	); */
-	return { mpns, brands, barcodes, images };
+	return vendorsProduct;
 };
 
 const getWebPrice: ParseFunctions = {
-	/* 	'tehnomedia.rs': function (document: Document) {
+	'tehnomedia.rs': async function (document: Document) {
+		const vendorData: VendorProduct = {
+			name: 'tehnomedia',
+			price: null,
+			barcode: [],
+			brand: null,
+			mpn: null,
+			images: [],
+			sku: null,
+			vendorPriceEnd: null,
+			onStock: null
+		};
 		const priceElement = document.querySelector<HTMLElement>('div.price > span > strong');
 		const addToCartButton = document.getElementById('add-to-cart-btn');
 		const priceText = priceElement ? priceElement.innerText : null;
 		if (priceText && addToCartButton) {
-			return parseFloat(priceText.replace('.', '').replace(',', '.'));
+			vendorData.price = parseFloat(priceText.replace('.', '').replace(',', '.'));
 		}
-		return 0;
-	}, */
-	/* 	'tehnomanija.rs': function (document: Document) {
-		const priceElement = document.querySelector('[data-price-amount]');
-		const priceAmount = priceElement?.getAttribute('data-price-amount');
-		const priceAvailability = document.querySelector('div.stock.unavailable');
-		if (priceAmount && !priceAvailability) {
-			return Number(priceAmount);
-		} else {
-			return 0;
+		vendorData.sku = document?.querySelector('.sifra')?.textContent ?? null;
+		// Try to find ean
+		const eanElement = document.getElementById('flixdataTM')?.getAttribute('data-flix-ean');
+		if (eanElement) {
+			vendorData.barcode = [eanElement];
 		}
-	}, */
-	/* 	'metalac.com': function (document: Document) {
-		const priceElement = document.querySelector<HTMLElement>('span.product-price');
-		const priceText = priceElement ? priceElement.innerText : null;
-		const priceAvailability = document.querySelector('[data-max-qunatity]');
-		const availabilityValue = priceAvailability?.getAttribute('data-max-qunatity');
-		if (priceText && availabilityValue !== '0') {
-			return parseFloat(priceText.replace('.', ''));
-		} else {
-			return 0;
+		const brandElement = document.querySelector('.proizvodjac')?.textContent;
+		if (brandElement) {
+			vendorData.brand = brandElement;
 		}
-	}, */
-	/* 	'cenoteka.rs': function (document: Document) {
-		let bestPrice: number | undefined = undefined;
-		const priceDivs = document.querySelectorAll('.product_prices_offline_col__KZWlc > div');
-		priceDivs?.forEach((div) => {
-			const imgElement = div.querySelector('img');
-			const sallerName = imgElement?.getAttribute('alt');
-			let priceDiv = div.querySelector('.product_action_tooltip__4tt_0');
-			if (!priceDiv) priceDiv = div.querySelector('.product_product_price__LLwr_');
-			const sallerPrice = Number(priceDiv?.textContent?.replace('.', '').replace(',', '.'));
-
-			const sallers = ['Roda', 'Tempo', 'Idea', 'Lidl', 'Maxi'];
-			if (sallerName && sallers.includes(sallerName)) {
-				if (!bestPrice || sallerPrice < bestPrice) bestPrice = sallerPrice;
+		// Find images
+		const aElements = document.querySelectorAll('a[data-pswp-width]');
+		aElements.forEach((el) => {
+			const imagePath = el.getAttribute('href');
+			if (imagePath) {
+				vendorData.images.push(imagePath);
 			}
 		});
-		if (bestPrice) return bestPrice;
-		return 0;
-	} */
+
+		const outOfStockDivElement = document.querySelector('.add-to-cart.add-archive');
+		vendorData.onStock = outOfStockDivElement ? false : true;
+
+		return vendorData;
+	},
+	'tehnomanija.rs': async function (document: Document) {
+		const vendorData: VendorProduct = {
+			name: 'tehnomanija',
+			price: null,
+			barcode: [],
+			brand: null,
+			mpn: null,
+			images: [],
+			sku: null,
+			vendorPriceEnd: null,
+			onStock: null
+		};
+
+		const addButton = document.getElementById('product-addtocart-button');
+
+		if (addButton) {
+			const dataBrand = addButton.getAttribute('data-brand');
+
+			if (dataBrand) {
+				vendorData.brand = dataBrand;
+			}
+		}
+
+		const skuElement = document.querySelector<HTMLDivElement>('.product.attribute.sku .value');
+		if (skuElement) {
+			// Extracting the content of the value div
+			const skuValue = skuElement.textContent;
+
+			if (skuValue) {
+				vendorData.sku = skuValue;
+			}
+		}
+		const metaElement = document.querySelector<HTMLMetaElement>(
+			'meta[property="product:price:amount"]'
+		);
+		if (metaElement) {
+			// Extracting the content attribute value and converting it to a number
+			vendorData.price = Number(metaElement.content);
+		}
+		const dateElement = document.querySelector<HTMLDivElement>('.action_to');
+		if (dateElement) {
+			// Extracting the content of the div element
+			const dateString = dateElement.textContent;
+			if (dateString) {
+				console.log('dateString', dateString);
+
+				const [day, month, year] = dateString.split('.').map(Number);
+				console.log('day,month,year', day, month, year);
+
+				vendorData.vendorPriceEnd = new Date(year, month - 1, day);
+			}
+			// Converting the extracted string to a Date object
+			//vendorData.vendorPriceEnd = dateString ? new Date(dateString) : null;
+		}
+		/* const priceElement = document.querySelector('[data-price-amount]');
+		const priceAmount = priceElement?.getAttribute('data-price-amount');*/
+		const availabilityElement = document.querySelector<HTMLDivElement>('div[title="Availability"]');
+		if (availabilityElement) {
+			// Check if the element has either class "stock unavailable" or "stock available"
+			const hasUnavailableClass =
+				availabilityElement.classList.contains('stock') &&
+				availabilityElement.classList.contains('unavailable');
+			const hasAvailableClass =
+				availabilityElement.classList.contains('stock') &&
+				availabilityElement.classList.contains('available');
+
+			if (hasUnavailableClass) {
+				vendorData.onStock = false;
+			} else if (hasAvailableClass) {
+				vendorData.onStock = true;
+			}
+		}
+
+		return vendorData;
+	},
+	'metalac.com': async function (document: Document) {
+		const vendorData: VendorProduct = {
+			name: 'metalac',
+			price: null,
+			barcode: [],
+			brand: null,
+			mpn: null,
+			images: [],
+			sku: null,
+			vendorPriceEnd: null,
+			onStock: null
+		};
+		const priceElement = document.querySelector<HTMLElement>('span.product-price');
+		vendorData.price = priceElement ? parseFloat(priceElement.innerText.replace('.', '')) : null;
+
+		const priceAvailability = document.querySelector('[data-max-qunatity]');
+		const availabilityValue = priceAvailability?.getAttribute('data-max-qunatity');
+		vendorData.onStock = availabilityValue !== '0' ? false : true;
+
+		// Get the script element
+		const h1Element = document.querySelector('h1.page-title');
+		if (h1Element) {
+			const productSKU = h1Element.getAttribute('id');
+			const match = productSKU?.match(/fnc-product-name-(\d+)/);
+			if (match) {
+				// Extract the value
+				vendorData.sku = match[1];
+			}
+		}
+
+		// Get the meta element by its itemprop attribute
+		const metaElement = document.querySelector('meta[itemprop="brand"]');
+		if (metaElement) {
+			// Access the content attribute of the meta element
+			vendorData.brand = metaElement.getAttribute('content');
+		}
+		// Get all div elements with class "slick-zoom"
+		const divElements = document.querySelectorAll('.slick-zoom');
+		divElements.forEach(function (divElement) {
+			// Access the src attribute of the div element
+			const imageLink = divElement.getAttribute('src');
+			if (imageLink) {
+				// Add the image link to the array
+				vendorData.images.push(imageLink);
+			}
+		});
+
+		const inStockDiv = document.querySelector('div.in-stock');
+		vendorData.onStock = inStockDiv ? true : false;
+
+		// Get the div element by its class name
+		//const divElement = document.querySelector<HTMLDivElement>('.special-offer');
+
+		// Check if the div element exists
+		/* if (divElement) {
+			// Access the text content of the div
+			const offerText = divElement.textContent || divElement.innerText;
+
+			// Use regular expressions to find and extract the date
+			const dateMatch = offerText.match(/(\d{2}.\d{2})/);
+
+			// Check if a match was found
+			if (dateMatch) {
+				// Extract the date
+				const extractedDate = dateMatch[1];
+				const []=extractedDate.split()
+				console.log('extractedDate', extractedDate);
+
+				// Convert the extracted date to a JavaScript Date object
+				vendorData.vendorPriceEnd = new Date(extractedDate.replace('.', '/'));
+			}
+		} */
+
+		return vendorData;
+	},
+	'cenoteka.rs': async function (document: Document) {
+		const vendorData: VendorProduct = {
+			name: 'cenoteka',
+			price: null,
+			barcode: [],
+			brand: null,
+			mpn: null,
+			images: [],
+			sku: null,
+			vendorPriceEnd: null,
+			onStock: null
+		};
+		//let bestPrice: number | undefined = undefined;
+		// Get the script element with id "__NEXT_DATA__"
+		const scriptElement = document.getElementById('__NEXT_DATA__');
+		// Extract the content of the script tag
+		if (scriptElement?.textContent) {
+			const {
+				props: {
+					pageProps: { variation }
+				}
+			} = JSON.parse(scriptElement.textContent);
+
+			vendorData.sku = variation?.sku;
+			vendorData.brand = variation?.brand?.name;
+			vendorData.barcode = variation?.barcodes.map((barcode: { value: string }) => barcode.value);
+			vendorData.images = [variation?.product_images[0]?.file?.product_large];
+
+			const targetShops = ['Idea', 'Tempo', 'Roda', 'Maxi'];
+
+			const filteredPrices = variation?.prices.filter(
+				(price: { shop: { name: string }; in_stock: boolean | null }) =>
+					targetShops.includes(price.shop.name) && price.in_stock
+			);
+
+			const lowestPrice = Math.min(
+				...filteredPrices.map((price: { current_price: number }) => price.current_price)
+			);
+
+			console.log('Lowest current price among Idea and Tempo:', lowestPrice);
+		} else {
+			console.log('Script element with id "__NEXT_DATA__" not found.');
+		}
+		/* 		let vendorPrice = undefined;
+		let mpn;
+		let vendorPriceEnd; */
+		//const priceDivs = document.querySelectorAll('.product_prices_offline_col__KZWlc > div');
+		//	priceDivs?.forEach((div) => {
+		//		const imgElement = div.querySelector('img');
+		//		const sallerName = imgElement?.getAttribute('alt');
+		//		let priceDiv = div.querySelector('.product_action_tooltip__4tt_0');
+		//		if (!priceDiv) priceDiv = div.querySelector('.product_product_price__LLwr_');
+		//		const sallerPrice = Number(priceDiv?.textContent?.replace('.', '').replace(',', '.'));
+		//
+		//		const sallers = ['Roda', 'Tempo', 'Idea', 'Lidl', 'Maxi'];
+		//		if (sallerName && sallers.includes(sallerName)) {
+		//			if (!bestPrice || sallerPrice < bestPrice) bestPrice = sallerPrice;
+		//		}
+		//	});
+		//	if (bestPrice) return bestPrice;
+		return vendorData;
+	}
 };
 
 const getApiInfo: GetApiInfo = {
-	'gigatron.rs': async function () {
-		//let barcode: string[]=[];
-		/* 	let price: number = 0; */
-		//		let barcode: string[] = [];
-		//let mpn: string = '';
-		//let brand: string = '';
-		//		let name: string = '';
-		/* 		const priceElement = document.querySelector<HTMLSpanElement>('.ppra_price-number');
-		const priceText = priceElement ? priceElement.innerText : null;
-		if (priceText) {
-			price = parseFloat(priceText.replace('.', ''));
-		} */
-		//		const titleDataElement = document.querySelector('.title-data');
+	'gigatron.rs': async function (url: string) {
+		const vendorData: VendorProduct = {
+			name: 'gigatron',
+			price: null,
+			barcode: [],
+			brand: null,
+			mpn: null,
+			images: [],
+			sku: null,
+			vendorPriceEnd: null,
+			onStock: null
+		};
+		const parts = url.split('-');
+		const productId = parts[parts.length - 1];
 
-		// Function to get value from a span element
-		//		const getValue = (element: Element | null, index: number) => {
-		//			const spanElement = element?.querySelector(`span:nth-child(${index})`);
-
-		//			return spanElement
-		//				? spanElement.textContent?.trim().split(':')[1].replace(/\s/g, '')
-		//				: undefined;
-		//		};
-
-		// Assign values only if the elements exist
-		//		const mpn = getValue(titleDataElement, 1);
-		//		const barcodeData = getValue(titleDataElement, 2);
-
-		//		if (barcodeData !== undefined && barcodeData !== null) {
-		//			barcode = [barcodeData];
-		//		}
-		//		const brand = getValue(titleDataElement, 3);
-
-		// Log the values to verify
-		//		console.log('Model:', mpn);
-		//		console.log('EAN:', barcode);
-		//		console.log('Brand:', brand);
-		///
 		const myHeaders = new Headers();
-		/* 	myHeaders.append(
-			'Cookie',
-			'PHPSESSID=drkb2tq4r100f74kqbar30r1qo; gigatron_session=a%3A5%3A%7Bs%3A10%3A%22session_id%22%3Bs%3A32%3A%2227482d9f28e410c739f0eaf031255c29%22%3Bs%3A10%3A%22ip_address%22%3Bs%3A13%3A%22109.198.20.10%22%3Bs%3A10%3A%22user_agent%22%3Bs%3A21%3A%22PostmanRuntime%2F7.36.3%22%3Bs%3A13%3A%22last_activity%22%3Bi%3A1708187413%3Bs%3A9%3A%22user_data%22%3Bs%3A0%3A%22%22%3B%7D1abda5faf81782bfd1d31eabe5a46060'
-		); */
 
 		const requestOptions = {
 			method: 'GET',
 			headers: myHeaders
 		};
 		const response = await fetch(
-			'https://api-v2.gigatron.rs/core/product/index/567764',
+			`https://api-v2.gigatron.rs/core/product/index/${productId}`,
 			requestOptions
 		);
 		const { items } = await response.json();
-		const vendorPrice = parseFloat(items.brand.price);
-		const brand = items.brand.name;
-		const barcode: string[] = [items.ean];
-		const vendorMpn: string = items.model;
-		const vendorId: string = items.id;
-		const vendorImages: string[] = items.images.map(
+		vendorData.price = parseFloat(items.price);
+		vendorData.brand = items.brand.name;
+		vendorData.barcode = [items.ean];
+		vendorData.mpn = items.model;
+		vendorData.sku = items.id;
+		vendorData.images = items.images.map(
 			(image: { sizes: { large: string } }) => image.sizes.large
 		);
-		const vendorPriceEnd = new Date(items.sticker_db.end);
 
-		return { vendorPrice, barcode, brand, vendorMpn, vendorImages, vendorId, vendorPriceEnd };
-	}
-	/* 	'online.idea.rs': async function (url: string) {
+		const stickerEndDate = new Date(items.sticker_db.end);
+		vendorData.vendorPriceEnd = stickerEndDate > new Date() ? stickerEndDate : null;
+		vendorData.onStock = !items.out_of_stock;
+
+		return vendorData;
+	},
+	'online.idea.rs': async function (url: string) {
+		const vendorData: VendorProduct = {
+			name: 'idea',
+			price: null,
+			barcode: [],
+			brand: null,
+			mpn: null,
+			images: [],
+			sku: null,
+			onStock: null,
+			vendorPriceEnd: null
+		};
 		const parts = url.split('/');
 		const productId = parts[parts.length - 2];
 		const myHeaders = new Headers();
@@ -267,17 +424,31 @@ const getApiInfo: GetApiInfo = {
 			throw new Error(`Network response was not OK: ${response.statusText}`);
 		}
 		const data = await response.json();
-		if (data.active && data.price) {
-			return data.price.amount / 100;
-		}
-		console.log('Product ID:', productId, data.active, data.price);
-		return 0;
-	}, */
-	/* 	'maxi.rs': async function (url: string) {
+		vendorData.barcode = data.barcodes;
+		vendorData.price = data.price.amount / 100;
+		vendorData.brand = data.manufacturer;
+		vendorData.images = ['https://online.idea.rs/' + data.images[0].image_l];
+		vendorData.sku = data.id;
+		vendorData.vendorPriceEnd = new Date(data.offer.end_on);
+
+		return vendorData;
+	},
+	'maxi.rs': async function (url) {
+		const vendorData: VendorProduct = {
+			name: 'maxi',
+			price: null,
+			barcode: [],
+			brand: null,
+			mpn: null,
+			images: [],
+			sku: null,
+			vendorPriceEnd: null,
+			onStock: null
+		};
 		const parts = url.split('/');
 		const productId = parts[parts.length - 1];
 		const myHeaders = new Headers();
-		
+
 		const requestOptions = {
 			method: 'GET',
 			headers: myHeaders
@@ -298,19 +469,33 @@ const getApiInfo: GetApiInfo = {
 		if (!response.ok) {
 			throw new Error(`Network response was not OK: ${response.statusText}`);
 		}
-		const { data } = await response.json();
-		const { productDetails } = data;
-
-		if (productDetails.stock.inStock) {
-			if (productDetails.price.discountedPriceFormatted) {
-				const rsdString = productDetails.price.discountedPriceFormatted;
-				const numericValue = parseFloat(rsdString.replace(/[^0-9.]+/g, ''));
-				console.log(numericValue);
-			} else if (productDetails.price.unitPrice) {
-				return productDetails.price.unitPrice;
-			}
+		const {
+			data: { productDetails }
+		} = await response.json();
+		if (productDetails.price.discountedPriceFormatted) {
+			const rsdString = productDetails.price.discountedPriceFormatted;
+			const numericValue = parseFloat(rsdString.replace(/[^0-9.]+/g, ''));
+			vendorData.price = numericValue / 100;
+		} else if (productDetails.price.unitPrice) {
+			vendorData.price = productDetails.price.unitPrice;
 		}
 
-		return 0;
-	} */
+		vendorData.brand = productDetails.manufacturerName;
+		vendorData.images = productDetails.images.map(
+			(item: { url: string }) => `https://static.maxi.rs${item.url}`
+		);
+		vendorData.sku = productDetails.code;
+		if (typeof productDetails?.potentialPromotions?.[0]?.endDate === 'string') {
+			// Split the string into date and time parts
+			const [datePart, timePart] = productDetails.potentialPromotions[0].endDate.split(' ');
+			// Split the date part into day, month, and year
+			const [day, month, year] = datePart.split('/');
+			// Split the time part into hours, minutes, and seconds
+			const [hours, minutes, seconds] = timePart.split(':');
+			// Create a new Date object using the parsed values
+			vendorData.vendorPriceEnd = new Date(year, month - 1, day, hours, minutes, seconds);
+		}
+
+		return vendorData;
+	}
 };

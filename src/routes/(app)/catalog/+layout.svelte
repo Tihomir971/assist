@@ -38,8 +38,6 @@
 		return;
 	}
 	$: if (selected) {
-		console.log('selected', selected.getAttribute('data-id'));
-
 		rerunLoadFunction(selected.getAttribute('data-id'));
 	}
 </script>

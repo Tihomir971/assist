@@ -5,8 +5,8 @@
 		type ComboboxOptionProps,
 		type ComboboxOption
 	} from '@melt-ui/svelte';
-	import { Check, ChevronDown, ChevronUp } from 'lucide-svelte';
-	import { fly } from 'svelte/transition';
+	//import { Check, ChevronDown, ChevronUp } from 'lucide-svelte';
+	//import { fly } from 'svelte/transition';
 	import { setCtx } from '../ctx';
 	import type { ExtendedComboboxOption } from '../types';
 	import { Input, Label, Menu, Options } from '..';
@@ -70,7 +70,7 @@
 			>
 				{#if $isSelected(singleOption)}
 					<!-- <div class="z-10 -mx-2"> -->
-					<Check size="20" />
+					<!-- <Check /> -->
 					<!-- </div> -->
 				{/if}
 				<!-- <div class="pl-4"> -->
