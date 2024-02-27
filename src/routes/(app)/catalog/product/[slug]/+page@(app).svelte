@@ -64,6 +64,7 @@
 			if (response.status === 200) {
 				const data = await response.json();
 				newURL = data.path;
+				newPartnerPN = product?.barcode ?? '';
 			} else if (response.status === 204) {
 				addToast({
 					data: {

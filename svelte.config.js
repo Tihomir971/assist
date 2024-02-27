@@ -11,7 +11,11 @@ const config = {
 	// for more information about preprocessors
 	preprocess: sequence([vitePreprocess(), preprocessMeltUI()]),
 	vitePlugin: {
-		inspector: false
+		inspector: {
+			toggleKeyCombo: 'meta-shift',
+			showToggleButton: 'always',
+			toggleButtonPos: 'bottom-right'
+		}
 	},
 	kit: {
 		// adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.

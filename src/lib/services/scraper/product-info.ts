@@ -5,6 +5,8 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { OrderService } from '../supabase';
 
 type VendorProduct = {
+	po_id?: number;
+	c_bpartner_id: number;
 	name: string;
 	price: number | null;
 	mpn: string | null;
@@ -26,7 +28,6 @@ export const getProductInfo = async (supabase: SupabaseClient<Database>, product
 	const productPurchasing = await OrderService.getProductPurchasing(supabase, productId);
 
 	if (productPurchasing && productPurchasing?.length > 0) {
-		const prices: number[] = [];
 		for (let index = 0; index < productPurchasing.length; index++) {
 			const fetchURL = productPurchasing[index].url;
 			if (fetchURL) {
@@ -44,6 +45,7 @@ export const getProductInfo = async (supabase: SupabaseClient<Database>, product
 						// If it does, call the corresponding function
 						const webData = await getWebPrice[key](document);
 						if (webData) {
+							webData.po_id = productPurchasing[index].id;
 							vendorsProduct.push(webData);
 						}
 					}
@@ -52,16 +54,12 @@ export const getProductInfo = async (supabase: SupabaseClient<Database>, product
 					if (fetchURL.includes(key)) {
 						const apiData = await getApiInfo[key](fetchURL);
 						if (apiData) {
+							apiData.po_id = productPurchasing[index].id;
 							vendorsProduct.push(apiData);
 						}
 					}
 				}
 			}
-		}
-
-		let smallestPrice = Math.min(...prices);
-		if (!isFinite(smallestPrice)) {
-			smallestPrice = 0;
 		}
 
 		/* 		const { count, error: errorUpdate } = await supabase
@@ -91,12 +89,20 @@ export const getProductInfo = async (supabase: SupabaseClient<Database>, product
 			? { error: errorProductPO }
 			: { error: { message: 'No sources', details: 'Sources should be defined first' } }
 	); */
-	return vendorsProduct;
+
+	const { data } = await supabase
+		.from('m_product')
+		.select('name')
+		.eq('id', productId)
+		.maybeSingle();
+
+	return { name: data?.name, vendorsProduct };
 };
 
 const getWebPrice: ParseFunctions = {
 	'tehnomedia.rs': async function (document: Document) {
 		const vendorData: VendorProduct = {
+			c_bpartner_id: 6,
 			name: 'tehnomedia',
 			price: null,
 			barcode: [],
@@ -139,6 +145,7 @@ const getWebPrice: ParseFunctions = {
 	},
 	'tehnomanija.rs': async function (document: Document) {
 		const vendorData: VendorProduct = {
+			c_bpartner_id: 8,
 			name: 'tehnomanija',
 			price: null,
 			barcode: [],
@@ -181,10 +188,7 @@ const getWebPrice: ParseFunctions = {
 			// Extracting the content of the div element
 			const dateString = dateElement.textContent;
 			if (dateString) {
-				console.log('dateString', dateString);
-
 				const [day, month, year] = dateString.split('.').map(Number);
-				console.log('day,month,year', day, month, year);
 
 				vendorData.vendorPriceEnd = new Date(year, month - 1, day);
 			}
@@ -214,6 +218,7 @@ const getWebPrice: ParseFunctions = {
 	},
 	'metalac.com': async function (document: Document) {
 		const vendorData: VendorProduct = {
+			c_bpartner_id: 1,
 			name: 'metalac',
 			price: null,
 			barcode: [],
@@ -289,6 +294,7 @@ const getWebPrice: ParseFunctions = {
 	},
 	'cenoteka.rs': async function (document: Document) {
 		const vendorData: VendorProduct = {
+			c_bpartner_id: 2,
 			name: 'cenoteka',
 			price: null,
 			barcode: [],
@@ -297,7 +303,7 @@ const getWebPrice: ParseFunctions = {
 			images: [],
 			sku: null,
 			vendorPriceEnd: null,
-			onStock: null
+			onStock: false
 		};
 		//let bestPrice: number | undefined = undefined;
 		// Get the script element with id "__NEXT_DATA__"
@@ -315,17 +321,21 @@ const getWebPrice: ParseFunctions = {
 			vendorData.barcode = variation?.barcodes.map((barcode: { value: string }) => barcode.value);
 			vendorData.images = [variation?.product_images[0]?.file?.product_large];
 
-			const targetShops = ['Idea', 'Tempo', 'Roda', 'Maxi'];
+			const targetShops = ['Idea', 'Tempo', 'Roda', 'Maxi', 'Lidl'];
 
 			const filteredPrices = variation?.prices.filter(
 				(price: { shop: { name: string }; in_stock: boolean | null }) =>
 					targetShops.includes(price.shop.name) && price.in_stock
 			);
+			//	console.log('filteredPrices', filteredPrices);
 
 			const lowestPrice = Math.min(
 				...filteredPrices.map((price: { current_price: number }) => price.current_price)
 			);
-
+			vendorData.price = lowestPrice;
+			if (lowestPrice > 0) {
+				vendorData.onStock = true;
+			}
 			console.log('Lowest current price among Idea and Tempo:', lowestPrice);
 		} else {
 			console.log('Script element with id "__NEXT_DATA__" not found.');
@@ -354,6 +364,7 @@ const getWebPrice: ParseFunctions = {
 const getApiInfo: GetApiInfo = {
 	'gigatron.rs': async function (url: string) {
 		const vendorData: VendorProduct = {
+			c_bpartner_id: 5,
 			name: 'gigatron',
 			price: null,
 			barcode: [],
@@ -395,6 +406,7 @@ const getApiInfo: GetApiInfo = {
 	},
 	'online.idea.rs': async function (url: string) {
 		const vendorData: VendorProduct = {
+			c_bpartner_id: 4,
 			name: 'idea',
 			price: null,
 			barcode: [],
@@ -429,12 +441,13 @@ const getApiInfo: GetApiInfo = {
 		vendorData.brand = data.manufacturer;
 		vendorData.images = ['https://online.idea.rs/' + data.images[0].image_l];
 		vendorData.sku = data.id;
-		vendorData.vendorPriceEnd = new Date(data.offer.end_on);
+		vendorData.vendorPriceEnd = data.offer?.end_on ? new Date(data.offer.end_on) : null;
 
 		return vendorData;
 	},
 	'maxi.rs': async function (url) {
 		const vendorData: VendorProduct = {
+			c_bpartner_id: 7,
 			name: 'maxi',
 			price: null,
 			barcode: [],
@@ -472,15 +485,18 @@ const getApiInfo: GetApiInfo = {
 		const {
 			data: { productDetails }
 		} = await response.json();
+
 		if (productDetails.price.discountedPriceFormatted) {
 			const rsdString = productDetails.price.discountedPriceFormatted;
 			const numericValue = parseFloat(rsdString.replace(/[^0-9.]+/g, ''));
+
 			vendorData.price = numericValue / 100;
 		} else if (productDetails.price.unitPrice) {
 			vendorData.price = productDetails.price.unitPrice;
 		}
 
 		vendorData.brand = productDetails.manufacturerName;
+		vendorData.onStock = productDetails.stock.inStock;
 		vendorData.images = productDetails.images.map(
 			(item: { url: string }) => `https://static.maxi.rs${item.url}`
 		);
@@ -495,7 +511,7 @@ const getApiInfo: GetApiInfo = {
 			// Create a new Date object using the parsed values
 			vendorData.vendorPriceEnd = new Date(year, month - 1, day, hours, minutes, seconds);
 		}
-
+		console.log('vendorData', vendorData);
 		return vendorData;
 	}
 };

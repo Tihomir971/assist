@@ -14,7 +14,7 @@
 		for (let index = 0; index < selectedProducts.length; index++) {
 			const element = selectedProducts[index];
 
-			const response = await fetch(`/api/scraper/getPrice/${element}`);
+			const response = await fetch(`/api/scraper/getPrice2/${element}`);
 			const serverResponse = await response.json();
 
 			if (serverResponse.error) {
