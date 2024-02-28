@@ -1,4 +1,6 @@
 <script lang="ts">
+	import 'iconify-icon';
+	import '@phosphor-icons/web/bold';
 	import { Toaster } from '$lib/components/toaster';
 	import Header from './Header.svelte';
 	import Aside from './Aside.svelte';

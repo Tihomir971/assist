@@ -6,10 +6,12 @@
 	import { DateTimeFormat, numberFormat } from '$lib/scripts/format';
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 	import { Combobox } from '$lib/components/combobox';
-	import { Link, Plus, Search, X } from 'lucide-svelte';
+	import { Link, Plus, Search } from 'lucide-svelte';
 	import { Dialog } from '$lib/components/dialog2';
 	import { findLabelByValue } from '$lib/scripts/objects';
-
+	//import { PhX } from '$lib/icons';
+	//import PhX from '~icons/ph/x?width=1.2em&height=1.2em';
+	//import PhX from '~icons/ph/x';
 	export let data: PageData;
 	$: ({ product, categories, productPurchasing, supabase, partners, replenishes, warehouses } =
 		data);
@@ -32,7 +34,16 @@
 		initialProductForm = { ...product };
 	});
 
-	let columns = ['Partner', 'Partner PN', 'Price', 'Updated', 'URL'];
+	let columns = [
+		'Organization',
+		'Business Partner',
+		'Active',
+		'GTIN',
+		'Partner PN',
+		'List Price',
+		'Updated',
+		'URL'
+	];
 	let addingProductPO = false;
 
 	async function deleteProductPORow(rowToBeDeleted: number) {
@@ -88,7 +99,7 @@
 	}
 </script>
 
-<div class="mx-auto flex h-full max-w-5xl flex-col">
+<div class="flex h-full w-full flex-col p-4">
 	<div class="flex w-full items-center justify-between pt-4">
 		<hgroup class="prose">
 			<h3>Edit product</h3>
@@ -98,7 +109,7 @@
 	</div>
 	<div class="divider my-2"></div>
 	{#if product}
-		<div class="w-full flex-grow overflow-hidden">
+		<div class="mx-auto max-w-5xl flex-grow overflow-hidden">
 			<form
 				method="post"
 				action="?/updateProduct"
@@ -356,7 +367,7 @@
 	<div class="divider my-2"></div>
 	<div class="min-h-64">
 		<div role="tablist" class="tabs tabs-bordered">
-			<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Prices" checked />
+			<input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Purchasing" checked />
 			<div role="tabpanel" class="tab-content">
 				{#if productPurchasing && product}
 					<div class="col-span-full w-full">
@@ -392,7 +403,10 @@
 									<tbody class="overflow-auto">
 										{#each productPurchasing as productPurchase}
 											<tr class="hover">
+												<td>Org</td>
 												<td>{productPurchase.c_bpartner?.name}</td>
+												<td>{productPurchase.isactive}</td>
+												<td>{productPurchase.barcode}</td>
 												<td>{productPurchase.vendorproductno}</td>
 												<td>{numberFormat(productPurchase.pricelist)}</td>
 												<td>{DateTimeFormat(productPurchase.updated)}</td>
@@ -408,12 +422,14 @@
 														on:click={() => deleteProductPORow(productPurchase.id)}
 														class="btn btn-ghost btn-sm"
 													>
-														<X />
+														<i class="ph-bold ph-x text-2xl"></i>
+														<iconify-icon icon="ph:x-bold" width="24" height="24"></iconify-icon>
 													</button>
 												</td>
 											</tr>
 										{/each}
-										<tr>
+										<tr
+											><td></td>
 											<td class="px-0">
 												<select
 													name="bpartner"
@@ -426,6 +442,7 @@
 													{/if}
 												</select>
 											</td>
+											<td></td>
 											<td
 												><input
 													type="text"
@@ -443,6 +460,7 @@
 													bind:value={newURL}
 												/>
 											</td>
+											<td></td>
 											<td>
 												{#if newURL === ''}
 													<button

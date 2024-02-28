@@ -96,6 +96,7 @@ export const getProductInfo = async (supabase: SupabaseClient<Database>, product
 		.eq('id', productId)
 		.maybeSingle();
 
+	//	console.log('vendorsProduct', vendorsProduct);
 	return { name: data?.name, vendorsProduct };
 };
 

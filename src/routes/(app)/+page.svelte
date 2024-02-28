@@ -20,7 +20,7 @@
 		}}
 	>
 		<Select></Select>
-		<button type="submit">Test</button>
+		<button type="submit" class="btn">Test</button>
 	</form>
 
 	<!-- Animated Logo -->

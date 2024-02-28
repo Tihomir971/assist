@@ -18,11 +18,14 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 			const vendorBrand = vendorsProduct[index].brand ?? undefined;
 			const vendorBarcode = vendorsProduct[index].barcode.join(',') ?? undefined;
 			const vendorPOId = vendorsProduct[index].po_id ?? 0;
+			const vendorOnStock = vendorsProduct[index].onStock;
+			console.log('vendorOnStock', vendorOnStock);
+
 			if (vendorPOId !== 0) {
 				const { error } = await supabase
 					.from('m_product_po')
 					.update({
-						pricelist: vendorPrice,
+						pricelist: vendorOnStock ? vendorPrice : 0,
 						vendorproductno: vendorPN,
 						manufacturer: vendorBrand,
 						barcode: vendorBarcode
@@ -32,7 +35,7 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 				if (error) {
 					throw new Error(`Failed to update: ${error.details}`);
 				}
-				if (!smallestPrice || smallestPrice > vendorPrice) {
+				if ((!smallestPrice || smallestPrice > vendorPrice) && vendorOnStock) {
 					smallestPrice = vendorPrice;
 				}
 			}
