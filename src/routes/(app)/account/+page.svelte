@@ -44,6 +44,7 @@
 		/>
 		<form method="post" action="?/update" use:enhance={handleSubmit} bind:this={profileForm}>
 			<fieldset>
+				<input name="id" id="id" value={profile?.id} hidden />
 				<div>
 					<label for="email">Email</label>
 					<input name="email" id="email" type="text" value={session?.user.email} disabled />

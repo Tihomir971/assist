@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@phosphor-icons/web':
-    specifier: ^2.0.3
-    version: 2.0.3
   '@supabase/ssr':
     specifier: ^0.1.0
     version: 0.1.0(@supabase/supabase-js@2.39.7)
@@ -29,6 +26,9 @@ dependencies:
   lucide-svelte:
     specifier: ^0.343.0
     version: 0.343.0(svelte@4.2.12)
+  paneforge:
+    specifier: ^0.0.2
+    version: 0.0.2(svelte@4.2.12)
   tailwind-merge:
     specifier: ^2.2.1
     version: 2.2.1
@@ -570,10 +570,6 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.17.1
     dev: true
-
-  /@phosphor-icons/web@2.0.3:
-    resolution: {integrity: sha512-9oYmohi2fo87w3DbtfjBoJxrklVojgXq2wuGcqxKccj2TxMq7UIusKDrGUZYOQHM9pUKkh+kvfmutETMGDR6gg==}
-    dev: false
 
   /@pkgjs/parseargs@0.11.0:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -2320,6 +2316,15 @@ packages:
     dependencies:
       p-limit: 3.1.0
     dev: true
+
+  /paneforge@0.0.2(svelte@4.2.12):
+    resolution: {integrity: sha512-1xNMq+uslstqum4D8CzzkPGqnTWUlevjYtMjUhuEOiuz7E0fJHFuM8ogk8+LJnVbAg3hMJJ/9Mu4A1KaxK38oQ==}
+    peerDependencies:
+      svelte: ^4.0.0
+    dependencies:
+      nanoid: 5.0.6
+      svelte: 4.2.12
+    dev: false
 
   /parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}

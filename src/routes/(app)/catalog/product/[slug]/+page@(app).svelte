@@ -100,7 +100,7 @@
 </script>
 
 <div class="flex h-full w-full flex-col p-4">
-	<div class="flex w-full items-center justify-between pt-4">
+	<div class="mx-auto flex w-full max-w-5xl items-center justify-between pt-4">
 		<hgroup class="prose">
 			<h3>Edit product</h3>
 			<p>Detailed information about product</p>
@@ -422,7 +422,6 @@
 														on:click={() => deleteProductPORow(productPurchase.id)}
 														class="btn btn-ghost btn-sm"
 													>
-														<i class="ph-bold ph-x text-2xl"></i>
 														<iconify-icon icon="ph:x-bold" width="24" height="24"></iconify-icon>
 													</button>
 												</td>

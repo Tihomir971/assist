@@ -10,6 +10,10 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 	const m_product_id = Number(params.slug);
 	const { name, vendorsProduct } = await ProductInfo.getProductInfo(supabase, m_product_id);
 
+	if (vendorsProduct.length === 0) {
+		console.log('vendorsProduct zero', vendorsProduct.length);
+		return json({ code: 'warning', message: 'Define vendor sources first' });
+	}
 	if (vendorsProduct) {
 		let smallestPrice = null;
 		for (let index = 0; index < vendorsProduct.length; index++) {
@@ -19,7 +23,6 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 			const vendorBarcode = vendorsProduct[index].barcode.join(',') ?? undefined;
 			const vendorPOId = vendorsProduct[index].po_id ?? 0;
 			const vendorOnStock = vendorsProduct[index].onStock;
-			console.log('vendorOnStock', vendorOnStock);
 
 			if (vendorPOId !== 0) {
 				const { error } = await supabase
@@ -30,7 +33,6 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 						manufacturer: vendorBrand,
 						barcode: vendorBarcode
 					})
-					//.eq('c_bpartner_id', vendorsProduct[index].c_bpartner_id)
 					.eq('id', vendorPOId);
 				if (error) {
 					throw new Error(`Failed to update: ${error.details}`);
@@ -60,7 +62,7 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 		if (errorUpdate) {
 			error(400, `Failed to update: ${errorUpdate.details}`);
 		}
-		return json({ name: name });
+		return json({ code: 'success', message: `${name} for ${vendorsProduct.length} vendors` });
 	}
 
 	return new Response();

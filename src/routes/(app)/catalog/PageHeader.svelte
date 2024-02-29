@@ -17,12 +17,12 @@
 			const response = await fetch(`/api/scraper/getPrice2/${element}`);
 			const serverResponse = await response.json();
 
-			if (serverResponse.error) {
+			if (serverResponse.code === 'warning') {
 				addToast({
 					data: {
-						title: `${serverResponse.error.message}`,
-						description: `${serverResponse.error.details}`,
-						color: 'alert-error',
+						title: 'Market Prices Warning',
+						description: `${serverResponse.message}`,
+						color: 'alert-warning',
 						closeDelay: 0
 					}
 				});
@@ -30,7 +30,7 @@
 				addToast({
 					data: {
 						title: 'Market Prices updated!',
-						description: `Market  price for "${serverResponse.name}" updated`,
+						description: `Market  price for "${serverResponse.message}" updated`,
 						color: 'alert-success',
 						closeDelay: 2000
 					}

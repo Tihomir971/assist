@@ -7,6 +7,9 @@ import { AppUser } from '$lib/types/';
 
 declare global {
 	namespace App {
+		//		interface Error {
+		//			code: string;
+		//		}
 		interface Locals {
 			supabase: SupabaseClient<Database>;
 			getSession(): Promise<Session | null>;

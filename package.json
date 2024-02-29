@@ -43,7 +43,6 @@
   },
   "type": "module",
   "dependencies": {
-    "@phosphor-icons/web": "^2.0.3",
     "@supabase/ssr": "^0.1.0",
     "@supabase/supabase-js": "^2.39.7",
     "bits-ui": "^0.18.4",
@@ -51,6 +50,7 @@
     "iconify-icon": "^2.0.0",
     "linkedom": "^0.16.8",
     "lucide-svelte": "^0.343.0",
+    "paneforge": "^0.0.2",
     "tailwind-merge": "^2.2.1"
   }
 }

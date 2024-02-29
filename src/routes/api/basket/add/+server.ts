@@ -17,7 +17,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, getSes
 		} else {
 			const { data, error } = await supabase
 				.from('w_basket')
-				.insert({ ad_user_id: session.user.id })
+				.insert({ id: session.user.id })
 				.select()
 				.single();
 			console.log('else error', JSON.stringify(error));

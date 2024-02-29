@@ -1,10 +1,20 @@
 <script>
+	import { Checkbox } from '$lib/components/checkbox';
 	import { Drawer } from '$lib/components/drawer';
 
 	//import { Dialog } from "$lib/Dialog";
 	import { melt } from '@melt-ui/svelte';
 </script>
 
+<div class="flex items-center space-x-2">
+	<Checkbox id="terms" />
+	<label
+		for="terms"
+		class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+	>
+		Accept terms and conditions
+	</label>
+</div>
 <hgroup>
 	<h1 class="text-4xl font-semibold">Dialog Registry</h1>
 	<h2 class="text-lg font-bold text-slate-300">Keep track of your dialogs. Use them anywhere.</h2>
