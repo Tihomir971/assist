@@ -16,13 +16,14 @@
 <ResizablePrimitive.PaneResizer
 	bind:el
 	class={cn(
-		'bg-border focus-visible:ring-ring relative flex w-px items-center justify-center after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-1 data-[direction=vertical]:h-px data-[direction=vertical]:w-full data-[direction=vertical]:after:left-0 data-[direction=vertical]:after:h-1 data-[direction=vertical]:after:w-full data-[direction=vertical]:after:-translate-y-1/2 data-[direction=vertical]:after:translate-x-0 [&[data-direction=vertical]>div]:rotate-90',
+		'divider data-[direction=vertical]:divider-vertical data-[direction=horizontal]:*:rotate-45',
 		className
 	)}
 >
 	{#if withHandle}
-		<div class="bg-border z-10 flex h-4 w-3 items-center justify-center rounded-sm border">
-			<iconify-icon icon="ph:dots-six" width="10" height="10"></iconify-icon>
+		<div class="z-10 flex h-6 w-6 items-center justify-center">
+			<iconify-icon icon="ph:dots-six-bold" width="20" height="20"></iconify-icon>
+			<!-- <iconify-icon inline icon="ph:dots-six" width="16" height="16" rotate="90deg"></iconify-icon> -->
 			<!-- <DragHandleDots2 class="h-2.5 w-2.5" /> -->
 		</div>
 	{/if}
