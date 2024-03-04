@@ -103,15 +103,24 @@ export const load = (async ({ url, depends, locals: { supabase, getSession } }) 
 		}
 
 		let priceRecommended = 0;
-		if (priceMarket === 0) {
-			priceRecommended = pricePurchase * 1.3;
+		if (pricePurchase < 30) {
+			priceRecommended = pricePurchase * 2;
+		} else if (pricePurchase < 50) {
+			priceRecommended = pricePurchase * 1.75;
+		} else if (pricePurchase < 100) {
+			priceRecommended = pricePurchase * 1.5;
+		} else {
+			priceRecommended = pricePurchase * 1.25;
+		}
+		/* if (priceMarket === 0) {
+			priceRecommended = pricePurchase * 1.25;
 		} else if (priceMarket < pricePurchase) {
 			priceRecommended = pricePurchase;
-		} else if (priceMarket < pricePurchase * 1.3) {
+		} else if (priceMarket < pricePurchase * 1.25) {
 			priceRecommended = priceMarket;
 		} else {
-			priceRecommended = pricePurchase * 1.3;
-		}
+			priceRecommended = pricePurchase * 1.25;
+		} */
 
 		priceRecommended = Math.ceil(priceRecommended);
 		if (priceRecommended < 1000) {

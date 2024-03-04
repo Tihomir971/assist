@@ -5,7 +5,6 @@
 		type ComboboxOptionProps,
 		type ComboboxOption
 	} from '@melt-ui/svelte';
-	//import { Check, ChevronDown, ChevronUp } from 'lucide-svelte';
 	//import { fly } from 'svelte/transition';
 	import { setCtx } from '../ctx';
 	import type { ExtendedComboboxOption } from '../types';

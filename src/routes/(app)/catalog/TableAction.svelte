@@ -1,7 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { AlignJustify } from 'lucide-svelte';
-
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 	export let id: number;
@@ -12,5 +9,5 @@
 	class="btn btn-square btn-ghost btn-sm -my-1"
 	on:click={() => {
 		dispatch('click', { id });
-	}}><AlignJustify size="20" /></button
+	}}><iconify-icon icon="ph:pencil-simple" width="20" height="20"></iconify-icon></button
 >

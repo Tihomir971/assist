@@ -20,7 +20,6 @@
 	import { createToaster, melt } from '@melt-ui/svelte';
 	import { flip } from 'svelte/animate';
 	import { fly } from 'svelte/transition';
-	import { X } from 'lucide-svelte';
 	import { cn } from '$lib/scripts/tailwind';
 </script>
 
@@ -45,7 +44,7 @@
 					use:melt={$close(id)}
 					class="btn btn-circle btn-ghost btn-xs absolute right-4 top-4"
 				>
-					<X size="12" />
+					<iconify-icon icon="ph:x-bold" width="12" height="12"></iconify-icon>
 				</button>
 			</article>
 		</div>

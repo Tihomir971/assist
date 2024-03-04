@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Tables } from '$lib/types/database.types';
-	import { FilePenLine, Trash2 } from 'lucide-svelte';
 	import type { PageData } from './$types';
 
 	type AttributeValue = Tables<'m_attributevalue'> & { ad_org: { name: string } };
@@ -105,7 +104,7 @@
 										<div class="drawer-content">
 											<!-- Page content here -->
 											<label for="my-drawer-4" class="btn btn-square btn-ghost drawer-button btn-sm"
-												><FilePenLine size="20" />
+												><iconify-icon icon="ph:note-pencil" width="20" height="20"></iconify-icon>
 											</label>
 										</div>
 										<div class="drawer-side overflow-x-hidden">
@@ -121,7 +120,7 @@
 								</th>
 								<th
 									><button class="btn btn-square btn-ghost btn-sm">
-										<Trash2 size="20" />
+										<iconify-icon icon="ph:trash" width="20" height="20"></iconify-icon>
 									</button>
 								</th>
 							</tr>

@@ -6,7 +6,6 @@
 	import { DateTimeFormat, numberFormat } from '$lib/scripts/format';
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 	import { Combobox } from '$lib/components/combobox';
-	import { Link, Plus, Search } from 'lucide-svelte';
 	import { Dialog } from '$lib/components/dialog2';
 	import { findLabelByValue } from '$lib/scripts/objects';
 	import { Checkbox } from '$lib/components/checkbox';
@@ -290,7 +289,7 @@
 										href={product?.descriptionurl}
 										target="_blank"
 										class="btn btn-square join-item"
-										><iconify-icon icon="ph:link-bold" width="20" height="20"></iconify-icon></a
+										><iconify-icon icon="ph:link-bold" width="24" height="24"></iconify-icon></a
 									>
 								</div>
 							</label>
@@ -438,7 +437,9 @@
 															><a
 																href={productPurchase.url}
 																target="_blank"
-																class="btn btn-square btn-xs"><Link /></a
+																class="btn btn-square btn-xs"
+																><iconify-icon icon="ph:link-bold" width="24" height="24"
+																></iconify-icon></a
 															></td
 														>
 														<td>
@@ -496,14 +497,20 @@
 																{#if addingProductPO}
 																	<span class="loading loading-spinner"></span>
 																{:else}
-																	<Search />
+																	<iconify-icon
+																		icon="ph:file-magnifying-glass-bold"
+																		width="24"
+																		height="24"
+																	></iconify-icon>
 																{/if}
 															</button>
 														{:else}
 															<button
 																type="submit"
 																disabled={addingProductPO}
-																class="btn btn-ghost btn-sm"><Plus /></button
+																class="btn btn-ghost btn-sm"
+																><iconify-icon icon="ph:plus-bold" width="24" height="24"
+																></iconify-icon></button
 															>
 														{/if}
 													</td>

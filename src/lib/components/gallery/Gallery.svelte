@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { ChevronLeftCircle, ChevronRightCircle } from 'lucide-svelte';
 	import Thumbnails from './Thumbnails.svelte';
 
 	let elemCarousel: HTMLDivElement;
@@ -27,12 +25,12 @@
 	}
 </script>
 
-<div class="flex w-full flex-col bg-layer-2 shadow-1">
+<div class="bg-layer-2 shadow-1 flex w-full flex-col">
 	<!-- Carousel -->
 	<div class="card grid grid-cols-[auto_1fr_auto] items-center gap-4 p-4">
 		<!-- Button: Left -->
 		<button type="button" class="btn-icon variant-filled" on:click={carouselLeft}>
-			<ChevronLeftCircle />
+			<iconify-icon icon="ph:caret-circle-left-bold" width="24" height="24"></iconify-icon>
 		</button>
 		<!-- Full Images -->
 		<div bind:this={elemCarousel} class="flex snap-x snap-mandatory overflow-x-auto scroll-smooth">
@@ -47,7 +45,7 @@
 		</div>
 		<!-- Button: Right -->
 		<button type="button" class="btn-icon variant-filled" on:click={carouselRight}>
-			<ChevronRightCircle />
+			<iconify-icon icon="ph:caret-circle-right-bold" width="24" height="24"></iconify-icon>
 		</button>
 	</div>
 	<!-- Thumbnails -->

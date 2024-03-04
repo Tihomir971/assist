@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { createSelect, melt } from '@melt-ui/svelte';
-	import { Check, ChevronDown } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
 
 	const options = {
@@ -48,7 +47,7 @@
 						{#each arr as item}
 							<div use:melt={$option({ value: item, label: item })}>
 								<div class="check {$isSelected(item) ? 'block' : 'hidden'}">
-									<Check class="square-4" />
+									<iconify-icon icon="ph:check-bold" width="4" height="4"></iconify-icon>
 								</div>
 
 								{item}

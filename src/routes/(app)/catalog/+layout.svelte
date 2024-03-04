@@ -6,7 +6,6 @@
 	import { browser } from '$app/environment';
 	import { TreeView, type TreeItem } from '$lib/components/treeview';
 	import { Toolbar } from '$lib/components/toolbar';
-	import { FolderEdit, FolderMinus, FolderPlus, FolderRoot } from 'lucide-svelte';
 
 	export let data: LayoutData;
 	let { categories, expanded } = data;
@@ -49,22 +48,25 @@
 				type="button"
 				data-tip="Edit"
 				on:click={editCategory}
-				class="btn join-item tooltip tooltip-bottom"><FolderEdit /></Toolbar.Button
+				class="btn join-item tooltip tooltip-bottom"
+				><iconify-icon icon="ph:note-pencil" width="24" height="24"></iconify-icon></Toolbar.Button
 			>
 			<Toolbar.Button type="button" data-tip="Add" class="btn join-item tooltip tooltip-bottom"
-				><FolderPlus /></Toolbar.Button
+				><iconify-icon icon="ph:folder-plus" width="24" height="24"></iconify-icon></Toolbar.Button
 			>
 			<Toolbar.Button type="button" data-tip="Delete" class="btn join-item tooltip tooltip-bottom"
-				><FolderMinus /></Toolbar.Button
+				><iconify-icon icon="ph:folder-minus" width="24" height="24"></iconify-icon></Toolbar.Button
 			>
 			<Toolbar.Button
 				type="button"
 				data-tip="Collapse"
 				class="btn join-item tooltip tooltip-bottom"
-				on:click={() => (expanded = [])}><FolderRoot /></Toolbar.Button
+				on:click={() => (expanded = [])}
 			>
+				<iconify-icon icon="ph:arrows-in-line-vertical" width="24" height="24"></iconify-icon>
+			</Toolbar.Button>
 		</Toolbar.Root>
-		<div class="menu h-full w-full overflow-y-auto">
+		<div class="h-full w-full overflow-y-auto">
 			<TreeView bind:treeItems bind:selected bind:expanded />
 		</div>
 	</div>

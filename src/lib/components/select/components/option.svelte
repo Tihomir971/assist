@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { melt, type SelectOption, type Select, type SelectOptions } from '@melt-ui/svelte';
 	import { getCtx } from '../ctx';
-	import { Check } from 'lucide-svelte';
 
 	export let options: SelectOption[] = [
 		{ value: '1', label: 'Caramel' },
@@ -26,7 +25,7 @@
 		use:melt={$option({ value: item.value, label: item.label })}
 	>
 		<div class="check {$isSelected(item) ? 'block' : 'hidden'}">
-			<Check class="square-4" />
+			<iconify-icon icon="ph:check-bold" width="4" height="4"></iconify-icon>
 		</div>
 
 		{item.label}

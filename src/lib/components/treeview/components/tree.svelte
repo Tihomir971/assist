@@ -6,7 +6,8 @@
 	export const icons = {
 		svelte: Svelte,
 		folder: ChevronRight,
-		folderOpen: ChevronDown,
+		//	folderOpen: ChevronDown,
+		folderOpen: `<iconify-icon icon="ph:caret-down" width="16" height="16"></iconify-icon>`,
 		js: JS,
 		highlight: ArrowLeft,
 		child: Dot
@@ -45,12 +46,19 @@
 			<!-- Add icon. -->
 			{#if hasChildren}
 				{#if $isExpanded(itemId)}
-					<svelte:component this={icons['folderOpen']} class="size-5 text-base-content" />
+					<span class="size-4">
+						<!-- <svelte:component this={icons['folderOpen']} class="size-5 text-base-content" /> -->
+						<iconify-icon icon="ph:caret-down" width="16" height="16"></iconify-icon>
+					</span>
 				{:else}
-					<svelte:component this={icons['folder']} class="size-5 text-base-content" />
+					<span class="size-4">
+						<!-- <svelte:component this={icons['folder']} class="size-5 text-base-content" /> -->
+						<iconify-icon icon="ph:caret-right" width="16" height="16"></iconify-icon>
+					</span>
 				{/if}
 			{:else}
-				<svelte:component this={icons['child']} class="size-5" />
+				<!-- <svelte:component this={icons['child']} class="size-5" /> -->
+				<iconify-icon icon="ph:dot-bold" width="16" height="16"></iconify-icon>
 			{/if}
 
 			{#if icon}
@@ -61,7 +69,7 @@
 		</button>
 
 		{#if children}
-			<ul use:melt={$group({ id: itemId })}>
+			<ul use:melt={$group({ id: itemId })} class="ms-2">
 				<svelte:self treeItems={children} level={level + 1} on:select />
 			</ul>
 		{/if}

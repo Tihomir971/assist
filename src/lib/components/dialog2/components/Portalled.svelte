@@ -2,7 +2,6 @@
 	import { melt } from '@melt-ui/svelte';
 	import { fade, fly } from 'svelte/transition';
 	import { getCtx } from '../ctx';
-	import { X } from 'lucide-svelte';
 
 	const {
 		elements: { portalled, overlay, content, close, title, description },
@@ -31,7 +30,7 @@
 				aria-label="Close"
 				class="btn btn-circle btn-accent btn-xs absolute right-[10px] top-[10px]"
 			>
-				<X class="size-4" />
+				<iconify-icon icon="ph:x-bold" width="4" height="4"></iconify-icon>
 			</button>
 			<h2 use:melt={$title} class="mb-0 text-lg font-medium">Notifications</h2>
 			<p use:melt={$description} class="mb-5 mt-2 leading-normal">Check out your latest updates.</p>

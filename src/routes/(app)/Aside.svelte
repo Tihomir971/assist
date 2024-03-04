@@ -2,7 +2,6 @@
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 
-	import { AlignJustify, LayoutDashboard, Palette, Tag, TestTube2 } from 'lucide-svelte';
 	let activePath: string | undefined = undefined;
 	$: if (browser) activePath = $page.url.pathname;
 </script>
@@ -17,7 +16,7 @@
 				data-tip="Dashboard"
 				class:btn-active={activePath === '/dashboard'}
 			>
-				<LayoutDashboard size="24" class="w-6" strokeWidth={1.75} />
+				<iconify-icon icon="ph:layout" width="24" height="24"></iconify-icon>
 			</a>
 		</div>
 		<div class="tooltip tooltip-right" data-tip="Catalog">
@@ -27,7 +26,7 @@
 				class="btn btn-square btn-ghost join-item"
 				class:btn-active={activePath === '/catalog'}
 			>
-				<Tag size="24" strokeWidth={1.75} />
+				<iconify-icon icon="ph:tag" width="24" height="24"></iconify-icon>
 			</a>
 		</div>
 
@@ -38,7 +37,7 @@
 				class="btn btn-square btn-ghost join-item"
 				class:btn-active={activePath?.startsWith('/catalog/')}
 			>
-				<TestTube2 size="24" strokeWidth={1.75} />
+				<iconify-icon icon="ph:test-tube" width="24" height="24"></iconify-icon>
 			</div>
 			<ul class="menu dropdown-content z-[1] w-52 rounded-box bg-base-300 p-2 shadow">
 				<li class="menu-title">Catalog</li>

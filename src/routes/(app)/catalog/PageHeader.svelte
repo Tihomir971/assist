@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Euro, Factory, TheaterIcon } from 'lucide-svelte';
 	import * as api from '$lib/api';
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 	import { browser } from '$app/environment';
@@ -130,15 +129,15 @@
 			/>
 		</label>
 		<button on:click={addToBasket} class="btn btn-neutral">
-			<Euro size="24" />
+			<iconify-icon icon="ph:currency-eur" width="24" height="24"></iconify-icon>
 			Add to Basket
 		</button>
 		<button on:click={getPrices} class="btn btn-neutral">
-			<Euro size="24" />
+			<iconify-icon icon="ph:currency-eur" width="24" height="24"></iconify-icon>
 			Get Prices
 		</button>
 		<button on:click={getERP} class="btn btn-neutral">
-			<Factory class="size-5" />
+			<iconify-icon icon="ph:factory" width="24" height="24"></iconify-icon>
 			Get ERP
 		</button>
 	</div>

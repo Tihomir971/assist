@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { createCombobox, melt, type ComboboxOptionProps } from '@melt-ui/svelte';
-	import { Check, ChevronDown, ChevronUp } from 'lucide-svelte';
 	import { fly } from 'svelte/transition';
 
 	export let name: string;
@@ -109,9 +108,9 @@
 		/>
 		<div class="absolute right-2 top-1/2 z-10 -translate-y-1/2 text-orange-900">
 			{#if $open}
-				<ChevronUp class="size-4" />
+				<iconify-icon icon="ph:caret-up-bold" width="4" height="4"></iconify-icon>
 			{:else}
-				<ChevronDown class="size-4" />
+				<iconify-icon icon="ph:caret-down-bold" width="4" height="4"></iconify-icon>
 			{/if}
 		</div>
 	</div>
@@ -137,7 +136,7 @@
 				>
 					{#if $isSelected(manga)}
 						<div class="check absolute left-2 top-1/2 z-10 text-orange-900">
-							<Check class="square-4" />
+							<iconify-icon icon="ph:check-bold" width="4" height="4"></iconify-icon>
 						</div>
 					{/if}
 					<div class="pl-4">

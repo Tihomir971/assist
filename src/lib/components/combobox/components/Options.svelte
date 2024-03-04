@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { ExtendedComboboxOption } from '../types';
-	import { Check } from 'lucide-svelte';
 	import { melt, type ComboboxOptionProps, type ComboboxOption } from '@melt-ui/svelte';
 
 	import { getContent } from '../ctx';
@@ -44,7 +43,7 @@
 			>
 				{#if $isSelected(singleOption)}
 					<div class="z-10 -mx-2">
-						<Check size="20" />
+						<iconify-icon icon="ph:check-bold" width="20" height="20"></iconify-icon>
 					</div>
 				{/if}
 				<div class="pl-4">
