@@ -497,10 +497,7 @@
 																{#if addingProductPO}
 																	<span class="loading loading-spinner"></span>
 																{:else}
-																	<iconify-icon
-																		icon="ph:file-magnifying-glass-bold"
-																		width="24"
-																		height="24"
+																	<iconify-icon icon="ph:magnifying-glass" width="24" height="24"
 																	></iconify-icon>
 																{/if}
 															</button>

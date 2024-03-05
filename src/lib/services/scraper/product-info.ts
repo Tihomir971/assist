@@ -33,6 +33,8 @@ export const getProductInfo = async (supabase: SupabaseClient<Database>, product
 			if (fetchURL) {
 				//if(fetchURL.includes(key))
 				for (const key in getWebPrice) {
+					console.log('getWebPrice[key]', productId, getWebPrice[key]);
+
 					// Check if the string contains the current key
 					if (fetchURL.includes(key)) {
 						const response = await fetch(fetchURL);

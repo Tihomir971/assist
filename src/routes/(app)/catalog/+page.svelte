@@ -130,7 +130,8 @@
 							fractionDigits: 2
 						}),
 					plugins: {
-						exportCsv: { exclude: true }
+						exportCsv: { exclude: true },
+						tableFilter: { exclude: true }
 					}
 				}),
 				table.column({
@@ -145,7 +146,8 @@
 							fractionDigits: 2
 						}),
 					plugins: {
-						exportCsv: { exclude: true }
+						exportCsv: { exclude: true },
+						tableFilter: { exclude: true }
 					}
 				})
 			]
@@ -165,7 +167,8 @@
 							fractionDigits: 2
 						}),
 					plugins: {
-						exportCsv: { exclude: true }
+						exportCsv: { exclude: true },
+						tableFilter: { exclude: true }
 					}
 				}),
 				table.column({
@@ -180,7 +183,8 @@
 							fractionDigits: 1
 						}),
 					plugins: {
-						exportCsv: { exclude: true }
+						exportCsv: { exclude: true },
+						tableFilter: { exclude: true }
 					}
 				}),
 				table.column({
@@ -194,7 +198,8 @@
 							fractionDigits: 2
 						}),
 					plugins: {
-						exportCsv: { exclude: true }
+						exportCsv: { exclude: true },
+						tableFilter: { exclude: true }
 					}
 				}),
 				table.column({
@@ -208,7 +213,8 @@
 							fractionDigits: 2
 						}),
 					plugins: {
-						exportCsv: { exclude: true }
+						exportCsv: { exclude: true },
+						tableFilter: { exclude: true }
 					}
 				}),
 				table.column({
@@ -222,7 +228,8 @@
 							fractionDigits: 2
 						}),
 					plugins: {
-						exportCsv: { exclude: true }
+						exportCsv: { exclude: true },
+						tableFilter: { exclude: true }
 					}
 				})
 			]

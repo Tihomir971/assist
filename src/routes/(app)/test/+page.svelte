@@ -17,20 +17,6 @@
 		Accept terms and conditions
 	</label>
 </div>
-<hgroup>
-	<h1 class="text-4xl font-semibold">Dialog Registry</h1>
-	<h2 class="text-lg font-bold text-slate-300">Keep track of your dialogs. Use them anywhere.</h2>
-	<h3 class="mt-1 text-xs text-slate-400">
-		Built with <a class="underline hover:opacity-75" href="https://melt-ui.com">Melt UI</a>.
-	</h3>
-</hgroup>
-
-<div class="mt-12 grid grid-cols-3 gap-4">
-	<Drawer.Trigger name="settings" />
-	<Drawer.Trigger name="settings">Settings again</Drawer.Trigger>
-	<Drawer.Trigger name="login" />
-	<Drawer.Trigger name="delete" />
-</div>
 
 <Drawer.Content name="settings" let:title let:description let:close>
 	<h2 class="font-bold" use:melt={title}>Settings</h2>

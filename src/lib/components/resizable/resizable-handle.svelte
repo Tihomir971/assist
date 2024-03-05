@@ -2,6 +2,7 @@
 	//	import DragHandleDots2 from 'svelte-radix/DragHandleDots2.svelte';
 	import * as ResizablePrimitive from 'paneforge';
 	import { cn } from '$lib/scripts/tailwind';
+	import { PhDotsSixBold } from '$lib/icons';
 
 	type $$Props = ResizablePrimitive.PaneResizerProps & {
 		withHandle?: boolean;
@@ -22,7 +23,7 @@
 >
 	{#if withHandle}
 		<div class="z-10 flex h-6 w-6 items-center justify-center">
-			<iconify-icon icon="ph:dots-six-bold" width="20" height="20"></iconify-icon>
+			<iconify-icon icon="ph:dots-six-bold" width="24" height="24"></iconify-icon>
 			<!-- <iconify-icon inline icon="ph:dots-six" width="16" height="16" rotate="90deg"></iconify-icon> -->
 			<!-- <DragHandleDots2 class="h-2.5 w-2.5" /> -->
 		</div>
