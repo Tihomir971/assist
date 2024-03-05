@@ -8,6 +8,8 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 		redirect(303, '/auth');
 	}
 	const m_product_id = Number(params.slug);
+	console.log('GetPrice2: m_product_id', m_product_id);
+
 	const { name, vendorsProduct } = await ProductInfo.getProductInfo(supabase, m_product_id);
 
 	if (vendorsProduct.length === 0) {

@@ -29,6 +29,7 @@ export const getProductInfo = async (supabase: SupabaseClient<Database>, product
 
 	if (productPurchasing && productPurchasing?.length > 0) {
 		for (let index = 0; index < productPurchasing.length; index++) {
+			console.log('getProductInfo: bpartner', productPurchasing[index].c_bpartner);
 			const fetchURL = productPurchasing[index].url;
 			if (fetchURL) {
 				//if(fetchURL.includes(key))
