@@ -2,7 +2,6 @@
 	//	import DragHandleDots2 from 'svelte-radix/DragHandleDots2.svelte';
 	import * as ResizablePrimitive from 'paneforge';
 	import { cn } from '$lib/scripts/tailwind';
-	import { PhDotsSixBold } from '$lib/icons';
 
 	type $$Props = ResizablePrimitive.PaneResizerProps & {
 		withHandle?: boolean;
