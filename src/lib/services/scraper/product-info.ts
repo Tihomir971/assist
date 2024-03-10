@@ -29,13 +29,10 @@ export const getProductInfo = async (supabase: SupabaseClient<Database>, product
 
 	if (productPurchasing && productPurchasing?.length > 0) {
 		for (let index = 0; index < productPurchasing.length; index++) {
-			console.log('getProductInfo: bpartner', productPurchasing[index].c_bpartner);
 			const fetchURL = productPurchasing[index].url;
 			if (fetchURL) {
 				//if(fetchURL.includes(key))
 				for (const key in getWebPrice) {
-					console.log('getWebPrice[key]', productId, getWebPrice[key]);
-
 					// Check if the string contains the current key
 					if (fetchURL.includes(key)) {
 						const response = await fetch(fetchURL);
@@ -99,7 +96,6 @@ export const getProductInfo = async (supabase: SupabaseClient<Database>, product
 		.eq('id', productId)
 		.maybeSingle();
 
-	//	console.log('vendorsProduct', vendorsProduct);
 	return { name: data?.name, vendorsProduct };
 };
 
@@ -340,7 +336,6 @@ const getWebPrice: ParseFunctions = {
 			if (lowestPrice > 0) {
 				vendorData.onStock = true;
 			}
-			console.log('Lowest current price among Idea and Tempo:', lowestPrice);
 		} else {
 			console.log('Script element with id "__NEXT_DATA__" not found.');
 		}
@@ -439,8 +434,11 @@ const getApiInfo: GetApiInfo = {
 		if (!response.ok) {
 			throw new Error(`Network response was not OK: ${response.statusText}`);
 		}
+
 		const data = await response.json();
+		console.log('data.price', data?.price);
 		vendorData.barcode = data.barcodes;
+		vendorData.onStock = data.active;
 		vendorData.price = data.price.amount / 100;
 		vendorData.brand = data.manufacturer;
 		vendorData.images = ['https://online.idea.rs/' + data.images[0].image_l];

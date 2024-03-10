@@ -2,24 +2,29 @@ import { error, json, redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { ProductInfo } from '$lib/services/scraper';
 
-export const GET: RequestHandler = async ({ params, locals: { supabase, getSession } }) => {
-	const session = await getSession();
-	if (!session) {
+export const GET: RequestHandler = async ({ params, locals: { supabase } }) => {
+	const userFetch = await supabase.auth.getUser();
+	if (userFetch.error) {
+		console.error(userFetch.error);
 		redirect(303, '/auth');
 	}
+	/* 	const session = await getSession();
+	if (!session) {
+		redirect(303, '/auth');
+	} */
 	const m_product_id = Number(params.slug);
-	console.log('GetPrice2: m_product_id', m_product_id);
 
 	const { name, vendorsProduct } = await ProductInfo.getProductInfo(supabase, m_product_id);
 
 	if (vendorsProduct.length === 0) {
-		console.log('vendorsProduct zero', vendorsProduct.length);
 		return json({ code: 'warning', message: 'Define vendor sources first' });
 	}
+
 	if (vendorsProduct) {
-		let smallestPrice = null;
+		let smallestPrice = 0;
 		for (let index = 0; index < vendorsProduct.length; index++) {
-			const vendorPrice = vendorsProduct[index].price ?? 0;
+			const tempPrice = vendorsProduct[index].price ?? 0;
+			const vendorPrice = tempPrice !== Infinity ? tempPrice : 0;
 			const vendorPN = vendorsProduct[index].sku ?? undefined;
 			const vendorBrand = vendorsProduct[index].brand ?? undefined;
 			const vendorBarcode = vendorsProduct[index].barcode.join(',') ?? undefined;
@@ -27,6 +32,13 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 			const vendorOnStock = vendorsProduct[index].onStock;
 
 			if (vendorPOId !== 0) {
+				console.log('for update', {
+					pricelist: vendorOnStock ? vendorPrice : 0,
+					vendorproductno: vendorPN,
+					manufacturer: vendorBrand,
+					barcode: vendorBarcode
+				});
+
 				const { error } = await supabase
 					.from('m_product_po')
 					.update({
@@ -39,7 +51,11 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 				if (error) {
 					throw new Error(`Failed to update: ${error.details}`);
 				}
-				if ((!smallestPrice || smallestPrice > vendorPrice) && vendorOnStock) {
+				if (
+					(smallestPrice > vendorPrice || smallestPrice === 0) &&
+					vendorOnStock &&
+					vendorPrice > 0
+				) {
 					smallestPrice = vendorPrice;
 				}
 			}

@@ -1,16 +1,15 @@
 <script context="module" lang="ts">
-	import { ArrowLeft, ChevronRight, ChevronDown, Dot } from 'lucide-svelte';
 	import JS from '$lib/icons/JS.svelte';
 	import Svelte from '$lib/icons/Svelte.svelte';
 
 	export const icons = {
-		svelte: Svelte,
-		folder: ChevronRight,
+		//svelte: Svelte,
+		//folder: ChevronRight,
 		//	folderOpen: ChevronDown,
-		folderOpen: `<iconify-icon icon="ph:caret-down" width="16" height="16"></iconify-icon>`,
-		js: JS,
-		highlight: ArrowLeft,
-		child: Dot
+		//folderOpen: `<iconify-icon icon="ph:caret-down" width="16" height="16"></iconify-icon>`,
+		//js: JS,
+		//highlight: ArrowLeft,
+		//child: Dot
 	};
 </script>
 
@@ -61,9 +60,9 @@
 				<iconify-icon icon="ph:dot-bold" width="16" height="16"></iconify-icon>
 			{/if}
 
-			{#if icon}
+			<!-- {#if icon}
 				<svelte:component this={icons[icon]} class="h-4 w-4" />
-			{/if}
+			{/if} -->
 
 			<span class="select-none text-left">{title}</span>
 		</button>
