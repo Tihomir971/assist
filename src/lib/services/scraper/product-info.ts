@@ -34,10 +34,10 @@ export const getProductInfo = async (supabase: SupabaseClient<Database>, product
 				for (const key in getWebPrice) {
 					//					// Check if the string contains the current key
 					if (fetchURL.includes(key)) {
-						//						const response = await fetch(fetchURL);
-						//						if (!response.ok) {
-						//							throw new Error(`Failed to fetch: ${response.status}`);
-						//						}
+						const response = await fetch(fetchURL);
+						if (!response.ok) {
+							throw new Error(`Failed to fetch: ${response.status}`);
+						}
 						//						const html = await response.text();
 						//						const { document } = parseHTML(html);
 						//
