@@ -3,8 +3,6 @@ import type { RequestHandler } from './$types';
 import { ProductInfo } from '$lib/services/scraper';
 
 export const GET: RequestHandler = async ({ params, locals: { supabase, getSession } }) => {
-	console.log('in getPrice2');
-
 	//	const userFetch = await supabase.auth.getUser();
 	//	if (userFetch.error) {
 	//		console.error(userFetch.error);
