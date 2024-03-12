@@ -2,7 +2,7 @@ import { error, json, redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { ProductInfo } from '$lib/services/scraper';
 
-export const GET: RequestHandler = async ({ params, locals: { supabase } }) => {
+export const GET: RequestHandler = async ({ params, locals: { supabase, getSession } }) => {
 	console.log('in getPrice2');
 
 	//	const userFetch = await supabase.auth.getUser();
@@ -10,14 +10,14 @@ export const GET: RequestHandler = async ({ params, locals: { supabase } }) => {
 	//		console.error(userFetch.error);
 	//		redirect(303, '/auth');
 	//	}
-	/* 	const session = await getSession();
+	const session = await getSession();
 	if (!session) {
 		redirect(303, '/auth');
-	} */
+	}
 	const m_product_id = Number(params.slug);
 
 	const { name, vendorsProduct } = await ProductInfo.getProductInfo(supabase, m_product_id);
-	console.log('vendorsProduct.length', vendorsProduct.length);
+	return json({ code: 'success', message: `${name} for ${vendorsProduct.length} vendors` });
 	if (vendorsProduct.length === 0) {
 		return json({ code: 'warning', message: 'Define vendor sources first' });
 	}
