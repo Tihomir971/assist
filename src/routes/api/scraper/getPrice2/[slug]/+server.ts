@@ -16,8 +16,8 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 	}
 	const m_product_id = Number(params.slug);
 
+	return json({ code: 'success', message: `Test vendors` });
 	const { name, vendorsProduct } = await ProductInfo.getProductInfo(supabase, m_product_id);
-	return json({ code: 'success', message: `${name} for ${vendorsProduct.length} vendors` });
 	if (vendorsProduct.length === 0) {
 		return json({ code: 'warning', message: 'Define vendor sources first' });
 	}
