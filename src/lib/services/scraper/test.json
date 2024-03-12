@@ -1,0 +1,806 @@
+{
+    "props": {
+        "pageProps": {
+            "product": {
+                "id": 31728,
+                "name": "Brašno DANUBIUS meko T-400 1kg",
+                "status": "active",
+                "multi_variant": false,
+                "product_variations": [
+                    {
+                        "id": 26044,
+                        "product": 31728,
+                        "sku": "1006006",
+                        "slug": "brasno-danubius-meko-t-400-1kg",
+                        "name": "Brašno DANUBIUS meko T-400 1kg",
+                        "status": "active",
+                        "description": "",
+                        "position": 0,
+                        "brand": {
+                            "id": 701,
+                            "slug": "danubius",
+                            "name": "Danubius",
+                            "image": {
+                                "id": 221228,
+                                "file_name": "brand-danubius-656dcc5e5dc2e.png",
+                                "file_path": "/uploads/2023/12/brand-danubius-656dcc5e5dc2e.png",
+                                "file_caption": null,
+                                "file_extension": "png",
+                                "thumb": "https://api.cenoteka.rs/uploads/cache/thumb/uploads/2023/12/brand-danubius-656dcc5e5dc2e.png",
+                                "product_small": "https://api.cenoteka.rs/uploads/cache/product_small/uploads/2023/12/brand-danubius-656dcc5e5dc2e.png",
+                                "product_medium": "https://api.cenoteka.rs/uploads/cache/product_medium/uploads/2023/12/brand-danubius-656dcc5e5dc2e.png",
+                                "product_large": "https://api.cenoteka.rs/uploads/cache/product_large/uploads/2023/12/brand-danubius-656dcc5e5dc2e.png",
+                                "product_16x9": "https://api.cenoteka.rs/uploads/cache/product_16x9/uploads/2023/12/brand-danubius-656dcc5e5dc2e.png",
+                                "product_1x1": "https://api.cenoteka.rs/uploads/cache/product_1x1/uploads/2023/12/brand-danubius-656dcc5e5dc2e.png",
+                                "product_4x3": "https://api.cenoteka.rs/uploads/cache/product_4x3/uploads/2023/12/brand-danubius-656dcc5e5dc2e.png",
+                                "shop_thumb": "https://api.cenoteka.rs/uploads/cache/shop_thumb/uploads/2023/12/brand-danubius-656dcc5e5dc2e.png"
+                            }
+                        },
+                        "amount": 1,
+                        "unit": "kg",
+                        "standardized_amount": 1,
+                        "standardized_unit": "kg",
+                        "product_images": [
+                            {
+                                "id": 113929,
+                                "file": {
+                                    "id": 200651,
+                                    "file_name": "brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg",
+                                    "file_path": "/uploads/2023/11/brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg",
+                                    "file_caption": null,
+                                    "file_extension": "jpeg",
+                                    "thumb": "https://api.cenoteka.rs/uploads/cache/thumb/uploads/2023/11/brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg",
+                                    "product_small": "https://api.cenoteka.rs/uploads/cache/product_small/uploads/2023/11/brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg",
+                                    "product_medium": "https://api.cenoteka.rs/uploads/cache/product_medium/uploads/2023/11/brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg",
+                                    "product_large": "https://api.cenoteka.rs/uploads/cache/product_large/uploads/2023/11/brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg",
+                                    "product_16x9": "https://api.cenoteka.rs/uploads/cache/product_16x9/uploads/2023/11/brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg",
+                                    "product_1x1": "https://api.cenoteka.rs/uploads/cache/product_1x1/uploads/2023/11/brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg",
+                                    "product_4x3": "https://api.cenoteka.rs/uploads/cache/product_4x3/uploads/2023/11/brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg",
+                                    "shop_thumb": "https://api.cenoteka.rs/uploads/cache/shop_thumb/uploads/2023/11/brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg"
+                                },
+                                "position": 0
+                            }
+                        ],
+                        "product_documents": [],
+                        "barcodes": [
+                            {
+                                "value": "8601300046013"
+                            },
+                            {
+                                "value": "8601300046419"
+                            }
+                        ],
+                        "prices": [
+                            {
+                                "id": 213335,
+                                "shop": {
+                                    "id": 42,
+                                    "name": "Tempo",
+                                    "status": "active",
+                                    "image": {
+                                        "id": 199534,
+                                        "file_name": "shop-tempo-655533342f2d7.png",
+                                        "file_path": "/uploads/2023/11/shop-tempo-655533342f2d7.png",
+                                        "file_caption": null,
+                                        "file_extension": "png",
+                                        "thumb": "https://api.cenoteka.rs/uploads/cache/thumb/uploads/2023/11/shop-tempo-655533342f2d7.png",
+                                        "product_small": "https://api.cenoteka.rs/uploads/cache/product_small/uploads/2023/11/shop-tempo-655533342f2d7.png",
+                                        "product_medium": "https://api.cenoteka.rs/uploads/cache/product_medium/uploads/2023/11/shop-tempo-655533342f2d7.png",
+                                        "product_large": "https://api.cenoteka.rs/uploads/cache/product_large/uploads/2023/11/shop-tempo-655533342f2d7.png",
+                                        "product_16x9": "https://api.cenoteka.rs/uploads/cache/product_16x9/uploads/2023/11/shop-tempo-655533342f2d7.png",
+                                        "product_1x1": "https://api.cenoteka.rs/uploads/cache/product_1x1/uploads/2023/11/shop-tempo-655533342f2d7.png",
+                                        "product_4x3": "https://api.cenoteka.rs/uploads/cache/product_4x3/uploads/2023/11/shop-tempo-655533342f2d7.png",
+                                        "shop_thumb": "https://api.cenoteka.rs/uploads/cache/shop_thumb/uploads/2023/11/shop-tempo-655533342f2d7.png"
+                                    },
+                                    "note": "",
+                                    "priority": 0,
+                                    "websites": [
+                                        {
+                                            "id": 46
+                                        }
+                                    ],
+                                    "promo": null,
+                                    "description": null,
+                                    "type": "offline",
+                                    "delivery_type": "paid",
+                                    "delivery_note": null,
+                                    "delivery_price": null,
+                                    "shop_badges": []
+                                },
+                                "current_price": 84.7,
+                                "old_price": null,
+                                "loyalty_price": null,
+                                "price_per_standardized": 84.7,
+                                "promo": false,
+                                "note": null,
+                                "valid_from": null,
+                                "valid_to": null,
+                                "shop_url": "https://NEMAURL/7176330",
+                                "updated_at": "2023-11-15T23:08:20Z",
+                                "in_stock": true,
+                                "disabled": null,
+                                "review_score": null,
+                                "review_count": null,
+                                "price_badges": []
+                            },
+                            {
+                                "id": 216581,
+                                "shop": {
+                                    "id": 40,
+                                    "name": "Dis",
+                                    "status": "active",
+                                    "image": {
+                                        "id": 300736,
+                                        "file_name": "shop-dis-65e89594126af.png",
+                                        "file_path": "/uploads/2024/03/shop-dis-65e89594126af.png",
+                                        "file_caption": null,
+                                        "file_extension": "png",
+                                        "thumb": "https://api.cenoteka.rs/uploads/cache/thumb/uploads/2024/03/shop-dis-65e89594126af.png",
+                                        "product_small": "https://api.cenoteka.rs/uploads/cache/product_small/uploads/2024/03/shop-dis-65e89594126af.png",
+                                        "product_medium": "https://api.cenoteka.rs/uploads/cache/product_medium/uploads/2024/03/shop-dis-65e89594126af.png",
+                                        "product_large": "https://api.cenoteka.rs/uploads/cache/product_large/uploads/2024/03/shop-dis-65e89594126af.png",
+                                        "product_16x9": "https://api.cenoteka.rs/uploads/cache/product_16x9/uploads/2024/03/shop-dis-65e89594126af.png",
+                                        "product_1x1": "https://api.cenoteka.rs/uploads/cache/product_1x1/uploads/2024/03/shop-dis-65e89594126af.png",
+                                        "product_4x3": "https://api.cenoteka.rs/uploads/cache/product_4x3/uploads/2024/03/shop-dis-65e89594126af.png",
+                                        "shop_thumb": "https://api.cenoteka.rs/uploads/cache/shop_thumb/uploads/2024/03/shop-dis-65e89594126af.png"
+                                    },
+                                    "note": "",
+                                    "priority": 0,
+                                    "websites": [
+                                        {
+                                            "id": 46
+                                        }
+                                    ],
+                                    "promo": null,
+                                    "description": null,
+                                    "type": "offline",
+                                    "delivery_type": "paid",
+                                    "delivery_note": null,
+                                    "delivery_price": null,
+                                    "shop_badges": []
+                                },
+                                "current_price": 84.99,
+                                "old_price": null,
+                                "loyalty_price": null,
+                                "price_per_standardized": 84.99,
+                                "promo": false,
+                                "note": null,
+                                "valid_from": null,
+                                "valid_to": null,
+                                "shop_url": "https://NEMAURL/21904",
+                                "updated_at": "2024-02-23T07:55:15Z",
+                                "in_stock": true,
+                                "disabled": null,
+                                "review_score": null,
+                                "review_count": null,
+                                "price_badges": []
+                            },
+                            {
+                                "id": 219367,
+                                "shop": {
+                                    "id": 38,
+                                    "name": "Idea",
+                                    "status": "active",
+                                    "image": {
+                                        "id": 199521,
+                                        "file_name": "shop-idea-655532b40645b.png",
+                                        "file_path": "/uploads/2023/11/shop-idea-655532b40645b.png",
+                                        "file_caption": null,
+                                        "file_extension": "png",
+                                        "thumb": "https://api.cenoteka.rs/uploads/cache/thumb/uploads/2023/11/shop-idea-655532b40645b.png",
+                                        "product_small": "https://api.cenoteka.rs/uploads/cache/product_small/uploads/2023/11/shop-idea-655532b40645b.png",
+                                        "product_medium": "https://api.cenoteka.rs/uploads/cache/product_medium/uploads/2023/11/shop-idea-655532b40645b.png",
+                                        "product_large": "https://api.cenoteka.rs/uploads/cache/product_large/uploads/2023/11/shop-idea-655532b40645b.png",
+                                        "product_16x9": "https://api.cenoteka.rs/uploads/cache/product_16x9/uploads/2023/11/shop-idea-655532b40645b.png",
+                                        "product_1x1": "https://api.cenoteka.rs/uploads/cache/product_1x1/uploads/2023/11/shop-idea-655532b40645b.png",
+                                        "product_4x3": "https://api.cenoteka.rs/uploads/cache/product_4x3/uploads/2023/11/shop-idea-655532b40645b.png",
+                                        "shop_thumb": "https://api.cenoteka.rs/uploads/cache/shop_thumb/uploads/2023/11/shop-idea-655532b40645b.png"
+                                    },
+                                    "note": "",
+                                    "priority": 0,
+                                    "websites": [
+                                        {
+                                            "id": 46
+                                        }
+                                    ],
+                                    "promo": null,
+                                    "description": null,
+                                    "type": "offline",
+                                    "delivery_type": "paid",
+                                    "delivery_note": null,
+                                    "delivery_price": null,
+                                    "shop_badges": []
+                                },
+                                "current_price": 59.99,
+                                "old_price": 84.7,
+                                "loyalty_price": null,
+                                "price_per_standardized": 59.99,
+                                "promo": true,
+                                "note": "Akcija",
+                                "valid_from": "2024-03-11T07:52:22Z",
+                                "valid_to": "2024-03-17T07:52:22Z",
+                                "shop_url": "https://NEMAURL/160041113",
+                                "updated_at": "2024-03-11T07:52:22Z",
+                                "in_stock": true,
+                                "disabled": null,
+                                "review_score": null,
+                                "review_count": null,
+                                "price_badges": []
+                            },
+                            {
+                                "id": 224983,
+                                "shop": {
+                                    "id": 41,
+                                    "name": "Roda",
+                                    "status": "active",
+                                    "image": {
+                                        "id": 199531,
+                                        "file_name": "shop-roda-6555330c8ef78.png",
+                                        "file_path": "/uploads/2023/11/shop-roda-6555330c8ef78.png",
+                                        "file_caption": null,
+                                        "file_extension": "png",
+                                        "thumb": "https://api.cenoteka.rs/uploads/cache/thumb/uploads/2023/11/shop-roda-6555330c8ef78.png",
+                                        "product_small": "https://api.cenoteka.rs/uploads/cache/product_small/uploads/2023/11/shop-roda-6555330c8ef78.png",
+                                        "product_medium": "https://api.cenoteka.rs/uploads/cache/product_medium/uploads/2023/11/shop-roda-6555330c8ef78.png",
+                                        "product_large": "https://api.cenoteka.rs/uploads/cache/product_large/uploads/2023/11/shop-roda-6555330c8ef78.png",
+                                        "product_16x9": "https://api.cenoteka.rs/uploads/cache/product_16x9/uploads/2023/11/shop-roda-6555330c8ef78.png",
+                                        "product_1x1": "https://api.cenoteka.rs/uploads/cache/product_1x1/uploads/2023/11/shop-roda-6555330c8ef78.png",
+                                        "product_4x3": "https://api.cenoteka.rs/uploads/cache/product_4x3/uploads/2023/11/shop-roda-6555330c8ef78.png",
+                                        "shop_thumb": "https://api.cenoteka.rs/uploads/cache/shop_thumb/uploads/2023/11/shop-roda-6555330c8ef78.png"
+                                    },
+                                    "note": "",
+                                    "priority": 0,
+                                    "websites": [
+                                        {
+                                            "id": 46
+                                        }
+                                    ],
+                                    "promo": null,
+                                    "description": null,
+                                    "type": "offline",
+                                    "delivery_type": "paid",
+                                    "delivery_note": null,
+                                    "delivery_price": null,
+                                    "shop_badges": []
+                                },
+                                "current_price": 59.99,
+                                "old_price": 84.7,
+                                "loyalty_price": null,
+                                "price_per_standardized": 59.99,
+                                "promo": true,
+                                "note": "Akcija",
+                                "valid_from": "2024-03-11T07:53:45Z",
+                                "valid_to": "2024-03-17T07:53:45Z",
+                                "shop_url": "https://NEMAURL/160041113",
+                                "updated_at": "2024-03-11T07:53:45Z",
+                                "in_stock": true,
+                                "disabled": null,
+                                "review_score": null,
+                                "review_count": null,
+                                "price_badges": []
+                            },
+                            {
+                                "id": 232328,
+                                "shop": {
+                                    "id": 39,
+                                    "name": "Univerexport",
+                                    "status": "active",
+                                    "image": {
+                                        "id": 199527,
+                                        "file_name": "shop-univerexport-655532f1259e6.png",
+                                        "file_path": "/uploads/2023/11/shop-univerexport-655532f1259e6.png",
+                                        "file_caption": null,
+                                        "file_extension": "png",
+                                        "thumb": "https://api.cenoteka.rs/uploads/cache/thumb/uploads/2023/11/shop-univerexport-655532f1259e6.png",
+                                        "product_small": "https://api.cenoteka.rs/uploads/cache/product_small/uploads/2023/11/shop-univerexport-655532f1259e6.png",
+                                        "product_medium": "https://api.cenoteka.rs/uploads/cache/product_medium/uploads/2023/11/shop-univerexport-655532f1259e6.png",
+                                        "product_large": "https://api.cenoteka.rs/uploads/cache/product_large/uploads/2023/11/shop-univerexport-655532f1259e6.png",
+                                        "product_16x9": "https://api.cenoteka.rs/uploads/cache/product_16x9/uploads/2023/11/shop-univerexport-655532f1259e6.png",
+                                        "product_1x1": "https://api.cenoteka.rs/uploads/cache/product_1x1/uploads/2023/11/shop-univerexport-655532f1259e6.png",
+                                        "product_4x3": "https://api.cenoteka.rs/uploads/cache/product_4x3/uploads/2023/11/shop-univerexport-655532f1259e6.png",
+                                        "shop_thumb": "https://api.cenoteka.rs/uploads/cache/shop_thumb/uploads/2023/11/shop-univerexport-655532f1259e6.png"
+                                    },
+                                    "note": "",
+                                    "priority": 0,
+                                    "websites": [
+                                        {
+                                            "id": 46
+                                        }
+                                    ],
+                                    "promo": null,
+                                    "description": null,
+                                    "type": "offline",
+                                    "delivery_type": "paid",
+                                    "delivery_note": null,
+                                    "delivery_price": null,
+                                    "shop_badges": []
+                                },
+                                "current_price": 84.7,
+                                "old_price": null,
+                                "loyalty_price": null,
+                                "price_per_standardized": 84.7,
+                                "promo": false,
+                                "note": null,
+                                "valid_from": null,
+                                "valid_to": null,
+                                "shop_url": "https://NEMAURL/1014452",
+                                "updated_at": "2023-11-16T15:02:53Z",
+                                "in_stock": true,
+                                "disabled": null,
+                                "review_score": null,
+                                "review_count": null,
+                                "price_badges": []
+                            },
+                            {
+                                "id": 236672,
+                                "shop": {
+                                    "id": 37,
+                                    "name": "Maxi",
+                                    "status": "active",
+                                    "image": {
+                                        "id": 199503,
+                                        "file_name": "shop-maxi-655531f309c28.png",
+                                        "file_path": "/uploads/2023/11/shop-maxi-655531f309c28.png",
+                                        "file_caption": null,
+                                        "file_extension": "png",
+                                        "thumb": "https://api.cenoteka.rs/uploads/cache/thumb/uploads/2023/11/shop-maxi-655531f309c28.png",
+                                        "product_small": "https://api.cenoteka.rs/uploads/cache/product_small/uploads/2023/11/shop-maxi-655531f309c28.png",
+                                        "product_medium": "https://api.cenoteka.rs/uploads/cache/product_medium/uploads/2023/11/shop-maxi-655531f309c28.png",
+                                        "product_large": "https://api.cenoteka.rs/uploads/cache/product_large/uploads/2023/11/shop-maxi-655531f309c28.png",
+                                        "product_16x9": "https://api.cenoteka.rs/uploads/cache/product_16x9/uploads/2023/11/shop-maxi-655531f309c28.png",
+                                        "product_1x1": "https://api.cenoteka.rs/uploads/cache/product_1x1/uploads/2023/11/shop-maxi-655531f309c28.png",
+                                        "product_4x3": "https://api.cenoteka.rs/uploads/cache/product_4x3/uploads/2023/11/shop-maxi-655531f309c28.png",
+                                        "shop_thumb": "https://api.cenoteka.rs/uploads/cache/shop_thumb/uploads/2023/11/shop-maxi-655531f309c28.png"
+                                    },
+                                    "note": "",
+                                    "priority": 0,
+                                    "websites": [
+                                        {
+                                            "id": 46
+                                        }
+                                    ],
+                                    "promo": null,
+                                    "description": null,
+                                    "type": "offline",
+                                    "delivery_type": "paid",
+                                    "delivery_note": null,
+                                    "delivery_price": null,
+                                    "shop_badges": []
+                                },
+                                "current_price": 84.7,
+                                "old_price": null,
+                                "loyalty_price": null,
+                                "price_per_standardized": 84.7,
+                                "promo": false,
+                                "note": null,
+                                "valid_from": null,
+                                "valid_to": null,
+                                "shop_url": "https://NEMAURL/7176330",
+                                "updated_at": "2024-01-11T07:59:48Z",
+                                "in_stock": true,
+                                "disabled": null,
+                                "review_score": null,
+                                "review_count": null,
+                                "price_badges": []
+                            }
+                        ],
+                        "product_attributes": [],
+                        "short_name": "",
+                        "featured": null,
+                        "bestseller": null,
+                        "websites": [
+                            {
+                                "id": 46
+                            }
+                        ],
+                        "likes": null,
+                        "page_title": null,
+                        "meta_description": null,
+                        "campaigns": [],
+                        "iframe": null,
+                        "view3d": null,
+                        "video": null
+                    }
+                ],
+                "product_relationships": [],
+                "related_products": []
+            },
+            "slug": "brasno-danubius-meko-t-400-1kg",
+            "variation": {
+                "id": 26044,
+                "product": 31728,
+                "sku": "1006006",
+                "slug": "brasno-danubius-meko-t-400-1kg",
+                "name": "Brašno DANUBIUS meko T-400 1kg",
+                "status": "active",
+                "description": "",
+                "position": 0,
+                "brand": {
+                    "id": 701,
+                    "slug": "danubius",
+                    "name": "Danubius",
+                    "image": {
+                        "id": 221228,
+                        "file_name": "brand-danubius-656dcc5e5dc2e.png",
+                        "file_path": "/uploads/2023/12/brand-danubius-656dcc5e5dc2e.png",
+                        "file_caption": null,
+                        "file_extension": "png",
+                        "thumb": "https://api.cenoteka.rs/uploads/cache/thumb/uploads/2023/12/brand-danubius-656dcc5e5dc2e.png",
+                        "product_small": "https://api.cenoteka.rs/uploads/cache/product_small/uploads/2023/12/brand-danubius-656dcc5e5dc2e.png",
+                        "product_medium": "https://api.cenoteka.rs/uploads/cache/product_medium/uploads/2023/12/brand-danubius-656dcc5e5dc2e.png",
+                        "product_large": "https://api.cenoteka.rs/uploads/cache/product_large/uploads/2023/12/brand-danubius-656dcc5e5dc2e.png",
+                        "product_16x9": "https://api.cenoteka.rs/uploads/cache/product_16x9/uploads/2023/12/brand-danubius-656dcc5e5dc2e.png",
+                        "product_1x1": "https://api.cenoteka.rs/uploads/cache/product_1x1/uploads/2023/12/brand-danubius-656dcc5e5dc2e.png",
+                        "product_4x3": "https://api.cenoteka.rs/uploads/cache/product_4x3/uploads/2023/12/brand-danubius-656dcc5e5dc2e.png",
+                        "shop_thumb": "https://api.cenoteka.rs/uploads/cache/shop_thumb/uploads/2023/12/brand-danubius-656dcc5e5dc2e.png"
+                    }
+                },
+                "amount": 1,
+                "unit": "kg",
+                "standardized_amount": 1,
+                "standardized_unit": "kg",
+                "product_images": [
+                    {
+                        "id": 113929,
+                        "file": {
+                            "id": 200651,
+                            "file_name": "brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg",
+                            "file_path": "/uploads/2023/11/brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg",
+                            "file_caption": null,
+                            "file_extension": "jpeg",
+                            "thumb": "https://api.cenoteka.rs/uploads/cache/thumb/uploads/2023/11/brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg",
+                            "product_small": "https://api.cenoteka.rs/uploads/cache/product_small/uploads/2023/11/brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg",
+                            "product_medium": "https://api.cenoteka.rs/uploads/cache/product_medium/uploads/2023/11/brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg",
+                            "product_large": "https://api.cenoteka.rs/uploads/cache/product_large/uploads/2023/11/brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg",
+                            "product_16x9": "https://api.cenoteka.rs/uploads/cache/product_16x9/uploads/2023/11/brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg",
+                            "product_1x1": "https://api.cenoteka.rs/uploads/cache/product_1x1/uploads/2023/11/brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg",
+                            "product_4x3": "https://api.cenoteka.rs/uploads/cache/product_4x3/uploads/2023/11/brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg",
+                            "shop_thumb": "https://api.cenoteka.rs/uploads/cache/shop_thumb/uploads/2023/11/brasno-danubius-meko-t-400-1kg-65553f4e812dc.jpeg"
+                        },
+                        "position": 0
+                    }
+                ],
+                "product_documents": [],
+                "barcodes": [
+                    {
+                        "value": "8601300046013"
+                    },
+                    {
+                        "value": "8601300046419"
+                    }
+                ],
+                "prices": [
+                    {
+                        "id": 213335,
+                        "shop": {
+                            "id": 42,
+                            "name": "Tempo",
+                            "status": "active",
+                            "image": {
+                                "id": 199534,
+                                "file_name": "shop-tempo-655533342f2d7.png",
+                                "file_path": "/uploads/2023/11/shop-tempo-655533342f2d7.png",
+                                "file_caption": null,
+                                "file_extension": "png",
+                                "thumb": "https://api.cenoteka.rs/uploads/cache/thumb/uploads/2023/11/shop-tempo-655533342f2d7.png",
+                                "product_small": "https://api.cenoteka.rs/uploads/cache/product_small/uploads/2023/11/shop-tempo-655533342f2d7.png",
+                                "product_medium": "https://api.cenoteka.rs/uploads/cache/product_medium/uploads/2023/11/shop-tempo-655533342f2d7.png",
+                                "product_large": "https://api.cenoteka.rs/uploads/cache/product_large/uploads/2023/11/shop-tempo-655533342f2d7.png",
+                                "product_16x9": "https://api.cenoteka.rs/uploads/cache/product_16x9/uploads/2023/11/shop-tempo-655533342f2d7.png",
+                                "product_1x1": "https://api.cenoteka.rs/uploads/cache/product_1x1/uploads/2023/11/shop-tempo-655533342f2d7.png",
+                                "product_4x3": "https://api.cenoteka.rs/uploads/cache/product_4x3/uploads/2023/11/shop-tempo-655533342f2d7.png",
+                                "shop_thumb": "https://api.cenoteka.rs/uploads/cache/shop_thumb/uploads/2023/11/shop-tempo-655533342f2d7.png"
+                            },
+                            "note": "",
+                            "priority": 0,
+                            "websites": [
+                                {
+                                    "id": 46
+                                }
+                            ],
+                            "promo": null,
+                            "description": null,
+                            "type": "offline",
+                            "delivery_type": "paid",
+                            "delivery_note": null,
+                            "delivery_price": null,
+                            "shop_badges": []
+                        },
+                        "current_price": 84.7,
+                        "old_price": null,
+                        "loyalty_price": null,
+                        "price_per_standardized": 84.7,
+                        "promo": false,
+                        "note": null,
+                        "valid_from": null,
+                        "valid_to": null,
+                        "shop_url": "https://NEMAURL/7176330",
+                        "updated_at": "2023-11-15T23:08:20Z",
+                        "in_stock": true,
+                        "disabled": null,
+                        "review_score": null,
+                        "review_count": null,
+                        "price_badges": []
+                    },
+                    {
+                        "id": 216581,
+                        "shop": {
+                            "id": 40,
+                            "name": "Dis",
+                            "status": "active",
+                            "image": {
+                                "id": 300736,
+                                "file_name": "shop-dis-65e89594126af.png",
+                                "file_path": "/uploads/2024/03/shop-dis-65e89594126af.png",
+                                "file_caption": null,
+                                "file_extension": "png",
+                                "thumb": "https://api.cenoteka.rs/uploads/cache/thumb/uploads/2024/03/shop-dis-65e89594126af.png",
+                                "product_small": "https://api.cenoteka.rs/uploads/cache/product_small/uploads/2024/03/shop-dis-65e89594126af.png",
+                                "product_medium": "https://api.cenoteka.rs/uploads/cache/product_medium/uploads/2024/03/shop-dis-65e89594126af.png",
+                                "product_large": "https://api.cenoteka.rs/uploads/cache/product_large/uploads/2024/03/shop-dis-65e89594126af.png",
+                                "product_16x9": "https://api.cenoteka.rs/uploads/cache/product_16x9/uploads/2024/03/shop-dis-65e89594126af.png",
+                                "product_1x1": "https://api.cenoteka.rs/uploads/cache/product_1x1/uploads/2024/03/shop-dis-65e89594126af.png",
+                                "product_4x3": "https://api.cenoteka.rs/uploads/cache/product_4x3/uploads/2024/03/shop-dis-65e89594126af.png",
+                                "shop_thumb": "https://api.cenoteka.rs/uploads/cache/shop_thumb/uploads/2024/03/shop-dis-65e89594126af.png"
+                            },
+                            "note": "",
+                            "priority": 0,
+                            "websites": [
+                                {
+                                    "id": 46
+                                }
+                            ],
+                            "promo": null,
+                            "description": null,
+                            "type": "offline",
+                            "delivery_type": "paid",
+                            "delivery_note": null,
+                            "delivery_price": null,
+                            "shop_badges": []
+                        },
+                        "current_price": 84.99,
+                        "old_price": null,
+                        "loyalty_price": null,
+                        "price_per_standardized": 84.99,
+                        "promo": false,
+                        "note": null,
+                        "valid_from": null,
+                        "valid_to": null,
+                        "shop_url": "https://NEMAURL/21904",
+                        "updated_at": "2024-02-23T07:55:15Z",
+                        "in_stock": true,
+                        "disabled": null,
+                        "review_score": null,
+                        "review_count": null,
+                        "price_badges": []
+                    },
+                    {
+                        "id": 219367,
+                        "shop": {
+                            "id": 38,
+                            "name": "Idea",
+                            "status": "active",
+                            "image": {
+                                "id": 199521,
+                                "file_name": "shop-idea-655532b40645b.png",
+                                "file_path": "/uploads/2023/11/shop-idea-655532b40645b.png",
+                                "file_caption": null,
+                                "file_extension": "png",
+                                "thumb": "https://api.cenoteka.rs/uploads/cache/thumb/uploads/2023/11/shop-idea-655532b40645b.png",
+                                "product_small": "https://api.cenoteka.rs/uploads/cache/product_small/uploads/2023/11/shop-idea-655532b40645b.png",
+                                "product_medium": "https://api.cenoteka.rs/uploads/cache/product_medium/uploads/2023/11/shop-idea-655532b40645b.png",
+                                "product_large": "https://api.cenoteka.rs/uploads/cache/product_large/uploads/2023/11/shop-idea-655532b40645b.png",
+                                "product_16x9": "https://api.cenoteka.rs/uploads/cache/product_16x9/uploads/2023/11/shop-idea-655532b40645b.png",
+                                "product_1x1": "https://api.cenoteka.rs/uploads/cache/product_1x1/uploads/2023/11/shop-idea-655532b40645b.png",
+                                "product_4x3": "https://api.cenoteka.rs/uploads/cache/product_4x3/uploads/2023/11/shop-idea-655532b40645b.png",
+                                "shop_thumb": "https://api.cenoteka.rs/uploads/cache/shop_thumb/uploads/2023/11/shop-idea-655532b40645b.png"
+                            },
+                            "note": "",
+                            "priority": 0,
+                            "websites": [
+                                {
+                                    "id": 46
+                                }
+                            ],
+                            "promo": null,
+                            "description": null,
+                            "type": "offline",
+                            "delivery_type": "paid",
+                            "delivery_note": null,
+                            "delivery_price": null,
+                            "shop_badges": []
+                        },
+                        "current_price": 59.99,
+                        "old_price": 84.7,
+                        "loyalty_price": null,
+                        "price_per_standardized": 59.99,
+                        "promo": true,
+                        "note": "Akcija",
+                        "valid_from": "2024-03-11T07:52:22Z",
+                        "valid_to": "2024-03-17T07:52:22Z",
+                        "shop_url": "https://NEMAURL/160041113",
+                        "updated_at": "2024-03-11T07:52:22Z",
+                        "in_stock": true,
+                        "disabled": null,
+                        "review_score": null,
+                        "review_count": null,
+                        "price_badges": []
+                    },
+                    {
+                        "id": 224983,
+                        "shop": {
+                            "id": 41,
+                            "name": "Roda",
+                            "status": "active",
+                            "image": {
+                                "id": 199531,
+                                "file_name": "shop-roda-6555330c8ef78.png",
+                                "file_path": "/uploads/2023/11/shop-roda-6555330c8ef78.png",
+                                "file_caption": null,
+                                "file_extension": "png",
+                                "thumb": "https://api.cenoteka.rs/uploads/cache/thumb/uploads/2023/11/shop-roda-6555330c8ef78.png",
+                                "product_small": "https://api.cenoteka.rs/uploads/cache/product_small/uploads/2023/11/shop-roda-6555330c8ef78.png",
+                                "product_medium": "https://api.cenoteka.rs/uploads/cache/product_medium/uploads/2023/11/shop-roda-6555330c8ef78.png",
+                                "product_large": "https://api.cenoteka.rs/uploads/cache/product_large/uploads/2023/11/shop-roda-6555330c8ef78.png",
+                                "product_16x9": "https://api.cenoteka.rs/uploads/cache/product_16x9/uploads/2023/11/shop-roda-6555330c8ef78.png",
+                                "product_1x1": "https://api.cenoteka.rs/uploads/cache/product_1x1/uploads/2023/11/shop-roda-6555330c8ef78.png",
+                                "product_4x3": "https://api.cenoteka.rs/uploads/cache/product_4x3/uploads/2023/11/shop-roda-6555330c8ef78.png",
+                                "shop_thumb": "https://api.cenoteka.rs/uploads/cache/shop_thumb/uploads/2023/11/shop-roda-6555330c8ef78.png"
+                            },
+                            "note": "",
+                            "priority": 0,
+                            "websites": [
+                                {
+                                    "id": 46
+                                }
+                            ],
+                            "promo": null,
+                            "description": null,
+                            "type": "offline",
+                            "delivery_type": "paid",
+                            "delivery_note": null,
+                            "delivery_price": null,
+                            "shop_badges": []
+                        },
+                        "current_price": 59.99,
+                        "old_price": 84.7,
+                        "loyalty_price": null,
+                        "price_per_standardized": 59.99,
+                        "promo": true,
+                        "note": "Akcija",
+                        "valid_from": "2024-03-11T07:53:45Z",
+                        "valid_to": "2024-03-17T07:53:45Z",
+                        "shop_url": "https://NEMAURL/160041113",
+                        "updated_at": "2024-03-11T07:53:45Z",
+                        "in_stock": true,
+                        "disabled": null,
+                        "review_score": null,
+                        "review_count": null,
+                        "price_badges": []
+                    },
+                    {
+                        "id": 232328,
+                        "shop": {
+                            "id": 39,
+                            "name": "Univerexport",
+                            "status": "active",
+                            "image": {
+                                "id": 199527,
+                                "file_name": "shop-univerexport-655532f1259e6.png",
+                                "file_path": "/uploads/2023/11/shop-univerexport-655532f1259e6.png",
+                                "file_caption": null,
+                                "file_extension": "png",
+                                "thumb": "https://api.cenoteka.rs/uploads/cache/thumb/uploads/2023/11/shop-univerexport-655532f1259e6.png",
+                                "product_small": "https://api.cenoteka.rs/uploads/cache/product_small/uploads/2023/11/shop-univerexport-655532f1259e6.png",
+                                "product_medium": "https://api.cenoteka.rs/uploads/cache/product_medium/uploads/2023/11/shop-univerexport-655532f1259e6.png",
+                                "product_large": "https://api.cenoteka.rs/uploads/cache/product_large/uploads/2023/11/shop-univerexport-655532f1259e6.png",
+                                "product_16x9": "https://api.cenoteka.rs/uploads/cache/product_16x9/uploads/2023/11/shop-univerexport-655532f1259e6.png",
+                                "product_1x1": "https://api.cenoteka.rs/uploads/cache/product_1x1/uploads/2023/11/shop-univerexport-655532f1259e6.png",
+                                "product_4x3": "https://api.cenoteka.rs/uploads/cache/product_4x3/uploads/2023/11/shop-univerexport-655532f1259e6.png",
+                                "shop_thumb": "https://api.cenoteka.rs/uploads/cache/shop_thumb/uploads/2023/11/shop-univerexport-655532f1259e6.png"
+                            },
+                            "note": "",
+                            "priority": 0,
+                            "websites": [
+                                {
+                                    "id": 46
+                                }
+                            ],
+                            "promo": null,
+                            "description": null,
+                            "type": "offline",
+                            "delivery_type": "paid",
+                            "delivery_note": null,
+                            "delivery_price": null,
+                            "shop_badges": []
+                        },
+                        "current_price": 84.7,
+                        "old_price": null,
+                        "loyalty_price": null,
+                        "price_per_standardized": 84.7,
+                        "promo": false,
+                        "note": null,
+                        "valid_from": null,
+                        "valid_to": null,
+                        "shop_url": "https://NEMAURL/1014452",
+                        "updated_at": "2023-11-16T15:02:53Z",
+                        "in_stock": true,
+                        "disabled": null,
+                        "review_score": null,
+                        "review_count": null,
+                        "price_badges": []
+                    },
+                    {
+                        "id": 236672,
+                        "shop": {
+                            "id": 37,
+                            "name": "Maxi",
+                            "status": "active",
+                            "image": {
+                                "id": 199503,
+                                "file_name": "shop-maxi-655531f309c28.png",
+                                "file_path": "/uploads/2023/11/shop-maxi-655531f309c28.png",
+                                "file_caption": null,
+                                "file_extension": "png",
+                                "thumb": "https://api.cenoteka.rs/uploads/cache/thumb/uploads/2023/11/shop-maxi-655531f309c28.png",
+                                "product_small": "https://api.cenoteka.rs/uploads/cache/product_small/uploads/2023/11/shop-maxi-655531f309c28.png",
+                                "product_medium": "https://api.cenoteka.rs/uploads/cache/product_medium/uploads/2023/11/shop-maxi-655531f309c28.png",
+                                "product_large": "https://api.cenoteka.rs/uploads/cache/product_large/uploads/2023/11/shop-maxi-655531f309c28.png",
+                                "product_16x9": "https://api.cenoteka.rs/uploads/cache/product_16x9/uploads/2023/11/shop-maxi-655531f309c28.png",
+                                "product_1x1": "https://api.cenoteka.rs/uploads/cache/product_1x1/uploads/2023/11/shop-maxi-655531f309c28.png",
+                                "product_4x3": "https://api.cenoteka.rs/uploads/cache/product_4x3/uploads/2023/11/shop-maxi-655531f309c28.png",
+                                "shop_thumb": "https://api.cenoteka.rs/uploads/cache/shop_thumb/uploads/2023/11/shop-maxi-655531f309c28.png"
+                            },
+                            "note": "",
+                            "priority": 0,
+                            "websites": [
+                                {
+                                    "id": 46
+                                }
+                            ],
+                            "promo": null,
+                            "description": null,
+                            "type": "offline",
+                            "delivery_type": "paid",
+                            "delivery_note": null,
+                            "delivery_price": null,
+                            "shop_badges": []
+                        },
+                        "current_price": 84.7,
+                        "old_price": null,
+                        "loyalty_price": null,
+                        "price_per_standardized": 84.7,
+                        "promo": false,
+                        "note": null,
+                        "valid_from": null,
+                        "valid_to": null,
+                        "shop_url": "https://NEMAURL/7176330",
+                        "updated_at": "2024-01-11T07:59:48Z",
+                        "in_stock": true,
+                        "disabled": null,
+                        "review_score": null,
+                        "review_count": null,
+                        "price_badges": []
+                    }
+                ],
+                "product_attributes": [],
+                "short_name": "",
+                "featured": null,
+                "bestseller": null,
+                "websites": [
+                    {
+                        "id": 46
+                    }
+                ],
+                "likes": null,
+                "page_title": null,
+                "meta_description": null,
+                "campaigns": [],
+                "iframe": null,
+                "view3d": null,
+                "video": null
+            }
+        },
+        "__N_SSG": true
+    }
+}

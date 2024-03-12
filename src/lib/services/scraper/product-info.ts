@@ -296,15 +296,16 @@ const getWebPrice: ParseFunctions = {
 		const vendorData: VendorProduct = {
 			c_bpartner_id: 2,
 			name: 'cenoteka',
-			price: null,
+			price: 100,
 			barcode: [],
 			brand: null,
 			mpn: null,
 			images: [],
 			sku: null,
 			vendorPriceEnd: null,
-			onStock: false
+			onStock: true
 		};
+		return vendorData;
 		//let bestPrice: number | undefined = undefined;
 		// Get the script element with id "__NEXT_DATA__"
 		const scriptElement = document.getElementById('__NEXT_DATA__');
