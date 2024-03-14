@@ -40,15 +40,15 @@ export const getProductInfo = async (supabase: SupabaseClient<Database>, product
 						if (!response.ok) {
 							throw new Error(`Failed to fetch: ${response.status}`);
 						}
-						//						const html = await response.text();
-						//						const { document } = parseHTML(html);
-						//
-						//						// If it does, call the corresponding function
-						//						const webData = await getWebPrice[key](document);
-						//						if (webData) {
-						//							webData.po_id = productPurchasing[index].id;
-						//							vendorsProduct.push(webData);
-						//						}
+						const html = await response.text();
+						const { document } = parseHTML(html);
+
+						// If it does, call the corresponding function
+						const webData = await getWebPrice[key](document);
+						if (webData) {
+							webData.po_id = productPurchasing[index].id;
+							vendorsProduct.push(webData);
+						}
 					}
 				}
 				for (const key in getApiInfo) {
