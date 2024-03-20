@@ -437,7 +437,6 @@ const getApiInfo: GetApiInfo = {
 		}
 
 		const data = await response.json();
-		console.log('data.price', data?.price);
 		vendorData.barcode = data.barcodes;
 		vendorData.onStock = data.active;
 		vendorData.price = data.price.amount / 100;
@@ -514,7 +513,6 @@ const getApiInfo: GetApiInfo = {
 			// Create a new Date object using the parsed values
 			vendorData.vendorPriceEnd = new Date(year, month - 1, day, hours, minutes, seconds);
 		}
-		console.log('vendorData', vendorData);
 		return vendorData;
 	}
 };
