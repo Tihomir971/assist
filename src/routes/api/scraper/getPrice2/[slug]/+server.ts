@@ -31,13 +31,6 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 			const vendorOnStock = vendorsProduct[index].onStock;
 
 			if (vendorPOId !== 0) {
-				console.log('for update', {
-					pricelist: vendorOnStock ? vendorPrice : 0,
-					vendorproductno: vendorPN,
-					manufacturer: vendorBrand,
-					barcode: vendorBarcode
-				});
-
 				const { error } = await supabase
 					.from('m_product_po')
 					.update({
