@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import PhLayout from '$lib/icons/PhLayout.svelte';
 
 	let activePath: string | undefined = undefined;
 	$: if (browser) activePath = $page.url.pathname;
@@ -16,7 +17,8 @@
 				data-tip="Dashboard"
 				class:btn-active={activePath === '/dashboard'}
 			>
-				<iconify-icon icon="ph:layout" width="24" height="24"></iconify-icon>
+				<!-- <iconify-icon icon="ph:layout" width="24" height="24"></iconify-icon> -->
+				<PhLayout class="w-6" />
 			</a>
 		</div>
 		<div class="tooltip tooltip-right" data-tip="Catalog">
