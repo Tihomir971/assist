@@ -17,6 +17,9 @@
 	import type { TreeItem } from '..';
 	import { melt } from '@melt-ui/svelte';
 	import { getCtx } from '../ctx';
+	import PhCaretDown from '$lib/icons/PhCaretDown.svelte';
+	import PhCaretRight from '$lib/icons/PhCaretRight.svelte';
+	import PhDotBold from '$lib/icons/PhDotBold.svelte';
 
 	export let treeItems: TreeItem[];
 	export let level = 1;
@@ -47,17 +50,20 @@
 				{#if $isExpanded(itemId)}
 					<span class="size-4">
 						<!-- <svelte:component this={icons['folderOpen']} class="size-5 text-base-content" /> -->
-						<iconify-icon icon="ph:caret-down" width="16" height="16"></iconify-icon>
+						<PhCaretDown class="size-4" />
+						<!-- <iconify-icon icon="ph:caret-down" width="16" height="16"></iconify-icon> -->
 					</span>
 				{:else}
 					<span class="size-4">
+						<PhCaretRight class="size-4" />
 						<!-- <svelte:component this={icons['folder']} class="size-5 text-base-content" /> -->
-						<iconify-icon icon="ph:caret-right" width="16" height="16"></iconify-icon>
+						<!-- <iconify-icon icon="ph:caret-right" width="16" height="16"></iconify-icon> -->
 					</span>
 				{/if}
 			{:else}
 				<!-- <svelte:component this={icons['child']} class="size-5" /> -->
-				<iconify-icon icon="ph:dot-bold" width="16" height="16"></iconify-icon>
+				<PhDotBold class="size-4" />
+				<!-- <iconify-icon icon="ph:dot-bold" width="16" height="16"></iconify-icon> -->
 			{/if}
 
 			<!-- {#if icon}

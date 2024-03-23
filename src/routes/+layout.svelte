@@ -1,7 +1,7 @@
 <!-- src/routes/+layout.svelte -->
 <script lang="ts">
 	import '../app.postcss';
-	//	import 'iconify-icon';
+	import 'iconify-icon';
 	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
 

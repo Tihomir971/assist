@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import * as api from '$lib/api';
+	//	import * as erp from '$lib/api/erp';
 	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
 	import { browser } from '$app/environment';
 	import { goto, invalidate } from '$app/navigation';
+	//	import { enhance } from '$app/forms';
 
 	export let selectedProducts: number[];
 	export let onStock: boolean = true;
@@ -58,6 +60,22 @@
 			.catch((error) => {
 				console.error(`Could not get products: ${error}`);
 			});
+	}
+	async function getERPnew() {
+		for (const item of selectedProducts) {
+			fetch(`/api/erp/getProduct/${item}`).then((response) => {
+				if (response.status === 200) {
+					addToast({
+						data: {
+							title: 'ERP Prices updated!',
+							description: `ERP price for "${item}" updated`,
+							color: 'alert-success'
+						}
+					});
+				}
+			});
+			console.log(item);
+		}
 	}
 	async function addToBasket() {
 		const apiUrl = '/api/basket/add/';
@@ -136,7 +154,7 @@
 			<iconify-icon icon="ph:currency-eur" width="24" height="24"></iconify-icon>
 			Get Prices
 		</button>
-		<button on:click={getERP} class="btn btn-neutral">
+		<button type="button" on:click={getERPnew} class="btn btn-neutral">
 			<iconify-icon icon="ph:factory" width="24" height="24"></iconify-icon>
 			Get ERP
 		</button>
