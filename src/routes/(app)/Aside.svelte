@@ -2,6 +2,8 @@
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import PhLayout from '$lib/icons/PhLayout.svelte';
+	import PhTag from '$lib/icons/PhTag.svelte';
+	import PhTestTube from '$lib/icons/PhTestTube.svelte';
 
 	let activePath: string | undefined = undefined;
 	$: if (browser) activePath = $page.url.pathname;
@@ -28,7 +30,8 @@
 				class="btn btn-square btn-ghost join-item"
 				class:btn-active={activePath === '/catalog'}
 			>
-				<iconify-icon icon="ph:tag" width="24" height="24"></iconify-icon>
+				<PhTag class="w-6" />
+				<!-- <iconify-icon icon="ph:tag" width="24" height="24"></iconify-icon> -->
 			</a>
 		</div>
 
@@ -39,7 +42,8 @@
 				class="btn btn-square btn-ghost join-item"
 				class:btn-active={activePath?.startsWith('/catalog/')}
 			>
-				<iconify-icon icon="ph:test-tube" width="24" height="24"></iconify-icon>
+				<PhTestTube class="w-6" />
+				<!-- <iconify-icon icon="ph:test-tube" width="24" height="24"></iconify-icon> -->
 			</div>
 			<ul class="menu dropdown-content z-[1] w-52 rounded-box bg-base-300 p-2 shadow">
 				<li class="menu-title">Catalog</li>

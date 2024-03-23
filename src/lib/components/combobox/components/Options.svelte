@@ -3,6 +3,7 @@
 	import { melt, type ComboboxOptionProps, type ComboboxOption } from '@melt-ui/svelte';
 
 	import { getContent } from '../ctx';
+	import PhCheckBold from '$lib/icons/PhCheckBold.svelte';
 	const {
 		elements: { option, menu },
 		states: { open, touchedInput, inputValue, selected },
@@ -43,7 +44,8 @@
 			>
 				{#if $isSelected(singleOption)}
 					<div class="z-10 -mx-2">
-						<iconify-icon icon="ph:check-bold" width="20" height="20"></iconify-icon>
+						<PhCheckBold class="w-5" />
+						<!-- <iconify-icon icon="ph:check-bold" width="20" height="20"></iconify-icon> -->
 					</div>
 				{/if}
 				<div class="pl-4">

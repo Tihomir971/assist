@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Npm, Yarn, Pnpm } from '../icons/index.js';
+	//	import { Npm, Yarn, Pnpm } from '../icons/index.js';
 	import { melt } from '@melt-ui/svelte';
 	import { getCtx } from './ctx.js';
 

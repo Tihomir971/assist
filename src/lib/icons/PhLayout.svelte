@@ -1,6 +1,4 @@
 <script lang="ts">
-	import type { SVGAttributes } from 'svelte/elements';
-
 	let { ...restProps } = $$props;
 </script>
 

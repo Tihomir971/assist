@@ -6,6 +6,8 @@
 	import { browser } from '$app/environment';
 	import { TreeView, type TreeItem } from '$lib/components/treeview';
 	import { Toolbar } from '$lib/components/toolbar';
+	import PhNotePencil from '$lib/icons/PhNotePencil.svelte';
+	import PhFolderPlus from '$lib/icons/PhFolderPlus.svelte';
 
 	export let data: LayoutData;
 	let { categories, expanded } = data;
@@ -49,14 +51,18 @@
 				data-tip="Edit"
 				on:click={editCategory}
 				class="btn join-item tooltip tooltip-bottom"
-				><iconify-icon icon="ph:note-pencil" width="24" height="24"></iconify-icon></Toolbar.Button
 			>
-			<Toolbar.Button type="button" data-tip="Add" class="btn join-item tooltip tooltip-bottom"
-				><iconify-icon icon="ph:folder-plus" width="24" height="24"></iconify-icon></Toolbar.Button
+				<PhNotePencil class="w-6" />
+				<!-- <iconify-icon icon="ph:note-pencil" width="24" height="24"
+				></iconify-icon> --></Toolbar.Button
 			>
-			<Toolbar.Button type="button" data-tip="Delete" class="btn join-item tooltip tooltip-bottom"
-				><iconify-icon icon="ph:folder-minus" width="24" height="24"></iconify-icon></Toolbar.Button
-			>
+			<Toolbar.Button type="button" data-tip="Add" class="btn join-item tooltip tooltip-bottom">
+				<PhFolderPlus class="w-6"></PhFolderPlus>
+				<!-- <iconify-icon icon="ph:folder-plus" width="24" height="24"></iconify-icon> -->
+			</Toolbar.Button>
+			<Toolbar.Button type="button" data-tip="Delete" class="btn join-item tooltip tooltip-bottom">
+				<iconify-icon icon="ph:folder-minus" width="24" height="24"></iconify-icon>
+			</Toolbar.Button>
 			<Toolbar.Button
 				type="button"
 				data-tip="Collapse"
