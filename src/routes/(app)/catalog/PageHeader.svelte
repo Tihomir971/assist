@@ -76,6 +76,7 @@
 			});
 			console.log(item);
 		}
+		invalidate('catalog:products');
 	}
 	async function addToBasket() {
 		const apiUrl = '/api/basket/add/';

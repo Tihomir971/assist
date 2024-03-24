@@ -1,4 +1,4 @@
-import { BIZNISOFT_BEARER_TOKEN } from '$env/static/private';
+import { BIZNISOFT_API, BIZNISOFT_BEARER_TOKEN } from '$env/static/private';
 import { json, redirect, type RequestHandler } from '@sveltejs/kit';
 
 const myHeaders = new Headers({ Authorization: 'Bearer ' + BIZNISOFT_BEARER_TOKEN });
@@ -19,7 +19,7 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 	if (!product) {
 		return json({ code: 'warning', message: 'Product not found' });
 	}
-	const apiUrl = `https://biznisoft-api.kalisi.rs/api/catalog/getProduct?id=${product.sku}`;
+	const apiUrl = BIZNISOFT_API + `/api/Article/GetItem?id=${product.sku}`;
 	console.log('apiUrl', apiUrl);
 
 	const response = await fetch(apiUrl, {
