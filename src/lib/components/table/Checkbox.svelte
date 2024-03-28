@@ -7,7 +7,7 @@
 
 <label>
 	<input
-		class="checkbox checkbox-sm"
+		class="checkbox"
 		type="checkbox"
 		bind:checked={$isSelected}
 		indeterminate={$isSomeSubRowsSelected && !$isSelected}

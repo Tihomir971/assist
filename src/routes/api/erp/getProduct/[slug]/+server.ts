@@ -1,7 +1,8 @@
-import { BIZNISOFT_API, BIZNISOFT_BEARER_TOKEN } from '$env/static/private';
+//import { BIZNISOFT_API, BIZNISOFT_BEARER_TOKEN } from '$env/static/private';
+import { getItem } from '$lib/server/erp/article';
 import { json, redirect, type RequestHandler } from '@sveltejs/kit';
 
-const myHeaders = new Headers({ Authorization: 'Bearer ' + BIZNISOFT_BEARER_TOKEN });
+//const myHeaders = new Headers({ Authorization: 'Bearer ' + BIZNISOFT_BEARER_TOKEN });
 
 export const GET: RequestHandler = async ({ params, locals: { supabase, getSession } }) => {
 	const session = await getSession();
@@ -16,10 +17,11 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 		.select('sku')
 		.eq('id', m_product_id)
 		.maybeSingle();
-	if (!product) {
+	if (!product?.sku) {
 		return json({ code: 'warning', message: 'Product not found' });
 	}
-	const apiUrl = BIZNISOFT_API + `/api/Article/GetItem?id=${product.sku}`;
+
+	/* 	const apiUrl = BIZNISOFT_API + `/api/Article/GetItem?id=${product.sku}`;
 	console.log('apiUrl', apiUrl);
 
 	const response = await fetch(apiUrl, {
@@ -29,9 +31,12 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 
 	if (!response.ok) {
 		throw new Error('Network response was not ok');
-	}
+	} */
 
-	const productErp = await response.json();
+	// Get data from article getItem
+	const productErp = await getItem(product.sku);
+
+	//	const productErp = await response.json();
 	/* 	const { error: errorProduct } = await supabase
 		.from('m_product')
 		.update({
@@ -45,7 +50,7 @@ export const GET: RequestHandler = async ({ params, locals: { supabase, getSessi
 	if (errorProduct) {
 		return json({ code: 'error', message: ` for vendors`, productErp });
 	} */
-	console.log('response', productErp[0]);
+	console.log('response', productErp);
 
 	return json({ code: 'success', message: ` for vendors`, productErp });
 };
