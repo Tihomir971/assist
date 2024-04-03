@@ -472,7 +472,7 @@ const getApiInfo: GetApiInfo = {
 		const extensions = {
 			persistedQuery: {
 				version: 1,
-				sha256Hash: 'dab0c62526aa89fb05ac65971e99961476fc100f31abaf875c32534190a497be'
+				sha256Hash: '83e82c12a02760d387a0a72a5317eaa94eb7d052a4407cfaeb0915946f03ab4f'
 			}
 		};
 		const apiUrl = new URL('https://www.maxi.rs/api/v1/');
@@ -513,6 +513,41 @@ const getApiInfo: GetApiInfo = {
 			// Create a new Date object using the parsed values
 			vendorData.vendorPriceEnd = new Date(year, month - 1, day, hours, minutes, seconds);
 		}
+		return vendorData;
+	},
+	'dis.rs': async function (url) {
+		const vendorData: VendorProduct = {
+			c_bpartner_id: 15,
+			name: 'dis',
+			price: null,
+			barcode: [],
+			brand: null,
+			mpn: null,
+			images: [],
+			sku: null,
+			vendorPriceEnd: null,
+			onStock: true
+		};
+		const parts = url.split('/');
+		const productId = parts[parts.length - 1];
+		const myHeaders = new Headers();
+
+		const requestOptions = {
+			method: 'GET',
+			headers: myHeaders
+		};
+		const apiUrl = new URL('https://www.dis.rs/api/Dis/Articles/');
+		const response = await fetch(`${apiUrl}${productId}`, requestOptions);
+		if (!response.ok) {
+			throw new Error(`Network response was not OK: ${response.statusText}`);
+		}
+		const data = await response.json();
+		console.log('data', data);
+		vendorData.sku = data.code;
+		vendorData.name = data.name;
+		vendorData.price = data.discountedPrice;
+		console.log('vendorData', vendorData);
+
 		return vendorData;
 	}
 };

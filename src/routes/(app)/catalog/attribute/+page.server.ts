@@ -1,9 +1,9 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
-export const load = (async ({ depends, locals: { supabase, getSession } }) => {
+export const load = (async ({ depends, locals: { supabase, safeGetSession } }) => {
 	depends('catalog:categories');
-	const session = await getSession();
+	const { session } = await safeGetSession();
 	if (!session) {
 		redirect(303, '/auth');
 	}

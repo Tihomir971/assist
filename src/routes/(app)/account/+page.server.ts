@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 
-export const load = async ({ locals: { supabase, getSession } }) => {
-	const session = await getSession();
+export const load = async ({ locals: { supabase, safeGetSession } }) => {
+	const { session } = await safeGetSession();
 
 	if (!session) {
 		redirect(303, '/');
@@ -16,7 +16,7 @@ export const load = async ({ locals: { supabase, getSession } }) => {
 };
 
 export const actions = {
-	update: async ({ request, locals: { supabase, getSession } }) => {
+	update: async ({ request, locals: { supabase, safeGetSession } }) => {
 		const formData = await request.formData();
 		const id = Number(formData.get('id'));
 		const fullName = formData.get('fullName') as string;
@@ -24,7 +24,7 @@ export const actions = {
 		const website = formData.get('website') as string;
 		const avatarUrl = formData.get('avatarUrl') as string;
 
-		const session = await getSession();
+		const { session } = await safeGetSession();
 
 		if (session) {
 			const { error } = await supabase.from('ad_user').upsert({
@@ -51,8 +51,8 @@ export const actions = {
 			avatarUrl
 		};
 	},
-	signout: async ({ locals: { supabase, getSession } }) => {
-		const session = await getSession();
+	signout: async ({ locals: { supabase, safeGetSession } }) => {
+		const { session } = await safeGetSession();
 		if (session) {
 			await supabase.auth.signOut();
 			redirect(303, '/');

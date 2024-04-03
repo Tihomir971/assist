@@ -4,8 +4,8 @@ import { json, redirect, type RequestHandler } from '@sveltejs/kit';
 
 //const myHeaders = new Headers({ Authorization: 'Bearer ' + BIZNISOFT_BEARER_TOKEN });
 
-export const GET: RequestHandler = async ({ params, locals: { supabase, getSession } }) => {
-	const session = await getSession();
+export const GET: RequestHandler = async ({ params, locals: { supabase, safeGetSession } }) => {
+	const { session } = await safeGetSession();
 	if (!session) {
 		redirect(303, '/auth');
 	}

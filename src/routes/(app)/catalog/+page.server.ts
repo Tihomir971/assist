@@ -12,8 +12,8 @@ type Product = Partial<Tables<'m_product'>> & {
 	m_storageonhand: { warehouse_id: number; qtyonhand: number }[];
 };
 
-export const load = (async ({ url, depends, locals: { supabase, getSession } }) => {
-	const session = await getSession();
+export const load = (async ({ url, depends, locals: { supabase, safeGetSession } }) => {
+	const { session } = await safeGetSession();
 	if (!session) {
 		redirect(303, '/auth');
 	}

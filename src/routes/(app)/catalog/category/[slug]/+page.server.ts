@@ -3,8 +3,8 @@ import type { Actions, PageServerLoad } from './$types';
 import { getBoolean, getNumber, getString } from '$lib/scripts/getForm';
 import type { Tables } from '$lib/types/database.types';
 
-export const load = (async ({ params, locals: { supabase, getSession } }) => {
-	const session = await getSession();
+export const load = (async ({ params, locals: { supabase, safeGetSession } }) => {
+	const { session } = await safeGetSession();
 	if (!session) {
 		error(401, { message: 'Unauthorized' });
 	}
@@ -31,8 +31,8 @@ export const load = (async ({ params, locals: { supabase, getSession } }) => {
 }) satisfies PageServerLoad;
 
 export const actions = {
-	setCategory: async ({ request, locals: { supabase, getSession } }) => {
-		const session = await getSession();
+	setCategory: async ({ request, locals: { supabase, safeGetSession } }) => {
+		const { session } = await safeGetSession();
 		if (!session) {
 			error(401, { message: 'Unauthorized' });
 		}

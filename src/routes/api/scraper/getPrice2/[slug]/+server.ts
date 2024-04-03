@@ -2,13 +2,13 @@ import { error, json, redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { ProductInfo } from '$lib/services/scraper';
 
-export const GET: RequestHandler = async ({ params, locals: { supabase, getSession } }) => {
+export const GET: RequestHandler = async ({ params, locals: { supabase, safeGetSession } }) => {
 	//	const userFetch = await supabase.auth.getUser();
 	//	if (userFetch.error) {
 	//		console.error(userFetch.error);
 	//		redirect(303, '/auth');
 	//	}
-	const session = await getSession();
+	const { session } = await safeGetSession();
 	if (!session) {
 		redirect(303, '/auth');
 	}

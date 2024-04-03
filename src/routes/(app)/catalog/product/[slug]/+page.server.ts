@@ -10,9 +10,10 @@ import {
 } from '$lib/services/supabase/';
 import { ProductInfo } from '$lib/services/scraper';
 
-export const load = (async ({ depends, params, locals: { supabase, getSession } }) => {
+export const load = (async ({ depends, params, locals: { supabase, safeGetSession } }) => {
 	depends('catalog:product');
-	const session = await getSession();
+	const { session } = await safeGetSession();
+
 	if (!session) {
 		error(401, { message: 'Unauthorized' });
 	}
@@ -39,8 +40,8 @@ export const load = (async ({ depends, params, locals: { supabase, getSession } 
 }) satisfies PageServerLoad;
 
 export const actions = {
-	updateProduct: async ({ request, locals: { supabase, getSession } }) => {
-		const session = await getSession();
+	updateProduct: async ({ request, locals: { supabase, safeGetSession } }) => {
+		const { session } = await safeGetSession();
 		if (!session) {
 			error(401, { message: 'Unauthorized' });
 		}
@@ -88,8 +89,8 @@ export const actions = {
 			}
 		}
 	},
-	deleteProduct: async ({ request, locals: { supabase, getSession } }) => {
-		const session = await getSession();
+	deleteProduct: async ({ request, locals: { supabase, safeGetSession } }) => {
+		const { session } = await safeGetSession();
 		if (!session) {
 			error(401, { message: 'Unauthorized' });
 		}
@@ -105,8 +106,8 @@ export const actions = {
 		}
 	},
 
-	addProductPO: async ({ request, locals: { supabase, getSession } }) => {
-		const session = await getSession();
+	addProductPO: async ({ request, locals: { supabase, safeGetSession } }) => {
+		const { session } = await safeGetSession();
 		if (!session) {
 			error(401, { message: 'Unauthorized' });
 		}
@@ -133,8 +134,8 @@ export const actions = {
 			}
 		}
 	},
-	addReplenish: async ({ request, locals: { supabase, getSession } }) => {
-		const session = await getSession();
+	addReplenish: async ({ request, locals: { supabase, safeGetSession } }) => {
+		const { session } = await safeGetSession();
 		if (!session) {
 			error(401, { message: 'Unauthorized' });
 		}
@@ -163,8 +164,8 @@ export const actions = {
 			}
 		}
 	},
-	getProductInfo: async ({ request, locals: { supabase, getSession } }) => {
-		const session = await getSession();
+	getProductInfo: async ({ request, locals: { supabase, safeGetSession } }) => {
+		const { session } = await safeGetSession();
 		if (!session) {
 			error(401, { message: 'Unauthorized' });
 		}

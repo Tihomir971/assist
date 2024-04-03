@@ -3,13 +3,6 @@
 	import { goto, invalidate } from '$app/navigation';
 	import { Avatar } from '$lib/components/avatar';
 	import type { SubmitFunction } from '@sveltejs/kit';
-
-	const handleLogout: SubmitFunction = () => {
-		return async ({ result }) => {
-			await invalidate('supabase:auth');
-			await applyAction(result);
-		};
-	};
 </script>
 
 <div class="navbar">

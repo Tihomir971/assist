@@ -1,8 +1,8 @@
 import type { RequestHandler } from './$types';
 //import type { Tables } from '$lib/types/database.types';
 
-export const POST: RequestHandler = async ({ locals: { supabase, getSession } }) => {
-	const session = await getSession();
+export const POST: RequestHandler = async ({ locals: { supabase, safeGetSession } }) => {
+	const { session } = await safeGetSession();
 	if (session) {
 		const { data: user } = await supabase
 			.from('ad_user')
