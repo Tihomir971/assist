@@ -351,6 +351,95 @@ export interface Database {
           }
         ]
       }
+      c_channel: {
+        Row: {
+          ad_org_id: number
+          c_channel_uu: string | null
+          created: string
+          description: string | null
+          id: number
+          isactive: boolean
+          name: string
+          updated: string
+        }
+        Insert: {
+          ad_org_id?: number
+          c_channel_uu?: string | null
+          created?: string
+          description?: string | null
+          id?: number
+          isactive?: boolean
+          name: string
+          updated?: string
+        }
+        Update: {
+          ad_org_id?: number
+          c_channel_uu?: string | null
+          created?: string
+          description?: string | null
+          id?: number
+          isactive?: boolean
+          name?: string
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "c_channel_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      c_channel_map: {
+        Row: {
+          ad_org_id: number
+          c_channel_id: number
+          channel_code: string
+          created: string
+          entity_type: Database["public"]["Enums"]["Entity"]
+          id: number
+          internal_code: string
+          isactive: boolean
+          updated: string
+        }
+        Insert: {
+          ad_org_id?: number
+          c_channel_id: number
+          channel_code: string
+          created?: string
+          entity_type: Database["public"]["Enums"]["Entity"]
+          id?: number
+          internal_code: string
+          isactive?: boolean
+          updated?: string
+        }
+        Update: {
+          ad_org_id?: number
+          c_channel_id?: number
+          channel_code?: string
+          created?: string
+          entity_type?: Database["public"]["Enums"]["Entity"]
+          id?: number
+          internal_code?: string
+          isactive?: boolean
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "c_channel_map_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_channel_map_c_channel_id_fkey"
+            columns: ["c_channel_id"]
+            referencedRelation: "c_channel"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       c_currency: {
         Row: {
           alphabetic_code: string
@@ -2099,7 +2188,7 @@ export interface Database {
       }
     }
     Enums: {
-      [_ in never]: never
+      Entity: "Category" | "Source"
     }
     CompositeTypes: {
       [_ in never]: never

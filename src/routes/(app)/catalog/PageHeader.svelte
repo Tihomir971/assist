@@ -63,7 +63,7 @@
 	}
 	async function getERPnew() {
 		for (const item of selectedProducts) {
-			fetch(`/api/erp/getProduct/${item}`).then((response) => {
+			fetch(`/api/erp/getProduct?ID=${item}`).then((response) => {
 				if (response.status === 200) {
 					addToast({
 						data: {
