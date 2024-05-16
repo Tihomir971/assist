@@ -55,3 +55,27 @@ export function convertToTreeStructure(data: Array<DataTableRow> | null): TreeIt
 	//return createTree(data);
 	return arrayToTree(data);
 }
+
+type Category = {
+	id: number;
+	parent_id: number | null;
+	title: string;
+};
+export function findChildren(categories: Category[], id: number): number[] {
+	const result: number[] = [];
+
+	const queue: number[] = [id];
+
+	while (queue.length > 0) {
+		const categoryId = queue.shift()!;
+		const category = categories.find((c) => c.id === categoryId);
+		if (!category) continue;
+
+		result.push(category.id);
+
+		const childCategories = categories.filter((c) => c.parent_id === category.id);
+		childCategories.forEach((child) => queue.push(child.id));
+	}
+
+	return result;
+}

@@ -2,6 +2,7 @@
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import PhLayout from '$lib/icons/PhLayout.svelte';
+	import PhRepeat from '$lib/icons/PhRepeat.svelte';
 	import PhTag from '$lib/icons/PhTag.svelte';
 	import PhTestTube from '$lib/icons/PhTestTube.svelte';
 
@@ -31,6 +32,17 @@
 				class:btn-active={activePath === '/catalog'}
 			>
 				<PhTag class="w-6" />
+				<!-- <iconify-icon icon="ph:tag" width="24" height="24"></iconify-icon> -->
+			</a>
+		</div>
+		<div class="tooltip tooltip-right" data-tip="Replenish">
+			<a
+				href="/catalog/replenish"
+				data-tip="Replanish"
+				class="btn btn-square btn-ghost join-item"
+				class:btn-active={activePath === '/catalog/replenish'}
+			>
+				<PhRepeat class="w-6" />
 				<!-- <iconify-icon icon="ph:tag" width="24" height="24"></iconify-icon> -->
 			</a>
 		</div>

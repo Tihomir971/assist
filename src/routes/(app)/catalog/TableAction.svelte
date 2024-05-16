@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import { Drawer } from 'vaul-svelte';
 	const dispatch = createEventDispatcher();
 	export let id: number;
 </script>
@@ -11,3 +12,12 @@
 		dispatch('click', { id });
 	}}><iconify-icon icon="ph:pencil-simple" width="20" height="20"></iconify-icon></button
 >
+<!-- <Drawer.Root>
+	<Drawer.Trigger>Open</Drawer.Trigger>
+	<Drawer.Portal>
+		<Drawer.Content>
+			<p>Content</p>
+		</Drawer.Content>
+		<Drawer.Overlay />
+	</Drawer.Portal>
+</Drawer.Root> -->

@@ -4,7 +4,7 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
-	import { TreeView, type TreeItem } from '$lib/components/treeview';
+	import { TreeView } from '$lib/components/treeview';
 	import { Toolbar } from '$lib/components/toolbar';
 	import PhNotePencil from '$lib/icons/PhNotePencil.svelte';
 	import PhFolderPlus from '$lib/icons/PhFolderPlus.svelte';
@@ -26,7 +26,7 @@
 		}
 
 		if (browser) {
-			goto(`${newUrl.origin}/catalog${newUrl.search}`);
+			goto(`${newUrl.origin}${newUrl.pathname}${newUrl.search}`);
 		}
 		return;
 	}
@@ -53,9 +53,7 @@
 				class="btn join-item tooltip tooltip-bottom"
 			>
 				<PhNotePencil class="w-6" />
-				<!-- <iconify-icon icon="ph:note-pencil" width="24" height="24"
-				></iconify-icon> --></Toolbar.Button
-			>
+			</Toolbar.Button>
 			<Toolbar.Button type="button" data-tip="Add" class="btn join-item tooltip tooltip-bottom">
 				<PhFolderPlus class="w-6"></PhFolderPlus>
 				<!-- <iconify-icon icon="ph:folder-plus" width="24" height="24"></iconify-icon> -->
