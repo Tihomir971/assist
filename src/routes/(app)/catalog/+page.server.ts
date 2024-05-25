@@ -1,6 +1,11 @@
-import type { PageServerLoad } from './$types';
+//import { BIZNISOFT_API, BIZNISOFT_BEARER_TOKEN } from '$env/static/private';
 import { redirect } from '@sveltejs/kit';
+import * as biznisoft from '$lib/services/biznisoft.js';
+import type { Actions, PageServerLoad } from './$types';
 import type { Tables } from '$lib/types/database.types';
+import type { BSNivoZaliha } from '$lib/types/biznisoft';
+import { getChannelMap } from '$lib/services/channel-map';
+//import type { BSArticle, BSNivoZaliha } from '$lib/types/biznisoft';
 type Product = Partial<Tables<'m_product'>> & {
 	id: number;
 	qtyonhand: number;
@@ -149,3 +154,58 @@ export const load = (async ({ url, depends, locals: { supabase, safeGetSession }
 	//	const contributions = await (await fetch('/catalog')).json();
 	return { products, onStock };
 }) satisfies PageServerLoad;
+
+export const actions = {
+	getErpInfo: async ({ request, locals: { supabase } }) => {
+		const ids = (await request.formData()).get('ids') as string;
+		const { data: skus } = await supabase
+			.from('m_product')
+			.select('sku')
+			.in('id', JSON.parse(ids || '[]'));
+
+		const sku = skus?.map(({ sku }) => parseInt(sku || '0', 10)) || [];
+
+		const artikli: BSNivoZaliha[] = await biznisoft.post('api/catalog/getStockLevels', sku);
+
+		const { data: mapChannelSource, error: mapChannelSourceError } = await getChannelMap(
+			supabase,
+			1,
+			'Source'
+		);
+
+		if (!mapChannelSource) {
+			console.log('no source', mapChannelSourceError);
+		}
+
+		artikli.forEach(async (art) => {
+			const { data: selectProductId, error: selectProductIdError } = await supabase
+				.from('m_product')
+				.select('id')
+				.eq('sku', art.sifra)
+				.maybeSingle();
+			if (selectProductIdError) {
+				return { success: false, error: { selectProductIdError } };
+			}
+
+			if (selectProductId?.id) {
+				const warehouseID = Number(
+					mapChannelSource?.find((item) => Number(item.channel_code) === art.sifobj)?.internal_code
+				);
+				const { error: updateRepelnishError } = await supabase
+					.from('m_replenish')
+					.update({ level_min: art.iminzal ?? 0, level_max: art.imaxzal ?? 0 })
+					.eq('m_warehouse_id', warehouseID)
+					.eq('m_product_id', selectProductId.id);
+
+				if (updateRepelnishError) {
+					return { success: false, error: { updateRepelnishError } };
+				}
+			}
+		});
+
+		return {
+			success: true
+			//"data": [...]
+		};
+	}
+} satisfies Actions;

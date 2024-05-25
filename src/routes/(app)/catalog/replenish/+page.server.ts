@@ -1,12 +1,13 @@
 import { findChildren } from '$lib/scripts/tree';
 import type { PageServerLoad } from './$types';
 
-export const load = (async ({ parent, url, locals: { supabase } }) => {
+export const load = (async ({ parent, depends, url, locals: { supabase } }) => {
+	depends('catalog:replenish');
 	const { categories } = await parent();
 	let query = supabase
 		.from('m_product')
 		.select(
-			'id, sku, name, barcode, unitsperpack, m_storageonhand!inner(warehouse_id,qtyonhand), level_min:m_replenish!inner(m_warehouse_id,level_min), level_max:m_replenish(m_warehouse_id,level_max)'
+			'id, sku, name, barcode, unitsperpack, c_taxcategory(c_tax(rate)), m_storageonhand!inner(warehouse_id,qtyonhand), priceList:m_productprice(m_pricelist_version_id,pricestd), level_min:m_replenish!inner(m_warehouse_id,level_min), level_max:m_replenish(m_warehouse_id,level_max)'
 		)
 		.gt('level_min.level_min', 0)
 		.eq('m_storageonhand.warehouse_id', 5)
@@ -23,7 +24,6 @@ export const load = (async ({ parent, url, locals: { supabase } }) => {
 	if (categories && categoryIds) {
 		children = findChildren(categories, Number(categoryIds));
 	}
-	console.log('categoryIds', categoryIds, Number(categoryIds), children);
 
 	if (children.length > 0) {
 		query = query.in('m_product_category_id', children);
@@ -32,7 +32,11 @@ export const load = (async ({ parent, url, locals: { supabase } }) => {
 	//			? query.eq('m_product_category_id', Number(categoryIds))
 	//			: query.is('m_product_category_id', null);
 
-	const { data } = await query;
+	const { data, error } = await query;
+	if (error) {
+		console.log('error', error);
+	}
+
 	//	console.log('data', data);
 	/* 	const { data } = await supabase
 		.from('m_product')

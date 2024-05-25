@@ -1,38 +1,41 @@
 <script lang="ts">
-	import { Toaster } from '$lib/components/toaster';
+	//	import { Toaster } from '$lib/components/toaster';
 	import Header from './Header.svelte';
 	import Aside from './Aside.svelte';
+	import { Toaster } from '$lib/components/ui/sonner';
 </script>
 
-<!-- App Shell -->
-<Toaster />
-<!-- <div class="flex h-full flex-col"> -->
-<div class="AppLayout h-full w-full">
-	<div class="h-full bg-base-300 [grid-area:title-bar]">
+<Toaster richColors />
+
+<div class="AppShell h-full max-h-full w-full max-w-full">
+	<div class="AreaHeader">
 		<Header></Header>
 	</div>
-	<div class="h-full bg-base-300 [grid-area:aside]">
+	<aside class="AreaAside">
 		<Aside></Aside>
-	</div>
-	<!-- Page Route Content -->
-	<main class="h-full w-full [grid-area:main]">
+	</aside>
+	<main class="[grid-area:AreaMain]">
 		<slot />
 	</main>
 </div>
 
 <style lang="postcss">
-	.AppLayout {
-		max-width: 100%;
-		max-height: 100%;
+	.AppShell {
 		display: grid;
-		grid-template-areas:
-			'title-bar title-bar'
-			'aside main';
+		grid-template-columns: 4rem minmax(0px, 1fr);
 		grid-template-rows: 4rem minmax(0px, 1fr);
-		grid-template-columns: 3rem minmax(0px, 1fr);
-		transition-delay: 0ms, 146ms;
-		transition-duration: 146ms, 0ms;
-		transition-timing-function: cubic-bezier(0.3, 0, 0.6, 1);
-		transition-property: height, width;
+		gap: 0px 0px;
+		grid-auto-flow: row;
+		grid-template-areas:
+			'AreaHeader AreaHeader'
+			'AreaAside AreaMain';
+	}
+
+	.AreaHeader {
+		grid-area: AreaHeader;
+	}
+
+	.AreaAside {
+		grid-area: AreaAside;
 	}
 </style>

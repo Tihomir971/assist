@@ -6,10 +6,7 @@
 	import { browser } from '$app/environment';
 	import { goto, invalidate } from '$app/navigation';
 	//	import { enhance } from '$app/forms';
-
 	export let selectedProducts: number[];
-	export let onStock: boolean = true;
-	export let filterValue: string;
 
 	async function getPrices() {
 		for (let index = 0; index < selectedProducts.length; index++) {
@@ -78,7 +75,7 @@
 		}
 		invalidate('catalog:products');
 	}
-	async function addToBasket() {
+	/* 	async function addToBasket() {
 		const apiUrl = '/api/basket/add/';
 
 		for (let index = 0; index < selectedProducts.length; index++) {
@@ -112,45 +109,15 @@
 				console.log('error', error);
 			}
 		}
-	}
-	const onStockChange = () => {
-		const newUrl = new URL($page.url);
-		onStock = !onStock;
-		newUrl?.searchParams?.set('onStock', onStock.toString());
-
-		if (browser) {
-			goto(`${newUrl.origin}/catalog${newUrl.search}`);
-		}
-		return;
-	};
+	} */
 </script>
 
 <div class="navbar bg-base-100">
-	<div class="flex-1">
-		<div class="form-control">
-			<input
-				type="search"
-				bind:value={filterValue}
-				placeholder="Search products..."
-				class="input input-bordered"
-			/>
-		</div>
-	</div>
 	<div class="flex-none gap-2">
-		<label class="flex items-center gap-2">
-			<span>On Stock:</span>
-			<input
-				type="checkbox"
-				role="switch"
-				checked={onStock}
-				on:change={onStockChange}
-				class="toggle toggle-primary"
-			/>
-		</label>
-		<button on:click={addToBasket} class="btn btn-neutral">
+		<!-- <button on:click={addToBasket} class="btn btn-neutral">
 			<iconify-icon icon="ph:currency-eur" width="24" height="24"></iconify-icon>
 			Add to Basket
-		</button>
+		</button> -->
 		<button on:click={getPrices} class="btn btn-neutral">
 			<iconify-icon icon="ph:currency-eur" width="24" height="24"></iconify-icon>
 			Get Prices

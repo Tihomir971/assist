@@ -23,7 +23,6 @@
 		return async ({ result }) => {
 			if (result.type === 'success') {
 				// do something...
-				// do something...
 				addToast({
 					data: {
 						title: 'Category update',
@@ -35,9 +34,6 @@
 				await applyAction(result);
 				history.back();
 			}
-			//await update({ reset: false, invalidateAll: false });
-			//	let timeTaken = Date.now() - start;
-			//	console.log('Total time taken : ' + timeTaken + ' ms');
 		};
 	};
 	let previousPage: string = base;

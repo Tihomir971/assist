@@ -1,4 +1,7 @@
 <script lang="ts">
+	import * as Resizable from '$lib/components/ui/resizable';
+	import * as ToggleGroup from '$lib/components/ui/toggle-group';
+
 	import type { LayoutData } from './$types';
 	import { convertToTreeStructure } from '$lib/scripts/tree';
 	import { page } from '$app/stores';
@@ -8,6 +11,9 @@
 	import { Toolbar } from '$lib/components/toolbar';
 	import PhNotePencil from '$lib/icons/PhNotePencil.svelte';
 	import PhFolderPlus from '$lib/icons/PhFolderPlus.svelte';
+	import PhFolderMinus from '$lib/icons/PhFolderMinus.svelte';
+	import PhArrowsInLineVertical from '$lib/icons/PhArrowsInLineVertical.svelte';
+	import { Button } from '$lib/components/ui/button';
 
 	export let data: LayoutData;
 	let { categories, expanded } = data;
@@ -34,6 +40,8 @@
 	//	let expanded: string[] | undefined = undefined;
 
 	function editCategory() {
+		console.log('editCategory');
+
 		//	const activeCategory = $page.url.searchParams.get('cat');
 		if (selected) goto('/catalog/category/' + selected.getAttribute('data-id'));
 		return;
@@ -44,13 +52,30 @@
 </script>
 
 <div class="flex h-full">
-	<div class="flex h-full w-80 flex-col overflow-hidden bg-base-200">
+	<div class="flex h-full w-80 flex-col overflow-hidden">
+		<div class="flex p-1">
+			<Button variant="outline" size="icon" on:click={editCategory}>
+				<PhNotePencil class="w-6" />
+			</Button>
+			<Button variant="outline" size="icon">
+				<PhFolderPlus class="w-6"></PhFolderPlus>
+			</Button>
+			<Button variant="outline" size="icon">
+				<PhFolderMinus class="w-6" />
+			</Button>
+			<Button variant="outline" size="icon">
+				<PhArrowsInLineVertical class="w-6" />
+			</Button>
+			<Button variant="outline" size="icon">
+				<PhNotePencil class="w-6" />
+			</Button>
+		</div>
 		<Toolbar.Root class="join border-b">
 			<Toolbar.Button
 				type="button"
 				data-tip="Edit"
 				on:click={editCategory}
-				class="btn join-item tooltip tooltip-bottom"
+				class="join-item tooltip tooltip-bottom"
 			>
 				<PhNotePencil class="w-6" />
 			</Toolbar.Button>
@@ -74,7 +99,8 @@
 			<TreeView bind:treeItems bind:selected bind:expanded />
 		</div>
 	</div>
-	<div class="flex-grow overflow-hidden">
+
+	<div class="grid w-full grid-rows-[auto_1fr] p-2">
 		<slot />
 	</div>
 </div>

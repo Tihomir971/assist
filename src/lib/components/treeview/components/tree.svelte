@@ -37,8 +37,9 @@
 	<li>
 		<button
 			type="button"
-			class="active flex w-full items-center gap-1 px-1.5"
-			class:active={$isSelected(itemId)}
+			class="ring-offset-background focus-visible:ring-ring hover:text-accent-foreground inline-flex h-10 w-full items-center justify-start whitespace-nowrap rounded-md px-2 py-2 text-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+			class:bg-secondary={$isSelected(itemId)}
+			class:text-secondary-foreground={$isSelected(itemId)}
 			class:m4={$isSelected(itemId)}
 			use:melt={$item({
 				id: itemId,
