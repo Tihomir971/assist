@@ -35,3 +35,22 @@ export interface BSNivoZaliha {
 	iminzal: number;
 	imaxzal: number;
 }
+export interface BSProductInfo {
+	sifra: number;
+	naziv: string;
+	grupa: number;
+	grupaNaziv: string;
+	jedmere: string;
+	porez: string;
+	katbr: string;
+	jeusluga: number;
+	garancija: number;
+	tpbarkod?: string | null;
+	tpkolicina: number;
+	ts: Date;
+	jc_jedmere: string;
+	jc_koef: number;
+	serbrrok: number;
+	barkod: string;
+	barcodes: (string | null)[];
+}

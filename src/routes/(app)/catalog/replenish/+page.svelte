@@ -277,14 +277,14 @@
 	<Input
 		class="max-w-sm"
 		placeholder="Filter products..."
-		type="text"
+		type="search"
 		bind:value={$filterValue}
 		autocomplete="off"
 	/>
 	<DropdownMenu.Root>
 		<DropdownMenu.Trigger asChild let:builder>
 			<Button variant="outline" class="ml-auto" builders={[builder]}>
-				ERP <ChevronDown class="ml-2 h-4 w-4" />
+				ERP <ChevronDown class="ml-2 h-4 w-4" />{JSON.stringify($selectedDataIds)}
 			</Button>
 		</DropdownMenu.Trigger>
 		<DropdownMenu.Content>
@@ -295,6 +295,7 @@
 				bind:this={formElErpSyncProd}
 			>
 				<input type="hidden" name="ids" value={JSON.stringify(strSelectedDataIds)} />
+
 				<DropdownMenu.Item
 					on:click={() => {
 						formElErpSyncProd.requestSubmit();

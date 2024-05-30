@@ -3,7 +3,7 @@ import { redirect } from '@sveltejs/kit';
 import * as biznisoft from '$lib/services/biznisoft.js';
 import type { Actions, PageServerLoad } from './$types';
 import type { Tables } from '$lib/types/database.types';
-import type { BSNivoZaliha } from '$lib/types/biznisoft';
+import type { BSNivoZaliha, BSProductInfo } from '$lib/types/biznisoft';
 import { getChannelMap } from '$lib/services/channel-map';
 //import type { BSArticle, BSNivoZaliha } from '$lib/types/biznisoft';
 type Product = Partial<Tables<'m_product'>> & {
@@ -165,7 +165,9 @@ export const actions = {
 
 		const sku = skus?.map(({ sku }) => parseInt(sku || '0', 10)) || [];
 
-		const artikli: BSNivoZaliha[] = await biznisoft.post('api/catalog/getStockLevels', sku);
+		const erpStockLevels: BSNivoZaliha[] = await biznisoft.post('api/catalog/getStockLevels', sku);
+		const erpProductInfo: BSProductInfo[] = await biznisoft.post('api/catalog/getProduct', sku);
+		console.log('erpProductInfo', erpProductInfo);
 
 		const { data: mapChannelSource, error: mapChannelSourceError } = await getChannelMap(
 			supabase,
@@ -177,7 +179,7 @@ export const actions = {
 			console.log('no source', mapChannelSourceError);
 		}
 
-		artikli.forEach(async (art) => {
+		erpStockLevels.forEach(async (art) => {
 			const { data: selectProductId, error: selectProductIdError } = await supabase
 				.from('m_product')
 				.select('id')
@@ -196,6 +198,34 @@ export const actions = {
 					.update({ level_min: art.iminzal ?? 0, level_max: art.imaxzal ?? 0 })
 					.eq('m_warehouse_id', warehouseID)
 					.eq('m_product_id', selectProductId.id);
+
+				if (updateRepelnishError) {
+					return { success: false, error: { updateRepelnishError } };
+				}
+			}
+		});
+		erpProductInfo.forEach(async (art) => {
+			const { data: selectProductId, error: selectProductIdError } = await supabase
+				.from('m_product')
+				.select('id')
+				.eq('sku', art.sifra)
+				.maybeSingle();
+			if (selectProductIdError) {
+				return { success: false, error: { selectProductIdError } };
+			}
+
+			if (selectProductId?.id) {
+				const warehouseID = Number(
+					mapChannelSource?.find((item) => Number(item.channel_code) === art.grupa)?.internal_code
+				);
+				const { error: updateRepelnishError } = await supabase
+					.from('m_product')
+					.update({
+						name: art.naziv ?? 0,
+						mpn: art.katbr ?? null,
+						m_product_category_id: warehouseID
+					})
+					.eq('id', selectProductId.id);
 
 				if (updateRepelnishError) {
 					return { success: false, error: { updateRepelnishError } };

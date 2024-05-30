@@ -18,7 +18,6 @@
 
 	import * as Tabs from '$lib/components/ui/tabs';
 
-	import { tick } from 'svelte';
 	import * as Command from '$lib/components/ui/command/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 
@@ -171,7 +170,6 @@
 								<Button
 									type="reset"
 									disabled={!modified}
-									class="btn btn-secondary"
 									on:click={() => (product = { ...initialProductForm })}>Reset</Button
 								>
 								<!-- <button
@@ -339,7 +337,6 @@
 									name="barcode"
 									id="barcode"
 									type="text"
-									readonly
 									autocomplete="off"
 									bind:value={product.barcode}
 								/>
@@ -482,7 +479,6 @@
 									id="unitsperpack"
 									type="number"
 									step="0.001"
-									readonly
 									autocomplete="off"
 									bind:value={product.unitsperpack}
 								/>

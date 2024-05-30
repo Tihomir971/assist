@@ -2,16 +2,16 @@
 	import type { TableViewModel } from 'svelte-headless-table';
 	import RadixIconsCross2 from '$lib/icons/RadixIconsCross2.svelte';
 	import type { Writable } from 'svelte/store';
-	import { priorities, statuses } from '../(data)/data.js';
-	import type { Task } from '../(data)/schemas.js';
-	import { DataTableFacetedFilter, DataTableViewOptions } from './index.js';
+	import type { Product } from '../(data)/schemas.js';
+	import { DataTableViewErp, DataTableViewOptions } from './index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Input } from '$lib/components/ui/input/index.js';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 
-	export let tableModel: TableViewModel<Task>;
-	export let data: Task[];
+	export let tableModel: TableViewModel<Product>;
+	//	export let data: Product[];
 
-	const counts = data.reduce<{
+	/* 	const counts = data.reduce<{
 		status: { [index: string]: number };
 		priority: { [index: string]: number };
 	}>(
@@ -24,7 +24,7 @@
 			status: {},
 			priority: {}
 		}
-	);
+	); */
 
 	const { pluginStates } = tableModel;
 	const {
@@ -45,7 +45,7 @@
 	$: showReset = Object.values({ ...$filterValues, $filterValue }).some((v) => v.length > 0);
 </script>
 
-<div class="flex items-center justify-between">
+<div class="flex items-center justify-between p-2">
 	<div class="flex flex-1 items-center space-x-2">
 		<Input
 			placeholder="Filter tasks..."
@@ -54,7 +54,7 @@
 			bind:value={$filterValue}
 		/>
 
-		<DataTableFacetedFilter
+		<!-- 	<DataTableFacetedFilter
 			bind:filterValues={$filterValues.status}
 			title="Status"
 			options={statuses}
@@ -65,7 +65,7 @@
 			title="Priority"
 			options={priorities}
 			counts={counts.priority}
-		/>
+		/> -->
 		{#if showReset}
 			<Button
 				on:click={() => {
@@ -82,5 +82,6 @@
 		{/if}
 	</div>
 
+	<DataTableViewErp {tableModel} />
 	<DataTableViewOptions {tableModel} />
 </div>

@@ -1,11 +1,11 @@
 <script lang="ts">
 	import RadixIconsMixerHorizontal from '$lib/icons/RadixIconsMixerHorizontal.svelte';
 	import type { TableViewModel } from 'svelte-headless-table';
-	import type { Task } from '../(data)/schemas.js';
+	import type { Product } from '../(data)/schemas.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 
-	export let tableModel: TableViewModel<Task>;
+	export let tableModel: TableViewModel<Product>;
 	const { pluginStates, flatColumns } = tableModel;
 	const { hiddenColumnIds } = pluginStates.hide;
 

@@ -3,17 +3,24 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-
 	import Search from 'lucide-svelte/icons/search';
 	import PhList from '$lib/icons/PhList.svelte';
 
-	import { applyAction, enhance } from '$app/forms';
+	import { enhance } from '$app/forms';
 	import { goto, invalidate } from '$app/navigation';
-	import { Avatar } from '$lib/components/avatar';
 	import type { SubmitFunction } from '@sveltejs/kit';
+	import { toast } from 'svelte-sonner';
+	import type { SupabaseClient } from '@supabase/supabase-js';
+	export let supabase: SupabaseClient;
+	let signOutForm: HTMLFormElement;
+	const handleSignOut: SubmitFunction = () => {
+		return async ({ update }) => {
+			update();
+		};
+	};
 </script>
 
-<header class="bg-muted flex h-full min-w-80 items-center justify-between gap-x-3 border-b">
+<header class="flex h-full min-w-80 items-center justify-between gap-x-3 border-b bg-muted">
 	<!-- 	<div class="flex-1">
 		<a href="/" class="btn btn-ghost text-xl">KALISI Assistant</a>
 	</div>
@@ -50,11 +57,11 @@
 	<div class="flex w-full items-center justify-between">
 		<div>KALISI Assistant</div>
 		<div class="relative ml-auto flex-1 md:grow-0">
-			<Search class="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4" />
+			<Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 			<Input
 				type="search"
 				placeholder="Search..."
-				class="bg-background w-full rounded-lg pl-8 md:w-[200px] lg:w-[336px]"
+				class="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
 			/>
 		</div>
 		<DropdownMenu.Root>
@@ -80,7 +87,20 @@
 				<DropdownMenu.Item>Settings</DropdownMenu.Item>
 				<DropdownMenu.Item>Support</DropdownMenu.Item>
 				<DropdownMenu.Separator />
-				<DropdownMenu.Item on:click={() => goto('/auth?/signout')}>Logout</DropdownMenu.Item>
+				<!-- //<form
+				//	method="post"
+				//	action="/auth?/signout"
+				//	bind:this={signOutForm}
+				//	use:enhance={handleSignOut}
+				//> -->
+				<DropdownMenu.Item
+					on:click={async () => {
+						//signOutForm?.requestSubmit();
+						await supabase.auth.signOut();
+						goto('/auth');
+					}}>Logout</DropdownMenu.Item
+				>
+				<!-- 	//</form> -->
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
 	</div>

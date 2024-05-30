@@ -3,13 +3,14 @@
 	import Header from './Header.svelte';
 	import Aside from './Aside.svelte';
 	import { Toaster } from '$lib/components/ui/sonner';
+	export let data;
 </script>
 
 <Toaster richColors />
 
 <div class="AppShell h-full max-h-full w-full max-w-full">
 	<div class="AreaHeader">
-		<Header></Header>
+		<Header supabase={data.supabase}></Header>
 	</div>
 	<aside class="AreaAside">
 		<Aside></Aside>

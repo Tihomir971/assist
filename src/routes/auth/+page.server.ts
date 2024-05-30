@@ -1,17 +1,36 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { AuthApiError } from '@supabase/supabase-js';
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
+import { superValidate } from 'sveltekit-superforms';
+import { formSchema } from './schema';
+import { zod } from 'sveltekit-superforms/adapters';
+
+export const load: PageServerLoad = async () => {
+	return {
+		form: await superValidate(zod(formSchema))
+	};
+};
 
 export const actions = {
-	signin: async ({ request, locals: { supabase } }) => {
-		const formData = await request.formData();
+	signin: async (event) => {
+		const form = await superValidate(event, zod(formSchema));
+		if (!form.valid) {
+			return fail(400, {
+				form
+			});
+		}
 
-		const email = formData.get('email') as string;
-		const password = formData.get('password') as string;
-		console.log('email,password', email, password);
+		const {
+			locals: { supabase }
+		} = event;
+		//		const formData = await request.formData();
+
+		//		const email = formData.get('email') as string;
+		//		const password = formData.get('password') as string;
+		console.log('email,password', form.data.email, form.data.password);
 		const { error } = await supabase.auth.signInWithPassword({
-			email,
-			password
+			email: form.data.email,
+			password: form.data.password
 		});
 
 		if (error) {
@@ -19,14 +38,14 @@ export const actions = {
 				return fail(400, {
 					error: 'Invalid credentials.',
 					values: {
-						email
+						email: form.data.email
 					}
 				});
 			}
 			return fail(500, {
 				error: 'Server error. Try again later.',
 				values: {
-					email
+					email: form.data.email
 				}
 			});
 		}
@@ -34,8 +53,11 @@ export const actions = {
 		redirect(303, '/dashboard');
 	},
 
-	signout: async ({ locals: { supabase } }) => {
-		await supabase.auth.signOut();
-		redirect(303, '/auth');
+	signout: async ({ locals: { supabase, safeGetSession } }) => {
+		const { session } = await safeGetSession();
+		if (session) {
+			await supabase.auth.signOut();
+			throw redirect(303, '/');
+		}
 	}
 } satisfies Actions;
