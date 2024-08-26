@@ -3,9 +3,14 @@ import { redirect } from '@sveltejs/kit';
 import * as biznisoft from '$lib/services/biznisoft.js';
 import type { Actions, PageServerLoad } from './$types';
 import type { Tables } from '$lib/types/database.types';
-import type { BSNivoZaliha, BSProductInfo } from '$lib/types/biznisoft';
+import type { BSProduct, BSStock } from '$lib/types/biznisoft';
 import { getChannelMap } from '$lib/services/channel-map';
-//import type { BSArticle, BSNivoZaliha } from '$lib/types/biznisoft';
+import { fail, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import { productSelectSchema } from '$lib/types/zod.js';
+import { MARKET_INFO_API_URL } from '$env/static/private';
+import type { VendorProduct } from '$lib/types/product-scrapper';
+import { isValidGTIN } from '$lib/scripts/gtin';
 type Product = Partial<Tables<'m_product'>> & {
 	id: number;
 	qtyonhand: number;
@@ -17,12 +22,7 @@ type Product = Partial<Tables<'m_product'>> & {
 	m_storageonhand: { warehouse_id: number; qtyonhand: number }[];
 };
 
-export const load = (async ({ url, depends, locals: { supabase, safeGetSession } }) => {
-	const { session } = await safeGetSession();
-	if (!session) {
-		redirect(303, '/auth');
-	}
-
+export const load = (async ({ url, depends, locals: { supabase } }) => {
 	depends('catalog:products');
 
 	//Get searchParams
@@ -33,7 +33,7 @@ export const load = (async ({ url, depends, locals: { supabase, safeGetSession }
 		const newUrl = new URL(url);
 		newUrl?.searchParams?.set('onStock', 'true');
 		//		newUrl?.searchParams?.set('wh', paramsWarehouse ?? '5');
-		redirect(303, newUrl);
+		redirect(302, newUrl);
 	}
 
 	/* const activeWarehouseId = Number(paramsWarehouse); */
@@ -43,7 +43,7 @@ export const load = (async ({ url, depends, locals: { supabase, safeGetSession }
 	const categoryIds = url.searchParams.get('cat')?.split(',').map(Number);
 
 	const columns =
-		'id,barcode,mpn,sku,name,c_taxcategory_id,c_uom_id,m_storageonhand(warehouse_id,qtyonhand),qPriceRetail:m_productprice(pricestd),qPricePurchase:m_productprice(pricestd),qPriceMarket:m_productprice(pricelist),c_taxcategory(c_tax(rate)),isactive,isselfservice,discontinued';
+		'id, mpn, sku, name, c_uom_id, c_taxcategory_id, m_storageonhand(warehouse_id,qtyonhand),qPriceRetail:m_productprice(pricestd),qPricePurchase:m_productprice(pricestd),qPriceMarket:m_productprice(pricelist),c_taxcategory(c_tax(rate)),isactive,isselfservice,discontinued';
 
 	let query = supabase
 		.from('m_product')
@@ -55,8 +55,7 @@ export const load = (async ({ url, depends, locals: { supabase, safeGetSession }
 		.eq('qPricePurchase.m_pricelist_version_id', 5)
 		.eq('qPriceMarket.m_pricelist_version_id', 15);
 	query = categoryIds
-		? //typeof activeCategoryId === 'number'
-			query.in('m_product_category_id', categoryIds)
+		? query.in('m_product_category_id', categoryIds)
 		: query.is('m_product_category_id', null);
 
 	const { data } = await query;
@@ -69,12 +68,6 @@ export const load = (async ({ url, depends, locals: { supabase, safeGetSession }
 			({ qtyonhand } = product.m_storageonhand[0]);
 		}
 
-		// Assign quantity  for experiment
-		/* 		let experiment = undefined;
-		if (Array.isArray(product.m_storageonhand) && product.m_storageonhand?.length !== 0) {
-			experiment = product.m_storageonhand[0];
-		} */
-
 		if (
 			(onStock === true || product.discontinued) &&
 			product.m_storageonhand.every((item) => item.qtyonhand === 0)
@@ -82,6 +75,7 @@ export const load = (async ({ url, depends, locals: { supabase, safeGetSession }
 			return;
 		}
 
+		/* const taxRate = product.c_taxcategory?.c_tax[0] === 2 ? 0.1 : 0.2; */
 		const taxRate = product.c_taxcategory_id === 2 ? 0.1 : 0.2;
 
 		// Assign retail price for product if exist
@@ -117,15 +111,6 @@ export const load = (async ({ url, depends, locals: { supabase, safeGetSession }
 		} else {
 			priceRecommended = pricePurchase * 1.25;
 		}
-		/* if (priceMarket === 0) {
-			priceRecommended = pricePurchase * 1.25;
-		} else if (priceMarket < pricePurchase) {
-			priceRecommended = pricePurchase;
-		} else if (priceMarket < pricePurchase * 1.25) {
-			priceRecommended = priceMarket;
-		} else {
-			priceRecommended = pricePurchase * 1.25;
-		} */
 
 		priceRecommended = Math.ceil(priceRecommended);
 		if (priceRecommended < 1000) {
@@ -134,7 +119,6 @@ export const load = (async ({ url, depends, locals: { supabase, safeGetSession }
 
 		products.push({
 			id: product.id,
-			barcode: product.barcode,
 			sku: product.sku,
 			name: product.name,
 			qtyonhand: qtyonhand,
@@ -151,91 +135,497 @@ export const load = (async ({ url, depends, locals: { supabase, safeGetSession }
 		});
 	});
 
-	//	const contributions = await (await fetch('/catalog')).json();
 	return { products, onStock };
 }) satisfies PageServerLoad;
 
 export const actions = {
 	getErpInfo: async ({ request, locals: { supabase } }) => {
-		const ids = (await request.formData()).get('ids') as string;
+		const form = await superValidate(request, zod(productSelectSchema));
+		if (!form.valid) return fail(400, { form });
 		const { data: skus } = await supabase
 			.from('m_product')
 			.select('sku')
-			.in('id', JSON.parse(ids || '[]'));
+			.in('id', form.data.ids.split(',').map(Number));
+		if (!skus) {
+			return;
+		}
+		const sku = skus.map(({ sku }) => parseInt(sku || '0', 10)) || [];
+		const data = { sku: sku };
 
-		const sku = skus?.map(({ sku }) => parseInt(sku || '0', 10)) || [];
+		// Get Product from BizniSoft
+		const erpProduct: BSProduct[] = await biznisoft.post('api/product', data);
+		console.log('erpProduct', erpProduct);
 
-		const erpStockLevels: BSNivoZaliha[] = await biznisoft.post('api/catalog/getStockLevels', sku);
-		const erpProductInfo: BSProductInfo[] = await biznisoft.post('api/catalog/getProduct', sku);
-		console.log('erpProductInfo', erpProductInfo);
+		// Get Stock from BizniSoft
+		const erpStock: BSStock[] = await biznisoft.post('api/stock', data);
 
-		const { data: mapChannelSource, error: mapChannelSourceError } = await getChannelMap(
-			supabase,
-			1,
-			'Source'
-		);
+		const { data: mapChannel, error: mapChannelError } = await getChannelMap(supabase, 1);
 
-		if (!mapChannelSource) {
-			console.log('no source', mapChannelSourceError);
+		if (mapChannelError) {
+			console.log('No chanell maping', mapChannel);
 		}
 
-		erpStockLevels.forEach(async (art) => {
+		erpProduct.forEach(async (product) => {
+			// Find product ID using SKU
 			const { data: selectProductId, error: selectProductIdError } = await supabase
 				.from('m_product')
 				.select('id')
-				.eq('sku', art.sifra)
+				.eq('sku', product.sifra)
 				.maybeSingle();
 			if (selectProductIdError) {
 				return { success: false, error: { selectProductIdError } };
 			}
+			if (!selectProductId) {
+				return { success: false, error: { selectProductIdError: 'Product not found' } };
+			}
 
-			if (selectProductId?.id) {
-				const warehouseID = Number(
-					mapChannelSource?.find((item) => Number(item.channel_code) === art.sifobj)?.internal_code
-				);
-				const { error: updateRepelnishError } = await supabase
-					.from('m_replenish')
-					.update({ level_min: art.iminzal ?? 0, level_max: art.imaxzal ?? 0 })
-					.eq('m_warehouse_id', warehouseID)
-					.eq('m_product_id', selectProductId.id);
+			// Get Channel Category
+			const { data: channelCategory } = await supabase
+				.from('c_channel_map_category')
+				.select('m_product_category_id,resource_id,resource_name,c_channel_id')
+				.eq('c_channel_id', 1)
+				.eq('resource_id', product.grupa)
+				.maybeSingle();
 
-				if (updateRepelnishError) {
-					return { success: false, error: { updateRepelnishError } };
+			const uomID = Number(
+				mapChannel?.find(
+					(item) => item.channel_code === product.jedmere && item.entity_type === 'Uom'
+				)?.internal_code
+			);
+			const taxID = Number(
+				mapChannel?.find(
+					(item) => item.channel_code === product.porez && item.entity_type === 'Tax'
+				)?.internal_code
+			);
+
+			const { error: updateProductError } = await supabase
+				.from('m_product')
+				.update(
+					{
+						name: product.naziv,
+						mpn: product.katbr ?? null,
+						m_product_category_id: channelCategory?.m_product_category_id,
+						c_uom_id: uomID,
+						c_taxcategory_id: taxID,
+						unitsperpack: product.tpkolicina ?? 1
+					},
+					{ count: 'estimated' }
+				)
+				.eq('id', selectProductId.id);
+
+			if (updateProductError) {
+				return { success: false, error: { updateProductError } };
+			}
+			product.barcodes?.forEach(async (element) => {
+				console.log('element', element);
+
+				const { error: updateBacodesError } = await supabase
+					.from('m_product_gtin')
+					.insert({ m_product_id: selectProductId.id, gtin: element });
+				if (updateBacodesError) {
+					console.error('Error adding product GTIN:', updateBacodesError);
 				}
+			});
+			if (product.replenish) {
+				product.replenish.forEach(async (replenish) => {
+					const warehouseID = Number(
+						mapChannel?.find(
+							(item) =>
+								Number(item.channel_code) === replenish.sifobj && item.entity_type === 'Source'
+						)?.internal_code
+					);
+
+					const { error: updateRepelnishError, count: updateRepelnishCount } = await supabase
+						.from('m_replenish')
+						.update(
+							{
+								level_min: replenish.iminzal ?? 0,
+								level_max: replenish.imaxzal ?? 0
+							},
+							{ count: 'estimated' }
+						)
+						.eq('m_warehouse_id', warehouseID)
+						.eq('m_product_id', selectProductId.id);
+
+					if (updateRepelnishError) {
+						console.log('updateRepelnishError', updateRepelnishError);
+
+						return { success: false, error: { updateRepelnishError } };
+					}
+					if (updateRepelnishCount === 0) {
+						const { error: insertRepelnishError } = await supabase.from('m_replenish').insert({
+							m_product_id: selectProductId.id,
+							m_warehouse_id: warehouseID,
+							level_min: replenish.iminzal ?? 0,
+							level_max: replenish.imaxzal ?? 0
+						});
+						if (insertRepelnishError) {
+							console.log('insertRepelnishError', insertRepelnishError);
+
+							return { success: false, error: { insertRepelnishError } };
+						}
+					}
+				});
+			}
+			if (product.m_product_po) {
+				product.m_product_po.forEach(async (po) => {
+					const { data: erpMapBpartner, error: selectProductIdError } = await supabase
+						.from('c_channel_map_bpartner')
+						.select('c_bpartner_id')
+						.eq('c_channel_id', 1)
+						.eq('resource_id', po.kupac)
+						.maybeSingle();
+					if (selectProductIdError) {
+						return { success: false, error: { selectProductIdError } };
+					}
+					if (erpMapBpartner) {
+						const { data: updateProductPo, error: updateProductPoError } = await supabase
+							.from('m_product_po')
+							.update({
+								vendorproductno: po.kupsif
+							})
+							.eq('m_product_id', selectProductId.id)
+							.eq('c_bpartner_id', erpMapBpartner.c_bpartner_id)
+							.select()
+							.maybeSingle();
+						if (updateProductPoError) {
+							return { success: false, error: { updateProductPoError } };
+						}
+						if (!updateProductPo) {
+							const { error: insertProductPoError } = await supabase.from('m_product_po').insert({
+								c_bpartner_id: erpMapBpartner.c_bpartner_id,
+								m_product_id: selectProductId.id,
+								vendorproductno: po.kupsif
+							});
+							if (insertProductPoError) {
+								return { success: false, error: { insertProductPoError } };
+							}
+						}
+					}
+				});
 			}
 		});
-		erpProductInfo.forEach(async (art) => {
+
+		erpStock.forEach(async (stock) => {
 			const { data: selectProductId, error: selectProductIdError } = await supabase
 				.from('m_product')
 				.select('id')
-				.eq('sku', art.sifra)
+				.eq('sku', stock.sifra)
 				.maybeSingle();
 			if (selectProductIdError) {
 				return { success: false, error: { selectProductIdError } };
 			}
-
-			if (selectProductId?.id) {
+			if (selectProductId) {
 				const warehouseID = Number(
-					mapChannelSource?.find((item) => Number(item.channel_code) === art.grupa)?.internal_code
+					mapChannel?.find(
+						(item) => Number(item.channel_code) === stock.sifobj && item.entity_type === 'Source'
+					)?.internal_code
 				);
-				const { error: updateRepelnishError } = await supabase
-					.from('m_product')
-					.update({
-						name: art.naziv ?? 0,
-						mpn: art.katbr ?? null,
-						m_product_category_id: warehouseID
-					})
-					.eq('id', selectProductId.id);
 
-				if (updateRepelnishError) {
-					return { success: false, error: { updateRepelnishError } };
+				const { error: updateStockError } = await supabase
+					.from('m_storageonhand')
+					.update({ qtyonhand: (stock.stanje ?? 0) - (stock.neprokkasa ?? 0) })
+					.eq('warehouse_id', warehouseID)
+					.eq('m_product_id', selectProductId.id);
+
+				if (updateStockError) {
+					return { success: false, error: { updateStockError } };
+				}
+				if ([1, 11].includes(stock.sifobj)) {
+					console.log('stock', stock);
+					console.log('stock', stock);
+
+					const priclist = stock.sifobj === 1 ? 5 : 13;
+					const price = stock.sifobj === 1 ? stock.nabcena : stock.mpcena;
+					console.log('priclist,price', priclist, price);
+					const { error: updatePriceError } = await supabase
+						.from('m_productprice')
+						.update({ pricestd: price })
+						.eq('m_pricelist_version_id', priclist)
+						.eq('m_product_id', selectProductId.id);
+
+					if (updatePriceError) {
+						return { success: false, error: { updatePriceError } };
+					}
 				}
 			}
 		});
 
 		return {
 			success: true
-			//"data": [...]
 		};
+	},
+	deleteCategory: async ({ request, locals: { supabase } }) => {
+		const id = Number((await request.formData()).get('id'));
+		const { error: deleteCategoryError } = await supabase
+			.from('m_product_category')
+			.delete()
+			.eq('id', id);
+		if (deleteCategoryError) {
+			throw deleteCategoryError;
+		}
+	},
+	getIdeaInfo: async ({ request, locals: { supabase } }) => {
+		const form = await superValidate(request, zod(productSelectSchema));
+		if (!form.valid) return fail(400, { form });
+
+		function stringToNumberArray(s: string) {
+			const numbers = s.match(/\d+/g);
+			return numbers ? numbers.map((num) => parseInt(num, 10)) : [];
+		}
+
+		const ids = stringToNumberArray(form.data.ids);
+		console.log('ids', ids, form.data.ids);
+
+		const { data } = await supabase
+			.from('m_product')
+			.select('id, m_product_po(id, c_bpartner_id, vendorproductno, url), m_product_gtin(gtin)')
+			.in('id', ids);
+
+		if (data) {
+			const cookiesUrl = MARKET_INFO_API_URL + `/api/idea/cookies`;
+			const cookiesResponse = await fetch(cookiesUrl);
+			const { cookies } = await cookiesResponse.json();
+
+			for (const product of data) {
+				let ideaProductId: string | null = null;
+				const wantedProduct = product.m_product_po.find((product) => product.c_bpartner_id === 4);
+
+				if (wantedProduct === undefined || !wantedProduct?.url) {
+					let found = false;
+					for (const gtin of product.m_product_gtin) {
+						console.log('Searching by gtin:', gtin);
+
+						const scrapUrl = MARKET_INFO_API_URL + `/api/idea/extract?term=${gtin.gtin}`;
+						const scrapResponse = await fetch(scrapUrl);
+						const scrapData = await scrapResponse.json();
+						if (!scrapData || scrapData.error) continue;
+
+						found = true;
+						ideaProductId = scrapData.productId;
+						break;
+					}
+
+					if (!found) {
+						console.log('Cannot find by barcode productID:', product.id);
+						continue; // Move to the next product
+					}
+				} else {
+					ideaProductId = wantedProduct.url.split('/').slice(-2)[0];
+				}
+
+				if (!ideaProductId) {
+					console.log('No ideaProductId');
+					continue; // Move to the next product
+				}
+
+				const fetchUrl =
+					MARKET_INFO_API_URL + `/api/idea/fetch-product/${ideaProductId}?cookies=${cookies}`;
+				const fetchResponse = await fetch(fetchUrl, {
+					headers: { 'Content-Type': 'application/json' }
+				});
+				const fetchData: {
+					id: number;
+					code: string;
+					name: string;
+					manufacturer: string;
+					barcodes: string[];
+				} = await fetchResponse.json();
+
+				if (fetchData) {
+					const productPO = {
+						c_bpartner_id: 4,
+						m_product_id: product.id,
+						vendorproductno: fetchData.code.replace(/^0+/, ''),
+						barcode: fetchData.barcodes.join(', '),
+						manufacturer: fetchData.manufacturer,
+						url: 'https://online.idea.rs/#!/products/' + ideaProductId + '/'
+					};
+
+					if (wantedProduct === undefined) {
+						const { error: insertProductPoError } = await supabase
+							.from('m_product_po')
+							.insert(productPO);
+						if (insertProductPoError) {
+							console.error('Error inserting product PO:', insertProductPoError);
+							continue; // Move to the next product
+						}
+					} else {
+						const { error: updateProductPoError } = await supabase
+							.from('m_product_po')
+							.update(productPO)
+							.eq('id', wantedProduct.id);
+						if (updateProductPoError) {
+							console.error('Error updating product PO:', updateProductPoError);
+							continue; // Move to the next product
+						}
+					}
+
+					for (const element of fetchData.barcodes) {
+						if (element) {
+							const { error: updateBacodesError } = await supabase
+								.from('m_product_gtin')
+								.insert({ m_product_id: product.id, gtin: element });
+							if (updateBacodesError) {
+								if (updateBacodesError.code === '23505') {
+									// Unique violation error code
+									console.log('Product GTIN already exists, no action taken');
+								} else {
+									console.error('Error adding product GTIN:', updateBacodesError);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			// Return success after all operations are complete
+			return { success: true };
+		}
+
+		// Return failure if no data was found
+		return { success: false, error: 'No data found' };
+	},
+	getCenotekaInfo: async ({ request, locals: { supabase } }) => {
+		console.log('getCenotekaInfo');
+		const form = await superValidate(request, zod(productSelectSchema));
+		if (!form.valid) return fail(400, { form });
+
+		function stringToNumberArray(s: string): number[] {
+			const numbers = s.match(/\d+/g);
+			return numbers ? numbers.map((num) => parseInt(num, 10)) : [];
+		}
+
+		const ids = stringToNumberArray(form.data.ids);
+
+		const { data: products, error: fetchError } = await supabase
+			.from('m_product')
+			.select(
+				'id, m_product_gtin(gtin), m_product_po(c_bpartner_id, url), c_taxcategory(c_tax(rate)),c_taxcategory_id'
+			)
+			.eq('m_product_po.c_bpartner_id', 2)
+			.in('id', ids);
+
+		if (fetchError) {
+			console.error('Error fetching products:', fetchError);
+			return fail(500, { message: 'Error fetching products from database' });
+		}
+
+		if (!products || products.length === 0) {
+			return fail(404, { message: 'No products found' });
+		}
+
+		const { data: allUom } = await supabase.from('c_uom').select('id,uomsymbol');
+
+		for (const product of products) {
+			const allGtins = product.m_product_gtin.map((item: { gtin: string }) => item.gtin);
+
+			//	const taxRate = product.c_taxcategory[0].c_tax[0].rate / 100;
+			const taxRate = product.c_taxcategory_id === 2 ? 0.1 : 0.2;
+			const poUrl = product.m_product_po.length > 0 ? product.m_product_po[0].url : null;
+
+			for (const gtin of allGtins) {
+				try {
+					const response = await fetch('http://localhost:3000/api/cenoteka', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ barcode: gtin, href: poUrl })
+					});
+					if (response.status !== 200) {
+						console.error(`API request failed for GTIN ${gtin}: ${response.statusText}`);
+						continue;
+					}
+
+					const { data }: { data: VendorProduct } = await response.json();
+					if (!data || data === undefined) {
+						console.error(`Invalid data received for GTIN ${gtin}`);
+						continue;
+					}
+					if (data.barcodes) {
+						const newBarcodes = data.barcodes.filter(
+							(barcode: string) =>
+								typeof barcode === 'string' && !allGtins.includes(barcode) && isValidGTIN(barcode)
+						);
+
+						if (newBarcodes.length > 0) {
+							const { error: insertError } = await supabase.from('m_product_gtin').insert(
+								newBarcodes.map((barcode: string) => ({
+									m_product_id: product.id,
+									gtin: barcode
+								}))
+							);
+
+							if (insertError) {
+								if (insertError.code === '23505') {
+									console.log('Some GTINs already exist, duplicates skipped');
+								} else {
+									console.error('Error inserting new GTINs:', insertError);
+								}
+							} else {
+								console.log(`Inserted ${newBarcodes.length} new GTINs for product ${product.id}`);
+							}
+						}
+					}
+					const priceWithoutTax = data.price ? data.price / (1 + taxRate) : undefined;
+
+					const { error: updateError, data: updatedProduct } = await supabase
+						.from('m_product_po')
+						.update({
+							vendorproductno: data.sku,
+							barcode: data.barcodes?.join(', '),
+							manufacturer: data.brand,
+							url: data.href,
+							pricelist: priceWithoutTax
+						})
+						.eq('m_product_id', product.id)
+						.eq('c_bpartner_id', 2)
+						.select();
+					if (updateError) {
+						console.error('Error updating product:', updateError);
+						continue;
+					}
+					if (updatedProduct && updatedProduct.length === 0) {
+						const { error: insertError } = await supabase.from('m_product_po').insert({
+							m_product_id: product.id,
+							c_bpartner_id: 2,
+							vendorproductno: data.sku,
+							barcode: data.barcodes?.join(', '),
+							manufacturer: data.brand,
+							url: data.href,
+							pricelist: priceWithoutTax
+						});
+						if (insertError) {
+							console.error('Error inserting product:', insertError);
+							continue;
+						}
+					}
+
+					if (data.netQuantity) {
+						const { error: updateProductError } = await supabase
+							.from('m_product')
+							.update({
+								net_quantity: data.netQuantity,
+								net_qty_uom_id: allUom
+									? allUom.find(
+											(uom) => uom.uomsymbol?.toLowerCase() === data.netQuantityUnit?.toLowerCase()
+										)?.id
+									: undefined
+							})
+							.eq('id', product.id);
+						if (updateProductError) {
+							console.error('Error updating product with net quantity:', updateProductError);
+						} else {
+							console.log(`Updated product ${product.id} with net quantity data`);
+						}
+					}
+
+					break; // Exit the loop if we get a successful response
+				} catch (err) {
+					console.error(`Error fetching data for GTIN ${gtin}:`, err);
+				}
+			}
+		}
+		return { success: true, message: 'Cenoteka info updated successfully' };
+		/* return { success: false, error: 'No data found' }; */
 	}
 } satisfies Actions;

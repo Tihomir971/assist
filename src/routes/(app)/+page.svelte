@@ -1,31 +1,10 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import { Combobox, Input, Label, Menu, Options } from '$lib/components/combobox';
-	import {
-		Select,
-		SelectLabel,
-		SelectMenu,
-		SelectOption,
-		SelectTrigger
-	} from '$lib/components/select';
 </script>
 
 <div class="flex-col items-center justify-center space-y-10 text-center">
-	<form
-		method="POST"
-		use:enhance={() => {
-			return async ({ update }) => {
-				await update({ reset: false });
-			};
-		}}
-	>
-		<Select></Select>
-		<button type="submit" class="btn">Test</button>
-	</form>
-
 	<!-- Animated Logo -->
 	<figure>
-		<section class="img-bg" />
+		<section class="img-bg"></section>
 		<svg
 			class="fill-token -scale-x-[100%]"
 			xmlns="http://www.w3.org/2000/svg"

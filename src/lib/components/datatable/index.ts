@@ -1,1 +1,0 @@
-export { default as DataTable } from './components/DataTable.svelte';

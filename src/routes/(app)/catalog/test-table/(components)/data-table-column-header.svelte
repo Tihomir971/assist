@@ -4,7 +4,7 @@
 	import ArrowUp from '$lib/icons/RadixIconsArrowUp.svelte';
 	import CaretSort from '$lib/icons/RadixIconsCaretSort.svelte';
 	import type { TableViewModel } from 'svelte-headless-table';
-	import type { Product } from '../(data)/schemas.js';
+	import type { ProductSchema } from '$lib/types/zod.js';
 	import { cn } from '$lib/utils.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
@@ -21,7 +21,7 @@
 		};
 		filter: never;
 	};
-	export let tableModel: TableViewModel<Product>;
+	export let tableModel: TableViewModel<ProductSchema>;
 	export let cellId: string;
 
 	const { hiddenColumnIds } = tableModel.pluginStates.hide;

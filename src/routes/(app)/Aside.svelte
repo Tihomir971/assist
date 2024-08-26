@@ -1,19 +1,18 @@
 <script lang="ts">
 	import Package2 from 'lucide-svelte/icons/package-2';
-	import Home from 'lucide-svelte/icons/home';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import PhLayout from '$lib/icons/PhLayout.svelte';
 	import PhRepeat from '$lib/icons/PhRepeat.svelte';
 	import PhTag from '$lib/icons/PhTag.svelte';
-	import PhTestTube from '$lib/icons/PhTestTube.svelte';
+	import PhMicrosoftExcelLogo from '$lib/icons/PhMicrosoftExcelLogo.svelte';
 
 	let activePath: string | undefined = undefined;
 	$: if (browser) activePath = $page.url.pathname;
 </script>
 
-<nav class="flex h-full flex-col items-center gap-4 bg-muted/80 px-2 sm:py-5">
+<nav class="flex h-full flex-col items-center gap-4 border-x bg-well-2 px-2 sm:py-5">
 	<a
 		href="##"
 		class="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
@@ -31,7 +30,6 @@
 				{...builder}
 			>
 				<PhLayout class="size-6" />
-				<!-- <Home class="h-5 w-5" /> -->
 				<span class="sr-only">Dashboard</span>
 			</a>
 		</Tooltip.Trigger>
@@ -46,37 +44,12 @@
 				{...builder}
 			>
 				<PhTag class="size-6" />
-				<!-- <Home class="h-5 w-5" /> -->
 				<span class="sr-only">Catalog</span>
 			</a>
 		</Tooltip.Trigger>
 		<Tooltip.Content side="right">Catalog</Tooltip.Content>
 	</Tooltip.Root>
-	<!-- 		<div class="tooltip tooltip-right" data-tip="Catalog">
-			<a
-				href="/catalog"
-				data-tip="Catalog"
-				class="btn btn-square btn-ghost join-item"
-				class:btn-active={activePath === '/catalog'}
-			>
-				<PhTag class="w-6" />
-			</a>
-		</div> -->
-	<Tooltip.Root>
-		<Tooltip.Trigger asChild let:builder>
-			<a
-				href="/catalog/replenish"
-				class={`${activePath === '/catalog/replenish' ? 'text-accent-foreground' : 'text-muted-foreground'} flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:text-foreground md:h-8 md:w-8`}
-				use:builder.action
-				{...builder}
-			>
-				<PhRepeat class="size-6" />
-				<!-- <Home class="h-5 w-5" /> -->
-				<span class="sr-only">Replenish</span>
-			</a>
-		</Tooltip.Trigger>
-		<Tooltip.Content side="right">Replenish</Tooltip.Content>
-	</Tooltip.Root>
+
 	<Tooltip.Root>
 		<Tooltip.Trigger asChild let:builder>
 			<a
@@ -85,12 +58,39 @@
 				use:builder.action
 				{...builder}
 			>
-				<PhRepeat class="size-6" />
-				<!-- <Home class="h-5 w-5" /> -->
+				<PhTag class="size-6" />
 				<span class="sr-only">Test Table</span>
 			</a>
 		</Tooltip.Trigger>
 		<Tooltip.Content side="right">Test Table</Tooltip.Content>
+	</Tooltip.Root>
+	<Tooltip.Root>
+		<Tooltip.Trigger asChild let:builder>
+			<a
+				href="/data"
+				class={`${activePath === '/data' ? 'text-accent-foreground' : 'text-muted-foreground'} flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:text-foreground md:h-8 md:w-8`}
+				use:builder.action
+				{...builder}
+			>
+				<PhRepeat class="size-6" />
+				<span class="sr-only">Export Import</span>
+			</a>
+		</Tooltip.Trigger>
+		<Tooltip.Content side="right">Export Import</Tooltip.Content>
+	</Tooltip.Root>
+	<Tooltip.Root>
+		<Tooltip.Trigger asChild let:builder>
+			<a
+				href="/excel"
+				class={`${activePath === '/excel' ? 'text-accent-foreground' : 'text-muted-foreground'} flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:text-foreground md:h-8 md:w-8`}
+				use:builder.action
+				{...builder}
+			>
+				<PhMicrosoftExcelLogo class="size-6" />
+				<span class="sr-only">Import Excel</span>
+			</a>
+		</Tooltip.Trigger>
+		<Tooltip.Content side="right">Import Excel</Tooltip.Content>
 	</Tooltip.Root>
 	<!-- 		<div class="tooltip tooltip-right" data-tip="Replenish">
 			<a

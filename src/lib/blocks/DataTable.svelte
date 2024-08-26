@@ -21,7 +21,7 @@
 	>
 		{#each $headerRows as headerRow (headerRow.id)}
 			<Subscribe rowAttrs={headerRow.attrs()} let:rowAttrs>
-				<tr {...rowAttrs} class={cn('border-b transition-colors data-[state=selected]:bg-muted')}>
+				<tr {...rowAttrs} class={cn('transition-colors data-[state=selected]:bg-muted')}>
 					{#each headerRow.cells as cell (cell.id)}
 						<Subscribe attrs={cell.attrs()} let:attrs>
 							<th

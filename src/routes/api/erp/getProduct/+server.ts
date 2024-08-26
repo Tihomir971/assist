@@ -2,16 +2,11 @@ import { BIZNISOFT_API, BIZNISOFT_BEARER_TOKEN } from '$env/static/private';
 import type { ArticlesOnStock } from '$lib/types/biznisoft';
 //import type { Tables } from '$lib/types/database.types';
 //import { getItem } from '$lib/server/erp/article';
-import { json, redirect, type RequestHandler } from '@sveltejs/kit';
+import { json, type RequestHandler } from '@sveltejs/kit';
 
 const myHeaders = new Headers({ Authorization: 'Bearer ' + BIZNISOFT_BEARER_TOKEN });
 
-export const GET: RequestHandler = async ({ url, locals: { supabase, safeGetSession } }) => {
-	const { session } = await safeGetSession();
-	if (!session) {
-		redirect(303, '/auth');
-	}
-
+export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 	const m_product_id = url.searchParams.get('ID');
 	if (!m_product_id) {
 		return json({ code: 'warning', message: 'Product not found' });
@@ -117,11 +112,6 @@ export const GET: RequestHandler = async ({ url, locals: { supabase, safeGetSess
 		console.log('stockUpdateData', stockUpdateData);
 		console.log('stockUpdateCount', stockUpdateCount);
 		console.log('---------------------------------');
-
-		/* 	const stock_update: Tables<m_storageonhand> = {
-			m_product_id: Number(m_product_id)
-		}; */
-		/* console.log('stock_update', stock_update); */
 	}
 
 	return json({ code: 'success', message: ` for vendors` });

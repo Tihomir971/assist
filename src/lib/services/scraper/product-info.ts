@@ -442,7 +442,7 @@ const getApiInfo: GetApiInfo = {
 		vendorData.price = data.price.amount / 100;
 		vendorData.brand = data.manufacturer;
 		vendorData.images = ['https://online.idea.rs/' + data.images[0].image_l];
-		vendorData.sku = data.id;
+		vendorData.sku = data.code;
 		vendorData.vendorPriceEnd = data.offer?.end_on ? new Date(data.offer.end_on) : null;
 
 		return vendorData;

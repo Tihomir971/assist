@@ -1,11 +1,6 @@
-import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 
-export const load = (async ({ url, depends, locals: { supabase, safeGetSession } }) => {
-	const { session } = await safeGetSession();
-	if (!session) {
-		redirect(303, '/auth');
-	}
+export const load = (async ({ url, depends, locals: { supabase } }) => {
 	const activeCategory = () => {
 		const param = url.searchParams.get('cat');
 
@@ -55,7 +50,6 @@ export const load = (async ({ url, depends, locals: { supabase, safeGetSession }
 	const { data: categories } = await supabase
 		.from('m_product_category')
 		.select('id,parent_id, title:name')
-		//.select('id,parent_id,content: name')
 		.order('name');
 
 	return { categories, expanded: findParents(categories, activeCategory()) };

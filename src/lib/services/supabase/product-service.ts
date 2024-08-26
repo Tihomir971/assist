@@ -4,7 +4,8 @@ type Product = Partial<Tables<'m_product'>>;
 
 // Get product details
 export const getProduct = async (supabase: SupabaseClient<Database>, id: number) => {
-	const { data: product } = await supabase.from('m_product').select().eq('id', id).maybeSingle();
+	const { data: product } = await supabase.from('m_product').select('*').eq('id', id).maybeSingle();
+	/* ', m_product_category_id' */
 
 	return product;
 };
@@ -67,4 +68,9 @@ export const addProductPurchasing = async (
 ) => {
 	const { error: productPurchasingError } = await supabase.from('m_product_po').insert(data);
 	return { error: productPurchasingError };
+};
+
+export const getUom = async (supabase: SupabaseClient<Database>) => {
+	const { data } = await supabase.from('c_uom').select('value:id, label:name').order('name');
+	return data;
 };

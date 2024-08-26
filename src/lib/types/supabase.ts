@@ -61,7 +61,6 @@ export interface Database {
     Tables: {
       _template: {
         Row: {
-          ad_client_id: number
           ad_org_id: number
           created: string
           id: number
@@ -69,7 +68,6 @@ export interface Database {
           updated: string
         }
         Insert: {
-          ad_client_id?: number
           ad_org_id?: number
           created?: string
           id?: number
@@ -77,7 +75,6 @@ export interface Database {
           updated?: string
         }
         Update: {
-          ad_client_id?: number
           ad_org_id?: number
           created?: string
           id?: number
@@ -85,12 +82,6 @@ export interface Database {
           updated?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "_template_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "_template_ad_org_id_fkey"
             columns: ["ad_org_id"]
@@ -290,7 +281,9 @@ export interface Database {
       c_bpartner: {
         Row: {
           ad_language: string | null
+          bpartner_parent_id: number | null
           created: string
+          duns: string | null
           id: number
           isactive: boolean
           iscustomer: boolean
@@ -302,11 +295,13 @@ export interface Database {
           po_pricelist_id: number | null
           taxid: string | null
           updated: string
-          value: string
+          value: string | null
         }
         Insert: {
           ad_language?: string | null
+          bpartner_parent_id?: number | null
           created?: string
+          duns?: string | null
           id?: number
           isactive?: boolean
           iscustomer?: boolean
@@ -318,11 +313,13 @@ export interface Database {
           po_pricelist_id?: number | null
           taxid?: string | null
           updated?: string
-          value: string
+          value?: string | null
         }
         Update: {
           ad_language?: string | null
+          bpartner_parent_id?: number | null
           created?: string
+          duns?: string | null
           id?: number
           isactive?: boolean
           iscustomer?: boolean
@@ -334,9 +331,15 @@ export interface Database {
           po_pricelist_id?: number | null
           taxid?: string | null
           updated?: string
-          value?: string
+          value?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "c_bpartner_bpartner_parent_id_fkey"
+            columns: ["bpartner_parent_id"]
+            referencedRelation: "c_bpartner"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "c_bpartner_m_pricelist_id_fkey"
             columns: ["m_pricelist_id"]
@@ -347,6 +350,61 @@ export interface Database {
             foreignKeyName: "c_bpartner_po_pricelist_id_fkey"
             columns: ["po_pricelist_id"]
             referencedRelation: "m_pricelist"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      c_bpartner_location: {
+        Row: {
+          ad_org_id: number
+          c_bpartner_id: number
+          created: string
+          id: number
+          isactive: boolean
+          isbillto: boolean
+          isshipto: boolean
+          name: string
+          phone: string | null
+          phone2: string | null
+          updated: string
+        }
+        Insert: {
+          ad_org_id?: number
+          c_bpartner_id: number
+          created?: string
+          id?: number
+          isactive?: boolean
+          isbillto?: boolean
+          isshipto?: boolean
+          name?: string
+          phone?: string | null
+          phone2?: string | null
+          updated?: string
+        }
+        Update: {
+          ad_org_id?: number
+          c_bpartner_id?: number
+          created?: string
+          id?: number
+          isactive?: boolean
+          isbillto?: boolean
+          isshipto?: boolean
+          name?: string
+          phone?: string | null
+          phone2?: string | null
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "c_bpartner_location_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_bpartner_location_c_bpartner_id_fkey"
+            columns: ["c_bpartner_id"]
+            referencedRelation: "c_bpartner"
             referencedColumns: ["id"]
           }
         ]
@@ -408,7 +466,7 @@ export interface Database {
           c_channel_id: number
           channel_code: string
           created?: string
-          entity_type: Database["public"]["Enums"]["Entity"]
+          entity_type?: Database["public"]["Enums"]["Entity"]
           id?: number
           internal_code: string
           isactive?: boolean
@@ -436,6 +494,284 @@ export interface Database {
             foreignKeyName: "c_channel_map_c_channel_id_fkey"
             columns: ["c_channel_id"]
             referencedRelation: "c_channel"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      c_channel_map_bpartner: {
+        Row: {
+          ad_client_id: number
+          ad_org_id: number
+          c_bpartner_id: number
+          c_channel_id: number
+          created: string
+          id: number
+          isactive: boolean
+          resource_id: string
+          updated: string
+        }
+        Insert: {
+          ad_client_id?: number
+          ad_org_id?: number
+          c_bpartner_id: number
+          c_channel_id: number
+          created?: string
+          id?: number
+          isactive?: boolean
+          resource_id: string
+          updated?: string
+        }
+        Update: {
+          ad_client_id?: number
+          ad_org_id?: number
+          c_bpartner_id?: number
+          c_channel_id?: number
+          created?: string
+          id?: number
+          isactive?: boolean
+          resource_id?: string
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "c_channel_map_bpartner_ad_client_id_fkey"
+            columns: ["ad_client_id"]
+            referencedRelation: "ad_client"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_channel_map_bpartner_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_channel_map_bpartner_c_bpartner_id_fkey"
+            columns: ["c_bpartner_id"]
+            referencedRelation: "c_bpartner"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_channel_map_bpartner_c_channel_id_fkey"
+            columns: ["c_channel_id"]
+            referencedRelation: "c_channel"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      c_channel_map_category: {
+        Row: {
+          ad_client_id: number
+          ad_org_id: number
+          c_channel_id: number
+          created: string
+          id: number
+          isactive: boolean
+          m_product_category_id: number | null
+          resource_id: string
+          resource_name: string
+          updated: string
+        }
+        Insert: {
+          ad_client_id?: number
+          ad_org_id?: number
+          c_channel_id: number
+          created?: string
+          id?: number
+          isactive?: boolean
+          m_product_category_id?: number | null
+          resource_id: string
+          resource_name: string
+          updated?: string
+        }
+        Update: {
+          ad_client_id?: number
+          ad_org_id?: number
+          c_channel_id?: number
+          created?: string
+          id?: number
+          isactive?: boolean
+          m_product_category_id?: number | null
+          resource_id?: string
+          resource_name?: string
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "c_channel_map_category_ad_client_id_fkey"
+            columns: ["ad_client_id"]
+            referencedRelation: "ad_client"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_channel_map_category_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_channel_map_category_c_channel_id_fkey"
+            columns: ["c_channel_id"]
+            referencedRelation: "c_channel"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_channel_map_category_m_product_category_id_fkey"
+            columns: ["m_product_category_id"]
+            referencedRelation: "m_product_category"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      c_channel_map_tax: {
+        Row: {
+          ad_org_id: number
+          c_channel_id: number
+          c_taxcategory_id: number
+          created: string
+          id: number
+          isactive: boolean
+          resource_id: string
+          updated: string
+        }
+        Insert: {
+          ad_org_id?: number
+          c_channel_id: number
+          c_taxcategory_id: number
+          created?: string
+          id?: number
+          isactive?: boolean
+          resource_id: string
+          updated?: string
+        }
+        Update: {
+          ad_org_id?: number
+          c_channel_id?: number
+          c_taxcategory_id?: number
+          created?: string
+          id?: number
+          isactive?: boolean
+          resource_id?: string
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "c_channel_map_tax_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_channel_map_tax_c_channel_id_fkey"
+            columns: ["c_channel_id"]
+            referencedRelation: "c_channel"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_channel_map_tax_c_taxcategory_id_fkey"
+            columns: ["c_taxcategory_id"]
+            referencedRelation: "c_taxcategory"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      c_channel_map_warehouse: {
+        Row: {
+          ad_org_id: number
+          c_channel_id: number
+          created: string
+          id: number
+          isactive: boolean
+          m_warehouse_id: number
+          resource_id: string
+          updated: string
+        }
+        Insert: {
+          ad_org_id?: number
+          c_channel_id: number
+          created?: string
+          id?: number
+          isactive?: boolean
+          m_warehouse_id: number
+          resource_id: string
+          updated?: string
+        }
+        Update: {
+          ad_org_id?: number
+          c_channel_id?: number
+          created?: string
+          id?: number
+          isactive?: boolean
+          m_warehouse_id?: number
+          resource_id?: string
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "c_channel_map_warehouse_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_channel_map_warehouse_c_channel_id_fkey"
+            columns: ["c_channel_id"]
+            referencedRelation: "c_channel"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_channel_map_warehouse_m_warehouse_id_fkey"
+            columns: ["m_warehouse_id"]
+            referencedRelation: "m_warehouse"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      c_country: {
+        Row: {
+          ad_org_id: number
+          alpha_2: string
+          c_currency_id: number | null
+          created: string
+          full_name: string | null
+          id: number
+          isactive: boolean
+          short_name: string
+          updated: string
+        }
+        Insert: {
+          ad_org_id?: number
+          alpha_2: string
+          c_currency_id?: number | null
+          created?: string
+          full_name?: string | null
+          id?: number
+          isactive?: boolean
+          short_name: string
+          updated?: string
+        }
+        Update: {
+          ad_org_id?: number
+          alpha_2?: string
+          c_currency_id?: number | null
+          created?: string
+          full_name?: string | null
+          id?: number
+          isactive?: boolean
+          short_name?: string
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "c_country_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_country_c_currency_id_fkey"
+            columns: ["c_currency_id"]
+            referencedRelation: "c_currency"
             referencedColumns: ["id"]
           }
         ]
@@ -472,6 +808,251 @@ export interface Database {
           minor_unit?: number
           name?: string
           numeric_code?: string
+          updated?: string
+        }
+        Relationships: []
+      }
+      c_loc_address: {
+        Row: {
+          ad_org_id: number
+          created: string
+          id: number
+          isactive: boolean
+          municipality_id: string
+          updated: string
+        }
+        Insert: {
+          ad_org_id?: number
+          created?: string
+          id?: number
+          isactive?: boolean
+          municipality_id: string
+          updated?: string
+        }
+        Update: {
+          ad_org_id?: number
+          created?: string
+          id?: number
+          isactive?: boolean
+          municipality_id?: string
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "c_loc_address_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_loc_address_municipality_id_fkey"
+            columns: ["municipality_id"]
+            referencedRelation: "c_loc_municipality"
+            referencedColumns: ["code"]
+          }
+        ]
+      }
+      c_loc_municipality: {
+        Row: {
+          ad_org_id: number
+          code: string
+          created: string
+          id: number
+          isactive: boolean
+          name: string
+          region_id: string
+          updated: string
+        }
+        Insert: {
+          ad_org_id?: number
+          code: string
+          created?: string
+          id?: number
+          isactive?: boolean
+          name: string
+          region_id: string
+          updated?: string
+        }
+        Update: {
+          ad_org_id?: number
+          code?: string
+          created?: string
+          id?: number
+          isactive?: boolean
+          name?: string
+          region_id?: string
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "c_loc_municipality_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_loc_municipality_region_id_fkey"
+            columns: ["region_id"]
+            referencedRelation: "c_loc_region"
+            referencedColumns: ["code"]
+          }
+        ]
+      }
+      c_loc_region: {
+        Row: {
+          code: string
+          created: string
+          id: number
+          name: string
+          parent_region: string | null
+          type: Database["public"]["Enums"]["region_type"] | null
+          updated: string
+        }
+        Insert: {
+          code: string
+          created?: string
+          id?: number
+          name: string
+          parent_region?: string | null
+          type?: Database["public"]["Enums"]["region_type"] | null
+          updated?: string
+        }
+        Update: {
+          code?: string
+          created?: string
+          id?: number
+          name?: string
+          parent_region?: string | null
+          type?: Database["public"]["Enums"]["region_type"] | null
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "c_loc_region_parent_region_fkey"
+            columns: ["parent_region"]
+            referencedRelation: "c_loc_region"
+            referencedColumns: ["code"]
+          }
+        ]
+      }
+      c_loc_settlement: {
+        Row: {
+          ad_org_id: number
+          code: string
+          created: string
+          id: number
+          isactive: boolean
+          municipality_id: string | null
+          name: string
+          updated: string
+        }
+        Insert: {
+          ad_org_id?: number
+          code: string
+          created?: string
+          id?: number
+          isactive?: boolean
+          municipality_id?: string | null
+          name: string
+          updated?: string
+        }
+        Update: {
+          ad_org_id?: number
+          code?: string
+          created?: string
+          id?: number
+          isactive?: boolean
+          municipality_id?: string | null
+          name?: string
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "c_loc_settlement_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_loc_settlement_municipality_id_fkey"
+            columns: ["municipality_id"]
+            referencedRelation: "c_loc_municipality"
+            referencedColumns: ["code"]
+          }
+        ]
+      }
+      c_location: {
+        Row: {
+          address1: string | null
+          address2: string | null
+          c_country_id: number | null
+          c_loc_municipality_id: number | null
+          c_region_id: number | null
+          created: string
+          id: number
+          isactive: boolean
+          updated: string
+        }
+        Insert: {
+          address1?: string | null
+          address2?: string | null
+          c_country_id?: number | null
+          c_loc_municipality_id?: number | null
+          c_region_id?: number | null
+          created?: string
+          id?: number
+          isactive?: boolean
+          updated?: string
+        }
+        Update: {
+          address1?: string | null
+          address2?: string | null
+          c_country_id?: number | null
+          c_loc_municipality_id?: number | null
+          c_region_id?: number | null
+          created?: string
+          id?: number
+          isactive?: boolean
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "c_location_c_country_id_fkey"
+            columns: ["c_country_id"]
+            referencedRelation: "c_country"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_location_c_loc_municipality_id_fkey"
+            columns: ["c_loc_municipality_id"]
+            referencedRelation: "c_loc_municipality"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_location_c_region_id_fkey"
+            columns: ["c_region_id"]
+            referencedRelation: "c_loc_region"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      c_postal: {
+        Row: {
+          created: string
+          id: number
+          isactive: boolean
+          updated: string
+        }
+        Insert: {
+          created?: string
+          id?: number
+          isactive?: boolean
+          updated?: string
+        }
+        Update: {
+          created?: string
+          id?: number
+          isactive?: boolean
           updated?: string
         }
         Relationships: []
@@ -713,6 +1294,33 @@ export interface Database {
             referencedColumns: ["id"]
           }
         ]
+      }
+      countries: {
+        Row: {
+          continent: Database["public"]["Enums"]["continents"] | null
+          id: number
+          iso2: string
+          iso3: string | null
+          local_name: string | null
+          name: string | null
+        }
+        Insert: {
+          continent?: Database["public"]["Enums"]["continents"] | null
+          id?: number
+          iso2: string
+          iso3?: string | null
+          local_name?: string | null
+          name?: string | null
+        }
+        Update: {
+          continent?: Database["public"]["Enums"]["continents"] | null
+          id?: number
+          iso2?: string
+          iso3?: string | null
+          local_name?: string | null
+          name?: string | null
+        }
+        Relationships: []
       }
       crud_history: {
         Row: {
@@ -1431,7 +2039,10 @@ export interface Database {
           m_product_uu: string | null
           mpn: string | null
           name: string
+          net_qty_uom_id: number | null
+          net_quantity: number
           producttype: string
+          shelf_life: number | null
           sku: string | null
           unitsperpack: number
           unitsperpallet: number | null
@@ -1443,7 +2054,7 @@ export interface Database {
           attributes?: Json | null
           barcode?: string | null
           brand?: string | null
-          c_taxcategory_id?: number
+          c_taxcategory_id: number
           c_uom_id?: number
           condition?: string | null
           created?: string
@@ -1459,7 +2070,10 @@ export interface Database {
           m_product_uu?: string | null
           mpn?: string | null
           name: string
+          net_qty_uom_id?: number | null
+          net_quantity?: number
           producttype?: string
+          shelf_life?: number | null
           sku?: string | null
           unitsperpack?: number
           unitsperpallet?: number | null
@@ -1487,7 +2101,10 @@ export interface Database {
           m_product_uu?: string | null
           mpn?: string | null
           name?: string
+          net_qty_uom_id?: number | null
+          net_quantity?: number
           producttype?: string
+          shelf_life?: number | null
           sku?: string | null
           unitsperpack?: number
           unitsperpallet?: number | null
@@ -1534,6 +2151,12 @@ export interface Database {
             foreignKeyName: "m_product_m_product_category_id_fkey"
             columns: ["m_product_category_id"]
             referencedRelation: "m_product_category"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_product_net_qty_uom_id_fkey"
+            columns: ["net_qty_uom_id"]
+            referencedRelation: "c_uom"
             referencedColumns: ["id"]
           }
         ]
@@ -1595,6 +2218,49 @@ export interface Database {
             foreignKeyName: "m_product_category_parent_id_fkey"
             columns: ["parent_id"]
             referencedRelation: "m_product_category"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      m_product_gtin: {
+        Row: {
+          ad_org_id: number
+          created: string
+          gtin: string
+          id: number
+          isactive: boolean
+          m_product_id: number
+          updated: string
+        }
+        Insert: {
+          ad_org_id?: number
+          created?: string
+          gtin: string
+          id?: number
+          isactive?: boolean
+          m_product_id: number
+          updated?: string
+        }
+        Update: {
+          ad_org_id?: number
+          created?: string
+          gtin?: string
+          id?: number
+          isactive?: boolean
+          m_product_id?: number
+          updated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "m_product_gtin_ad_org_id_fkey"
+            columns: ["ad_org_id"]
+            referencedRelation: "ad_org"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_product_gtin_m_product_id_fkey"
+            columns: ["m_product_id"]
+            referencedRelation: "m_product"
             referencedColumns: ["id"]
           }
         ]
@@ -2186,9 +2852,24 @@ export interface Database {
         }
         Returns: Record<string, unknown>
       }
+      is_valid_gtin: {
+        Args: {
+          barcode: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      Entity: "Category" | "Source"
+      continents:
+        | "Africa"
+        | "Antarctica"
+        | "Asia"
+        | "Europe"
+        | "Oceania"
+        | "North America"
+        | "South America"
+      Entity: "Category" | "Source" | "Uom" | "Tax"
+      region_type: "city" | "district" | "autonomous province"
     }
     CompositeTypes: {
       [_ in never]: never

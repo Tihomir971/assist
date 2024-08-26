@@ -1,17 +1,16 @@
 <script lang="ts">
-	import * as Form from '$lib/components/ui/form';
-	import { formSchema, type FormSchema } from './schema';
+	import { authSchema, type AuthSchema } from './schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
 
-	export let data: SuperValidated<Infer<FormSchema>>;
+	import { Input } from '$lib/components/ui/input/index.js';
+	import * as Form from '$lib/components/ui/form';
+	import * as Card from '$lib/components/ui/card/index.js';
+
+	export let data: SuperValidated<Infer<AuthSchema>>;
 
 	const form = superForm(data, {
-		validators: zodClient(formSchema)
+		validators: zodClient(authSchema)
 	});
 
 	const { form: formData, enhance } = form;
@@ -23,7 +22,7 @@
 			<Card.Title class="text-2xl">Login</Card.Title>
 			<Card.Description>Enter your email below to login to your account.</Card.Description>
 		</Card.Header>
-		<Card.Content class="ggap-2 grid">
+		<Card.Content class="grid gap-2">
 			<Form.Field {form} name="email">
 				<Form.Control let:attrs>
 					<Form.Label>Email</Form.Label>
@@ -36,7 +35,7 @@
 						required
 					/>
 				</Form.Control>
-				<Form.Description>This is your password.</Form.Description>
+				<Form.Description>This is your Email.</Form.Description>
 				<Form.FieldErrors />
 			</Form.Field>
 			<Form.Field {form} name="password">

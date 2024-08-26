@@ -1,7 +1,22 @@
-<!-- src/routes/+layout.svelte -->
-<script lang="ts">
+<script>
 	import '../app.postcss';
-	import 'iconify-icon';
+	import { invalidate } from '$app/navigation';
+	import { Toaster } from '$lib/components/ui/sonner';
+
+	let { data, children } = $props();
+	let { session, supabase } = $derived(data);
+
+	$effect(() => {
+		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
+			if (newSession?.expires_at !== session?.expires_at) {
+				invalidate('supabase:auth');
+			}
+		});
+
+		return () => data.subscription.unsubscribe();
+	});
 </script>
 
-<slot />
+<Toaster position="bottom-center" richColors />
+
+{@render children()}

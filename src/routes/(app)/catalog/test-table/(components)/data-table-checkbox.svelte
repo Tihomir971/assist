@@ -9,4 +9,5 @@
 	export let checked: Writable<boolean>;
 </script>
 
-<Checkbox bind:checked={$checked} {...$$restProps} />
+<!-- <Checkbox bind:checked={$checked} {...$$restProps} /> -->
+<input type="checkbox" bind:checked={$checked} {...$$restProps} />

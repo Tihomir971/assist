@@ -1,165 +1,102 @@
 <script lang="ts">
-	import type { SubmitFunction } from '@sveltejs/kit';
-	import type { PageData } from './$types';
-	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
-	import { applyAction, enhance } from '$app/forms';
-	import { Combobox } from '$lib/components/combobox';
-	import { DateTimeFormat, numberFormat } from '$lib/scripts/format';
-	import { afterNavigate } from '$app/navigation';
-	import { base } from '$app/paths';
+	import { browser } from '$app/environment';
+	import { formatDateTime } from '$lib/style/locale';
 
-	export let data: PageData;
-	$: ({ category, categories } = data);
+	import * as Card from '$lib/components/ui/card';
+	import * as Form from '$lib/components/ui/form';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
+	import { Textarea } from '$lib/components/ui/textarea';
+	import ComboBox2 from '$lib/components/melt/ComboBox2.svelte';
+	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { page } from '$app/stores';
+	import { crudProductCategorySchema } from '../zod.schema.js';
 
-	let localCopy: any = undefined;
-	let modified = false;
-	$: if (localCopy && JSON.stringify(category) !== JSON.stringify(localCopy)) {
-		modified = true;
-	} else {
-		modified = false;
-	}
+	let { data } = $props();
 
-	const submit: SubmitFunction = ({}) => {
-		return async ({ result }) => {
-			if (result.type === 'success') {
-				// do something...
-				addToast({
-					data: {
-						title: 'Category update',
-						description: `Category: "${category?.name}" successfully updated!`,
-						color: 'alert-success'
-					}
-				});
-				// use the default behavior for this result type
-				await applyAction(result);
-				history.back();
-			}
-		};
-	};
-	let previousPage: string = base;
-	afterNavigate(({ from }) => {
-		previousPage = from?.url.pathname || previousPage;
-		previousPage = previousPage + '?' + from?.url.searchParams.toString() || previousPage;
-		localCopy = Object.assign({}, category);
+	const formCategory = superForm(data.formCategory, {
+		validators: zodClient(crudProductCategorySchema)
 	});
+	const { form: formCategoryData, enhance: enhanceCategory, message } = formCategory;
 </script>
 
-<div class="mx-auto max-w-2xl">
-	<div class="card">
-		<hgroup class="prose">
-			<h2>Edit category</h2>
-			<p>Some information about category</p>
-		</hgroup>
-		<form method="POST" action="?/setCategory" use:enhance={submit}>
-			{#if category}
-				<div class="space-y-12">
-					<div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
-						<label class="form-control">
-							<div class="label">
-								<span class="label-text">ID</span>
-							</div>
-							<input
-								name="id"
-								type="text"
-								readonly
-								value={category.id}
-								class="input input-bordered"
-							/>
-						</label>
-						{#if categories}
-							<Combobox
-								labela="Parent Category"
-								name="parent_id"
-								options={categories}
-								bind:value={category.parent_id}
-							></Combobox>
-						{/if}
-						<div class="col-span-3 col-start-1 flex flex-col">
-							<div class="form-control w-52">
-								<label class="label cursor-pointer">
-									<span class="label-text">Is Active?</span>
-									<input
-										type="checkbox"
-										name="isactive"
-										checked={category.isactive}
-										class="toggle toggle-primary"
-									/>
-								</label>
-							</div>
-							<div class="form-control w-52">
-								<label class="label cursor-pointer">
-									<span class="label-text">Is Self-service?</span>
-									<input
-										type="checkbox"
-										name="isselfservice"
-										checked={category.isselfservice}
-										class="toggle toggle-secondary"
-									/>
-								</label>
-							</div>
-						</div>
-
-						<label class="form-control col-span-full">
-							<div class="label">
-								<span class="label-text">Name</span>
-							</div>
-							<input
-								name="name"
-								type="text"
-								placeholder="Enter email..."
-								bind:value={category.name}
-								required
-								class="input input-bordered"
-							/>
-						</label>
-
-						<label class="form-control col-span-3 col-start-1">
-							<div class="label">
-								<span class="label-text">Created</span>
-							</div>
-							<input
-								name="created"
-								type="datetime"
-								readonly
-								value={DateTimeFormat(category.created)}
-								class="input input-bordered"
-							/>
-						</label>
-						<label class="form-control col-span-3">
-							<div class="label">
-								<span class="label-text">Updated</span>
-							</div>
-							<input
-								id="updated"
-								name="updated"
-								type="datetime"
-								readonly
-								value={DateTimeFormat(category.updated)}
-								class="input input-bordered"
-							/>
-						</label>
-
-						<!-- name="m_product_category_id"
-					labelText="Product category"
-					placeholder="Choose category"
-					options={categories}
-					bind:value={product.m_product_category_id} -->
-
-						<footer class="col-span-full flex items-center justify-end gap-x-6">
-							<button type="button" on:click={() => history.back()} class="btn btn-outline"
-								>Back</button
-							>
-							<button
-								type="reset"
-								disabled={!modified}
-								on:click={() => (category = localCopy)}
-								class="btn btn-outline btn-secondary">Reset</button
-							>
-							<button type="submit" disabled={!modified} class="btn btn-primary">Save</button>
-						</footer>
-					</div>
+<form method="POST" use:enhanceCategory>
+	<div class="container grid grid-cols-[2fr_1fr] gap-2 overflow-hidden">
+		<Card.Root>
+			<input type="number" name="id" bind:value={$formCategoryData.id} hidden />
+			<Card.Header>
+				<Card.Title>{$formCategoryData.name}</Card.Title>
+			</Card.Header>
+			<Card.Content>
+				{#if $message}
+					<h3 class:invalid={$page.status >= 400}>{$message}</h3>
+				{/if}
+				<Form.Field form={formCategory} name="name">
+					<Form.Control let:attrs>
+						<Form.Label>Name</Form.Label>
+						<Input {...attrs} bind:value={$formCategoryData.name} autocomplete="off" />
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field form={formCategory} name="description">
+					<Form.Control let:attrs>
+						<Form.Label>Description</Form.Label>
+						<Textarea {...attrs} bind:value={$formCategoryData.description} />
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field form={formCategory} name="parent_id">
+					<Form.Control let:attrs>
+						<Form.Label>Parent Category</Form.Label>
+						<ComboBox2
+							{...attrs}
+							options={data.categories}
+							bind:value={$formCategoryData.parent_id}
+						/>
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				{JSON.stringify($formCategoryData.parent_id)}
+			</Card.Content>
+			<Card.Footer class="flex justify-between">
+				{#if $formCategoryData.id}
+					<Form.Button
+						variant="destructive"
+						name="delete"
+						onclick={(
+							e: MouseEvent & {
+								currentTarget: EventTarget & HTMLButtonElement;
+							}
+						) => !confirm('Are you sure?') && e.preventDefault()}>Delete</Form.Button
+					>
+				{/if}
+				<Form.Button>Save</Form.Button>
+				{#if browser}
+					<SuperDebug data={$formCategoryData} />
+				{/if}
+			</Card.Footer>
+		</Card.Root>
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>Card Title</Card.Title>
+				<Card.Description>Card Description</Card.Description>
+			</Card.Header>
+			<Card.Content class="space-y-2">
+				<div class="grid grid-cols-[1fr_2fr] items-center">
+					<Label>ID</Label>
+					<Input value={$formCategoryData.id} readonly />
 				</div>
-			{/if}
-		</form>
+				<div class="grid grid-cols-[1fr_2fr] items-center">
+					<Label>Created</Label>
+					<Input type="text" value={formatDateTime($formCategoryData.created)} readonly />
+				</div>
+				<div class="grid grid-cols-[1fr_2fr] items-center">
+					<Label>Updated</Label>
+					<Input type="text" value={formatDateTime($formCategoryData.updated)} readonly />
+				</div>
+			</Card.Content>
+		</Card.Root>
 	</div>
-</div>
+</form>
+<!-- <Form data={form} categories={data.categories} /> -->

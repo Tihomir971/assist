@@ -3,12 +3,13 @@
 	import Header from './Header.svelte';
 	import Aside from './Aside.svelte';
 	import { Toaster } from '$lib/components/ui/sonner';
-	export let data;
+	//	export let data;
+	let { data, children } = $props();
 </script>
 
-<Toaster richColors />
+<!-- <Toaster richColors /> -->
 
-<div class="AppShell h-full max-h-full w-full max-w-full">
+<!-- <div class="AppShell h-full max-h-full w-full max-w-full overflow-hidden">
 	<div class="AreaHeader">
 		<Header supabase={data.supabase}></Header>
 	</div>
@@ -18,8 +19,21 @@
 	<main class="[grid-area:AreaMain]">
 		<slot />
 	</main>
+</div> -->
+<div class="grid h-screen w-screen grid-rows-[auto_1fr] overflow-hidden">
+	<div class="h-full">
+		<Header></Header>
+	</div>
+	<div class="grid h-full w-full grid-cols-[auto_1fr] overflow-hidden">
+		<Aside></Aside>
+		<!-- <Header supabase={data.supabase}></Header> -->
+		<main class="flex h-full w-full flex-col items-center overflow-hidden p-2">
+			<!-- <slot></slot> -->
+			{@render children()}
+		</main>
+	</div>
 </div>
-
+<!-- 
 <style lang="postcss">
 	.AppShell {
 		display: grid;
@@ -40,3 +54,4 @@
 		grid-area: AreaAside;
 	}
 </style>
+ -->

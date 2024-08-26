@@ -1,25 +1,11 @@
-<script context="module" lang="ts">
-	import JS from '$lib/icons/JS.svelte';
-	import Svelte from '$lib/icons/Svelte.svelte';
-
-	export const icons = {
-		//svelte: Svelte,
-		//folder: ChevronRight,
-		//	folderOpen: ChevronDown,
-		//folderOpen: `<iconify-icon icon="ph:caret-down" width="16" height="16"></iconify-icon>`,
-		//js: JS,
-		//highlight: ArrowLeft,
-		//child: Dot
-	};
-</script>
-
 <script lang="ts">
 	import type { TreeItem } from '..';
 	import { melt } from '@melt-ui/svelte';
 	import { getCtx } from '../ctx';
-	import PhCaretDown from '$lib/icons/PhCaretDown.svelte';
 	import PhCaretRight from '$lib/icons/PhCaretRight.svelte';
 	import PhDotBold from '$lib/icons/PhDotBold.svelte';
+	import { cn } from '$lib/utils';
+	import { slide } from 'svelte/transition';
 
 	export let treeItems: TreeItem[];
 	export let level = 1;
@@ -28,54 +14,54 @@
 		elements: { item, group },
 		helpers: { isExpanded, isSelected }
 	} = getCtx();
+	// Adjust this value to change the indentation size
+	const INDENT_SIZE = 8; // reduced from 16
 </script>
 
 {#each treeItems as { id, title, icon, children }}
 	{@const itemId = id.toString()}
 	{@const hasChildren = !!children?.length}
 
-	<li>
-		<button
-			type="button"
-			class="ring-offset-background focus-visible:ring-ring hover:text-accent-foreground inline-flex h-10 w-full items-center justify-start whitespace-nowrap rounded-md px-2 py-2 text-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-			class:bg-secondary={$isSelected(itemId)}
-			class:text-secondary-foreground={$isSelected(itemId)}
-			class:m4={$isSelected(itemId)}
-			use:melt={$item({
-				id: itemId,
-				hasChildren
-			})}
+	<li class="w-full list-none p-0">
+		<div
+			class={cn(
+				'w-full rounded-md hover:bg-surface-2',
+				$isSelected(itemId) ? 'bg-surface-document' : ''
+			)}
 		>
-			<!-- Add icon. -->
-			{#if hasChildren}
-				{#if $isExpanded(itemId)}
-					<span class="size-4">
-						<!-- <svelte:component this={icons['folderOpen']} class="size-5 text-base-content" /> -->
-						<PhCaretDown class="size-4" />
-						<!-- <iconify-icon icon="ph:caret-down" width="16" height="16"></iconify-icon> -->
+			<button
+				type="button"
+				class={cn(
+					'flex w-full items-center gap-1 overflow-hidden text-ellipsis text-wrap px-2 py-2 text-left text-sm',
+					$isSelected(itemId) ? 'text-secondary-foreground' : ''
+				)}
+				style="padding-left: {level * INDENT_SIZE}px;"
+				use:melt={$item({
+					id: itemId,
+					hasChildren
+				})}
+			>
+				<!-- Add icon. -->
+				{#if hasChildren}
+					<span
+						class="size-4 flex-shrink-0 transition-transform duration-300"
+						class:rotate-90={$isExpanded(itemId)}
+					>
+						<PhCaretRight class="size-4" />
 					</span>
 				{:else}
-					<span class="size-4">
-						<PhCaretRight class="size-4" />
-						<!-- <svelte:component this={icons['folder']} class="size-5 text-base-content" /> -->
-						<!-- <iconify-icon icon="ph:caret-right" width="16" height="16"></iconify-icon> -->
+					<span class="size-4 flex-shrink-0">
+						<PhDotBold class="size-4" />
 					</span>
 				{/if}
-			{:else}
-				<!-- <svelte:component this={icons['child']} class="size-5" /> -->
-				<PhDotBold class="size-4" />
-				<!-- <iconify-icon icon="ph:dot-bold" width="16" height="16"></iconify-icon> -->
-			{/if}
-
-			<!-- {#if icon}
-				<svelte:component this={icons[icon]} class="h-4 w-4" />
-			{/if} -->
-
-			<span class="select-none text-left">{title}</span>
-		</button>
+				<span class="truncate">
+					{title}
+				</span>
+			</button>
+		</div>
 
 		{#if children}
-			<ul use:melt={$group({ id: itemId })} class="ms-2">
+			<ul use:melt={$group({ id: itemId })} class="w-full overflow-hidden p-0">
 				<svelte:self treeItems={children} level={level + 1} on:select />
 			</ul>
 		{/if}

@@ -1,61 +1,63 @@
-import { error, fail } from '@sveltejs/kit';
+import { message, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { getBoolean, getNumber, getString } from '$lib/scripts/getForm';
-import type { Tables } from '$lib/types/database.types';
+import { crudProductCategorySchema, productCategorySchema } from '../zod.schema';
 
-export const load = (async ({ params, locals: { supabase, safeGetSession } }) => {
-	const { session } = await safeGetSession();
-	if (!session) {
-		error(401, { message: 'Unauthorized' });
-	}
+export const load = (async ({ params, locals: { supabase } }) => {
 	const categoryId = params.slug as unknown as number;
-	const getCategory = async (id: number) => {
-		const { data } = await supabase.from('m_product_category').select().eq('id', id).maybeSingle();
+	const { data: category } = await supabase
+		.from('m_product_category')
+		.select('*')
+		.eq('id', categoryId)
+		.maybeSingle();
+	if (params.slug && !category) throw error(404, 'User not found.');
 
-		return data;
-	};
+	const categories =
+		(await supabase.from('m_product_category').select('value:id,label:name')).data || [];
 
-	const getCategories = async () => {
-		const { data } = await supabase
-			.from('m_product_category')
-			.select('value:id,label:name')
-			.order('name');
-		/* .returns<AutocompleteOption<string>[]>(); */
-		return data;
-	};
+	const formCategory = await superValidate(category, zod(crudProductCategorySchema));
 
 	return {
-		category: await getCategory(categoryId),
-		categories: await getCategories()
+		formCategory,
+		categories
 	};
 }) satisfies PageServerLoad;
 
 export const actions = {
-	setCategory: async ({ request, locals: { supabase, safeGetSession } }) => {
-		const { session } = await safeGetSession();
-		if (!session) {
-			error(401, { message: 'Unauthorized' });
-		}
-		const category: Partial<Tables<'m_product_category'>> = {};
-		/* let temporary: FormDataEntryValue | null; */
+	default: async ({ request, locals: { supabase } }) => {
 		const formData = await request.formData();
+		const form = await superValidate(formData, zod(crudProductCategorySchema));
+		if (!form.valid) return fail(400, { form });
 
-		const productId = getNumber(formData, 'id');
-		category.description = getString(formData, 'description');
-		category.name = getString(formData, 'name') ?? undefined;
-		category.parent_id = getNumber(formData, 'parent_id') ?? undefined;
-		category.isselfservice = getBoolean(formData, 'isselfservice');
-		category.isactive = getBoolean(formData, 'isactive');
-		if (productId) {
-			const { error: createPostError } = await supabase
-				.from('m_product_category')
-				.update(category)
-				.eq('id', productId);
+		if (form.data.id) {
+			if (formData.has('delete')) {
+				console.log('Deleting Category', form.data.id);
+				// DELETE
+				const { error: deleteProductCategoryError } = await supabase
+					.from('m_product_category')
+					.delete()
+					.eq('id', form.data.id);
+				if (deleteProductCategoryError) {
+					console.log('deleteProductCategoryError', deleteProductCategoryError);
 
-			if (createPostError) {
-				return fail(500, { supabaseErrorMessage: createPostError.message });
+					return fail(500, { supabaseErrorMessage: deleteProductCategoryError.message });
+				}
+				throw redirect(303, '/catalog/test-table');
+			} else {
+				const { created, updated, ...updateData } = form.data;
+				const { error: updateProductCategoryError } = await supabase
+					.from('m_product_category')
+					.update(updateData)
+					.eq('id', form.data.id);
+
+				if (updateProductCategoryError) {
+					console.log('updateProductCategoryError', updateProductCategoryError);
+
+					return fail(500, { supabaseErrorMessage: updateProductCategoryError.message });
+				}
 			}
 		}
-		return { success: true };
+		return { form };
 	}
 } satisfies Actions;

@@ -4,11 +4,11 @@
 	import RadixIconsDoubleArrowRight from '$lib/icons/RadixIconsDoubleArrowRight.svelte';
 	import RadixIconsDoubleArrowLeft from '$lib/icons/RadixIconsDoubleArrowLeft.svelte';
 	import type { TableViewModel } from 'svelte-headless-table';
-	import type { Product } from '../(data)/schemas.js';
+	import type { ProductSchema } from '$lib/types/zod.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 
-	export let tableModel: TableViewModel<Product>;
+	export let tableModel: TableViewModel<ProductSchema>;
 
 	const { pageRows, pluginStates, rows } = tableModel;
 

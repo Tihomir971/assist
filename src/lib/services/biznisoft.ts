@@ -9,6 +9,7 @@ interface SendOptions {
 
 async function send<T>(options: SendOptions): Promise<T> {
 	const { method, path, data } = options;
+
 	const opts: RequestInit = { method };
 	opts.headers = {
 		Authorization: 'Bearer ' + BIZNISOFT_BEARER_TOKEN
@@ -19,7 +20,7 @@ async function send<T>(options: SendOptions): Promise<T> {
 			...opts.headers,
 			'Content-Type': 'application/json'
 		};
-		opts.body = JSON.stringify({ data });
+		opts.body = JSON.stringify(data);
 	}
 
 	const response = await fetch(`${BIZNISOFT_API}/${path}`, opts);

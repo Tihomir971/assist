@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export interface ArticlesOnStock {
 	StorageID: number;
 	ID: number;
@@ -35,11 +37,22 @@ export interface BSNivoZaliha {
 	iminzal: number;
 	imaxzal: number;
 }
-export interface BSProductInfo {
+export interface BSStock {
+	sifra: number;
+	sifobj: number;
+	zadizm: string;
+	faktcena: number;
+	nabcena: number;
+	vpcena: number;
+	mpcena: number;
+	stanje: number;
+	neprokkasa: number;
+	rezervacije: number;
+}
+export interface BSProduct {
 	sifra: number;
 	naziv: string;
 	grupa: number;
-	grupaNaziv: string;
 	jedmere: string;
 	porez: string;
 	katbr: string;
@@ -51,6 +64,33 @@ export interface BSProductInfo {
 	jc_jedmere: string;
 	jc_koef: number;
 	serbrrok: number;
-	barkod: string;
-	barcodes: (string | null)[];
+	barkod: string | null;
+	barcodes: string[] | null;
+	replenish: { sifobj: number; iminzal: number | null; imaxzal: number | null }[];
+	m_product_po: { kupac: number; kupsif: string }[];
 }
+
+export const partnerBS = z.object({
+	sifra: z.number(),
+	naziv: z.string(),
+	pbr: z.string().nullable(),
+	mesto: z.string().nullable(),
+	adresa: z.string().nullable(),
+	konosoba: z.string().nullable(),
+	telefoni: z.string().nullable(),
+	drzava: z.string().nullable(),
+	pib: z.string().nullable(),
+	matbr: z.string().nullable(),
+	pdv: z.number(),
+	tip: z.number(),
+	email: z.string().nullable(),
+	punnaziv: z.string().nullable(),
+	aktivan: z.number()
+});
+export type PartnerBS = z.infer<typeof partnerBS>;
+
+export const groupBS = z.object({
+	sifra: z.number(),
+	naziv: z.string()
+});
+export type GroupBS = z.infer<typeof groupBS>;

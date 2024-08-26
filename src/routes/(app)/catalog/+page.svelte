@@ -1,25 +1,15 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { get, writable } from 'svelte/store';
+	import { writable } from 'svelte/store';
 
 	import TableAction from './TableAction.svelte';
 	import NumberFormat from '$lib/components/table/NumberFormat.svelte';
 	import TextRight from '$lib/components/table/TextRight.svelte';
-	import PageHeader from './PageHeader.svelte';
 	import Checkbox from '$lib/components/table/Checkbox.svelte';
 	//	import * as Table from '$lib/components/table';
 	import * as Table from '$lib/components/ui/table';
-	import { Input } from '$lib/components/ui/input';
-	import { Switch } from '$lib/components/ui/switch';
-	import { Label } from '$lib/components/ui/label';
-	import { Button } from '$lib/components/ui/button';
-	import { toast } from 'svelte-sonner';
-	import PhBasket from '$lib/icons/PhBasket.svelte';
-	import PhCurrencyEur from '$lib/icons/PhCurrencyEur.svelte';
-	import PhFactory from '$lib/icons/PhFactory.svelte';
 
 	export let data: PageData;
-	let onStock = data.onStock;
 
 	import { createTable, createRender, Subscribe, Render } from 'svelte-headless-table';
 	import {
@@ -29,9 +19,7 @@
 		addSortBy,
 		addTableFilter
 	} from 'svelte-headless-table/plugins';
-	import { goto, invalidate } from '$app/navigation';
-	import { page } from '$app/stores';
-	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 
 	const products = writable(data.products);
 	$: $products = data.products;
@@ -251,7 +239,7 @@
 			/* cell: ({ value }) => value */
 			cell: ({ value }) =>
 				createRender(TableAction, { id: value }).on('click', (ev) =>
-					goto(`/catalog/product/${ev.detail.id.toString()}`)
+					goto(`/catalog/products/${ev.detail.id.toString()}`)
 				),
 			plugins: {
 				exportCsv: { exclude: true }
@@ -266,114 +254,12 @@
 		});
 
 	let { selectedDataIds } = pluginStates.select;
-	const { filterValue } = pluginStates.tableFilter;
-	const { exportedData: exportedCsv } = pluginStates.exportCsv;
 
 	$: $products, ($selectedDataIds = {});
-	$: strSelectedDataIds = Object.keys($selectedDataIds).map(Number);
-
-	const onStockChange = () => {
-		const newUrl = new URL($page.url);
-		onStock = !onStock;
-		newUrl?.searchParams?.set('onStock', onStock.toString());
-
-		if (browser) {
-			goto(`${newUrl.origin}/catalog${newUrl.search}`);
-		}
-		return;
-	};
-	async function addToBasket() {
-		const apiUrl = '/api/basket/add/';
-
-		for (let index = 0; index < strSelectedDataIds.length; index++) {
-			try {
-				const response = await fetch(apiUrl, {
-					method: 'POST',
-					body: JSON.stringify({ id: strSelectedDataIds[index] }),
-					headers: {
-						'content-type': 'application/json'
-					}
-				});
-
-				if (response.status === 200) {
-					toast.success('Add product to basket', {
-						description: 'Product added to basket!'
-					});
-				} else if (response.status === 204) {
-					toast.error('Add product to basket', {
-						description: 'Error adding to basket'
-					});
-				}
-			} catch (error) {
-				console.log('error', error);
-			}
-		}
-	}
-	async function getPrices() {
-		for (let index = 0; index < strSelectedDataIds.length; index++) {
-			const element = strSelectedDataIds[index];
-
-			const response = await fetch(`/api/scraper/getPrice2/${element}`);
-			const serverResponse = await response.json();
-
-			if (serverResponse.code === 'warning') {
-				toast.warning('Market Prices Warning', {
-					description: `${serverResponse.message}`
-				});
-			} else {
-				toast.success('Market Prices updated!', {
-					description: `Market  price for "${serverResponse.message}" updated`
-				});
-			}
-		}
-		invalidate('catalog:products');
-	}
-	async function getERPnew() {
-		for (const item of strSelectedDataIds) {
-			fetch(`/api/erp/getProduct?ID=${item}`).then((response) => {
-				if (response.status === 200) {
-					toast.success('ERP Prices updated!', {
-						description: `ERP price for "${item}" updated`
-					});
-				}
-			});
-			console.log(item);
-		}
-		invalidate('catalog:products');
-	}
 </script>
 
-<div class="flex items-center justify-between border-b border-muted-foreground bg-muted/70 p-4">
-	<!-- <div class="grid h-full w-full grid-rows-[auto_1fr] overflow-hidden"> -->
-	<!-- <div class="flex h-full flex-col overflow-hidden px-2"> -->
-	<Input
-		class="max-w-sm"
-		placeholder="Filter products..."
-		type="text"
-		bind:value={$filterValue}
-		autocomplete="off"
-	/>
-	<div class="flex items-center space-x-2">
-		<Label for="show-stock">On Stock:</Label>
-		<Switch id="show-stock" checked={onStock} onCheckedChange={onStockChange} />
-	</div>
-	<div class="flex">
-		<!-- <PageHeader selectedProducts={strSelectedDataIds} /> -->
-		<Button variant="outline" on:click={() => console.log(get(exportedCsv))}>Export as CSV</Button>
-		<Button variant="outline" on:click={addToBasket}
-			><PhBasket class="mr-2 size-5" />Add to Basket</Button
-		>
-		<Button variant="outline" on:click={getPrices}
-			><PhCurrencyEur class="mr-2 size-5" />Get Prices</Button
-		>
-		<form method="POST" action="/catalog?/getErpProductInfo">
-			<input type="hidden" name="ids" value={JSON.stringify(strSelectedDataIds)} />
-			<Button variant="outline" type="submit"><PhFactory class="mr-2 size-5" />Get ERP</Button>
-		</form>
-	</div>
-</div>
-<Table.Root {...$tableAttrs} class="border">
-	<Table.Header class="sticky top-0 bg-muted">
+<Table.Root {...$tableAttrs} class="">
+	<Table.Header class="sticky top-0">
 		{#each $headerRows as headerRow}
 			<Subscribe rowAttrs={headerRow.attrs()} rowProps={headerRow.props()} let:rowProps>
 				<Table.Row>

@@ -1,11 +1,8 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import * as api from '$lib/api';
-	//	import * as erp from '$lib/api/erp';
-	import { addToast } from '$lib/components/toaster/components/Toaster.svelte';
-	import { browser } from '$app/environment';
-	import { goto, invalidate } from '$app/navigation';
-	//	import { enhance } from '$app/forms';
+	import { toast } from 'svelte-sonner';
+
+	import { invalidate } from '$app/navigation';
 	export let selectedProducts: number[];
 
 	async function getPrices() {
@@ -16,22 +13,12 @@
 			const serverResponse = await response.json();
 
 			if (serverResponse.code === 'warning') {
-				addToast({
-					data: {
-						title: 'Market Prices Warning',
-						description: `${serverResponse.message}`,
-						color: 'alert-warning',
-						closeDelay: 0
-					}
+				toast.warning('Market Prices Warning', {
+					description: `${serverResponse.message}`
 				});
 			} else {
-				addToast({
-					data: {
-						title: 'Market Prices updated!',
-						description: `Market  price for "${serverResponse.message}" updated`,
-						color: 'alert-success',
-						closeDelay: 2000
-					}
+				toast.success('Market Prices updated', {
+					description: `Market  price for "${serverResponse.message}" updated`
 				});
 			}
 		}
@@ -44,12 +31,8 @@
 				console.log('data', data);
 
 				if (data) {
-					addToast({
-						data: {
-							title: 'ERP Prices updated!',
-							description: data,
-							color: 'alert-success'
-						}
+					toast.success('ERP Prices updated!', {
+						description: data
 					});
 				}
 				invalidate('catalog:products');
@@ -62,12 +45,8 @@
 		for (const item of selectedProducts) {
 			fetch(`/api/erp/getProduct?ID=${item}`).then((response) => {
 				if (response.status === 200) {
-					addToast({
-						data: {
-							title: 'ERP Prices updated!',
-							description: `ERP price for "${item}" updated`,
-							color: 'alert-success'
-						}
+					toast.success('ERP Prices updated!', {
+						description: `ERP price for "${item}" updated`
 					});
 				}
 			});
@@ -75,41 +54,6 @@
 		}
 		invalidate('catalog:products');
 	}
-	/* 	async function addToBasket() {
-		const apiUrl = '/api/basket/add/';
-
-		for (let index = 0; index < selectedProducts.length; index++) {
-			try {
-				const response = await fetch(apiUrl, {
-					method: 'POST',
-					body: JSON.stringify({ id: selectedProducts[index] }),
-					headers: {
-						'content-type': 'application/json'
-					}
-				});
-
-				if (response.status === 200) {
-					addToast({
-						data: {
-							title: 'Add product to basket',
-							description: `Product added to basket!`,
-							color: 'alert-success'
-						}
-					});
-				} else if (response.status === 204) {
-					addToast({
-						data: {
-							title: 'Add product to basket',
-							description: `Error adding to basket`,
-							color: 'alert-info'
-						}
-					});
-				}
-			} catch (error) {
-				console.log('error', error);
-			}
-		}
-	} */
 </script>
 
 <div class="navbar bg-base-100">

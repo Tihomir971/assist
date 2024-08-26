@@ -1,12 +1,12 @@
 <script lang="ts">
 	import PhDotsThree from '$lib/icons/PhDotsThree.svelte';
-	import { labels } from '../(data)/data.js';
-	import { productSchema, type Product } from '../(data)/schemas.js';
+	import { productSchema, type ProductSchema } from '$lib/types/zod.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { goto } from '$app/navigation';
+	import * as Drawer from '$lib/components/ui/drawer/index.js';
 
-	export let row: Product;
+	export let row: ProductSchema;
 	const task = productSchema.parse(row);
 </script>
 
@@ -23,26 +23,21 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="w-[160px]" align="end">
 		<DropdownMenu.Item
-			on:click={() => {
-				goto(`/catalog/product/${row.id.toString()}`);
+			onclick={() => {
+				goto(`/catalog/products/${row.id.toString()}`);
 			}}>Edit</DropdownMenu.Item
 		>
-		<DropdownMenu.Item>Make a copy</DropdownMenu.Item>
+		<Drawer.Root>
+			<Drawer.Trigger asChild let:builder>
+				<div use:builder.action {...builder} class="px-2 py-1.5 text-sm hover:bg-[--surface-3]">
+					Open Drawer
+				</div>
+			</Drawer.Trigger>
+			<Drawer.Content>It me</Drawer.Content>
+		</Drawer.Root>
 		<DropdownMenu.Item>Favorite</DropdownMenu.Item>
 		<DropdownMenu.Separator />
-		<DropdownMenu.Sub>
-			<DropdownMenu.SubTrigger>Labels</DropdownMenu.SubTrigger>
-			<DropdownMenu.SubContent>
-				<DropdownMenu.RadioGroup value={task.name}>
-					{#each labels as label}
-						<DropdownMenu.RadioItem value={label.value}>
-							{label.label}
-						</DropdownMenu.RadioItem>
-					{/each}
-				</DropdownMenu.RadioGroup>
-			</DropdownMenu.SubContent>
-		</DropdownMenu.Sub>
-		<DropdownMenu.Separator />
+
 		<DropdownMenu.Item>
 			Delete
 			<DropdownMenu.Shortcut>⌘⌫</DropdownMenu.Shortcut>

@@ -1,14 +1,17 @@
-//import { redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
-export const load = (async ({ locals: { supabase } }) => {
-	//	const { session } = await safeGetSession();
+export const load = (async ({ locals: { supabase, session } }) => {
+	if (!session) {
+		redirect(303, '/auth');
+	}
 
-	//	if (!session) {
-	//		redirect(303, '/auth');
-	//	}
-
-	const { data: profile } = await supabase.from('ad_user').select();
+	const { data: profile } = await supabase
+		.from('ad_user')
+		.select('full_name')
+		.eq('auth_user_id', session.user.id)
+		/* .single() */
+		.maybeSingle();
 
 	return { profile: profile ?? [] };
 }) satisfies PageServerLoad;
