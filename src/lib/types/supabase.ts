@@ -2027,6 +2027,7 @@ export interface Database {
           c_uom_id: number
           condition: string | null
           created: string
+          description: string | null
           descriptionurl: string | null
           discontinued: boolean
           featuredAssetId: number | null
@@ -2058,6 +2059,7 @@ export interface Database {
           c_uom_id?: number
           condition?: string | null
           created?: string
+          description?: string | null
           descriptionurl?: string | null
           discontinued?: boolean
           featuredAssetId?: number | null
@@ -2089,6 +2091,7 @@ export interface Database {
           c_uom_id?: number
           condition?: string | null
           created?: string
+          description?: string | null
           descriptionurl?: string | null
           discontinued?: boolean
           featuredAssetId?: number | null

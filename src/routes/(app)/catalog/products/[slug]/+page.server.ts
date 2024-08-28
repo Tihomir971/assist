@@ -162,6 +162,7 @@ export const actions = {
 		}
 	},
 	updReplenish: async ({ request, locals: { supabase } }) => {
+		console.log('UPD Replenish');
 		const form = await superValidate(request, zod(updateReplenishSchema));
 		console.log('POST', form);
 		if (!form.valid) return fail(400, { form });

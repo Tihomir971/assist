@@ -54,7 +54,7 @@
 						<PhDotBold class="size-4" />
 					</span>
 				{/if}
-				<span class="truncate">
+				<span class="truncate" {title}>
 					{title}
 				</span>
 			</button>
