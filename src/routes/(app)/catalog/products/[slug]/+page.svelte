@@ -4,11 +4,11 @@
 	import * as Card from '$lib/components/ui/card';
 	import { Label } from '$lib/components/ui/label';
 	import SuperDebug, { type SuperValidated } from 'sveltekit-superforms';
+	import { superForm } from 'sveltekit-superforms';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button, buttonVariants } from '$lib/components/ui/button';
-	import { superForm } from 'sveltekit-superforms';
 	import { toast } from 'svelte-sonner';
-	import { formatDateTime, formatNumber } from '$lib/style/locale';
+	import { formatDate, formatDateTime, formatNumber } from '$lib/style/locale';
 	import * as Form from '$lib/components/ui/form';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { browser } from '$app/environment';
@@ -17,7 +17,6 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { crudmProductPoSchema } from '$lib/types/supabase/mProductPo.validator';
 	import * as Tabs from '$lib/components/ui/tabs';
-	import X from 'lucide-svelte/icons/x';
 	let { data } = $props();
 	import { crudMProductSchema } from '$lib/types/supabase/product.validator';
 
@@ -41,8 +40,6 @@
 				toast.success('Product updated successfully', {
 					description: form.message || 'Your changes have been saved.'
 				});
-
-				// Invalidate the page to refresh all data
 
 				invalidate('catalog:product');
 			} else {
@@ -92,12 +89,14 @@
 	const { form: formProductGtin, enhance: enhanceProductGtin } = formGtin;
 
 	const formReplenish = superForm(data.formReplenish, {
-		validators: zodClient(replenishSchema),
+		dataType: 'json',
 		onUpdated({ form }) {
 			if (form.valid) {
 				toast.success('Replenish data updated successfully', {
 					description: form.message
 				});
+				// Invalidate the page to refresh all data
+				invalidate('catalog:product');
 			} else {
 				console.error('Form is not valid', form.errors, form.message);
 				toast.error('Failed to update replenish data', {
@@ -106,23 +105,20 @@
 			}
 		}
 	});
-	const {
-		form: formProductReplenish,
-		enhance: enhanceReplenish,
-		formId: formIdReplenish
-	} = formReplenish;
+	const { form: formReplenishUpd, enhance: enhanceReplenishUpd } = formReplenish;
+	//	const { form: formReplenishMod, enhance: enhanceReplenishMod } = formReplenish;
 
-	let selectedWarehouse = $derived(
-		$formProductReplenish.m_warehouse_id
-			? data.warehouses?.find((v) => v.value === $formProductReplenish.m_warehouse_id)
+	/* 	let selectedWarehouse = $derived(
+		$formReplenishNew.m_warehouse_id
+			? data.warehouses?.find((v) => v.value === $formReplenishNew.m_warehouse_id)
 			: undefined
 	);
 
 	let selectedSourceWarehouse = $derived(
-		$formProductReplenish.m_warehousesource_id
-			? data.warehouses?.find((v) => v.value === $formProductReplenish.m_warehousesource_id)
+		$formReplenishNew.m_warehousesource_id
+			? data.warehouses?.find((v) => v.value === $formReplenishNew.m_warehousesource_id)
 			: undefined
-	);
+	); */
 
 	let selectedUoM = $derived(
 		$formProduct.c_uom_id ? data.uom?.find((v) => v.value === $formProduct.c_uom_id) : undefined
@@ -138,9 +134,6 @@
 			? data.c_bpartner?.find((v) => v.value === $formProductPO.c_bpartner_id)
 			: undefined
 	);
-	function getWarehouseName(id: number) {
-		return data.warehouses.find((w) => w.value === id)?.label || 'Unknown';
-	}
 
 	function handleNetQuantityInput(event: Event) {
 		const input = event.target as HTMLInputElement;
@@ -312,6 +305,15 @@
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
+								<div class="grid grid-cols-3 gap-3">
+									<Form.Field {form} name="shelf_life">
+										<Form.Control let:attrs>
+											<Form.Label>Shelf Life (days)</Form.Label>
+											<Input type="number" bind:value={$formProduct.shelf_life} {...attrs} />
+										</Form.Control>
+										<Form.FieldErrors />
+									</Form.Field>
+								</div>
 							</div>
 						</Card.Content>
 					</Card.Root>
@@ -352,7 +354,12 @@
 									<Form.Field {form} name="isactive">
 										<Form.Control let:attrs>
 											<div class="flex items-center space-x-2">
-												<Checkbox {...attrs} bind:checked={$formProduct.isactive} />
+												<input
+													type="checkbox"
+													name="isactive"
+													bind:checked={$formProduct.isactive}
+												/>
+												<Checkbox {...attrs} bind:checked={$formProduct.isactive as boolean} />
 												<Form.Label>Is Active?</Form.Label>
 											</div>
 											<input name={attrs.name} value={$formProduct.isactive} hidden />
@@ -361,7 +368,7 @@
 									<Form.Field {form} name="isselfservice">
 										<Form.Control let:attrs>
 											<div class="flex items-center space-x-2">
-												<Checkbox {...attrs} bind:checked={$formProduct.isselfservice} />
+												<Checkbox {...attrs} bind:checked={$formProduct.isselfservice as boolean} />
 												<Form.Label>Is Self Service?</Form.Label>
 											</div>
 											<input name={attrs.name} value={$formProduct.isselfservice} hidden />
@@ -370,7 +377,7 @@
 									<Form.Field {form} name="discontinued">
 										<Form.Control let:attrs>
 											<div class="flex items-center space-x-2">
-												<Checkbox {...attrs} bind:checked={$formProduct.discontinued} />
+												<Checkbox {...attrs} bind:checked={$formProduct.discontinued as boolean} />
 												<Form.Label>Discontinued?</Form.Label>
 											</div>
 											<input name={attrs.name} value={$formProduct.discontinued} hidden />
@@ -599,7 +606,10 @@
 										<Table.Cell>
 											<Form.Field form={formGtin} name="isactive">
 												<Form.Control let:attrs>
-													<Checkbox {...attrs} bind:checked={$formProductGtin.isactive} />
+													<Checkbox
+														{...attrs}
+														bind:checked={$formProductGtin.isactive as boolean}
+													/>
 													<input name={attrs.name} value={$formProductGtin.isactive} hidden />
 												</Form.Control>
 											</Form.Field>
@@ -619,173 +629,181 @@
 			</Card.Root>
 		</Tabs.Content>
 		<Tabs.Content value="replenish">
+			<Card.Root class="mb-2">
+				<Card.Header>
+					<Card.Title>Storage on hand by warehouse</Card.Title>
+				</Card.Header>
+				<Card.Content>
+					<Table.Root>
+						<Table.Header>
+							<Table.Row>
+								<Table.Head>Warehouse</Table.Head>
+								<Table.Head>Quantity</Table.Head>
+								<Table.Head>Reservation</Table.Head>
+							</Table.Row>
+						</Table.Header>
+						<Table.Body>
+							{#each data.stock as stock}
+								<Table.Row>
+									<Table.Cell class="font-medium"
+										>{data.warehouses.find((w) => w.value === stock.warehouse_id)
+											?.label}</Table.Cell
+									>
+									<Table.Cell>{stock.qtyonhand}</Table.Cell>
+									<Table.Cell>Nisam još ubacio</Table.Cell>
+								</Table.Row>
+							{/each}
+						</Table.Body>
+					</Table.Root>
+				</Card.Content>
+			</Card.Root>
+			<Card.Root class="mb-2">
+				<Card.Header>
+					<Card.Title>Sales by two week period</Card.Title>
+				</Card.Header>
+				<Card.Content>
+					<Table.Root>
+						<Table.Header>
+							<Table.Row>
+								{#each data.salesByWeeks as week}
+									<Table.Head>
+										{formatDate(week.start_date)}
+									</Table.Head>
+								{/each}
+							</Table.Row>
+						</Table.Header>
+						<Table.Body>
+							<Table.Row>
+								{#each data.salesByWeeks as week}
+									<Table.Head>
+										{week.total_izlaz}
+									</Table.Head>
+								{/each}</Table.Row
+							>
+						</Table.Body>
+					</Table.Root>
+				</Card.Content>
+			</Card.Root>
 			<Card.Root>
 				<Card.Header>
 					<Card.Title>Replenish Information</Card.Title>
 				</Card.Header>
 				<Card.Content>
 					<div class="overflow-x-auto">
-						<form method="POST" use:enhanceReplenish>
+						<form method="POST" action="?/modReplenish" use:enhanceReplenishUpd>
 							<Table.Root>
 								<Table.Header>
 									<Table.Row>
-										<Table.Head>Warehouse</Table.Head>
-										<Table.Head>Min Level</Table.Head>
-										<Table.Head>Max Level</Table.Head>
-										<Table.Head>Batch Size</Table.Head>
-										<Table.Head>Source Warehouse</Table.Head>
-										<Table.Head>Action</Table.Head>
+										<Table.Head class="w-1/5">Warehouse</Table.Head>
+										<Table.Head class="w-1/5">Min Level</Table.Head>
+										<Table.Head class="w-1/5">Max Level</Table.Head>
+										<Table.Head class="w-1/5">Batch Size</Table.Head>
+										<Table.Head class="w-1/5">Source Warehouse</Table.Head>
 									</Table.Row>
 								</Table.Header>
 								<Table.Body>
-									{#each data.replenishes as replenish}
+									{#each $formReplenishUpd.replenishes as replenish}
 										<Table.Row>
-											<Table.Cell>{getWarehouseName(replenish.m_warehouse_id)}</Table.Cell>
-											<Table.Cell>
+											<Table.Cell class="w-1/5">
+												<Select.Root
+													selected={data.warehouses.find(
+														(w) => w.value === replenish.m_warehouse_id
+													)}
+													onSelectedChange={(v) => {
+														if (v) replenish.m_warehouse_id = v.value;
+													}}
+												>
+													<Select.Trigger class="w-full">
+														<Select.Value placeholder="Select warehouse" />
+													</Select.Trigger>
+													<Select.Content>
+														{#each data.warehouses as warehouse}
+															<Select.Item value={warehouse.value} label={warehouse.label} />
+														{/each}
+													</Select.Content>
+												</Select.Root>
+												<input hidden name="m_warehouse_id" bind:value={replenish.m_warehouse_id} />
+											</Table.Cell>
+											<Table.Cell class="w-1/5">
 												<Input
 													type="number"
-													value={replenish.level_min}
+													bind:value={replenish.level_min}
 													placeholder="Min level..."
 												/>
 											</Table.Cell>
-											<Table.Cell>
+											<Table.Cell class="w-1/5">
 												<Input
 													type="number"
 													bind:value={replenish.level_max}
 													placeholder="Max level..."
 												/>
 											</Table.Cell>
-											<Table.Cell>
+											<Table.Cell class="w-1/5">
 												<Input
 													type="number"
 													bind:value={replenish.qtybatchsize}
 													placeholder="Batch size..."
 												/>
 											</Table.Cell>
-											<Table.Cell
-												>{replenish.m_warehousesource_id
-													? getWarehouseName(replenish.m_warehousesource_id)
-													: 'N/A'}</Table.Cell
-											>
-											<Table.Cell>
-												<Button
-													variant="secondary"
-													formaction="?/updReplenish"
-													name="id"
-													value={replenish.id}
-													on:click={() => ($formIdReplenish = replenish.id.toString())}>Save</Button
+											<Table.Cell class="w-1/5">
+												<Select.Root
+													selected={data.warehouses.find(
+														(w) => w.value === replenish.m_warehousesource_id
+													)}
+													onSelectedChange={(v) => {
+														if (v) replenish.m_warehousesource_id = v.value;
+													}}
 												>
+													<Select.Trigger>
+														<Select.Value placeholder="Select source warehouse" />
+													</Select.Trigger>
+													<Select.Content>
+														{#each data.warehouses as warehouse}
+															<Select.Item value={warehouse.value} label={warehouse.label} />
+														{/each}
+													</Select.Content>
+												</Select.Root>
+												<input
+													hidden
+													name="m_warehousesource_id"
+													bind:value={replenish.m_warehousesource_id}
+												/>
 											</Table.Cell>
 										</Table.Row>
 									{/each}
-									<Table.Row>
-										<Table.Cell>
-											<Form.Field form={formReplenish} name="m_warehouse_id">
-												<Form.Control let:attrs>
-													<Select.Root
-														selected={selectedWarehouse}
-														onSelectedChange={(v) => {
-															v && ($formProductReplenish.m_warehouse_id = v.value);
-														}}
-													>
-														<Select.Trigger {...attrs}>
-															<Select.Value placeholder="Select warehouse" />
-														</Select.Trigger>
-														<Select.Content>
-															{#each data.warehouses as { value, label }}
-																<Select.Item {value} {label} />
-															{/each}
-														</Select.Content>
-													</Select.Root>
-													<input
-														hidden
-														bind:value={$formProductReplenish.m_warehouse_id}
-														name={attrs.name}
-													/>
-												</Form.Control>
-												<Form.FieldErrors />
-											</Form.Field>
-										</Table.Cell>
-										<Table.Cell>
-											<Form.Field form={formReplenish} name="level_min">
-												<Form.Control let:attrs>
-													<Input
-														{...attrs}
-														type="number"
-														bind:value={$formProductReplenish.level_min}
-														placeholder="Min level..."
-													/>
-												</Form.Control>
-												<Form.FieldErrors />
-											</Form.Field>
-										</Table.Cell>
-										<Table.Cell>
-											<Form.Field form={formReplenish} name="level_max">
-												<Form.Control let:attrs>
-													<Input
-														{...attrs}
-														type="number"
-														bind:value={$formProductReplenish.level_max}
-														placeholder="Max level..."
-													/>
-												</Form.Control>
-												<Form.FieldErrors />
-											</Form.Field>
-										</Table.Cell>
-										<Table.Cell>
-											<Form.Field form={formReplenish} name="qtybatchsize">
-												<Form.Control let:attrs>
-													<Input
-														{...attrs}
-														type="number"
-														bind:value={$formProductReplenish.qtybatchsize}
-														placeholder="Batch size..."
-													/>
-												</Form.Control>
-												<Form.FieldErrors />
-											</Form.Field>
-										</Table.Cell>
-										<Table.Cell>
-											<Form.Field form={formReplenish} name="m_warehousesource_id">
-												<Form.Control let:attrs>
-													<Select.Root
-														selected={selectedSourceWarehouse}
-														onSelectedChange={(v) => {
-															v && ($formProductReplenish.m_warehousesource_id = v.value);
-														}}
-													>
-														<Select.Trigger {...attrs}>
-															<Select.Value placeholder="Select source warehouse" />
-														</Select.Trigger>
-														<Select.Content>
-															{#each data.warehouses as { value, label }}
-																<Select.Item {value} {label} />
-															{/each}
-														</Select.Content>
-													</Select.Root>
-													<input
-														hidden
-														bind:value={$formProductReplenish.m_warehousesource_id}
-														name={attrs.name}
-													/>
-												</Form.Control>
-												<Form.FieldErrors />
-											</Form.Field>
-										</Table.Cell>
-										<Table.Cell>
-											<Button type="submit" variant="secondary">Add</Button>
-										</Table.Cell>
-									</Table.Row>
 								</Table.Body>
 							</Table.Root>
+							<Form.Button>Save</Form.Button>
+							<Button
+								variant="default"
+								on:click={() => {
+									if ($formProduct.id) {
+										$formReplenishUpd.replenishes = [
+											...$formReplenishUpd.replenishes,
+											{
+												ad_org_id: undefined,
+												isactive: undefined,
+												ad_client_id: undefined,
+												m_warehouse_id: 0,
+												m_product_id: $formProduct.id,
+												level_max: undefined,
+												level_min: undefined,
+												m_locator_id: undefined,
+												m_replenish_uu: undefined,
+												m_warehousesource_id: undefined,
+												qtybatchsize: undefined
+											}
+										];
+									}
+								}}>Add</Button
+							>
 						</form>
 					</div>
-					<input type="hidden" name="m_product_id" bind:value={$formProduct.id} />
 				</Card.Content>
 			</Card.Root>
-			{#if browser}
-				<SuperDebug data={$formProductReplenish} />
-			{/if}
+			<!-- 	{#if browser}
+				<SuperDebug data={$formReplenishUpd} />
+			{/if} -->
 		</Tabs.Content>
 	</Tabs.Root>
 </div>

@@ -27,7 +27,8 @@ export const mProductSchema = z.object({
 	descriptionurl: z.string().url().nullable(),
 	m_product_uu: z.string().uuid().nullable(),
 	net_quantity: z.number().optional(),
-	net_qty_uom_id: z.number().nullable()
+	net_qty_uom_id: z.number().nullable(),
+	shelf_life: z.number().int().positive().nullable()
 });
 export type MProductSchema = z.infer<typeof mProductSchema>;
 export const crudMProductSchema = mProductSchema.extend({

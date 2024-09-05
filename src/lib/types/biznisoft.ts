@@ -66,8 +66,18 @@ export interface BSProduct {
 	serbrrok: number;
 	barkod: string | null;
 	barcodes: string[] | null;
-	replenish: { sifobj: number; iminzal: number | null; imaxzal: number | null }[];
-	m_product_po: { kupac: number; kupsif: string }[];
+	replenish: { sifobj: number; iminzal: number | null; imaxzal: number | null }[] | null;
+	m_product_po: { kupac: number; kupsif: string }[] | null;
+	stanje:
+		| {
+				sifobj: number;
+				nabcena: number;
+				mpcena: number;
+				stanje: number;
+				neprokkasa: number;
+				rezervacije: number;
+		  }[]
+		| null;
 }
 
 export const partnerBS = z.object({

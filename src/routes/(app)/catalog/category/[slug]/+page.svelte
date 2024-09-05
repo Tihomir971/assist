@@ -42,7 +42,7 @@
 				<Form.Field form={formCategory} name="description">
 					<Form.Control let:attrs>
 						<Form.Label>Description</Form.Label>
-						<Textarea {...attrs} bind:value={$formCategoryData.description} />
+						<Textarea {...attrs} bind:value={$formCategoryData.description as string | null} />
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>

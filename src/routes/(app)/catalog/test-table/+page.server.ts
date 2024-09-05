@@ -17,7 +17,7 @@ interface Product {
 	unitsperpack: number;
 	imageurl: string;
 	discontinued: boolean;
-	c_taxcategory: { c_tax: { rate: number }[] }[];
+	c_taxcategory?: { c_tax: { rate: number }[] } | null;
 	m_storageonhand: { warehouse_id: number; qtyonhand: number }[];
 	priceList: {
 		m_pricelist_version_id: number;
@@ -27,6 +27,29 @@ interface Product {
 	level_min: { m_warehouse_id: number; level_min: number }[];
 	level_max: { m_warehouse_id: number; level_max: number }[];
 	m_product_po: { c_bpartner_id: number; pricelist: number | null }[];
+}
+
+export interface FlattenedProduct {
+	id: number;
+	sku: string;
+	name: string;
+	barcode: string;
+	mpn: string;
+	unitsperpack: number;
+	imageurl: string;
+	discontinued: boolean;
+	taxRate: number | null;
+	qtyWholesale: number;
+	qtyRetail: number;
+	pricePurchase: number | null;
+	priceRetail: number | null;
+	ruc: number;
+	levelMin: number | null;
+	levelMax: number | null;
+	priceMercator: number | null;
+	priceMivex: number | null;
+	priceCenoteka: number | null;
+	priceGros: number | null;
 }
 
 interface Category {
@@ -39,8 +62,7 @@ export const load: PageServerLoad = async ({ parent, depends, url, locals: { sup
 	depends('catalog:test-table');
 
 	const { searchParams } = url;
-	const showReplenish = searchParams.get('rep') === 'true';
-	const showStock = searchParams.get('stock') !== 'false';
+	const showProducts = searchParams.get('stock') === 'true';
 	const whParam = searchParams.get('wh') || '5';
 	const activeWarehouse = Number(whParam);
 	const categoryIds = searchParams.get('cat');
@@ -56,28 +78,57 @@ export const load: PageServerLoad = async ({ parent, depends, url, locals: { sup
 	const warehouses = await getWarehouses(supabase);
 
 	const query = buildQuery(supabase);
-	const filteredQuery = applyFilters(query, categories, categoryIds, showReplenish);
+	const filteredQuery = applyFilters(query, categoryIds);
 	const { data, error } = await filteredQuery;
 
 	if (error) {
 		console.error('Error fetching products:', error);
 	}
 
-	const products = filterProducts(
-		data as unknown as Product[],
-		showReplenish,
-		showStock,
-		activeWarehouse
-	);
+	const products = filterProducts(data as unknown as Product[], showProducts, activeWarehouse);
+
+	const flattenedProducts = products.map((product) => flattenProduct(product, activeWarehouse));
 
 	return {
-		products,
+		products: flattenedProducts,
 		warehouses,
 		activeWarehouse,
-		showReplenish,
-		showStock
+		showProducts
 	};
 };
+
+function flattenProduct(product: Product, activeWarehouse: number): FlattenedProduct {
+	const purchase =
+		product.priceList.find((item) => item.m_pricelist_version_id === 5)?.pricestd ?? 0;
+	const retail =
+		product.priceList.find((item) => item.m_pricelist_version_id === 13)?.pricestd ?? 0;
+	const tax = product.c_taxcategory?.c_tax?.[0]?.rate ?? 0;
+
+	return {
+		id: product.id,
+		sku: product.sku,
+		name: product.name,
+		barcode: product.barcode,
+		mpn: product.mpn,
+		unitsperpack: product.unitsperpack,
+		imageurl: product.imageurl,
+		discontinued: product.discontinued,
+		taxRate: tax ? tax / 100 : null,
+		qtyWholesale: product.m_storageonhand.find((item) => item.warehouse_id === 2)?.qtyonhand ?? 0,
+		qtyRetail: product.m_storageonhand.find((item) => item.warehouse_id === 5)?.qtyonhand ?? 0,
+		pricePurchase: purchase,
+		priceRetail: retail,
+		ruc: (retail / (1 + tax / 100) - purchase) / purchase,
+		levelMin:
+			product.level_min.find((item) => item.m_warehouse_id === activeWarehouse)?.level_min ?? null,
+		levelMax:
+			product.level_max.find((item) => item.m_warehouse_id === activeWarehouse)?.level_max ?? null,
+		priceMercator: product.m_product_po.find((item) => item.c_bpartner_id === 4)?.pricelist ?? null,
+		priceMivex: product.m_product_po.find((item) => item.c_bpartner_id === 89)?.pricelist ?? null,
+		priceCenoteka: product.m_product_po.find((item) => item.c_bpartner_id === 2)?.pricelist ?? null,
+		priceGros: product.m_product_po.find((item) => item.c_bpartner_id === 407)?.pricelist ?? null
+	};
+}
 
 async function getWarehouses(supabase: SupabaseClient): Promise<Warehouse[]> {
 	const { data } = await supabase.from('m_warehouse').select('value:id, label:name').order('name');
@@ -103,19 +154,8 @@ function buildQuery(supabase: SupabaseClient) {
 		.order('name');
 }
 
-function applyFilters(
-	query: ReturnType<typeof buildQuery>,
-	categories: Category[] | null,
-	categoryIds: string | null,
-	showReplenish: boolean
-) {
+function applyFilters(query: ReturnType<typeof buildQuery>, categoryIds: string | null) {
 	if (categoryIds) {
-		if (categories) {
-			const children = showReplenish
-				? findChildren(categories, Number(categoryIds))
-				: [Number(categoryIds)];
-			return query.in('m_product_category_id', children);
-		}
 		return query.eq('m_product_category_id', Number(categoryIds));
 	} else {
 		// When no category is specified, only include products with null category
@@ -125,25 +165,24 @@ function applyFilters(
 
 function filterProducts(
 	data: Product[] | null,
-	showReplenish: boolean,
-	showStock: boolean,
+	showProducts: boolean,
 	activeWarehouse: number
 ): Product[] {
 	if (!data) return [];
 
 	return data.filter((product) => {
-		if (showReplenish) {
-			const storage = product.m_storageonhand.find((item) => item.warehouse_id === activeWarehouse);
-			const replenish = product.level_min.find((item) => item.m_warehouse_id === activeWarehouse);
-			if (!(storage && replenish && replenish.level_min > storage.qtyonhand)) {
-				return false;
-			}
-		}
+		const storage = product.m_storageonhand.find((item) => item.warehouse_id === activeWarehouse);
+		const replenish = product.level_min.find((item) => item.m_warehouse_id === activeWarehouse);
 
-		if (showStock) {
-			return !product.m_storageonhand.every((item) => item.qtyonhand === 0);
+		if (showProducts) {
+			// Show products that are either in stock or need replenishment
+			return (
+				(storage && storage.qtyonhand > 0) ||
+				(storage && replenish && replenish.level_min > storage.qtyonhand)
+			);
+		} else {
+			// Show all products when showProducts is false
+			return true;
 		}
-
-		return true;
 	});
 }

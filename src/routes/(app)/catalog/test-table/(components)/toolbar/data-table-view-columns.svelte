@@ -5,38 +5,33 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
 	import { Checkbox } from '$lib/components/ui/checkbox';
-
-	export let tableModel: TableViewModel<ProductSchema>;
+	import { browser } from '$app/environment';
+	import type { FlattenedProduct } from '../../+page.server.js';
+	export let tableModel: TableViewModel<FlattenedProduct>;
 	const { pluginStates, flatColumns } = tableModel;
 	const { hiddenColumnIds } = pluginStates.hide;
 
 	function handleHide(id: string) {
 		hiddenColumnIds.update((ids: string[]) => {
+			let newIds;
 			if (ids.includes(id)) {
-				return ids.filter((i) => i !== id);
+				newIds = ids.filter((i) => i !== id);
+			} else {
+				newIds = [...ids, id];
 			}
-			return [...ids, id];
+			if (browser) {
+				localStorage.setItem('hiddenColumns', JSON.stringify(newIds));
+			}
+			return newIds;
 		});
 	}
 
-	/* 	const hidableCols = [
-		'MPN',
-		'Tax',
-		'level_min',
-		'level_max',
-		'unitsperpack',
-		'priceMarket',
-		'pricePurchase'
-	]; */
 	const hidableCols: string[] = [];
 	flatColumns.forEach((col) => {
-		//	console.log('col.plugins?.export', col.plugins?.export);
-
 		if (col.plugins?.export.exclude !== true) {
 			hidableCols.push(col.id);
 		}
 	});
-	flatColumns[0].plugins;
 </script>
 
 <DropdownMenu.Root>
@@ -57,21 +52,10 @@
 							checked={!$hiddenColumnIds.includes(col.id)}
 							on:change={() => handleHide(col.id)}
 						/>
-						<!-- <Checkbox
-							checked={!$hiddenColumnIds.includes(col.id)}
-							onCheckedChange={() => handleHide(col.id)}
-							class="flex h-4 w-4 items-center justify-center text-current"
-						/> -->
 						<span>
 							{col.header}
 						</span>
 					</div>
-					<!-- <DropdownMenu.CheckboxItem
-					checked={!$hiddenColumnIds.includes(col.id)}
-					on:click={() => handleHide(col.id)}
-				>
-					{col.header}
-				</DropdownMenu.CheckboxItem> -->
 				{/if}
 			{/each}
 		</div>

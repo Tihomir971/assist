@@ -8,8 +8,8 @@
 	import { toast } from 'svelte-sonner';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { invalidate } from '$app/navigation';
-
-	export let tableModel: TableViewModel<ProductSchema>;
+	import type { FlattenedProduct } from '../../+page.server.js';
+	export let tableModel: TableViewModel<FlattenedProduct>;
 	//export let data: SuperValidated<Infer<ProductSelectSchema>>;
 
 	const { pluginStates } = tableModel;
@@ -60,22 +60,31 @@
 	const submitCenotekaSync: SubmitFunction = ({}) => {
 		return async ({ result }) => {
 			if (result.type === 'success') {
-				// do something...
-				toast.success('Cenoteka Sync', {
-					description: `Successfully syncronised!`,
-					action: {
-						label: 'Undo',
-						onClick: () => console.info('Undo')
-					}
-				});
-				$selectedDataIds = {};
-				await invalidate('catalog:test-table');
+				const data = result.data;
+				if (data && data.success) {
+					toast.success('Cenoteka Sync', {
+						description: data.message || 'Successfully synchronized!',
+						action: {
+							label: 'Undo',
+							onClick: () => console.info('Undo')
+						}
+					});
+					$selectedDataIds = {};
+					await invalidate('catalog:test-table');
+				} else {
+					toast.error('Cenoteka Sync', {
+						description: data?.error || 'Unknown error occurred'
+					});
+				}
 			} else if (result.type === 'error') {
 				toast.error('Cenoteka Sync', {
-					description: `Something is wrong ${result.error}`
+					description: `Error: ${result.error?.message || 'Unknown error occurred'}`
+				});
+			} else if (result.type === 'failure') {
+				toast.error('Cenoteka Sync', {
+					description: `Action failed: ${result.data?.message || 'Unknown error occurred'}`
 				});
 			}
-			// use the default behavior for this result type
 		};
 	};
 	let formElErpSyncProd: HTMLFormElement;

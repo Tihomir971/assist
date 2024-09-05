@@ -16,34 +16,27 @@ function is_valid_gtin(gtin: string): boolean {
 }
 
 export const replenishSchema = z.object({
-	id: z.number().int().positive().optional(),
-	created: z.date().optional(),
-	updated: z.date().optional(),
-	ad_client_id: z.number().int().positive().default(1),
-	ad_org_id: z.number().int().positive().default(1),
-	isactive: z.boolean().default(true),
-	m_product_id: z.number().int().positive(),
-	m_warehouse_id: z.number().int().positive(),
-	level_min: z.number().int().nonnegative().default(0),
-	level_max: z.number().int().nonnegative().default(0),
-	m_warehousesource_id: z.number().int().positive().nullable(),
-	m_replenish_uu: z.string().uuid().optional(),
-	replenishtype: z.string().default('1'),
-	m_locator_id: z.number().int().positive().nullable(),
-	qtybatchsize: z.number().int().min(-32768).max(32767).nullable()
+	replenishes: z
+		.object({
+			id: z.number().int().positive().optional(),
+			created: z.string().optional(),
+			updated: z.string().optional(),
+			ad_client_id: z.number().int().positive().default(1).optional(),
+			ad_org_id: z.number().int().positive().default(1).optional(),
+			isactive: z.boolean().default(true).optional(),
+			m_product_id: z.number().int().positive(),
+			m_warehouse_id: z.number().int().positive(),
+			level_min: z.number().int().nonnegative().default(0).optional(),
+			level_max: z.number().int().nonnegative().default(0).optional(),
+			m_warehousesource_id: z.number().int().positive().nullable().optional(),
+			m_replenish_uu: z.string().uuid().nullable().optional(),
+			replenishtype: z.string().optional().default('1').optional(),
+			m_locator_id: z.number().positive().nullable().optional(),
+			qtybatchsize: z.number().int().nonnegative().nullable().optional()
+		})
+		.array()
 });
-export const createReplenishSchema = replenishSchema.omit({
-	id: true,
-	created: true,
-	updated: true,
-	m_replenish_uu: true
-});
-export const updateReplenishSchema = replenishSchema.partial().omit({
-	created: true,
-	updated: true,
-	m_replenish_uu: true
-});
-export const getReplenishSchema = z.object({
-	id: z.number().int().positive()
-});
-export const deleteReplenishSchema = getReplenishSchema;
+//export const replenishArraySchema = z.array(replenishSchema);
+//export const crudReplenishSchema = replenishSchema.extend({
+//	id: replenishSchema.shape.id.optional()
+//});

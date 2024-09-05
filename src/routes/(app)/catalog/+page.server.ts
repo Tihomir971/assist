@@ -11,6 +11,7 @@ import { productSelectSchema } from '$lib/types/zod.js';
 import { MARKET_INFO_API_URL } from '$env/static/private';
 import type { VendorProduct } from '$lib/types/product-scrapper';
 import { isValidGTIN } from '$lib/scripts/gtin';
+
 type Product = Partial<Tables<'m_product'>> & {
 	id: number;
 	qtyonhand: number;
@@ -154,16 +155,32 @@ export const actions = {
 
 		// Get Product from BizniSoft
 		const erpProduct: BSProduct[] = await biznisoft.post('api/product', data);
-		console.log('erpProduct', erpProduct);
+		//		console.log('erpProduct', erpProduct);
 
 		// Get Stock from BizniSoft
-		const erpStock: BSStock[] = await biznisoft.post('api/stock', data);
+		//		const erpStock: BSStock[] = await biznisoft.post('api/stock', data);
 
 		const { data: mapChannel, error: mapChannelError } = await getChannelMap(supabase, 1);
 
 		if (mapChannelError) {
 			console.log('No chanell maping', mapChannel);
 		}
+		const { data: mapCategory } = await supabase
+			.from('c_channel_map_category')
+			.select('m_product_category_id,resource_id')
+			.eq('c_channel_id', 1);
+		const { data: mapWarehouse } = await supabase
+			.from('c_channel_map_warehouse')
+			.select('m_warehouse_id,resource_id')
+			.eq('c_channel_id', 1);
+		//const { data: mapUom } = await supabase
+		//	.from('c_channel_map_warehouse')
+		//	.select('m_warehouse_id,resource_id')
+		//	.eq('c_channel_id', 1);
+		const { data: mapTax } = await supabase
+			.from('c_channel_map_tax')
+			.select('c_taxcategory_id,resource_id')
+			.eq('c_channel_id', 1);
 
 		erpProduct.forEach(async (product) => {
 			// Find product ID using SKU
@@ -179,24 +196,12 @@ export const actions = {
 				return { success: false, error: { selectProductIdError: 'Product not found' } };
 			}
 
-			// Get Channel Category
-			const { data: channelCategory } = await supabase
-				.from('c_channel_map_category')
-				.select('m_product_category_id,resource_id,resource_name,c_channel_id')
-				.eq('c_channel_id', 1)
-				.eq('resource_id', product.grupa)
-				.maybeSingle();
-
 			const uomID = Number(
 				mapChannel?.find(
 					(item) => item.channel_code === product.jedmere && item.entity_type === 'Uom'
 				)?.internal_code
 			);
-			const taxID = Number(
-				mapChannel?.find(
-					(item) => item.channel_code === product.porez && item.entity_type === 'Tax'
-				)?.internal_code
-			);
+			const taxID = mapTax?.find((item) => item.resource_id === product.porez)?.c_taxcategory_id;
 
 			const { error: updateProductError } = await supabase
 				.from('m_product')
@@ -204,7 +209,9 @@ export const actions = {
 					{
 						name: product.naziv,
 						mpn: product.katbr ?? null,
-						m_product_category_id: channelCategory?.m_product_category_id,
+						m_product_category_id: mapCategory?.find(
+							(item) => Number(item.resource_id) === product.grupa
+						)?.m_product_category_id,
 						c_uom_id: uomID,
 						c_taxcategory_id: taxID,
 						unitsperpack: product.tpkolicina ?? 1
@@ -226,87 +233,142 @@ export const actions = {
 					console.error('Error adding product GTIN:', updateBacodesError);
 				}
 			});
-			if (product.replenish) {
-				product.replenish.forEach(async (replenish) => {
-					const warehouseID = Number(
-						mapChannel?.find(
-							(item) =>
-								Number(item.channel_code) === replenish.sifobj && item.entity_type === 'Source'
-						)?.internal_code
-					);
+			product.replenish?.forEach(async (replenish) => {
+				const warehouseID = Number(
+					mapWarehouse?.find((item) => item.resource_id === replenish.sifobj.toString())
+						?.m_warehouse_id
+				);
 
-					const { error: updateRepelnishError, count: updateRepelnishCount } = await supabase
-						.from('m_replenish')
-						.update(
-							{
-								level_min: replenish.iminzal ?? 0,
-								level_max: replenish.imaxzal ?? 0
-							},
-							{ count: 'estimated' }
-						)
-						.eq('m_warehouse_id', warehouseID)
-						.eq('m_product_id', selectProductId.id);
-
-					if (updateRepelnishError) {
-						console.log('updateRepelnishError', updateRepelnishError);
-
-						return { success: false, error: { updateRepelnishError } };
-					}
-					if (updateRepelnishCount === 0) {
-						const { error: insertRepelnishError } = await supabase.from('m_replenish').insert({
-							m_product_id: selectProductId.id,
-							m_warehouse_id: warehouseID,
+				const { error: updateRepelnishError, count: updateRepelnishCount } = await supabase
+					.from('m_replenish')
+					.update(
+						{
 							level_min: replenish.iminzal ?? 0,
 							level_max: replenish.imaxzal ?? 0
-						});
-						if (insertRepelnishError) {
-							console.log('insertRepelnishError', insertRepelnishError);
+						},
+						{ count: 'estimated' }
+					)
+					.eq('m_warehouse_id', warehouseID)
+					.eq('m_product_id', selectProductId.id);
 
-							return { success: false, error: { insertRepelnishError } };
-						}
+				if (updateRepelnishError) {
+					console.log('updateRepelnishError', updateRepelnishError);
+
+					return { success: false, error: { updateRepelnishError } };
+				}
+				if (updateRepelnishCount === 0) {
+					const { error: insertRepelnishError } = await supabase.from('m_replenish').insert({
+						m_product_id: selectProductId.id,
+						m_warehouse_id: warehouseID,
+						level_min: replenish.iminzal ?? 0,
+						level_max: replenish.imaxzal ?? 0
+					});
+					if (insertRepelnishError) {
+						console.log('insertRepelnishError', insertRepelnishError);
+
+						return { success: false, error: { insertRepelnishError } };
 					}
-				});
-			}
-			if (product.m_product_po) {
-				product.m_product_po.forEach(async (po) => {
-					const { data: erpMapBpartner, error: selectProductIdError } = await supabase
-						.from('c_channel_map_bpartner')
-						.select('c_bpartner_id')
-						.eq('c_channel_id', 1)
-						.eq('resource_id', po.kupac)
+				}
+			});
+			product.m_product_po?.forEach(async (po) => {
+				const { data: erpMapBpartner, error: selectProductIdError } = await supabase
+					.from('c_channel_map_bpartner')
+					.select('c_bpartner_id')
+					.eq('c_channel_id', 1)
+					.eq('resource_id', po.kupac)
+					.maybeSingle();
+				if (selectProductIdError) {
+					return { success: false, error: { selectProductIdError } };
+				}
+				if (erpMapBpartner) {
+					const { data: updateProductPo, error: updateProductPoError } = await supabase
+						.from('m_product_po')
+						.update({
+							vendorproductno: po.kupsif
+						})
+						.eq('m_product_id', selectProductId.id)
+						.eq('c_bpartner_id', erpMapBpartner.c_bpartner_id)
+						.select()
 						.maybeSingle();
-					if (selectProductIdError) {
-						return { success: false, error: { selectProductIdError } };
+					if (updateProductPoError) {
+						return { success: false, error: { updateProductPoError } };
 					}
-					if (erpMapBpartner) {
-						const { data: updateProductPo, error: updateProductPoError } = await supabase
-							.from('m_product_po')
-							.update({
-								vendorproductno: po.kupsif
-							})
-							.eq('m_product_id', selectProductId.id)
-							.eq('c_bpartner_id', erpMapBpartner.c_bpartner_id)
-							.select()
-							.maybeSingle();
-						if (updateProductPoError) {
-							return { success: false, error: { updateProductPoError } };
-						}
-						if (!updateProductPo) {
-							const { error: insertProductPoError } = await supabase.from('m_product_po').insert({
-								c_bpartner_id: erpMapBpartner.c_bpartner_id,
-								m_product_id: selectProductId.id,
-								vendorproductno: po.kupsif
-							});
-							if (insertProductPoError) {
-								return { success: false, error: { insertProductPoError } };
-							}
+					if (!updateProductPo) {
+						const { error: insertProductPoError } = await supabase.from('m_product_po').insert({
+							c_bpartner_id: erpMapBpartner.c_bpartner_id,
+							m_product_id: selectProductId.id,
+							vendorproductno: po.kupsif
+						});
+						if (insertProductPoError) {
+							return { success: false, error: { insertProductPoError } };
 						}
 					}
-				});
-			}
+				}
+			});
+			console.log('product', product);
+			product.stanje?.forEach(async (stanje) => {
+				const warehouseID = mapWarehouse?.find(
+					(item) => item.resource_id === stanje.sifobj.toString()
+				)?.m_warehouse_id;
+
+				if (!warehouseID) return;
+				console.log('warehouseID, selectProductId.id', warehouseID, selectProductId.id);
+
+				const { error: updateStockError, count: updateStorageCount } = await supabase
+					.from('m_storageonhand')
+					.update(
+						{ qtyonhand: (stanje.stanje ?? 0) - (stanje.neprokkasa ?? 0) },
+						{ count: 'estimated' }
+					)
+					.eq('warehouse_id', warehouseID)
+					.eq('m_product_id', selectProductId.id)
+					.select();
+				if (updateStockError) {
+					console.log(updateStockError);
+					return;
+				}
+				if (updateStorageCount !== 1) {
+					const { error: insertStockError } = await supabase.from('m_storageonhand').insert({
+						qtyonhand: (stanje.stanje ?? 0) - (stanje.neprokkasa ?? 0),
+						warehouse_id: warehouseID,
+						m_product_id: selectProductId.id
+					});
+					if (insertStockError) console.log('insertStockError', insertStockError);
+				}
+				let pricelist = 0;
+				let price = 0;
+				if (stanje.sifobj === 1) {
+					pricelist = 5;
+					price = stanje.nabcena;
+					console.log('stanje 1, price', stanje, price);
+				} else if (stanje.sifobj === 11) {
+					pricelist = 13;
+					price = stanje.mpcena;
+				} else {
+					return;
+				}
+
+				const { error: updatePriceError, count: countProductPriceUpd } = await supabase
+					.from('m_productprice')
+					.update({ pricestd: price }, { count: 'estimated' })
+					.eq('m_pricelist_version_id', pricelist)
+					.eq('m_product_id', selectProductId.id);
+				if (updatePriceError) console.error('updatePriceError', updatePriceError);
+
+				if (countProductPriceUpd !== 1) {
+					const { error: insertPriceError } = await supabase.from('m_productprice').insert({
+						pricestd: price,
+						m_pricelist_version_id: pricelist,
+						m_product_id: selectProductId.id
+					});
+					if (insertPriceError) {
+						console.error('updatePriceError', updatePriceError);
+					}
+				}
+			});
 		});
 
-		erpStock.forEach(async (stock) => {
+		/* 		erpStock.forEach(async (stock) => {
 			const { data: selectProductId, error: selectProductIdError } = await supabase
 				.from('m_product')
 				.select('id')
@@ -349,7 +411,7 @@ export const actions = {
 					}
 				}
 			}
-		});
+		}); */
 
 		return {
 			success: true
@@ -516,7 +578,7 @@ export const actions = {
 		}
 
 		const { data: allUom } = await supabase.from('c_uom').select('id,uomsymbol');
-
+		const fetchUrl = MARKET_INFO_API_URL + `/api/cenoteka`;
 		for (const product of products) {
 			const allGtins = product.m_product_gtin.map((item: { gtin: string }) => item.gtin);
 
@@ -526,7 +588,7 @@ export const actions = {
 
 			for (const gtin of allGtins) {
 				try {
-					const response = await fetch('http://localhost:3000/api/cenoteka', {
+					const response = await fetch(fetchUrl, {
 						method: 'POST',
 						headers: { 'Content-Type': 'application/json' },
 						body: JSON.stringify({ barcode: gtin, href: poUrl })
@@ -600,7 +662,7 @@ export const actions = {
 						}
 					}
 
-					if (data.netQuantity) {
+					if (data.netQuantity && data.netQuantity !== 1) {
 						const { error: updateProductError } = await supabase
 							.from('m_product')
 							.update({

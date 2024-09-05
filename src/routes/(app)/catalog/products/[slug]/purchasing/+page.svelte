@@ -98,7 +98,7 @@
 								<Table.Cell>Org</Table.Cell>
 								<Table.Cell>{productPurchase.c_bpartner?.name}</Table.Cell>
 								<Table.Cell>
-									<Checkbox checked={productPurchase.isactive} disabled />
+									<Checkbox checked={productPurchase.isactive} />
 								</Table.Cell>
 								<Table.Cell>{productPurchase.barcode}</Table.Cell>
 								<Table.Cell>{productPurchase.vendorproductno}</Table.Cell>

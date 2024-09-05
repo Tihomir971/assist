@@ -31,9 +31,11 @@
 	const { saveAs } = pkg;
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { browser } from '$app/environment';
+	import type { FlattenedProduct } from './+page.server.js';
 
 	export let data: {
-		products: ProductSchema[];
+		products: FlattenedProduct[];
 		warehouses: { value: number; label: string }[];
 		activeWarehouse: number;
 		showReplenish: boolean;
@@ -86,6 +88,15 @@
 	const productsStore = writable(products);
 	$: $productsStore = products;
 
+	let initialHiddenColumnIds = ['Tax', 'MPN', 'Pack', 'Max', 'Gros'];
+
+	if (browser) {
+		const storedHiddenColumns = localStorage.getItem('hiddenColumns');
+		if (storedHiddenColumns) {
+			initialHiddenColumnIds = JSON.parse(storedHiddenColumns);
+		}
+	}
+
 	const table = createTable(productsStore, {
 		select: addSelectedRows(),
 		sort: addSortBy({
@@ -99,7 +110,7 @@
 		}),
 		colFilter: addColumnFilters(),
 		hide: addHiddenColumns({
-			initialHiddenColumnIds: ['Tax', 'MPN', 'Pack', 'Max', 'Gros']
+			initialHiddenColumnIds
 		}),
 		export: addDataExport()
 	});
@@ -173,12 +184,9 @@
 				})
 		}),
 		table.column({
-			id: 'Tax',
+			id: 'taxRate',
 			header: 'Tax',
-			accessor: (item) => {
-				const tax = item.c_taxcategory?.c_tax[0].rate;
-				return tax ? tax / 100 : 0;
-			},
+			accessor: 'taxRate',
 			cell: ({ value }) =>
 				createRender(StyleNumber, {
 					value: value,
@@ -187,9 +195,9 @@
 				})
 		}),
 		table.column({
-			id: 'Wholesale',
+			id: 'qtyWholesale',
 			header: 'Whole.',
-			accessor: (item) => getQtyOnHand(2, item.m_storageonhand),
+			accessor: 'qtyWholesale',
 			cell: ({ value }) =>
 				createRender(StyleNumber, {
 					value: value,
@@ -198,9 +206,9 @@
 				})
 		}),
 		table.column({
-			id: 'Retail',
+			id: 'qtyRetail',
 			header: 'Retail',
-			accessor: (item) => getQtyOnHand(5, item.m_storageonhand),
+			accessor: 'qtyRetail',
 			cell: ({ value }) =>
 				createRender(StyleNumber, {
 					value: value,
@@ -208,61 +216,91 @@
 					fractionDigits: 0
 				})
 		}),
-		table.column({
-			id: 'level_min',
-			header: 'Min',
-			accessor: (item) => {
-				const data = item.level_min.find((item) => item.m_warehouse_id === activeWarehouse);
-				return data?.level_min ?? 0;
-			},
-			cell: ({ row }) => {
+		table.column(
+			{
+				id: 'level_min',
+				header: 'Min',
+				accessor: 'levelMin',
+				cell: ({ value }) =>
+					value != null
+						? createRender(StyleNumber, {
+								value,
+								style: 'decimal',
+								fractionDigits: 0
+							})
+						: ''
+			}
+			/* 		cell: ({ row}) => {
 				if (row.isData() && row.original) {
-					const levelMin = row.original.level_min.find(
-						(item) => item.m_warehouse_id === activeWarehouse
-					)?.level_min;
+					
 					const qty = row.original.m_storageonhand.find(
 						(item) => item.warehouse_id === activeWarehouse
 					)?.qtyonhand;
 
 					return createRender(Replenish, {
-						levelMin: levelMin ?? 0,
+						levelMin: row.original.,
 						stock: qty ?? 0,
 						style: 'decimal',
 						fractionDigits: 0
 					});
-				}
+				} 
 				return '';
-			}
-		}),
+			}*/
+		),
 		table.column({
-			id: 'Max',
+			id: 'levelMax',
 			header: 'Max',
-			accessor: (item) => {
-				const data = item.level_max.find((item) => item.m_warehouse_id === activeWarehouse);
-				return data?.level_max ?? 0;
-			},
+			accessor: 'levelMax',
 			cell: ({ value }) =>
-				createRender(StyleNumber, {
-					value: value,
-					style: 'decimal',
-					fractionDigits: 0
-				})
+				value != null
+					? createRender(StyleNumber, {
+							value,
+							style: 'decimal',
+							fractionDigits: 0
+						})
+					: ''
 		}),
 		table.column({
 			id: 'PricePurchase',
 			header: 'Purch.',
-			accessor: (item) => getPrice(5, item.priceList).pricestd,
+			accessor: 'pricePurchase',
 			cell: ({ value }) =>
 				createRender(StyleNumber, {
 					value: value ?? 0,
 					style: 'decimal',
 					fractionDigits: 2
+				})
+		}),
+		/* 				table.column({
+					id: 'ruc',
+					accessor: (item) => item,
+					header: 'RuC',
+					cell: ({ row,value }) =>
+						createRender(StyleNumber, {
+							value: row.priceList / value.pricePurchase - 1,
+							style: 'percent',
+							fractionDigits: 1
+						}),
+					plugins: {
+						exportCsv: { exclude: true },
+						tableFilter: { exclude: true }
+					}
+				}), */
+		table.column({
+			id: 'ruc',
+			header: 'RuC',
+			accessor: 'ruc',
+			cell: ({ value }) =>
+				createRender(StyleNumber, {
+					value: value,
+					style: 'percent',
+					fractionDigits: 0
 				})
 		}),
 		table.column({
 			id: 'PriceRetail',
 			header: 'Retail',
-			accessor: (item) => getPrice(13, item.priceList).pricestd,
+			accessor: 'priceRetail',
 			cell: ({ value }) =>
 				createRender(StyleNumber, {
 					value: value ?? 0,
@@ -270,10 +308,11 @@
 					fractionDigits: 2
 				})
 		}),
+
 		table.column({
 			id: 'Mercator',
 			header: 'Mercator',
-			accessor: (item) => getPOPrice(4, item.m_product_po).pricelist,
+			accessor: 'priceMercator',
 			cell: ({ value }) =>
 				createRender(StyleNumber, {
 					value: value ?? 0,
@@ -284,7 +323,7 @@
 		table.column({
 			id: 'Mivex',
 			header: 'Mivex',
-			accessor: (item) => getPOPrice(89, item.m_product_po).pricelist,
+			accessor: 'priceMivex',
 			cell: ({ value }) =>
 				createRender(StyleNumber, {
 					value: value ?? 0,
@@ -295,7 +334,7 @@
 		table.column({
 			id: 'Cenoteka',
 			header: 'Cenoteka',
-			accessor: (item) => getPOPrice(2, item.m_product_po).pricelist,
+			accessor: 'priceCenoteka',
 			cell: ({ value }) =>
 				createRender(StyleNumber, {
 					value: value ?? 0,
@@ -306,7 +345,7 @@
 		table.column({
 			id: 'Gros',
 			header: 'Gros',
-			accessor: (item) => getPOPrice(407, item.m_product_po).pricelist,
+			accessor: 'priceGros',
 			cell: ({ value }) =>
 				createRender(StyleNumber, {
 					value: value ?? 0,
@@ -340,9 +379,9 @@
 
 	const tableModel = table.createViewModel(columns, { rowDataId: (row) => row.id?.toString() });
 
-	const { flatColumns, headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates, rows } =
-		tableModel;
-	$: ({ selectedDataIds } = pluginStates.select);
+	const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates, rows } = tableModel;
+	const { selectedDataIds } = pluginStates.select;
+	/* $: ({ selectedDataIds } = pluginStates.select); */
 	const { filterValue } = pluginStates.filter;
 	const { exportedData } = pluginStates.export;
 
@@ -399,7 +438,6 @@
 							type="checkbox"
 							id="only-stock"
 							checked={showStock}
-							disabled={showReplenish}
 							on:change={() => {
 								let checkbox = document.getElementById('only-stock') as HTMLInputElement;
 								let isChecked = checkbox.checked;
@@ -411,7 +449,7 @@
 						/>
 						<label for="only-stock">Only on Stock</label>
 					</div>
-					<div class="flex items-center space-x-2">
+					<!-- 	<div class="flex items-center space-x-2">
 						<input
 							id="show-replenish"
 							type="checkbox"
@@ -426,7 +464,7 @@
 							}}
 						/>
 						<label for="show-replenish">Only Replenish</label>
-					</div>
+					</div> -->
 
 					<Button variant="outline" on:click={exportProductDataToExcel}>Replenish</Button>
 					{#if warehouses && activeWarehouse}

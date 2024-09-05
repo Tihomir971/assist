@@ -8,7 +8,7 @@
 	import { cn } from '$lib/utils.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-
+	import type { FlattenedProduct } from '../+page.server.js';
 	let className: string | undefined | null = undefined;
 	export { className as class };
 	export let props: {
@@ -21,7 +21,7 @@
 		};
 		filter: never;
 	};
-	export let tableModel: TableViewModel<ProductSchema>;
+	export let tableModel: TableViewModel<FlattenedProduct>;
 	export let cellId: string;
 
 	const { hiddenColumnIds } = tableModel.pluginStates.hide;
