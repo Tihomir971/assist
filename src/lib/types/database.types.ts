@@ -1,5 +1,5 @@
 import type { Database } from './supabase.ts';
 export type { Database } from './supabase.ts';
 
-export type Tables<T extends keyof Database['public']['Tables']> =
-	Database['public']['Tables'][T]['Row'];
+export type SupabaseTable<T extends keyof Database['public']['Tables']> =
+	Database['public']['Tables'][T];

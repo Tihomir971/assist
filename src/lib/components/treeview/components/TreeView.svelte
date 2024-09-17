@@ -15,12 +15,13 @@
 
 	const {
 		elements: { tree },
-		states
-	} = setCtx({ forceVisible, onExpandedChange });
+		states: { selectedItem }
+	} = setCtx({ forceVisible, onExpandedChange, defaultExpanded: expanded });
 
-	const sync = createSync(states);
-	$: sync.expanded(expanded, (v) => (expanded = v));
-	$: sync.selectedItem(selected, (v) => (selected = v));
+	//	const sync = createSync(states);
+	//	$: sync.expanded(expanded, (v) => (expanded = v));
+	//	$: sync.selectedItem(selected, (v) => (selected = v));
+	$: selected = $selectedItem;
 </script>
 
 <ul class={cn('menu flex-nowrap py-0 ps-0', { ...$tree })}>

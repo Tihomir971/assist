@@ -26,6 +26,8 @@
 
 	import Combobox2 from '$lib/components/melt/ComboBox2.svelte';
 	import { crudProductGtinSchema, replenishSchema } from '../zod.validator.js';
+	import SquareArrowOutUpRight from 'lucide-svelte/icons/square-arrow-out-up-right';
+	import X from 'lucide-svelte/icons/x';
 	async function deleteProductPORow(rowToBeDeleted: number) {
 		const { error } = await data.supabase.from('m_product_po').delete().eq('id', rowToBeDeleted);
 		if (error) throw error;
@@ -450,9 +452,15 @@
 												)}</Table.Cell
 											>
 											<Table.Cell>
-												<a href={productPurchase.url} target="_blank" class="btn btn-square btn-xs">
-													{productPurchase.url}
-												</a>
+												{#if productPurchase.url}
+													<a
+														href={productPurchase.url}
+														target="_blank"
+														class="btn btn-square btn-xs"
+													>
+														<SquareArrowOutUpRight />
+													</a>
+												{/if}
 											</Table.Cell>
 											<Table.Cell>
 												<Button
@@ -460,7 +468,7 @@
 													on:click={() => deleteProductPORow(productPurchase.id)}
 													type="button"
 												>
-													<iconify-icon icon="ph:x-bold" width="24" height="24"></iconify-icon>
+													<X />
 												</Button>
 											</Table.Cell>
 										</Table.Row>
@@ -479,7 +487,7 @@
 														<Select.Trigger {...attrs}>
 															<Select.Value placeholder="Select a vendor" />
 														</Select.Trigger>
-														<Select.Content>
+														<Select.Content class="max-h-80 overflow-auto">
 															{#each data.c_bpartner as { value, label }}
 																<Select.Item {value} {label} />
 															{/each}
@@ -506,7 +514,7 @@
 												<Form.FieldErrors />
 											</Form.Field>
 										</Table.Cell>
-										<Table.Cell>
+										<!-- 	<Table.Cell>
 											<Form.Field form={formPPO} name="pricelist">
 												<Form.Control let:attrs>
 													<Input
@@ -519,8 +527,8 @@
 												</Form.Control>
 												<Form.FieldErrors />
 											</Form.Field>
-										</Table.Cell>
-										<Table.Cell>
+										</Table.Cell> -->
+										<Table.Cell colspan={2}>
 											<Form.Field form={formPPO} name="url">
 												<Form.Control let:attrs>
 													<Input

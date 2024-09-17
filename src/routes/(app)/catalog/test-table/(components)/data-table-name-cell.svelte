@@ -20,7 +20,7 @@
 			</span>
 		</Tooltip.Trigger>
 		<Tooltip.Content>
-			<p class="max-w-xs break-words">{value}</p>
+			<p class="w-full overflow-hidden text-ellipsis whitespace-nowrap">{value}</p>
 		</Tooltip.Content>
 	</Tooltip.Root>
 </div>

@@ -27,7 +27,7 @@
 					}
 				});
 				$selectedDataIds = {};
-				await invalidate('catalog:test-table');
+				invalidate('catalog:test-table');
 			} else if (result.type === 'error') {
 				toast.error('Replenish ERP Sync', {
 					description: `Something is wrong ${result.error}`
@@ -59,8 +59,10 @@
 	};
 	const submitCenotekaSync: SubmitFunction = ({}) => {
 		return async ({ result }) => {
+			console.log('result', result);
 			if (result.type === 'success') {
 				const data = result.data;
+
 				if (data && data.success) {
 					toast.success('Cenoteka Sync', {
 						description: data.message || 'Successfully synchronized!',
@@ -73,12 +75,12 @@
 					await invalidate('catalog:test-table');
 				} else {
 					toast.error('Cenoteka Sync', {
-						description: data?.error || 'Unknown error occurred'
+						description: data?.message || 'Unknown error occurred'
 					});
 				}
 			} else if (result.type === 'error') {
 				toast.error('Cenoteka Sync', {
-					description: `Error: ${result.error?.message || 'Unknown error occurred'}`
+					description: `Error: ${result.error.message || 'Unknown error occurred'}`
 				});
 			} else if (result.type === 'failure') {
 				toast.error('Cenoteka Sync', {

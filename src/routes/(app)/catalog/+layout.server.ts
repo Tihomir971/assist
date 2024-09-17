@@ -1,6 +1,7 @@
 import type { LayoutServerLoad } from './$types';
 
 export const load = (async ({ url, depends, locals: { supabase } }) => {
+	depends('catalog:categories');
 	const activeCategory = () => {
 		const param = url.searchParams.get('cat');
 
@@ -46,7 +47,7 @@ export const load = (async ({ url, depends, locals: { supabase } }) => {
 
 		return parents.length > 0 ? parents : undefined;
 	}
-	depends('catalog:categories');
+
 	const { data: categories } = await supabase
 		.from('m_product_category')
 		.select('id,parent_id, title:name')

@@ -55,7 +55,7 @@
 </script>
 
 {#if !props.sort.disabled}
-	<div class={cn('flex items-center', className)}>
+	<div class={cn('flex justify-center', className)}>
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger asChild let:builder>
 				<Button

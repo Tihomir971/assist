@@ -14,6 +14,5 @@ type Icon = 'svelte' | 'folder' | 'js';
 export type TreeItem = {
 	id: number | string;
 	title: string;
-	icon?: Icon;
 	children?: TreeItem[];
 };

@@ -68,7 +68,7 @@ export interface BSProduct {
 	barcodes: string[] | null;
 	replenish: { sifobj: number; iminzal: number | null; imaxzal: number | null }[] | null;
 	m_product_po: { kupac: number; kupsif: string }[] | null;
-	stanje:
+	trstanje:
 		| {
 				sifobj: number;
 				nabcena: number;

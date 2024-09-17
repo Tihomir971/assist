@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { ProductSchema } from '$lib/types/zod.js';
 	import { writable } from 'svelte/store';
 	import { Render, Subscribe, createRender, createTable } from 'svelte-headless-table';
 	import {
@@ -20,7 +19,6 @@
 		DataTableViewWarehouse
 	} from './(components)/index.js';
 	import StyleNumber from '$lib/style/StyleNumber.svelte';
-	import Replenish from './(components)/Replenish.svelte';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -38,52 +36,11 @@
 		products: FlattenedProduct[];
 		warehouses: { value: number; label: string }[];
 		activeWarehouse: number;
-		showReplenish: boolean;
 		showStock: boolean;
+		showVat: boolean;
 	};
 
-	$: ({ products, warehouses, activeWarehouse, showReplenish, showStock } = data);
-
-	function getQtyOnHand(
-		warehouse_id: number,
-		productStorage: {
-			warehouse_id: number;
-			qtyonhand: number;
-		}[]
-	): number {
-		const item = productStorage.find((item) => item.warehouse_id === warehouse_id);
-		return item ? item.qtyonhand : 0;
-	}
-
-	function getPrice(
-		pricelistId: number,
-		pricePurchase: {
-			m_pricelist_version_id: number;
-			pricestd: number | null;
-			pricelist: number | null;
-		}[]
-	): {
-		m_pricelist_version_id: number;
-		pricestd: number | null;
-		pricelist: number | null;
-	} {
-		const item = pricePurchase.find((item) => item.m_pricelist_version_id === pricelistId);
-		return item ?? { m_pricelist_version_id: 0, pricestd: 0, pricelist: 0 };
-	}
-
-	function getPOPrice(
-		vendorId: number,
-		m_product_po: {
-			pricelist: number | null;
-			c_bpartner_id: number;
-		}[]
-	): {
-		c_bpartner_id: number;
-		pricelist: number | null;
-	} {
-		const item = m_product_po.find((item) => item.c_bpartner_id === vendorId);
-		return item ?? { pricelist: 0, c_bpartner_id: 0 };
-	}
+	$: ({ products, warehouses, activeWarehouse, showStock, showVat } = data);
 
 	const productsStore = writable(products);
 	$: $productsStore = products;
@@ -96,6 +53,8 @@
 			initialHiddenColumnIds = JSON.parse(storedHiddenColumns);
 		}
 	}
+
+	// Add a state variable for showVat
 
 	const table = createTable(productsStore, {
 		select: addSelectedRows(),
@@ -216,37 +175,24 @@
 					fractionDigits: 0
 				})
 		}),
-		table.column(
-			{
-				id: 'level_min',
-				header: 'Min',
-				accessor: 'levelMin',
-				cell: ({ value }) =>
-					value != null
-						? createRender(StyleNumber, {
-								value,
-								style: 'decimal',
-								fractionDigits: 0
-							})
-						: ''
-			}
-			/* 		cell: ({ row}) => {
-				if (row.isData() && row.original) {
-					
-					const qty = row.original.m_storageonhand.find(
-						(item) => item.warehouse_id === activeWarehouse
-					)?.qtyonhand;
-
-					return createRender(Replenish, {
-						levelMin: row.original.,
-						stock: qty ?? 0,
+		table.column({
+			id: 'level_min',
+			header: 'Min',
+			accessor: 'levelMin',
+			cell: ({ row }) => {
+				if (row.isData()) {
+					const levelMin = row.original.levelMin ?? 0;
+					const qtyRetail = row.original.qtyRetail ?? 0;
+					return createRender(StyleNumber, {
+						value: levelMin,
+						danger: qtyRetail < levelMin,
 						style: 'decimal',
 						fractionDigits: 0
 					});
-				} 
+				}
 				return '';
-			}*/
-		),
+			}
+		}),
 		table.column({
 			id: 'levelMax',
 			header: 'Max',
@@ -271,21 +217,6 @@
 					fractionDigits: 2
 				})
 		}),
-		/* 				table.column({
-					id: 'ruc',
-					accessor: (item) => item,
-					header: 'RuC',
-					cell: ({ row,value }) =>
-						createRender(StyleNumber, {
-							value: row.priceList / value.pricePurchase - 1,
-							style: 'percent',
-							fractionDigits: 1
-						}),
-					plugins: {
-						exportCsv: { exclude: true },
-						tableFilter: { exclude: true }
-					}
-				}), */
 		table.column({
 			id: 'ruc',
 			header: 'RuC',
@@ -294,13 +225,36 @@
 				createRender(StyleNumber, {
 					value: value,
 					style: 'percent',
-					fractionDigits: 0
+					fractionDigits: 1
 				})
 		}),
+
 		table.column({
 			id: 'PriceRetail',
 			header: 'Retail',
 			accessor: 'priceRetail',
+			cell: ({ row }) => {
+				if (row.isData()) {
+					const priceRetail = row.original.priceRetail ?? 0;
+					const priceCenoteka = row.original.priceCenoteka ?? 0;
+					const ruc = row.original.ruc ?? 0;
+					return createRender(StyleNumber, {
+						value: priceRetail,
+						danger:
+							priceCenoteka !== 0 &&
+							(priceRetail > priceCenoteka || (priceCenoteka - priceRetail > 1 && ruc * 100 <= 18)),
+						style: 'decimal',
+						fractionDigits: 2
+					});
+				}
+				return '';
+			}
+		}),
+
+		table.column({
+			id: 'Agrofina',
+			header: 'Agrofina',
+			accessor: 'priceAgrofina',
 			cell: ({ value }) =>
 				createRender(StyleNumber, {
 					value: value ?? 0,
@@ -308,7 +262,6 @@
 					fractionDigits: 2
 				})
 		}),
-
 		table.column({
 			id: 'Mercator',
 			header: 'Mercator',
@@ -381,7 +334,6 @@
 
 	const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates, rows } = tableModel;
 	const { selectedDataIds } = pluginStates.select;
-	/* $: ({ selectedDataIds } = pluginStates.select); */
 	const { filterValue } = pluginStates.filter;
 	const { exportedData } = pluginStates.export;
 
@@ -441,7 +393,6 @@
 							on:change={() => {
 								let checkbox = document.getElementById('only-stock') as HTMLInputElement;
 								let isChecked = checkbox.checked;
-
 								const newUrl = new URL($page.url);
 								newUrl?.searchParams?.set('stock', JSON.stringify(isChecked));
 								goto(newUrl);
@@ -449,23 +400,20 @@
 						/>
 						<label for="only-stock">Only on Stock</label>
 					</div>
-					<!-- 	<div class="flex items-center space-x-2">
+					<div class="flex items-center space-x-2">
 						<input
-							id="show-replenish"
 							type="checkbox"
-							checked={showReplenish}
-							on:change={(value) => {
-								let checkbox = document.getElementById('show-replenish') as HTMLInputElement;
-								let isChecked = checkbox.checked;
+							id="show-vat"
+							checked={showVat}
+							on:change={(e) => {
+								showVat = (e.target as HTMLInputElement).checked;
 								const newUrl = new URL($page.url);
-								newUrl?.searchParams?.set('rep', JSON.stringify(isChecked));
-								newUrl?.searchParams?.set('stock', isChecked ? 'false' : 'true');
+								newUrl.searchParams.set('showVat', showVat.toString());
 								goto(newUrl);
 							}}
 						/>
-						<label for="show-replenish">Only Replenish</label>
-					</div> -->
-
+						<label for="show-vat">Show VAT</label>
+					</div>
 					<Button variant="outline" on:click={exportProductDataToExcel}>Replenish</Button>
 					{#if warehouses && activeWarehouse}
 						<DataTableViewWarehouse {warehouses} {activeWarehouse} />

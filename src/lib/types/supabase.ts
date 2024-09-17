@@ -1954,6 +1954,7 @@ export interface Database {
           name: string
           updated: string
           validfrom: string
+          validto: string | null
         }
         Insert: {
           ad_client_id?: number
@@ -1968,6 +1969,7 @@ export interface Database {
           name: string
           updated?: string
           validfrom: string
+          validto?: string | null
         }
         Update: {
           ad_client_id?: number
@@ -1982,6 +1984,7 @@ export interface Database {
           name?: string
           updated?: string
           validfrom?: string
+          validto?: string | null
         }
         Relationships: [
           {

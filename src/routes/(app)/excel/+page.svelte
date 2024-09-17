@@ -27,9 +27,10 @@
 
 	let selectedSupplier: number | null = null;
 	const suppliers: Supplier[] = [
+		{ id: 480, name: 'Agrofina' },
+		{ id: 407, name: 'Gros' },
 		{ id: 4, name: 'Mercator-S' },
 		{ id: 89, name: 'Mivex' },
-		{ id: 407, name: 'Gros' },
 		{ id: 5, name: 'Other' }
 	];
 	const productProperties: (keyof Product)[] = [

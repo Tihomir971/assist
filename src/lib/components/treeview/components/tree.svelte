@@ -7,9 +7,9 @@
 	import { cn } from '$lib/utils';
 	import { slide } from 'svelte/transition';
 
-	export let treeItems: TreeItem[];
-	export let level = 1;
-
+	//	export let treeItems: TreeItem[];
+	//	export let level = 1;
+	let { treeItems, level = 1 }: { treeItems: TreeItem[]; level?: number } = $props();
 	const {
 		elements: { item, group },
 		helpers: { isExpanded, isSelected }
@@ -18,7 +18,7 @@
 	const INDENT_SIZE = 8; // reduced from 16
 </script>
 
-{#each treeItems as { id, title, icon, children }}
+{#each treeItems as { id, title, children }}
 	{@const itemId = id.toString()}
 	{@const hasChildren = !!children?.length}
 

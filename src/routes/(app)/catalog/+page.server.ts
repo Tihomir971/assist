@@ -1,5 +1,4 @@
-//import { BIZNISOFT_API, BIZNISOFT_BEARER_TOKEN } from '$env/static/private';
-import { redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import * as biznisoft from '$lib/services/biznisoft.js';
 import type { Actions, PageServerLoad } from './$types';
 import type { Tables } from '$lib/types/database.types';
@@ -11,6 +10,7 @@ import { productSelectSchema } from '$lib/types/zod.js';
 import { MARKET_INFO_API_URL } from '$env/static/private';
 import type { VendorProduct } from '$lib/types/product-scrapper';
 import { isValidGTIN } from '$lib/scripts/gtin';
+import { connector } from '$lib/ky';
 
 type Product = Partial<Tables<'m_product'>> & {
 	id: number;
@@ -153,12 +153,7 @@ export const actions = {
 		const sku = skus.map(({ sku }) => parseInt(sku || '0', 10)) || [];
 		const data = { sku: sku };
 
-		// Get Product from BizniSoft
-		const erpProduct: BSProduct[] = await biznisoft.post('api/product', data);
-		//		console.log('erpProduct', erpProduct);
-
-		// Get Stock from BizniSoft
-		//		const erpStock: BSStock[] = await biznisoft.post('api/stock', data);
+		const erpProduct = await connector.post('api/product', { json: data }).json<BSProduct[]>();
 
 		const { data: mapChannel, error: mapChannelError } = await getChannelMap(supabase, 1);
 
@@ -173,10 +168,6 @@ export const actions = {
 			.from('c_channel_map_warehouse')
 			.select('m_warehouse_id,resource_id')
 			.eq('c_channel_id', 1);
-		//const { data: mapUom } = await supabase
-		//	.from('c_channel_map_warehouse')
-		//	.select('m_warehouse_id,resource_id')
-		//	.eq('c_channel_id', 1);
 		const { data: mapTax } = await supabase
 			.from('c_channel_map_tax')
 			.select('c_taxcategory_id,resource_id')
@@ -306,9 +297,9 @@ export const actions = {
 				}
 			});
 			console.log('product', product);
-			product.stanje?.forEach(async (stanje) => {
+			product.trstanje?.forEach(async (trstanje) => {
 				const warehouseID = mapWarehouse?.find(
-					(item) => item.resource_id === stanje.sifobj.toString()
+					(item) => item.resource_id === trstanje.sifobj.toString()
 				)?.m_warehouse_id;
 
 				if (!warehouseID) return;
@@ -317,7 +308,7 @@ export const actions = {
 				const { error: updateStockError, count: updateStorageCount } = await supabase
 					.from('m_storageonhand')
 					.update(
-						{ qtyonhand: (stanje.stanje ?? 0) - (stanje.neprokkasa ?? 0) },
+						{ qtyonhand: (trstanje.stanje ?? 0) - (trstanje.neprokkasa ?? 0) },
 						{ count: 'estimated' }
 					)
 					.eq('warehouse_id', warehouseID)
@@ -329,7 +320,7 @@ export const actions = {
 				}
 				if (updateStorageCount !== 1) {
 					const { error: insertStockError } = await supabase.from('m_storageonhand').insert({
-						qtyonhand: (stanje.stanje ?? 0) - (stanje.neprokkasa ?? 0),
+						qtyonhand: (trstanje.stanje ?? 0) - (trstanje.neprokkasa ?? 0),
 						warehouse_id: warehouseID,
 						m_product_id: selectProductId.id
 					});
@@ -337,13 +328,13 @@ export const actions = {
 				}
 				let pricelist = 0;
 				let price = 0;
-				if (stanje.sifobj === 1) {
+				if (trstanje.sifobj === 1) {
 					pricelist = 5;
-					price = stanje.nabcena;
-					console.log('stanje 1, price', stanje, price);
-				} else if (stanje.sifobj === 11) {
+					price = trstanje.nabcena;
+					console.log('stanje 1, price', trstanje, price);
+				} else if (trstanje.sifobj === 11) {
 					pricelist = 13;
-					price = stanje.mpcena;
+					price = trstanje.mpcena;
 				} else {
 					return;
 				}
@@ -367,51 +358,6 @@ export const actions = {
 				}
 			});
 		});
-
-		/* 		erpStock.forEach(async (stock) => {
-			const { data: selectProductId, error: selectProductIdError } = await supabase
-				.from('m_product')
-				.select('id')
-				.eq('sku', stock.sifra)
-				.maybeSingle();
-			if (selectProductIdError) {
-				return { success: false, error: { selectProductIdError } };
-			}
-			if (selectProductId) {
-				const warehouseID = Number(
-					mapChannel?.find(
-						(item) => Number(item.channel_code) === stock.sifobj && item.entity_type === 'Source'
-					)?.internal_code
-				);
-
-				const { error: updateStockError } = await supabase
-					.from('m_storageonhand')
-					.update({ qtyonhand: (stock.stanje ?? 0) - (stock.neprokkasa ?? 0) })
-					.eq('warehouse_id', warehouseID)
-					.eq('m_product_id', selectProductId.id);
-
-				if (updateStockError) {
-					return { success: false, error: { updateStockError } };
-				}
-				if ([1, 11].includes(stock.sifobj)) {
-					console.log('stock', stock);
-					console.log('stock', stock);
-
-					const priclist = stock.sifobj === 1 ? 5 : 13;
-					const price = stock.sifobj === 1 ? stock.nabcena : stock.mpcena;
-					console.log('priclist,price', priclist, price);
-					const { error: updatePriceError } = await supabase
-						.from('m_productprice')
-						.update({ pricestd: price })
-						.eq('m_pricelist_version_id', priclist)
-						.eq('m_product_id', selectProductId.id);
-
-					if (updatePriceError) {
-						return { success: false, error: { updatePriceError } };
-					}
-				}
-			}
-		}); */
 
 		return {
 			success: true
@@ -549,7 +495,6 @@ export const actions = {
 		return { success: false, error: 'No data found' };
 	},
 	getCenotekaInfo: async ({ request, locals: { supabase } }) => {
-		console.log('getCenotekaInfo');
 		const form = await superValidate(request, zod(productSelectSchema));
 		if (!form.valid) return fail(400, { form });
 
@@ -570,21 +515,30 @@ export const actions = {
 
 		if (fetchError) {
 			console.error('Error fetching products:', fetchError);
-			return fail(500, { message: 'Error fetching products from database' });
+			return {
+				success: false,
+				status: 500,
+				message: 'Error fetching products from database',
+				error: fetchError.message
+			};
 		}
 
 		if (!products || products.length === 0) {
-			return fail(404, { message: 'No products found' });
+			return { success: false, status: 404, message: 'No products found' };
 		}
 
 		const { data: allUom } = await supabase.from('c_uom').select('id,uomsymbol');
 		const fetchUrl = MARKET_INFO_API_URL + `/api/cenoteka`;
+		let updatedCount = 0;
+		let errorCount = 0;
+		let errorMessages: string[] = [];
+
 		for (const product of products) {
 			const allGtins = product.m_product_gtin.map((item: { gtin: string }) => item.gtin);
-
-			//	const taxRate = product.c_taxcategory[0].c_tax[0].rate / 100;
 			const taxRate = product.c_taxcategory_id === 2 ? 0.1 : 0.2;
 			const poUrl = product.m_product_po.length > 0 ? product.m_product_po[0].url : null;
+
+			let productUpdated = false;
 
 			for (const gtin of allGtins) {
 				try {
@@ -595,14 +549,17 @@ export const actions = {
 					});
 					if (response.status !== 200) {
 						console.error(`API request failed for GTIN ${gtin}: ${response.statusText}`);
+						errorMessages.push(`API request failed for GTIN ${gtin}: ${response.statusText}`);
 						continue;
 					}
 
 					const { data }: { data: VendorProduct } = await response.json();
 					if (!data || data === undefined) {
 						console.error(`Invalid data received for GTIN ${gtin}`);
+						errorMessages.push(`Invalid data received for GTIN ${gtin}`);
 						continue;
 					}
+
 					if (data.barcodes) {
 						const newBarcodes = data.barcodes.filter(
 							(barcode: string) =>
@@ -622,6 +579,9 @@ export const actions = {
 									console.log('Some GTINs already exist, duplicates skipped');
 								} else {
 									console.error('Error inserting new GTINs:', insertError);
+									errorMessages.push(
+										`Error inserting new GTINs for product ${product.id}: ${insertError.message}`
+									);
 								}
 							} else {
 								console.log(`Inserted ${newBarcodes.length} new GTINs for product ${product.id}`);
@@ -644,6 +604,7 @@ export const actions = {
 						.select();
 					if (updateError) {
 						console.error('Error updating product:', updateError);
+						errorMessages.push(`Error updating product ${product.id}: ${updateError.message}`);
 						continue;
 					}
 					if (updatedProduct && updatedProduct.length === 0) {
@@ -658,6 +619,7 @@ export const actions = {
 						});
 						if (insertError) {
 							console.error('Error inserting product:', insertError);
+							errorMessages.push(`Error inserting product ${product.id}: ${insertError.message}`);
 							continue;
 						}
 					}
@@ -676,18 +638,53 @@ export const actions = {
 							.eq('id', product.id);
 						if (updateProductError) {
 							console.error('Error updating product with net quantity:', updateProductError);
+							errorMessages.push(
+								`Error updating product ${product.id} with net quantity: ${updateProductError.message}`
+							);
 						} else {
 							console.log(`Updated product ${product.id} with net quantity data`);
 						}
 					}
 
+					productUpdated = true;
+					updatedCount++;
 					break; // Exit the loop if we get a successful response
 				} catch (err) {
-					console.error(`Error fetching data for GTIN ${gtin}:`, err);
+					if (err instanceof Error) {
+						console.error(`Error fetching data for GTIN ${gtin}:`, err);
+						errorMessages.push(`Error fetching data for GTIN ${gtin}: ${err.message}`);
+					} else {
+						console.error(`Unknown error fetching data for GTIN ${gtin}`);
+						errorMessages.push(`Unknown error fetching data for GTIN ${gtin}`);
+					}
 				}
 			}
+
+			if (!productUpdated) {
+				errorCount++;
+			}
 		}
-		return { success: true, message: 'Cenoteka info updated successfully' };
-		/* return { success: false, error: 'No data found' }; */
+
+		if (updatedCount > 0) {
+			//error(404, {
+			//	message: `Updated ${updatedCount} product(s) successfully. ${errorCount} product(s) failed to update.${errorMessages}`
+			//});
+			return {
+				success: true,
+				status: 200,
+				message: `Updated ${updatedCount} product(s) successfully. ${errorCount} product(s) failed to update.`,
+				details: errorMessages.length > 0 ? errorMessages : undefined
+			};
+		} else {
+			error(404, {
+				message: `Failed to update any products. ${errorCount} product(s) encountered errors.`
+			});
+			//return {
+			//	success: false,
+			//	status: 500,
+			//	message: `Failed to update any products. ${errorCount} product(s) encountered errors.`,
+			//	details: errorMessages
+			//};
+		}
 	}
 } satisfies Actions;

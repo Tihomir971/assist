@@ -15,7 +15,7 @@
 
 	import * as Card from '$lib/components/ui/card/index.js';
 
-	import { Button, buttonVariants } from '$lib/components/ui/button';
+	import { Button } from '$lib/components/ui/button';
 	import { enhance } from '$app/forms';
 
 	export let data: LayoutData;
@@ -116,7 +116,7 @@
 		</Card.Header>
 		<Card.Content class="h-full overflow-hidden px-1">
 			<div class="h-full w-full overflow-y-auto">
-				<TreeView bind:treeItems bind:expanded={data.expanded} bind:selected />
+				<TreeView bind:treeItems expanded={data.expanded} bind:selected />
 			</div>
 		</Card.Content>
 	</Card.Root>
