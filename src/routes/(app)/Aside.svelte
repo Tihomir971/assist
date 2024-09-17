@@ -13,14 +13,6 @@
 </script>
 
 <nav class="flex h-full flex-col items-center gap-4 border-x bg-well-2 px-2 sm:py-5">
-	<a
-		href="##"
-		class="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
-	>
-		<Package2 class="h-4 w-4 transition-all group-hover:scale-110" />
-		<span class="sr-only">Acme Inc</span>
-	</a>
-
 	<Tooltip.Root>
 		<Tooltip.Trigger asChild let:builder>
 			<a
@@ -35,7 +27,7 @@
 		</Tooltip.Trigger>
 		<Tooltip.Content side="right">Dashboard</Tooltip.Content>
 	</Tooltip.Root>
-	<Tooltip.Root>
+	<!-- 	<Tooltip.Root>
 		<Tooltip.Trigger asChild let:builder>
 			<a
 				href="/catalog"
@@ -48,7 +40,7 @@
 			</a>
 		</Tooltip.Trigger>
 		<Tooltip.Content side="right">Catalog</Tooltip.Content>
-	</Tooltip.Root>
+	</Tooltip.Root> -->
 
 	<Tooltip.Root>
 		<Tooltip.Trigger asChild let:builder>
