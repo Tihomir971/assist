@@ -239,6 +239,7 @@
 					const priceCenoteka = row.original.priceCenoteka ?? 0;
 					const ruc = row.original.ruc ?? 0;
 					return createRender(StyleNumber, {
+						action: row.original.action,
 						value: priceRetail,
 						danger:
 							priceCenoteka !== 0 &&
