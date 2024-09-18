@@ -166,11 +166,17 @@ function filterAndFlattenProducts(
 ): FlattenedProduct[] {
 	const filteredProducts = showStock
 		? products.filter((product) => {
-				const storage = product.m_storageonhand.find((item) => item.qtyonhand !== 0);
-				const replenish = product.level_min.find((item) => item.m_warehouse_id === activeWarehouse);
+				const hasNonZeroStock = product.m_storageonhand.some((item) => item.qtyonhand !== 0);
+				const activeWarehouseStock =
+					product.m_storageonhand.find((item) => item.warehouse_id === activeWarehouse)
+						?.qtyonhand || 0;
+				const activeWarehouseLevelMin = product.level_min.find(
+					(item) => item.m_warehouse_id === activeWarehouse
+				)?.level_min;
+
 				return (
-					(storage && storage.qtyonhand !== 0) ||
-					(storage && replenish && replenish.level_min > storage.qtyonhand)
+					hasNonZeroStock ||
+					(activeWarehouseLevelMin !== undefined && activeWarehouseLevelMin > activeWarehouseStock)
 				);
 			})
 		: products;
