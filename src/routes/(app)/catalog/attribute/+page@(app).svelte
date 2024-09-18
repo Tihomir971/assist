@@ -1,10 +1,11 @@
 <script lang="ts">
-	import type { Tables } from '$lib/types/database.types';
+	import type { SupabaseTable } from '$lib/types/database.types';
 	import type { PageData } from './$types';
 
-	type AttributeValue = Tables<'m_attributevalue'> & { ad_org: { name: string } };
-	//type AttributeValue = Tables<'m_attributevalue'> & Pick<Tables<'ad_org'>, 'name'>;
-	type Attribute = Tables<'m_attribute'> & Pick<Tables<'ad_org'>, 'name'>;
+	type AttributeValue = SupabaseTable<'m_attributevalue'>['Row'] & { ad_org: { name: string } };
+	//type AttributeValue = SupabaseTable<'m_attributevalue'> & Pick<SupabaseTable<'ad_org'>, 'name'>;
+	type Attribute = SupabaseTable<'m_attribute'>['Row'] &
+		Pick<SupabaseTable<'ad_org'>['Row'], 'name'>;
 	export let data: PageData;
 	$: ({ attributes, supabase } = data);
 
@@ -33,7 +34,7 @@
 		return;
 	}
 
-	async function clickAttributeValue(row: Tables<'m_attributevalue'>) {
+	async function clickAttributeValue(row: SupabaseTable<'m_attributevalue'>['Row']) {
 		return;
 	}
 </script>
@@ -110,7 +111,7 @@
 										<div class="drawer-side overflow-x-hidden">
 											<label for="my-drawer-4" aria-label="close sidebar" class="drawer-overlay"
 											></label>
-											<ul class="menu min-h-full w-80 bg-base-200 p-4 text-base-content">
+											<ul class="menu bg-base-200 text-base-content min-h-full w-80 p-4">
 												<!-- Sidebar content here -->
 												<li><a href="/">Sidebar Item 1</a></li>
 												<li><a href="/">Sidebar Item 2</a></li>

@@ -1,10 +1,10 @@
-import type { Database, Tables } from '$lib/types/database.types';
+import type { Database, SupabaseTable } from '$lib/types/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 export const addProductPurchasing = async (
 	supabase: SupabaseClient<Database>,
 	data: { c_bpartner_id: number; m_product_id: number; vendorproductno: string } & Partial<
-		Tables<'m_product_po'>
+		SupabaseTable<'m_product_po'>
 	>
 ) => {
 	const { error: productPurchasingError } = await supabase.from('m_product_po').insert(data);

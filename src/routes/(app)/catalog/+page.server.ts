@@ -1,18 +1,17 @@
 import { error, redirect } from '@sveltejs/kit';
-import * as biznisoft from '$lib/services/biznisoft.js';
 import type { Actions, PageServerLoad } from './$types';
-import type { Tables } from '$lib/types/database.types';
-import type { BSProduct, BSStock } from '$lib/types/biznisoft';
+import type { SupabaseTable } from '$lib/types/database.types';
+import type { BSProduct } from '$lib/types/biznisoft';
 import { getChannelMap } from '$lib/services/channel-map';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { productSelectSchema } from '$lib/types/zod.js';
-import { MARKET_INFO_API_URL } from '$env/static/private';
+import { SCRAPPER_API_URL } from '$env/static/private';
 import type { VendorProduct } from '$lib/types/product-scrapper';
 import { isValidGTIN } from '$lib/scripts/gtin';
-import { connector } from '$lib/ky';
+import { connector, scrapper } from '$lib/ky';
 
-type Product = Partial<Tables<'m_product'>> & {
+type Product = Partial<SupabaseTable<'m_product'>['Row']> & {
 	id: number;
 	qtyonhand: number;
 	pricePurchase: number;
@@ -391,9 +390,10 @@ export const actions = {
 			.in('id', ids);
 
 		if (data) {
-			const cookiesUrl = MARKET_INFO_API_URL + `/api/idea/cookies`;
-			const cookiesResponse = await fetch(cookiesUrl);
-			const { cookies } = await cookiesResponse.json();
+			//	const cookiesUrl = SCRAPPER_API_URL + `/api/idea/cookies`;
+			const cookies = await scrapper.get('api/idea/cookies').json<string>();
+			//	const cookiesResponse = await fetch(cookiesUrl);
+			//	const { cookies } = await cookiesResponse.json();
 
 			for (const product of data) {
 				let ideaProductId: string | null = null;
@@ -403,10 +403,13 @@ export const actions = {
 					let found = false;
 					for (const gtin of product.m_product_gtin) {
 						console.log('Searching by gtin:', gtin);
-
-						const scrapUrl = MARKET_INFO_API_URL + `/api/idea/extract?term=${gtin.gtin}`;
-						const scrapResponse = await fetch(scrapUrl);
-						const scrapData = await scrapResponse.json();
+						const scrapData = await scrapper.get(`api/idea/extract?term=${gtin.gtin}`).json<{
+							productId: string;
+							error?: string;
+						}>();
+						//const scrapUrl = SCRAPPER_API_URL + `/api/idea/extract?term=${gtin.gtin}`;
+						//const scrapResponse = await fetch(scrapUrl);
+						//const scrapData = await scrapResponse.json();
 						if (!scrapData || scrapData.error) continue;
 
 						found = true;
@@ -426,19 +429,27 @@ export const actions = {
 					console.log('No ideaProductId');
 					continue; // Move to the next product
 				}
-
-				const fetchUrl =
-					MARKET_INFO_API_URL + `/api/idea/fetch-product/${ideaProductId}?cookies=${cookies}`;
-				const fetchResponse = await fetch(fetchUrl, {
-					headers: { 'Content-Type': 'application/json' }
-				});
-				const fetchData: {
-					id: number;
-					code: string;
-					name: string;
-					manufacturer: string;
-					barcodes: string[];
-				} = await fetchResponse.json();
+				const fetchData = await scrapper
+					.get(`api/idea/fetch-product/${ideaProductId}?cookies=${cookies}`)
+					.json<{
+						id: number;
+						code: string;
+						name: string;
+						manufacturer: string;
+						barcodes: string[];
+					}>();
+				//const fetchUrl =
+				//	SCRAPPER_API_URL + `/api/idea/fetch-product/${ideaProductId}?cookies=${cookies}`;
+				//const fetchResponse = await fetch(fetchUrl, {
+				//	headers: { 'Content-Type': 'application/json' }
+				//});
+				//const fetchData: {
+				//	id: number;
+				//	code: string;
+				//	name: string;
+				//	manufacturer: string;
+				//	barcodes: string[];
+				//} = await fetchResponse.json();
 
 				if (fetchData) {
 					const productPO = {
@@ -528,7 +539,7 @@ export const actions = {
 		}
 
 		const { data: allUom } = await supabase.from('c_uom').select('id,uomsymbol');
-		const fetchUrl = MARKET_INFO_API_URL + `/api/cenoteka`;
+		const fetchUrl = SCRAPPER_API_URL + `/api/cenoteka`;
 		let updatedCount = 0;
 		let errorCount = 0;
 		let errorMessages: string[] = [];
@@ -542,18 +553,23 @@ export const actions = {
 
 			for (const gtin of allGtins) {
 				try {
-					const response = await fetch(fetchUrl, {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({ barcode: gtin, href: poUrl })
-					});
-					if (response.status !== 200) {
-						console.error(`API request failed for GTIN ${gtin}: ${response.statusText}`);
-						errorMessages.push(`API request failed for GTIN ${gtin}: ${response.statusText}`);
-						continue;
-					}
+					const { data, status } = await scrapper
+						.post('api/cenoteka', { json: { barcode: gtin, href: poUrl } })
+						.json<{ data: VendorProduct; status: number }>();
+					console.log(' scrapper data', data);
 
-					const { data }: { data: VendorProduct } = await response.json();
+					//					const response = await fetch(fetchUrl, {
+					//						method: 'POST',
+					//						headers: { 'Content-Type': 'application/json' },
+					//						body: JSON.stringify({ barcode: gtin, href: poUrl })
+					//					});
+					//					if (response.status !== 200) {
+					//						console.error(`API request failed for GTIN ${gtin}: ${response.statusText}`);
+					//						errorMessages.push(`API request failed for GTIN ${gtin}: ${response.statusText}`);
+					//						continue;
+					//					}
+					//
+					//		const { data }: { data: VendorProduct } = await response.json();
 					if (!data || data === undefined) {
 						console.error(`Invalid data received for GTIN ${gtin}`);
 						errorMessages.push(`Invalid data received for GTIN ${gtin}`);

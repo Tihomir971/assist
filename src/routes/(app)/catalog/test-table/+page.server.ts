@@ -239,7 +239,7 @@ function flattenProduct(
 		qtyWholesale: storageLookup.get(2) ?? 0,
 		qtyRetail: storageLookup.get(5) ?? 0,
 		pricePurchase: showVat ? purchase * (1 + tax / 100) : purchase,
-		ruc: (retail / (1 + tax / 100) - purchase) / purchase,
+		ruc: (priceRetail / (1 + tax / 100) - purchase) / purchase,
 		priceRetail: showVat ? priceRetail : priceRetail / (1 + tax / 100),
 		levelMin: levelMinLookup.get(activeWarehouse) ?? null,
 		levelMax: levelMaxLookup.get(activeWarehouse) ?? null,
