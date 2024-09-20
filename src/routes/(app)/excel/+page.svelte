@@ -454,7 +454,7 @@
 			// Insert into m_product
 			const { data: productData, error: productError } = await supabase
 				.from('m_product')
-				.insert({ name: product.name })
+				.insert({ name: product.name, c_taxcategory_id: 1 })
 				.select('id')
 				.single();
 
@@ -534,7 +534,7 @@
 			class="border bg-surface-document p-2 text-text-1"
 			bind:value={priceModificationPercentage}
 			min="-100"
-			step="0.1"
+			step="0.5"
 		/>
 		<p class="mt-1 text-sm text-gray-500">
 			Enter a percentage to modify prices. Positive values increase prices, negative values decrease
