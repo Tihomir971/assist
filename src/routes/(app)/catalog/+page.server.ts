@@ -6,7 +6,6 @@ import { getChannelMap } from '$lib/services/channel-map';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { productSelectSchema } from '$lib/types/zod.js';
-import { SCRAPPER_API_URL } from '$env/static/private';
 import type { VendorProduct } from '$lib/types/product-scrapper';
 import { isValidGTIN } from '$lib/scripts/gtin';
 import { connector, scrapper } from '$lib/ky';
@@ -539,7 +538,6 @@ export const actions = {
 		}
 
 		const { data: allUom } = await supabase.from('c_uom').select('id,uomsymbol');
-		const fetchUrl = SCRAPPER_API_URL + `/api/cenoteka`;
 		let updatedCount = 0;
 		let errorCount = 0;
 		let errorMessages: string[] = [];

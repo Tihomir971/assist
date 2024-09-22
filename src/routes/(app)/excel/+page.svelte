@@ -603,7 +603,7 @@
 	{#if showNotUpdatedProducts && productsNotUpdated.length > 0}
 		<div class="mt-8">
 			<h2 class="mb-4 text-xl font-bold">Products Not Updated</h2>
-			<div class="h-[600px] overflow-auto">
+			<div class="h-[500px] overflow-auto">
 				<Table.Root class="sticky top-0">
 					<Table.Caption>Products Not Updated Caption</Table.Caption>
 					<Table.Header>
