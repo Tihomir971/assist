@@ -13,7 +13,6 @@
 	} from '$lib/components/ui/dialog';
 	import type { SupabaseTable } from '$lib/types/database.types.js';
 	import type { SupabaseClient } from '@supabase/supabase-js';
-	import { Datepicker } from 'svelte-calendar';
 	import { writable } from 'svelte/store';
 
 	let { data } = $props();
@@ -25,29 +24,27 @@
 	let selectedVersionId = $state<number | null>(null);
 	let showNewVersionDialog = $state(false);
 	let showNewProductDialog = $state(false);
-	let newVersion = $state({ name: '', fromDate: new Date(), toDate: new Date() });
+	let newVersion = $state({
+		name: '',
+		fromDate: DateTime.now().setZone('Europe/Belgrade').toFormat('dd/MM/yyyy'),
+		toDate: DateTime.now().setZone('Europe/Belgrade').toFormat('dd/MM/yyyy')
+	});
 	let newProduct = $state({ productName: '', price: '' });
 
-	const theme = {
-		calendar: {
-			width: '300px',
-
-			colors: {
-				background: {
-					highlight: 'purple'
-				}
-			}
-		}
-	};
 	let fromStore = writable();
-	const dateFormat = 'DD/MM/YY';
 
 	function formatDate(date: string | null): string {
-		return date ? DateTime.fromISO(date).setLocale('sr').toFormat(dateFormat) : '';
+		return date ? DateTime.fromISO(date).setZone('Europe/Belgrade').toFormat('dd/MM/yyyy') : '';
 	}
 
-	function parseDate(date: Date): string {
-		return date.toISOString();
+	function parseDate(dateString: string): string {
+		const [day, month, year] = dateString.split('/');
+		return (
+			DateTime.fromObject(
+				{ day: parseInt(day), month: parseInt(month), year: parseInt(year) },
+				{ zone: 'Europe/Belgrade' }
+			).toISO() || new Date().toISOString()
+		);
 	}
 
 	async function selectPricelist(id: number, supabase: SupabaseClient) {
@@ -76,7 +73,7 @@
 	function updateVersionDate(
 		version: SupabaseTable<'m_pricelist_version'>['Row'],
 		field: 'validfrom' | 'validto',
-		newDate: Date
+		newDate: string
 	) {
 		version[field] = parseDate(newDate);
 		// Implement the update logic here, e.g., call an API to update the database
@@ -102,7 +99,11 @@
 			};
 			pricelistVersions = [...pricelistVersions, newVersionObj];
 			showNewVersionDialog = false;
-			newVersion = { name: '', fromDate: new Date(), toDate: new Date() };
+			newVersion = {
+				name: '',
+				fromDate: DateTime.now().setZone('Europe/Belgrade').toFormat('dd/MM/yyyy'),
+				toDate: DateTime.now().setZone('Europe/Belgrade').toFormat('dd/MM/yyyy')
+			};
 		}
 	}
 
@@ -184,19 +185,20 @@
 								>
 									<TableShow.Cell>{version.name}</TableShow.Cell>
 									<TableShow.Cell>
-										<Datepicker
-											{theme}
-											start={new Date(version.validfrom || '')}
-											format={dateFormat}
-											on:select={(e) => updateVersionDate(version, 'validfrom', e.detail)}
+										<input
+											type="text"
+											value={formatDate(version.validfrom)}
+											onchange={(e) =>
+												updateVersionDate(version, 'validfrom', e.currentTarget.value)}
+											placeholder="DD/MM/YYYY"
 										/>
 									</TableShow.Cell>
 									<TableShow.Cell>
-										<Datepicker
-											{theme}
-											start={new Date(version.validto || '')}
-											format={dateFormat}
-											on:select={(e) => updateVersionDate(version, 'validto', e.detail)}
+										<input
+											type="text"
+											value={formatDate(version.validto)}
+											onchange={(e) => updateVersionDate(version, 'validto', e.currentTarget.value)}
+											placeholder="DD/MM/YYYY"
 										/>
 									</TableShow.Cell>
 									<TableShow.Cell>
@@ -263,8 +265,8 @@
 		</DialogHeader>
 		<div class="grid gap-4 py-4">
 			<Input placeholder="Version Name" bind:value={newVersion.name} />
-			<Datepicker bind:selected={newVersion.fromDate} format={dateFormat} />
-			<Datepicker bind:selected={newVersion.toDate} format={dateFormat} />
+			<input type="text" bind:value={newVersion.fromDate} placeholder="DD/MM/YYYY" />
+			<input type="text" bind:value={newVersion.toDate} placeholder="DD/MM/YYYY" />
 		</div>
 		<DialogFooter>
 			<Button on:click={addNewVersion}>Add Version</Button>

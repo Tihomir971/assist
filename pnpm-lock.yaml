@@ -144,9 +144,6 @@ importers:
       svelte:
         specifier: 5.0.0-next.259
         version: 5.0.0-next.259
-      svelte-calendar:
-        specifier: ^3.1.6
-        version: 3.1.6
       svelte-check:
         specifier: ^4.0.2
         version: 4.0.2(svelte@5.0.0-next.259)(typescript@5.6.2)
@@ -1895,9 +1892,6 @@ packages:
   just-clone@6.2.0:
     resolution: {integrity: sha512-1IynUYEc/HAwxhi3WDpIpxJbZpMCvvrrmZVqvj9EhpvbH8lls7HhdhiByjL7DkAaWlLIzpC0Xc/VPvy/UxLNjA==}
 
-  just-throttle@2.3.1:
-    resolution: {integrity: sha512-0H4miIAWZYpnpg7oD/Y/PBb77ISSHAETif5xK9EnwIgYCO6oC8ErkJxDumMUTR44shSOwptRIArRuvNuvN/hOw==}
-
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
 
@@ -2553,9 +2547,6 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  svelte-calendar@3.1.6:
-    resolution: {integrity: sha512-jOHiPlxBAa1LGVFQZoczdAGnCSI2RKcuQQHj32TjLbXO/P2Povx4JphPEcP7XjKj/s/jimBC6xQyFhyjD0vxbg==}
-
   svelte-check@4.0.2:
     resolution: {integrity: sha512-w2yqcG9ELJe2RJCnAvB7v0OgkHhL3czzz/tVoxGFfO6y4mOrF6QHCDhXijeXzsU7LVKEwWS3Qd9tza4JBuDxqA==}
     engines: {node: '>= 18.0.0'}
@@ -2921,7 +2912,7 @@ snapshots:
 
   '@babel/generator@7.17.7':
     dependencies:
-      '@babel/types': 7.17.0
+      '@babel/types': 7.25.6
       jsesc: 2.5.2
       source-map: 0.5.7
     optional: true
@@ -4601,8 +4592,6 @@ snapshots:
 
   just-clone@6.2.0: {}
 
-  just-throttle@2.3.1: {}
-
   keyv@4.5.4:
     dependencies:
       json-buffer: 3.0.1
@@ -5158,11 +5147,6 @@ snapshots:
       has-flag: 4.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
-
-  svelte-calendar@3.1.6:
-    dependencies:
-      dayjs: 1.11.13
-      just-throttle: 2.3.1
 
   svelte-check@4.0.2(svelte@5.0.0-next.259)(typescript@5.6.2):
     dependencies:
