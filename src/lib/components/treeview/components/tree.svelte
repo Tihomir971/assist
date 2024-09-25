@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { TreeItem } from '..';
+	import Tree from './tree.svelte';
 	import { melt } from '@melt-ui/svelte';
 	import { getCtx } from '../ctx';
 	import PhCaretRight from '$lib/icons/PhCaretRight.svelte';
 	import PhDotBold from '$lib/icons/PhDotBold.svelte';
 	import { cn } from '$lib/utils';
-	import { slide } from 'svelte/transition';
 
 	//	export let treeItems: TreeItem[];
 	//	export let level = 1;
@@ -62,7 +62,7 @@
 
 		{#if children}
 			<ul use:melt={$group({ id: itemId })} class="w-full overflow-hidden p-0">
-				<svelte:self treeItems={children} level={level + 1} on:select />
+				<Tree treeItems={children} level={level + 1} />
 			</ul>
 		{/if}
 	</li>

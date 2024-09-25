@@ -25,8 +25,6 @@
 	$: treeItems = convertToTreeStructure(data.categories);
 
 	function rerunLoadFunction(id: string | null) {
-		console.log('rerunLoadFunction');
-
 		if (!id) return;
 		const newUrl = new URL($page.url);
 

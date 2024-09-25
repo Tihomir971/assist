@@ -565,6 +565,7 @@ export const actions = {
 			const { data, status, error } = await scrapper
 				.post(sourcePath, { json: { products: productRequests } })
 				.json<ApiResponseData<ProductResult[]>>();
+			console.log('data, status, error', data, status, error);
 
 			if (status !== 200 || !data) {
 				console.error('Invalid data received from API', error);

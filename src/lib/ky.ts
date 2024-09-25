@@ -16,5 +16,6 @@ export const scrapper = ky.create({
 	prefixUrl: SCRAPPER_API_URL,
 	headers: {
 		Authorization: `Bearer ${SCRAPPER_API_BEARER}`
-	}
+	},
+	timeout: 300000
 });
