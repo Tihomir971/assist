@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
 export const productSelectSchema = z.object({
-	ids: z.string()
+	ids: z.string(),
+	source: z.number().default(2)
 });
 export type ProductSelectSchema = z.infer<typeof productSelectSchema>;
 

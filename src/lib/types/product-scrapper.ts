@@ -9,7 +9,8 @@ export interface VendorProduct {
 	price: number | null;
 	href: string | null;
 	brand: string | null;
-	quantity: string | null;
 	netQuantity: number | null;
 	netQuantityUnit: string | null;
+	images: string[] | null;
+	shelfLife: number | null | undefined;
 }

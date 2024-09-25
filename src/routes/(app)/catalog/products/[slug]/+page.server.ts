@@ -13,6 +13,7 @@ import { crudProductGtinSchema, replenishSchema } from '../zod.validator';
 import type { Database } from '$lib/types/supabase';
 import { CONNECTOR_API_BEARER, CONNECTOR_API_URL } from '$env/static/private';
 import type { SalesByWeekApi } from '$lib/types/connector';
+import { connector } from '$lib/ky';
 
 type Replenish = Database['public']['Tables']['m_replenish']['Insert'];
 
@@ -70,14 +71,7 @@ export const load = (async ({ depends, params, locals: { supabase }, fetch }) =>
 				.select('id, m_product_id, vendorproductno, c_bpartner(id, name), pricelist, updated, url')
 				.eq(' m_product_id', productId)
 		).data || [],
-		fetch(`${CONNECTOR_API_URL}/api/sales/${product?.sku}`, {
-			headers: {
-				Authorization: `Bearer ${CONNECTOR_API_BEARER}`
-			}
-		})
-			.then((res) => res.json())
-			.then((data: SalesByWeekApi) => data || [])
-			.catch(() => []) as Promise<SalesByWeekApi | []>,
+		(await connector.get(`api/sales/${product?.sku}`).json<SalesByWeekApi>()) || [],
 		(
 			await supabase
 				.from('m_storageonhand')

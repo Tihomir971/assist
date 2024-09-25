@@ -36,27 +36,7 @@
 			// use the default behavior for this result type
 		};
 	};
-	const submitIdeaSync: SubmitFunction = ({}) => {
-		return async ({ result }) => {
-			if (result.type === 'success') {
-				// do something...
-				toast.success('Idea Sync', {
-					description: `Successfully syncronised!`,
-					action: {
-						label: 'Undo',
-						onClick: () => console.info('Undo')
-					}
-				});
-				$selectedDataIds = {};
-				await invalidate('catalog:test-table');
-			} else if (result.type === 'error') {
-				toast.error('Idea Sync', {
-					description: `Something is wrong ${result.error}`
-				});
-			}
-			// use the default behavior for this result type
-		};
-	};
+
 	const submitCenotekaSync: SubmitFunction = ({}) => {
 		return async ({ result }) => {
 			console.log('result', result);
@@ -134,7 +114,8 @@
 			use:enhance={submitCenotekaSync}
 			bind:this={formElCenoteka}
 		>
-			<input type="hidden" name="ids" value={JSON.stringify(strSelectedDataIds)} />
+			<input type="hidden" name="ids" value={strSelectedDataIds} />
+			<input type="hidden" name="source" value={2} />
 			<DropdownMenu.Item
 				on:click={() => {
 					formElCenoteka.requestSubmit();
@@ -144,6 +125,22 @@
 			</DropdownMenu.Item>
 		</form>
 		<form
+			method="POST"
+			action="/catalog?/getCenotekaInfo"
+			use:enhance={submitCenotekaSync}
+			bind:this={formElIdea}
+		>
+			<input type="hidden" name="ids" value={strSelectedDataIds} />
+			<input type="hidden" name="source" value={4} />
+			<DropdownMenu.Item
+				on:click={() => {
+					formElIdea.requestSubmit();
+				}}
+			>
+				Get Idea Info
+			</DropdownMenu.Item>
+		</form>
+		<!-- <form
 			method="POST"
 			action="/catalog?/getIdeaInfo"
 			use:enhance={submitIdeaSync}
@@ -157,6 +154,6 @@
 			>
 				Get Idea Info
 			</DropdownMenu.Item>
-		</form>
+		</form> -->
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

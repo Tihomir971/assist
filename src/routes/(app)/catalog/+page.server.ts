@@ -5,11 +5,28 @@ import type { BSProduct } from '$lib/types/biznisoft';
 import { getChannelMap } from '$lib/services/channel-map';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { productSelectSchema } from '$lib/types/zod.js';
+import { productSelectSchema } from '$lib/types/zod';
 import type { VendorProduct } from '$lib/types/product-scrapper';
 import { isValidGTIN } from '$lib/scripts/gtin';
 import { connector, scrapper } from '$lib/ky';
 
+// Define the ProductRequest interface
+interface ProductRequest {
+	productId: number;
+	href?: string | null;
+	barcodes?: string[];
+}
+enum ProductStatus {
+	OK = 'ok',
+	NOT_FOUND_BY_HREF = 'Not found by href',
+	NOT_FOUND_BY_BARCODE = 'Not found by barcode',
+	ERROR = 'error'
+}
+interface ProductResult {
+	product: VendorProduct | null;
+	status: ProductStatus;
+	productId: number;
+}
 type Product = Partial<SupabaseTable<'m_product'>['Row']> & {
 	id: number;
 	qtyonhand: number;
@@ -20,6 +37,11 @@ type Product = Partial<SupabaseTable<'m_product'>['Row']> & {
 	taxRate: number;
 	m_storageonhand: { warehouse_id: number; qtyonhand: number }[];
 };
+interface ApiResponseData<T> {
+	data?: T;
+	error?: string;
+	status: number;
+}
 
 export const load = (async ({ url, depends, locals: { supabase } }) => {
 	depends('catalog:products');
@@ -294,7 +316,6 @@ export const actions = {
 					}
 				}
 			});
-			console.log('product', product);
 			product.trstanje?.forEach(async (trstanje) => {
 				const warehouseID = mapWarehouse?.find(
 					(item) => item.resource_id === trstanje.sifobj.toString()
@@ -406,9 +427,6 @@ export const actions = {
 							productId: string;
 							error?: string;
 						}>();
-						//const scrapUrl = SCRAPPER_API_URL + `/api/idea/extract?term=${gtin.gtin}`;
-						//const scrapResponse = await fetch(scrapUrl);
-						//const scrapData = await scrapResponse.json();
 						if (!scrapData || scrapData.error) continue;
 
 						found = true;
@@ -437,18 +455,6 @@ export const actions = {
 						manufacturer: string;
 						barcodes: string[];
 					}>();
-				//const fetchUrl =
-				//	SCRAPPER_API_URL + `/api/idea/fetch-product/${ideaProductId}?cookies=${cookies}`;
-				//const fetchResponse = await fetch(fetchUrl, {
-				//	headers: { 'Content-Type': 'application/json' }
-				//});
-				//const fetchData: {
-				//	id: number;
-				//	code: string;
-				//	name: string;
-				//	manufacturer: string;
-				//	barcodes: string[];
-				//} = await fetchResponse.json();
 
 				if (fetchData) {
 					const productPO = {
@@ -504,24 +510,31 @@ export const actions = {
 		// Return failure if no data was found
 		return { success: false, error: 'No data found' };
 	},
+
 	getCenotekaInfo: async ({ request, locals: { supabase } }) => {
+		console.log('Start getCenotekaInfo');
+
 		const form = await superValidate(request, zod(productSelectSchema));
 		if (!form.valid) return fail(400, { form });
+
+		const { ids, source } = form.data;
 
 		function stringToNumberArray(s: string): number[] {
 			const numbers = s.match(/\d+/g);
 			return numbers ? numbers.map((num) => parseInt(num, 10)) : [];
 		}
+		console.log('source', source);
 
-		const ids = stringToNumberArray(form.data.ids);
+		const productIds = stringToNumberArray(ids);
+		const sourcePath = source === 2 ? 'api/cenoteka/batch' : 'api/idea/batch';
 
 		const { data: products, error: fetchError } = await supabase
 			.from('m_product')
 			.select(
 				'id, m_product_gtin(gtin), m_product_po(c_bpartner_id, url), c_taxcategory(c_tax(rate)),c_taxcategory_id'
 			)
-			.eq('m_product_po.c_bpartner_id', 2)
-			.in('id', ids);
+			.eq('m_product_po.c_bpartner_id', source)
+			.in('id', productIds);
 
 		if (fetchError) {
 			console.error('Error fetching products:', fetchError);
@@ -542,163 +555,162 @@ export const actions = {
 		let errorCount = 0;
 		let errorMessages: string[] = [];
 
-		for (const product of products) {
-			const allGtins = product.m_product_gtin.map((item: { gtin: string }) => item.gtin);
-			const taxRate = product.c_taxcategory_id === 2 ? 0.1 : 0.2;
-			const poUrl = product.m_product_po.length > 0 ? product.m_product_po[0].url : null;
+		const productRequests: ProductRequest[] = products.map((product) => ({
+			productId: product.id,
+			href: product.m_product_po.length > 0 ? product.m_product_po[0].url : null,
+			barcodes: product.m_product_gtin.map((item: { gtin: string }) => item.gtin)
+		}));
 
-			let productUpdated = false;
+		try {
+			const { data, status, error } = await scrapper
+				.post(sourcePath, { json: { products: productRequests } })
+				.json<ApiResponseData<ProductResult[]>>();
 
-			for (const gtin of allGtins) {
-				try {
-					const { data, status } = await scrapper
-						.post('api/cenoteka', { json: { barcode: gtin, href: poUrl } })
-						.json<{ data: VendorProduct; status: number }>();
-					console.log(' scrapper data', data);
+			if (status !== 200 || !data) {
+				console.error('Invalid data received from API', error);
+				return {
+					success: false,
+					status: 500,
+					message: 'Invalid data received from API',
+					error: error
+				};
+			}
 
-					//					const response = await fetch(fetchUrl, {
-					//						method: 'POST',
-					//						headers: { 'Content-Type': 'application/json' },
-					//						body: JSON.stringify({ barcode: gtin, href: poUrl })
-					//					});
-					//					if (response.status !== 200) {
-					//						console.error(`API request failed for GTIN ${gtin}: ${response.statusText}`);
-					//						errorMessages.push(`API request failed for GTIN ${gtin}: ${response.statusText}`);
-					//						continue;
-					//					}
-					//
-					//		const { data }: { data: VendorProduct } = await response.json();
-					if (!data || data === undefined) {
-						console.error(`Invalid data received for GTIN ${gtin}`);
-						errorMessages.push(`Invalid data received for GTIN ${gtin}`);
-						continue;
-					}
+			for (const result of data) {
+				const { product, status, productId } = result;
+				const originalProduct = products.find((p) => p.id === productId);
 
-					if (data.barcodes) {
-						const newBarcodes = data.barcodes.filter(
-							(barcode: string) =>
-								typeof barcode === 'string' && !allGtins.includes(barcode) && isValidGTIN(barcode)
+				if (!originalProduct) {
+					console.error(`Original product not found for productId: ${productId}`);
+					errorCount++;
+					continue;
+				}
+
+				if (status !== ProductStatus.OK || !product) {
+					console.log(`Product ${productId} status: ${status}`);
+					errorCount++;
+					continue;
+				}
+
+				const taxRate = originalProduct.c_taxcategory_id === 2 ? 0.1 : 0.2;
+
+				// Update GTINs
+				if (product.barcodes) {
+					const allGtins = originalProduct.m_product_gtin.map(
+						(item: { gtin: string }) => item.gtin
+					);
+					const newBarcodes = product.barcodes.filter(
+						(barcode: string) =>
+							typeof barcode === 'string' && !allGtins.includes(barcode) && isValidGTIN(barcode)
+					);
+
+					if (newBarcodes.length > 0) {
+						const { error: insertError } = await supabase.from('m_product_gtin').insert(
+							newBarcodes.map((barcode: string) => ({
+								m_product_id: productId,
+								gtin: barcode
+							}))
 						);
 
-						if (newBarcodes.length > 0) {
-							const { error: insertError } = await supabase.from('m_product_gtin').insert(
-								newBarcodes.map((barcode: string) => ({
-									m_product_id: product.id,
-									gtin: barcode
-								}))
-							);
-
-							if (insertError) {
-								if (insertError.code === '23505') {
-									console.log('Some GTINs already exist, duplicates skipped');
-								} else {
-									console.error('Error inserting new GTINs:', insertError);
-									errorMessages.push(
-										`Error inserting new GTINs for product ${product.id}: ${insertError.message}`
-									);
-								}
-							} else {
-								console.log(`Inserted ${newBarcodes.length} new GTINs for product ${product.id}`);
-							}
-						}
-					}
-					const priceWithoutTax = data.price ? data.price / (1 + taxRate) : undefined;
-
-					const { error: updateError, data: updatedProduct } = await supabase
-						.from('m_product_po')
-						.update({
-							vendorproductno: data.sku,
-							barcode: data.barcodes?.join(', '),
-							manufacturer: data.brand,
-							url: data.href,
-							pricelist: priceWithoutTax
-						})
-						.eq('m_product_id', product.id)
-						.eq('c_bpartner_id', 2)
-						.select();
-					if (updateError) {
-						console.error('Error updating product:', updateError);
-						errorMessages.push(`Error updating product ${product.id}: ${updateError.message}`);
-						continue;
-					}
-					if (updatedProduct && updatedProduct.length === 0) {
-						const { error: insertError } = await supabase.from('m_product_po').insert({
-							m_product_id: product.id,
-							c_bpartner_id: 2,
-							vendorproductno: data.sku,
-							barcode: data.barcodes?.join(', '),
-							manufacturer: data.brand,
-							url: data.href,
-							pricelist: priceWithoutTax
-						});
 						if (insertError) {
-							console.error('Error inserting product:', insertError);
-							errorMessages.push(`Error inserting product ${product.id}: ${insertError.message}`);
-							continue;
-						}
-					}
-
-					if (data.netQuantity && data.netQuantity !== 1) {
-						const { error: updateProductError } = await supabase
-							.from('m_product')
-							.update({
-								net_quantity: data.netQuantity,
-								net_qty_uom_id: allUom
-									? allUom.find(
-											(uom) => uom.uomsymbol?.toLowerCase() === data.netQuantityUnit?.toLowerCase()
-										)?.id
-									: undefined
-							})
-							.eq('id', product.id);
-						if (updateProductError) {
-							console.error('Error updating product with net quantity:', updateProductError);
+							console.error('Error inserting new GTINs:', insertError);
 							errorMessages.push(
-								`Error updating product ${product.id} with net quantity: ${updateProductError.message}`
+								`Error inserting new GTINs for product ${productId}: ${insertError.message}`
 							);
 						} else {
-							console.log(`Updated product ${product.id} with net quantity data`);
+							console.log(`Inserted ${newBarcodes.length} new GTINs for product ${productId}`);
 						}
 					}
+				}
 
-					productUpdated = true;
-					updatedCount++;
-					break; // Exit the loop if we get a successful response
-				} catch (err) {
-					if (err instanceof Error) {
-						console.error(`Error fetching data for GTIN ${gtin}:`, err);
-						errorMessages.push(`Error fetching data for GTIN ${gtin}: ${err.message}`);
-					} else {
-						console.error(`Unknown error fetching data for GTIN ${gtin}`);
-						errorMessages.push(`Unknown error fetching data for GTIN ${gtin}`);
+				// Update product_po
+				console.log('product.price', product);
+
+				const priceWithoutTax = product.price ? product.price / (1 + taxRate) : undefined;
+				const { error: updateError, data: updatedProduct } = await supabase
+					.from('m_product_po')
+					.update({
+						vendorproductno: product.sku,
+						barcode: product.barcodes?.join(', '),
+						manufacturer: product.brand,
+						url: product.href,
+						pricelist: priceWithoutTax
+					})
+					.eq('m_product_id', productId)
+					.eq('c_bpartner_id', source)
+					.select();
+
+				if (updateError) {
+					console.error('Error updating product:', updateError);
+					errorMessages.push(`Error updating product ${productId}: ${updateError.message}`);
+					errorCount++;
+					continue;
+				}
+
+				if (updatedProduct && updatedProduct.length === 0) {
+					const { error: insertError } = await supabase.from('m_product_po').insert({
+						m_product_id: productId,
+						c_bpartner_id: source,
+						vendorproductno: product.sku,
+						barcode: product.barcodes?.join(', '),
+						manufacturer: product.brand,
+						url: product.href,
+						pricelist: priceWithoutTax
+					});
+					if (insertError) {
+						console.error('Error inserting product:', insertError);
+						errorMessages.push(`Error inserting product ${productId}: ${insertError.message}`);
+						errorCount++;
+						continue;
 					}
 				}
+
+				// Update net quantity
+				if (product.netQuantity && product.netQuantity !== 1) {
+					const { error: updateProductError } = await supabase
+						.from('m_product')
+						.update({
+							net_quantity: product.netQuantity,
+							net_qty_uom_id: allUom
+								? allUom.find(
+										(uom) => uom.uomsymbol?.toLowerCase() === product.netQuantityUnit?.toLowerCase()
+									)?.id
+								: undefined
+						})
+						.eq('id', productId);
+					if (updateProductError) {
+						console.error('Error updating product with net quantity:', updateProductError);
+						errorMessages.push(
+							`Error updating product ${productId} with net quantity: ${updateProductError.message}`
+						);
+					} else {
+						console.log(`Updated product ${productId} with net quantity data`);
+					}
+				}
+
+				updatedCount++;
 			}
 
-			if (!productUpdated) {
-				errorCount++;
-			}
-		}
-
-		if (updatedCount > 0) {
-			//error(404, {
-			//	message: `Updated ${updatedCount} product(s) successfully. ${errorCount} product(s) failed to update.${errorMessages}`
-			//});
 			return {
 				success: true,
 				status: 200,
 				message: `Updated ${updatedCount} product(s) successfully. ${errorCount} product(s) failed to update.`,
 				details: errorMessages.length > 0 ? errorMessages : undefined
 			};
-		} else {
-			error(404, {
-				message: `Failed to update any products. ${errorCount} product(s) encountered errors.`
-			});
-			//return {
-			//	success: false,
-			//	status: 500,
-			//	message: `Failed to update any products. ${errorCount} product(s) encountered errors.`,
-			//	details: errorMessages
-			//};
+		} catch (err) {
+			if (err instanceof Error) {
+				console.error('Error fetching data from API:', err);
+				errorMessages.push(`Error fetching data from API: ${err.message}`);
+			} else {
+				console.error('Unknown error fetching data from API');
+				errorMessages.push('Unknown error fetching data from API');
+			}
+			return {
+				success: false,
+				status: 500,
+				message: 'Error fetching data from API',
+				details: errorMessages
+			};
 		}
 	}
 } satisfies Actions;
