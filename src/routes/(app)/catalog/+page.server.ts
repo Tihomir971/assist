@@ -161,6 +161,8 @@ export const load = (async ({ url, depends, locals: { supabase } }) => {
 
 export const actions = {
 	getErpInfo: async ({ request, locals: { supabase } }) => {
+		console.log('geterpinfo');
+
 		const form = await superValidate(request, zod(productSelectSchema));
 		if (!form.valid) return fail(400, { form });
 		const { data: skus } = await supabase
@@ -192,6 +194,7 @@ export const actions = {
 			.from('c_channel_map_tax')
 			.select('c_taxcategory_id,resource_id')
 			.eq('c_channel_id', 1);
+		console.log('erpProduct:', erpProduct);
 
 		erpProduct.forEach(async (product) => {
 			// Find product ID using SKU
@@ -213,7 +216,7 @@ export const actions = {
 				)?.internal_code
 			);
 			const taxID = mapTax?.find((item) => item.resource_id === product.porez)?.c_taxcategory_id;
-
+			console.log('product:', product);
 			const { error: updateProductError } = await supabase
 				.from('m_product')
 				.update(
@@ -235,8 +238,6 @@ export const actions = {
 				return { success: false, error: { updateProductError } };
 			}
 			product.barcodes?.forEach(async (element) => {
-				console.log('element', element);
-
 				const { error: updateBacodesError } = await supabase
 					.from('m_product_gtin')
 					.insert({ m_product_id: selectProductId.id, gtin: element });
@@ -244,6 +245,7 @@ export const actions = {
 					console.error('Error adding product GTIN:', updateBacodesError);
 				}
 			});
+			console.log('product.replenish', product.replenish);
 			product.replenish?.forEach(async (replenish) => {
 				const warehouseID = Number(
 					mapWarehouse?.find((item) => item.resource_id === replenish.sifobj.toString())
@@ -281,6 +283,7 @@ export const actions = {
 					}
 				}
 			});
+			console.log('product.m_product_po', product.m_product_po);
 			product.m_product_po?.forEach(async (po) => {
 				const { data: erpMapBpartner, error: selectProductIdError } = await supabase
 					.from('c_channel_map_bpartner')
@@ -316,6 +319,8 @@ export const actions = {
 					}
 				}
 			});
+			console.log('product.trstanje', product.trstanje);
+
 			product.trstanje?.forEach(async (trstanje) => {
 				const warehouseID = mapWarehouse?.find(
 					(item) => item.resource_id === trstanje.sifobj.toString()
@@ -323,6 +328,15 @@ export const actions = {
 
 				if (!warehouseID) return;
 				console.log('warehouseID, selectProductId.id', warehouseID, selectProductId.id);
+				const updateStorageOnHandData = {
+					qtyonhand: (trstanje.stanje ?? 0) - (trstanje.neprokkasa ?? 0)
+				};
+				console.log(
+					'updateStorageOnHandData,warehouseID,selectProductId.id',
+					updateStorageOnHandData,
+					warehouseID,
+					selectProductId.id
+				);
 
 				const { error: updateStockError, count: updateStorageCount } = await supabase
 					.from('m_storageonhand')
@@ -350,7 +364,6 @@ export const actions = {
 				if (trstanje.sifobj === 1) {
 					pricelist = 5;
 					price = trstanje.nabcena;
-					console.log('stanje 1, price', trstanje, price);
 				} else if (trstanje.sifobj === 11) {
 					pricelist = 13;
 					price = trstanje.mpcena;
@@ -392,124 +405,6 @@ export const actions = {
 			throw deleteCategoryError;
 		}
 	},
-	getIdeaInfo: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(productSelectSchema));
-		if (!form.valid) return fail(400, { form });
-
-		function stringToNumberArray(s: string) {
-			const numbers = s.match(/\d+/g);
-			return numbers ? numbers.map((num) => parseInt(num, 10)) : [];
-		}
-
-		const ids = stringToNumberArray(form.data.ids);
-		console.log('ids', ids, form.data.ids);
-
-		const { data } = await supabase
-			.from('m_product')
-			.select('id, m_product_po(id, c_bpartner_id, vendorproductno, url), m_product_gtin(gtin)')
-			.in('id', ids);
-
-		if (data) {
-			//	const cookiesUrl = SCRAPPER_API_URL + `/api/idea/cookies`;
-			const cookies = await scrapper.get('api/idea/cookies').json<string>();
-			//	const cookiesResponse = await fetch(cookiesUrl);
-			//	const { cookies } = await cookiesResponse.json();
-
-			for (const product of data) {
-				let ideaProductId: string | null = null;
-				const wantedProduct = product.m_product_po.find((product) => product.c_bpartner_id === 4);
-
-				if (wantedProduct === undefined || !wantedProduct?.url) {
-					let found = false;
-					for (const gtin of product.m_product_gtin) {
-						console.log('Searching by gtin:', gtin);
-						const scrapData = await scrapper.get(`api/idea/extract?term=${gtin.gtin}`).json<{
-							productId: string;
-							error?: string;
-						}>();
-						if (!scrapData || scrapData.error) continue;
-
-						found = true;
-						ideaProductId = scrapData.productId;
-						break;
-					}
-
-					if (!found) {
-						console.log('Cannot find by barcode productID:', product.id);
-						continue; // Move to the next product
-					}
-				} else {
-					ideaProductId = wantedProduct.url.split('/').slice(-2)[0];
-				}
-
-				if (!ideaProductId) {
-					console.log('No ideaProductId');
-					continue; // Move to the next product
-				}
-				const fetchData = await scrapper
-					.get(`api/idea/fetch-product/${ideaProductId}?cookies=${cookies}`)
-					.json<{
-						id: number;
-						code: string;
-						name: string;
-						manufacturer: string;
-						barcodes: string[];
-					}>();
-
-				if (fetchData) {
-					const productPO = {
-						c_bpartner_id: 4,
-						m_product_id: product.id,
-						vendorproductno: fetchData.code.replace(/^0+/, ''),
-						barcode: fetchData.barcodes.join(', '),
-						manufacturer: fetchData.manufacturer,
-						url: 'https://online.idea.rs/#!/products/' + ideaProductId + '/'
-					};
-
-					if (wantedProduct === undefined) {
-						const { error: insertProductPoError } = await supabase
-							.from('m_product_po')
-							.insert(productPO);
-						if (insertProductPoError) {
-							console.error('Error inserting product PO:', insertProductPoError);
-							continue; // Move to the next product
-						}
-					} else {
-						const { error: updateProductPoError } = await supabase
-							.from('m_product_po')
-							.update(productPO)
-							.eq('id', wantedProduct.id);
-						if (updateProductPoError) {
-							console.error('Error updating product PO:', updateProductPoError);
-							continue; // Move to the next product
-						}
-					}
-
-					for (const element of fetchData.barcodes) {
-						if (element) {
-							const { error: updateBacodesError } = await supabase
-								.from('m_product_gtin')
-								.insert({ m_product_id: product.id, gtin: element });
-							if (updateBacodesError) {
-								if (updateBacodesError.code === '23505') {
-									// Unique violation error code
-									console.log('Product GTIN already exists, no action taken');
-								} else {
-									console.error('Error adding product GTIN:', updateBacodesError);
-								}
-							}
-						}
-					}
-				}
-			}
-
-			// Return success after all operations are complete
-			return { success: true };
-		}
-
-		// Return failure if no data was found
-		return { success: false, error: 'No data found' };
-	},
 
 	getCenotekaInfo: async ({ request, locals: { supabase } }) => {
 		console.log('Start getCenotekaInfo');
@@ -526,7 +421,7 @@ export const actions = {
 		console.log('source', source);
 
 		const productIds = stringToNumberArray(ids);
-		const sourcePath = source === 2 ? 'api/cenoteka/batch' : 'api/idea/batch';
+		const sourcePath = source === 2 ? 'scraper/cenoteka' : 'scraper/idea';
 
 		const { data: products, error: fetchError } = await supabase
 			.from('m_product')

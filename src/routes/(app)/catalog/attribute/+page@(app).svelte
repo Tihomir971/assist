@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { SupabaseTable } from '$lib/types/database.types';
+	import Trash from 'phosphor-svelte/lib/Trash';
 	import type { PageData } from './$types';
+	import NotePencil from 'phosphor-svelte/lib/NotePencil';
 
 	type AttributeValue = SupabaseTable<'m_attributevalue'>['Row'] & { ad_org: { name: string } };
 	//type AttributeValue = SupabaseTable<'m_attributevalue'> & Pick<SupabaseTable<'ad_org'>, 'name'>;
@@ -105,7 +107,7 @@
 										<div class="drawer-content">
 											<!-- Page content here -->
 											<label for="my-drawer-4" class="btn btn-square btn-ghost drawer-button btn-sm"
-												><iconify-icon icon="ph:note-pencil" width="20" height="20"></iconify-icon>
+												><NotePencil size={20} weight="bold" />
 											</label>
 										</div>
 										<div class="drawer-side overflow-x-hidden">
@@ -121,7 +123,7 @@
 								</th>
 								<th
 									><button class="btn btn-square btn-ghost btn-sm">
-										<iconify-icon icon="ph:trash" width="20" height="20"></iconify-icon>
+										<Trash size={32} />
 									</button>
 								</th>
 							</tr>

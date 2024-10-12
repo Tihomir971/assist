@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
-
+	import X from 'phosphor-svelte/lib/X';
 	import * as Card from '$lib/components/ui/card';
 	import { Label } from '$lib/components/ui/label';
 	import SuperDebug, { type SuperValidated } from 'sveltekit-superforms';
@@ -27,7 +27,6 @@
 	import Combobox2 from '$lib/components/melt/ComboBox2.svelte';
 	import { crudProductGtinSchema, replenishSchema } from '../zod.validator.js';
 	import SquareArrowOutUpRight from 'lucide-svelte/icons/square-arrow-out-up-right';
-	import X from 'lucide-svelte/icons/x';
 	async function deleteProductPORow(rowToBeDeleted: number) {
 		const { error } = await data.supabase.from('m_product_po').delete().eq('id', rowToBeDeleted);
 		if (error) throw error;
@@ -356,11 +355,6 @@
 									<Form.Field {form} name="isactive">
 										<Form.Control let:attrs>
 											<div class="flex items-center space-x-2">
-												<input
-													type="checkbox"
-													name="isactive"
-													bind:checked={$formProduct.isactive}
-												/>
 												<Checkbox {...attrs} bind:checked={$formProduct.isactive as boolean} />
 												<Form.Label>Is Active?</Form.Label>
 											</div>
@@ -468,7 +462,7 @@
 													on:click={() => deleteProductPORow(productPurchase.id)}
 													type="button"
 												>
-													<X />
+													<X size={16} weight="bold" />
 												</Button>
 											</Table.Cell>
 										</Table.Row>
@@ -589,7 +583,7 @@
 													name="id"
 													value={barcode.id}
 												>
-													<iconify-icon icon="ph:x-bold" width="24" height="24"></iconify-icon>
+													<X size={24} weight="bold" />
 												</Button>
 											</Table.Cell>
 										</Table.Row>

@@ -70,7 +70,7 @@
 		};
 	};
 	let formElErpSyncProd: HTMLFormElement;
-	let formElErp: HTMLFormElement;
+	let formElExcel: HTMLFormElement;
 	let formElIdea: HTMLFormElement;
 	let formElCenoteka: HTMLFormElement;
 
@@ -101,13 +101,13 @@
 			</DropdownMenu.Item>
 		</form>
 
-		<DropdownMenu.Item
+		<!-- 		<DropdownMenu.Item
 			on:click={() => {
-				formElErp.requestSubmit();
+				formElExcel.requestSubmit();
 			}}
 		>
 			Export to Excel
-		</DropdownMenu.Item>
+		</DropdownMenu.Item> -->
 		<form
 			method="POST"
 			action="/catalog?/getCenotekaInfo"

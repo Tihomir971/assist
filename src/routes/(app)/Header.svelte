@@ -3,7 +3,6 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import Search from 'lucide-svelte/icons/search';
-	import PhList from '$lib/icons/PhList.svelte';
 	import ShoppingCart from './shopping-cart.svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { enhance } from '$app/forms';

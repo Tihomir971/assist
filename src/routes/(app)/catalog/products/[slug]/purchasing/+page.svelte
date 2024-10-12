@@ -7,7 +7,9 @@
 	import { Button } from '$lib/components/ui/button';
 	import { DateTimeFormat, numberFormat } from '$lib/scripts/format';
 	import { toast } from 'svelte-sonner';
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import Link from 'phosphor-svelte/lib/Link';
+	import X from 'phosphor-svelte/lib/X';
+	import Plus from 'phosphor-svelte/lib/Plus';
 
 	//	export let data: PageData;
 	let { data } = $props();
@@ -106,12 +108,12 @@
 								<Table.Cell>{DateTimeFormat(productPurchase.updated)}</Table.Cell>
 								<Table.Cell
 									><a href={productPurchase.url} target="_blank" class="btn btn-square btn-xs"
-										><iconify-icon icon="ph:link-bold" width="24" height="24"></iconify-icon></a
+										><Link size={32} weight="bold" /></a
 									></Table.Cell
 								>
 								<Table.Cell>
 									<Button variant="ghost" on:click={() => deleteProductPORow(productPurchase.id)}>
-										<iconify-icon icon="ph:x-bold" width="24" height="24"></iconify-icon>
+										<X size={32} weight="bold" />
 									</Button>
 								</Table.Cell>
 							</Table.Row>
@@ -137,8 +139,7 @@
 							</Table.Cell>
 							<Table.Cell>
 								<Button type="submit" disabled={addingProductPO}
-									>Add<iconify-icon icon="ph:plus-bold" width="24" height="24"
-									></iconify-icon></Button
+									>Add<Plus size={24} weight="bold" /></Button
 								>
 								<!-- {/if} -->
 							</Table.Cell>

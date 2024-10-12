@@ -1,7 +1,8 @@
 <script lang="ts">
 	import * as api from '$lib/api';
 	import { toast } from 'svelte-sonner';
-
+	import CurrencyEur from 'phosphor-svelte/lib/CurrencyEur';
+	import Factory from 'phosphor-svelte/lib/Factory';
 	import { invalidate } from '$app/navigation';
 	export let selectedProducts: number[];
 
@@ -58,16 +59,12 @@
 
 <div class="navbar bg-base-100">
 	<div class="flex-none gap-2">
-		<!-- <button on:click={addToBasket} class="btn btn-neutral">
-			<iconify-icon icon="ph:currency-eur" width="24" height="24"></iconify-icon>
-			Add to Basket
-		</button> -->
 		<button on:click={getPrices} class="btn btn-neutral">
-			<iconify-icon icon="ph:currency-eur" width="24" height="24"></iconify-icon>
+			<CurrencyEur size={32} weight="bold" />
 			Get Prices
 		</button>
 		<button type="button" on:click={getERPnew} class="btn btn-neutral">
-			<iconify-icon icon="ph:factory" width="24" height="24"></iconify-icon>
+			<Factory size={32} weight="bold" />
 			Get ERP
 		</button>
 	</div>
