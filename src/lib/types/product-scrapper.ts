@@ -2,7 +2,7 @@
 export type VendorId = 'idea' | 'cenoteka'; // Add more vendors as needed
 
 export interface VendorProduct {
-	sku: string | null;
+	sku: string;
 	name: string | null;
 	vendorId: VendorId;
 	barcodes: string[] | null;

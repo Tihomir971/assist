@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import * as ExcelJS from 'exceljs';
+	import * as XLSX from 'xlsx';
 	import { onDestroy, onMount } from 'svelte';
 	import * as Table from '$lib/components/ui/table';
 	import type { Product, Mapping, Supplier, ProductToUpdate } from './types';
@@ -106,39 +106,50 @@
 	async function handleFileUpload(event: Event) {
 		const file = (event.target as HTMLInputElement).files?.[0];
 		if (file) {
-			const workbook = new ExcelJS.Workbook();
-			await workbook.xlsx.load(await file.arrayBuffer());
+			const reader = new FileReader();
+			reader.onload = (e) => {
+				const data = new Uint8Array(e.target?.result as ArrayBuffer);
+				const workbook = XLSX.read(data, { type: 'array' });
 
-			sheetNames = workbook.worksheets.map((sheet) => sheet.name);
+				sheetNames = workbook.SheetNames;
 
-			if (sheetNames.length === 1) {
-				selectedSheet = sheetNames[0];
-				await loadSheetData(workbook, selectedSheet);
-			} else {
-				excelData = [];
-				headers = [];
-			}
+				if (sheetNames.length === 1) {
+					selectedSheet = sheetNames[0];
+					loadSheetData(workbook, selectedSheet);
+				} else {
+					excelData = [];
+					headers = [];
+				}
+			};
+			reader.readAsArrayBuffer(file);
 		}
 	}
 
-	async function loadSheetData(workbook: ExcelJS.Workbook, sheetName: string) {
-		const worksheet = workbook.getWorksheet(sheetName);
+	function loadSheetData(workbook: XLSX.WorkBook, sheetName: string) {
+		const worksheet = workbook.Sheets[sheetName];
 		if (!worksheet) return;
 
+		const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1');
 		headers = [];
-		worksheet.getRow(1).eachCell({ includeEmpty: true }, (cell, colNumber) => {
-			const header = cell.value ? cell.value.toString().trim() : `Unknown${colNumber}`;
+		for (let col = range.s.c; col <= range.e.c; col++) {
+			const cellAddress = XLSX.utils.encode_cell({ r: range.s.r, c: col });
+			const cell = worksheet[cellAddress];
+			const header = cell ? cell.v.toString().trim() : `Unknown${col + 1}`;
 			headers.push(header);
-		});
+		}
 
 		showModal = true;
 	}
 
 	async function handleSheetSelect() {
 		if (selectedSheet && fileInput?.files?.[0]) {
-			const workbook = new ExcelJS.Workbook();
-			await workbook.xlsx.load(await fileInput.files[0].arrayBuffer());
-			await loadSheetData(workbook, selectedSheet);
+			const reader = new FileReader();
+			reader.onload = (e) => {
+				const data = new Uint8Array(e.target?.result as ArrayBuffer);
+				const workbook = XLSX.read(data, { type: 'array' });
+				loadSheetData(workbook, selectedSheet);
+			};
+			reader.readAsArrayBuffer(fileInput.files[0]);
 		}
 	}
 
@@ -159,66 +170,44 @@
 		isProcessing = true;
 		processedRows = 0;
 
-		const workbook = new ExcelJS.Workbook();
-		await workbook.xlsx.load(await file.arrayBuffer());
-		const worksheet = workbook.getWorksheet(selectedSheet);
-		if (!worksheet) {
-			isProcessing = false;
-			return;
-		}
-
-		totalRows = worksheet.rowCount - 1; // Exclude header row
-		console.log(`Total Rows: ${totalRows}`);
-		excelData = [];
-
-		const rowGenerator = processRowsInChunks(worksheet);
-		for await (const processedChunk of rowGenerator) {
-			excelData.push(...processedChunk);
-			processedRows += processedChunk.length;
-		}
-
-		isProcessing = false;
-	}
-
-	async function* processRowsInChunks(worksheet: ExcelJS.Worksheet, chunkSize: number = 1000) {
-		let chunk: Product[] = [];
-		let rowNumber = 2; // Start from the second row (skip header)
-
-		while (rowNumber <= worksheet.rowCount) {
-			const row = worksheet.getRow(rowNumber);
-			if (row.cellCount === 0) break; // End of data
-
-			const product: Partial<Product> = {};
-			Object.entries(mappings).forEach(([prop, header]) => {
-				const colNumber = headers.indexOf(header) + 1;
-				if (colNumber > 0) {
-					let value = row.getCell(colNumber).value;
-					if (prop === 'pricelist') {
-						value = typeof value === 'number' ? value : parseFloat(value as string);
-					}
-					if (prop === 'vendorproductno') {
-						value = typeof value === 'string' ? value : value?.toString();
-					}
-					if (prop === 'barcode') {
-						value = typeof value === 'string' ? value : value?.toString();
-					}
-					product[prop as keyof Product] = value as any;
-				}
-			});
-
-			chunk.push(product as Product);
-
-			if (chunk.length >= chunkSize) {
-				yield chunk;
-				chunk = [];
+		const reader = new FileReader();
+		reader.onload = (e) => {
+			const data = new Uint8Array(e.target?.result as ArrayBuffer);
+			const workbook = XLSX.read(data, { type: 'array' });
+			const worksheet = workbook.Sheets[selectedSheet];
+			if (!worksheet) {
+				isProcessing = false;
+				return;
 			}
 
-			rowNumber++;
-		}
+			const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+			totalRows = jsonData.length - 1; // Exclude header row
+			console.log(`Total Rows: ${totalRows}`);
+			excelData = [];
 
-		if (chunk.length > 0) {
-			yield chunk;
-		}
+			for (let i = 1; i < jsonData.length; i++) {
+				const row = jsonData[i] as any[];
+				const product: Partial<Product> = {};
+				Object.entries(mappings).forEach(([prop, header]) => {
+					const colNumber = headers.indexOf(header);
+					if (colNumber > -1) {
+						let value = row[colNumber];
+						if (prop === 'pricelist') {
+							value = typeof value === 'number' ? value : parseFloat(value);
+						}
+						if (prop === 'vendorproductno' || prop === 'barcode') {
+							value = typeof value === 'string' ? value : value?.toString();
+						}
+						product[prop as keyof Product] = value as any;
+					}
+				});
+				excelData.push(product as Product);
+				processedRows++;
+			}
+
+			isProcessing = false;
+		};
+		reader.readAsArrayBuffer(file);
 	}
 
 	function normalizeVendorProductNo(vendorproductno: string, supplierId?: number | null): string {

@@ -519,9 +519,6 @@ export const actions = {
 					}
 				}
 
-				// Update product_po
-				console.log('product.price', product);
-
 				const priceWithoutTax = product.price ? product.price / (1 + taxRate) : undefined;
 				const { error: updateError, data: updatedProduct } = await supabase
 					.from('m_product_po')

@@ -1,58 +1,43 @@
 <script lang="ts">
-	import type { CartProduct } from './types';
-	import Minus from 'lucide-svelte/icons/Minus';
-	import Plus from 'lucide-svelte/icons/Plus';
-	import Trash from 'lucide-svelte/icons/Trash';
+	import type { CartItem } from './types';
+	import { Trash, Plus, Minus } from 'phosphor-svelte';
+	import { getShoppingCartState } from './cart-state.svelte';
 
 	type Props = {
-		cartProduct: CartProduct;
-		removeItem: (id: string) => void;
+		cartItem: CartItem;
 	};
 
-	let { cartProduct = $bindable(), removeItem }: Props = $props();
+	let { cartItem }: Props = $props();
+	const shoppingCartState = getShoppingCartState();
+
+	function incrementQuantity() {
+		shoppingCartState.updateQuantity(cartItem.id, cartItem.quantity + 1);
+	}
+
+	function decrementQuantity() {
+		if (cartItem.quantity > 1) {
+			shoppingCartState.updateQuantity(cartItem.id, cartItem.quantity - 1);
+		}
+	}
 </script>
 
-<div class="flex items-center justify-between border-b border-gray-200 py-2">
-	<div class="flex items-center">
-		<img
-			src={cartProduct.product.thumbnail}
-			alt="Product"
-			class="mr-4 size-12 rounded object-cover"
-		/>
-		<div>
-			<p class="font-medium">{cartProduct.product.title}</p>
-			<p class="text-sm">${cartProduct.product.price} each</p>
-		</div>
+<div class="flex items-center justify-between rounded-md bg-surface-3 p-2">
+	<div class="flex flex-col">
+		<span class="text-sm font-medium">{cartItem.name}</span>
 	</div>
-	<div class="flex items-center">
-		<button
-			onclick={() => {
-				if (cartProduct.quantity === 1) {
-					removeItem(cartProduct.id);
-				} else {
-					cartProduct.quantity--;
-				}
-			}}
-			class="rounded p-1 hover:bg-gray-200"
-			aria-label="Subtract 1 from quantity"
-		>
-			<Minus class="size-4" />
+	<div class="flex items-center space-x-2">
+		<button class="bg-surface-4 hover:bg-surface-5 rounded-md p-1" onclick={decrementQuantity}>
+			<Minus size={16} />
 		</button>
-		<span class="mx-2">
-			{cartProduct.quantity}
-		</span>
-		<button
-			class="rounded p-1 hover:bg-gray-200"
-			aria-label="Add 1 to quantity"
-			onclick={() => cartProduct.quantity++}
-		>
-			<Plus class="size-4" />
+		<span class="text-sm font-medium">{cartItem.quantity}</span>
+		<button class="bg-surface-4 hover:bg-surface-5 rounded-md p-1" onclick={incrementQuantity}>
+			<Plus size={16} />
 		</button>
 		<button
-			onclick={() => removeItem(cartProduct.id)}
-			class="ml-4 rounded p-1 text-red-500 hover:bg-red-100"
+			class="rounded-md bg-red-500 p-1 text-white hover:bg-red-600"
+			onclick={() => shoppingCartState.remove(cartItem.id)}
 		>
-			<Trash class="size-4" />
+			<Trash size={16} />
 		</button>
 	</div>
 </div>

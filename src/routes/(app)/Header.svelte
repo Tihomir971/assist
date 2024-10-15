@@ -7,6 +7,7 @@
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { enhance } from '$app/forms';
 	import * as Avatar from '$lib/components/ui/avatar';
+	import type { SupabaseClient } from '@supabase/supabase-js';
 
 	const handleSignOut: SubmitFunction = () => {
 		return async ({ update }) => {
@@ -15,6 +16,7 @@
 	};
 	//	let signOutEl: HTMLDivElement | undefined = $state();
 	let formEl: HTMLFormElement;
+	export let supabase: SupabaseClient;
 </script>
 
 <header class="grid w-full grid-cols-3 border-b p-3">
@@ -29,7 +31,7 @@
 		/>
 	</div>
 	<div class="flex items-center justify-end gap-x-3">
-		<ShoppingCart />
+		<ShoppingCart {supabase} />
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger asChild let:builder>
 				<Button variant="ghost" builders={[builder]} class="relative h-8 w-8 rounded-full">

@@ -10,7 +10,8 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
     "format": "prettier --plugin-search-dir . --write .",
-    "package update": "ncu -ui --format group --install always"
+    "taze": "pnpx taze",
+    "taze:next": "pnpx taze next"
   },
   "devDependencies": {
     "@melt-ui/pp": "^0.3.2",
@@ -39,7 +40,7 @@
     "tailwindcss": "^3.4.13",
     "tslib": "^2.7.0",
     "typescript": "^5.6.3",
-    "vite": "^5.4.8"
+    "vite": "^5.4.9"
   },
   "type": "module",
   "dependencies": {
@@ -51,8 +52,6 @@
     "bits-ui": "^0.21.16",
     "clsx": "^2.1.1",
     "cmdk-sv": "^0.0.18",
-    "exceljs": "^4.4.0",
-    "file-saver": "^2.0.5",
     "formsnap": "^1.0.1",
     "ky": "^1.7.2",
     "linkedom": "^0.18.5",
@@ -64,9 +63,10 @@
     "phosphor-svelte": "^2.0.1",
     "svelte-sonner": "^0.3.28",
     "sveltekit-superforms": "^2.19.1",
-    "tailwind-merge": "^2.5.3",
+    "tailwind-merge": "^2.5.4",
     "tailwind-variants": "^0.2.1",
     "vaul-svelte": "^0.3.2",
+    "xlsx": "^0.18.5",
     "zod": "^3.23.8"
   }
 }

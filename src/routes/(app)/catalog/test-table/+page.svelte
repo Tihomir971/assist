@@ -24,13 +24,11 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card';
 
-	import ExcelJS from 'exceljs';
-	import pkg from 'file-saver';
-	const { saveAs } = pkg;
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
 	import type { FlattenedProduct } from './+page.server.js';
+	import { getShoppingCartState } from '$lib/components/cart/cart-state.svelte.js';
 
 	export let data: {
 		products: FlattenedProduct[];
@@ -40,6 +38,7 @@
 		showVat: boolean;
 	};
 
+	const shoppingCartState = getShoppingCartState();
 	$: ({ products, warehouses, activeWarehouse, showStock, showVat } = data);
 
 	const productsStore = writable(products);
@@ -53,8 +52,6 @@
 			initialHiddenColumnIds = JSON.parse(storedHiddenColumns);
 		}
 	}
-
-	// Add a state variable for showVat
 
 	const table = createTable(productsStore, {
 		select: addSelectedRows(),
@@ -338,36 +335,49 @@
 	const { filterValue } = pluginStates.filter;
 	const { exportedData } = pluginStates.export;
 
-	async function exportProductDataToExcel() {
-		const workbook = new ExcelJS.Workbook();
-		const worksheet = workbook.addWorksheet();
+	type CartItem = {
+		id: string | number;
+		name: string;
+		quantity: number;
+	};
 
-		// Define Header
-		worksheet.addRow(Object.keys($exportedData[0]));
+	function addToCart(): void {
+		if (browser) {
+			console.log('Shopping Cart State:', shoppingCartState); // Add this line to log the state
+			console.log('All rows:', $rows);
 
-		// Define Body
-		$exportedData.forEach((item) => {
-			const rowData = Object.values(item);
-			const row = worksheet.addRow(rowData);
-			row.eachCell((cell) => {
-				if (typeof cell.value === 'number' && cell.value < 1 && cell.value !== 0) {
-					cell.numFmt = '0%';
-				} else if (typeof cell.value === 'number') {
-					cell.numFmt = '#,##0';
-				} else if (typeof cell.value === 'string') {
-					cell.numFmt = '@';
+			const selectedProducts = $rows.filter((row) => {
+				if (row.isData()) {
+					return $selectedDataIds[row.original.id];
+				}
+				return false;
+			});
+			console.log('Selected products:', selectedProducts);
+
+			let cartItems: CartItem[] = JSON.parse(localStorage.getItem('cartItems') || '[]');
+
+			selectedProducts.forEach((row) => {
+				if (row.isData()) {
+					const product = row.original;
+					console.log('Adding product to cart:', product);
+					const existingItem = cartItems.find((item) => item.id === product.id);
+					if (existingItem) {
+						existingItem.quantity += 1;
+					} else {
+						shoppingCartState.add(product.id, product.name, 1);
+
+						cartItems.push({
+							id: product.id,
+							name: product.name,
+							quantity: 1
+						});
+					}
 				}
 			});
-		});
 
-		// Generate Excel file as a buffer
-		const buffer = await workbook.xlsx.writeBuffer();
-
-		// Save the file
-		const blob = new Blob([buffer], {
-			type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-		});
-		saveAs(blob, 'products_export.xlsx');
+			localStorage.setItem('cartItems', JSON.stringify(cartItems));
+			$selectedDataIds = {};
+		}
 	}
 </script>
 
@@ -415,7 +425,7 @@
 						/>
 						<label for="show-vat">Show VAT</label>
 					</div>
-					<Button variant="outline" on:click={exportProductDataToExcel}>Replenish</Button>
+					<Button variant="outline" on:click={addToCart}>Add to Cart</Button>
 					{#if warehouses && activeWarehouse}
 						<DataTableViewWarehouse {warehouses} {activeWarehouse} />
 					{/if}
