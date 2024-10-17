@@ -85,7 +85,7 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content>
 		<form
-			method="POST"
+			method="post"
 			action="/catalog?/getErpInfo"
 			use:enhance={submitSyncStock}
 			bind:this={formElErpSyncProd}
@@ -109,7 +109,7 @@
 			Export to Excel
 		</DropdownMenu.Item> -->
 		<form
-			method="POST"
+			method="post"
 			action="/catalog?/getCenotekaInfo"
 			use:enhance={submitCenotekaSync}
 			bind:this={formElCenoteka}
@@ -125,7 +125,7 @@
 			</DropdownMenu.Item>
 		</form>
 		<form
-			method="POST"
+			method="post"
 			action="/catalog?/getCenotekaInfo"
 			use:enhance={submitCenotekaSync}
 			bind:this={formElIdea}
@@ -141,7 +141,7 @@
 			</DropdownMenu.Item>
 		</form>
 		<!-- <form
-			method="POST"
+			method="post"
 			action="/catalog?/getIdeaInfo"
 			use:enhance={submitIdeaSync}
 			bind:this={formElIdea}

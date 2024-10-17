@@ -1,6 +1,5 @@
 <script lang="ts">
 	import * as Form from '$lib/components/ui/form';
-
 	import type { LayoutData } from './$types';
 	import { convertToTreeStructure } from '$lib/scripts/tree';
 	import { page } from '$app/stores';
@@ -11,16 +10,14 @@
 	import PhFolderPlus from '$lib/icons/PhFolderPlus.svelte';
 	import PhFolderMinus from '$lib/icons/PhFolderMinus.svelte';
 	import PhArrowsInLineVertical from '$lib/icons/PhArrowsInLineVertical.svelte';
+	import PhPrinter from 'phosphor-svelte/lib/Printer';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-
 	import * as Card from '$lib/components/ui/card/index.js';
-
 	import { Button } from '$lib/components/ui/button';
 	import { enhance } from '$app/forms';
+	import WarehouseSelectionModal from './WarehouseSelectionModal.svelte';
 
 	export let data: LayoutData;
-	//	let { categories, expanded } = data;
-	//	$: ({ categories } = data);
 
 	$: treeItems = convertToTreeStructure(data.categories);
 
@@ -40,23 +37,61 @@
 		return;
 	}
 	let selected: HTMLElement | null | undefined;
-	//	let expanded: string[] | undefined = undefined;
 
 	function editCategory() {
 		console.log('editCategory');
 
-		//	const activeCategory = $page.url.searchParams.get('cat');
 		if (selected) {
 			goto('/catalog/category/' + selected.getAttribute('data-id'));
 		}
 
 		return;
 	}
-	let activeCategory = selected?.getAttribute('data-id');
+
+	let activeCategory = selected?.getAttribute('data-id') || null;
 	$: if (selected && activeCategory !== selected?.getAttribute('data-id')) {
-		rerunLoadFunction(selected.getAttribute('data-id'));
+		activeCategory = selected?.getAttribute('data-id');
+		rerunLoadFunction(activeCategory);
 	}
 	$: if (activeCategory) console.log('activeCategory', activeCategory);
+
+	let showModal = false;
+
+	async function handleWarehouseSelect() {
+		if (!activeCategory) {
+			console.error('No active category selected');
+			return;
+		}
+
+		const { data: warehouses, error } = await data.supabase
+			.from('m_warehouse')
+			.select('id, name')
+			.order('name');
+
+		if (error) {
+			console.error('Error fetching warehouses:', error);
+			return;
+		}
+
+		showModal = true;
+
+		// Pass the fetched warehouses to the WarehouseSelectionModal
+		if (warehouses) {
+			const warehouseSelectEvent = new CustomEvent('warehouseSelect', {
+				detail: { warehouses }
+			});
+			window.dispatchEvent(warehouseSelectEvent);
+		}
+	}
+
+	function onWarehouseSelected(event: CustomEvent<{ warehouseId: string }>) {
+		const { warehouseId } = event.detail;
+		if (activeCategory) {
+			goto(`/catalog/report?warehouse=${warehouseId}&treeCategory=${activeCategory}`);
+		} else {
+			console.error('No active category selected');
+		}
+	}
 </script>
 
 <div class="flex h-full w-full gap-2 overflow-hidden">
@@ -82,7 +117,7 @@
 						</Tooltip.Trigger>
 						<Tooltip.Content side="bottom">Create Category</Tooltip.Content>
 					</Tooltip.Root>
-					<form method="POST" use:enhance action="/catalog?/deleteCategory">
+					<form method="post" use:enhance action="/catalog?/deleteCategory">
 						<input
 							type="number"
 							name="id"
@@ -109,6 +144,20 @@
 						</Tooltip.Trigger>
 						<Tooltip.Content side="bottom">Collaps Tree</Tooltip.Content>
 					</Tooltip.Root>
+					<Tooltip.Root openDelay={0} group>
+						<Tooltip.Trigger id="report_tooltip" asChild let:builder>
+							<Button
+								builders={[builder]}
+								variant="ghost"
+								size="icon"
+								on:click={handleWarehouseSelect}
+							>
+								<span class="sr-only">Generate Report</span>
+								<PhPrinter size="32" />
+							</Button>
+						</Tooltip.Trigger>
+						<Tooltip.Content side="bottom">Generate Report</Tooltip.Content>
+					</Tooltip.Root>
 				</div>
 			</Card.Title>
 		</Card.Header>
@@ -121,3 +170,9 @@
 
 	<slot />
 </div>
+
+<WarehouseSelectionModal
+	show={showModal}
+	on:close={() => (showModal = false)}
+	on:select={onWarehouseSelected}
+/>

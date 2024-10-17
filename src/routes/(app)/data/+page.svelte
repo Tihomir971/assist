@@ -5,10 +5,10 @@
 
 <div class="grid h-full place-items-center">
 	<div class="card flex space-x-2">
-		<form method="POST" use:enhance action="?/importPartners">
+		<form method="post" use:enhance action="?/importPartners">
 			<Form.Button>Import Partners</Form.Button>
 		</form>
-		<form method="POST" use:enhance action="?/importCategories">
+		<form method="post" use:enhance action="?/importCategories">
 			<Form.Button>Import Categories</Form.Button>
 		</form>
 	</div>

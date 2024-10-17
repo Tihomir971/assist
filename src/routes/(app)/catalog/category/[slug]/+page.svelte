@@ -21,7 +21,7 @@
 	const { form: formCategoryData, enhance: enhanceCategory, message } = formCategory;
 </script>
 
-<form method="POST" use:enhanceCategory>
+<form method="post" use:enhanceCategory>
 	<div class="container grid grid-cols-[2fr_1fr] gap-2 overflow-hidden">
 		<Card.Root>
 			<input type="number" name="id" bind:value={$formCategoryData.id} hidden />

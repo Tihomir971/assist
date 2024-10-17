@@ -35,7 +35,7 @@
 			<h2 class="text-2xl font-bold tracking-tight">Product</h2>
 			<p class="text-muted-foreground">Manage your product settings.</p>
 		</div>
-		<form method="POST" action="/catalog?/getIdeaInfo" use:enhance>
+		<form method="post" action="/catalog?/getIdeaInfo" use:enhance>
 			<input type="hidden" name="ids" value={[data.productId]} />
 			<Button variant="secondary" type="submit">Info from Idea</Button>
 		</form>

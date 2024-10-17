@@ -16,7 +16,7 @@
 	const { form: formData, enhance } = form;
 </script>
 
-<form method="POST" action="?/signin" use:enhance>
+<form method="post" action="?/signin" use:enhance>
 	<Card.Root class="w-full max-w-sm">
 		<Card.Header>
 			<Card.Title class="text-2xl">Login</Card.Title>

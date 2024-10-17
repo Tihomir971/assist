@@ -14,7 +14,7 @@
 		<CardTitle>User Profile</CardTitle>
 	</CardHeader>
 	<CardContent>
-		<form method="POST" use:enhance>
+		<form method="post" use:enhance>
 			<div class="space-y-4">
 				<div>
 					<Label for="email">Email</Label>

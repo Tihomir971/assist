@@ -156,7 +156,7 @@
 		</Tabs.List>
 
 		<Tabs.Content value="info">
-			<form method="POST" action="?/updateProduct" use:enhanceProduct id="product-form">
+			<form method="post" action="?/updateProduct" use:enhanceProduct id="product-form">
 				<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
 					<Card.Root class="md:col-span-2">
 						<Card.Header>
@@ -692,7 +692,7 @@
 				</Card.Header>
 				<Card.Content>
 					<div class="overflow-x-auto">
-						<form method="POST" action="?/modReplenish" use:enhanceReplenishUpd>
+						<form method="post" action="?/modReplenish" use:enhanceReplenishUpd>
 							<Table.Root>
 								<Table.Header>
 									<Table.Row>

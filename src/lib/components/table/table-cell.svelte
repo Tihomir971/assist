@@ -12,9 +12,3 @@
 	<!-- <td class={cn('h-8 overflow-x-auto truncate  px-1 py-0 !align-middle', className)} {...$$restProps}> -->
 	<slot />
 </td>
-
-<style lang="postcss">
-	td:not(:has(input)) {
-		text-align: left;
-	}
-</style>
