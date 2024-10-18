@@ -7,20 +7,32 @@ type ProductGTIN = {
 	m_product: {
 		name: string;
 		description: string;
-	};
+	} | null;
+	storage_info: {
+		qtyonhand: number;
+		m_warehouse: {
+			name: string;
+		};
+	}[];
 };
 
-async function findProductByGTIN(gtin: string, supabase: SupabaseClient) {
+async function findProductByGTIN(
+	gtin: string,
+	supabase: SupabaseClient
+): Promise<ProductGTIN | null> {
 	const { data, error } = await supabase
 		.from('m_product_gtin')
 		.select(
 			`
             gtin,
-            m_product(name,description)
+            m_product(name, description),
+            storage_info:m_storageonhand(
+                qtyonhand,
+                m_warehouse(name)
+            )
         `
 		)
-		.eq('gtin', '8600462040815')
-		/* .eq('gtin', gtin) */
+		.eq('gtin', gtin)
 		.single();
 
 	if (error) {
@@ -29,7 +41,8 @@ async function findProductByGTIN(gtin: string, supabase: SupabaseClient) {
 	}
 
 	if (data) {
-		return data;
+		// Use type assertion to help TypeScript understand the structure
+		return data as unknown as ProductGTIN;
 	}
 
 	return null;

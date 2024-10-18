@@ -6,12 +6,19 @@
 		m_product: {
 			name: string;
 			description: string;
-		};
+		} | null;
+		storage_info: {
+			qtyonhand: number;
+			m_warehouse: {
+				name: string;
+			};
+		}[];
 	};
 	let scanResult: string | null = null;
-	let productInfo: any | null = null;
+	let productInfo: ProductGTIN | null = null;
 	let html5QrCode: Html5Qrcode;
 	let isScanning = false;
+	let manualGtin: string = '';
 
 	onMount(() => {
 		html5QrCode = new Html5Qrcode('qr-reader');
@@ -69,6 +76,12 @@
 			alert('Failed to check product. Please try again.');
 		}
 	}
+
+	function handleManualSubmit() {
+		if (manualGtin) {
+			checkProduct(manualGtin);
+		}
+	}
 </script>
 
 <svelte:head>
@@ -81,14 +94,26 @@
 	<div id="qr-reader" class="mb-4"></div>
 
 	{#if !isScanning}
-		<button on:click={startScanning} class="mb-4 rounded bg-blue-500 px-4 py-2">
+		<button on:click={startScanning} class="mb-4 rounded bg-blue-500 px-4 py-2 text-white">
 			Start Scanning
 		</button>
 	{:else}
-		<button on:click={stopScanning} class="mb-4 rounded bg-red-500 px-4 py-2">
+		<button on:click={stopScanning} class="mb-4 rounded bg-red-500 px-4 py-2 text-white">
 			Stop Scanning
 		</button>
 	{/if}
+
+	<div class="mb-4">
+		<input
+			type="text"
+			bind:value={manualGtin}
+			placeholder="Enter GTIN manually"
+			class="mr-2 rounded border p-2"
+		/>
+		<button on:click={handleManualSubmit} class="rounded bg-green-500 px-4 py-2 text-white">
+			Check Product
+		</button>
+	</div>
 
 	{#if scanResult}
 		<p class="mb-2">Scanned barcode: {scanResult}</p>
@@ -96,9 +121,21 @@
 
 	{#if productInfo}
 		<div class="rounded p-4 shadow">
-			<h2 class="mb-2 text-xl font-semibold">{productInfo.m_product.name}</h2>
+			<h2 class="mb-2 text-xl font-semibold">{productInfo.m_product?.name || 'Unknown Product'}</h2>
 			<p>GTIN: {productInfo.gtin}</p>
-			<!-- Add more product information here as needed -->
+			<p>Description: {productInfo.m_product?.description || 'No description available'}</p>
+			<h3 class="mb-2 mt-4 text-lg font-semibold">Storage Information:</h3>
+			{#if productInfo.storage_info.length > 0}
+				<ul>
+					{#each productInfo.storage_info as storage}
+						<li>
+							Warehouse: {storage.m_warehouse.name}, Quantity on Hand: {storage.qtyonhand}
+						</li>
+					{/each}
+				</ul>
+			{:else}
+				<p>No storage information available.</p>
+			{/if}
 		</div>
 	{:else if scanResult}
 		<p>No product found for this barcode.</p>
