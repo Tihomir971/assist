@@ -1,28 +1,66 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
-// Mock database query function
-async function findProductByGTIN(gtin: string) {
-	// TODO: Replace this with actual database query
-	const mockProducts = [
-		{ gtin: '1234567890123', name: 'Sample Product 1' },
-		{ gtin: '2345678901234', name: 'Sample Product 2' }
-	];
-	return mockProducts.find((p) => p.gtin === gtin) || null;
+type ProductGTIN = {
+	gtin: string;
+	m_product: Array<{
+		name: string;
+		description: string;
+	}>;
+};
+
+async function findProductByGTIN(gtin: string, supabase: SupabaseClient) {
+	const { data, error } = await supabase
+		.from('m_product_gtin')
+		.select(
+			`
+            gtin,
+            m_product (
+                name,
+                description
+            )
+        `
+		)
+		.eq('gtin', gtin)
+		.single();
+
+	if (error) {
+		console.error('Error querying Supabase:', error);
+		throw new Error('Database query failed');
+	}
+
+	if (data) {
+		const productData = data as ProductGTIN;
+		if (productData.m_product.length > 0) {
+			return {
+				gtin: productData.gtin,
+				name: productData.m_product[0].name,
+				description: productData.m_product[0].description
+			};
+		}
+	}
+
+	return null;
 }
 
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
 	const gtin = url.searchParams.get('gtin');
 
 	if (!gtin) {
 		return json({ error: 'GTIN parameter is required' }, { status: 400 });
 	}
 
-	const product = await findProductByGTIN(gtin);
+	try {
+		const product = await findProductByGTIN(gtin, locals.supabase);
 
-	if (product) {
-		return json(product);
-	} else {
-		return json({ error: 'Product not found' }, { status: 404 });
+		if (product) {
+			return json(product);
+		} else {
+			return json({ error: 'Product not found' }, { status: 404 });
+		}
+	} catch (error) {
+		console.error('Error in GET handler:', error);
+		return json({ error: 'Internal server error' }, { status: 500 });
 	}
 };
