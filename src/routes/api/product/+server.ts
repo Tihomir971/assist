@@ -16,13 +16,11 @@ async function findProductByGTIN(gtin: string, supabase: SupabaseClient) {
 		.select(
 			`
             gtin,
-            m_product (
-                name,
-                description
-            )
+            m_product(name,description)
         `
 		)
-		.eq('gtin', gtin)
+		.eq('gtin', '8600462040815')
+		/* .eq('gtin', gtin) */
 		.single();
 
 	if (error) {
