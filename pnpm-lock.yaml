@@ -13,10 +13,10 @@ importers:
         version: 5.1.0
       '@supabase/ssr':
         specifier: ^0.5.1
-        version: 0.5.1(@supabase/supabase-js@2.45.4)
+        version: 0.5.1(@supabase/supabase-js@2.45.5)
       '@supabase/supabase-js':
-        specifier: ^2.45.4
-        version: 2.45.4
+        specifier: ^2.45.5
+        version: 2.45.5
       '@zag-js/date-picker':
         specifier: ^0.74.2
         version: 0.74.2(@internationalized/date@3.5.6)
@@ -34,7 +34,10 @@ importers:
         version: 0.0.18(svelte@5.0.0-next.268)
       formsnap:
         specifier: ^1.0.1
-        version: 1.0.1(svelte@5.0.0-next.268)(sveltekit-superforms@2.19.1(@sveltejs/kit@2.7.1(@sveltejs/vite-plugin-svelte@4.0.0-next.8(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(@types/json-schema@7.0.15)(svelte@5.0.0-next.268))
+        version: 1.0.1(svelte@5.0.0-next.268)(sveltekit-superforms@2.20.0(@sveltejs/kit@2.7.1(@sveltejs/vite-plugin-svelte@4.0.0-next.8(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(@types/json-schema@7.0.15)(svelte@5.0.0-next.268)(typescript@5.6.3))
+      html5-qrcode:
+        specifier: ^2.3.8
+        version: 2.3.8
       ky:
         specifier: ^1.7.2
         version: 1.7.2
@@ -63,8 +66,8 @@ importers:
         specifier: ^0.3.28
         version: 0.3.28(svelte@5.0.0-next.268)
       sveltekit-superforms:
-        specifier: ^2.19.1
-        version: 2.19.1(@sveltejs/kit@2.7.1(@sveltejs/vite-plugin-svelte@4.0.0-next.8(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(@types/json-schema@7.0.15)(svelte@5.0.0-next.268)
+        specifier: ^2.20.0
+        version: 2.20.0(@sveltejs/kit@2.7.1(@sveltejs/vite-plugin-svelte@4.0.0-next.8(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(@types/json-schema@7.0.15)(svelte@5.0.0-next.268)(typescript@5.6.3)
       tailwind-merge:
         specifier: ^2.5.4
         version: 2.5.4
@@ -91,8 +94,8 @@ importers:
         specifier: ^4.7.3
         version: 4.7.3(@sveltejs/kit@2.7.1(@sveltejs/vite-plugin-svelte@4.0.0-next.8(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(wrangler@3.80.4(@cloudflare/workers-types@4.20241011.0))
       '@sveltejs/adapter-node':
-        specifier: ^5.2.7
-        version: 5.2.7(@sveltejs/kit@2.7.1(@sveltejs/vite-plugin-svelte@4.0.0-next.8(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))
+        specifier: ^5.2.8
+        version: 5.2.8(@sveltejs/kit@2.7.1(@sveltejs/vite-plugin-svelte@4.0.0-next.8(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))
       '@sveltejs/kit':
         specifier: ^2.7.1
         version: 2.7.1(@sveltejs/vite-plugin-svelte@4.0.0-next.8(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6))
@@ -300,6 +303,11 @@ packages:
     engines: {node: '>=18'}
     peerDependencies:
       postcss-selector-parser: ^6.1.0
+
+  '@effect/schema@0.75.5':
+    resolution: {integrity: sha512-TQInulTVCuF+9EIbJpyLP6dvxbQJMphrnRqgexm/Ze39rSjfhJuufF7XvU3SxTgg3HnL7B/kpORTJbHhlE6thw==}
+    peerDependencies:
+      effect: ^3.9.2
 
   '@esbuild-plugins/node-globals-polyfill@0.2.3':
     resolution: {integrity: sha512-r3MIryXDeXDOZh7ih1l/yE9ZLORCd5e8vWg02azWRGj5SPTuoh69A2AIyn0Z31V/kHBfZ4HgWJ+OK3GTTwLmnw==}
@@ -999,32 +1007,32 @@ packages:
   '@sinclair/typebox@0.32.35':
     resolution: {integrity: sha512-Ul3YyOTU++to8cgNkttakC0dWvpERr6RYoHO2W47DLbFvrwBDJUY31B1sImH6JZSYc4Kt4PyHtoPNu+vL2r2dA==}
 
-  '@supabase/auth-js@2.65.0':
-    resolution: {integrity: sha512-+wboHfZufAE2Y612OsKeVP4rVOeGZzzMLD/Ac3HrTQkkY4qXNjI6Af9gtmxwccE5nFvTiF114FEbIQ1hRq5uUw==}
+  '@supabase/auth-js@2.65.1':
+    resolution: {integrity: sha512-IA7i2Xq2SWNCNMKxwmPlHafBQda0qtnFr8QnyyBr+KaSxoXXqEzFCnQ1dGTy6bsZjVBgXu++o3qrDypTspaAPw==}
 
-  '@supabase/functions-js@2.4.1':
-    resolution: {integrity: sha512-8sZ2ibwHlf+WkHDUZJUXqqmPvWQ3UHN0W30behOJngVh/qHHekhJLCFbh0AjkE9/FqqXtf9eoVvmYgfCLk5tNA==}
+  '@supabase/functions-js@2.4.3':
+    resolution: {integrity: sha512-sOLXy+mWRyu4LLv1onYydq+10mNRQ4rzqQxNhbrKLTLTcdcmS9hbWif0bGz/NavmiQfPs4ZcmQJp4WqOXlR4AQ==}
 
   '@supabase/node-fetch@2.6.15':
     resolution: {integrity: sha512-1ibVeYUacxWYi9i0cf5efil6adJ9WRyZBLivgjs+AUpewx1F3xPi7gLgaASI2SmIQxPoCEjAsLAzKPgMJVgOUQ==}
     engines: {node: 4.x || >=6.0.0}
 
-  '@supabase/postgrest-js@1.16.1':
-    resolution: {integrity: sha512-EOSEZFm5pPuCPGCmLF1VOCS78DfkSz600PBuvBND/IZmMciJ1pmsS3ss6TkB6UkuvTybYiBh7gKOYyxoEO3USA==}
+  '@supabase/postgrest-js@1.16.2':
+    resolution: {integrity: sha512-dA/CIrSO2YDQ6ABNpbvEg9DwBMMbuKfWaFuZAU9c66PenoLSoIoyXk1Yq/wC2XISgEIqaMHmTrDAAsO80kjHqg==}
 
-  '@supabase/realtime-js@2.10.2':
-    resolution: {integrity: sha512-qyCQaNg90HmJstsvr2aJNxK2zgoKh9ZZA8oqb7UT2LCh3mj9zpa3Iwu167AuyNxsxrUE8eEJ2yH6wLCij4EApA==}
+  '@supabase/realtime-js@2.10.7':
+    resolution: {integrity: sha512-OLI0hiSAqQSqRpGMTUwoIWo51eUivSYlaNBgxsXZE7PSoWh12wPRdVt0psUMaUzEonSB85K21wGc7W5jHnT6uA==}
 
   '@supabase/ssr@0.5.1':
     resolution: {integrity: sha512-+G94H/GZG0nErZ3FQV9yJmsC5Rj7dmcfCAwOt37hxeR1La+QTl8cE9whzYwPUrTJjMLGNXoO+1BMvVxwBAbz4g==}
     peerDependencies:
       '@supabase/supabase-js': ^2.43.4
 
-  '@supabase/storage-js@2.7.0':
-    resolution: {integrity: sha512-iZenEdO6Mx9iTR6T7wC7sk6KKsoDPLq8rdu5VRy7+JiT1i8fnqfcOr6mfF2Eaqky9VQzhP8zZKQYjzozB65Rig==}
+  '@supabase/storage-js@2.7.1':
+    resolution: {integrity: sha512-asYHcyDR1fKqrMpytAS1zjyEfvxuOIp1CIXX7ji4lHHcJKqyk+sLl/Vxgm4sN6u8zvuUtae9e4kDxQP2qrwWBA==}
 
-  '@supabase/supabase-js@2.45.4':
-    resolution: {integrity: sha512-E5p8/zOLaQ3a462MZnmnz03CrduA5ySH9hZyL03Y+QZLIOO4/Gs8Rdy4ZCKDHsN7x0xdanVEWWFN3pJFQr9/hg==}
+  '@supabase/supabase-js@2.45.5':
+    resolution: {integrity: sha512-xTPsv33Hcj6C38SXa4nKobwEwkNQuwcCKtcuBsDT6bvphl1VUAO3x2QoLOuuglJzk2Oaf3WcVsvRcxXNE8PG/g==}
 
   '@sveltejs/adapter-cloudflare@4.7.3':
     resolution: {integrity: sha512-mHw0Jvd+74jj8fkduA8jrVXgsCY3+NwDc7FrDUiwU1Qe5QEuqPUab8Lv+np+4afEuMtFNytxUJsiiWlNN2w10w==}
@@ -1032,8 +1040,8 @@ packages:
       '@sveltejs/kit': ^2.0.0
       wrangler: ^3.28.4
 
-  '@sveltejs/adapter-node@5.2.7':
-    resolution: {integrity: sha512-lamfhxiRIaPtuhNpJE9h8haRo/I5TzuimaiphWUGXsRCDqYWsLKtF+mo61awkBIxm+XggC4n1iaNqwf+Kt7K4Q==}
+  '@sveltejs/adapter-node@5.2.8':
+    resolution: {integrity: sha512-wll164mO8pX/0Ak6/64h0OzO4Id24PBmTla3zRlGEdbdQGkGb2WZPZOuvcWi6IEpwekA4RVFe58fjbkIV0Bslw==}
     peerDependencies:
       '@sveltejs/kit': ^2.4.0
 
@@ -1119,8 +1127,8 @@ packages:
   '@types/ws@8.5.12':
     resolution: {integrity: sha512-3tPRkv1EtkDpzlgyKyI8pGsGZAGPEaXeu0DOj5DI25Ja91bdAYddYHbADRYVrZMRbfW+1l5YwXVDKohDJNQxkQ==}
 
-  '@typeschema/class-validator@0.2.0':
-    resolution: {integrity: sha512-zq0qeflVu1Z6D0ttkqAWZMtxJeNEQ70yo/025sV0jujiOOgQx38JXrky77nSWWPp2E1KIMtgkToQbkzkXyW5yg==}
+  '@typeschema/class-validator@0.3.0':
+    resolution: {integrity: sha512-OJSFeZDIQ8EK1HTljKLT5CItM2wsbgczLN8tMEfz3I1Lmhc5TBfkZ0eikFzUC16tI3d1Nag7um6TfCgp2I2Bww==}
     peerDependencies:
       class-validator: ^0.14.1
     peerDependenciesMeta:
@@ -1462,6 +1470,9 @@ packages:
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
 
+  effect@3.9.2:
+    resolution: {integrity: sha512-1sx/v1HTWHTodXfzWxAFg+SCF+ACgpJVruaAMIh/NmDVvrUsf0x9PzpXvkgJUbQ1fMdmKYK//FqxeHSQ+Zxv/Q==}
+
   electron-to-chromium@1.5.40:
     resolution: {integrity: sha512-LYm78o6if4zTasnYclgQzxEcgMoIcybWOhkATWepN95uwVVWV0/IW10v+2sIeHE+bIYWipLneTftVyQm45UY7g==}
 
@@ -1599,6 +1610,10 @@ packages:
     resolution: {integrity: sha512-eNTPlAD67BmP31LDINZ3U7HSF8l57TxOY2PmBJ1shpCvpnxBF93mWCE8YHBnXs8qiUZJc9WDcWIeC3a2HIAMfw==}
     engines: {node: '>=6'}
 
+  fast-check@3.22.0:
+    resolution: {integrity: sha512-8HKz3qXqnHYp/VCNn2qfjHdAdcI8zcSqOyX64GOMukp7SL2bfzfeDKjSd+UyECtejccaZv3LcvZTm9YDD22iCQ==}
+    engines: {node: '>=8.0.0'}
+
   fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
 
@@ -1712,6 +1727,9 @@ packages:
 
   html-escaper@3.0.3:
     resolution: {integrity: sha512-RuMffC89BOWQoY0WKGpIhn5gX3iI54O6nRA0yC124NYVtzjmFWBIiFd8M0x+ZdX0P9R4lADg1mgP8C7PxGOWuQ==}
+
+  html5-qrcode@2.3.8:
+    resolution: {integrity: sha512-jsr4vafJhwoLVEDW3n1KvPnCCXWaQfRng0/EEYk1vNcQGcG/htAdhJX0be8YyqMoSz7+hZvOZSTAepsabiuhiQ==}
 
   htmlparser2@9.1.0:
     resolution: {integrity: sha512-5zfg6mHUoaer/97TxnGpxmbR7zJtPwIYFMZ/H5ucTlPZhKvtum05yiPK3Mgai3a0DyVxv7qYqoweaEd2nrYQzQ==}
@@ -2228,6 +2246,9 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
+  pure-rand@6.1.0:
+    resolution: {integrity: sha512-bVWawvoZoBYpp6yIoQtQXHZjmz35RSVHnUOTefl8Vcjr8snTPY1wnpSPMWekcFwbxI6gtmT7rSYPFvz71ldiOA==}
+
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
@@ -2428,8 +2449,8 @@ packages:
     resolution: {integrity: sha512-QshHUiDlrIfr9z2r0crFbKwhepw34qbMD7p7Hl8Fiyyo5McqIPBgGASV6QAvSqCIQ6zc0bQfh74oMB/8i9Fxvg==}
     engines: {node: '>=18'}
 
-  sveltekit-superforms@2.19.1:
-    resolution: {integrity: sha512-P3R3S8o+0UGHtVqmisb13aFVuIyTCsFdxh/2C/fvoR9/JKeBrhzJ/chI7GdByoXE5fr2DtanocGXmP3PRTcpvw==}
+  sveltekit-superforms@2.20.0:
+    resolution: {integrity: sha512-5HyA6THKFBHEmJinZ/klu2/0jYr9ElSaXMYc5EO9ptP3x1wQPWVXYl59sMcaSrIjWUlPpayGxVppCyu+x/o4WA==}
     peerDependencies:
       '@sveltejs/kit': 1.x || 2.x
       svelte: 3.x || 4.x || >=5.0.0-next.51
@@ -2545,8 +2566,13 @@ packages:
   valibot@0.31.1:
     resolution: {integrity: sha512-2YYIhPrnVSz/gfT2/iXVTrSj92HwchCt9Cga/6hX4B26iCz9zkIsGTS0HjDYTZfTi1Un0X6aRvhBi1cfqs/i0Q==}
 
-  valibot@0.35.0:
-    resolution: {integrity: sha512-+i2aCRkReTrd5KBN/dW2BrPOvFnU5LXTV2xjZnjnqUIO8YUx6P2+MgRrkwF2FhkexgyKq/NIZdPdknhHf5A/Ww==}
+  valibot@0.41.0:
+    resolution: {integrity: sha512-igDBb8CTYr8YTQlOKgaN9nSS0Be7z+WRuaeYqGf3Cjz3aKmSnqEmYnkfVjzIuumGqfHpa3fLIvMEAfhrpqN8ng==}
+    peerDependencies:
+      typescript: '>=5'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   validator@13.12.0:
     resolution: {integrity: sha512-c1Q0mCiPlgdTVVVIJIrBuxNicYE+t/7oKeI9MWLj3fh/uq2Pxh/3eeWbVZ4OcGW1TUf53At0njHw5SMdA3tmMg==}
@@ -2714,7 +2740,7 @@ snapshots:
 
   '@babel/generator@7.17.7':
     dependencies:
-      '@babel/types': 7.17.0
+      '@babel/types': 7.25.8
       jsesc: 2.5.2
       source-map: 0.5.7
     optional: true
@@ -2845,6 +2871,12 @@ snapshots:
   '@csstools/selector-specificity@4.0.0(postcss-selector-parser@6.1.2)':
     dependencies:
       postcss-selector-parser: 6.1.2
+
+  '@effect/schema@0.75.5(effect@3.9.2)':
+    dependencies:
+      effect: 3.9.2
+      fast-check: 3.22.0
+    optional: true
 
   '@esbuild-plugins/node-globals-polyfill@0.2.3(esbuild@0.17.19)':
     dependencies:
@@ -3328,11 +3360,11 @@ snapshots:
   '@sinclair/typebox@0.32.35':
     optional: true
 
-  '@supabase/auth-js@2.65.0':
+  '@supabase/auth-js@2.65.1':
     dependencies:
       '@supabase/node-fetch': 2.6.15
 
-  '@supabase/functions-js@2.4.1':
+  '@supabase/functions-js@2.4.3':
     dependencies:
       '@supabase/node-fetch': 2.6.15
 
@@ -3340,11 +3372,11 @@ snapshots:
     dependencies:
       whatwg-url: 5.0.0
 
-  '@supabase/postgrest-js@1.16.1':
+  '@supabase/postgrest-js@1.16.2':
     dependencies:
       '@supabase/node-fetch': 2.6.15
 
-  '@supabase/realtime-js@2.10.2':
+  '@supabase/realtime-js@2.10.7':
     dependencies:
       '@supabase/node-fetch': 2.6.15
       '@types/phoenix': 1.6.5
@@ -3354,23 +3386,23 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@supabase/ssr@0.5.1(@supabase/supabase-js@2.45.4)':
+  '@supabase/ssr@0.5.1(@supabase/supabase-js@2.45.5)':
     dependencies:
-      '@supabase/supabase-js': 2.45.4
+      '@supabase/supabase-js': 2.45.5
       cookie: 0.6.0
 
-  '@supabase/storage-js@2.7.0':
+  '@supabase/storage-js@2.7.1':
     dependencies:
       '@supabase/node-fetch': 2.6.15
 
-  '@supabase/supabase-js@2.45.4':
+  '@supabase/supabase-js@2.45.5':
     dependencies:
-      '@supabase/auth-js': 2.65.0
-      '@supabase/functions-js': 2.4.1
+      '@supabase/auth-js': 2.65.1
+      '@supabase/functions-js': 2.4.3
       '@supabase/node-fetch': 2.6.15
-      '@supabase/postgrest-js': 1.16.1
-      '@supabase/realtime-js': 2.10.2
-      '@supabase/storage-js': 2.7.0
+      '@supabase/postgrest-js': 1.16.2
+      '@supabase/realtime-js': 2.10.7
+      '@supabase/storage-js': 2.7.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -3383,7 +3415,7 @@ snapshots:
       worktop: 0.8.0-next.18
       wrangler: 3.80.4(@cloudflare/workers-types@4.20241011.0)
 
-  '@sveltejs/adapter-node@5.2.7(@sveltejs/kit@2.7.1(@sveltejs/vite-plugin-svelte@4.0.0-next.8(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))':
+  '@sveltejs/adapter-node@5.2.8(@sveltejs/kit@2.7.1(@sveltejs/vite-plugin-svelte@4.0.0-next.8(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))':
     dependencies:
       '@rollup/plugin-commonjs': 28.0.1(rollup@4.24.0)
       '@rollup/plugin-json': 6.1.0(rollup@4.24.0)
@@ -3495,7 +3527,7 @@ snapshots:
     dependencies:
       '@types/node': 22.7.6
 
-  '@typeschema/class-validator@0.2.0(@types/json-schema@7.0.15)(class-validator@0.14.1)':
+  '@typeschema/class-validator@0.3.0(@types/json-schema@7.0.15)(class-validator@0.14.1)':
     dependencies:
       '@typeschema/core': 0.14.0(@types/json-schema@7.0.15)
     optionalDependencies:
@@ -3860,6 +3892,9 @@ snapshots:
 
   eastasianwidth@0.2.0: {}
 
+  effect@3.9.2:
+    optional: true
+
   electron-to-chromium@1.5.40: {}
 
   emoji-regex@8.0.0: {}
@@ -4086,6 +4121,11 @@ snapshots:
 
   exit-hook@2.2.1: {}
 
+  fast-check@3.22.0:
+    dependencies:
+      pure-rand: 6.1.0
+    optional: true
+
   fast-deep-equal@3.1.3: {}
 
   fast-glob@3.3.2:
@@ -4137,11 +4177,11 @@ snapshots:
       cross-spawn: 7.0.3
       signal-exit: 4.1.0
 
-  formsnap@1.0.1(svelte@5.0.0-next.268)(sveltekit-superforms@2.19.1(@sveltejs/kit@2.7.1(@sveltejs/vite-plugin-svelte@4.0.0-next.8(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(@types/json-schema@7.0.15)(svelte@5.0.0-next.268)):
+  formsnap@1.0.1(svelte@5.0.0-next.268)(sveltekit-superforms@2.20.0(@sveltejs/kit@2.7.1(@sveltejs/vite-plugin-svelte@4.0.0-next.8(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(@types/json-schema@7.0.15)(svelte@5.0.0-next.268)(typescript@5.6.3)):
     dependencies:
       nanoid: 5.0.7
       svelte: 5.0.0-next.268
-      sveltekit-superforms: 2.19.1(@sveltejs/kit@2.7.1(@sveltejs/vite-plugin-svelte@4.0.0-next.8(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(@types/json-schema@7.0.15)(svelte@5.0.0-next.268)
+      sveltekit-superforms: 2.20.0(@sveltejs/kit@2.7.1(@sveltejs/vite-plugin-svelte@4.0.0-next.8(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(@types/json-schema@7.0.15)(svelte@5.0.0-next.268)(typescript@5.6.3)
 
   fraction.js@4.3.7: {}
 
@@ -4193,6 +4233,8 @@ snapshots:
       function-bind: 1.1.2
 
   html-escaper@3.0.3: {}
+
+  html5-qrcode@2.3.8: {}
 
   htmlparser2@9.1.0:
     dependencies:
@@ -4592,6 +4634,9 @@ snapshots:
 
   punycode@2.3.1: {}
 
+  pure-rand@6.1.0:
+    optional: true
+
   queue-microtask@1.2.3: {}
 
   read-cache@1.0.0:
@@ -4818,7 +4863,7 @@ snapshots:
       magic-string: 0.30.12
       zimmerframe: 1.1.2
 
-  sveltekit-superforms@2.19.1(@sveltejs/kit@2.7.1(@sveltejs/vite-plugin-svelte@4.0.0-next.8(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(@types/json-schema@7.0.15)(svelte@5.0.0-next.268):
+  sveltekit-superforms@2.20.0(@sveltejs/kit@2.7.1(@sveltejs/vite-plugin-svelte@4.0.0-next.8(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(@types/json-schema@7.0.15)(svelte@5.0.0-next.268)(typescript@5.6.3):
     dependencies:
       '@sveltejs/kit': 2.7.1(@sveltejs/vite-plugin-svelte@4.0.0-next.8(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6)))(svelte@5.0.0-next.268)(vite@5.4.9(@types/node@22.7.6))
       devalue: 5.1.1
@@ -4827,22 +4872,25 @@ snapshots:
       svelte: 5.0.0-next.268
       ts-deepmerge: 7.0.1
     optionalDependencies:
+      '@effect/schema': 0.75.5(effect@3.9.2)
       '@exodus/schemasafe': 1.3.0
       '@gcornut/valibot-json-schema': 0.31.0
       '@sinclair/typebox': 0.32.35
-      '@typeschema/class-validator': 0.2.0(@types/json-schema@7.0.15)(class-validator@0.14.1)
+      '@typeschema/class-validator': 0.3.0(@types/json-schema@7.0.15)(class-validator@0.14.1)
       '@vinejs/vine': 1.8.0
       arktype: 2.0.0-rc.8
       class-validator: 0.14.1
+      effect: 3.9.2
       joi: 17.13.3
       json-schema-to-ts: 3.1.1
       superstruct: 2.0.2
-      valibot: 0.35.0
+      valibot: 0.41.0(typescript@5.6.3)
       yup: 1.4.0
       zod: 3.23.8
       zod-to-json-schema: 3.23.3(zod@3.23.8)
     transitivePeerDependencies:
       - '@types/json-schema'
+      - typescript
 
   tabbable@6.2.0: {}
 
@@ -4965,7 +5013,9 @@ snapshots:
   valibot@0.31.1:
     optional: true
 
-  valibot@0.35.0:
+  valibot@0.41.0(typescript@5.6.3):
+    optionalDependencies:
+      typescript: 5.6.3
     optional: true
 
   validator@13.12.0:

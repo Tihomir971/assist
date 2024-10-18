@@ -6,10 +6,10 @@
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { TreeView } from '$lib/components/treeview';
-	import PhNotePencil from '$lib/icons/PhNotePencil.svelte';
-	import PhFolderPlus from '$lib/icons/PhFolderPlus.svelte';
-	import PhFolderMinus from '$lib/icons/PhFolderMinus.svelte';
-	import PhArrowsInLineVertical from '$lib/icons/PhArrowsInLineVertical.svelte';
+	import PhNotePencil from 'phosphor-svelte/lib/NotePencil';
+	import PhFolderPlus from 'phosphor-svelte/lib/FolderPlus';
+	import PhFolderMinus from 'phosphor-svelte/lib/FolderMinus';
+	import PhArrowsInLineVertical from 'phosphor-svelte/lib/ArrowsInLineVertical';
 	import PhPrinter from 'phosphor-svelte/lib/Printer';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -102,7 +102,7 @@
 					<Tooltip.Root openDelay={0} group>
 						<Tooltip.Trigger id="edit_tooltip" asChild let:builder>
 							<Button builders={[builder]} variant="ghost" size="icon" on:click={editCategory}>
-								<PhNotePencil class="w-6" />
+								<PhNotePencil size="24" />
 								<span class="sr-only">Edit</span>
 							</Button>
 						</Tooltip.Trigger>
@@ -111,7 +111,7 @@
 					<Tooltip.Root openDelay={0} group>
 						<Tooltip.Trigger id="create_tooltip" asChild let:builder>
 							<Button builders={[builder]} variant="ghost" size="icon">
-								<PhFolderPlus class="w-6" />
+								<PhFolderPlus size="24" />
 								<span class="sr-only">Create Category</span>
 							</Button>
 						</Tooltip.Trigger>
@@ -128,7 +128,7 @@
 						<Tooltip.Root openDelay={0} group>
 							<Tooltip.Trigger id="delete_tooltip" asChild let:builder>
 								<Form.Button builders={[builder]} variant="ghost" size="icon">
-									<PhFolderMinus class="w-6" />
+									<PhFolderMinus size="24" />
 									<span class="sr-only">Delete Category</span>
 								</Form.Button>
 							</Tooltip.Trigger>
@@ -138,7 +138,7 @@
 					<Tooltip.Root openDelay={0} group>
 						<Tooltip.Trigger id="collaps_tooltip" asChild let:builder>
 							<Button builders={[builder]} variant="ghost" size="icon">
-								<PhArrowsInLineVertical class="w-6" />
+								<PhArrowsInLineVertical size="24" />
 								<span class="sr-only">Collaps Tree</span>
 							</Button>
 						</Tooltip.Trigger>
@@ -153,7 +153,7 @@
 								on:click={handleWarehouseSelect}
 							>
 								<span class="sr-only">Generate Report</span>
-								<PhPrinter size="32" />
+								<PhPrinter size="24" />
 							</Button>
 						</Tooltip.Trigger>
 						<Tooltip.Content side="bottom">Generate Report</Tooltip.Content>
