@@ -4,10 +4,10 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 type ProductGTIN = {
 	gtin: string;
-	m_product: Array<{
+	m_product: {
 		name: string;
 		description: string;
-	}>;
+	};
 };
 
 async function findProductByGTIN(gtin: string, supabase: SupabaseClient) {
@@ -29,14 +29,7 @@ async function findProductByGTIN(gtin: string, supabase: SupabaseClient) {
 	}
 
 	if (data) {
-		const productData = data as ProductGTIN;
-		if (productData.m_product.length > 0) {
-			return {
-				gtin: productData.gtin,
-				name: productData.m_product[0].name,
-				description: productData.m_product[0].description
-			};
-		}
+		return data;
 	}
 
 	return null;
@@ -44,14 +37,13 @@ async function findProductByGTIN(gtin: string, supabase: SupabaseClient) {
 
 export const GET: RequestHandler = async ({ url, locals }) => {
 	const gtin = url.searchParams.get('gtin');
-
 	if (!gtin) {
 		return json({ error: 'GTIN parameter is required' }, { status: 400 });
 	}
 
 	try {
 		const product = await findProductByGTIN(gtin, locals.supabase);
-
+		console.log('product', product);
 		if (product) {
 			return json(product);
 		} else {

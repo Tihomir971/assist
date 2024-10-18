@@ -54,6 +54,17 @@ const authGuard: Handle = async ({ event, resolve }) => {
 
 	const userAgent = event.request.headers.get('user-agent') || '';
 
+	// Check if the request is for an API route
+	if (event.url.pathname.startsWith('/api')) {
+		// Allow access only for authenticated users
+		if (event.locals.session) {
+			return resolve(event);
+		} else {
+			// Redirect unauthenticated users to the auth page
+			return redirect(303, '/auth');
+		}
+	}
+
 	if (event.locals.session) {
 		if (isMobile(userAgent) && !event.url.pathname.startsWith('/mobile')) {
 			return redirect(303, '/mobile');
