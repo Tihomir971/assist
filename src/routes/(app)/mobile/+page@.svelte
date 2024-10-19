@@ -2,10 +2,11 @@
 	import { onMount } from 'svelte';
 	import { Html5Qrcode } from 'html5-qrcode';
 	type ProductGTIN = {
-		gtin: string;
+		gtins: string[]; // Changed from single gtin to array of gtins
 		m_product: {
 			name: string;
 			description: string;
+			sku: string;
 		} | null;
 		storage_info: {
 			qtyonhand: number;
@@ -19,6 +20,7 @@
 	let html5QrCode: Html5Qrcode;
 	let isScanning = false;
 	let manualGtin: string = '';
+	let skuSearch: string = '';
 
 	onMount(() => {
 		html5QrCode = new Html5Qrcode('qr-reader');
@@ -66,7 +68,6 @@
 
 			if (response.ok) {
 				productInfo = await response.json();
-				console.log('productInfo', productInfo);
 			} else {
 				productInfo = null;
 				alert('Product not found');
@@ -80,6 +81,26 @@
 	function handleManualSubmit() {
 		if (manualGtin) {
 			checkProduct(manualGtin);
+		}
+	}
+
+	async function handleSkuSearch() {
+		if (skuSearch) {
+			try {
+				const response = await fetch(`/api/product?sku=${skuSearch}`, { method: 'GET' });
+				console.log('response', response);
+
+				if (response.ok) {
+					productInfo = await response.json();
+					console.log('productInfo', productInfo);
+				} else {
+					productInfo = null;
+					alert('Product not found');
+				}
+			} catch (error) {
+				console.error('Error searching product by SKU:', error);
+				alert('Failed to search product. Please try again.');
+			}
 		}
 	}
 </script>
@@ -115,6 +136,18 @@
 		</button>
 	</div>
 
+	<div class="mb-4">
+		<input
+			type="text"
+			bind:value={skuSearch}
+			placeholder="Search by SKU"
+			class="mr-2 rounded border p-2"
+		/>
+		<button on:click={handleSkuSearch} class="rounded bg-purple-500 px-4 py-2 text-white">
+			Search SKU
+		</button>
+	</div>
+
 	{#if scanResult}
 		<p class="mb-2">Scanned barcode: {scanResult}</p>
 	{/if}
@@ -122,17 +155,33 @@
 	{#if productInfo}
 		<div class="rounded p-4 shadow">
 			<h2 class="mb-2 text-xl font-semibold">{productInfo.m_product?.name || 'Unknown Product'}</h2>
-			<p>GTIN: {productInfo.gtin}</p>
-			<p>Description: {productInfo.m_product?.description || 'No description available'}</p>
+			<h3 class="mb-2 text-lg font-semibold">GTINs:</h3>
+			<ul class="mb-4 list-disc pl-5">
+				{#each productInfo.gtins as gtin}
+					<li>{gtin}</li>
+				{/each}
+			</ul>
+			<p>SKU: {productInfo.m_product?.sku || 'N/A'}</p>
+
 			<h3 class="mb-2 mt-4 text-lg font-semibold">Storage Information:</h3>
 			{#if productInfo.storage_info.length > 0}
-				<ul>
-					{#each productInfo.storage_info as storage}
-						<li>
-							Warehouse: {storage.m_warehouse.name}, Quantity on Hand: {storage.qtyonhand}
-						</li>
-					{/each}
-				</ul>
+				<table class="w-full border-collapse border border-gray-300">
+					<thead>
+						<tr class="bg-gray-500">
+							<th class="border border-gray-300 p-2 text-left">Warehouse</th>
+							<th class="border border-gray-300 p-2 text-left">Quantity on Hand</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each productInfo.storage_info as storage}
+							<tr>
+								<td class="border border-gray-300 p-2">{storage.m_warehouse.name}</td>
+								<td class="border border-gray-300 p-2">{storage.qtyonhand}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+				<p>Description: {productInfo.m_product?.description || 'No description available'}</p>
 			{:else}
 				<p>No storage information available.</p>
 			{/if}
