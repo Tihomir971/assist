@@ -339,6 +339,7 @@
 		id: string | number;
 		name: string;
 		quantity: number;
+		sku: string;
 	};
 
 	function addToCart(): void {
@@ -364,12 +365,13 @@
 					if (existingItem) {
 						existingItem.quantity += 1;
 					} else {
-						shoppingCartState.add(product.id, product.name, 1);
+						shoppingCartState.add(product.id, product.name, 1, product.sku);
 
 						cartItems.push({
 							id: product.id,
 							name: product.name,
-							quantity: 1
+							quantity: 1,
+							sku: product.sku
 						});
 					}
 				}

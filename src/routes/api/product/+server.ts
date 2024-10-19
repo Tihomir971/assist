@@ -5,6 +5,7 @@ import type { SupabaseClient, PostgrestError } from '@supabase/supabase-js';
 type ProductGTIN = {
 	gtins: string[];
 	m_product: {
+		id: number; // Add id field
 		name: string;
 		description: string | null;
 		sku: string;
@@ -18,6 +19,7 @@ type ProductGTIN = {
 };
 
 type SupabaseResponse = {
+	id: number; // Add id field
 	name: string;
 	description: string | null;
 	sku: string;
@@ -39,6 +41,7 @@ async function findProductByGTIN(
 		.select(
 			`
             m_product!inner (
+                id,
                 name,
                 description,
                 sku,
@@ -79,6 +82,7 @@ async function findProductBySKU(
 		.from('m_product')
 		.select(
 			`
+            id,
             name,
             description,
             sku,
@@ -112,6 +116,7 @@ function formatSupabaseResponse(supabaseData: SupabaseResponse): ProductGTIN {
 	return {
 		gtins: supabaseData.m_product_gtin.map((g) => g.gtin).filter(Boolean),
 		m_product: {
+			id: supabaseData.id, // Include id in the response
 			name: supabaseData.name,
 			description: supabaseData.description,
 			sku: supabaseData.sku

@@ -3,6 +3,7 @@
 	import CartItem from './cart-item.svelte';
 	import { utils, writeFile } from 'xlsx';
 	import PhMicrosoftExcelLogo from 'phosphor-svelte/lib/MicrosoftExcelLogo';
+	import PhX from 'phosphor-svelte/lib/X';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import {
 		Dialog,
@@ -14,8 +15,10 @@
 	} from '$lib/components/ui/dialog';
 	import { Button } from '$lib/components/ui/button';
 	import { Checkbox } from '$lib/components/ui/checkbox';
+	import type { FlattenedProduct, Product } from './types';
 
 	export let supabase: SupabaseClient;
+	export let toggleCart: () => void;
 	const cartState = getShoppingCartState();
 
 	let showVendorDialog = false;
@@ -28,52 +31,8 @@
 		{ id: 407, name: 'Gros', selected: false }
 	];
 
-	interface Product {
-		id: number;
-		sku: string;
-		name: string;
-		barcode: string;
-		mpn: string;
-		unitsperpack: number;
-		imageurl: string;
-		discontinued: boolean;
-		c_taxcategory?: { c_tax: { rate: number }[] } | null;
-		m_storageonhand: { warehouse_id: number; qtyonhand: number }[];
-		productPrice: {
-			m_pricelist_version_id: number;
-			pricestd: number | null;
-			pricelist: number | null;
-		}[];
-		level_min: { m_warehouse_id: number; level_min: number }[];
-		level_max: { m_warehouse_id: number; level_max: number }[];
-		m_product_po: {
-			c_bpartner_id: number;
-			pricelist: number | null;
-			vendorproductno: string | null;
-		}[];
-	}
-
-	interface FlattenedProduct {
-		id: number;
-		sku: string;
-		name: string;
-		barcode: string;
-		mpn: string;
-		unitsperpack: number;
-		imageurl: string;
-		discontinued: boolean;
-		taxRate: number | null;
-		qtyWholesale: number;
-		qtyRetail: number;
-		pricePurchase: number | null;
-		priceRetail: number | null;
-		ruc: number;
-		levelMin: number | null;
-		levelMax: number | null;
-		vendorPrices: { [vendorId: number]: number | null };
-		vendorProductNos: { [vendorId: number]: string | null };
-		action: boolean;
-		[key: string]: any;
+	function clearCart() {
+		cartState.clearItems();
 	}
 
 	async function fetchProducts(productIds: (string | number)[]): Promise<Product[]> {
@@ -250,30 +209,47 @@
 	}
 </script>
 
-<div
-	class="absolute right-2 top-2 flex max-h-[calc(100vh-1rem)] w-[32rem] flex-col gap-2 overflow-y-auto bg-surface-2 p-4"
->
-	<button
-		class="flex items-center gap-2 self-end rounded bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700"
-		on:click={exportToExcel}
-	>
-		<PhMicrosoftExcelLogo size={20} />
-		Export to Excel
-	</button>
-	{#each cartState.items as cartItem}
-		<CartItem {cartItem} />
-	{/each}
+<div class="flex flex-col bg-surface-2 sm:w-[32rem] sm:rounded-lg sm:shadow-lg">
+	<div class="flex items-center justify-between border-b p-4">
+		<h2 class="text-lg font-semibold">Shopping Cart</h2>
+		<div class="flex items-center gap-2">
+			<button
+				class="flex items-center gap-2 rounded bg-red-600 px-4 py-2 text-sm text-white transition-colors hover:bg-red-700"
+				on:click={clearCart}
+			>
+				Clear All
+			</button>
+			<button
+				class="hidden items-center gap-2 rounded bg-green-600 px-4 py-2 text-sm text-white transition-colors hover:bg-green-700 sm:flex"
+				on:click={exportToExcel}
+			>
+				<PhMicrosoftExcelLogo size={20} />
+				Export to Excel
+			</button>
+			<button
+				class="hover:bg-surface-4 items-center justify-center rounded-full bg-surface-3 p-2 text-foreground transition-colors"
+				on:click={toggleCart}
+			>
+				<PhX size={24} />
+			</button>
+		</div>
+	</div>
+	<div class="flex-grow overflow-y-auto p-4">
+		{#each cartState.items as cartItem}
+			<CartItem {cartItem} />
+		{/each}
+	</div>
 </div>
 
 <Dialog open={showVendorDialog}>
-	<DialogContent>
+	<DialogContent class="w-full max-w-sm sm:max-w-md">
 		<DialogHeader>
 			<DialogTitle>Select Vendors</DialogTitle>
 			<DialogDescription>
 				Choose the vendors whose prices and product numbers you want to include in the export.
 			</DialogDescription>
 		</DialogHeader>
-		<div class="flex flex-col space-y-2">
+		<div class="flex max-h-[40vh] flex-col space-y-2 overflow-y-auto">
 			{#each vendors as vendor}
 				<label class="flex items-center space-x-2">
 					<Checkbox bind:checked={vendor.selected} />
@@ -287,3 +263,7 @@
 		</DialogFooter>
 	</DialogContent>
 </Dialog>
+
+<style>
+	/* Add any additional styles here if needed */
+</style>

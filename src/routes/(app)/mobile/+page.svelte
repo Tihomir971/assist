@@ -1,9 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Html5Qrcode } from 'html5-qrcode';
+	import { getShoppingCartState } from '$lib/components/cart/cart-state.svelte.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+
 	type ProductGTIN = {
-		gtins: string[]; // Changed from single gtin to array of gtins
+		gtins: string[];
 		m_product: {
+			id: number;
 			name: string;
 			description: string;
 			sku: string;
@@ -21,6 +25,9 @@
 	let isScanning = false;
 	let manualGtin: string = '';
 	let skuSearch: string = '';
+	let addingToCart = false;
+
+	const shoppingCartState = getShoppingCartState();
 
 	onMount(() => {
 		html5QrCode = new Html5Qrcode('qr-reader');
@@ -58,7 +65,6 @@
 	}
 
 	function onScanFailure(error: string) {
-		// Handle scan failure, if needed
 		console.warn(`QR code scanning failed: ${error}`);
 	}
 
@@ -68,6 +74,7 @@
 
 			if (response.ok) {
 				productInfo = await response.json();
+				console.log('Product Info:', productInfo);
 			} else {
 				productInfo = null;
 				alert('Product not found');
@@ -100,6 +107,28 @@
 			} catch (error) {
 				console.error('Error searching product by SKU:', error);
 				alert('Failed to search product. Please try again.');
+			}
+		}
+	}
+
+	async function addToCart() {
+		if (productInfo && productInfo.m_product && !addingToCart) {
+			addingToCart = true;
+			try {
+				shoppingCartState.add(
+					productInfo.m_product.id,
+					productInfo.m_product.name,
+					1,
+					productInfo.m_product.sku
+				);
+				alert('Product added to cart');
+			} catch (error) {
+				console.error('Error adding product to cart:', error);
+				alert('Failed to add product to cart. Please try again.');
+			} finally {
+				setTimeout(() => {
+					addingToCart = false;
+				}, 1000);
 			}
 		}
 	}
@@ -156,6 +185,10 @@
 				{:else}
 					<p>No storage information available.</p>
 				{/if}
+
+				<Button on:click={addToCart} class="mt-4" disabled={addingToCart}>
+					{addingToCart ? 'Adding...' : 'Add to Cart'}
+				</Button>
 			</div>
 		{:else if scanResult}
 			<p>No product found for this barcode.</p>

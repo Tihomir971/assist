@@ -5,6 +5,7 @@ const STORAGE_KEY = 'cartItems';
 
 export class ShoppingCartState {
 	items = $state<CartItem[]>([]);
+	isVisible = $state(false);
 
 	constructor() {
 		this.loadFromLocalStorage();
@@ -26,12 +27,12 @@ export class ShoppingCartState {
 		}
 	}
 
-	add(id: number, name: string, quantity: number) {
+	add(id: number, name: string, quantity: number, sku: string) {
 		const existingItem = this.items.find((item) => item.id === id);
 		if (existingItem) {
 			existingItem.quantity += quantity;
 		} else {
-			this.items = [...this.items, { id, name, quantity }];
+			this.items = [...this.items, { id, name, quantity, sku }];
 		}
 	}
 
@@ -47,6 +48,17 @@ export class ShoppingCartState {
 				this.remove(id);
 			}
 		}
+	}
+
+	clearItems() {
+		this.items = [];
+		if (typeof window !== 'undefined') {
+			localStorage.removeItem(STORAGE_KEY);
+		}
+	}
+
+	toggleVisibility() {
+		this.isVisible = !this.isVisible;
 	}
 }
 

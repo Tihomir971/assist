@@ -13,8 +13,10 @@
 	<div class="h-full">
 		<Header supabase={data.supabase}></Header>
 	</div>
-	<div class="grid h-full w-full grid-cols-[auto_1fr] overflow-hidden">
-		<Aside></Aside>
+	<div class="grid h-full w-full grid-cols-1 overflow-hidden md:grid-cols-[auto_1fr]">
+		<div class="hidden md:block">
+			<Aside></Aside>
+		</div>
 		<main class="flex h-full w-full flex-col items-center overflow-hidden p-2">
 			{@render children()}
 		</main>

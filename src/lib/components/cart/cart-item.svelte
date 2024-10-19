@@ -21,23 +21,26 @@
 	}
 </script>
 
-<div class="flex items-center justify-between rounded-md bg-surface-3 p-2">
-	<div class="flex flex-col">
+<div
+	class="mb-2 flex flex-col items-start justify-between rounded-md bg-surface-3 p-3 sm:flex-row sm:items-center"
+>
+	<div class="mb-2 flex flex-col sm:mb-0">
 		<span class="text-sm font-medium">{cartItem.name}</span>
+		<span class="text-xs text-gray-500">SKU: {cartItem.sku}</span>
 	</div>
 	<div class="flex items-center space-x-2">
-		<button class="bg-surface-4 hover:bg-surface-5 rounded-md p-1" onclick={decrementQuantity}>
-			<Minus size={16} />
+		<button class="bg-surface-4 hover:bg-surface-5 rounded-md p-2" onclick={decrementQuantity}>
+			<Minus size={14} />
 		</button>
-		<span class="text-sm font-medium">{cartItem.quantity}</span>
-		<button class="bg-surface-4 hover:bg-surface-5 rounded-md p-1" onclick={incrementQuantity}>
-			<Plus size={16} />
+		<span class="w-8 text-center text-sm font-medium">{cartItem.quantity}</span>
+		<button class="bg-surface-4 hover:bg-surface-5 rounded-md p-2" onclick={incrementQuantity}>
+			<Plus size={14} />
 		</button>
 		<button
-			class="rounded-md bg-red-500 p-1 text-white hover:bg-red-600"
+			class="rounded-md bg-red-500 p-2 text-white hover:bg-red-600"
 			onclick={() => shoppingCartState.remove(cartItem.id)}
 		>
-			<Trash size={16} />
+			<Trash size={14} />
 		</button>
 	</div>
 </div>
