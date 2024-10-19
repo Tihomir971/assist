@@ -109,84 +109,97 @@
 	<title>Mobile Barcode Scanner</title>
 </svelte:head>
 
-<div class="container mx-auto p-4">
-	<h1 class="mb-4 text-2xl font-bold">Mobile Barcode Scanner</h1>
+<div class="flex h-screen flex-col">
+	<div class="flex-grow overflow-y-auto p-4 pb-16">
+		<h1 class="mb-4 text-2xl font-bold">Mobile Barcode Scanner</h1>
 
-	<div id="qr-reader" class="mb-4"></div>
+		<div id="qr-reader" class="mb-4"></div>
 
-	{#if !isScanning}
-		<button on:click={startScanning} class="mb-4 rounded bg-blue-500 px-4 py-2 text-white">
-			Start Scanning
-		</button>
-	{:else}
-		<button on:click={stopScanning} class="mb-4 rounded bg-red-500 px-4 py-2 text-white">
-			Stop Scanning
-		</button>
-	{/if}
+		{#if scanResult}
+			<p class="mb-2">Scanned barcode: {scanResult}</p>
+		{/if}
 
-	<div class="mb-4">
-		<input
-			type="text"
-			bind:value={manualGtin}
-			placeholder="Enter GTIN manually"
-			class="mr-2 rounded border p-2"
-		/>
-		<button on:click={handleManualSubmit} class="rounded bg-green-500 px-4 py-2 text-white">
-			Check Product
-		</button>
-	</div>
+		{#if productInfo}
+			<div class="rounded p-4 shadow">
+				<h2 class="mb-2 text-xl font-semibold">
+					{productInfo.m_product?.name || 'Unknown Product'}
+				</h2>
+				<h3 class="mb-2 text-lg font-semibold">GTINs:</h3>
+				<ul class="mb-4 list-disc pl-5">
+					{#each productInfo.gtins as gtin}
+						<li>{gtin}</li>
+					{/each}
+				</ul>
+				<p>SKU: {productInfo.m_product?.sku || 'N/A'}</p>
 
-	<div class="mb-4">
-		<input
-			type="text"
-			bind:value={skuSearch}
-			placeholder="Search by SKU"
-			class="mr-2 rounded border p-2"
-		/>
-		<button on:click={handleSkuSearch} class="rounded bg-purple-500 px-4 py-2 text-white">
-			Search SKU
-		</button>
-	</div>
-
-	{#if scanResult}
-		<p class="mb-2">Scanned barcode: {scanResult}</p>
-	{/if}
-
-	{#if productInfo}
-		<div class="rounded p-4 shadow">
-			<h2 class="mb-2 text-xl font-semibold">{productInfo.m_product?.name || 'Unknown Product'}</h2>
-			<h3 class="mb-2 text-lg font-semibold">GTINs:</h3>
-			<ul class="mb-4 list-disc pl-5">
-				{#each productInfo.gtins as gtin}
-					<li>{gtin}</li>
-				{/each}
-			</ul>
-			<p>SKU: {productInfo.m_product?.sku || 'N/A'}</p>
-
-			<h3 class="mb-2 mt-4 text-lg font-semibold">Storage Information:</h3>
-			{#if productInfo.storage_info.length > 0}
-				<table class="w-full border-collapse border border-gray-300">
-					<thead>
-						<tr class="bg-gray-500">
-							<th class="border border-gray-300 p-2 text-left">Warehouse</th>
-							<th class="border border-gray-300 p-2 text-left">Quantity on Hand</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each productInfo.storage_info as storage}
-							<tr>
-								<td class="border border-gray-300 p-2">{storage.m_warehouse.name}</td>
-								<td class="border border-gray-300 p-2">{storage.qtyonhand}</td>
+				<h3 class="mb-2 mt-4 text-lg font-semibold">Storage Information:</h3>
+				{#if productInfo.storage_info.length > 0}
+					<table class="w-full border-collapse border border-gray-300">
+						<thead>
+							<tr class="bg-gray-500">
+								<th class="border border-gray-300 p-2 text-left">Warehouse</th>
+								<th class="border border-gray-300 p-2 text-left">Quantity on Hand</th>
 							</tr>
-						{/each}
-					</tbody>
-				</table>
-				<p>Description: {productInfo.m_product?.description || 'No description available'}</p>
-			{:else}
-				<p>No storage information available.</p>
-			{/if}
+						</thead>
+						<tbody>
+							{#each productInfo.storage_info as storage}
+								{#if storage.qtyonhand > 0}
+									<tr>
+										<td class="border border-gray-300 p-2">{storage.m_warehouse.name}</td>
+										<td class="border border-gray-300 p-2">{storage.qtyonhand}</td>
+									</tr>
+								{/if}
+							{/each}
+						</tbody>
+					</table>
+					<p>Description: {productInfo.m_product?.description || 'No description available'}</p>
+				{:else}
+					<p>No storage information available.</p>
+				{/if}
+			</div>
+		{:else if scanResult}
+			<p>No product found for this barcode.</p>
+		{/if}
+	</div>
+
+	<div class="fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-white p-2">
+		<div class="flex h-12 items-stretch">
+			<input
+				type="text"
+				bind:value={skuSearch}
+				placeholder="Search by SKU"
+				class="w-1/2 rounded-l border border-r-0 p-2 text-sm"
+			/>
+			<div class="flex w-1/2">
+				<button
+					on:click={handleSkuSearch}
+					class="flex-1 border-r border-white bg-purple-500 px-2 py-2 text-sm text-white"
+				>
+					Search
+				</button>
+				{#if !isScanning}
+					<button
+						on:click={startScanning}
+						class="flex-1 rounded-r bg-blue-500 px-2 py-2 text-sm text-white"
+					>
+						Scan
+					</button>
+				{:else}
+					<button
+						on:click={stopScanning}
+						class="flex-1 rounded-r bg-red-500 px-2 py-2 text-sm text-white"
+					>
+						Stop
+					</button>
+				{/if}
+			</div>
 		</div>
-	{:else if scanResult}
-		<p>No product found for this barcode.</p>
-	{/if}
+	</div>
 </div>
+
+<style>
+	:global(body) {
+		margin: 0;
+		padding: 0;
+	}
+</style>
