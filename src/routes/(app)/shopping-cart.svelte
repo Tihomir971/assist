@@ -19,8 +19,12 @@
 </Button>
 
 {#if shoppingCartState.isVisible}
-	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-		<div class="w-full max-w-md rounded-lg bg-white shadow-lg">
+	<div
+		class="fixed inset-0 z-50 flex items-start justify-center bg-black bg-opacity-50 sm:items-center"
+	>
+		<div
+			class="h-full max-h-screen w-full overflow-y-auto bg-white shadow-lg sm:h-auto sm:max-h-[90vh] sm:w-[32rem] sm:rounded-lg"
+		>
 			<CartItems {supabase} {toggleCart} />
 		</div>
 	</div>
