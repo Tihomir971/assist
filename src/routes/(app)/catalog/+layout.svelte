@@ -53,7 +53,6 @@
 		activeCategory = selected?.getAttribute('data-id');
 		rerunLoadFunction(activeCategory);
 	}
-	$: if (activeCategory) console.log('activeCategory', activeCategory);
 
 	let showModal = false;
 

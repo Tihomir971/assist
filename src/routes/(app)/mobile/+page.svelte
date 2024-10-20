@@ -85,11 +85,11 @@
 		}
 	}
 
-	function handleManualSubmit() {
+	/* 	function handleManualSubmit() {
 		if (manualGtin) {
 			checkProduct(manualGtin);
 		}
-	}
+	} */
 
 	async function handleSkuSearch() {
 		if (skuSearch) {
@@ -138,8 +138,8 @@
 	<title>Mobile Barcode Scanner</title>
 </svelte:head>
 
-<div class="flex h-screen flex-col">
-	<div class="flex-grow overflow-y-auto p-4 pb-16">
+<div class="flex h-dvh flex-col">
+	<div class="h-dvh flex-grow overflow-y-auto p-4 pb-16">
 		<h1 class="mb-4 text-2xl font-bold">Mobile Barcode Scanner</h1>
 
 		<div id="qr-reader" class="mb-4"></div>
