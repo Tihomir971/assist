@@ -2,16 +2,15 @@ import { fail, error } from '@sveltejs/kit';
 import type { Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getNumber, getString } from '$lib/scripts/getForm';
-import { ProductService, WarehouseService } from '$lib/services/supabase/';
+import { ProductService } from '$lib/services/supabase/';
 import { ProductInfo } from '$lib/services/scraper';
 
-import { message, superValidate } from 'sveltekit-superforms';
+import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { crudMProductSchema, mProductSchema } from '$lib/types/supabase/product.validator.js';
 import { crudmProductPoSchema, mProductPoSchema } from '$lib/types/supabase/mProductPo.validator';
 import { crudProductGtinSchema, replenishSchema } from '../zod.validator';
 import type { Database } from '$lib/types/supabase';
-import { CONNECTOR_API_BEARER, CONNECTOR_API_URL } from '$env/static/private';
 import type { SalesByWeekApi } from '$lib/types/connector';
 import { connector } from '$lib/ky';
 
@@ -133,7 +132,7 @@ export const actions = {
 		if (productId) {
 			const { error: delProductError } = await ProductService.delProduct(supabase, productId);
 			if (delProductError) {
-				return fail(404, delProductError);
+				return fail(404, { delProductError });
 			}
 		}
 	},
@@ -157,7 +156,7 @@ export const actions = {
 			);
 
 			if (addProductPurchasingError) {
-				return fail(400, addProductPurchasingError);
+				return fail(400, { addProductPurchasingError });
 			}
 		}
 	},

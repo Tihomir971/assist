@@ -234,13 +234,15 @@
 				if (row.isData()) {
 					const priceRetail = row.original.priceRetail ?? 0;
 					const priceCenoteka = row.original.priceCenoteka ?? 0;
-					const ruc = row.original.ruc ?? 0;
+					const qtyRetail = row.original.qtyRetail ?? 0;
 					return createRender(StyleNumber, {
 						action: row.original.action,
 						value: priceRetail,
 						danger:
 							priceCenoteka !== 0 &&
-							(priceRetail > priceCenoteka || (priceCenoteka - priceRetail > 1 && ruc * 100 <= 18)),
+							qtyRetail > 0 &&
+							priceRetail > priceCenoteka &&
+							(priceRetail - priceCenoteka) / priceCenoteka >= 0.05,
 						style: 'decimal',
 						fractionDigits: 2
 					});

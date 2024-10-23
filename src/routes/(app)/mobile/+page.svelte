@@ -85,12 +85,6 @@
 		}
 	}
 
-	/* 	function handleManualSubmit() {
-		if (manualGtin) {
-			checkProduct(manualGtin);
-		}
-	} */
-
 	async function handleSkuSearch() {
 		if (skuSearch) {
 			try {
@@ -138,61 +132,67 @@
 	<title>Mobile Barcode Scanner</title>
 </svelte:head>
 
-<div class="flex h-dvh flex-col">
-	<div class="h-dvh flex-grow overflow-y-auto p-4 pb-16">
-		<h1 class="mb-4 text-2xl font-bold">Mobile Barcode Scanner</h1>
+<div class="flex min-h-screen flex-col">
+	<div class="flex-1 overflow-y-auto pb-20">
+		<div class="p-4">
+			<h1 class="mb-4 text-2xl font-bold">Mobile Barcode Scanner</h1>
 
-		<div id="qr-reader" class="mb-4"></div>
+			<div id="qr-reader" class="mb-4"></div>
 
-		{#if scanResult}
-			<p class="mb-2">Scanned barcode: {scanResult}</p>
-		{/if}
+			{#if scanResult}
+				<p class="mb-2">Scanned barcode: {scanResult}</p>
+			{/if}
 
-		{#if productInfo}
-			<div class="rounded p-4 shadow">
-				<h2 class="mb-2 text-xl font-semibold">
-					{productInfo.m_product?.name || 'Unknown Product'}
-				</h2>
-				<h3 class="mb-2 text-lg font-semibold">GTINs:</h3>
-				<ul class="mb-4 list-disc pl-5">
-					{#each productInfo.gtins as gtin}
-						<li>{gtin}</li>
-					{/each}
-				</ul>
-				<p>SKU: {productInfo.m_product?.sku || 'N/A'}</p>
+			{#if productInfo}
+				<div class="rounded p-4 shadow">
+					<h2 class="mb-2 text-xl font-semibold">
+						{productInfo.m_product?.name || 'Unknown Product'}
+					</h2>
+					<h3 class="mb-2 text-lg font-semibold">GTINs:</h3>
+					<ul class="mb-4 list-disc pl-5">
+						{#each productInfo.gtins as gtin}
+							<li>{gtin}</li>
+						{/each}
+					</ul>
+					<p>SKU: {productInfo.m_product?.sku || 'N/A'}</p>
 
-				<h3 class="mb-2 mt-4 text-lg font-semibold">Storage Information:</h3>
-				{#if productInfo.storage_info.length > 0}
-					<table class="w-full border-collapse border border-gray-300">
-						<thead>
-							<tr class="bg-gray-500">
-								<th class="border border-gray-300 p-2 text-left">Warehouse</th>
-								<th class="border border-gray-300 p-2 text-left">Quantity on Hand</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each productInfo.storage_info as storage}
-								{#if storage.qtyonhand > 0}
-									<tr>
-										<td class="border border-gray-300 p-2">{storage.m_warehouse.name}</td>
-										<td class="border border-gray-300 p-2">{storage.qtyonhand}</td>
+					<h3 class="mb-2 mt-4 text-lg font-semibold">Storage Information:</h3>
+					{#if productInfo.storage_info.length > 0}
+						<div class="overflow-x-auto">
+							<table class="w-full border-collapse border border-gray-300">
+								<thead>
+									<tr class="bg-gray-500">
+										<th class="border border-gray-300 p-2 text-left">Warehouse</th>
+										<th class="border border-gray-300 p-2 text-left">Quantity on Hand</th>
 									</tr>
-								{/if}
-							{/each}
-						</tbody>
-					</table>
-					<p>Description: {productInfo.m_product?.description || 'No description available'}</p>
-				{:else}
-					<p>No storage information available.</p>
-				{/if}
+								</thead>
+								<tbody>
+									{#each productInfo.storage_info as storage}
+										{#if storage.qtyonhand > 0}
+											<tr>
+												<td class="border border-gray-300 p-2">{storage.m_warehouse.name}</td>
+												<td class="border border-gray-300 p-2">{storage.qtyonhand}</td>
+											</tr>
+										{/if}
+									{/each}
+								</tbody>
+							</table>
+						</div>
+						<p class="mt-4">
+							Description: {productInfo.m_product?.description || 'No description available'}
+						</p>
+					{:else}
+						<p>No storage information available.</p>
+					{/if}
 
-				<Button on:click={addToCart} class="mt-4" disabled={addingToCart}>
-					{addingToCart ? 'Adding...' : 'Add to Cart'}
-				</Button>
-			</div>
-		{:else if scanResult}
-			<p>No product found for this barcode.</p>
-		{/if}
+					<Button on:click={addToCart} class="mt-4" disabled={addingToCart}>
+						{addingToCart ? 'Adding...' : 'Add to Cart'}
+					</Button>
+				</div>
+			{:else if scanResult}
+				<p>No product found for this barcode.</p>
+			{/if}
+		</div>
 	</div>
 
 	<div class="fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-white p-2">
@@ -234,5 +234,7 @@
 	:global(body) {
 		margin: 0;
 		padding: 0;
+		overflow-y: auto;
+		height: 100%;
 	}
 </style>
