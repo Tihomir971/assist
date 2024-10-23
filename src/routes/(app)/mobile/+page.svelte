@@ -144,7 +144,8 @@
 			{/if}
 
 			{#if productInfo}
-				<div class="rounded p-4 shadow">
+				<div class="rounded shadow">
+					<p class="mb-2">SKU: {productInfo.m_product?.sku || 'N/A'}</p>
 					<h2 class="mb-2 text-xl font-semibold">
 						{productInfo.m_product?.name || 'Unknown Product'}
 					</h2>
@@ -154,9 +155,8 @@
 							<li>{gtin}</li>
 						{/each}
 					</ul>
-					<p>SKU: {productInfo.m_product?.sku || 'N/A'}</p>
 
-					<h3 class="mb-2 mt-4 text-lg font-semibold">Storage Information:</h3>
+					<h3 class="mb-2 text-lg font-semibold">Storage Information:</h3>
 					{#if productInfo.storage_info.length > 0}
 						<div class="overflow-x-auto">
 							<table class="w-full border-collapse border border-gray-300">
