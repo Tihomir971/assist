@@ -112,7 +112,7 @@
 									></Table.Cell
 								>
 								<Table.Cell>
-									<Button variant="ghost" on:click={() => deleteProductPORow(productPurchase.id)}>
+									<Button variant="ghost" onclick={() => deleteProductPORow(productPurchase.id)}>
 										<X size={32} weight="bold" />
 									</Button>
 								</Table.Cell>

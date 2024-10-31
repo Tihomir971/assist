@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const crudProductGtinSchema = z.object({
+export const productGtinSchema = z.object({
 	id: z.number().optional(),
 	m_product_id: z.number(),
 	gtin: z.string().refine((val) => is_valid_gtin(val), {
@@ -8,6 +8,12 @@ export const crudProductGtinSchema = z.object({
 	}),
 	isactive: z.boolean().default(true)
 });
+export type ProductGtinSchema = z.infer<typeof productGtinSchema>;
+
+export const schemaProductGtinID = z.object({
+	id: productGtinSchema.shape.id
+});
+export type SchemaProductGtinID = z.infer<typeof schemaProductGtinID>;
 
 function is_valid_gtin(gtin: string): boolean {
 	// Implement GTIN validation logic here

@@ -12,15 +12,17 @@
 	{#if labelValue}
 		<Badge variant="outline" class="rounded">EOL</Badge>
 	{/if}
-	<Tooltip.Root>
-		<Tooltip.Trigger asChild let:builder>
-			<span class={cn('', className)} use:builder.action {...builder}>
-				<!-- <span class={cn('cursor-default truncate', className)} use:builder.action {...builder}> -->
-				{value}
-			</span>
-		</Tooltip.Trigger>
-		<Tooltip.Content>
-			<p class="w-full overflow-hidden text-ellipsis whitespace-nowrap">{value}</p>
-		</Tooltip.Content>
-	</Tooltip.Root>
+	<Tooltip.Provider>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				<span class={cn('', className)}>
+					<!-- <span class={cn('cursor-default truncate', className)} use:builder.action {...builder}> -->
+					{value}
+				</span>
+			</Tooltip.Trigger>
+			<Tooltip.Content>
+				<p class="w-full overflow-hidden text-ellipsis whitespace-nowrap">{value}</p>
+			</Tooltip.Content>
+		</Tooltip.Root>
+	</Tooltip.Provider>
 </div>

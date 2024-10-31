@@ -209,26 +209,26 @@
 	}
 </script>
 
-<div class="flex flex-col bg-surface-2 sm:w-[32rem] sm:rounded-lg sm:shadow-lg">
+<div class="bg-surface-2 flex flex-col sm:w-[32rem] sm:rounded-lg sm:shadow-lg">
 	<div class="flex items-center justify-between border-b p-4">
 		<h2 class="text-lg font-semibold">Shopping Cart</h2>
 		<div class="flex items-center gap-2">
 			<button
 				class="flex items-center gap-2 rounded bg-red-600 px-4 py-2 text-sm text-white transition-colors hover:bg-red-700"
-				on:click={clearCart}
+				onclick={clearCart}
 			>
 				Clear All
 			</button>
 			<button
 				class="hidden items-center gap-2 rounded bg-green-600 px-4 py-2 text-sm text-white transition-colors hover:bg-green-700 sm:flex"
-				on:click={exportToExcel}
+				onclick={exportToExcel}
 			>
 				<PhMicrosoftExcelLogo size={20} />
 				Export to Excel
 			</button>
 			<button
-				class="hover:bg-surface-4 items-center justify-center rounded-full bg-surface-3 p-2 text-foreground transition-colors"
-				on:click={toggleCart}
+				class="hover:bg-surface-4 bg-surface-3 items-center justify-center rounded-full p-2 text-foreground transition-colors"
+				onclick={toggleCart}
 			>
 				<PhX size={24} />
 			</button>
@@ -258,8 +258,8 @@
 			{/each}
 		</div>
 		<DialogFooter>
-			<Button on:click={() => (showVendorDialog = false)}>Cancel</Button>
-			<Button on:click={processExport}>Export</Button>
+			<Button onclick={() => (showVendorDialog = false)}>Cancel</Button>
+			<Button onclick={processExport}>Export</Button>
 		</DialogFooter>
 	</DialogContent>
 </Dialog>

@@ -3,22 +3,36 @@ type TimeStyle = Intl.DateTimeFormatOptions['timeStyle'];
 type Style = Intl.NumberFormatOptions['style'];
 type Locales = Intl.LocalesArgument;
 
-export function formatNumber(
-	value: number | undefined,
-	locales: Locales = 'sr-Latn',
-	style: Style = 'currency',
-	currency: string = 'RSD',
-	minimumFractionDigits: number = 0
-) {
-	if (value === undefined) {
-		return;
-	}
-	return new Intl.NumberFormat(locales, {
+/**
+ * Formatting options for the `formatNumber` function.
+ */
+interface NumberFormatOptions {
+	style?: Intl.NumberFormatOptions['style'];
+	currency?: string;
+	fractionDigits?: number;
+	locale?: Intl.LocalesArgument;
+}
+/**
+ * Formats a number according to the provided options.
+ * @param value - The number to be formatted.
+ * @param options - The formatting options.
+ * @returns The formatted number.
+ */
+export function formatNumber(value: number, options: NumberFormatOptions = {}): string {
+	const { style = 'decimal', currency = 'RSD', fractionDigits = 2, locale = 'sr-Latn' } = options;
+
+	const formatter = new Intl.NumberFormat(locale, {
 		style,
 		currency,
-		minimumFractionDigits
-	}).format(value);
+		minimumFractionDigits: fractionDigits,
+		maximumFractionDigits: fractionDigits
+	});
+
+	return formatter.format(value);
 }
+//style: Style = 'currency',
+//currency: string = 'RSD',
+//minimumFractionDigits: number = 0
 
 export function formatDateTime(
 	value: string | undefined,

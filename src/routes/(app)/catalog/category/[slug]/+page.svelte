@@ -33,27 +33,33 @@
 					<h3 class:invalid={$page.status >= 400}>{$message}</h3>
 				{/if}
 				<Form.Field form={formCategory} name="name">
-					<Form.Control let:attrs>
-						<Form.Label>Name</Form.Label>
-						<Input {...attrs} bind:value={$formCategoryData.name} autocomplete="off" />
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Name</Form.Label>
+							<Input {...props} bind:value={$formCategoryData.name} autocomplete="off" />
+						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 				<Form.Field form={formCategory} name="description">
-					<Form.Control let:attrs>
-						<Form.Label>Description</Form.Label>
-						<Textarea {...attrs} bind:value={$formCategoryData.description as string | null} />
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Description</Form.Label>
+							<Textarea {...props} bind:value={$formCategoryData.description as string | null} />
+						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 				<Form.Field form={formCategory} name="parent_id">
-					<Form.Control let:attrs>
-						<Form.Label>Parent Category</Form.Label>
-						<ComboBox2
-							{...attrs}
-							options={data.categories}
-							bind:value={$formCategoryData.parent_id}
-						/>
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Parent Category</Form.Label>
+							<ComboBox2
+								{...props}
+								options={data.categories}
+								bind:value={$formCategoryData.parent_id}
+							/>
+						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
@@ -64,11 +70,7 @@
 					<Form.Button
 						variant="destructive"
 						name="delete"
-						onclick={(
-							e: MouseEvent & {
-								currentTarget: EventTarget & HTMLButtonElement;
-							}
-						) => !confirm('Are you sure?') && e.preventDefault()}>Delete</Form.Button
+						onclick={(e) => !confirm('Are you sure?') && e.preventDefault()}>Delete</Form.Button
 					>
 				{/if}
 				<Form.Button>Save</Form.Button>

@@ -7,7 +7,7 @@
 
 <button
 	class="-my-1"
-	on:click={() => {
+	onclick={() => {
 		dispatch('click', { id });
 	}}
 	><Ellipsis />

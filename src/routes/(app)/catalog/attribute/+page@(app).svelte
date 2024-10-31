@@ -8,11 +8,15 @@
 	//type AttributeValue = SupabaseTable<'m_attributevalue'> & Pick<SupabaseTable<'ad_org'>, 'name'>;
 	type Attribute = SupabaseTable<'m_attribute'>['Row'] &
 		Pick<SupabaseTable<'ad_org'>['Row'], 'name'>;
-	export let data: PageData;
-	$: ({ attributes, supabase } = data);
+	interface Props {
+		data: PageData;
+	}
 
-	let attributeValues: AttributeValue[];
-	let selectedAttribute: Attribute;
+	let { data }: Props = $props();
+	let { attributes, supabase } = $derived(data);
+
+	let attributeValues: AttributeValue[] | undefined = $state();
+	let selectedAttribute: Attribute | undefined = $state();
 	let selectedAttributeValue: AttributeValue;
 
 	async function clickAttribute(row: Attribute) {
@@ -71,7 +75,7 @@
 							<tr
 								class:bg-base-300={selectedAttribute?.id === attribute.id}
 								class="hover"
-								on:click={() => clickAttribute(attribute)}
+								onclick={() => clickAttribute(attribute)}
 							>
 								<th>{attribute.ad_org?.name}</th>
 								<th>{attribute.name}</th>
@@ -157,7 +161,7 @@
 							<tr
 								class:bg-base-300={selectedAttributeValue?.id === attributeValue.id}
 								class="hover"
-								on:click={() => clickAttributeValue(attributeValue)}
+								onclick={() => clickAttributeValue(attributeValue)}
 							>
 								<th>{attributeValue.ad_org?.name}</th>
 								<th>{attributeValue.name}</th>

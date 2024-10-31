@@ -98,24 +98,28 @@
 		<Card.Header class="border-b p-3">
 			<Card.Title>
 				<div class="flex items-center gap-2">
-					<Tooltip.Root openDelay={0} group>
-						<Tooltip.Trigger id="edit_tooltip" asChild let:builder>
-							<Button builders={[builder]} variant="ghost" size="icon" on:click={editCategory}>
-								<PhNotePencil size="24" />
-								<span class="sr-only">Edit</span>
-							</Button>
-						</Tooltip.Trigger>
-						<Tooltip.Content side="bottom">Edit</Tooltip.Content>
-					</Tooltip.Root>
-					<Tooltip.Root openDelay={0} group>
-						<Tooltip.Trigger id="create_tooltip" asChild let:builder>
-							<Button builders={[builder]} variant="ghost" size="icon">
-								<PhFolderPlus size="24" />
-								<span class="sr-only">Create Category</span>
-							</Button>
-						</Tooltip.Trigger>
-						<Tooltip.Content side="bottom">Create Category</Tooltip.Content>
-					</Tooltip.Root>
+					<Tooltip.Provider>
+						<Tooltip.Root>
+							<Tooltip.Trigger id="edit_tooltip">
+								<Button variant="ghost" size="icon" onclick={editCategory}>
+									<PhNotePencil size="24" />
+									<span class="sr-only">Edit</span>
+								</Button>
+							</Tooltip.Trigger>
+							<Tooltip.Content side="bottom">Edit</Tooltip.Content>
+						</Tooltip.Root>
+					</Tooltip.Provider>
+					<Tooltip.Provider>
+						<Tooltip.Root>
+							<Tooltip.Trigger id="create_tooltip">
+								<Button variant="ghost" size="icon">
+									<PhFolderPlus size="24" />
+									<span class="sr-only">Create Category</span>
+								</Button>
+							</Tooltip.Trigger>
+							<Tooltip.Content side="bottom">Create Category</Tooltip.Content>
+						</Tooltip.Root>
+					</Tooltip.Provider>
 					<form method="post" use:enhance action="/catalog?/deleteCategory">
 						<input
 							type="number"
@@ -123,40 +127,40 @@
 							value={Number(selected?.getAttribute('data-id'))}
 							hidden
 						/>
-
-						<Tooltip.Root openDelay={0} group>
-							<Tooltip.Trigger id="delete_tooltip" asChild let:builder>
-								<Form.Button builders={[builder]} variant="ghost" size="icon">
-									<PhFolderMinus size="24" />
-									<span class="sr-only">Delete Category</span>
-								</Form.Button>
-							</Tooltip.Trigger>
-							<Tooltip.Content side="bottom">{activeCategory}Delete Category</Tooltip.Content>
-						</Tooltip.Root>
+						<Tooltip.Provider>
+							<Tooltip.Root>
+								<Tooltip.Trigger id="delete_tooltip">
+									<Form.Button variant="ghost" size="icon">
+										<PhFolderMinus size="24" />
+										<span class="sr-only">Delete Category</span>
+									</Form.Button>
+								</Tooltip.Trigger>
+								<Tooltip.Content side="bottom">{activeCategory}Delete Category</Tooltip.Content>
+							</Tooltip.Root>
+						</Tooltip.Provider>
 					</form>
-					<Tooltip.Root openDelay={0} group>
-						<Tooltip.Trigger id="collaps_tooltip" asChild let:builder>
-							<Button builders={[builder]} variant="ghost" size="icon">
-								<PhArrowsInLineVertical size="24" />
-								<span class="sr-only">Collaps Tree</span>
-							</Button>
-						</Tooltip.Trigger>
-						<Tooltip.Content side="bottom">Collaps Tree</Tooltip.Content>
-					</Tooltip.Root>
-					<Tooltip.Root openDelay={0} group>
-						<Tooltip.Trigger id="report_tooltip" asChild let:builder>
-							<Button
-								builders={[builder]}
-								variant="ghost"
-								size="icon"
-								on:click={handleWarehouseSelect}
-							>
-								<span class="sr-only">Generate Report</span>
-								<PhPrinter size="24" />
-							</Button>
-						</Tooltip.Trigger>
-						<Tooltip.Content side="bottom">Generate Report</Tooltip.Content>
-					</Tooltip.Root>
+					<Tooltip.Provider>
+						<Tooltip.Root>
+							<Tooltip.Trigger id="collaps_tooltip">
+								<Button variant="ghost" size="icon">
+									<PhArrowsInLineVertical size="24" />
+									<span class="sr-only">Collaps Tree</span>
+								</Button>
+							</Tooltip.Trigger>
+							<Tooltip.Content side="bottom">Collaps Tree</Tooltip.Content>
+						</Tooltip.Root>
+					</Tooltip.Provider>
+					<Tooltip.Provider>
+						<Tooltip.Root>
+							<Tooltip.Trigger id="report_tooltip">
+								<Button variant="ghost" size="icon" onclick={handleWarehouseSelect}>
+									<span class="sr-only">Generate Report</span>
+									<PhPrinter size="24" />
+								</Button>
+							</Tooltip.Trigger>
+							<Tooltip.Content side="bottom">Generate Report</Tooltip.Content>
+						</Tooltip.Root>
+					</Tooltip.Provider>
 				</div>
 			</Card.Title>
 		</Card.Header>

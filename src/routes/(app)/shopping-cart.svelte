@@ -13,7 +13,7 @@
 	}
 </script>
 
-<Button variant="outline" size="icon" on:click={toggleCart}>
+<Button variant="outline" size="icon" onclick={toggleCart}>
 	<PhShoppingCart class="h-4 w-4" />
 	{shoppingCartState.items.length}
 </Button>

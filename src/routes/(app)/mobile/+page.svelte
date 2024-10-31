@@ -185,7 +185,7 @@
 						<p>No storage information available.</p>
 					{/if}
 
-					<Button on:click={addToCart} class="mt-4" disabled={addingToCart}>
+					<Button onclick={addToCart} class="mt-4" disabled={addingToCart}>
 						{addingToCart ? 'Adding...' : 'Add to Cart'}
 					</Button>
 				</div>
@@ -205,21 +205,21 @@
 			/>
 			<div class="flex w-1/2">
 				<button
-					on:click={handleSkuSearch}
+					onclick={handleSkuSearch}
 					class="flex-1 border-r border-white bg-purple-500 px-2 py-2 text-sm text-white"
 				>
 					Search
 				</button>
 				{#if !isScanning}
 					<button
-						on:click={startScanning}
+						onclick={startScanning}
 						class="flex-1 rounded-r bg-blue-500 px-2 py-2 text-sm text-white"
 					>
 						Scan
 					</button>
 				{:else}
 					<button
-						on:click={stopScanning}
+						onclick={stopScanning}
 						class="flex-1 rounded-r bg-red-500 px-2 py-2 text-sm text-white"
 					>
 						Stop

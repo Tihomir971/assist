@@ -2,18 +2,18 @@ import { fail, redirect } from '@sveltejs/kit';
 import { AuthApiError } from '@supabase/supabase-js';
 import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
-import { authSchema } from './schema';
+import { loginSchema } from './schema';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export const load: PageServerLoad = async () => {
-	return {
-		form: await superValidate(zod(authSchema))
-	};
+	const form = await superValidate(zod(loginSchema));
+
+	return { form };
 };
 
 export const actions = {
-	signin: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(authSchema));
+	login: async ({ request, locals: { supabase } }) => {
+		const form = await superValidate(request, zod(loginSchema));
 		console.log('form', form);
 
 		if (!form.valid) {
@@ -45,8 +45,8 @@ export const actions = {
 				}
 			});
 		}
-		return { form };
-		/* return redirect(303, '/dashboard'); */
+		throw redirect(303, '/dashboard');
+		/* 		return { form }; */
 	},
 
 	signout: async ({ locals: { supabase, session } }) => {

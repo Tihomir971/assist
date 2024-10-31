@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { TableViewModel } from 'svelte-headless-table';
 	import type { ProductSchema } from '$lib/types/zod.js';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
 	import { enhance } from '$app/forms';
@@ -27,7 +27,7 @@
 					}
 				});
 				$selectedDataIds = {};
-				invalidate('catalog:test-table');
+				invalidate('catalog:products');
 			} else if (result.type === 'error') {
 				toast.error('Replenish ERP Sync', {
 					description: `Something is wrong ${result.error}`
@@ -52,7 +52,7 @@
 						}
 					});
 					$selectedDataIds = {};
-					await invalidate('catalog:test-table');
+					await invalidate('catalog:products');
 				} else {
 					toast.error('Cenoteka Sync', {
 						description: data?.message || 'Unknown error occurred'
@@ -78,10 +78,8 @@
 </script>
 
 <DropdownMenu.Root>
-	<DropdownMenu.Trigger asChild let:builder>
-		<Button variant="outline" class="ml-auto" builders={[builder]}>
-			ERP <ChevronDown class="ml-2 h-4 w-4" />
-		</Button>
+	<DropdownMenu.Trigger class={buttonVariants({ variant: 'outline' })}>
+		ERP <ChevronDown class="ml-2 h-4 w-4" />
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content>
 		<form
@@ -93,7 +91,7 @@
 			<!-- <input type="hidden" name="ids" value={JSON.stringify(strSelectedDataIds)} /> -->
 			<input type="hidden" name="ids" value={strSelectedDataIds} />
 			<DropdownMenu.Item
-				on:click={() => {
+				onclick={() => {
 					formElErpSyncProd.requestSubmit();
 				}}
 			>
@@ -102,7 +100,7 @@
 		</form>
 
 		<!-- 		<DropdownMenu.Item
-			on:click={() => {
+			onclick={() => {
 				formElExcel.requestSubmit();
 			}}
 		>
@@ -117,7 +115,7 @@
 			<input type="hidden" name="ids" value={strSelectedDataIds} />
 			<input type="hidden" name="source" value={2} />
 			<DropdownMenu.Item
-				on:click={() => {
+				onclick={() => {
 					formElCenoteka.requestSubmit();
 				}}
 			>
@@ -133,7 +131,7 @@
 			<input type="hidden" name="ids" value={strSelectedDataIds} />
 			<input type="hidden" name="source" value={4} />
 			<DropdownMenu.Item
-				on:click={() => {
+				onclick={() => {
 					formElIdea.requestSubmit();
 				}}
 			>
@@ -148,7 +146,7 @@
 		>
 			<input type="hidden" name="ids" value={JSON.stringify(strSelectedDataIds)} />
 			<DropdownMenu.Item
-				on:click={() => {
+				onclick={() => {
 					formElIdea.requestSubmit();
 				}}
 			>

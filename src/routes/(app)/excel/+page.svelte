@@ -486,7 +486,7 @@
 		<label class="mb-2 block" for="supplier">Select Supplier:</label>
 		<select
 			id="supplier"
-			class="border bg-surface-document p-2 text-text-1"
+			class="bg-surface-document text-text-1 border p-2"
 			bind:value={selectedSupplier}
 		>
 			<option value={null}>Select a supplier</option>
@@ -520,7 +520,7 @@
 		<input
 			id="priceModification"
 			type="number"
-			class="border bg-surface-document p-2 text-text-1"
+			class="bg-surface-document text-text-1 border p-2"
 			bind:value={priceModificationPercentage}
 			min="-100"
 			step="0.5"
@@ -545,7 +545,7 @@
 						</select>
 					</div>
 				{/each}
-				<Button on:click={handleMapping}>Apply Mapping</Button>
+				<Button onclick={handleMapping}>Apply Mapping</Button>
 			</div>
 		</div>
 	{/if}
@@ -585,7 +585,7 @@
 				<progress value={importProgress} max="100"></progress>
 			</div>
 		{:else}
-			<Button variant="default" type="button" on:click={importProducts}>Import Products</Button>
+			<Button variant="default" type="button" onclick={importProducts}>Import Products</Button>
 		{/if}
 	{/if}
 
@@ -609,7 +609,7 @@
 									<Table.Cell>{product[prop]}</Table.Cell>
 								{/each}
 								<Table.Cell>
-									<Button on:click={() => addProduct(product)}>+</Button>
+									<Button onclick={() => addProduct(product)}>+</Button>
 								</Table.Cell>
 							</Table.Row>
 						{/each}
@@ -619,6 +619,5 @@
 		</div>
 	{/if}
 
-	<Button variant="destructive" type="button" on:click={manualReset} class="mt-4">Reset Form</Button
-	>
+	<Button variant="destructive" type="button" onclick={manualReset} class="mt-4">Reset Form</Button>
 </div>

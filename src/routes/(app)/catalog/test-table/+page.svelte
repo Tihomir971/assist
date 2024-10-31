@@ -429,7 +429,7 @@
 						/>
 						<label for="show-vat">Show VAT</label>
 					</div>
-					<Button variant="outline" on:click={addToCart}>Add to Cart</Button>
+					<Button variant="outline" onclick={addToCart}>Add to Cart</Button>
 					{#if warehouses && activeWarehouse}
 						<DataTableViewWarehouse {warehouses} {activeWarehouse} />
 					{/if}

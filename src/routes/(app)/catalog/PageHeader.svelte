@@ -59,11 +59,11 @@
 
 <div class="navbar bg-base-100">
 	<div class="flex-none gap-2">
-		<button on:click={getPrices} class="btn btn-neutral">
+		<button onclick={getPrices} class="btn btn-neutral">
 			<CurrencyEur size={32} weight="bold" />
 			Get Prices
 		</button>
-		<button type="button" on:click={getERPnew} class="btn btn-neutral">
+		<button type="button" onclick={getERPnew} class="btn btn-neutral">
 			<Factory size={32} weight="bold" />
 			Get ERP
 		</button>

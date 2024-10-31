@@ -150,7 +150,7 @@
 								class={selectedPricelistId === pricelist.id
 									? 'cursor-pointer bg-muted'
 									: 'cursor-pointer hover:bg-muted'}
-								on:click={() => selectPricelist(pricelist.id, data.supabase)}
+								onclick={() => selectPricelist(pricelist.id, data.supabase)}
 							>
 								<TableShow.Cell>{pricelist.name}</TableShow.Cell>
 							</TableShow.Row>
@@ -181,7 +181,7 @@
 									class={selectedVersionId === version.id
 										? 'cursor-pointer bg-muted'
 										: 'cursor-pointer hover:bg-muted'}
-									on:click={() => selectVersion(version.id)}
+									onclick={() => selectVersion(version.id)}
 								>
 									<TableShow.Cell>{version.name}</TableShow.Cell>
 									<TableShow.Cell>
@@ -208,8 +208,7 @@
 							{/each}
 						</TableShow.Body>
 					</TableShow.Table>
-					<Button class="mt-4" on:click={() => (showNewVersionDialog = true)}
-						>Add New Version</Button
+					<Button class="mt-4" onclick={() => (showNewVersionDialog = true)}>Add New Version</Button
 					>
 				{:else}
 					<p class="text-muted-foreground">Select a pricelist to view versions</p>
@@ -239,16 +238,14 @@
 										<Input type="number" value={price.pricestd?.toFixed(2)} class="w-24" />
 									</TableShow.Cell>
 									<TableShow.Cell>
-										<Button size="sm" on:click={() => updatePrice(price, data.supabase)}
-											>Save</Button
+										<Button size="sm" onclick={() => updatePrice(price, data.supabase)}>Save</Button
 										>
 									</TableShow.Cell>
 								</TableShow.Row>
 							{/each}
 						</TableShow.Body>
 					</TableShow.Table>
-					<Button class="mt-4" on:click={() => (showNewProductDialog = true)}
-						>Add New Product</Button
+					<Button class="mt-4" onclick={() => (showNewProductDialog = true)}>Add New Product</Button
 					>
 				{:else}
 					<p class="text-muted-foreground">Select a version to view product prices</p>
@@ -269,7 +266,7 @@
 			<input type="text" bind:value={newVersion.toDate} placeholder="DD/MM/YYYY" />
 		</div>
 		<DialogFooter>
-			<Button on:click={addNewVersion}>Add Version</Button>
+			<Button onclick={addNewVersion}>Add Version</Button>
 		</DialogFooter>
 	</DialogContent>
 </Dialog>
@@ -284,7 +281,7 @@
 			<Input type="number" placeholder="Price" bind:value={newProduct.price} />
 		</div>
 		<DialogFooter>
-			<Button on:click={addNewProduct}>Add Product</Button>
+			<Button onclick={addNewProduct}>Add Product</Button>
 		</DialogFooter>
 	</DialogContent>
 </Dialog>

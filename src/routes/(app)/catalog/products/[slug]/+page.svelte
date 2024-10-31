@@ -1,8 +1,25 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
 	import X from 'phosphor-svelte/lib/X';
+	import {
+		ExternalLink,
+		Ellipsis,
+		Package,
+		CircleAlert,
+		Barcode,
+		Users,
+		Warehouse,
+		TrendingUp,
+		Save,
+		RotateCcw
+	} from 'lucide-svelte';
 	import * as Card from '$lib/components/ui/card';
 	import { Label } from '$lib/components/ui/label';
+	import { Badge } from '$lib/components/ui/badge';
+	import * as Drawer from '$lib/components/ui/drawer';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import * as Table from '$lib/components/ui/table';
+
 	import SuperDebug, { type SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -13,7 +30,6 @@
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { browser } from '$app/environment';
 	import * as Select from '$lib/components/ui/select';
-	import * as Table from '$lib/components/ui/table';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { crudmProductPoSchema } from '$lib/types/supabase/mProductPo.validator';
 	import * as Tabs from '$lib/components/ui/tabs';
@@ -25,15 +41,17 @@
 	}); */
 
 	import Combobox2 from '$lib/components/melt/ComboBox2.svelte';
-	import { crudProductGtinSchema, replenishSchema } from '../zod.validator.js';
+	import { schemaProductGtinID, replenishSchema } from '../zod.validator.js';
 	import SquareArrowOutUpRight from 'lucide-svelte/icons/square-arrow-out-up-right';
+	import ProductBarcodes from './ProductBarcodes.svelte';
+	import { back } from '@melt-ui/svelte/internal/helpers';
 	async function deleteProductPORow(rowToBeDeleted: number) {
 		const { error } = await data.supabase.from('m_product_po').delete().eq('id', rowToBeDeleted);
 		if (error) throw error;
 		return;
 	}
 
-	const form = superForm(data.formProduct, {
+	const productForm = superForm(data.formProduct, {
 		validators: zodClient(crudMProductSchema),
 		onUpdated(event) {
 			const { form } = event;
@@ -56,7 +74,7 @@
 		enhance: enhanceProduct,
 		tainted: productTainted,
 		isTainted: isProductTainted
-	} = form;
+	} = productForm;
 
 	const formPPO = superForm(data.formProductPO, {
 		validators: zodClient(crudmProductPoSchema),
@@ -77,7 +95,7 @@
 	const { form: formProductPO, enhance: enhanceProductPO } = formPPO;
 
 	const formGtin = superForm(data.formProductGtin, {
-		validators: zodClient(crudProductGtinSchema),
+		validators: zodClient(schemaProductGtinID),
 		onUpdated({ form }) {
 			if (form.valid) {
 				toast.success(form.message || 'Barcode operation successful');
@@ -87,7 +105,11 @@
 			}
 		}
 	});
-	const { form: formProductGtin, enhance: enhanceProductGtin } = formGtin;
+	const {
+		form: formProductGtin,
+		enhance: enhanceProductGtin,
+		formId: formIdProductGtin
+	} = formGtin;
 
 	const formReplenish = superForm(data.formReplenish, {
 		dataType: 'json',
@@ -143,9 +165,143 @@
 			$formProduct.net_quantity = value;
 		}
 	}
+	let editMode: boolean = $state(false);
+	let originalProduct: typeof $formProduct = $state({} as typeof $formProduct);
+	function saveChanges(): void {
+		//console.log("Saving changes:", product);
+		//product.updated = new Date().toISOString();
+		editMode = false;
+	}
+
+	function toggleEditMode(): void {
+		if (!editMode) {
+			originalProduct = JSON.parse(JSON.stringify($formProduct));
+		}
+		editMode = !editMode;
+	}
+
+	function resetChanges(): void {
+		$formProduct = JSON.parse(JSON.stringify(originalProduct));
+		editMode = false;
+	}
+	let isDrawerOpen: boolean = $state(false);
+	let editedProduct = $state({ ...$formProduct });
+	function openDrawer(): void {
+		editedProduct = JSON.parse(JSON.stringify($formProduct));
+		isDrawerOpen = true;
+	}
+	const warehousesWithStringValues = data.warehouses.map((warehouse) => ({
+		value: warehouse.value.toString(),
+		label: warehouse.label
+	}));
+	let selectedWarehouseSourceValue = $state('');
+	const triggerContentWarehouseSourceValue = $derived(
+		warehousesWithStringValues.find((f) => f.value === selectedWarehouseSourceValue)?.label ??
+			'Select a fruit'
+	);
 </script>
 
 <div class="container mx-auto p-4">
+	<Card.Root class="mb-8">
+		<Card.Header class="flex flex-row items-center justify-between">
+			<div>
+				<Card.Title class="flex items-center gap-2 text-3xl font-bold">
+					<Package class="h-8 w-8" />
+					{$formProduct.name}
+				</Card.Title>
+				<Card.Description class="text-lg">Product ID: {$formProduct.id}</Card.Description>
+			</div>
+			<DropdownMenu.Root>
+				<DropdownMenu.Trigger>
+					<Button variant="ghost" size="icon">
+						<Ellipsis class="h-4 w-4" />
+					</Button>
+				</DropdownMenu.Trigger>
+				<DropdownMenu.Content>
+					<DropdownMenu.Item onclick={openDrawer}>Edit</DropdownMenu.Item>
+					<DropdownMenu.Item>Delete</DropdownMenu.Item>
+				</DropdownMenu.Content>
+			</DropdownMenu.Root>
+		</Card.Header>
+		<Card.Content>
+			<div class="mb-4 flex flex-wrap gap-4">
+				<div class="mb-4 flex flex-wrap gap-4">
+					<Badge variant={$formProduct.isactive ? 'default' : 'secondary'}>
+						{$formProduct.isactive ? 'Active' : 'Inactive'}
+					</Badge>
+					<Badge variant={$formProduct.isselfservice ? 'default' : 'secondary'}>
+						{$formProduct.isselfservice ? 'Self Service' : 'Not Self Service'}
+					</Badge>
+					<Badge variant={$formProduct.discontinued ? 'destructive' : 'secondary'}>
+						{$formProduct.discontinued ? 'Discontinued' : 'Not Discontinued'}
+					</Badge>
+				</div>
+			</div>
+			<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+				<div>
+					<h3 class="mb-2 text-lg font-semibold">Basic Information</h3>
+					<Table.Root>
+						<Table.Body>
+							<Table.Row>
+								<Table.Cell class="font-medium">SKU</Table.Cell>
+								<Table.Cell>{$formProduct.sku}</Table.Cell>
+							</Table.Row>
+							<Table.Row>
+								<Table.Cell class="font-medium">UOM</Table.Cell>
+								<Table.Cell>{$formProduct.c_uom_id}</Table.Cell>
+							</Table.Row>
+							<Table.Row>
+								<Table.Cell class="font-medium">Tax</Table.Cell>
+								<Table.Cell>{$formProduct.c_taxcategory_id}</Table.Cell>
+							</Table.Row>
+							<Table.Row>
+								<Table.Cell class="font-medium">Category</Table.Cell>
+								<Table.Cell>{$formProduct.m_product_category_id}</Table.Cell>
+							</Table.Row>
+							<Table.Row>
+								<Table.Cell class="font-medium">MPN</Table.Cell>
+								<Table.Cell>{$formProduct.mpn}</Table.Cell>
+							</Table.Row>
+						</Table.Body>
+					</Table.Root>
+				</div>
+				<div>
+					<h3 class="mb-2 text-lg font-semibold">Packaging Information</h3>
+					<Table.Root>
+						<Table.Body>
+							<Table.Row>
+								<Table.Cell class="font-medium">Units per Pack</Table.Cell>
+								<Table.Cell>{$formProduct.unitsperpack}</Table.Cell>
+							</Table.Row>
+							<Table.Row>
+								<Table.Cell class="font-medium">Units per Pallet</Table.Cell>
+								<Table.Cell>{$formProduct.unitsperpallet}</Table.Cell>
+							</Table.Row>
+							<Table.Row>
+								<Table.Cell class="font-medium">Net Quantity</Table.Cell>
+								<Table.Cell>{$formProduct.net_qty_uom_id} {$formProduct.net_qty_uom_id}</Table.Cell>
+							</Table.Row>
+							<Table.Row>
+								<Table.Cell class="font-medium">Shelf Life</Table.Cell>
+								<Table.Cell>{$formProduct.shelf_life}</Table.Cell>
+							</Table.Row>
+						</Table.Body>
+					</Table.Root>
+				</div>
+				<div>
+					<h3 class="mb-2 text-lg font-semibold">Barcodes</h3>
+					<div class="flex flex-col gap-2">
+						{#each data.barcodes as barcode}
+							<Badge variant="outline" class="flex items-center gap-2">
+								<Package class="h-4 w-4" />
+								{barcode.gtin}
+							</Badge>
+						{/each}
+					</div>
+				</div>
+			</div>
+		</Card.Content>
+	</Card.Root>
 	<h1 class="mb-6 text-3xl font-bold">Product Management</h1>
 	<Tabs.Root value="info" class="w-full">
 		<Tabs.List class="mb-4">
@@ -156,7 +312,7 @@
 		</Tabs.List>
 
 		<Tabs.Content value="info">
-			<form method="post" action="?/updateProduct" use:enhanceProduct id="product-form">
+			<form method="post" action="?/productUPD" use:enhanceProduct id="product-form">
 				<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
 					<Card.Root class="md:col-span-2">
 						<Card.Header>
@@ -164,25 +320,29 @@
 						</Card.Header>
 						<Card.Content>
 							<div class="space-y-4">
-								<Form.Field {form} name="name">
-									<Form.Control let:attrs>
-										<Form.Label>Name</Form.Label>
-										<Input {...attrs} autocomplete="off" bind:value={$formProduct.name} />
+								<Form.Field form={productForm} name="name">
+									<Form.Control>
+										{#snippet children({ props })}
+											<Form.Label>Name</Form.Label>
+											<Input {...props} autocomplete="off" bind:value={$formProduct.name} />
+										{/snippet}
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
 								<div class="grid grid-cols-3 gap-3">
-									<Form.Field {form} name="c_uom_id">
-										<Form.Control let:attrs>
-											<Form.Label>UoM</Form.Label>
-											<Select.Root
+									<Form.Field form={productForm} name="c_uom_id">
+										<Form.Control>
+											{#snippet children({ props })}
+												<Form.Label>UoM</Form.Label>
+												<!-- <Select.Root
+											 type="single"
+											 bind:value={$formProduct.c_uom_id}
+											 name={props.name}
 												selected={selectedUoM}
-												onSelectedChange={(v) => {
-													v && ($formProduct.c_uom_id = v.value);
-												}}
+												
 											>
-												<Select.Trigger {...attrs}>
-													<Select.Value placeholder="Select UoM" />
+												<Select.Trigger {...props}>
+													{$formProduct.c_uom_id ? "Select a verified email to display":"Izaberi me"} 
 												</Select.Trigger>
 												<Select.Content>
 													{#if data.uom}
@@ -191,21 +351,22 @@
 														{/each}
 													{/if}
 												</Select.Content>
-											</Select.Root>
-											<input hidden bind:value={$formProduct.c_uom_id} name={attrs.name} />
+											</Select.Root> -->
+												<!-- <input hidden bind:value={$formProduct.c_uom_id} name={attrs.name} /> -->
+											{/snippet}
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
-									<Form.Field {form} name="c_taxcategory_id">
-										<Form.Control let:attrs>
+									<Form.Field form={productForm} name="c_taxcategory_id">
+										<Form.Control>
 											<Form.Label>Tax</Form.Label>
-											<Select.Root
+											<!-- <Select.Root
 												selected={selectedTax}
 												onSelectedChange={(v) => {
 													v && ($formProduct.c_taxcategory_id = v.value);
 												}}
 											>
-												<Select.Trigger {...attrs}>
+												<Select.Trigger {...props}>
 													<Select.Value placeholder="Select Tax" />
 												</Select.Trigger>
 												<Select.Content>
@@ -215,75 +376,83 @@
 														{/each}
 													{/if}
 												</Select.Content>
-											</Select.Root>
-											<input hidden bind:value={$formProduct.c_taxcategory_id} name={attrs.name} />
+											</Select.Root> -->
+											<!-- <input hidden bind:value={$formProduct.c_taxcategory_id} name={props.name} /> -->
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
-									<Form.Field {form} name="m_product_category_id">
-										<Form.Control let:attrs>
+									<!-- <Form.Field form={productForm} name="m_product_category_id">
+										<Form.Control>
 											<Form.Label>Category</Form.Label>
 											<Combobox2
-												{...attrs}
+												{...props}
 												options={data.categories}
 												bind:value={$formProduct.m_product_category_id}
 											/>
 										</Form.Control>
 										<Form.FieldErrors />
-									</Form.Field>
+									</Form.Field> -->
 								</div>
 								<div class="grid grid-cols-3 gap-3">
-									<Form.Field {form} name="unitsperpack">
-										<Form.Control let:attrs>
-											<Form.Label>Units Per Pack</Form.Label>
-											<Input
-												type="number"
-												min="1"
-												bind:value={$formProduct.unitsperpack}
-												{...attrs}
-											/>
+									<Form.Field form={productForm} name="unitsperpack">
+										<Form.Control>
+											{#snippet children({ props })}
+												<Form.Label>Units Per Pack</Form.Label>
+												<Input
+													type="number"
+													min="1"
+													bind:value={$formProduct.unitsperpack}
+													{...props}
+												/>
+											{/snippet}
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
-									<Form.Field {form} name="unitsperpallet">
-										<Form.Control let:attrs>
-											<Form.Label>Units Per Pallet</Form.Label>
-											<Input type="number" bind:value={$formProduct.unitsperpallet} {...attrs} />
+									<Form.Field form={productForm} name="unitsperpallet">
+										<Form.Control>
+											{#snippet children({ props })}
+												<Form.Label>Units Per Pallet</Form.Label>
+												<Input type="number" bind:value={$formProduct.unitsperpallet} {...props} />
+											{/snippet}
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
-									<Form.Field {form} name="descriptionurl">
-										<Form.Control let:attrs>
-											<Form.Label>Manufacturer URL</Form.Label>
-											<Input type="url" bind:value={$formProduct.descriptionurl} {...attrs} />
+									<Form.Field form={productForm} name="descriptionurl">
+										<Form.Control>
+											{#snippet children({ props })}
+												<Form.Label>Manufacturer URL</Form.Label>
+												<Input type="url" bind:value={$formProduct.descriptionurl} {...props} />
+											{/snippet}
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
 								</div>
 								<div class="grid grid-cols-2 gap-3">
-									<Form.Field {form} name="net_quantity">
-										<Form.Control let:attrs>
+									<!-- <Form.Field form={productForm} name="net_quantity">
+										<Form.Control>
+											{#snippet children({ props })}
 											<Form.Label>Net Quantity</Form.Label>
 											<Input
 												type="number"
 												step="0.001"
 												bind:value={$formProduct.net_quantity}
 												on:input={handleNetQuantityInput}
-												{...attrs}
+												{...props}
 											/>
+											{/snippet}
 										</Form.Control>
 										<Form.FieldErrors />
-									</Form.Field>
-									<Form.Field {form} name="net_qty_uom_id">
-										<Form.Control let:attrs>
+									</Form.Field> -->
+									<Form.Field form={productForm} name="net_qty_uom_id">
+										<Form.Control>
 											<Form.Label>Net Quantity UoM</Form.Label>
-											<Select.Root
+											<!-- <Select.Root
 												selected={data.uom?.find((v) => v.value === $formProduct.net_qty_uom_id)}
 												onSelectedChange={(v) => {
 													v && ($formProduct.net_qty_uom_id = v.value);
 												}}
 											>
-												<Select.Trigger {...attrs}>
+												<Select.Trigger {...props}>
 													<Select.Value placeholder="Select Net Quantity UoM" />
 												</Select.Trigger>
 												<Select.Content>
@@ -293,24 +462,31 @@
 														{/each}
 													{/if}
 												</Select.Content>
-											</Select.Root>
-											<input hidden bind:value={$formProduct.net_qty_uom_id} name={attrs.name} />
+											</Select.Root> -->
+											<!-- <input hidden bind:value={$formProduct.net_qty_uom_id} name={props.name} /> -->
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
 								</div>
-								<Form.Field {form} name="mpn">
-									<Form.Control let:attrs>
-										<Form.Label>Manufacturer Part Number (MPN)</Form.Label>
-										<Input {...attrs} autocomplete="off" bind:value={$formProduct.mpn} />
+								<Form.Field form={productForm} name="mpn">
+									<Form.Control>
+										{#snippet children({ props })}
+											<Form.Label>Manufacturer Part Number (MPN)</Form.Label>
+											<Input {...props} autocomplete="off" bind:value={$formProduct.mpn} />
+										{/snippet}
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
 								<div class="grid grid-cols-3 gap-3">
-									<Form.Field {form} name="shelf_life">
-										<Form.Control let:attrs>
-											<Form.Label>Shelf Life (days)</Form.Label>
-											<Input type="number" bind:value={$formProduct.shelf_life} {...attrs} />
+									<Form.Field form={productForm} name="shelf_life">
+										<Form.Control
+											>{#snippet children({ props })}
+												<Form.Label>Shelf Life (days)</Form.Label>
+												<Input
+													type="number"
+													bind:value={$formProduct.shelf_life}
+													{...props}
+												/>{/snippet}
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
@@ -326,20 +502,22 @@
 							</Card.Header>
 							<Card.Content>
 								<div class="space-y-2">
-									<Form.Field {form} name="id">
-										<Form.Control let:attrs>
-											<div class="grid grid-cols-[1fr_2fr] items-center">
-												<Form.Label>ID</Form.Label>
-												<Input {...attrs} bind:value={$formProduct.id} readonly />
-											</div>
+									<Form.Field form={productForm} name="id">
+										<Form.Control
+											>{#snippet children({ props })}
+												<div class="grid grid-cols-[1fr_2fr] items-center">
+													<Form.Label>ID</Form.Label>
+													<Input {...props} bind:value={$formProduct.id} readonly />
+												</div>{/snippet}
 										</Form.Control>
 									</Form.Field>
-									<Form.Field {form} name="sku">
-										<Form.Control let:attrs>
-											<div class="grid grid-cols-[1fr_2fr] items-center">
-												<Form.Label>SKU</Form.Label>
-												<Input {...attrs} bind:value={$formProduct.sku} readonly />
-											</div>
+									<Form.Field form={productForm} name="sku">
+										<Form.Control
+											>{#snippet children({ props })}
+												<div class="grid grid-cols-[1fr_2fr] items-center">
+													<Form.Label>SKU</Form.Label>
+													<Input {...props} bind:value={$formProduct.sku} readonly />
+												</div>{/snippet}
 										</Form.Control>
 									</Form.Field>
 								</div>
@@ -352,33 +530,33 @@
 							</Card.Header>
 							<Card.Content>
 								<div class="space-y-2">
-									<Form.Field {form} name="isactive">
-										<Form.Control let:attrs>
+									<!-- <Form.Field form={productForm} name="isactive">
+										<Form.Control>
 											<div class="flex items-center space-x-2">
-												<Checkbox {...attrs} bind:checked={$formProduct.isactive as boolean} />
+												<Checkbox {...props} bind:checked={$formProduct.isactive as boolean} />
 												<Form.Label>Is Active?</Form.Label>
 											</div>
 											<input name={attrs.name} value={$formProduct.isactive} hidden />
 										</Form.Control>
 									</Form.Field>
-									<Form.Field {form} name="isselfservice">
-										<Form.Control let:attrs>
+									<Form.Field form={productForm} name="isselfservice">
+										<Form.Control>
 											<div class="flex items-center space-x-2">
-												<Checkbox {...attrs} bind:checked={$formProduct.isselfservice as boolean} />
+												<Checkbox {...props} bind:checked={$formProduct.isselfservice as boolean} />
 												<Form.Label>Is Self Service?</Form.Label>
 											</div>
 											<input name={attrs.name} value={$formProduct.isselfservice} hidden />
 										</Form.Control>
 									</Form.Field>
-									<Form.Field {form} name="discontinued">
-										<Form.Control let:attrs>
+									<Form.Field form={productForm} name="discontinued">
+										<Form.Control>
 											<div class="flex items-center space-x-2">
-												<Checkbox {...attrs} bind:checked={$formProduct.discontinued as boolean} />
+												<Checkbox {...props} bind:checked={$formProduct.discontinued as boolean} />
 												<Form.Label>Discontinued?</Form.Label>
 											</div>
 											<input name={attrs.name} value={$formProduct.discontinued} hidden />
 										</Form.Control>
-									</Form.Field>
+									</Form.Field> -->
 								</div>
 							</Card.Content>
 						</Card.Root>
@@ -406,7 +584,7 @@
 					<Button type="submit" disabled={!isProductTainted($productTainted)}
 						>Save Product Info</Button
 					>
-					<Button type="button" on:click={() => form.reset()}>Reset Changes</Button>
+					<Button type="button" onclick={() => productForm.reset()}>Reset Changes</Button>
 				</div>
 			</form>
 		</Tabs.Content>
@@ -431,7 +609,7 @@
 									</Table.Row>
 								</Table.Header>
 								<Table.Body>
-									{#each data.m_product_po as productPurchase}
+									<!-- {#each data.m_product_po as productPurchase}
 										<Table.Row>
 											<Table.Cell>{formatDateTime(productPurchase.updated)}</Table.Cell>
 											<Table.Cell>{productPurchase.c_bpartner?.name}</Table.Cell>
@@ -459,26 +637,26 @@
 											<Table.Cell>
 												<Button
 													variant="ghost"
-													on:click={() => deleteProductPORow(productPurchase.id)}
+													onclick={() => deleteProductPORow(productPurchase.id)}
 													type="button"
 												>
 													<X size={16} weight="bold" />
 												</Button>
 											</Table.Cell>
 										</Table.Row>
-									{/each}
+									{/each} -->
 									<Table.Row>
-										<Table.Cell class="text-right">Add new:</Table.Cell>
+										<!-- <Table.Cell class="text-right">Add new:</Table.Cell>
 										<Table.Cell>
 											<Form.Field form={formPPO} name="c_bpartner_id">
-												<Form.Control let:attrs>
+												<Form.Control>
 													<Select.Root
 														selected={selectedVendor}
 														onSelectedChange={(v) => {
 															v && ($formProductPO.c_bpartner_id = v.value);
 														}}
 													>
-														<Select.Trigger {...attrs}>
+														<Select.Trigger {...props}>
 															<Select.Value placeholder="Select a vendor" />
 														</Select.Trigger>
 														<Select.Content class="max-h-80 overflow-auto">
@@ -498,21 +676,21 @@
 										</Table.Cell>
 										<Table.Cell>
 											<Form.Field form={formPPO} name="vendorproductno">
-												<Form.Control let:attrs>
+												<Form.Control>
 													<Input
-														{...attrs}
+														{...props}
 														bind:value={$formProductPO.vendorproductno}
 														placeholder="Enter product number..."
 													/>
 												</Form.Control>
 												<Form.FieldErrors />
 											</Form.Field>
-										</Table.Cell>
+										</Table.Cell> -->
 										<!-- 	<Table.Cell>
 											<Form.Field form={formPPO} name="pricelist">
-												<Form.Control let:attrs>
+												<Form.Control>
 													<Input
-														{...attrs}
+														{...props}
 														type="number"
 														step="0.01"
 														bind:value={$formProductPO.pricelist}
@@ -522,11 +700,11 @@
 												<Form.FieldErrors />
 											</Form.Field>
 										</Table.Cell> -->
-										<Table.Cell colspan={2}>
+										<!-- <Table.Cell colspan={2}>
 											<Form.Field form={formPPO} name="url">
-												<Form.Control let:attrs>
+												<Form.Control>
 													<Input
-														{...attrs}
+														{...props}
 														bind:value={$formProductPO.url}
 														placeholder="Enter URL..."
 													/>
@@ -536,7 +714,7 @@
 										</Table.Cell>
 										<Table.Cell>
 											<Button type="submit" variant="secondary">Add</Button>
-										</Table.Cell>
+										</Table.Cell> -->
 									</Table.Row>
 								</Table.Body>
 							</Table.Root>
@@ -550,88 +728,18 @@
 			{/if}
 		</Tabs.Content>
 
-		<Tabs.Content value="barcodes">
-			<Card.Root>
-				<Card.Header>
-					<Card.Title>Product Barcodes</Card.Title>
-				</Card.Header>
-				<Card.Content>
-					<form method="post" action="?/mProductGtin" use:enhanceProductGtin>
-						<div class="overflow-x-auto">
-							<Table.Root>
-								<Table.Header>
-									<Table.Row>
-										<Table.Head class="hidden">ID</Table.Head>
-										<Table.Head>Updated</Table.Head>
-										<Table.Head>GTIN</Table.Head>
-										<Table.Head>Is Active</Table.Head>
-										<Table.Head>Action</Table.Head>
-									</Table.Row>
-								</Table.Header>
-								<Table.Body>
-									{#each data.barcodes as barcode}
-										<Table.Row>
-											<Table.Cell class="hidden">{barcode.id}</Table.Cell>
-											<Table.Cell class="w-44">{formatDateTime(barcode.updated)}</Table.Cell>
-											<Table.Cell>{barcode.gtin}</Table.Cell>
-											<Table.Cell>{barcode.isactive ? 'Yes' : 'No'}</Table.Cell>
-											<Table.Cell>
-												<Button
-													type="submit"
-													variant="ghost"
-													formaction="?/deleteProductGtin"
-													name="id"
-													value={barcode.id}
-												>
-													<X size={24} weight="bold" />
-												</Button>
-											</Table.Cell>
-										</Table.Row>
-									{/each}
-									<Table.Row>
-										<Table.Cell class="hidden">
-											<input type="hidden" name="m_product_id" bind:value={$formProduct.id} />
-										</Table.Cell>
-										<Table.Cell class="text-right">Add new:</Table.Cell>
-										<Table.Cell>
-											<Form.Field form={formGtin} name="gtin">
-												<Form.Control let:attrs>
-													<Input
-														{...attrs}
-														bind:value={$formProductGtin.gtin}
-														placeholder="Enter GTIN..."
-													/>
-												</Form.Control>
-												<Form.FieldErrors />
-											</Form.Field>
-										</Table.Cell>
-										<Table.Cell>
-											<Form.Field form={formGtin} name="isactive">
-												<Form.Control let:attrs>
-													<Checkbox
-														{...attrs}
-														bind:checked={$formProductGtin.isactive as boolean}
-													/>
-													<input name={attrs.name} value={$formProductGtin.isactive} hidden />
-												</Form.Control>
-											</Form.Field>
-										</Table.Cell>
-										<Table.Cell>
-											<Button type="submit" variant="secondary">Add</Button>
-										</Table.Cell>
-									</Table.Row>
-								</Table.Body>
-							</Table.Root>
-							{#if browser}
-								<SuperDebug data={$formProductGtin} />
-							{/if}
-						</div>
-					</form>
-				</Card.Content>
-			</Card.Root>
-		</Tabs.Content>
+		<!-- <Tabs.Content value="barcodes">
+			{#if $formProduct.id}
+				<ProductBarcodes
+					formProductGtin={data.formProductGtin}
+					formProductGtinId={data.formProductGtinId}
+					barcodes={data.barcodes}
+					productId={$formProduct.id}
+				/>
+			{/if}
+		</Tabs.Content> -->
 		<Tabs.Content value="replenish">
-			<Card.Root class="mb-2">
+			<!-- <Card.Root class="mb-2">
 				<Card.Header>
 					<Card.Title>Storage on hand by warehouse</Card.Title>
 				</Card.Header>
@@ -658,8 +766,8 @@
 						</Table.Body>
 					</Table.Root>
 				</Card.Content>
-			</Card.Root>
-			<Card.Root class="mb-2">
+			</Card.Root> -->
+			<!-- <Card.Root class="mb-2">
 				<Card.Header>
 					<Card.Title>Sales by two week period</Card.Title>
 				</Card.Header>
@@ -685,8 +793,8 @@
 						</Table.Body>
 					</Table.Root>
 				</Card.Content>
-			</Card.Root>
-			<Card.Root>
+			</Card.Root> -->
+			<!-- <Card.Root>
 				<Card.Header>
 					<Card.Title>Replenish Information</Card.Title>
 				</Card.Header>
@@ -748,28 +856,22 @@
 												/>
 											</Table.Cell>
 											<Table.Cell class="w-1/5">
-												<Select.Root
-													selected={data.warehouses.find(
-														(w) => w.value === replenish.m_warehousesource_id
-													)}
-													onSelectedChange={(v) => {
-														if (v) replenish.m_warehousesource_id = v.value;
-													}}
+												<Select.Root 
+												type="single"
+												 name="m_warehousesource_id" 
+												 bind:value={selectedWarehouseSourceValue}
+													
 												>
 													<Select.Trigger>
-														<Select.Value placeholder="Select source warehouse" />
+														{triggerContentWarehouseSourceValue}
 													</Select.Trigger>
 													<Select.Content>
-														{#each data.warehouses as warehouse}
+														{#each warehousesWithStringValues as warehouse}
 															<Select.Item value={warehouse.value} label={warehouse.label} />
 														{/each}
 													</Select.Content>
 												</Select.Root>
-												<input
-													hidden
-													name="m_warehousesource_id"
-													bind:value={replenish.m_warehousesource_id}
-												/>
+												
 											</Table.Cell>
 										</Table.Row>
 									{/each}
@@ -778,7 +880,7 @@
 							<Form.Button>Save</Form.Button>
 							<Button
 								variant="default"
-								on:click={() => {
+								onclick={() => {
 									if ($formProduct.id) {
 										$formReplenishUpd.replenishes = [
 											...$formReplenishUpd.replenishes,
@@ -802,10 +904,14 @@
 						</form>
 					</div>
 				</Card.Content>
-			</Card.Root>
+			</Card.Root> -->
 			<!-- 	{#if browser}
 				<SuperDebug data={$formReplenishUpd} />
 			{/if} -->
 		</Tabs.Content>
 	</Tabs.Root>
 </div>
+
+<Drawer.Root open={isDrawerOpen} onOpenChange={(open) => (isDrawerOpen = open)} direction="right">
+	Hello
+</Drawer.Root>

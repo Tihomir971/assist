@@ -5,8 +5,8 @@
 </script>
 
 <DropdownMenu.Root>
-	<DropdownMenu.Trigger asChild let:builder>
-		<Button variant="ghost" builders={[builder]} class="relative h-8 w-8 rounded-full">
+	<DropdownMenu.Trigger>
+		<Button variant="ghost" class="relative h-8 w-8 rounded-full">
 			<Avatar.Root class="h-9 w-9">
 				<Avatar.Image src="/avatars/01.png" alt="@shadcn" />
 				<Avatar.Fallback>SC</Avatar.Fallback>

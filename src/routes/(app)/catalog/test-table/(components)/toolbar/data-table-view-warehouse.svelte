@@ -19,15 +19,15 @@
 	const selected = warehouses.find((element) => element.value === activeWarehouse);
 </script>
 
-<Select.Root {selected}>
+<!-- <Select.Root {selected}>
 	<Select.Trigger class="w-[180px]">
 		<Select.Value placeholder="Select Warehouse" />
 	</Select.Trigger>
 	<Select.Content>
 		{#each warehouses as warehouse}
-			<Select.Item value={warehouse.value} on:click={() => handleWH(warehouse.value)}
+			<Select.Item value={warehouse.value} onclick={() => handleWH(warehouse.value)}
 				>{warehouse.label}
 			</Select.Item>
 		{/each}
 	</Select.Content>
-</Select.Root>
+</Select.Root> -->

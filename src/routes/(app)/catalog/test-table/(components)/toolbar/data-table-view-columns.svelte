@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { TableViewModel } from 'svelte-headless-table';
 	import type { ProductSchema } from '$lib/types/zod.js';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
 	import { Checkbox } from '$lib/components/ui/checkbox';
@@ -35,10 +35,8 @@
 </script>
 
 <DropdownMenu.Root>
-	<DropdownMenu.Trigger asChild let:builder>
-		<Button variant="outline" class="ml-auto hidden lg:flex" builders={[builder]}>
-			Columns <ChevronDown class="ml-2 h-4 w-4" />
-		</Button>
+	<DropdownMenu.Trigger class={buttonVariants({ variant: 'outline' })}>
+		Columns <ChevronDown class="ml-2 h-4 w-4" />
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content>
 		<DropdownMenu.Label>Toggle columns</DropdownMenu.Label>

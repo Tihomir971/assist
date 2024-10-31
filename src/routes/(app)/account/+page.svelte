@@ -1,80 +1,89 @@
-<!-- src/routes/account/+page.svelte -->
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import type { SubmitFunction } from '@sveltejs/kit';
+	import { superForm } from 'sveltekit-superforms';
+	import * as Card from '$lib/components/ui/card';
+	import * as Form from '$lib/components/ui/form';
+	import { Input } from '$lib/components/ui/input';
+	import { crudSchema } from './schema';
+	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { Label } from '$lib/components/ui/label';
+
+	import SuperDebug from 'sveltekit-superforms';
+	import { formatDateTime } from '$lib/style/locale';
+	import { DateTime, type DateTimeMaybeValid } from 'luxon';
 	import Avatar from './Avatar.svelte';
 
-	export let data;
-	export let form;
+	let { data } = $props();
+	const form = superForm(data.form, {
+		validators: zodClient(crudSchema)
+	});
 
-	let { session, supabase, profile } = data;
-	$: ({ session, supabase, profile } = data);
+	const { form: formData, enhance } = form;
+	let valueCreated = $state<DateTimeMaybeValid>();
 
-	let profileForm: HTMLFormElement;
-	let loading = false;
-	let fullName: string = profile?.full_name ?? '';
-	let username: string = profile?.username ?? '';
-	let avatarUrl: string = profile?.avatar_url ?? '';
-
-	const handleSubmit: SubmitFunction = () => {
-		loading = true;
-		return async () => {
-			loading = false;
-		};
-	};
-
-	const handleSignOut: SubmitFunction = () => {
-		loading = true;
-		return async ({ update }) => {
-			loading = false;
-			update();
-		};
-	};
+	$effect(() => {
+		valueCreated = $formData.created ? DateTime.fromISO($formData.created) : undefined;
+	});
 </script>
 
 <div class="grid h-full place-content-center">
-	<div>
-		<Avatar
-			{supabase}
-			bind:url={avatarUrl}
-			size={10}
-			on:upload={() => {
-				profileForm.requestSubmit();
-			}}
-		/>
-		<form method="post" action="?/update" use:enhance={handleSubmit} bind:this={profileForm}>
-			<fieldset>
-				<input name="id" id="id" value={profile?.id} hidden />
-				<div>
-					<label for="email">Email</label>
-					<input name="email" id="email" type="text" value={session?.user.email} disabled />
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>Account</Card.Title>
+		</Card.Header>
+		<Card.Content>
+			<form method="POST" use:enhance>
+				<div class="space-y-2">
+					<Form.Field {form} name="username">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Username</Form.Label>
+								<Input {...props} bind:value={$formData.username} />
+							{/snippet}
+						</Form.Control>
+						<Form.Description />
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field {form} name="full_name">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Ful name</Form.Label>
+								<Input {...props} bind:value={$formData.full_name} />
+							{/snippet}
+						</Form.Control>
+						<Form.Description />
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field {form} name="email">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Email</Form.Label>
+								<Input {...props} bind:value={$formData.email} />
+							{/snippet}
+						</Form.Control>
+						<Form.Description />
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field {form} name="email">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Label>Created</Label>
+								<Input value={valueCreated?.toISODate()} readonly type="date" />
+								<input hidden value={$formData.created} name={props.name} />
+							{/snippet}
+						</Form.Control>
+						<Form.Description />
+						<Form.FieldErrors />
+					</Form.Field>
+					<div>
+						<Label>Updated</Label>
+						<Input value={formatDateTime($formData.updated)} readonly />
+					</div>
 				</div>
-
-				<div>
-					<label for="fullName">Full Name</label>
-					<input id="fullName" name="fullName" type="text" value={form?.fullName ?? fullName} />
-				</div>
-
-				<div>
-					<label for="username">Username</label>
-					<input id="username" name="username" type="text" value={form?.username ?? username} />
-				</div>
-
-				<div>
-					<input
-						type="submit"
-						class="button primary block"
-						value={loading ? 'Loading...' : 'Update'}
-						disabled={loading}
-					/>
-				</div>
-			</fieldset>
-		</form>
-
-		<form method="post" action="?/signout" use:enhance={handleSignOut}>
-			<div>
-				<button class="button block" disabled={loading}>Sign Out</button>
-			</div>
-		</form>
-	</div>
+			</form>
+			<Avatar supabase={data.supabase} bind:url={$formData.avatar_url} size={10} />
+		</Card.Content>
+		<Card.Footer class="Footer">
+			<SuperDebug data={formData} />
+		</Card.Footer>
+	</Card.Root>
 </div>

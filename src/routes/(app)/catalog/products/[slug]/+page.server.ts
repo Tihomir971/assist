@@ -5,14 +5,15 @@ import { getNumber, getString } from '$lib/scripts/getForm';
 import { ProductService } from '$lib/services/supabase/';
 import { ProductInfo } from '$lib/services/scraper';
 
-import { superValidate } from 'sveltekit-superforms';
+import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { crudMProductSchema, mProductSchema } from '$lib/types/supabase/product.validator.js';
 import { crudmProductPoSchema, mProductPoSchema } from '$lib/types/supabase/mProductPo.validator';
-import { crudProductGtinSchema, replenishSchema } from '../zod.validator';
+import { productGtinSchema, replenishSchema, schemaProductGtinID } from '../zod.validator';
 import type { Database } from '$lib/types/supabase';
 import type { SalesByWeekApi } from '$lib/types/connector';
 import { connector } from '$lib/ky';
+import type { PostgrestError } from '@supabase/supabase-js';
 
 type Replenish = Database['public']['Tables']['m_replenish']['Insert'];
 
@@ -25,7 +26,6 @@ export const load = (async ({ depends, params, locals: { supabase }, fetch }) =>
 		.select()
 		.eq('id', productId)
 		.single();
-
 	if (!product || productError) {
 		throw error(404, 'Product not found');
 	}
@@ -81,20 +81,22 @@ export const load = (async ({ depends, params, locals: { supabase }, fetch }) =>
 
 	const formProduct = await superValidate(product, zod(crudMProductSchema));
 	const formProductPO = await superValidate(zod(crudmProductPoSchema));
-	const formProductGtin = await superValidate(zod(crudProductGtinSchema));
+	const formProductGtin = await superValidate(zod(productGtinSchema));
+	const formProductGtinId = await superValidate(zod(schemaProductGtinID));
 	const formReplenish = await superValidate({ replenishes }, zod(replenishSchema));
 
 	return {
 		formProduct,
 		formProductPO,
+		productPurchasing,
 		formProductGtin,
-		formReplenish,
+		formProductGtinId,
 		barcodes,
+		formReplenish,
+		replenishes,
 		uom,
 		categories,
-		productPurchasing,
 		c_bpartner,
-		replenishes,
 		warehouses,
 		tax,
 		m_product_po,
@@ -107,15 +109,27 @@ export const load = (async ({ depends, params, locals: { supabase }, fetch }) =>
 const removeUndefinedValues = <T extends Record<string, any>>(obj: T): T => {
 	return Object.fromEntries(Object.entries(obj).filter(([_, value]) => value !== undefined)) as T;
 };
-
+// Helper function to get user-friendly error messages
+function getErrorMessage(error: PostgrestError): string {
+	switch (error.code) {
+		case '23505':
+			return 'This record already exists';
+		case '23503':
+			return 'Referenced record does not exist';
+		case '23502':
+			return 'Required field is missing';
+		case '42P01':
+			return 'Table does not exist';
+		default:
+			return error.message || 'An unexpected database error occurred';
+	}
+}
 export const actions = {
-	updateProduct: async ({ request, locals: { supabase } }) => {
+	productUPD: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(mProductSchema));
 		if (!form.valid) return fail(400, { form });
 
-		// Remove created and updated from the data to be updated
 		const { created, updated, ...updateData } = form.data;
-
 		const { error } = await supabase.from('m_product').update(updateData).eq('id', form.data.id);
 
 		if (error) {
@@ -124,7 +138,7 @@ export const actions = {
 
 		return { form };
 	},
-	deleteProduct: async ({ request, locals: { supabase } }) => {
+	/* deleteProduct: async ({ request, locals: { supabase } }) => {
 		const formData = await request.formData();
 		const formValue = formData.get('id');
 		const productId = formValue ? +formValue : undefined;
@@ -135,9 +149,9 @@ export const actions = {
 				return fail(404, { delProductError });
 			}
 		}
-	},
+	}, */
 
-	addProductPO: async ({ request, locals: { supabase } }) => {
+	/* addProductPO: async ({ request, locals: { supabase } }) => {
 		const formData = await request.formData();
 		const c_bpartner_id = getNumber(formData, 'bpartner');
 		const m_product_id = getNumber(formData, 'm_product_id');
@@ -159,9 +173,9 @@ export const actions = {
 				return fail(400, { addProductPurchasingError });
 			}
 		}
-	},
+	}, */
 
-	modReplenish: async ({ request, locals: { supabase } }) => {
+	/* modReplenish: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(replenishSchema));
 		if (!form.valid) return fail(400, { form });
 
@@ -213,9 +227,9 @@ export const actions = {
 		}
 
 		return { form };
-	},
+	}, */
 
-	deleteReplenish: async ({ request, locals: { supabase } }) => {
+	/* 	deleteReplenish: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(replenishSchema));
 
 		if (!form.valid) {
@@ -223,16 +237,9 @@ export const actions = {
 		}
 		console.log('deleting....', form.id);
 
-		/* try {
-			const { error } = await supabase.from('m_replenish').delete().eq('id', form.data.id);
-			if (error) throw error;
-			return { form };
-		} catch (error) {
-			console.error('Failed to delete replenish data:', error);
-			return fail(500, { form, serverError: 'Failed to delete replenish data' });
-		} */
-	},
-	getProductInfo: async ({ request, locals: { supabase } }) => {
+	
+	}, */
+	/* getProductInfo: async ({ request, locals: { supabase } }) => {
 		const formData = await request.formData();
 		const form = await superValidate(formData, zod(crudMProductSchema));
 		//const formData = Object.fromEntries(await request.formData());
@@ -241,8 +248,8 @@ export const actions = {
 
 			return data;
 		}
-	},
-	mProductPo: async ({ request, locals: { supabase } }) => {
+	}, */
+	/* mProductPo: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(crudmProductPoSchema));
 		if (!form.valid) {
 			console.error('Form validation failed:', form.errors);
@@ -258,37 +265,44 @@ export const actions = {
 		}
 
 		return { form };
-	},
-	mProductGtin: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(crudProductGtinSchema));
+	}, */
+	gtinADD: async ({ request, locals: { supabase } }) => {
+		console.log('mProductGtin');
+		const form = await superValidate(request, zod(productGtinSchema));
 		if (!form.valid) {
 			console.error('Form validation failed:', form.errors);
 			return fail(400, { form });
 		}
 
-		try {
-			const { error: insertError } = await supabase.from('m_product_gtin').insert(form.data);
-			if (insertError) throw insertError;
-		} catch (error) {
-			console.error('Database insertion failed:', error);
-			return fail(500, { form, error: 'Failed to insert data' });
+		const { error: insertError } = await supabase.from('m_product_gtin').insert(form.data);
+		console.log('insertError', insertError);
+
+		if (insertError) {
+			// Handle specific Postgrest error codes
+			//const errorMessage = getErrorMessage(insertError);
+			return fail(500, {
+				form,
+				error: insertError.details
+			});
 		}
 
 		return { form };
 	},
 
-	deleteProductGtin: async ({ request, locals: { supabase } }) => {
-		const formData = await request.formData();
-		const id = formData.get('id');
+	gtinDEL: async ({ request, locals: { supabase } }) => {
+		console.log('gtinDelete');
 
-		if (id) {
-			const { error } = await supabase.from('m_product_gtin').delete().eq('id', id);
-			if (error) {
-				console.error('Failed to delete product GTIN:', error);
-				return fail(500, { error: 'Failed to delete product GTIN' });
-			}
+		const form = await superValidate(request, zod(schemaProductGtinID));
+		console.log('POST', form);
+		if (!form.valid) {
+			return message(form, 'Invalid ID for constellation.');
+		}
+		const { error } = await supabase.from('m_product_gtin').delete().eq('id', Number(form.id));
+		if (error) {
+			console.error('Failed to delete product GTIN:', error);
+			return fail(500, { error: 'Failed to delete product GTIN' });
 		}
 
-		return { success: true };
+		return { form };
 	}
 } satisfies Actions;

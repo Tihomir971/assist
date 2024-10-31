@@ -1,49 +1,44 @@
 import { fail, redirect } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import { crudSchema } from './schema';
 
 export const load = async ({ locals: { supabase, session } }) => {
 	if (!session) {
 		redirect(303, '/auth');
 	}
+
 	const { data: profile } = await supabase
 		.from('ad_user')
-		.select('*')
-		.eq('id', session.user.id)
+		.select('id,created,updated,full_name,username,email,avatar_url')
+		.eq('auth_user_id', session.user.id)
 		.single();
-	return { session, profile };
+
+	const form = await superValidate(profile, zod(crudSchema));
+	console.log('form.data', form.data.created, ' ', form.data.updated);
+
+	return { session, form };
 };
 
 export const actions = {
 	update: async ({ request, locals: { supabase, session } }) => {
-		const formData = await request.formData();
-		const id = Number(formData.get('id'));
-		const fullName = formData.get('fullName') as string;
-		const username = formData.get('username') as string;
-		const website = formData.get('website') as string;
-		const avatarUrl = formData.get('avatarUrl') as string;
+		const form = await superValidate(request, zod(crudSchema));
 
-		if (session) {
-			const { error } = await supabase.from('ad_user').upsert({
-				id: id,
-				auth_user_id: session?.user.id,
-				full_name: fullName,
-				username,
-				avatar_url: avatarUrl
+		if (!form.valid) {
+			return fail(400, {
+				form
 			});
+		}
+
+		if (form.data.id) {
+			const { error } = await supabase.from('ad_user').upsert(form.data).eq('id', form.data.id);
 
 			if (error) {
-				return fail(500, {
-					fullName,
-					username,
-					website,
-					avatarUrl
-				});
+				return fail(500, { error: error.message });
 			}
 		}
 		return {
-			fullName,
-			username,
-			website,
-			avatarUrl
+			form
 		};
 	},
 	signout: async ({ locals: { supabase, session } }) => {

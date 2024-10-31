@@ -6,7 +6,7 @@
 	import type { TableViewModel } from 'svelte-headless-table';
 	import type { ProductSchema } from '$lib/types/zod.js';
 	import { cn } from '$lib/utils.js';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import type { FlattenedProduct } from '../+page.server.js';
 	let className: string | undefined | null = undefined;
@@ -57,34 +57,27 @@
 {#if !props.sort.disabled}
 	<div class={cn('flex justify-center', className)}>
 		<DropdownMenu.Root>
-			<DropdownMenu.Trigger asChild let:builder>
-				<Button
-					variant="ghost"
-					builders={[builder]}
-					class="-ml-3 h-8 data-[state=open]:bg-accent"
-					size="sm"
-				>
-					<slot />
-					{#if props.sort.order === 'desc'}
-						<ArrowDown class="ml-2 h-4 w-4" />
-					{:else if props.sort.order === 'asc'}
-						<ArrowUp class="ml-2 h-4 w-4" />
-					{:else}
-						<CaretSort class="ml-2 h-4 w-4" />
-					{/if}
-				</Button>
+			<DropdownMenu.Trigger class={buttonVariants({ variant: 'ghost' })}>
+				<slot />
+				{#if props.sort.order === 'desc'}
+					<ArrowDown class="ml-2 h-4 w-4" />
+				{:else if props.sort.order === 'asc'}
+					<ArrowUp class="ml-2 h-4 w-4" />
+				{:else}
+					<CaretSort class="ml-2 h-4 w-4" />
+				{/if}
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content align="start">
-				<DropdownMenu.Item on:click={handleAscSort}>
+				<DropdownMenu.Item onclick={handleAscSort}>
 					<ArrowUp class="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
 					Asc
 				</DropdownMenu.Item>
-				<DropdownMenu.Item on:click={handleDescSort}>
+				<DropdownMenu.Item onclick={handleDescSort}>
 					<ArrowDown class="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
 					Desc
 				</DropdownMenu.Item>
 				<DropdownMenu.Separator />
-				<DropdownMenu.Item on:click={handleHide}>
+				<DropdownMenu.Item onclick={handleHide}>
 					<EyeNone class="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
 					Hide
 				</DropdownMenu.Item>

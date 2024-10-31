@@ -46,7 +46,7 @@
 		</Dialog.Header>
 		<form on:submit|preventDefault={handleSubmit} use:enhance>
 			<div class="grid gap-4 py-4">
-				<Select.Root selected={selectedWarehouse} onSelectedChange={handleSelect as any}>
+				<!-- <Select.Root selected={selectedWarehouse} onSelectedChange={handleSelect as any}>
 					<Select.Trigger class="w-full">
 						<Select.Value placeholder="Select a warehouse" />
 					</Select.Trigger>
@@ -60,7 +60,7 @@
 							{/each}
 						</Select.Group>
 					</Select.Content>
-				</Select.Root>
+				</Select.Root> -->
 			</div>
 			<Dialog.Footer>
 				<Button type="submit" disabled={!selectedWarehouse}>Generate Report</Button>

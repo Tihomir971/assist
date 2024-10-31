@@ -33,8 +33,8 @@
 	<div class="flex items-center justify-end gap-x-3">
 		<ShoppingCart {supabase} />
 		<DropdownMenu.Root>
-			<DropdownMenu.Trigger asChild let:builder>
-				<Button variant="ghost" builders={[builder]} class="relative h-8 w-8 rounded-full">
+			<DropdownMenu.Trigger>
+				<Button variant="ghost" class="relative h-8 w-8 rounded-full">
 					<Avatar.Root class="h-8 w-8">
 						<Avatar.Image src="https://github.com/shadcn.png" alt="@shadcn" />
 						<Avatar.Fallback>CN</Avatar.Fallback>
