@@ -40,7 +40,6 @@
 		toast.success(JSON.stringify(data.barcodes));
 	}); */
 
-	import Combobox2 from '$lib/components/melt/ComboBox2.svelte';
 	import { schemaProductGtinID, replenishSchema } from '../zod.validator.js';
 	import SquareArrowOutUpRight from 'lucide-svelte/icons/square-arrow-out-up-right';
 	import ProductBarcodes from './ProductBarcodes.svelte';
@@ -143,15 +142,6 @@
 			: undefined
 	); */
 
-	let selectedUoM = $derived(
-		$formProduct.c_uom_id ? data.uom?.find((v) => v.value === $formProduct.c_uom_id) : undefined
-	);
-	let selectedTax = $derived(
-		$formProduct.c_taxcategory_id
-			? data.tax?.find((v) => v.value === $formProduct.c_taxcategory_id)
-			: undefined
-	);
-
 	let selectedVendor = $derived(
 		$formProductPO.c_bpartner_id
 			? data.c_bpartner?.find((v) => v.value === $formProductPO.c_bpartner_id)
@@ -185,9 +175,9 @@
 		editMode = false;
 	}
 	let isDrawerOpen: boolean = $state(false);
-	let editedProduct = $state({ ...$formProduct });
+	//let editedProduct = $state({ ...$formProduct });
 	function openDrawer(): void {
-		editedProduct = JSON.parse(JSON.stringify($formProduct));
+		//editedProduct = JSON.parse(JSON.stringify($formProduct));
 		isDrawerOpen = true;
 	}
 	const warehousesWithStringValues = data.warehouses.map((warehouse) => ({
@@ -199,11 +189,20 @@
 		warehousesWithStringValues.find((f) => f.value === selectedWarehouseSourceValue)?.label ??
 			'Select a fruit'
 	);
+	let selectedUomLabel = $derived(
+		data.uom.find((v) => v.value === $formProduct.c_uom_id?.toString())?.label
+	);
+	let selectedTaxLabel = $derived(
+		data.tax?.find((v) => v.value === $formProduct.c_taxcategory_id?.toString())?.label
+	);
+	let selectedCategoryLabel = $derived(
+		data.categories?.find((v) => v.value === $formProduct.m_product_category_id?.toString())?.label
+	);
 </script>
 
-<div class="container mx-auto p-4">
+<div class="mx-auto w-full max-w-[var(--breakpoint-xl)] p-4">
 	<Card.Root class="mb-8">
-		<Card.Header class="flex flex-row items-center justify-between">
+		<Card.Header class="flex flex-row items-center justify-between border-b">
 			<div>
 				<Card.Title class="flex items-center gap-2 text-3xl font-bold">
 					<Package class="h-8 w-8" />
@@ -247,20 +246,20 @@
 								<Table.Cell>{$formProduct.sku}</Table.Cell>
 							</Table.Row>
 							<Table.Row>
+								<Table.Cell class="font-medium">MPN</Table.Cell>
+								<Table.Cell>{$formProduct.mpn}</Table.Cell>
+							</Table.Row>
+							<Table.Row>
 								<Table.Cell class="font-medium">UOM</Table.Cell>
-								<Table.Cell>{$formProduct.c_uom_id}</Table.Cell>
+								<Table.Cell>{selectedUomLabel}</Table.Cell>
 							</Table.Row>
 							<Table.Row>
 								<Table.Cell class="font-medium">Tax</Table.Cell>
-								<Table.Cell>{$formProduct.c_taxcategory_id}</Table.Cell>
+								<Table.Cell>{selectedTaxLabel}</Table.Cell>
 							</Table.Row>
 							<Table.Row>
 								<Table.Cell class="font-medium">Category</Table.Cell>
-								<Table.Cell>{$formProduct.m_product_category_id}</Table.Cell>
-							</Table.Row>
-							<Table.Row>
-								<Table.Cell class="font-medium">MPN</Table.Cell>
-								<Table.Cell>{$formProduct.mpn}</Table.Cell>
+								<Table.Cell>{selectedCategoryLabel}</Table.Cell>
 							</Table.Row>
 						</Table.Body>
 					</Table.Root>
@@ -302,292 +301,15 @@
 			</div>
 		</Card.Content>
 	</Card.Root>
-	<h1 class="mb-6 text-3xl font-bold">Product Management</h1>
 	<Tabs.Root value="info" class="w-full">
 		<Tabs.List class="mb-4">
-			<Tabs.Trigger value="info">Product Info</Tabs.Trigger>
+			<Tabs.Trigger value="logistics">Logistics</Tabs.Trigger>
 			<Tabs.Trigger value="vendors">Vendors</Tabs.Trigger>
 			<Tabs.Trigger value="barcodes">Barcodes</Tabs.Trigger>
 			<Tabs.Trigger value="replenish">Replenish</Tabs.Trigger>
 		</Tabs.List>
 
-		<Tabs.Content value="info">
-			<form method="post" action="?/productUPD" use:enhanceProduct id="product-form">
-				<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-					<Card.Root class="md:col-span-2">
-						<Card.Header>
-							<Card.Title>Product Information</Card.Title>
-						</Card.Header>
-						<Card.Content>
-							<div class="space-y-4">
-								<Form.Field form={productForm} name="name">
-									<Form.Control>
-										{#snippet children({ props })}
-											<Form.Label>Name</Form.Label>
-											<Input {...props} autocomplete="off" bind:value={$formProduct.name} />
-										{/snippet}
-									</Form.Control>
-									<Form.FieldErrors />
-								</Form.Field>
-								<div class="grid grid-cols-3 gap-3">
-									<Form.Field form={productForm} name="c_uom_id">
-										<Form.Control>
-											{#snippet children({ props })}
-												<Form.Label>UoM</Form.Label>
-												<!-- <Select.Root
-											 type="single"
-											 bind:value={$formProduct.c_uom_id}
-											 name={props.name}
-												selected={selectedUoM}
-												
-											>
-												<Select.Trigger {...props}>
-													{$formProduct.c_uom_id ? "Select a verified email to display":"Izaberi me"} 
-												</Select.Trigger>
-												<Select.Content>
-													{#if data.uom}
-														{#each data.uom as v}
-															<Select.Item value={v.value} label={v.label} />
-														{/each}
-													{/if}
-												</Select.Content>
-											</Select.Root> -->
-												<!-- <input hidden bind:value={$formProduct.c_uom_id} name={attrs.name} /> -->
-											{/snippet}
-										</Form.Control>
-										<Form.FieldErrors />
-									</Form.Field>
-									<Form.Field form={productForm} name="c_taxcategory_id">
-										<Form.Control>
-											<Form.Label>Tax</Form.Label>
-											<!-- <Select.Root
-												selected={selectedTax}
-												onSelectedChange={(v) => {
-													v && ($formProduct.c_taxcategory_id = v.value);
-												}}
-											>
-												<Select.Trigger {...props}>
-													<Select.Value placeholder="Select Tax" />
-												</Select.Trigger>
-												<Select.Content>
-													{#if data.tax}
-														{#each data.tax as v}
-															<Select.Item value={v.value} label={v.label} />
-														{/each}
-													{/if}
-												</Select.Content>
-											</Select.Root> -->
-											<!-- <input hidden bind:value={$formProduct.c_taxcategory_id} name={props.name} /> -->
-										</Form.Control>
-										<Form.FieldErrors />
-									</Form.Field>
-									<!-- <Form.Field form={productForm} name="m_product_category_id">
-										<Form.Control>
-											<Form.Label>Category</Form.Label>
-											<Combobox2
-												{...props}
-												options={data.categories}
-												bind:value={$formProduct.m_product_category_id}
-											/>
-										</Form.Control>
-										<Form.FieldErrors />
-									</Form.Field> -->
-								</div>
-								<div class="grid grid-cols-3 gap-3">
-									<Form.Field form={productForm} name="unitsperpack">
-										<Form.Control>
-											{#snippet children({ props })}
-												<Form.Label>Units Per Pack</Form.Label>
-												<Input
-													type="number"
-													min="1"
-													bind:value={$formProduct.unitsperpack}
-													{...props}
-												/>
-											{/snippet}
-										</Form.Control>
-										<Form.FieldErrors />
-									</Form.Field>
-									<Form.Field form={productForm} name="unitsperpallet">
-										<Form.Control>
-											{#snippet children({ props })}
-												<Form.Label>Units Per Pallet</Form.Label>
-												<Input type="number" bind:value={$formProduct.unitsperpallet} {...props} />
-											{/snippet}
-										</Form.Control>
-										<Form.FieldErrors />
-									</Form.Field>
-									<Form.Field form={productForm} name="descriptionurl">
-										<Form.Control>
-											{#snippet children({ props })}
-												<Form.Label>Manufacturer URL</Form.Label>
-												<Input type="url" bind:value={$formProduct.descriptionurl} {...props} />
-											{/snippet}
-										</Form.Control>
-										<Form.FieldErrors />
-									</Form.Field>
-								</div>
-								<div class="grid grid-cols-2 gap-3">
-									<!-- <Form.Field form={productForm} name="net_quantity">
-										<Form.Control>
-											{#snippet children({ props })}
-											<Form.Label>Net Quantity</Form.Label>
-											<Input
-												type="number"
-												step="0.001"
-												bind:value={$formProduct.net_quantity}
-												on:input={handleNetQuantityInput}
-												{...props}
-											/>
-											{/snippet}
-										</Form.Control>
-										<Form.FieldErrors />
-									</Form.Field> -->
-									<Form.Field form={productForm} name="net_qty_uom_id">
-										<Form.Control>
-											<Form.Label>Net Quantity UoM</Form.Label>
-											<!-- <Select.Root
-												selected={data.uom?.find((v) => v.value === $formProduct.net_qty_uom_id)}
-												onSelectedChange={(v) => {
-													v && ($formProduct.net_qty_uom_id = v.value);
-												}}
-											>
-												<Select.Trigger {...props}>
-													<Select.Value placeholder="Select Net Quantity UoM" />
-												</Select.Trigger>
-												<Select.Content>
-													{#if data.uom}
-														{#each data.uom as v}
-															<Select.Item value={v.value} label={v.label} />
-														{/each}
-													{/if}
-												</Select.Content>
-											</Select.Root> -->
-											<!-- <input hidden bind:value={$formProduct.net_qty_uom_id} name={props.name} /> -->
-										</Form.Control>
-										<Form.FieldErrors />
-									</Form.Field>
-								</div>
-								<Form.Field form={productForm} name="mpn">
-									<Form.Control>
-										{#snippet children({ props })}
-											<Form.Label>Manufacturer Part Number (MPN)</Form.Label>
-											<Input {...props} autocomplete="off" bind:value={$formProduct.mpn} />
-										{/snippet}
-									</Form.Control>
-									<Form.FieldErrors />
-								</Form.Field>
-								<div class="grid grid-cols-3 gap-3">
-									<Form.Field form={productForm} name="shelf_life">
-										<Form.Control
-											>{#snippet children({ props })}
-												<Form.Label>Shelf Life (days)</Form.Label>
-												<Input
-													type="number"
-													bind:value={$formProduct.shelf_life}
-													{...props}
-												/>{/snippet}
-										</Form.Control>
-										<Form.FieldErrors />
-									</Form.Field>
-								</div>
-							</div>
-						</Card.Content>
-					</Card.Root>
-
-					<div class="space-y-6">
-						<Card.Root>
-							<Card.Header>
-								<Card.Title>Identification</Card.Title>
-							</Card.Header>
-							<Card.Content>
-								<div class="space-y-2">
-									<Form.Field form={productForm} name="id">
-										<Form.Control
-											>{#snippet children({ props })}
-												<div class="grid grid-cols-[1fr_2fr] items-center">
-													<Form.Label>ID</Form.Label>
-													<Input {...props} bind:value={$formProduct.id} readonly />
-												</div>{/snippet}
-										</Form.Control>
-									</Form.Field>
-									<Form.Field form={productForm} name="sku">
-										<Form.Control
-											>{#snippet children({ props })}
-												<div class="grid grid-cols-[1fr_2fr] items-center">
-													<Form.Label>SKU</Form.Label>
-													<Input {...props} bind:value={$formProduct.sku} readonly />
-												</div>{/snippet}
-										</Form.Control>
-									</Form.Field>
-								</div>
-							</Card.Content>
-						</Card.Root>
-
-						<Card.Root>
-							<Card.Header>
-								<Card.Title>Statuses</Card.Title>
-							</Card.Header>
-							<Card.Content>
-								<div class="space-y-2">
-									<!-- <Form.Field form={productForm} name="isactive">
-										<Form.Control>
-											<div class="flex items-center space-x-2">
-												<Checkbox {...props} bind:checked={$formProduct.isactive as boolean} />
-												<Form.Label>Is Active?</Form.Label>
-											</div>
-											<input name={attrs.name} value={$formProduct.isactive} hidden />
-										</Form.Control>
-									</Form.Field>
-									<Form.Field form={productForm} name="isselfservice">
-										<Form.Control>
-											<div class="flex items-center space-x-2">
-												<Checkbox {...props} bind:checked={$formProduct.isselfservice as boolean} />
-												<Form.Label>Is Self Service?</Form.Label>
-											</div>
-											<input name={attrs.name} value={$formProduct.isselfservice} hidden />
-										</Form.Control>
-									</Form.Field>
-									<Form.Field form={productForm} name="discontinued">
-										<Form.Control>
-											<div class="flex items-center space-x-2">
-												<Checkbox {...props} bind:checked={$formProduct.discontinued as boolean} />
-												<Form.Label>Discontinued?</Form.Label>
-											</div>
-											<input name={attrs.name} value={$formProduct.discontinued} hidden />
-										</Form.Control>
-									</Form.Field> -->
-								</div>
-							</Card.Content>
-						</Card.Root>
-
-						<Card.Root>
-							<Card.Header>
-								<Card.Title>Dates</Card.Title>
-							</Card.Header>
-							<Card.Content>
-								<div class="space-y-2">
-									<div class="grid grid-cols-[1fr_2fr] items-center">
-										<Label>Created</Label>
-										<Input type="text" readonly value={formatDateTime($formProduct.created)} />
-									</div>
-									<div class="grid grid-cols-[1fr_2fr] items-center">
-										<Label>Updated</Label>
-										<Input type="text" readonly value={formatDateTime($formProduct.updated)} />
-									</div>
-								</div>
-							</Card.Content>
-						</Card.Root>
-					</div>
-				</div>
-				<div class="mt-6 flex space-x-4">
-					<Button type="submit" disabled={!isProductTainted($productTainted)}
-						>Save Product Info</Button
-					>
-					<Button type="button" onclick={() => productForm.reset()}>Reset Changes</Button>
-				</div>
-			</form>
-		</Tabs.Content>
+		<Tabs.Content value="logistics"></Tabs.Content>
 
 		<Tabs.Content value="vendors">
 			<Card.Root>
@@ -913,5 +635,238 @@
 </div>
 
 <Drawer.Root open={isDrawerOpen} onOpenChange={(open) => (isDrawerOpen = open)} direction="right">
-	Hello
+	<Drawer.Content class="inset-x-auto top-0 right-0 bottom-0 mt-0 w-96">
+		<Drawer.Header>
+			<Drawer.Title>Product Information</Drawer.Title>
+			<Drawer.Description>This action cannot be undone.</Drawer.Description>
+		</Drawer.Header>
+		<div class="px-4">
+			<form method="post" action="?/productUPD" use:enhanceProduct id="product-form">
+				<Form.Field form={productForm} name="id">
+					<Form.Control>
+						{#snippet children({ props })}
+							<div class="grid grid-cols-[1fr_3fr] items-center">
+								<Form.Label>ID</Form.Label>
+								<Input {...props} bind:value={$formProduct.id} readonly />
+							</div>
+						{/snippet}
+					</Form.Control>
+				</Form.Field>
+				<Form.Field form={productForm} name="sku">
+					<Form.Control
+						>{#snippet children({ props })}
+							<div class="grid grid-cols-[1fr_3fr] items-center">
+								<Form.Label>SKU</Form.Label>
+								<Input {...props} bind:value={$formProduct.sku} readonly />
+							</div>{/snippet}
+					</Form.Control>
+				</Form.Field>
+				<Form.Field form={productForm} name="mpn">
+					<Form.Control>
+						{#snippet children({ props })}
+							<div class="grid grid-cols-[1fr_3fr] items-center">
+								<Form.Label>MPN</Form.Label>
+								<Input {...props} autocomplete="off" bind:value={$formProduct.mpn} />
+							</div>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field form={productForm} name="name">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Name</Form.Label>
+							<Input {...props} autocomplete="off" bind:value={$formProduct.name} />
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field form={productForm} name="c_uom_id">
+					<Form.Control>
+						{#snippet children({ props })}
+							<div class="grid grid-cols-[1fr_3fr] items-center">
+								<Form.Label>UoM</Form.Label>
+								<Select.Root
+									type="single"
+									value={$formProduct.c_uom_id?.toString()}
+									name={props.name}
+									onValueChange={(v) => {
+										$formProduct.c_uom_id = Number.parseInt(v);
+									}}
+								>
+									<Select.Trigger {...props}>
+										{selectedUomLabel}
+									</Select.Trigger>
+									<Select.Content>
+										{#if data.uom}
+											{#each data.uom as v}
+												<Select.Item value={v.value} label={v.label} />
+											{/each}
+										{/if}
+									</Select.Content>
+								</Select.Root>
+							</div>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field form={productForm} name="c_taxcategory_id">
+					<Form.Control>
+						{#snippet children({ props })}
+							<div class="grid grid-cols-[1fr_3fr] items-center">
+								<Form.Label>Tax</Form.Label>
+								<Select.Root
+									type="single"
+									value={$formProduct.c_taxcategory_id?.toString()}
+									name={props.name}
+									onValueChange={(v) => {
+										$formProduct.c_taxcategory_id = Number.parseInt(v);
+									}}
+								>
+									<Select.Trigger {...props}>
+										{selectedTaxLabel}
+									</Select.Trigger>
+									<Select.Content>
+										{#if data.tax}
+											{#each data.tax as v}
+												<Select.Item value={v.value} label={v.label} />
+											{/each}
+										{/if}
+									</Select.Content>
+								</Select.Root>
+							</div>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<!-- <Form.Field form={productForm} name="m_product_category_id">
+									<Form.Control>
+										<Form.Label>Category</Form.Label>
+										<Combobox2
+											{...props}
+											options={data.categories}
+											bind:value={$formProduct.m_product_category_id}
+										/>
+									</Form.Control>
+									<Form.FieldErrors />
+								</Form.Field> -->
+				<Form.Field form={productForm} name="unitsperpack">
+					<Form.Control>
+						{#snippet children({ props })}
+							<div class="grid grid-cols-[1fr_3fr] items-center">
+								<Form.Label>Units Per Pack</Form.Label>
+								<Input type="number" min="1" bind:value={$formProduct.unitsperpack} {...props} />
+							</div>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field form={productForm} name="unitsperpallet">
+					<Form.Control>
+						{#snippet children({ props })}
+							<div class="grid grid-cols-[1fr_3fr] items-center">
+								<Form.Label>Units Per Pallet</Form.Label>
+								<Input type="number" bind:value={$formProduct.unitsperpallet} {...props} />
+							</div>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+
+				<!-- <Form.Field form={productForm} name="net_quantity">
+									<Form.Control>
+										{#snippet children({ props })}
+										<Form.Label>Net Quantity</Form.Label>
+										<Input
+											type="number"
+											step="0.001"
+											bind:value={$formProduct.net_quantity}
+											on:input={handleNetQuantityInput}
+											{...props}
+										/>
+										{/snippet}
+									</Form.Control>
+									<Form.FieldErrors />
+								</Form.Field> -->
+				<Form.Field form={productForm} name="net_qty_uom_id">
+					<Form.Control>
+						<Form.Label>Net Quantity UoM</Form.Label>
+						<!-- <Select.Root
+											selected={data.uom?.find((v) => v.value === $formProduct.net_qty_uom_id)}
+											onSelectedChange={(v) => {
+												v && ($formProduct.net_qty_uom_id = v.value);
+											}}
+										>
+											<Select.Trigger {...props}>
+												<Select.Value placeholder="Select Net Quantity UoM" />
+											</Select.Trigger>
+											<Select.Content>
+												{#if data.uom}
+													{#each data.uom as v}
+														<Select.Item value={v.value} label={v.label} />
+													{/each}
+												{/if}
+											</Select.Content>
+										</Select.Root> -->
+						<!-- <input hidden bind:value={$formProduct.net_qty_uom_id} name={props.name} /> -->
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+
+				<Form.Field form={productForm} name="shelf_life">
+					<Form.Control>
+						{#snippet children({ props })}
+							<div class="grid grid-cols-[2fr_2fr] items-center">
+								<Form.Label>Shelf Life (days)</Form.Label>
+								<Input type="number" bind:value={$formProduct.shelf_life} {...props} />
+							</div>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field form={productForm} name="descriptionurl">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Manufacturer URL</Form.Label>
+							<Input type="url" bind:value={$formProduct.descriptionurl} {...props} />
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+
+				<!-- <Form.Field form={productForm} name="isactive">
+									<Form.Control>
+										<div class="flex items-center space-x-2">
+											<Checkbox {...props} bind:checked={$formProduct.isactive as boolean} />
+											<Form.Label>Is Active?</Form.Label>
+										</div>
+										<input name={attrs.name} value={$formProduct.isactive} hidden />
+									</Form.Control>
+								</Form.Field>
+								<Form.Field form={productForm} name="isselfservice">
+									<Form.Control>
+										<div class="flex items-center space-x-2">
+											<Checkbox {...props} bind:checked={$formProduct.isselfservice as boolean} />
+											<Form.Label>Is Self Service?</Form.Label>
+										</div>
+										<input name={attrs.name} value={$formProduct.isselfservice} hidden />
+									</Form.Control>
+								</Form.Field>
+								<Form.Field form={productForm} name="discontinued">
+									<Form.Control>
+										<div class="flex items-center space-x-2">
+											<Checkbox {...props} bind:checked={$formProduct.discontinued as boolean} />
+											<Form.Label>Discontinued?</Form.Label>
+										</div>
+										<input name={attrs.name} value={$formProduct.discontinued} hidden />
+									</Form.Control>
+								</Form.Field> -->
+			</form>
+		</div>
+		<Drawer.Footer>
+			<Button type="submit" disabled={!isProductTainted($productTainted)}>Save Product Info</Button>
+			<Button type="button" onclick={() => productForm.reset()}>Reset Changes</Button>
+			<Drawer.Close>Cancel</Drawer.Close>
+		</Drawer.Footer>
+	</Drawer.Content>
 </Drawer.Root>

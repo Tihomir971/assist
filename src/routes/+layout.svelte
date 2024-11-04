@@ -1,5 +1,7 @@
 <script>
 	import '../app.css';
+	import '@fontsource-variable/nunito-sans';
+
 	import { invalidate } from '$app/navigation';
 	import { Toaster } from '$lib/components/ui/sonner';
 

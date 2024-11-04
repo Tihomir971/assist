@@ -44,8 +44,8 @@ export const load = (async ({ depends, params, locals: { supabase }, fetch }) =>
 		stock
 	] = await Promise.all([
 		ProductService.getUom(supabase),
-		(await supabase.from('m_product_category').select('value:id, label:name').order('name')).data ||
-			[],
+		(await supabase.from('m_product_category').select('value:id::text, label:name').order('name'))
+			.data || [],
 		(
 			await supabase
 				.from('c_bpartner')
@@ -63,7 +63,8 @@ export const load = (async ({ depends, params, locals: { supabase }, fetch }) =>
 		(await supabase.from('m_warehouse').select('value:id, label:name')).data || [],
 		ProductService.getProductPurchasing(supabase, productId),
 		(await supabase.from('m_product_gtin').select('*').eq('m_product_id', productId)).data || [],
-		(await supabase.from('c_taxcategory').select('value:id, label:name').order('name')).data || [],
+		(await supabase.from('c_taxcategory').select('value:id::text, label:name').order('name'))
+			.data || [],
 		(
 			await supabase
 				.from('m_product_po')

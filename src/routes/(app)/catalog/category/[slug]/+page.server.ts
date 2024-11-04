@@ -14,7 +14,7 @@ export const load = (async ({ params, locals: { supabase } }) => {
 	if (params.slug && !category) throw error(404, 'User not found.');
 
 	const categories =
-		(await supabase.from('m_product_category').select('value:id,label:name')).data || [];
+		(await supabase.from('m_product_category').select('value:id::text,label:name')).data || [];
 
 	const formCategory = await superValidate(category, zod(crudProductCategorySchema));
 
@@ -26,12 +26,11 @@ export const load = (async ({ params, locals: { supabase } }) => {
 
 export const actions = {
 	default: async ({ request, locals: { supabase } }) => {
-		const formData = await request.formData();
-		const form = await superValidate(formData, zod(crudProductCategorySchema));
+		const form = await superValidate(request, zod(crudProductCategorySchema));
 		if (!form.valid) return fail(400, { form });
 
-		if (form.data.id) {
-			if (formData.has('delete')) {
+		/* 	if (form.data.id) {
+			if (form.has('delete')) {
 				console.log('Deleting Category', form.data.id);
 				// DELETE
 				const { error: deleteProductCategoryError } = await supabase
@@ -58,6 +57,6 @@ export const actions = {
 				}
 			}
 		}
-		return { form };
+		return { form }; */
 	}
 } satisfies Actions;

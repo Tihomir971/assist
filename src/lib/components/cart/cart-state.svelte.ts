@@ -14,16 +14,37 @@ export class ShoppingCartState {
 
 	private loadFromLocalStorage() {
 		if (typeof window !== 'undefined') {
-			const storedItems = localStorage.getItem(STORAGE_KEY);
-			if (storedItems) {
-				this.items = JSON.parse(storedItems);
+			try {
+				const storedItems = localStorage.getItem(STORAGE_KEY);
+				if (storedItems) {
+					const parsedItems = JSON.parse(storedItems);
+					// Validate that parsedItems is an array
+					if (Array.isArray(parsedItems)) {
+						this.items = parsedItems;
+					}
+				}
+			} catch (error) {
+				console.error('Error loading cart from localStorage:', error);
+				// Reset to empty array if there's an error
+				this.items = [];
 			}
 		}
 	}
 
 	private saveToLocalStorage() {
 		if (typeof window !== 'undefined') {
-			localStorage.setItem(STORAGE_KEY, JSON.stringify(this.items));
+			try {
+				// Only store the raw array data, not the reactive state
+				const itemsToStore = this.items.map((item) => ({
+					id: item.id,
+					name: item.name,
+					quantity: item.quantity,
+					sku: item.sku
+				}));
+				localStorage.setItem(STORAGE_KEY, JSON.stringify(itemsToStore));
+			} catch (error) {
+				console.error('Error saving cart to localStorage:', error);
+			}
 		}
 	}
 

@@ -1,12 +1,16 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import * as XLSX from 'xlsx';
-	import { onDestroy, onMount } from 'svelte';
-	import * as Table from '$lib/components/ui/table';
 	import type { Product, Mapping, Supplier, ProductToUpdate } from './types';
+	import { browser } from '$app/environment';
+	import { onDestroy, onMount } from 'svelte';
+	import * as XLSX from 'xlsx';
+	//Components
+	import { Button } from '$lib/components/ui/button/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
+
 	import { isValidGTIN } from '$lib/scripts/gtin';
 	export let data;
+
 	$: ({ supabase } = data);
 
 	let fileInput: HTMLInputElement | null = null;
@@ -481,7 +485,16 @@
 
 <div class="container">
 	<h1 class="mb-4 text-2xl font-bold">Product Data Upload</h1>
-
+	<!-- <Select.Root type="single">
+		<Select.Trigger class="w-[180px]">
+			<Select.Value placeholder="Theme" />
+		</Select.Trigger>
+		<Select.Content>
+			<Select.Item value="light">Light</Select.Item>
+			<Select.Item value="dark">Dark</Select.Item>
+			<Select.Item value="system">System</Select.Item>
+		</Select.Content>
+	</Select.Root> -->
 	<div class="mb-4">
 		<label class="mb-2 block" for="supplier">Select Supplier:</label>
 		<select

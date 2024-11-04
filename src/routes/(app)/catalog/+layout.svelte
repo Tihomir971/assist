@@ -102,7 +102,7 @@
 						<Tooltip.Root>
 							<Tooltip.Trigger id="edit_tooltip">
 								<Button variant="ghost" size="icon" onclick={editCategory}>
-									<PhNotePencil size="24" />
+									<PhNotePencil class="!size-6" />
 									<span class="sr-only">Edit</span>
 								</Button>
 							</Tooltip.Trigger>
@@ -112,8 +112,8 @@
 					<Tooltip.Provider>
 						<Tooltip.Root>
 							<Tooltip.Trigger id="create_tooltip">
-								<Button variant="ghost" size="icon">
-									<PhFolderPlus size="24" />
+								<Button variant="outline" size="icon">
+									<PhFolderPlus class="!size-6" />
 									<span class="sr-only">Create Category</span>
 								</Button>
 							</Tooltip.Trigger>
@@ -131,7 +131,7 @@
 							<Tooltip.Root>
 								<Tooltip.Trigger id="delete_tooltip">
 									<Form.Button variant="ghost" size="icon">
-										<PhFolderMinus size="24" />
+										<PhFolderMinus class="!size-6" />
 										<span class="sr-only">Delete Category</span>
 									</Form.Button>
 								</Tooltip.Trigger>
@@ -143,7 +143,7 @@
 						<Tooltip.Root>
 							<Tooltip.Trigger id="collaps_tooltip">
 								<Button variant="ghost" size="icon">
-									<PhArrowsInLineVertical size="24" />
+									<PhArrowsInLineVertical class="!size-6" />
 									<span class="sr-only">Collaps Tree</span>
 								</Button>
 							</Tooltip.Trigger>

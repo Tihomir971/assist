@@ -66,18 +66,28 @@ const rightAlignSnippet = createRawSnippet<[string]>((getValue) => {
 const colHelp = createColumnHelper<FlattenedProduct>();
 export const columnDefs = [
 	colHelp.display({
-		header: 'Select',
+		id: 'select',
+		header: ({ table }) =>
+			renderComponent(TableCheckbox, {
+				checked:
+					table.getIsAllPageRowsSelected() ||
+					(table.getIsSomePageRowsSelected() && 'indeterminate'),
+				onchange: () => {
+					table.toggleAllRowsSelected();
+				}
+			}),
 		cell: ({ row }) =>
 			renderComponent(TableCheckbox, {
 				checked: row.getIsSelected(),
 				onchange: () => {
 					row.toggleSelected();
 				}
-			})
+			}),
+		enableHiding: false
 	}),
-	colHelp.accessor('sku', { header: 'SKU' }),
+	colHelp.accessor('sku', { header: 'SKU', enableHiding: false }),
 	colHelp.accessor('mpn', { header: 'MPN' }),
-	colHelp.accessor('name', { header: 'Name' }),
+	colHelp.accessor('name', { header: 'Name', enableHiding: false }),
 	colHelp.accessor('taxRate', {
 		header: 'Tax',
 		cell: ({ row }) => {
@@ -167,6 +177,15 @@ export const columnDefs = [
 		cell: ({ row }) => {
 			return renderSnippet(rightAlignSnippet, formatNumber(parseFloat(row.getValue('priceGros'))));
 		}
+	}),
+
+	colHelp.accessor('id', {
+		header: '',
+		cell: ({ row }) => {
+			return renderComponent(DataTableActions, { id: row.original.id.toString() });
+		},
+		enableSorting: false,
+		enableHiding: false
 	})
 ];
 /* export const columns: ColumnDef<FlattenedProduct>[] = [

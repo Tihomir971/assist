@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { formatDateTime } from '$lib/style/locale';
-
+	import * as Select from '$lib/components/ui/select/index.js';
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';
-	import ComboBox2 from '$lib/components/melt/ComboBox2.svelte';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
 	import { crudProductCategorySchema } from '../zod.schema.js';
+	import Button from '$lib/components/ui/button/button.svelte';
 
 	let { data } = $props();
 
@@ -19,6 +19,10 @@
 		validators: zodClient(crudProductCategorySchema)
 	});
 	const { form: formCategoryData, enhance: enhanceCategory, message } = formCategory;
+	let triggerName = $derived(
+		data.categories.find((category) => category.value === $formCategoryData.parent_id?.toString())
+			?.label
+	);
 </script>
 
 <form method="post" use:enhanceCategory>
@@ -45,25 +49,48 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>Description</Form.Label>
-							<Textarea {...props} bind:value={$formCategoryData.description as string | null} />
+							<Textarea {...props} bind:value={$formCategoryData.description} />
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
-				<Form.Field form={formCategory} name="parent_id">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label>Parent Category</Form.Label>
-							<ComboBox2
-								{...props}
-								options={data.categories}
-								bind:value={$formCategoryData.parent_id}
-							/>
-						{/snippet}
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field>
-				{JSON.stringify($formCategoryData.parent_id)}
+
+				<div>
+					<Form.Field form={formCategory} name="parent_id">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Email</Form.Label>
+								<Select.Root
+									type="single"
+									value={$formCategoryData.parent_id?.toString()}
+									name={props.name}
+									onValueChange={(v) => {
+										$formCategoryData.parent_id = Number.parseInt(v);
+									}}
+								>
+									<Select.Trigger {...props}>
+										{triggerName}
+									</Select.Trigger>
+									<Select.Content>
+										{#each data.categories as category}
+											<Select.Item value={category.value} label={category.label} />
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							{/snippet}
+						</Form.Control>
+						<Form.Description>
+							You can manage email address in your <a href="/examples/forms">email settings</a>.
+						</Form.Description>
+						<Form.FieldErrors />
+					</Form.Field>
+					<Button
+						variant="default"
+						onclick={() => {
+							$formCategoryData.parent_id = null;
+						}}>Save</Button
+					>
+				</div>
 			</Card.Content>
 			<Card.Footer class="flex justify-between">
 				{#if $formCategoryData.id}

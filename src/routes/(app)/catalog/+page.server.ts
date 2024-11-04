@@ -194,7 +194,6 @@ export const actions = {
 			.from('c_channel_map_tax')
 			.select('c_taxcategory_id,resource_id')
 			.eq('c_channel_id', 1);
-		console.log('erpProduct:', erpProduct);
 
 		erpProduct.forEach(async (product) => {
 			// Find product ID using SKU

@@ -1,66 +1,62 @@
-:where(html) {
-	--link: var(--indigo-7);
-	--link-visited: var(--purple-7);
-	--text-1: var(--gray-12);
-	--text-2: var(--gray-7);
-	--surface-1: var(--gray-0);
-	--surface-2: var(--gray-2);
-	--surface-3: var(--gray-3);
-	--surface-4: var(--gray-4);
-	--scrollthumb-color: var(--gray-7);
-	-webkit-text-size-adjust: none;
-	accent-color: var(--brand, var(--link));
-	background-color: var(--surface-1);
-	block-size: 100%;
-	caret-color: var(--brand, var(--link));
-	color: var(--text-1);
+:where(:root) {
 	color-scheme: light;
-	font-family: var(--font-sans);
-	line-height: var(--font-lineheight-3);
-	scrollbar-color: var(--scrollthumb-color) transparent;
+	--palette-hue: 270;
+	--palette-hue-rotate-by: -5;
+	--palette-chroma: 0.1;
+	--link: oklch(50% 100% var(--palette-hue));
+	--link-visited: oklch(50% 100% calc(var(--palette-hue) * 1.2));
+	--surface-1: white;
+	--surface-2: var(--color-1);
+	--surface-3: var(--color-3);
+	--surface-document: var(--color-4);
+	--well-1: var(--color-5);
+	--well-2: var(--color-6);
+	--text-1: var(--color-16);
+	--text-2: var(--color-12);
+	--scrollthumb-color: var(--text-2);
 }
-@media (dynamic-range: high) {
-	@supports (color: color(display-p3 0 0 0)) {
-		:where(html) {
-			--link: color(display-p3 0.1 0.4 1);
-			--link-visited: color(display-p3 0.6 0.2 1);
-		}
-	}
-}
-:where(html) :where(dialog) {
+:where(:root) :where(dialog) {
 	background-color: var(--surface-1);
 }
-:where(html) :where(button, .btn) {
+:where(:root) :where(button, .btn) {
 	--_highlight: var(--_highlight-light);
 	--_bg: var(--_bg-light);
 	--_ink-shadow: var(--_ink-shadow-light);
 }
-:where(html) :where(button, .btn) :where([type='reset']) {
-	--_text: var(--red-6);
-	--_border: var(--red-3);
+:where(:root) :where(button, .btn) :where([type='reset']) {
+	--_text: var(--red-6, #fa5252);
+	--_border: var(--red-3, #ffa8a8);
 }
-:where(html)
+:where(:root)
 	:where(button, .btn, input:is([type='button'], [type='submit'], [type='reset']))[disabled] {
-	--_text: var(--gray-6);
+	box-shadow: none;
 }
-:where(html) :where(textarea, select, input:not([type='button'], [type='submit'], [type='reset'])) {
+:where(:root)
+	:where(textarea, select, input:not([type='button'], [type='submit'], [type='reset'])) {
 	background-color: var(--surface-2);
 }
 @media (prefers-color-scheme: dark) {
-	:where(html) {
-		--link: var(--indigo-3);
-		--link-visited: var(--purple-3);
-		--text-1: var(--gray-1);
-		--text-2: var(--gray-4);
-		--surface-1: var(--gray-9);
-		--surface-2: var(--gray-8);
-		--surface-3: var(--gray-7);
-		--surface-4: var(--gray-6);
-		--scrollthumb-color: var(--gray-6);
-		--shadow-strength: 10%;
-		--shadow-color: 220 40% 2%;
+	:where(:root) {
 		color-scheme: dark;
+		--link: oklch(90% 80% var(--palette-hue));
+		--link-visited: oklch(90% 80% calc(var(--palette-hue) * 1.2));
+		--surface-1: var(--color-11);
+		--surface-2: var(--color-12);
+		--surface-3: var(--color-13);
+		--surface-document: var(--color-14);
+		--well-1: var(--color-15);
+		--well-2: var(--color-16);
+		--text-1: var(--color-1);
+		--text-2: var(--color-5);
+		--scrollthumb-color: var(--text-2);
 	}
+}
+:where(:root) {
+	scrollbar-color: var(--scrollthumb-color) transparent;
+	accent-color: var(--brand, var(--link));
+	caret-color: var(--brand, var(--link));
+	color: var(--text-1);
+	background-color: var(--surface-document);
 }
 :where(a[href]) {
 	color: var(--brand, var(--link));
@@ -72,18 +68,32 @@
 	outline-color: var(--brand, var(--link));
 }
 *,
-:after,
-:before {
+:before,
+:after {
 	box-sizing: border-box;
+}
+:where(:root) {
+	--transition-focus: outline-offset 0.145s var(--ease-2);
+}
+@supports (transition-timing-function: linear(0, 1)) {
+	:where(:root) {
+		--transition-focus: outline-offset 0.145s var(--ease-spring-3);
+	}
 }
 :where(:not(dialog)) {
 	margin: 0;
 }
 :where(:not(fieldset, progress, meter)) {
-	background-origin: border-box;
 	background-repeat: no-repeat;
+	background-origin: border-box;
 	border-style: solid;
 	border-width: 0;
+}
+:where(html) {
+	font-family: var(--font-sans);
+	-webkit-text-size-adjust: none;
+	block-size: 100%;
+	line-height: 1.5;
 }
 @media (prefers-reduced-motion: no-preference) {
 	:where(html) {
@@ -92,7 +102,7 @@
 }
 @media (prefers-reduced-motion: no-preference) {
 	:where(:focus-visible) {
-		transition: outline-offset 145ms var(--ease-2);
+		transition: var(--transition-focus);
 	}
 	:where(:not(:active):focus-visible) {
 		transition-duration: 0.25s;
@@ -105,9 +115,9 @@
 	min-block-size: 100%;
 }
 :where(h1, h2, h3, h4, h5, h6) {
-	text-wrap: balance;
+	line-height: 1.25;
 	font-weight: var(--font-weight-9);
-	line-height: var(--font-lineheight-1);
+	text-wrap: balance;
 }
 :where(h1) {
 	font-size: var(--font-size-8);
@@ -135,7 +145,7 @@
 :where(a, u, ins, abbr) {
 	text-underline-offset: 1px;
 }
-@supports (-moz-appearance: none) {
+@supports ((-moz-appearance: none)) {
 	:where(a, u, ins, abbr) {
 		text-underline-offset: 2px;
 	}
@@ -156,7 +166,7 @@
 		label[for],
 		select,
 		summary,
-		[tabindex]:not([tabindex*='-'])
+		[tabindex]:not([tabindex*='\-'])
 	) {
 	cursor: pointer;
 }
@@ -169,24 +179,21 @@
 		select,
 		summary,
 		textarea,
-		[tabindex]:not([tabindex*='-'])
+		[tabindex]:not([tabindex*='\-'])
 	) {
-	-webkit-tap-highlight-color: transparent;
 	touch-action: manipulation;
-}
-:where(a) {
-	margin-block: calc(var(--size-1) * -1);
-	margin-inline: calc(var(--size-1) * -1);
-	padding-block: var(--size-1);
-	padding-inline: var(--size-1);
+	-webkit-tap-highlight-color: transparent;
 }
 :where(a):where([href]) {
-	text-decoration-color: var(--indigo-2);
+	-webkit-text-decoration-color: var(--link);
+	text-decoration-color: var(--link);
 }
 :where(a):where([href]):where(:visited) {
-	text-decoration-color: var(--purple-2);
+	-webkit-text-decoration-color: var(--link-visited);
+	text-decoration-color: var(--link-visited);
 }
 :where(a):where(:not(:hover)) {
+	-webkit-text-decoration: inherit;
 	text-decoration: inherit;
 }
 :where(img, svg, video, canvas, audio, iframe, embed, object) {
@@ -196,33 +203,46 @@
 	block-size: auto;
 	max-inline-size: 100%;
 }
-:where(input, button, textarea, select),
-:where(input[type='file'])::-webkit-file-upload-button {
-	color: inherit;
+:where(input, button, textarea, select) {
 	font: inherit;
 	font-size: inherit;
+	color: inherit;
+	letter-spacing: inherit;
+}
+:where(input[type='file'])::-webkit-file-upload-button {
+	font: inherit;
+	font-size: inherit;
+	color: inherit;
 	letter-spacing: inherit;
 }
 ::placeholder {
-	color: var(--gray-7);
+	color: var(--color-8);
 	opacity: 0.75;
 }
 :where(input:not([type='range']), textarea) {
-	padding-block: var(--size-1);
 	padding-inline: var(--size-2);
+	padding-block: var(--size-1);
 }
 :where(select) {
-	padding-block: 0.75ch;
-	padding-inline: var(--size-relative-4) 0;
+	padding-inline: var(--size-4) 0;
+	padding-block: var(--size-2);
+	field-sizing: content;
 }
 :where(textarea, select, input:not([type='button'], [type='submit'], [type='reset'])) {
-	background-color: var(--surface-2);
+	background-color: var(--well-1);
 	border-radius: var(--radius-2);
 }
 :where(textarea) {
 	resize: block;
+	field-sizing: content;
+	min-block-size: 3rlh;
+	min-inline-size: var(--size-content-1);
+	max-inline-size: var(--size-content-2);
+	min-block-size: 3lh;
+	max-block-size: 80svh;
 }
 :where(input[type='checkbox'], input[type='radio']) {
+	background-color: var(--well-1);
 	block-size: var(--size-3);
 	inline-size: var(--size-3);
 }
@@ -236,23 +256,23 @@
 	white-space: nowrap;
 }
 :where(pre) {
-	direction: ltr;
-	max-inline-size: max-content;
-	min-inline-size: 0;
 	white-space: pre;
 	writing-mode: lr;
+	direction: ltr;
+	min-inline-size: 0;
+	max-inline-size: max-content;
 }
 :where(:not(pre) > code) {
+	padding: var(--size-1) var(--size-2);
 	background: var(--surface-2);
 	border-radius: var(--radius-2);
-	padding: var(--size-1) var(--size-2);
 	writing-mode: lr;
 }
 :where(kbd, var) {
+	padding: var(--size-1) var(--size-2);
+	border-width: var(--border-size-1);
 	border-color: var(--surface-4);
 	border-radius: var(--radius-2);
-	border-width: var(--border-size-1);
-	padding: var(--size-1) var(--size-2);
 }
 :where(mark) {
 	border-radius: var(--radius-2);
@@ -268,8 +288,8 @@
 	max-inline-size: var(--size-content-2);
 }
 :where(p) {
-	text-wrap: pretty;
 	max-inline-size: var(--size-content-3);
+	text-wrap: pretty;
 }
 :where(dt, summary) {
 	font-weight: var(--font-weight-7);
@@ -282,102 +302,96 @@
 	max-inline-size: var(--size-content-1);
 }
 :where(hr) {
-	background-color: var(--surface-3);
-	height: var(--border-size-2);
 	margin-block: var(--size-fluid-5);
+	height: var(--border-size-2);
+	background-color: var(--surface-3);
 }
 :where(figure) {
-	display: grid;
 	gap: var(--size-2);
 	place-items: center;
+	display: grid;
 }
 :where(figure) > :where(figcaption) {
-	text-wrap: balance;
 	font-size: var(--font-size-1);
+	text-wrap: balance;
 }
 :where(blockquote, :not(blockquote) > cite) {
 	border-inline-start-width: var(--border-size-3);
 }
 :where(blockquote) {
-	display: grid;
 	gap: var(--size-3);
-	max-inline-size: var(--size-content-2);
 	padding-block: var(--size-3);
 	padding-inline: var(--size-4);
+	max-inline-size: var(--size-content-2);
+	display: grid;
 }
 :where(:not(blockquote) > cite) {
 	padding-inline-start: var(--size-2);
 }
 :where(summary) {
 	background: var(--surface-3);
-	border-radius: var(--radius-2);
-	margin: calc(var(--size-2) * -1) calc(var(--size-3) * -1);
 	padding: var(--size-2) var(--size-3);
+	margin: calc(var(--size-2) * -1) calc(var(--size-3) * -1);
+	border-radius: var(--radius-2);
 }
 :where(details) {
+	padding-inline: var(--size-3);
+	padding-block: var(--size-2);
 	background: var(--surface-2);
 	border-radius: var(--radius-2);
-	padding-block: var(--size-2);
-	padding-inline: var(--size-3);
 }
 :where(details[open] > summary) {
+	margin-bottom: var(--size-2);
 	border-end-end-radius: 0;
 	border-end-start-radius: 0;
-	margin-bottom: var(--size-2);
 }
 :where(fieldset) {
-	border: var(--border-size-1) solid var(--surface-4);
 	border-radius: var(--radius-2);
+	border: var(--border-size-1) solid var(--surface-4);
 }
 :where(del) {
-	background: var(--red-9);
-	color: var(--red-2);
+	background: var(--red-9, #c92a2a);
+	color: var(--red-2, #ffc9c9);
 }
 :where(ins) {
-	background: var(--green-9);
-	color: var(--green-1);
+	background: var(--green-9, #2b8a3e);
+	color: var(--green-1, #d3f9d8);
 }
 :where(abbr) {
-	text-decoration-color: var(--blue-5);
+	-webkit-text-decoration-color: var(--blue-5, #339af0);
+	text-decoration-color: var(--blue-5, #339af0);
 }
 :where(dialog) {
 	background-color: var(--surface-1);
+	color: inherit;
 	border-radius: var(--radius-3);
 	box-shadow: var(--shadow-6);
-	color: inherit;
 }
 :where(dialog)::backdrop {
+	-webkit-backdrop-filter: blur(25px);
 	backdrop-filter: blur(25px);
-}
-:where(html[\:has\(dialog\[open\]\)]) {
-	overflow: hidden;
 }
 :where(html:has(dialog[open])) {
 	overflow: hidden;
 }
 :where(menu) {
-	display: flex;
 	gap: var(--size-3);
 	padding-inline-start: 0;
+	display: flex;
 }
 :where(sup) {
 	font-size: 0.5em;
 }
 :where(table) {
-	--nice-inner-radius: calc(var(--radius-3) - 2px);
-	background: var(--surface-2);
 	border: 1px solid var(--surface-2);
+	background: var(--surface-2);
 	border-radius: var(--radius-3);
+	--nice-inner-radius: calc(var(--radius-3) - 2px);
+	width: -moz-fit-content;
 	width: fit-content;
-}
-:where(table[\:not-has\(tfoot\)] tr:last-child td:first-child) {
-	border-bottom-left-radius: var(--nice-inner-radius);
 }
 :where(table:not(:has(tfoot)) tr:last-child td:first-child) {
 	border-bottom-left-radius: var(--nice-inner-radius);
-}
-:where(table[\:not-has\(tfoot\)] tr:last-child td:last-child) {
-	border-bottom-right-radius: var(--nice-inner-radius);
 }
 :where(table:not(:has(tfoot)) tr:last-child td:last-child) {
 	border-bottom-right-radius: var(--nice-inner-radius);
@@ -395,20 +409,20 @@
 	border-end-end-radius: var(--nice-inner-radius);
 }
 :where(th) {
-	background-color: var(--surface-2);
 	color: var(--text-1);
+	background-color: var(--surface-2);
 }
-:where(table :is(a, button, [contenteditable]):is(:focus-visible)) {
+:where(table :is(a, button, [contenteditable]):focus-visible) {
 	outline-offset: -2px;
 }
 :where(td) {
-	text-wrap: pretty;
 	background: var(--surface-1);
 	max-inline-size: var(--size-content-2);
+	text-wrap: pretty;
 }
 :where(td, th) {
-	padding: var(--size-2);
 	text-align: left;
+	padding: var(--size-2);
 }
 :where(:is(td, th):not([align])) {
 	text-align: center;
@@ -418,11 +432,10 @@
 }
 :where(table tr:hover td),
 :where(tbody tr:nth-child(2n):hover td) {
-	background-color: var(--gray-10);
+	background-color: var(--color-10);
 }
 @media (prefers-color-scheme: light) {
-	:where(table tr:hover td),
-	:where(tbody tr:nth-child(2n):hover td) {
+	:is(:where(table tr:hover td), :where(tbody tr:nth-child(2n):hover td)) {
 		background-color: #fff;
 	}
 }
@@ -440,7 +453,11 @@
 	:where(dialog) {
 		background-color: var(--surface-2);
 	}
+	:where(html) {
+		--shadow-strength: 10%;
+		--shadow-color: 220 40% 2%;
+	}
 	::placeholder {
-		color: var(--gray-6);
+		color: var(--color-6);
 	}
 }

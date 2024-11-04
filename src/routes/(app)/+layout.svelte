@@ -15,7 +15,7 @@
 
 <div class="grid h-screen w-screen grid-rows-[auto_1fr] overflow-hidden">
 	<div class="h-full">
-		<Header supabase={data.supabase}></Header>
+		<Header supabase={data.supabase} profile={data.profile}></Header>
 	</div>
 	<div class="grid h-full w-full grid-cols-1 overflow-hidden md:grid-cols-[auto_1fr]">
 		<div class="hidden md:block">

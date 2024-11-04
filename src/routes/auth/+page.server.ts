@@ -45,7 +45,7 @@ export const actions = {
 				}
 			});
 		}
-		throw redirect(303, '/dashboard');
+		redirect(303, '/dashboard');
 		/* 		return { form }; */
 	},
 

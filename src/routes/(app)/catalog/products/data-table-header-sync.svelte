@@ -1,40 +1,19 @@
 <script lang="ts">
-	import type { TableViewModel } from 'svelte-headless-table';
-	import { buttonVariants } from '$lib/components/ui/button/index.js';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import ChevronDown from 'lucide-svelte/icons/chevron-down';
-	import { enhance } from '$app/forms';
-	import { toast } from 'svelte-sonner';
+	import type { RowSelectionState } from '@tanstack/table-core';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { invalidate } from '$app/navigation';
-	import type { FlattenedProduct } from '../../+page.server.js';
-	export let tableModel: TableViewModel<FlattenedProduct>;
+	import { enhance } from '$app/forms';
+	//Components
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { toast } from 'svelte-sonner';
+	//Icons
+	import ChevronDown from 'lucide-svelte/icons/chevron-down';
 
-	const { pluginStates } = tableModel;
-	const { selectedDataIds } = pluginStates.select;
+	let { rowSelectionState = $bindable() }: { rowSelectionState: RowSelectionState } = $props();
+	let strRowSelectionState = $derived(Object.keys(rowSelectionState).map((x) => x));
 
-	const submitSyncStock: SubmitFunction = ({}) => {
-		return async ({ result }) => {
-			if (result.type === 'success') {
-				// do something...
-				toast.success('Replenish ERP Sync', {
-					description: `Successfully updated!`,
-					action: {
-						label: 'Undo',
-						onClick: () => console.info('Undo')
-					}
-				});
-				$selectedDataIds = {};
-				invalidate('catalog:products');
-			} else if (result.type === 'error') {
-				toast.error('Replenish ERP Sync', {
-					description: `Something is wrong ${result.error}`
-				});
-			}
-		};
-	};
-
-	const submitCenotekaSync: SubmitFunction = ({}) => {
+	/*	const submitCenotekaSync: SubmitFunction = ({}) => {
 		return async ({ result }) => {
 			console.log('result', result);
 			if (result.type === 'success') {
@@ -66,15 +45,40 @@
 			}
 		};
 	};
-	let formElErpSyncProd: HTMLFormElement;
 	let formElExcel: HTMLFormElement;
 	let formElIdea: HTMLFormElement;
 	let formElCenoteka: HTMLFormElement;
-
-	$: strSelectedDataIds = Object.keys($selectedDataIds).map((x) => parseInt(x));
+	
+	$: strSelectedDataIds = Object.keys($selectedDataIds).map((x) => parseInt(x)); */
+	let formElErpSyncProd: HTMLFormElement;
 </script>
 
 <DropdownMenu.Root>
+	<DropdownMenu.Trigger>
+		{#snippet child({ props })}
+			<Button {...props} variant="outline">Sync <ChevronDown class="ml-2 size-4" /></Button>
+		{/snippet}
+	</DropdownMenu.Trigger>
+	<DropdownMenu.Content>
+		<DropdownMenu.Group>
+			<DropdownMenu.Item
+				onSelect={() => {
+					if (formElErpSyncProd) {
+						formElErpSyncProd.requestSubmit();
+					}
+				}}
+			>
+				Get ERP Products
+			</DropdownMenu.Item>
+
+			<DropdownMenu.Separator />
+			<DropdownMenu.Item>Get Cenoteka</DropdownMenu.Item>
+			<DropdownMenu.Item>Get Idea</DropdownMenu.Item>
+		</DropdownMenu.Group>
+	</DropdownMenu.Content>
+</DropdownMenu.Root>
+
+<!-- <DropdownMenu.Root>
 	<DropdownMenu.Trigger class={buttonVariants({ variant: 'outline' })}>
 		ERP <ChevronDown class="ml-2 h-4 w-4" />
 	</DropdownMenu.Trigger>
@@ -85,7 +89,6 @@
 			use:enhance={submitSyncStock}
 			bind:this={formElErpSyncProd}
 		>
-			<!-- <input type="hidden" name="ids" value={JSON.stringify(strSelectedDataIds)} /> -->
 			<input type="hidden" name="ids" value={strSelectedDataIds} />
 			<DropdownMenu.Item
 				onclick={() => {
@@ -129,4 +132,35 @@
 			</DropdownMenu.Item>
 		</form>
 	</DropdownMenu.Content>
-</DropdownMenu.Root>
+</DropdownMenu.Root> -->
+
+<form
+	bind:this={formElErpSyncProd}
+	method="post"
+	action="/catalog?/getErpInfo"
+	class="hidden"
+	use:enhance={() => {
+		return async ({ result }) => {
+			console.log('result', result);
+
+			if (result.type === 'success') {
+				// do something...
+				toast.success('Replenish ERP Sync', {
+					description: `Successfully updated!`,
+					action: {
+						label: 'Undo',
+						onClick: () => console.info('Undo')
+					}
+				});
+				rowSelectionState = {};
+				invalidate('catalog:products');
+			} else if (result.type === 'error') {
+				toast.error('Replenish ERP Sync', {
+					description: `Something is wrong ${result.error}`
+				});
+			}
+		};
+	}}
+>
+	<input type="hidden" name="ids" value={strRowSelectionState} />
+</form>

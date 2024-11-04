@@ -346,23 +346,18 @@
 
 	function addToCart(): void {
 		if (browser) {
-			console.log('Shopping Cart State:', shoppingCartState); // Add this line to log the state
-			console.log('All rows:', $rows);
-
 			const selectedProducts = $rows.filter((row) => {
 				if (row.isData()) {
 					return $selectedDataIds[row.original.id];
 				}
 				return false;
 			});
-			console.log('Selected products:', selectedProducts);
 
 			let cartItems: CartItem[] = JSON.parse(localStorage.getItem('cartItems') || '[]');
 
 			selectedProducts.forEach((row) => {
 				if (row.isData()) {
 					const product = row.original;
-					console.log('Adding product to cart:', product);
 					const existingItem = cartItems.find((item) => item.id === product.id);
 					if (existingItem) {
 						existingItem.quantity += 1;
@@ -441,7 +436,7 @@
 	</Card.Header>
 	<Card.Content class="grid h-full w-full grid-rows-[auto_1fr] overflow-hidden p-2">
 		<Table.Root {...$tableAttrs} class="table-auto">
-			<Table.Header class="sticky top-0 z-10 bg-background">
+			<Table.Header class="bg-background sticky top-0 z-10">
 				{#each $headerRows as headerRow}
 					<Subscribe rowAttrs={headerRow.attrs()}>
 						<Table.Row>
@@ -483,7 +478,7 @@
 					</Table.Row>
 				{/if}
 			</Table.Body>
-			<Table.Footer class="sticky bottom-0 bg-background p-2 text-muted-foreground">
+			<Table.Footer class="bg-background text-muted-foreground sticky bottom-0 p-2">
 				<Table.Row>
 					<Table.Cell colspan={columns.length} class="text-center"
 						>{Object.keys($selectedDataIds).length} of {$rows.length} row(s) selected.</Table.Cell

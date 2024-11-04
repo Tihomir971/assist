@@ -71,6 +71,6 @@ export const addProductPurchasing = async (
 };
 
 export const getUom = async (supabase: SupabaseClient<Database>) => {
-	const { data } = await supabase.from('c_uom').select('value:id, label:name').order('name');
-	return data;
+	const { data } = await supabase.from('c_uom').select('value:id::text, label:name').order('name');
+	return data || [];
 };

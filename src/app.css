@@ -1,18 +1,39 @@
+@import 'https://unpkg.com/open-props@beta.5/hues.oklch.css';
+@import 'https://unpkg.com/open-props@beta.5/palette.css';
+
 @import 'tailwindcss';
 
+/* @import '@fontsource-variable/inter'; */
+
 @theme {
-	--color-background: hsl(var(--background));
-	--color-foreground: hsl(var(--foreground));
-	--color-muted: hsl(var(--muted));
+	--font-family-sans: 'Nunito Sans Variable', ui-sans-serif, system-ui, sans-serif,
+		'Apple Color Emoji', 'Segoe UI Emoji';
+
+	--color-link: var(-link);
+	--color-link-visited: var(-link-visited);
+	--color-surface-1: var(-surface-11);
+	--color-surface-2: var(--surface-2);
+	--color-surface-3: var(--surface-3);
+	--color-surface-document: var(--surface-document);
+	--color-well-1: var(--well-1);
+	--color-well-2: var(--well-2);
+	--color-ink-1: var(--text-1);
+	--color-ink-2: var(--text-2);
+
+	--color-background: var(--surface-document);
+	--color-foreground: var(--text-1);
+	--color-muted: var(--surface-2);
 	--color-muted-foreground: hsl(var(--muted-foreground));
 	--color-popover: hsl(var(--popover));
 	--color-popover-foreground: hsl(var(--popover-foreground));
-	--color-card: hsl(var(--card));
-	--color-card-foreground: hsl(var(--card-foreground));
-	--color-border: hsl(var(--border));
-	--color-input: hsl(var(--input));
-	--color-primary: hsl(var(--primary));
-	--color-primary-foreground: hsl(var(--primary-foreground));
+	--color-card: var(--surface-3);
+	--color-card-foreground: var(--text-1);
+	/* Default border color */
+	--color-border: var(--surface-2);
+	/* Border color for inputs such as <Input />, <Select />, <Textarea /> */
+	--color-input: var(--surface-1);
+	--color-primary: oklch(70% 100% var(--palette-hue));
+	--color-primary-foreground: hsl(var(--text-1));
 	--color-secondary: hsl(var(--secondary));
 	--color-secondary-foreground: hsl(var(--secondary-foreground));
 	--color-accent: hsl(var(--accent));
@@ -32,18 +53,44 @@
 }
 
 :root {
-	--background: 0 0% 100%;
-	--foreground: 224 71.4% 4.1%;
-	--muted: 220 14.3% 95.9%;
+	color-scheme: light dark;
+
+	/* --palette-hue: light-dark(var(--oklch-blue), var(--oklch-purple)); */
+	--palette-hue: var(--oklch-purple);
+	/* --palette-hue-rotate-by: light-dark(-5, none); */
+	--palette-hue-rotate-by: -5;
+	/* --palette-chroma: light-dark(0.1, 0.15); */
+	--palette-chroma: 0.1;
+
+	--link: light-dark(oklch(50% 100% var(--palette-hue)), oklch(90% 80% var(--palette-hue)));
+	--link-visited: light-dark(
+		oklch(50% 100% calc(var(--palette-hue) * 1.2)),
+		oklch(90% 80% calc(var(--palette-hue) * 1.2))
+	);
+
+	--surface-1: light-dark(white, var(--color-11));
+	--surface-2: light-dark(var(--color-1), var(--color-12));
+	--surface-3: light-dark(var(--color-3), var(--color-13));
+	--surface-document: light-dark(var(--color-4), var(--color-14));
+	--well-1: light-dark(var(--color-5), var(--color-15));
+	--well-2: light-dark(var(--color-6), var(--color-16));
+
+	--text-1: light-dark(var(--color-16), var(--color-1));
+	--text-2: light-dark(var(--color-12), var(--color-5));
+
+	--scrollthumb-color: var(--text-2);
+
+	scrollbar-color: var(--scrollthumb-color) transparent;
+	scrollbar-width: auto;
+	accent-color: var(--brand, var(--link));
+	caret-color: var(--brand, var(--link));
+	color: var(--text-1);
+	background-color: var(--surface-document);
+
 	--muted-foreground: 220 8.9% 46.1%;
 	--popover: 0 0% 100%;
 	--popover-foreground: 224 71.4% 4.1%;
-	--card: 0 0% 100%;
-	--card-foreground: 224 71.4% 4.1%;
-	--border: 220 13% 91%;
-	--input: 220 13% 91%;
-	--primary: 220.9 39.3% 11%;
-	--primary-foreground: 210 20% 98%;
+	--primary: light-dark('220.9 39.3% 11%', '210 20% 98%');
 	--secondary: 220 14.3% 95.9%;
 	--secondary-foreground: 220.9 39.3% 11%;
 	--accent: 220 14.3% 95.9%;
@@ -64,18 +111,10 @@
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--background: 224 71.4% 4.1%;
-		--foreground: 210 20% 98%;
-		--muted: 215 27.9% 16.9%;
 		--muted-foreground: 217.9 10.6% 64.9%;
 		--popover: 224 71.4% 4.1%;
 		--popover-foreground: 210 20% 98%;
-		--card: 224 71.4% 4.1%;
-		--card-foreground: 210 20% 98%;
-		--border: 215 27.9% 16.9%;
-		--input: 215 27.9% 16.9%;
-		--primary: 210 20% 98%;
-		--primary-foreground: 220.9 39.3% 11%;
+		/* --primary: 210 20% 98%; */
 		--secondary: 215 27.9% 16.9%;
 		--secondary-foreground: 210 20% 98%;
 		--accent: 215 27.9% 16.9%;
@@ -97,8 +136,5 @@
 @layer base {
 	* {
 		@apply border-border;
-	}
-	body {
-		@apply bg-background text-foreground;
 	}
 }
