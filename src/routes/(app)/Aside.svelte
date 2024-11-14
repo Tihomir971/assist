@@ -18,13 +18,13 @@
 			<Tooltip.Trigger>
 				<a
 					href="/dashboard"
-					class={`${activePath === '/dashboard' ? 'text-accent-foreground' : 'text-muted-foreground'} flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:text-foreground md:h-8 md:w-8`}
+					class={`${activePath === '/dashboard' ? 'text-accent-foreground' : 'text-muted-foreground'} hover:text-foreground flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8`}
 				>
 					<PhLayout class="size-6" />
 					<span class="sr-only">Dashboard</span>
 				</a>
 			</Tooltip.Trigger>
-			<Tooltip.Content side="right">Dashboard</Tooltip.Content>
+			<Tooltip.Content side="right">Dashboard {activePath}</Tooltip.Content>
 		</Tooltip.Root>
 	</Tooltip.Provider>
 	<!-- 	<Tooltip.Root>
@@ -46,7 +46,7 @@
 			<Tooltip.Trigger>
 				<a
 					href="/catalog/test-table"
-					class={`${activePath === '/catalog/test-table' ? 'text-accent-foreground' : 'text-muted-foreground'} flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:text-foreground md:h-8 md:w-8`}
+					class={`${activePath === '/catalog/test-table' ? 'text-accent-foreground' : 'text-muted-foreground'} hover:text-foreground flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8`}
 				>
 					<PhTag class="size-6" />
 					<span class="sr-only">Test Table</span>
@@ -60,7 +60,7 @@
 			<Tooltip.Trigger>
 				<a
 					href="/catalog/products"
-					class={`${activePath === '/catalogproducts' ? 'text-accent-foreground' : 'text-muted-foreground'} flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:text-foreground md:h-8 md:w-8`}
+					class={`${activePath === '/catalogproducts' ? 'text-accent-foreground' : 'text-muted-foreground'} hover:text-foreground flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8`}
 				>
 					<PhTag class="size-6" />
 					<span class="sr-only">Test Table</span>
@@ -74,7 +74,7 @@
 			<Tooltip.Trigger>
 				<a
 					href="/data"
-					class={`${activePath === '/data' ? 'text-accent-foreground' : 'text-muted-foreground'} flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:text-foreground md:h-8 md:w-8`}
+					class={`${activePath === '/data' ? 'text-accent-foreground' : 'text-muted-foreground'} hover:text-foreground flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8`}
 				>
 					<PhRepeat class="size-6" />
 					<span class="sr-only">Export Import</span>
@@ -88,7 +88,7 @@
 			<Tooltip.Trigger>
 				<a
 					href="/excel"
-					class={`${activePath === '/excel' ? 'text-accent-foreground' : 'text-muted-foreground'} flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:text-foreground md:h-8 md:w-8`}
+					class={`${activePath === '/excel' ? 'text-accent-foreground' : 'text-muted-foreground'} hover:text-foreground flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8`}
 				>
 					<PhMicrosoftExcelLogo class="size-6" />
 					<span class="sr-only">Import Excel</span>

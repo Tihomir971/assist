@@ -7,29 +7,33 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
 
-	import { isValidGTIN } from '$lib/scripts/gtin';
-	export let data;
+	// Import utility functions
+	import { handleFileUpload, loadSheetData } from './utils/file-handlers';
+	import { processExcelData, modifyPrice } from './utils/data-processors';
+	import { importProducts, addProduct } from './utils/product-handlers';
 
-	$: ({ supabase } = data);
+	let { data } = $props();
+	let { supabase } = $derived(data);
 
-	let fileInput: HTMLInputElement | null = null;
-
-	let excelData: Product[] = [];
-	let headers: string[] = [];
-	let sheetNames: string[] = [];
-	let selectedSheet: string = '';
-	let showModal = false;
-	let mappings: Mapping = {
+	let fileInput: HTMLInputElement | null = $state(null);
+	let excelData: Product[] = $state([]);
+	let headers: string[] = $state([]);
+	let sheetNames: string[] = $state([]);
+	let selectedSheet: string = $state('');
+	let showModal = $state(false);
+	let mappings: Mapping = $state({
 		name: '',
 		vendorproductno: '',
 		pricelist: '',
 		barcode: '',
 		vendorcategory: '',
 		manufacturer: ''
-	};
+	});
 
-	let selectedSupplier: number | null = null;
 	const suppliers: Supplier[] = [
 		{ id: 480, name: 'Agrofina' },
 		{ id: 407, name: 'Gros' },
@@ -46,38 +50,21 @@
 		'manufacturer'
 	];
 
-	let totalRows = 0;
-	let processedRows = 0;
-	let importedRows = 0;
-	let isProcessing = false;
-	let isImporting = false;
+	let totalRows = $state(0);
+	let processedRows = $state(0);
+	let importedRows = $state(0);
+	let isProcessing = $state(false);
+	let isImporting = $state(false);
+	let priceModificationPercentage: number = $state(0);
+	let productsNotUpdated: Product[] = $state([]);
+	let showNotUpdatedProducts = $state(false);
 
-	// New variable for price modification
-	let priceModificationPercentage: number = 0;
-
-	// New variables for not updated products
-	let productsNotUpdated: Product[] = [];
-	let showNotUpdatedProducts = false;
-
-	$: processProgress = totalRows > 0 ? (processedRows / totalRows) * 100 : 0;
-	$: importProgress = excelData.length > 0 ? (importedRows / excelData.length) * 100 : 0;
-
-	// Load saved mappings
-	onMount(() => {
-		if (browser) {
-			const savedMappings = localStorage.getItem('supplierMappings');
-			if (savedMappings) {
-				const parsedMappings = JSON.parse(savedMappings);
-				if (selectedSupplier !== null && parsedMappings[selectedSupplier]) {
-					mappings = parsedMappings[selectedSupplier];
-				}
-			}
-		}
-	});
+	let processProgress = $derived(totalRows > 0 ? (processedRows / totalRows) * 100 : 0);
+	let importProgress = $derived(excelData.length > 0 ? (importedRows / excelData.length) * 100 : 0);
 
 	// Update mappings when selectedSupplier changes
-	$: {
-		if (browser && selectedSupplier !== null) {
+	$effect(() => {
+		if (browser && selectedSupplier !== undefined) {
 			const savedMappings = localStorage.getItem('supplierMappings');
 			if (savedMappings) {
 				const parsedMappings = JSON.parse(savedMappings);
@@ -96,10 +83,10 @@
 				}
 			}
 		}
-	}
+	});
 
 	function saveMappings() {
-		if (browser && selectedSupplier !== null) {
+		if (browser && selectedSupplier !== undefined) {
 			const savedMappings = localStorage.getItem('supplierMappings');
 			const parsedMappings = savedMappings ? JSON.parse(savedMappings) : {};
 			parsedMappings[selectedSupplier] = mappings;
@@ -107,42 +94,16 @@
 		}
 	}
 
-	async function handleFileUpload(event: Event) {
-		const file = (event.target as HTMLInputElement).files?.[0];
-		if (file) {
-			const reader = new FileReader();
-			reader.onload = (e) => {
-				const data = new Uint8Array(e.target?.result as ArrayBuffer);
-				const workbook = XLSX.read(data, { type: 'array' });
+	async function handleFileSelect(event: Event) {
+		const result = await handleFileUpload(event);
+		sheetNames = result.sheetNames;
+		selectedSheet = result.selectedSheet;
+		excelData = result.excelData;
+		headers = result.headers;
 
-				sheetNames = workbook.SheetNames;
-
-				if (sheetNames.length === 1) {
-					selectedSheet = sheetNames[0];
-					loadSheetData(workbook, selectedSheet);
-				} else {
-					excelData = [];
-					headers = [];
-				}
-			};
-			reader.readAsArrayBuffer(file);
+		if (selectedSheet) {
+			showModal = true;
 		}
-	}
-
-	function loadSheetData(workbook: XLSX.WorkBook, sheetName: string) {
-		const worksheet = workbook.Sheets[sheetName];
-		if (!worksheet) return;
-
-		const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1');
-		headers = [];
-		for (let col = range.s.c; col <= range.e.c; col++) {
-			const cellAddress = XLSX.utils.encode_cell({ r: range.s.r, c: col });
-			const cell = worksheet[cellAddress];
-			const header = cell ? cell.v.toString().trim() : `Unknown${col + 1}`;
-			headers.push(header);
-		}
-
-		showModal = true;
 	}
 
 	async function handleSheetSelect() {
@@ -151,7 +112,9 @@
 			reader.onload = (e) => {
 				const data = new Uint8Array(e.target?.result as ArrayBuffer);
 				const workbook = XLSX.read(data, { type: 'array' });
-				loadSheetData(workbook, selectedSheet);
+				const result = loadSheetData(workbook, selectedSheet);
+				headers = result.headers;
+				showModal = true;
 			};
 			reader.readAsArrayBuffer(fileInput.files[0]);
 		}
@@ -161,81 +124,16 @@
 		showModal = false;
 		if (fileInput?.files?.[0]) {
 			saveMappings();
-			await processExcelData();
-			// Ensure the UI updates
-			excelData = [...excelData];
-		}
-	}
-
-	async function processExcelData() {
-		const file = fileInput?.files?.[0];
-		if (!file) return;
-
-		isProcessing = true;
-		processedRows = 0;
-
-		const reader = new FileReader();
-		reader.onload = (e) => {
-			const data = new Uint8Array(e.target?.result as ArrayBuffer);
-			const workbook = XLSX.read(data, { type: 'array' });
-			const worksheet = workbook.Sheets[selectedSheet];
-			if (!worksheet) {
-				isProcessing = false;
-				return;
-			}
-
-			const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-			totalRows = jsonData.length - 1; // Exclude header row
-			console.log(`Total Rows: ${totalRows}`);
-			excelData = [];
-
-			for (let i = 1; i < jsonData.length; i++) {
-				const row = jsonData[i] as any[];
-				const product: Partial<Product> = {};
-				Object.entries(mappings).forEach(([prop, header]) => {
-					const colNumber = headers.indexOf(header);
-					if (colNumber > -1) {
-						let value = row[colNumber];
-						if (prop === 'pricelist') {
-							value = typeof value === 'number' ? value : parseFloat(value);
-						}
-						if (prop === 'vendorproductno' || prop === 'barcode') {
-							value = typeof value === 'string' ? value : value?.toString();
-						}
-						product[prop as keyof Product] = value as any;
-					}
-				});
-				excelData.push(product as Product);
-				processedRows++;
-			}
-
+			isProcessing = true;
+			const result = await processExcelData(fileInput.files[0], selectedSheet, headers, mappings);
+			totalRows = result.totalRows;
+			processedRows = result.processedRows;
+			excelData = result.excelData;
 			isProcessing = false;
-		};
-		reader.readAsArrayBuffer(file);
-	}
-
-	function normalizeVendorProductNo(vendorproductno: string, supplierId?: number | null): string {
-		// Remove any non-digit characters
-		let normalized = vendorproductno.replace(/\D/g, '');
-
-		if (supplierId === 4) {
-			// For supplier 4, ensure the vendorproductno is 9 digits long
-			normalized = normalized.padStart(9, '0');
-			// If it's longer than 9 digits, take the last 9
-			normalized = normalized.slice(-9);
-		} else {
-			// For other suppliers, just remove leading zeros
-			normalized = normalized.replace(/^0+/, '');
 		}
-
-		return normalized;
 	}
 
-	function modifyPrice(price: number): number {
-		return price * (1 + priceModificationPercentage / 100);
-	}
-
-	async function importProducts() {
+	async function handleImport() {
 		if (!selectedSupplier) {
 			alert('Please select a supplier before importing.');
 			return;
@@ -245,148 +143,56 @@
 			'Do you want to set all prices to 0 before importing new prices?'
 		);
 
-		isImporting = true;
-		importedRows = 0;
-		let insertedRows = 0;
-
-		try {
-			// Fetch existing products for this supplier
-			const { data: existingProducts, error: fetchError } = await supabase
+		if (shouldSetPricesToZero) {
+			const { error: updateError } = await supabase
 				.from('m_product_po')
-				.select('id, vendorproductno')
+				.update({ pricelist: 0 })
 				.eq('c_bpartner_id', selectedSupplier);
 
-			if (fetchError) throw fetchError;
+			if (updateError) {
+				alert('Error setting prices to zero. Please try again.');
+				return;
+			}
+		}
 
-			// Create a map for quick lookup, using normalized vendorproductno
-			const productMap = new Map(
-				existingProducts.map((p) => [
-					normalizeVendorProductNo(p.vendorproductno, selectedSupplier),
-					p.id
-				])
+		isImporting = true;
+		try {
+			const result = await importProducts(
+				supabase,
+				excelData,
+				selectedSupplier,
+				priceModificationPercentage,
+				(rows) => (importedRows = rows)
 			);
 
-			if (shouldSetPricesToZero) {
-				const { error: updateError } = await supabase
-					.from('m_product_po')
-					.update({ pricelist: 0 })
-					.eq('c_bpartner_id', selectedSupplier);
-
-				if (updateError) throw updateError;
-			}
-
-			// Filter Excel data to create two arrays
-			const productsToUpdate: ProductToUpdate[] = [];
-			productsNotUpdated = [];
-
-			excelData.forEach((product) => {
-				const normalizedVendorProductNo = normalizeVendorProductNo(
-					product.vendorproductno,
-					selectedSupplier
-				);
-				const existingProductId = productMap.get(normalizedVendorProductNo);
-				if (existingProductId !== undefined) {
-					productsToUpdate.push({
-						...product,
-						id: existingProductId,
-						normalizedVendorProductNo
-					});
-				} else if (product.barcode) {
-					productsNotUpdated.push(product);
-				}
-			});
-
-			// Update products in batches
-			const batchSize = 100;
-			for (let i = 0; i < productsToUpdate.length; i += batchSize) {
-				const batch = productsToUpdate.slice(i, i + batchSize);
-
-				for (const product of batch) {
-					const { error } = await supabase
-						.from('m_product_po')
-						.update({
-							pricelist: modifyPrice(product.pricelist),
-							vendorproductno: product.normalizedVendorProductNo
-						})
-						.eq('id', product.id)
-						.eq('c_bpartner_id', selectedSupplier);
-
-					if (error) {
-						console.error('Error updating product:', error);
-						continue;
-					}
-
-					importedRows++;
-				}
-			}
-
-			// Check for matching barcodes in m_product table
-			const barcodes = productsNotUpdated.map((p) => p.barcode);
-
-			const matchingProducts = [];
-			const chunkSize = 10;
-
-			for (let i = 0; i < barcodes.length; i += chunkSize) {
-				const barcodeChunk = barcodes.slice(i, i + chunkSize);
-
-				const { data: chunkMatchingProducts, error: barcodeError } = await supabase
-					.from('m_product_gtin')
-					.select('gtin, m_product_id')
-					.in('gtin', barcodeChunk);
-
-				if (barcodeError) {
-					throw barcodeError;
-				}
-
-				matchingProducts.push(...chunkMatchingProducts);
-			}
-
-			const barcodeMatches = new Map(matchingProducts.map((p) => [p.gtin, p.m_product_id]));
-
-			const productsWithMatchingBarcodes = productsNotUpdated.filter((p) =>
-				barcodeMatches.has(p.barcode)
-			);
-
-			// Insert productsWithMatchingBarcodes into m_product_po
-			const insertChunkSize = 100;
-			for (let i = 0; i < productsWithMatchingBarcodes.length; i += insertChunkSize) {
-				const insertChunk = productsWithMatchingBarcodes.slice(i, i + insertChunkSize);
-
-				const insertData = insertChunk.map((product) => ({
-					m_product_id: barcodeMatches.get(product.barcode),
-					c_bpartner_id: selectedSupplier,
-					vendorproductno: normalizeVendorProductNo(product.vendorproductno, selectedSupplier),
-					manufacturer: product.manufacturer,
-					vendorcategory: product.vendorcategory,
-					pricelist: modifyPrice(product.pricelist)
-				}));
-
-				const { data, error } = await supabase.from('m_product_po').insert(insertData).select();
-
-				if (error) {
-					console.error('Error inserting products:', error);
-					continue;
-				}
-
-				insertedRows += data.length;
-			}
-
-			// Update productsNotUpdated to only include products that weren't inserted
-			productsNotUpdated = productsNotUpdated.filter(
-				(product) => !barcodeMatches.has(product.barcode)
-			);
-
+			productsNotUpdated = result.productsNotUpdated;
 			showNotUpdatedProducts = true;
 
 			const selectedSupplierObj = suppliers.find((s) => s.id === selectedSupplier);
 			alert(
-				`${importedRows} products updated and ${insertedRows} products inserted successfully for supplier: ${selectedSupplierObj?.name} (ID: ${selectedSupplierObj?.id})!`
+				`${result.importedRows} products updated and ${result.insertedRows} products inserted successfully for supplier: ${selectedSupplierObj?.name} (ID: ${selectedSupplierObj?.id})!`
 			);
 		} catch (error) {
 			console.error('Error importing products:', error);
 			alert('An error occurred while updating products. Please check the console for details.');
 		} finally {
 			isImporting = false;
+		}
+	}
+
+	async function handleAddProduct(product: Product) {
+		if (!selectedSupplier) {
+			alert('Please select a supplier before adding a product.');
+			return;
+		}
+
+		try {
+			await addProduct(supabase, product, selectedSupplier, priceModificationPercentage);
+			alert('Product added successfully!');
+			productsNotUpdated = productsNotUpdated.filter((p) => p.barcode !== product.barcode);
+		} catch (error) {
+			console.error('Error adding product:', error);
+			alert(error instanceof Error ? error.message : 'An error occurred while adding the product.');
 		}
 	}
 
@@ -399,7 +205,7 @@
 		sheetNames = [];
 		selectedSheet = '';
 		showModal = false;
-		selectedSupplier = null;
+		selectedSupplier = undefined;
 		mappings = {
 			name: '',
 			vendorproductno: '',
@@ -424,6 +230,15 @@
 	}
 
 	onMount(() => {
+		if (browser) {
+			const savedMappings = localStorage.getItem('supplierMappings');
+			if (savedMappings) {
+				const parsedMappings = JSON.parse(savedMappings);
+				if (selectedSupplier !== undefined && parsedMappings[selectedSupplier]) {
+					mappings = parsedMappings[selectedSupplier];
+				}
+			}
+		}
 		fileInput = document.querySelector('input[type="file"]');
 	});
 
@@ -431,206 +246,183 @@
 		resetAll();
 	});
 
-	async function addProduct(product: Product) {
-		if (!selectedSupplier) {
-			alert('Please select a supplier before adding a product.');
-			return;
-		}
-
-		// Check if the barcode is a valid GTIN
-		if (!isValidGTIN(product.barcode)) {
-			alert('Invalid GTIN. Please check the barcode.');
-			return;
-		}
-
-		try {
-			// Insert into m_product
-			const { data: productData, error: productError } = await supabase
-				.from('m_product')
-				.insert({ name: product.name, c_taxcategory_id: 1 })
-				.select('id')
-				.single();
-
-			if (productError) throw productError;
-
-			const productId = productData.id;
-
-			// Insert into m_product_po
-			const { error: poError } = await supabase.from('m_product_po').insert({
-				m_product_id: productId,
-				c_bpartner_id: selectedSupplier,
-				vendorproductno: normalizeVendorProductNo(product.vendorproductno, selectedSupplier),
-				pricelist: modifyPrice(product.pricelist)
-			});
-
-			if (poError) throw poError;
-
-			// Insert into m_product_gtin
-			const { error: gtinError } = await supabase.from('m_product_gtin').insert({
-				m_product_id: productId,
-				gtin: product.barcode
-			});
-
-			if (gtinError) throw gtinError;
-
-			alert('Product added successfully!');
-			// Remove the product from the not updated list
-			productsNotUpdated = productsNotUpdated.filter((p) => p.barcode !== product.barcode);
-		} catch (error) {
-			console.error('Error adding product:', error);
-			alert('An error occurred while adding the product. Please check the console for details.');
-		}
-	}
+	let selectedSupplier: number | undefined = $state(undefined);
+	const triggerSelectedSupplier = $derived(
+		suppliers.find((f) => f.id === selectedSupplier)?.name ?? 'Select Supplier'
+	);
 </script>
 
-<div class="container">
-	<h1 class="mb-4 text-2xl font-bold">Product Data Upload</h1>
-	<!-- <Select.Root type="single">
-		<Select.Trigger class="w-[180px]">
-			<Select.Value placeholder="Theme" />
-		</Select.Trigger>
-		<Select.Content>
-			<Select.Item value="light">Light</Select.Item>
-			<Select.Item value="dark">Dark</Select.Item>
-			<Select.Item value="system">System</Select.Item>
-		</Select.Content>
-	</Select.Root> -->
-	<div class="mb-4">
-		<label class="mb-2 block" for="supplier">Select Supplier:</label>
-		<select
-			id="supplier"
-			class="bg-surface-document text-text-1 border p-2"
-			bind:value={selectedSupplier}
-		>
-			<option value={null}>Select a supplier</option>
-			{#each suppliers as supplier}
-				<option value={supplier.id}>{supplier.name}</option>
-			{/each}
-		</select>
-	</div>
-
-	<input
-		class="mb-4 border p-2"
-		type="file"
-		accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
-               application/vnd.ms-excel"
-		placeholder="Excel files (.xlsx, .xls)"
-		on:change={handleFileUpload}
-		bind:this={fileInput}
-	/>
-
-	{#if sheetNames.length > 1}
-		<select class="mb-4 border p-2" bind:value={selectedSheet} on:change={handleSheetSelect}>
-			<option value="">Select a sheet</option>
-			{#each sheetNames as sheet}
-				<option value={sheet}>{sheet}</option>
-			{/each}
-		</select>
-	{/if}
-
-	<div class="mb-4">
-		<label class="mb-2 block" for="priceModification">Price Modification (%):</label>
-		<input
-			id="priceModification"
-			type="number"
-			class="bg-surface-document text-text-1 border p-2"
-			bind:value={priceModificationPercentage}
-			min="-100"
-			step="0.5"
-		/>
-		<p class="mt-1 text-sm text-gray-500">
-			Enter a percentage to modify prices. Positive values increase prices, negative values decrease
-			prices.
-		</p>
-	</div>
-	{#if showModal}
-		<div class="fixed inset-0 flex items-center justify-center">
-			<div class="card">
-				<h2 class="mb-4 text-xl font-bold">Map Columns to Product Properties</h2>
-				{#each productProperties as prop}
-					<div class="mb-2">
-						<label class="block" for={prop}>{prop}:</label>
-						<select class="w-full border p-1" id={prop} bind:value={mappings[prop]}>
-							<option value="">Select a column</option>
-							{#each headers as header}
-								<option value={header}>{header}</option>
-							{/each}
-						</select>
-					</div>
-				{/each}
-				<Button onclick={handleMapping}>Apply Mapping</Button>
-			</div>
-		</div>
-	{/if}
-
-	{#if isProcessing}
-		<div class="mt-4">
-			<p>Processing Excel data: {processedRows} / {totalRows} rows</p>
-			<progress value={processProgress} max="100"></progress>
-		</div>
-	{/if}
-
-	{#if excelData.length > 0 && !showNotUpdatedProducts}
-		<div class="h-[600px] overflow-auto">
-			<Table.Root class="sticky top-0">
-				<Table.Caption>Mapped Product Data from sheet: {selectedSheet}</Table.Caption>
-				<Table.Header>
-					<Table.Row class="sticky top-0">
-						{#each productProperties as prop}
-							<Table.Head>{prop}</Table.Head>
+<div class="mx-auto grid h-full w-1/2 grid-rows-[auto_1fr_auto] gap-4">
+	<h1 class="text-2xl font-bold">Product Data Upload</h1>
+	<div class="flex flex-col gap-4">
+		<div class="flex items-start justify-between gap-2">
+			<div class="grid w-full max-w-sm items-center gap-1.5">
+				<Label for="excel-file">Supplier</Label>
+				<Select.Root
+					type="single"
+					value={selectedSupplier?.toString()}
+					onValueChange={(v) => (selectedSupplier = parseInt(v))}
+				>
+					<Select.Trigger class="w-[180px]">
+						{triggerSelectedSupplier}
+					</Select.Trigger>
+					<Select.Content>
+						{#each suppliers as supplier}
+							<Select.Item value={supplier.id.toString()}>{supplier.name}</Select.Item>
 						{/each}
-					</Table.Row>
-				</Table.Header>
-				<Table.Body>
-					{#each excelData as product}
-						<Table.Row>
-							{#each productProperties as prop}
-								<Table.Cell>{product[prop]}</Table.Cell>
-							{/each}
-						</Table.Row>
+					</Select.Content>
+				</Select.Root>
+			</div>
+
+			<div class="grid items-center gap-1.5">
+				<Label for="excel-file">Excel File</Label>
+				<Input
+					id="excel-file"
+					type="file"
+					accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+		application/vnd.ms-excel"
+					placeholder="Excel files (.xlsx, .xls)"
+					onchange={handleFileSelect}
+					bind:ref={fileInput}
+				/>
+			</div>
+
+			{#if sheetNames.length > 1}
+				<select class="border p-2" bind:value={selectedSheet} onchange={handleSheetSelect}>
+					<option value="">Select a sheet</option>
+					{#each sheetNames as sheet}
+						<option value={sheet}>{sheet}</option>
 					{/each}
-				</Table.Body>
-			</Table.Root>
-		</div>
-		{#if isImporting}
-			<div class="mt-4">
-				<p>Importing products: {importedRows} / {excelData.length}</p>
-				<progress value={importProgress} max="100"></progress>
-			</div>
-		{:else}
-			<Button variant="default" type="button" onclick={importProducts}>Import Products</Button>
-		{/if}
-	{/if}
+				</select>
+			{/if}
 
-	{#if showNotUpdatedProducts && productsNotUpdated.length > 0}
-		<div class="mt-8">
-			<h2 class="mb-4 text-xl font-bold">Products Not Updated</h2>
-			<div class="h-[500px] overflow-auto">
-				<Table.Root class="sticky top-0">
-					<Table.Caption>Products Not Updated Caption</Table.Caption>
-					<Table.Header>
-						<Table.Row class="sticky top-0">
-							{#each productProperties as prop}
-								<Table.Head>{prop}</Table.Head>
-							{/each}
-						</Table.Row>
-					</Table.Header>
-					<Table.Body>
-						{#each productsNotUpdated as product}
-							<Table.Row>
-								{#each productProperties as prop}
-									<Table.Cell>{product[prop]}</Table.Cell>
-								{/each}
-								<Table.Cell>
-									<Button onclick={() => addProduct(product)}>+</Button>
-								</Table.Cell>
-							</Table.Row>
+			<div>
+				<div class="grid items-center gap-1.5">
+					<Label for="priceModification">Price Modification (%):</Label>
+					<Input
+						type="number"
+						id="priceModification"
+						placeholder="email"
+						bind:value={priceModificationPercentage}
+						min="-100"
+						step="0.5"
+					/>
+					<p class="text-muted-foreground text-sm">
+						Enter a percentage to modify prices. Positive values increase prices, negative values
+						decrease prices.
+					</p>
+				</div>
+			</div>
+		</div>
+
+		{#if showModal}
+			<Card.Root>
+				<Card.Header>
+					<Card.Title>Map Columns to Product Properties</Card.Title>
+					<Card.Description>Map Columns to Product Properties</Card.Description>
+				</Card.Header>
+				<Card.Content>
+					<div class="flex flex-col gap-2">
+						{#each productProperties as prop}
+							<div class="flex items-center justify-between">
+								<Label for={prop}>{prop}:</Label>
+								<Select.Root type="single" bind:value={mappings[prop]}>
+									<Select.Trigger class="w-64" id={prop}
+										>{headers.find((f) => f === mappings[prop])}</Select.Trigger
+									>
+									<Select.Content>
+										{#each headers as header}
+											<Select.Item value={header}>{header}</Select.Item>
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							</div>
 						{/each}
-					</Table.Body>
-				</Table.Root>
-			</div>
-		</div>
-	{/if}
+					</div>
+				</Card.Content>
+				<Card.Footer>
+					<Button onclick={handleMapping}>Apply Mapping</Button>
+				</Card.Footer>
+			</Card.Root>
+		{/if}
 
-	<Button variant="destructive" type="button" onclick={manualReset} class="mt-4">Reset Form</Button>
+		{#if isProcessing}
+			<div>
+				<p>Processing Excel data: {processedRows} / {totalRows} rows</p>
+				<progress value={processProgress} max="100"></progress>
+			</div>
+		{/if}
+
+		{#if excelData.length > 0 && !showNotUpdatedProducts}
+			<div class="flex flex-col gap-2">
+				<div>Mapped Product Data from sheet: {selectedSheet}</div>
+				<div
+					class="relative flex-1 overflow-auto rounded-md border"
+					style="max-height: calc(100vh - 400px);"
+				>
+					<Table.Root>
+						<Table.Header>
+							<Table.Row class="sticky top-0 bg-white">
+								{#each productProperties as prop}
+									<Table.Head>{prop}</Table.Head>
+								{/each}
+							</Table.Row>
+						</Table.Header>
+						<Table.Body>
+							{#each excelData as product}
+								<Table.Row>
+									{#each productProperties as prop}
+										<Table.Cell>{product[prop]}</Table.Cell>
+									{/each}
+								</Table.Row>
+							{/each}
+						</Table.Body>
+					</Table.Root>
+				</div>
+			</div>
+			{#if isImporting}
+				<div>
+					<p>Importing products: {importedRows} / {excelData.length}</p>
+					<progress value={importProgress} max="100"></progress>
+				</div>
+			{:else}
+				<Button variant="default" type="button" onclick={handleImport}>Import Products</Button>
+			{/if}
+		{/if}
+
+		{#if showNotUpdatedProducts && productsNotUpdated.length > 0}
+			<div class="flex flex-col gap-2">
+				<h2 class="text-xl font-bold">Products Not Updated</h2>
+				<div
+					class="relative flex-1 overflow-auto rounded-md border"
+					style="max-height: calc(100vh - 400px);"
+				>
+					<Table.Root>
+						<Table.Header>
+							<Table.Row class="sticky top-0 bg-white">
+								{#each productProperties as prop}
+									<Table.Head>{prop}</Table.Head>
+								{/each}
+							</Table.Row>
+						</Table.Header>
+						<Table.Body>
+							{#each productsNotUpdated as product}
+								<Table.Row>
+									{#each productProperties as prop}
+										<Table.Cell>{product[prop]}</Table.Cell>
+									{/each}
+									<Table.Cell>
+										<Button onclick={() => handleAddProduct(product)}>+</Button>
+									</Table.Cell>
+								</Table.Row>
+							{/each}
+						</Table.Body>
+					</Table.Root>
+				</div>
+			</div>
+		{/if}
+	</div>
+	<div>
+		<Button variant="destructive" type="button" onclick={manualReset}>Reset Form</Button>
+	</div>
 </div>

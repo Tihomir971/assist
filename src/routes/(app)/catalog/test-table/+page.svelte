@@ -28,7 +28,7 @@
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
 	import type { FlattenedProduct } from './+page.server.js';
-	import { getShoppingCartState } from '$lib/components/cart/cart-state.svelte.js';
+	import { LocalStorage } from '$lib/storage.svelte.js';
 
 	export let data: {
 		products: FlattenedProduct[];
@@ -38,7 +38,6 @@
 		showVat: boolean;
 	};
 
-	const shoppingCartState = getShoppingCartState();
 	$: ({ products, warehouses, activeWarehouse, showStock, showVat } = data);
 
 	const productsStore = writable(products);
@@ -343,6 +342,7 @@
 		quantity: number;
 		sku: string;
 	};
+	const cartItems = new LocalStorage<CartItem[]>('cartItems', []);
 
 	function addToCart(): void {
 		if (browser) {
@@ -353,18 +353,15 @@
 				return false;
 			});
 
-			let cartItems: CartItem[] = JSON.parse(localStorage.getItem('cartItems') || '[]');
-
 			selectedProducts.forEach((row) => {
 				if (row.isData()) {
 					const product = row.original;
-					const existingItem = cartItems.find((item) => item.id === product.id);
-					if (existingItem) {
-						existingItem.quantity += 1;
-					} else {
-						shoppingCartState.add(product.id, product.name, 1, product.sku);
+					const existingItemIndex = cartItems.current.findIndex((item) => item.id === product.id);
 
-						cartItems.push({
+					if (existingItemIndex !== -1) {
+						cartItems.current[existingItemIndex].quantity += 1;
+					} else {
+						cartItems.current.push({
 							id: product.id,
 							name: product.name,
 							quantity: 1,
@@ -374,7 +371,7 @@
 				}
 			});
 
-			localStorage.setItem('cartItems', JSON.stringify(cartItems));
+			//cartItems.current = currentItems;
 			$selectedDataIds = {};
 		}
 	}

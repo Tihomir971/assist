@@ -3,12 +3,13 @@ import type { PageServerLoad } from './$types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { SupabaseTable } from '$lib/types/database.types';
 import { DateTime } from 'luxon';
-import type { FlattenedProduct, Product, Warehouse } from './columns';
+import type { FlattenedProduct, Product, Warehouse } from './columns.svelte';
 
 let warehousesCache: Warehouse[] | [] = [];
 
 export const load: PageServerLoad = async ({ depends, url, locals: { supabase } }) => {
 	depends('catalog:products');
+	console.log("depends('catalog:products');");
 
 	const { searchParams } = url;
 	const showStock = searchParams.get('stock') === 'true';
@@ -49,7 +50,10 @@ export const load: PageServerLoad = async ({ depends, url, locals: { supabase } 
 async function getWarehouses(supabase: SupabaseClient): Promise<Warehouse[]> {
 	if (warehousesCache.length > 0) return warehousesCache;
 
-	const { data } = await supabase.from('m_warehouse').select('value:id, label:name').order('name');
+	const { data } = await supabase
+		.from('m_warehouse')
+		.select('value:id::text, label:name')
+		.order('name');
 	warehousesCache = data || [];
 	return warehousesCache;
 }

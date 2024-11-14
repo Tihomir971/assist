@@ -34,7 +34,8 @@ export type MProductSchema = z.infer<typeof mProductSchema>;
 export const crudMProductSchema = mProductSchema.extend({
 	id: mProductSchema.shape.id.optional()
 });
-
+/* export type CrudMProductSchema = z.infer<typeof crudMProductSchema>; */
+export type CrudMProductSchema = typeof crudMProductSchema;
 export const mProductBarcodesSchema = z.object({
 	ad_org_id: z.number(),
 	created: z.string(),

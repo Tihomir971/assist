@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getShoppingCartState } from './cart-state.svelte';
-	import CartItem from './cart-item.svelte';
+	import CartItemComp from './cart-item.svelte';
 	import { utils, writeFile } from 'xlsx';
 	import PhMicrosoftExcelLogo from 'phosphor-svelte/lib/MicrosoftExcelLogo';
 	import PhX from 'phosphor-svelte/lib/X';
@@ -16,24 +16,25 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import type { FlattenedProduct, Product } from './types';
+	import { LocalStorage } from '$lib/storage.svelte';
+	import type { CartItem } from '$lib/components/cart/types';
+	interface Props {
+		supabase: SupabaseClient;
+		toggleCart: () => void;
+	}
 
-	export let supabase: SupabaseClient;
-	export let toggleCart: () => void;
-	const cartState = getShoppingCartState();
+	let { supabase, toggleCart }: Props = $props();
+	//	const cartState = getShoppingCartState();
+	const storageCartItems = new LocalStorage<CartItem[]>('cartItems', []);
+	let showVendorDialog = $state(false);
 
-	let showVendorDialog = false;
-
-	let vendors = [
+	let vendors = $state([
 		{ id: 480, name: 'Agrofina', selected: false },
 		{ id: 4, name: 'Mercator', selected: false },
 		{ id: 89, name: 'Mivex', selected: false },
 		{ id: 2, name: 'Cenoteka', selected: false },
 		{ id: 407, name: 'Gros', selected: false }
-	];
-
-	function clearCart() {
-		cartState.clearItems();
-	}
+	]);
 
 	async function fetchProducts(productIds: (string | number)[]): Promise<Product[]> {
 		const { data, error } = await supabase
@@ -137,12 +138,12 @@
 			return;
 		}
 
-		const productIds = cartState.items.map((item) => item.id);
+		const productIds = storageCartItems.current.map((item) => item.id);
 
 		const products = await fetchProducts(productIds);
 		const flattenedProducts = products.map((product) => flattenProduct(product, selectedVendorIds));
 
-		const cartData = cartState.items.map((item) => {
+		const cartData = storageCartItems.current.map((item) => {
 			const product = flattenedProducts.find((p) => p.id === item.id);
 			const baseData: { [key: string]: any } = {
 				ID: item.id,
@@ -215,7 +216,7 @@
 		<div class="flex items-center gap-2">
 			<button
 				class="flex items-center gap-2 rounded bg-red-600 px-4 py-2 text-sm text-white transition-colors hover:bg-red-700"
-				onclick={clearCart}
+				onclick={() => (storageCartItems.current = [])}
 			>
 				Clear All
 			</button>
@@ -227,7 +228,7 @@
 				Export to Excel
 			</button>
 			<button
-				class="hover:bg-surface-4 bg-surface-3 items-center justify-center rounded-full p-2 text-foreground transition-colors"
+				class="hover:bg-surface-4 bg-surface-3 text-foreground items-center justify-center rounded-full p-2 transition-colors"
 				onclick={toggleCart}
 			>
 				<PhX size={24} />
@@ -235,8 +236,8 @@
 		</div>
 	</div>
 	<div class="flex-grow overflow-y-auto p-4">
-		{#each cartState.items as cartItem}
-			<CartItem {cartItem} />
+		{#each storageCartItems.current as cartItem}
+			<CartItemComp {cartItem} />
 		{/each}
 	</div>
 </div>
@@ -263,7 +264,3 @@
 		</DialogFooter>
 	</DialogContent>
 </Dialog>
-
-<style>
-	/* Add any additional styles here if needed */
-</style>

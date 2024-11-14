@@ -5,40 +5,38 @@
 		getCoreRowModel,
 		getFilteredRowModel,
 		getSortedRowModel,
-		type ColumnFiltersState,
-		type GlobalFilterColumn,
 		type GlobalFilterTableState,
 		type RowSelectionState,
 		type SortingState,
 		type Updater,
 		type VisibilityState
 	} from '$lib/components/walker-tx';
-	import { createRawSnippet } from 'svelte';
 
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 
-	import { columnDefs } from './columns.js';
+	import { columnDefs } from './columns.svelte.js';
 	import ArrowUp from 'lucide-svelte/icons/arrow-up';
 	import ArrowDown from 'lucide-svelte/icons/arrow-down';
 	import ArrowDownUp from 'lucide-svelte/icons/arrow-down-up';
 
 	import DataTableToolbar from './data-table-toolbar.svelte';
+	import { browser } from '$app/environment';
+	import { LocalStorage } from '$lib/storage.svelte.js';
+	import type { CartItem } from '$lib/components/cart/types.js';
+	import { set } from 'zod';
+	import { getContext } from 'svelte';
 
 	let { data } = $props();
-	let products = $derived(data.products);
-	$inspect(products[0]);
-	const rightAlignSnippet = createRawSnippet<[string]>((getValue) => {
-		const value = getValue() ?? 0;
-		return {
-			render: () => `<div class="text-right">${value}</div>`
-		};
-	});
+	//let { products } = data;
+	//let dataState = $state(data.products);
 
+	const storageColumnVisibility = new LocalStorage<VisibilityState>('hiddenColumns', {});
+	let storageCartItems = getContext<LocalStorage<CartItem[]>>('cartItems');
 	// Define a reactive state to track the row selection state.
 	let rowSelectionState: RowSelectionState = $state({});
 	let sorting = $state<SortingState>([]);
-	let columnVisibility = $state<VisibilityState>({});
+	let columnVisibility = $state<VisibilityState>(storageColumnVisibility.current);
 	let globalFilterTableState = $state<GlobalFilterTableState>();
 
 	function onRowSelectionChange(updater: Updater<RowSelectionState>) {
@@ -60,7 +58,7 @@
 	// Create the table and bind the row selection state using a getter.
 	const table = createSvelteTable({
 		get data() {
-			return products;
+			return data.products;
 		},
 		columns: columnDefs,
 		getCoreRowModel: getCoreRowModel(),
@@ -88,13 +86,14 @@
 			} else {
 				columnVisibility = updater;
 			}
+			storageColumnVisibility.current = columnVisibility;
 		},
 		state: {
-			get globalFilter() {
-				return globalFilterTableState;
-			},
 			get rowSelection() {
 				return rowSelectionState;
+			},
+			get globalFilter() {
+				return globalFilterTableState;
 			},
 			get sorting() {
 				return sorting;
@@ -105,6 +104,31 @@
 		},
 		getRowId: (originalRow) => originalRow.id.toString()
 	});
+	function addToCart(): void {
+		if (browser) {
+			table.getRowModel().rows.forEach((row) => {
+				if (row.getIsSelected()) {
+					const existingItemIndex = storageCartItems.current.findIndex(
+						(item) => item.id === row.original.id
+					);
+
+					if (existingItemIndex !== -1) {
+						storageCartItems.current[existingItemIndex].quantity += 1;
+					} else {
+						storageCartItems.current.push({
+							id: row.original.id,
+							name: row.original.name,
+							quantity: 1,
+							sku: row.original.sku
+						});
+					}
+				}
+			});
+
+			//cartItems.current = currentItems;
+			rowSelectionState = {};
+		}
+	}
 </script>
 
 <Card.Root class="grid h-full w-full grid-rows-[auto_1fr]">
@@ -120,6 +144,8 @@
 			bind:globalFilterTableState
 			showStock={data.showStock}
 			showVat={data.showVat}
+			warehouses={data.warehouses}
+			{addToCart}
 		/>
 	</Card.Header>
 	<Card.Content class="grid h-full w-full grid-rows-[auto_1fr] overflow-hidden p-2">
@@ -162,7 +188,7 @@
 				{#each table.getRowModel().rows as row (row.id)}
 					<Table.Row data-state={row.getIsSelected() && 'selected'}>
 						{#each row.getVisibleCells() as cell (cell.id)}
-							<Table.Cell>
+							<Table.Cell class="py-2">
 								<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
 							</Table.Cell>
 						{/each}

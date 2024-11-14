@@ -9,15 +9,20 @@ import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { crudMProductSchema, mProductSchema } from '$lib/types/supabase/product.validator.js';
 import { crudmProductPoSchema, mProductPoSchema } from '$lib/types/supabase/mProductPo.validator';
-import { productGtinSchema, replenishSchema, schemaProductGtinID } from '../zod.validator';
+import {
+	crudReplenishSchema,
+	productGtinSchema,
+	replenishSchema,
+	schemaProductGtinID,
+	type CrudReplenishSchema
+} from '../zod.validator';
 import type { Database } from '$lib/types/supabase';
-import type { SalesByWeekApi } from '$lib/types/connector';
+import type { ChartData } from '$lib/types/connector';
 import { connector } from '$lib/ky';
 import type { PostgrestError } from '@supabase/supabase-js';
+import { log } from 'console';
 
-type Replenish = Database['public']['Tables']['m_replenish']['Insert'];
-
-export const load = (async ({ depends, params, locals: { supabase }, fetch }) => {
+export const load = (async ({ depends, params, locals: { supabase } }) => {
 	depends('catalog:product');
 
 	const productId = params.slug as unknown as number;
@@ -56,7 +61,9 @@ export const load = (async ({ depends, params, locals: { supabase }, fetch }) =>
 		(
 			await supabase
 				.from('m_replenish')
-				.select('*')
+				.select(
+					'id,m_warehouse_id,m_product_id,level_max,level_min,m_warehousesource_id,qtybatchsize'
+				)
 				.eq('m_product_id', productId)
 				.order('m_warehouse_id')
 		).data || [],
@@ -71,7 +78,7 @@ export const load = (async ({ depends, params, locals: { supabase }, fetch }) =>
 				.select('id, m_product_id, vendorproductno, c_bpartner(id, name), pricelist, updated, url')
 				.eq(' m_product_id', productId)
 		).data || [],
-		(await connector.get(`api/sales/${product?.sku}`).json<SalesByWeekApi>()) || [],
+		(await connector.get(`api/sales/${product?.sku}/2`).json<ChartData>()) || [],
 		(
 			await supabase
 				.from('m_storageonhand')
@@ -84,25 +91,25 @@ export const load = (async ({ depends, params, locals: { supabase }, fetch }) =>
 	const formProductPO = await superValidate(zod(crudmProductPoSchema));
 	const formProductGtin = await superValidate(zod(productGtinSchema));
 	const formProductGtinId = await superValidate(zod(schemaProductGtinID));
-	const formReplenish = await superValidate({ replenishes }, zod(replenishSchema));
+	const formReplenish = await superValidate(zod(crudReplenishSchema));
 
 	return {
 		formProduct,
-		formProductPO,
+		//formProductPO,
 		productPurchasing,
 		formProductGtin,
-		formProductGtinId,
+		//formProductGtinId,
 		barcodes,
 		formReplenish,
 		replenishes,
 		uom,
 		categories,
-		c_bpartner,
+		//c_bpartner,
 		warehouses,
 		tax,
-		m_product_po,
-		salesByWeeks,
-		stock
+		//m_product_po,
+		salesByWeeks
+		//stock
 	};
 }) satisfies PageServerLoad;
 
@@ -176,59 +183,15 @@ export const actions = {
 		}
 	}, */
 
-	/* modReplenish: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(replenishSchema));
+	replenish: async ({ request, locals: { supabase } }) => {
+		console.log('replenish');
+		const form = await superValidate(request, zod(crudReplenishSchema));
 		if (!form.valid) return fail(400, { form });
 
-		const replenishes = form.data.replenishes as Replenish[];
-
-		const toInsert: Replenish[] = [];
-		const toUpdate: Replenish[] = [];
-
-		for (const replenish of replenishes) {
-			const cleanReplenish = removeUndefinedValues(replenish);
-			if (!cleanReplenish.id) {
-				if (cleanReplenish.m_warehouse_id !== 0) {
-					toInsert.push(cleanReplenish);
-				}
-			} else {
-				toUpdate.push(cleanReplenish);
-			}
-		}
-
-		if (toInsert.length > 0) {
-			console.log('toInsert', toInsert);
-			const { data: insertData, error: insertError } = await supabase
-				.from('m_replenish')
-				.insert(toInsert)
-				.select();
-			console.log('insertData', insertData);
-
-			if (insertError) {
-				console.error(insertError);
-
-				return fail(500, { form, error: 'Failed to insert new replenishes' });
-			}
-		}
-
-		if (toUpdate.length > 0) {
-			for (const replenish of toUpdate) {
-				if (typeof replenish.id === 'number') {
-					const { error: updateError } = await supabase
-						.from('m_replenish')
-						.update(replenish)
-						.eq('id', replenish.id);
-					if (updateError) {
-						return fail(500, { form, error: `Failed to update replenish with id ${replenish.id}` });
-					}
-				} else {
-					console.error('Replenish object has an invalid id:', replenish);
-				}
-			}
-		}
+		console.log('form', form);
 
 		return { form };
-	}, */
+	},
 
 	/* 	deleteReplenish: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(replenishSchema));
@@ -240,6 +203,7 @@ export const actions = {
 
 	
 	}, */
+
 	/* getProductInfo: async ({ request, locals: { supabase } }) => {
 		const formData = await request.formData();
 		const form = await superValidate(formData, zod(crudMProductSchema));
@@ -298,11 +262,11 @@ export const actions = {
 		if (!form.valid) {
 			return message(form, 'Invalid ID for constellation.');
 		}
-		const { error } = await supabase.from('m_product_gtin').delete().eq('id', Number(form.id));
+		/* const { error } = await supabase.from('m_product_gtin').delete().eq('id', Number(form.id));
 		if (error) {
 			console.error('Failed to delete product GTIN:', error);
 			return fail(500, { error: 'Failed to delete product GTIN' });
-		}
+		} */
 
 		return { form };
 	}

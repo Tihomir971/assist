@@ -17,7 +17,6 @@
 
 	let attributeValues: AttributeValue[] | undefined = $state();
 	let selectedAttribute: Attribute | undefined = $state();
-	let selectedAttributeValue: AttributeValue;
 
 	async function clickAttribute(row: Attribute) {
 		if (selectedAttribute?.id === row.id) return;
@@ -158,11 +157,7 @@
 					<tbody>
 						<!-- row 1 -->
 						{#each attributeValues as attributeValue}
-							<tr
-								class:bg-base-300={selectedAttributeValue?.id === attributeValue.id}
-								class="hover"
-								onclick={() => clickAttributeValue(attributeValue)}
-							>
+							<tr class="hover" onclick={() => clickAttributeValue(attributeValue)}>
 								<th>{attributeValue.ad_org?.name}</th>
 								<th>{attributeValue.name}</th>
 								<th>{attributeValue.description}</th>

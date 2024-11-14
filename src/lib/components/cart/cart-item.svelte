@@ -1,28 +1,31 @@
 <script lang="ts">
 	import type { CartItem } from './types';
 	import { Trash, Plus, Minus } from 'phosphor-svelte';
-	import { getShoppingCartState } from './cart-state.svelte';
+	import { LocalStorage } from '$lib/storage.svelte';
 
 	type Props = {
 		cartItem: CartItem;
 	};
 
 	let { cartItem }: Props = $props();
-	const shoppingCartState = getShoppingCartState();
+	//const shoppingCartState = getShoppingCartState();
+	const storageCartItems = new LocalStorage<CartItem[]>('cartItems', []);
 
 	function incrementQuantity() {
-		shoppingCartState.updateQuantity(cartItem.id, cartItem.quantity + 1);
+		const itemIndex = storageCartItems.current.findIndex((item) => item.id === cartItem.id);
+		storageCartItems.current[itemIndex].quantity += 1; //shoppingCartState.updateQuantity(cartItem.id, cartItem.quantity + 1);
 	}
 
 	function decrementQuantity() {
 		if (cartItem.quantity > 1) {
-			shoppingCartState.updateQuantity(cartItem.id, cartItem.quantity - 1);
+			const itemIndex = storageCartItems.current.findIndex((item) => item.id === cartItem.id);
+			storageCartItems.current[itemIndex].quantity -= 1;
 		}
 	}
 </script>
 
 <div
-	class="mb-2 flex flex-col items-start justify-between rounded-md bg-surface-3 p-3 sm:flex-row sm:items-center"
+	class="bg-surface-3 mb-2 flex flex-col items-start justify-between rounded-md p-3 sm:flex-row sm:items-center"
 >
 	<div class="mb-2 flex flex-col sm:mb-0">
 		<span class="text-sm font-medium">{cartItem.name}</span>
@@ -38,7 +41,7 @@
 		</button>
 		<button
 			class="rounded-md bg-red-500 p-2 text-white hover:bg-red-600"
-			onclick={() => shoppingCartState.remove(cartItem.id)}
+			onclick={() => storageCartItems.current.filter((item) => item.id !== cartItem.id)}
 		>
 			<Trash size={14} />
 		</button>

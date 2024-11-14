@@ -9,7 +9,16 @@ export class ShoppingCartState {
 
 	constructor() {
 		this.loadFromLocalStorage();
-		$effect(() => this.saveToLocalStorage());
+		$effect(() => {
+			// Ensure we're working with plain objects, not reactive state
+			const plainItems = this.items.map((item) => ({
+				id: item.id,
+				name: item.name,
+				quantity: item.quantity,
+				sku: item.sku
+			}));
+			this.saveToLocalStorage(plainItems);
+		});
 	}
 
 	private loadFromLocalStorage() {
@@ -18,32 +27,42 @@ export class ShoppingCartState {
 				const storedItems = localStorage.getItem(STORAGE_KEY);
 				if (storedItems) {
 					const parsedItems = JSON.parse(storedItems);
-					// Validate that parsedItems is an array
-					if (Array.isArray(parsedItems)) {
+					// Validate that parsedItems is an array and has the expected structure
+					if (
+						Array.isArray(parsedItems) &&
+						parsedItems.every(
+							(item) =>
+								typeof item === 'object' &&
+								'id' in item &&
+								'name' in item &&
+								'quantity' in item &&
+								'sku' in item
+						)
+					) {
 						this.items = parsedItems;
+					} else {
+						// If the data structure is invalid, reset to empty array
+						this.items = [];
+						localStorage.removeItem(STORAGE_KEY);
 					}
 				}
 			} catch (error) {
 				console.error('Error loading cart from localStorage:', error);
 				// Reset to empty array if there's an error
 				this.items = [];
+				localStorage.removeItem(STORAGE_KEY);
 			}
 		}
 	}
 
-	private saveToLocalStorage() {
+	private saveToLocalStorage(itemsToStore: CartItem[]) {
 		if (typeof window !== 'undefined') {
 			try {
-				// Only store the raw array data, not the reactive state
-				const itemsToStore = this.items.map((item) => ({
-					id: item.id,
-					name: item.name,
-					quantity: item.quantity,
-					sku: item.sku
-				}));
 				localStorage.setItem(STORAGE_KEY, JSON.stringify(itemsToStore));
 			} catch (error) {
 				console.error('Error saving cart to localStorage:', error);
+				// If there's an error saving, clear localStorage to prevent corrupt state
+				localStorage.removeItem(STORAGE_KEY);
 			}
 		}
 	}

@@ -46,11 +46,19 @@
 		};
 	};
 	let formElExcel: HTMLFormElement;
-	let formElIdea: HTMLFormElement;
-	let formElCenoteka: HTMLFormElement;
 	
+	let formElIdea: HTMLFormElement;
 	$: strSelectedDataIds = Object.keys($selectedDataIds).map((x) => parseInt(x)); */
+	let formElCenoteka: HTMLFormElement;
 	let formElErpSyncProd: HTMLFormElement;
+	let sourceInput: HTMLInputElement;
+
+	const submitWithSource = (source: number) => {
+		if (sourceInput && formElCenoteka) {
+			sourceInput.value = source.toString();
+			formElCenoteka.requestSubmit();
+		}
+	};
 </script>
 
 <DropdownMenu.Root>
@@ -72,8 +80,8 @@
 			</DropdownMenu.Item>
 
 			<DropdownMenu.Separator />
-			<DropdownMenu.Item>Get Cenoteka</DropdownMenu.Item>
-			<DropdownMenu.Item>Get Idea</DropdownMenu.Item>
+			<DropdownMenu.Item onSelect={() => submitWithSource(2)}>Get Cenoteka</DropdownMenu.Item>
+			<DropdownMenu.Item onSelect={() => submitWithSource(4)}>Get Idea</DropdownMenu.Item>
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
@@ -144,7 +152,6 @@
 			console.log('result', result);
 
 			if (result.type === 'success') {
-				// do something...
 				toast.success('Replenish ERP Sync', {
 					description: `Successfully updated!`,
 					action: {
@@ -152,6 +159,7 @@
 						onClick: () => console.info('Undo')
 					}
 				});
+
 				rowSelectionState = {};
 				invalidate('catalog:products');
 			} else if (result.type === 'error') {
@@ -163,4 +171,43 @@
 	}}
 >
 	<input type="hidden" name="ids" value={strRowSelectionState} />
+</form>
+
+<form
+	bind:this={formElCenoteka}
+	method="post"
+	action="/catalog?/getCenotekaInfo"
+	class="hidden"
+	use:enhance={() => {
+		return async ({ result }) => {
+			console.log('result', result);
+
+			if (result.type === 'success') {
+				const data = result.data;
+				if (data && data.success) {
+					toast.success('Cenoteka Sync', {
+						/* description: data.message || 'Successfully synchronized!', */
+						action: {
+							label: 'Undo',
+							onClick: () => console.info('Undo')
+						}
+					});
+				} else {
+					toast.error('Cenoteka Sync', {
+						/* description: data?.message || 'Unknown error occurred' */
+					});
+				}
+
+				rowSelectionState = {};
+				invalidate('catalog:products');
+			} else if (result.type === 'error') {
+				toast.error('Replenish ERP Sync', {
+					description: `Something is wrong ${result.error}`
+				});
+			}
+		};
+	}}
+>
+	<input type="hidden" name="ids" value={strRowSelectionState} />
+	<input bind:this={sourceInput} type="hidden" name="source" value={2} />
 </form>

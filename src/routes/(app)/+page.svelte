@@ -33,10 +33,7 @@
 	figure {
 		@apply relative flex flex-col;
 	}
-	figure svg,
-	.img-bg {
-		@apply h-64 w-64 md:h-80 md:w-80;
-	}
+
 	.img-bg {
 		@apply absolute z-[-1] rounded-full blur-[50px] transition-all;
 		animation:

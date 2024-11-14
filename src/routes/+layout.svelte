@@ -21,4 +21,4 @@
 
 <Toaster position="bottom-center" richColors />
 
-{@render children()}
+{@render children?.()}

@@ -7,7 +7,18 @@
 	let { id }: { id: string } = $props();
 </script>
 
-<DropdownMenu.Root>
+<Button
+	variant="ghost"
+	size="icon"
+	onclick={() => {
+		goto(`/catalog/products/${id}`);
+	}}
+	class="relative size-8 p-0"
+>
+	<span class="sr-only">Edit product</span>
+	<Ellipsis class="size-4" />
+</Button>
+<!-- <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
 			<Button {...props} variant="ghost" size="icon" class="relative size-8 p-0">
@@ -31,4 +42,4 @@
 		>
 		<DropdownMenu.Item>Delete</DropdownMenu.Item>
 	</DropdownMenu.Content>
-</DropdownMenu.Root>
+</DropdownMenu.Root> -->

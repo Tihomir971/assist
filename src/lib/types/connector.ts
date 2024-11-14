@@ -1,7 +1,25 @@
-// Type definition for API data
-export type SalesByWeekApiItem = {
-	start_date: string;
-	total_izlaz: number;
+export interface MonthData {
+	month: number;
+	value: number;
+}
+
+export interface YearData {
+	year: number;
+	months: MonthData[];
+}
+
+export type ChartData = {
+	years: YearData[];
+	currentYear: number;
 };
 
-export type SalesByWeekApi = SalesByWeekApiItem[];
+export interface ProcessedYearValue {
+	year: number;
+	value: number;
+	isCurrentYear: boolean;
+}
+
+export interface ProcessedMonthData {
+	month: number;
+	yearValues: ProcessedYearValue[];
+}

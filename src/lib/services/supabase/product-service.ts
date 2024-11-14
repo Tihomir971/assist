@@ -57,7 +57,7 @@ export const getProductPurchasing = async (
 			'id,isactive,barcode,c_bpartner_id,pricelist,vendorproductno,url,updated,c_bpartner(name)'
 		)
 		.eq('m_product_id', productId);
-	return productPurchasing;
+	return productPurchasing ?? [];
 };
 
 export const addProductPurchasing = async (

@@ -26,3 +26,4 @@ export const mProductPoSchema = z.object({
 export const crudmProductPoSchema = mProductPoSchema.extend({
 	id: mProductPoSchema.shape.id.optional()
 });
+export type CrudMProductPoSchema = typeof crudmProductPoSchema;

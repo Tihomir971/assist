@@ -94,7 +94,7 @@
 </script>
 
 <div class="flex h-full w-full gap-2 overflow-hidden">
-	<Card.Root class="grid h-full w-72 grid-rows-[auto_1fr] overflow-hidden">
+	<Card.Root class="card h-full w-72 overflow-hidden">
 		<Card.Header class="border-b p-3">
 			<Card.Title>
 				<div class="flex items-center gap-2">
@@ -164,7 +164,7 @@
 				</div>
 			</Card.Title>
 		</Card.Header>
-		<Card.Content class="h-full overflow-hidden px-1">
+		<Card.Content class="h-full overflow-hidden p-1">
 			<div class="h-full w-full overflow-y-auto">
 				<TreeView bind:treeItems expanded={data.expanded} bind:selected />
 			</div>

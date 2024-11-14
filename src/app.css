@@ -1,9 +1,6 @@
-@import 'https://unpkg.com/open-props@beta.5/hues.oklch.css';
-@import 'https://unpkg.com/open-props@beta.5/palette.css';
-
+@import './open-props.css';
+/* @import './shadow.css'; */
 @import 'tailwindcss';
-
-/* @import '@fontsource-variable/inter'; */
 
 @theme {
 	--font-family-sans: 'Nunito Sans Variable', ui-sans-serif, system-ui, sans-serif,
@@ -20,117 +17,42 @@
 	--color-ink-1: var(--text-1);
 	--color-ink-2: var(--text-2);
 
+	/* Default background color of <body />...etc */
 	--color-background: var(--surface-document);
 	--color-foreground: var(--text-1);
+	/* Muted backgrounds such as <TabsList />, <Skeleton /> and <Switch /> */
 	--color-muted: var(--surface-2);
-	--color-muted-foreground: hsl(var(--muted-foreground));
-	--color-popover: hsl(var(--popover));
-	--color-popover-foreground: hsl(var(--popover-foreground));
+	--color-muted-foreground: light-dark(hsl(240 3.8% 46.1%), hsl(240 5% 64.9%));
+	/* Background color for popovers such as <DropdownMenu />, <HoverCard />, <Popover /> */
+	--color-popover: light-dark(hsl(0 0% 100%), hsl(240 10% 3.9%));
+	--color-popover-foreground: light-dark(hsl(0 0% 98%), hsl(0 0% 98%));
+	/* Background color for <Card /> */
 	--color-card: var(--surface-3);
 	--color-card-foreground: var(--text-1);
 	/* Default border color */
 	--color-border: var(--surface-2);
 	/* Border color for inputs such as <Input />, <Select />, <Textarea /> */
 	--color-input: var(--surface-1);
-	--color-primary: oklch(70% 100% var(--palette-hue));
-	--color-primary-foreground: hsl(var(--text-1));
+	/* Primary colors for <Button /> */
+	--color-primary: oklch(30% 100% var(--palette-hue));
+	--color-primary-foreground: var(--text-1);
+	/* Secondary colors for <Button /> */
 	--color-secondary: hsl(var(--secondary));
 	--color-secondary-foreground: hsl(var(--secondary-foreground));
-	--color-accent: hsl(var(--accent));
-	--color-accent-foreground: hsl(var(--accent-foreground));
-	--color-destructive: hsl(var(--destructive));
-	--color-destructive-foreground: hsl(var(--destructive-foreground));
-	--color-ring: hsl(var(--ring));
-	--radius: 0.5rem;
-	--color-sidebar-background: hsl(var(--sidebar-background));
-	--color-sidebar-foreground: hsl(var(--sidebar-foreground));
-	--color-sidebar-primary: hsl(var(--sidebar-primary));
-	--color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
-	--color-sidebar-accent: hsl(var(--sidebar-accent));
-	--color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
-	--color-sidebar-border: hsl(var(--sidebar-border));
-	--color-sidebar-ring: hsl(var(--sidebar-ring));
-}
-
-:root {
-	color-scheme: light dark;
-
-	/* --palette-hue: light-dark(var(--oklch-blue), var(--oklch-purple)); */
-	--palette-hue: var(--oklch-purple);
-	/* --palette-hue-rotate-by: light-dark(-5, none); */
-	--palette-hue-rotate-by: -5;
-	/* --palette-chroma: light-dark(0.1, 0.15); */
-	--palette-chroma: 0.1;
-
-	--link: light-dark(oklch(50% 100% var(--palette-hue)), oklch(90% 80% var(--palette-hue)));
-	--link-visited: light-dark(
-		oklch(50% 100% calc(var(--palette-hue) * 1.2)),
-		oklch(90% 80% calc(var(--palette-hue) * 1.2))
-	);
-
-	--surface-1: light-dark(white, var(--color-11));
-	--surface-2: light-dark(var(--color-1), var(--color-12));
-	--surface-3: light-dark(var(--color-3), var(--color-13));
-	--surface-document: light-dark(var(--color-4), var(--color-14));
-	--well-1: light-dark(var(--color-5), var(--color-15));
-	--well-2: light-dark(var(--color-6), var(--color-16));
-
-	--text-1: light-dark(var(--color-16), var(--color-1));
-	--text-2: light-dark(var(--color-12), var(--color-5));
-
-	--scrollthumb-color: var(--text-2);
-
-	scrollbar-color: var(--scrollthumb-color) transparent;
-	scrollbar-width: auto;
-	accent-color: var(--brand, var(--link));
-	caret-color: var(--brand, var(--link));
-	color: var(--text-1);
-	background-color: var(--surface-document);
-
-	--muted-foreground: 220 8.9% 46.1%;
-	--popover: 0 0% 100%;
-	--popover-foreground: 224 71.4% 4.1%;
-	--primary: light-dark('220.9 39.3% 11%', '210 20% 98%');
-	--secondary: 220 14.3% 95.9%;
-	--secondary-foreground: 220.9 39.3% 11%;
-	--accent: 220 14.3% 95.9%;
-	--accent-foreground: 220.9 39.3% 11%;
-	--destructive: 0 72.2% 50.6%;
-	--destructive-foreground: 210 20% 98%;
-	--ring: 224 71.4% 4.1%;
-	--radius: 0.5rem;
-	--sidebar-background: 0 0% 98%;
-	--sidebar-foreground: 240 5.3% 26.1%;
-	--sidebar-primary: 240 5.9% 10%;
-	--sidebar-primary-foreground: 0 0% 98%;
-	--sidebar-accent: 240 4.8% 95.9%;
-	--sidebar-accent-foreground: 240 5.9% 10%;
-	--sidebar-border: 220 13% 91%;
-	--sidebar-ring: 217.2 91.2% 59.8%;
-}
-
-@media (prefers-color-scheme: dark) {
-	:root {
-		--muted-foreground: 217.9 10.6% 64.9%;
-		--popover: 224 71.4% 4.1%;
-		--popover-foreground: 210 20% 98%;
-		/* --primary: 210 20% 98%; */
-		--secondary: 215 27.9% 16.9%;
-		--secondary-foreground: 210 20% 98%;
-		--accent: 215 27.9% 16.9%;
-		--accent-foreground: 210 20% 98%;
-		--destructive: 0 62.8% 30.6%;
-		--destructive-foreground: 210 20% 98%;
-		--ring: 216 12.2% 83.9%;
-		--sidebar-background: 240 5.9% 10%;
-		--sidebar-foreground: 240 4.8% 95.9%;
-		--sidebar-primary: 224.3 76.3% 48%;
-		--sidebar-primary-foreground: 0 0% 100%;
-		--sidebar-accent: 240 3.7% 15.9%;
-		--sidebar-accent-foreground: 240 4.8% 95.9%;
-		--sidebar-border: 240 3.7% 15.9%;
-		--sidebar-ring: 217.2 91.2% 59.8%;
-	}
+	/* Used for accents such as hover effects on <DropdownMenuItem>, <SelectItem>...etc */
+	--color-accent: var(--surface-2);
+	--color-accent-foreground: light-dark(hsl(240 5.9% 10%), hsl(0 0% 98%));
+	/* Used for destructive actions such as <Button variant='destructive'> */
+	--color-destructive: oklch(30% 100% var(--oklch-red));
+	--color-destructive-foreground: var(--text-1);
+	/* Used for focus ring */
+	--color-ring: oklch(30% 100% var(--palette-hue));
+	/* --color-ring: hsl(215 20.2% 65.1%); */
+	/* Border radius for card, input and buttons */
+	--radius-xl: 5px;
+	--radius-lg: 5px;
+	--radius-md: 5px;
+	--radius-sm: 5px;
 }
 
 @layer base {

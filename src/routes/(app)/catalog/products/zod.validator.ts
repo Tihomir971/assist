@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { mReplenishRowSchema } from '$lib/types/supabase-zod-schemas';
 
 export const productGtinSchema = z.object({
 	id: z.number().optional(),
@@ -21,28 +22,21 @@ function is_valid_gtin(gtin: string): boolean {
 	return /^\d{8}$|^\d{12,14}$/.test(gtin);
 }
 
-export const replenishSchema = z.object({
-	replenishes: z
-		.object({
-			id: z.number().int().positive().optional(),
-			created: z.string().optional(),
-			updated: z.string().optional(),
-			ad_client_id: z.number().int().positive().default(1).optional(),
-			ad_org_id: z.number().int().positive().default(1).optional(),
-			isactive: z.boolean().default(true).optional(),
-			m_product_id: z.number().int().positive(),
-			m_warehouse_id: z.number().int().positive(),
-			level_min: z.number().int().nonnegative().default(0).optional(),
-			level_max: z.number().int().nonnegative().default(0).optional(),
-			m_warehousesource_id: z.number().int().positive().nullable().optional(),
-			m_replenish_uu: z.string().uuid().nullable().optional(),
-			replenishtype: z.string().optional().default('1').optional(),
-			m_locator_id: z.number().positive().nullable().optional(),
-			qtybatchsize: z.number().int().nonnegative().nullable().optional()
-		})
-		.array()
+// Create new schema based on mReplenishRowSchema but omitting ad_client_id and ad_org_id
+export const replenishSchema = mReplenishRowSchema.omit({
+	ad_client_id: true,
+	ad_org_id: true,
+	isactive: true,
+	created: true,
+	updated: true,
+	m_locator_id: true,
+	m_replenish_uu: true,
+	replenishtype: true
 });
-//export const replenishArraySchema = z.array(replenishSchema);
-//export const crudReplenishSchema = replenishSchema.extend({
-//	id: replenishSchema.shape.id.optional()
-//});
+export type ReplenishSchema = z.infer<typeof replenishSchema>;
+
+export const crudReplenishSchema = replenishSchema.extend({
+	id: replenishSchema.shape.id.optional()
+});
+export type LoginSchema = typeof crudReplenishSchema;
+export type CrudReplenishSchema = z.infer<typeof crudReplenishSchema>;

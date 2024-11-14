@@ -132,9 +132,9 @@
 		color: white !important ;
 	}
 
-	[data-scope='date-picker'][data-part='table-cell-trigger'][data-in-range]:not([data-selected]) {
+	/* 	[data-scope='date-picker'][data-part='table-cell-trigger'][data-in-range]:not([data-selected]) {
 		background: rgb(240, 219, 240);
-	}
+	} */
 
 	[data-scope='date-picker'][data-part='control'] {
 		display: flex;

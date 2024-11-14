@@ -18,7 +18,11 @@ interface NumberFormatOptions {
  * @param options - The formatting options.
  * @returns The formatted number.
  */
-export function formatNumber(value: number, options: NumberFormatOptions = {}): string {
+export function formatNumber(
+	value: number | null,
+	options: NumberFormatOptions = {}
+): string | null {
+	if (value === null) return null;
 	const { style = 'decimal', currency = 'RSD', fractionDigits = 2, locale = 'sr-Latn' } = options;
 
 	const formatter = new Intl.NumberFormat(locale, {

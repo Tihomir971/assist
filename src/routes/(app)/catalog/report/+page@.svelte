@@ -121,9 +121,9 @@
 		line-height: 0.75rem;
 	}
 	/* Add border only to the top of the first row in each group */
-	.group:not(:first-child) .group-first\:border-t {
+	/* 	.group:not(:first-child) .group-first\:border-t {
 		border-top-width: 1px;
-	}
+	} */
 	/* Custom scrollbar styles */
 	.report-container {
 		scrollbar-width: thin;
