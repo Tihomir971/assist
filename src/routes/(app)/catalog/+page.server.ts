@@ -107,6 +107,7 @@ export const actions = {
 			if (updateProductError) {
 				return { success: false, error: { updateProductError } };
 			}
+
 			product.barcodes?.forEach(async (element) => {
 				const { error: updateBacodesError } = await supabase
 					.from('m_product_gtin')

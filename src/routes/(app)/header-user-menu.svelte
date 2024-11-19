@@ -54,9 +54,7 @@
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		<Avatar.Root>
-			{#if typeof avatarUrl}
-				<Avatar.Image src={avatarUrl} alt="@shadcn" />
-			{/if}
+			<Avatar.Image src={avatarUrl} alt="@shadcn" />
 			<Avatar.Fallback>CN</Avatar.Fallback>
 		</Avatar.Root>
 	</DropdownMenu.Trigger>

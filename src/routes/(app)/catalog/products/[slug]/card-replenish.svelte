@@ -2,11 +2,7 @@
 	import { invalidate } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 	import { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
-	import {
-		type CrudReplenishSchema,
-		type LoginSchema,
-		type ReplenishSchema
-	} from '../zod.validator';
+	import { type LoginSchema } from '../zod.validator';
 	import { Button } from '$lib/components/ui/button';
 	import { X } from 'lucide-svelte';
 	import * as Table from '$lib/components/ui/table';
@@ -16,16 +12,15 @@
 
 	interface Props {
 		form: SuperValidated<Infer<LoginSchema>>;
-		replenishes: CrudReplenishSchema[];
+		productId: number;
+		//replenishes: CrudReplenishSchema[];
 		warehouses: Array<{ value: number; label: string }>;
 	}
 
 	let data: Props = $props();
-	let replenishes = $state(data.replenishes);
-	let productID = $state(data.replenishes[0].m_product_id);
-	$inspect(replenishes);
+	//let replenishes = $state(data.replenishes);
 
-	const { enhance, formId } = superForm(data.form, {
+	const { form, enhance, tainted, isTainted, allErrors } = superForm(data.form, {
 		dataType: 'json',
 		onUpdated({ form }) {
 			if (form.valid) {
@@ -33,11 +28,6 @@
 					description: form.message
 				});
 				invalidate('catalog:product');
-			} else {
-				console.error('Form is not valid', form.errors, form.message);
-				toast.error('Failed to update replenish data', {
-					description: form.message || 'Please check the form for errors'
-				});
 			}
 		}
 	});
@@ -54,22 +44,30 @@
 		return data.warehouses?.find((v) => v.value === value)?.label ?? '';
 	}
 	function addRow() {
-		if (data.form.id && data.warehouses.length > 0) {
-			replenishes.push({
-				m_product_id: productID,
-				m_warehouse_id: data.warehouses.reduce((min, warehouse) => {
-					return warehouse.value < min ? warehouse.value : min;
-				}, Number.MAX_SAFE_INTEGER),
-				level_min: 0,
-				level_max: 0,
-				qtybatchsize: null,
-				m_warehousesource_id: null
-			});
-		}
+		$form.replenishes.push({
+			m_product_id: data.productId,
+			m_warehouse_id: data.warehouses.reduce((min, warehouse) => {
+				return warehouse.value < min ? warehouse.value : min;
+			}, Number.MAX_SAFE_INTEGER),
+			level_min: 0,
+			level_max: 0,
+			qtybatchsize: null,
+			m_warehousesource_id: null
+		});
+		$form.replenishes = $form.replenishes;
 	}
 </script>
 
-<form method="post" use:enhance>
+{#if $allErrors.length}
+	<ul>
+		{#each $allErrors as error}
+			<li class="text-red-500">
+				! {error.messages.join('. ')}
+			</li>
+		{/each}
+	</ul>
+{/if}
+<form method="post" use:enhance action="?/replenishUPD">
 	<Table.Root>
 		<Table.Header>
 			<Table.Row>
@@ -82,12 +80,18 @@
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
-			{#each replenishes as replenish (replenish.id)}
+			{#each $form.replenishes as _, i}
 				<Table.Row>
 					<Table.Cell class="w-1/5">
-						<Select.Root type="single" value={replenish.m_warehouse_id?.toString()}>
+						<Select.Root
+							type="single"
+							value={$form.replenishes[i].m_warehouse_id.toString()}
+							onValueChange={(v) => {
+								$form.replenishes[i].m_warehouse_id = Number.parseInt(v);
+							}}
+						>
 							<Select.Trigger>
-								{selectedWarehouseLabel(replenish.m_warehouse_id)}
+								{selectedWarehouseLabel($form.replenishes[i].m_warehouse_id)}
 							</Select.Trigger>
 							<Select.Content>
 								{#each warehousesWithStringValues as warehouse}
@@ -100,25 +104,36 @@
 						<Input
 							type="number"
 							min="0"
-							bind:value={replenish.level_min}
+							bind:value={$form.replenishes[i].level_min}
 							placeholder="Min level..."
 						/>
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
-						<Input type="number" min="0" value={replenish.level_max} placeholder="Max level..." />
+						<Input
+							type="number"
+							min="0"
+							bind:value={$form.replenishes[i].level_max}
+							placeholder="Max level..."
+						/>
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
 						<Input
 							type="number"
 							min="0"
-							value={replenish.qtybatchsize ?? 0}
+							bind:value={$form.replenishes[i].qtybatchsize}
 							placeholder="Batch size..."
 						/>
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
-						<Select.Root type="single" value={replenish.m_warehousesource_id?.toString()}>
+						<Select.Root
+							type="single"
+							value={$form.replenishes[i].m_warehousesource_id?.toString()}
+							onValueChange={(v) => {
+								$form.replenishes[i].m_warehousesource_id = Number.parseInt(v);
+							}}
+						>
 							<Select.Trigger>
-								{selectedWarehouseLabel(replenish.m_warehousesource_id)}
+								{selectedWarehouseLabel($form.replenishes[i].m_warehousesource_id)}
 							</Select.Trigger>
 							<Select.Content>
 								{#each warehousesWithStringValues as warehouse}
@@ -128,27 +143,16 @@
 						</Select.Root>
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
-						<Form.Button
-							name="id"
-							formaction="?/replenish"
-							variant="outline"
-							size="icon"
-							value="update-row"
-							onclick={() => {
-								if (replenish.id) {
-									$formId = replenish.id?.toString();
-								}
-							}}
-						>
-							<!-- <X /> -->Add
-						</Form.Button>
+						<Button variant="outline" size="icon">
+							<X />
+						</Button>
 					</Table.Cell>
 				</Table.Row>
 			{/each}
 		</Table.Body>
 	</Table.Root>
 	<div class=" flex flex-row-reverse gap-4 pt-4 pr-4">
-		<Form.Button>Save</Form.Button>
-		<Button type="button" variant="outline" onclick={addRow}>Add Row</Button>
+		<Button variant="outline" onclick={addRow}>Add Row</Button>
+		<Form.Button disabled={!isTainted($tainted)}>Save</Form.Button>
 	</div>
 </form>

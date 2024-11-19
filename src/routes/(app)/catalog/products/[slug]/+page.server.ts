@@ -3,17 +3,15 @@ import type { Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getNumber, getString } from '$lib/scripts/getForm';
 import { ProductService } from '$lib/services/supabase/';
-import { ProductInfo } from '$lib/services/scraper';
 
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { crudMProductSchema, mProductSchema } from '$lib/types/supabase/product.validator.js';
 import { crudmProductPoSchema, mProductPoSchema } from '$lib/types/supabase/mProductPo.validator';
 import {
+	crudGtinSchema,
 	crudReplenishSchema,
-	productGtinSchema,
 	replenishSchema,
-	schemaProductGtinID,
 	type CrudReplenishSchema
 } from '../zod.validator';
 import type { Database } from '$lib/types/supabase';
@@ -69,7 +67,12 @@ export const load = (async ({ depends, params, locals: { supabase } }) => {
 		).data || [],
 		(await supabase.from('m_warehouse').select('value:id, label:name')).data || [],
 		ProductService.getProductPurchasing(supabase, productId),
-		(await supabase.from('m_product_gtin').select('*').eq('m_product_id', productId)).data || [],
+		(
+			await supabase
+				.from('m_product_gtin')
+				.select('id,gtin,m_product_id')
+				.eq('m_product_id', productId)
+		).data || [],
 		(await supabase.from('c_taxcategory').select('value:id::text, label:name').order('name'))
 			.data || [],
 		(
@@ -89,49 +92,22 @@ export const load = (async ({ depends, params, locals: { supabase } }) => {
 
 	const formProduct = await superValidate(product, zod(crudMProductSchema));
 	const formProductPO = await superValidate(zod(crudmProductPoSchema));
-	const formProductGtin = await superValidate(zod(productGtinSchema));
-	const formProductGtinId = await superValidate(zod(schemaProductGtinID));
-	const formReplenish = await superValidate(zod(crudReplenishSchema));
+	const formProductGtin = await superValidate({ barcodes }, zod(crudGtinSchema));
+	const formReplenish = await superValidate({ replenishes }, zod(crudReplenishSchema));
 
 	return {
 		formProduct,
-		//formProductPO,
 		productPurchasing,
 		formProductGtin,
-		//formProductGtinId,
-		barcodes,
 		formReplenish,
-		replenishes,
 		uom,
 		categories,
-		//c_bpartner,
 		warehouses,
 		tax,
-		//m_product_po,
 		salesByWeeks
-		//stock
 	};
 }) satisfies PageServerLoad;
 
-// Helper function to remove undefined values from an object
-const removeUndefinedValues = <T extends Record<string, any>>(obj: T): T => {
-	return Object.fromEntries(Object.entries(obj).filter(([_, value]) => value !== undefined)) as T;
-};
-// Helper function to get user-friendly error messages
-function getErrorMessage(error: PostgrestError): string {
-	switch (error.code) {
-		case '23505':
-			return 'This record already exists';
-		case '23503':
-			return 'Referenced record does not exist';
-		case '23502':
-			return 'Required field is missing';
-		case '42P01':
-			return 'Table does not exist';
-		default:
-			return error.message || 'An unexpected database error occurred';
-	}
-}
 export const actions = {
 	productUPD: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(mProductSchema));
@@ -146,127 +122,98 @@ export const actions = {
 
 		return { form };
 	},
-	/* deleteProduct: async ({ request, locals: { supabase } }) => {
-		const formData = await request.formData();
-		const formValue = formData.get('id');
-		const productId = formValue ? +formValue : undefined;
 
-		if (productId) {
-			const { error: delProductError } = await ProductService.delProduct(supabase, productId);
-			if (delProductError) {
-				return fail(404, { delProductError });
-			}
-		}
-	}, */
-
-	/* addProductPO: async ({ request, locals: { supabase } }) => {
-		const formData = await request.formData();
-		const c_bpartner_id = getNumber(formData, 'bpartner');
-		const m_product_id = getNumber(formData, 'm_product_id');
-		const vendorproductno = getString(formData, 'partnerPN');
-		const url = getString(formData, 'url');
-
-		if (m_product_id && c_bpartner_id && vendorproductno && url) {
-			const { error: addProductPurchasingError } = await ProductService.addProductPurchasing(
-				supabase,
-				{
-					m_product_id,
-					c_bpartner_id,
-					vendorproductno,
-					url
-				}
-			);
-
-			if (addProductPurchasingError) {
-				return fail(400, { addProductPurchasingError });
-			}
-		}
-	}, */
-
-	replenish: async ({ request, locals: { supabase } }) => {
-		console.log('replenish');
+	replenishUPD: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(crudReplenishSchema));
 		if (!form.valid) return fail(400, { form });
 
-		console.log('form', form);
-
-		return { form };
-	},
-
-	/* 	deleteReplenish: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(replenishSchema));
-
-		if (!form.valid) {
-			return fail(400, { form });
-		}
-		console.log('deleting....', form.id);
-
-	
-	}, */
-
-	/* getProductInfo: async ({ request, locals: { supabase } }) => {
-		const formData = await request.formData();
-		const form = await superValidate(formData, zod(crudMProductSchema));
-		//const formData = Object.fromEntries(await request.formData());
-		if (form.data.id) {
-			const data = await ProductInfo.getProductInfo(supabase, form.data.id);
-
-			return data;
-		}
-	}, */
-	/* mProductPo: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(crudmProductPoSchema));
-		if (!form.valid) {
-			console.error('Form validation failed:', form.errors);
-			return fail(400, { form });
-		}
-
 		try {
-			const { error: insertError } = await supabase.from('m_product_po').insert(form.data);
-			if (insertError) throw insertError;
+			// Separate records into updates and inserts
+			const updatesToProcess = form.data.replenishes.filter((r) => r.id !== undefined);
+			const insertsToProcess = form.data.replenishes.filter((r) => r.id === undefined);
+
+			// Perform updates
+			if (updatesToProcess.length > 0) {
+				// Use Promise.all to update multiple records concurrently
+				const updatePromises = updatesToProcess.map((r) =>
+					supabase.from('m_replenish').update(r).eq('id', r.id!)
+				);
+
+				const updateResults = await Promise.all(updatePromises);
+
+				// Check for any errors in the updates
+				const updateErrors = updateResults.filter((result) => result.error);
+				if (updateErrors.length > 0) {
+					throw updateErrors[0].error;
+				}
+			}
+
+			// Perform inserts
+			if (insertsToProcess.length > 0) {
+				const { error: insertError } = await supabase.from('m_replenish').insert(
+					insertsToProcess.map((r) => ({
+						...r
+					}))
+				);
+
+				if (insertError) throw insertError;
+			}
 		} catch (error) {
-			console.error('Database insertion failed:', error);
-			return fail(500, { form, error: 'Failed to insert data' });
-		}
-
-		return { form };
-	}, */
-	gtinADD: async ({ request, locals: { supabase } }) => {
-		console.log('mProductGtin');
-		const form = await superValidate(request, zod(productGtinSchema));
-		if (!form.valid) {
-			console.error('Form validation failed:', form.errors);
-			return fail(400, { form });
-		}
-
-		const { error: insertError } = await supabase.from('m_product_gtin').insert(form.data);
-		console.log('insertError', insertError);
-
-		if (insertError) {
-			// Handle specific Postgrest error codes
-			//const errorMessage = getErrorMessage(insertError);
+			console.error('Replenish update error:', error);
 			return fail(500, {
 				form,
-				error: insertError.details
+				error: error instanceof Error ? error.message : 'Unknown error occurred'
 			});
 		}
 
 		return { form };
 	},
 
-	gtinDEL: async ({ request, locals: { supabase } }) => {
-		console.log('gtinDelete');
-
-		const form = await superValidate(request, zod(schemaProductGtinID));
-		console.log('POST', form);
+	gtinUPD: async ({ request, locals: { supabase } }) => {
+		console.log('gtinUPD');
+		const form = await superValidate(request, zod(crudGtinSchema));
 		if (!form.valid) {
-			return message(form, 'Invalid ID for constellation.');
+			console.error('Form validation failed:', form.errors);
+			return fail(400, { form });
 		}
-		/* const { error } = await supabase.from('m_product_gtin').delete().eq('id', Number(form.id));
-		if (error) {
-			console.error('Failed to delete product GTIN:', error);
-			return fail(500, { error: 'Failed to delete product GTIN' });
-		} */
+		try {
+			// Separate records into updates and inserts
+			const updatesToProcess = form.data.barcodes.filter((r) => r.id !== undefined);
+			const insertsToProcess = form.data.barcodes.filter((r) => r.id === undefined);
+
+			// Perform updates
+			if (updatesToProcess.length > 0) {
+				// Use Promise.all to update multiple records concurrently
+				const updatePromises = updatesToProcess.map((r) =>
+					supabase.from('m_product_gtin').update(r).eq('id', r.id!)
+				);
+
+				const updateResults = await Promise.all(updatePromises);
+
+				// Check for any errors in the updates
+				const updateErrors = updateResults.filter((result) => result.error);
+				if (updateErrors.length > 0) {
+					throw updateErrors[0].error;
+				}
+			}
+
+			// Perform inserts
+			if (insertsToProcess.length > 0) {
+				const { error: insertError } = await supabase.from('m_product_gtin').insert(
+					insertsToProcess.map((r) => ({
+						...r
+					}))
+				);
+
+				if (insertError) throw insertError;
+			}
+		} catch (error) {
+			console.error('Replenish update error:', error);
+			return fail(500, {
+				form,
+				error: error instanceof Error ? error.message : 'Unknown error occurred'
+			});
+		}
 
 		return { form };
 	}

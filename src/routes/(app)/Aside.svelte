@@ -41,20 +41,7 @@
 		</Tooltip.Trigger>
 		<Tooltip.Content side="right">Catalog</Tooltip.Content>
 	</Tooltip.Root> -->
-	<Tooltip.Provider>
-		<Tooltip.Root>
-			<Tooltip.Trigger>
-				<a
-					href="/catalog/test-table"
-					class={`${activePath === '/catalog/test-table' ? 'text-accent-foreground' : 'text-muted-foreground'} hover:text-foreground flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8`}
-				>
-					<PhTag class="size-6" />
-					<span class="sr-only">Test Table</span>
-				</a>
-			</Tooltip.Trigger>
-			<Tooltip.Content side="right">Test Table</Tooltip.Content>
-		</Tooltip.Root>
-	</Tooltip.Provider>
+
 	<Tooltip.Provider>
 		<Tooltip.Root>
 			<Tooltip.Trigger>

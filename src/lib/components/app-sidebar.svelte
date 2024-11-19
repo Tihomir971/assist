@@ -55,25 +55,7 @@
 					}
 				]
 			},
-			{
-				title: 'Test Table',
-				url: '/catalog/test-table',
-				icon: Bot,
-				items: [
-					{
-						title: 'Genesis',
-						url: '#'
-					},
-					{
-						title: 'Explorer',
-						url: '#'
-					},
-					{
-						title: 'Quantum',
-						url: '#'
-					}
-				]
-			},
+
 			{
 				title: 'Export Import',
 				url: '/data',

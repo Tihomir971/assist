@@ -9,7 +9,6 @@ let warehousesCache: Warehouse[] | [] = [];
 
 export const load: PageServerLoad = async ({ depends, url, locals: { supabase } }) => {
 	depends('catalog:products');
-	console.log("depends('catalog:products');");
 
 	const { searchParams } = url;
 	const showStock = searchParams.get('stock') === 'true';

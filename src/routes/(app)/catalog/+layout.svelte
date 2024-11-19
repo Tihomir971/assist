@@ -93,8 +93,8 @@
 	}
 </script>
 
-<div class="flex h-full w-full gap-2 overflow-hidden">
-	<Card.Root class="card h-full w-72 overflow-hidden">
+<div class="grid h-full w-full grid-cols-[auto_1fr] gap-2 overflow-hidden">
+	<Card.Root class="card grid h-full w-64 grid-rows-[auto_1fr] overflow-hidden">
 		<Card.Header class="border-b p-3">
 			<Card.Title>
 				<div class="flex items-center gap-2">

@@ -108,6 +108,12 @@ export const columnDefs = [
 			});
 		}
 	}),
+	colHelp.accessor('unitsperpack', {
+		header: 'Pack',
+		cell: ({ cell }) => {
+			return renderSnippet(rightAlignSnippet, { value: cell.getValue() });
+		}
+	}),
 	colHelp.accessor('qtyWholesale', {
 		header: 'WH',
 		cell: ({ cell }) => {

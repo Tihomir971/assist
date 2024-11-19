@@ -22,7 +22,6 @@
 	import ChartVisualization from './ChartVisualization.svelte';
 	import VendorsCard from './card-vendors.svelte';
 	import ReplenishCard from './card-replenish.svelte';
-	import type { z } from 'zod';
 
 	let { data } = $props();
 
@@ -360,7 +359,7 @@
 							</Button>
 						</div>
 						<ul class="list-inside list-disc space-y-2">
-							{#each data.barcodes as barcode}
+							{#each data.formProductGtin.data.barcodes as barcode}
 								<li class="flex items-center gap-2">
 									<Package class="h-4 w-4" />
 									{barcode.gtin}
@@ -388,17 +387,19 @@
 			<Card.Description>Manage warehouse replenishment rules</Card.Description>
 		</Card.Header>
 		<Card.Content>
-			<ReplenishCard
-				replenishes={data.replenishes}
-				form={data.formReplenish}
-				warehouses={data.warehouses}
-			/>
+			{#if $formProduct.id}
+				<ReplenishCard
+					form={data.formReplenish}
+					warehouses={data.warehouses}
+					productId={$formProduct.id}
+				/>
+			{/if}
 		</Card.Content>
 	</Card.Root>
 	<Card.Root class="mb-4">
 		<Card.Header>
 			<Card.Title>Sales Chart</Card.Title>
-			<Card.Description>Monthly Sales Quantity</Card.Description>
+			<Card.Description>Monthly Sales Comparison</Card.Description>
 		</Card.Header>
 		<Card.Content>
 			<ChartVisualization data={data.salesByWeeks} />
@@ -409,8 +410,7 @@
 {#if $formProduct.id}
 	<DrawerBarcodes
 		bind:isBarcodeDrawerOpen
-		formData={data.formProductGtin}
-		barcodes={data.barcodes}
+		validatedForm={data.formProductGtin}
 		m_product_id={$formProduct.id}
 	/>
 {/if}

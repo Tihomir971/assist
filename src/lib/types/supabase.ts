@@ -2169,8 +2169,6 @@ export interface Database {
       }
       m_product_category: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
           created: string
           description: string | null
           id: number
@@ -2179,11 +2177,8 @@ export interface Database {
           name: string
           parent_id: number | null
           updated: string
-          value: string | null
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
           created?: string
           description?: string | null
           id?: number
@@ -2192,11 +2187,8 @@ export interface Database {
           name: string
           parent_id?: number | null
           updated?: string
-          value?: string | null
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
           created?: string
           description?: string | null
           id?: number
@@ -2205,21 +2197,8 @@ export interface Database {
           name?: string
           parent_id?: number | null
           updated?: string
-          value?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "m_product_category_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_product_category_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "m_product_category_parent_id_fkey"
             columns: ["parent_id"]
