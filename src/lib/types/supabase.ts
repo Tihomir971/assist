@@ -561,8 +561,6 @@ export interface Database {
       }
       c_channel_map_category: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
           c_channel_id: number
           created: string
           id: number
@@ -573,8 +571,6 @@ export interface Database {
           updated: string
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
           c_channel_id: number
           created?: string
           id?: number
@@ -585,8 +581,6 @@ export interface Database {
           updated?: string
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
           c_channel_id?: number
           created?: string
           id?: number
@@ -597,18 +591,6 @@ export interface Database {
           updated?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "c_channel_map_category_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "c_channel_map_category_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "c_channel_map_category_c_channel_id_fkey"
             columns: ["c_channel_id"]
@@ -2209,7 +2191,6 @@ export interface Database {
       }
       m_product_gtin: {
         Row: {
-          ad_org_id: number
           created: string
           gtin: string
           id: number
@@ -2218,7 +2199,6 @@ export interface Database {
           updated: string
         }
         Insert: {
-          ad_org_id?: number
           created?: string
           gtin: string
           id?: number
@@ -2227,7 +2207,6 @@ export interface Database {
           updated?: string
         }
         Update: {
-          ad_org_id?: number
           created?: string
           gtin?: string
           id?: number
@@ -2236,12 +2215,6 @@ export interface Database {
           updated?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "m_product_gtin_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "m_product_gtin_m_product_id_fkey"
             columns: ["m_product_id"]

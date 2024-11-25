@@ -1,27 +1,17 @@
-import { fail, error } from '@sveltejs/kit';
+import { fail, error, redirect } from '@sveltejs/kit';
 import type { Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getNumber, getString } from '$lib/scripts/getForm';
 import { ProductService } from '$lib/services/supabase/';
 
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { crudMProductSchema, mProductSchema } from '$lib/types/supabase/product.validator.js';
-import { crudmProductPoSchema, mProductPoSchema } from '$lib/types/supabase/mProductPo.validator';
-import {
-	crudGtinSchema,
-	crudReplenishSchema,
-	replenishSchema,
-	type CrudReplenishSchema
-} from '../zod.validator';
-import type { Database } from '$lib/types/supabase';
+import { crudReplenishSchema } from '../zod.validator';
 import type { ChartData } from '$lib/types/connector';
 import { connector } from '$lib/ky';
-import type { PostgrestError } from '@supabase/supabase-js';
-import { log } from 'console';
+import { crudMProductGtinSchema, crudMProductSchema } from './schema';
 
 export const load = (async ({ depends, params, locals: { supabase } }) => {
-	depends('catalog:product');
+	depends('catalog:products');
 
 	const productId = params.slug as unknown as number;
 	const { data: product, error: productError } = await supabase
@@ -29,9 +19,6 @@ export const load = (async ({ depends, params, locals: { supabase } }) => {
 		.select()
 		.eq('id', productId)
 		.single();
-	if (!product || productError) {
-		throw error(404, 'Product not found');
-	}
 
 	const [
 		uom,
@@ -66,36 +53,39 @@ export const load = (async ({ depends, params, locals: { supabase } }) => {
 				.order('m_warehouse_id')
 		).data || [],
 		(await supabase.from('m_warehouse').select('value:id, label:name')).data || [],
-		ProductService.getProductPurchasing(supabase, productId),
-		(
-			await supabase
-				.from('m_product_gtin')
-				.select('id,gtin,m_product_id')
-				.eq('m_product_id', productId)
-		).data || [],
+		product ? ProductService.getProductPurchasing(supabase, productId) : [],
+		product
+			? (await supabase.from('m_product_gtin').select('*').eq('m_product_id', productId)).data || []
+			: [],
 		(await supabase.from('c_taxcategory').select('value:id::text, label:name').order('name'))
 			.data || [],
-		(
-			await supabase
-				.from('m_product_po')
-				.select('id, m_product_id, vendorproductno, c_bpartner(id, name), pricelist, updated, url')
-				.eq(' m_product_id', productId)
-		).data || [],
+		product
+			? (
+					await supabase
+						.from('m_product_po')
+						.select(
+							'id, m_product_id, vendorproductno, c_bpartner(id, name), pricelist, updated, url'
+						)
+						.eq(' m_product_id', productId)
+				).data || []
+			: [],
 		(await connector.get(`api/sales/${product?.sku}/2`).json<ChartData>()) || [],
-		(
-			await supabase
-				.from('m_storageonhand')
-				.select('warehouse_id, qtyonhand')
-				.eq('m_product_id', productId)
-		).data || []
+		product
+			? (
+					await supabase
+						.from('m_storageonhand')
+						.select('warehouse_id, qtyonhand')
+						.eq('m_product_id', productId)
+				).data || []
+			: []
 	]);
 
 	const formProduct = await superValidate(product, zod(crudMProductSchema));
-	const formProductPO = await superValidate(zod(crudmProductPoSchema));
-	const formProductGtin = await superValidate({ barcodes }, zod(crudGtinSchema));
+	const formProductGtin = await superValidate({ barcodes }, zod(crudMProductGtinSchema));
 	const formReplenish = await superValidate({ replenishes }, zod(crudReplenishSchema));
 
 	return {
+		productId,
 		formProduct,
 		productPurchasing,
 		formProductGtin,
@@ -109,15 +99,29 @@ export const load = (async ({ depends, params, locals: { supabase } }) => {
 }) satisfies PageServerLoad;
 
 export const actions = {
-	productUPD: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(mProductSchema));
+	product: async ({ request, locals: { supabase } }) => {
+		const formData = await request.formData();
+		const form = await superValidate(formData, zod(crudMProductSchema));
 		if (!form.valid) return fail(400, { form });
 
-		const { created, updated, ...updateData } = form.data;
-		const { error } = await supabase.from('m_product').update(updateData).eq('id', form.data.id);
-
-		if (error) {
-			return fail(500, { form, error: error.message });
+		if (form.data.id) {
+			if (formData.has('delete')) {
+				const { error: delError } = await supabase
+					.from('m_product')
+					.delete()
+					.eq('id', form.data.id);
+				if (delError) throw error(404, delError.message);
+				throw redirect(303, '/catalog');
+			} else {
+				const { error: updError } = await supabase
+					.from('m_product')
+					.update(form.data)
+					.eq('id', form.data.id);
+				if (updError) throw error(404, updError.message);
+			}
+		} else {
+			const { error: insError } = await supabase.from('m_product').insert(form.data);
+			if (insError) throw error(500, insError.message);
 		}
 
 		return { form };
@@ -170,8 +174,7 @@ export const actions = {
 	},
 
 	gtinUPD: async ({ request, locals: { supabase } }) => {
-		console.log('gtinUPD');
-		const form = await superValidate(request, zod(crudGtinSchema));
+		const form = await superValidate(request, zod(crudMProductGtinSchema));
 		if (!form.valid) {
 			console.error('Form validation failed:', form.errors);
 			return fail(400, { form });

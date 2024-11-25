@@ -530,8 +530,6 @@ export const cChannelMapBpartnerRelationshipsSchema = z.tuple([
 ]);
 
 export const cChannelMapCategoryRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
 	c_channel_id: z.number(),
 	created: z.string(),
 	id: z.number(),
@@ -543,8 +541,6 @@ export const cChannelMapCategoryRowSchema = z.object({
 });
 
 export const cChannelMapCategoryInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
 	c_channel_id: z.number(),
 	created: z.string().optional(),
 	id: z.number().optional(),
@@ -556,8 +552,6 @@ export const cChannelMapCategoryInsertSchema = z.object({
 });
 
 export const cChannelMapCategoryUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
 	c_channel_id: z.number().optional(),
 	created: z.string().optional(),
 	id: z.number().optional(),
@@ -569,18 +563,6 @@ export const cChannelMapCategoryUpdateSchema = z.object({
 });
 
 export const cChannelMapCategoryRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('c_channel_map_category_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('c_channel_map_category_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('c_channel_map_category_c_channel_id_fkey'),
 		columns: z.tuple([z.literal('c_channel_id')]),
@@ -2235,7 +2217,6 @@ export const mProductCategoryRelationshipsSchema = z.tuple([
 ]);
 
 export const mProductGtinRowSchema = z.object({
-	ad_org_id: z.number(),
 	created: z.string(),
 	gtin: z.string(),
 	id: z.number(),
@@ -2245,7 +2226,6 @@ export const mProductGtinRowSchema = z.object({
 });
 
 export const mProductGtinInsertSchema = z.object({
-	ad_org_id: z.number().optional(),
 	created: z.string().optional(),
 	gtin: z.string(),
 	id: z.number().optional(),
@@ -2255,7 +2235,6 @@ export const mProductGtinInsertSchema = z.object({
 });
 
 export const mProductGtinUpdateSchema = z.object({
-	ad_org_id: z.number().optional(),
 	created: z.string().optional(),
 	gtin: z.string().optional(),
 	id: z.number().optional(),
@@ -2265,12 +2244,6 @@ export const mProductGtinUpdateSchema = z.object({
 });
 
 export const mProductGtinRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('m_product_gtin_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('m_product_gtin_m_product_id_fkey'),
 		columns: z.tuple([z.literal('m_product_id')]),

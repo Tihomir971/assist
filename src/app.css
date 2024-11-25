@@ -11,6 +11,8 @@
 	--color-surface-1: var(-surface-11);
 	--color-surface-2: var(--surface-2);
 	--color-surface-3: var(--surface-3);
+	/* --color-surface-3: light-dark(var(--color-red-500), var(--color-red-800)); */
+	/* --color-surface-document: light-dark(var(--color-zink-500), var(--color-slate-800)); */
 	--color-surface-document: var(--surface-document);
 	--color-well-1: var(--well-1);
 	--color-well-2: var(--well-2);
@@ -19,6 +21,7 @@
 
 	/* Default background color of <body />...etc */
 	--color-background: var(--surface-document);
+	/* --color-background: light-dark(var(--color-blue-500), var(--color-red-500)); */
 	--color-foreground: var(--text-1);
 	/* Muted backgrounds such as <TabsList />, <Skeleton /> and <Switch /> */
 	--color-muted: var(--surface-2);
@@ -27,6 +30,7 @@
 	--color-popover: light-dark(hsl(0 0% 100%), hsl(240 10% 3.9%));
 	--color-popover-foreground: light-dark(hsl(0 0% 98%), hsl(0 0% 98%));
 	/* Background color for <Card /> */
+	/* --color-card: light-dark(var(--color-slate-700), var(--color-gray-800)); */
 	--color-card: var(--surface-3);
 	--color-card-foreground: var(--text-1);
 	/* Default border color */
@@ -58,5 +62,17 @@
 @layer base {
 	* {
 		@apply border-border;
+	}
+}
+@layer base {
+	input,
+	textarea,
+	select,
+	button {
+		border: 0px solid;
+		border-radius: 0;
+		padding: 0;
+		color: inherit;
+		background-color: transparent;
 	}
 }

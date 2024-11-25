@@ -47,11 +47,6 @@
 	function initializeChart() {
 		if (!chartContainer || !data?.years) return;
 
-		console.log('Initializing chart with container dimensions:', {
-			width: chartContainer.clientWidth,
-			height: chartContainer.clientHeight
-		});
-
 		chartInstance = echarts.init(chartContainer);
 
 		// Sort years in ascending order
@@ -92,19 +87,16 @@
 		};
 
 		chartInstance.setOption(option);
-		console.log('Chart options set:', option);
 	}
 
 	// Initialize chart when data changes
 	$effect(() => {
-		console.log('Effect running, data changed:', !!data);
 		if (chartInstance) {
 			initializeChart();
 		}
 	});
 
 	onMount(() => {
-		console.log('Component mounted');
 		initializeChart();
 
 		// Handle window resize

@@ -252,7 +252,7 @@
 	);
 </script>
 
-<div class="mx-auto grid h-full w-1/2 grid-rows-[auto_1fr_auto] gap-4">
+<div class="mx-auto grid h-full grid-rows-[auto_1fr_auto] gap-4 p-2">
 	<h1 class="text-2xl font-bold">Product Data Upload</h1>
 	<div class="flex flex-col gap-4">
 		<div class="flex items-start justify-between gap-2">

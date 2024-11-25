@@ -16,10 +16,13 @@
 	import { toast } from 'svelte-sonner';
 	import { invalidate } from '$app/navigation';
 	import { crudMProductCategorySchema } from './schema';
+	import DrawerCategoryMap from './drawer-category-map.svelte';
+	import Package from 'lucide-svelte/icons/package';
 
 	let { data } = $props();
 
 	const formCategory = superForm(data.formCategory, {
+		resetForm: false,
 		validators: zodClient(crudMProductCategorySchema),
 		onUpdated(event) {
 			const { form } = event;
@@ -42,24 +45,29 @@
 	let triggerName = $derived(
 		data.categories.find((category) => category.value === $formData.parent_id?.toString())?.label
 	);
+	let isCategoryMapDrawerOpen = $state(false);
 </script>
 
 <form method="post" use:enhanceCategory>
-	<div class="container grid grid-cols-[2fr_1fr] gap-2 overflow-hidden">
+	<div class="grid grid-cols-[2fr_1fr] gap-2 overflow-hidden">
 		<Card.Root>
-			<input type="number" name="id" bind:value={$formData.id} hidden />
 			<Card.Header>
-				<Card.Title>
+				<Card.Title class="flex items-center gap-2">
+					<Package class="mb-2 size-8" />
 					<Form.Field form={formCategory} name="name">
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>Name</Form.Label>
-								<Input {...props} bind:value={$formData.name} />
+								<Input {...props} bind:value={$formData.name} class="min-w-4xl text-2xl" />
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
 				</Card.Title>
+				{#if $message}
+					<Card.Description>
+						<h3 class:invalid={$page.status >= 400}>{$message}</h3>
+					</Card.Description>{/if}
 			</Card.Header>
 			<Card.Content class="space-y-2">
 				{#if $message}
@@ -142,16 +150,11 @@
 					>
 				</div>
 			</Card.Content>
-			<Card.Footer class="flex justify-between">
-				{#if browser}
-					<SuperDebug data={$formData} />
-				{/if}
-			</Card.Footer>
+			<Card.Footer class="flex justify-between"></Card.Footer>
 		</Card.Root>
 		<Card.Root>
 			<Card.Header>
-				<Card.Title>Card Title</Card.Title>
-				<Card.Description>Card Description</Card.Description>
+				<Card.Title>Info</Card.Title>
 			</Card.Header>
 			<Card.Content class="space-y-2">
 				<div class="grid grid-cols-[1fr_2fr] items-center">
@@ -160,14 +163,29 @@
 				</div>
 				<div class="grid grid-cols-[1fr_2fr] items-center">
 					<Label>Created</Label>
-					<Input type="text" value={formatDateTime($formData.created)} readonly />
+					<Input type="text" value={formatDateTime($formData.created as string)} readonly />
 				</div>
 				<div class="grid grid-cols-[1fr_2fr] items-center">
 					<Label>Updated</Label>
-					<Input type="text" value={formatDateTime($formData.updated)} readonly />
+					<Input type="text" value={formatDateTime($formData.updated as string)} readonly />
 				</div>
 			</Card.Content>
 		</Card.Root>
+		<Button onclick={() => (isCategoryMapDrawerOpen = !isCategoryMapDrawerOpen)}>Drawer</Button>
 	</div>
+	{#if browser}
+		<Card.Root>
+			<Card.Content>
+				{#if browser}
+					<SuperDebug data={$formData} />
+				{/if}
+			</Card.Content>
+		</Card.Root>
+	{/if}
 </form>
-<!-- <Form data={form} categories={data.categories} /> -->
+<DrawerCategoryMap
+	bind:isCategoryMapDrawerOpen
+	categories={data.categories}
+	channels={data.channels}
+	validatedForm={data.formCategoryMap}
+/>

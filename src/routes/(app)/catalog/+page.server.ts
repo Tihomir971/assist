@@ -1,14 +1,17 @@
-import { error, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import type { SupabaseTable } from '$lib/types/database.types';
 import type { BSProduct } from '$lib/types/biznisoft';
 import { getChannelMap } from '$lib/services/channel-map';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { productSelectSchema } from '$lib/types/zod';
 import type { VendorProduct } from '$lib/types/product-scrapper';
 import { isValidGTIN } from '$lib/scripts/gtin';
 import { connector, scrapper } from '$lib/ky';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { DateTime } from 'luxon';
+import type { FlattenedProduct, Product, Warehouse } from './columns.svelte';
+import { productSelectSchema } from './schema';
 
 interface ProductRequest {
 	productId: number;
@@ -31,6 +34,199 @@ interface ApiResponseData<T> {
 	data?: T;
 	error?: string;
 	status: number;
+}
+export const load: PageServerLoad = async ({ depends, parent, url, locals: { supabase } }) => {
+	depends('catalog');
+	const { searchParams } = url;
+	const showStock = searchParams.get('stock') === 'true';
+	const showReport = searchParams.get('report');
+	const showVat = searchParams.get('showVat') === 'true';
+	const categoryId = searchParams.get('cat');
+	const { activeWarehouse } = await parent();
+
+	const [productsData, activePricelists] = await Promise.all([
+		fetchProducts(supabase, categoryId),
+		getPriceLists(supabase)
+	]);
+
+	const products = filterAndFlattenProducts(
+		productsData,
+		showStock,
+		showReport,
+		activeWarehouse,
+		showVat,
+		activePricelists
+	);
+
+	return {
+		products,
+		activeWarehouse,
+		showStock,
+		showVat
+	};
+};
+
+async function fetchProducts(supabase: SupabaseClient, categoryIds: string | null) {
+	const query = supabase
+		.from('m_product')
+		.select(
+			`
+			id, sku, name, barcode, mpn, unitsperpack, imageurl, discontinued,
+			c_taxcategory(c_tax(rate)),
+			m_storageonhand(warehouse_id,qtyonhand),
+			productPrice:m_productprice(m_pricelist_version_id,pricestd,pricelist),
+			level_min:m_replenish(m_warehouse_id,level_min),
+			level_max:m_replenish(m_warehouse_id,level_max),
+			m_product_po(c_bpartner_id,pricelist)
+		`
+		)
+		.eq('producttype', 'I')
+		.eq('isactive', true)
+		//.eq('m_pricelist_version.m_pricelist_id', 4)
+		.order('name');
+
+	if (categoryIds) {
+		query.eq('m_product_category_id', Number(categoryIds));
+	} else {
+		query.is('m_product_category_id', null);
+	}
+
+	const { data, error } = await query;
+
+	if (error) {
+		console.error('Error fetching products:', error);
+		return [];
+	}
+
+	return data as unknown as Product[];
+}
+async function getPriceLists(
+	supabase: SupabaseClient
+): Promise<Partial<SupabaseTable<'m_pricelist_version'>['Row']>[] | []> {
+	const nowBelgrade = DateTime.now().setZone('Europe/Belgrade');
+	const targetDate = nowBelgrade.toFormat("yyyy-MM-dd'T'HH:mm:ssZZ");
+
+	const { data } = await supabase
+		.from('m_pricelist_version')
+		.select('id')
+		.eq('isactive', true)
+		.eq('m_pricelist_id', 4)
+		.or(`validfrom.lte.${targetDate},validfrom.is.null`)
+		.or(`validto.gte.${targetDate},validto.is.null`);
+
+	return data || [];
+}
+function filterAndFlattenProducts(
+	products: Product[],
+	showStock: boolean,
+	showReport: string | null,
+	activeWarehouse: number,
+	showVat: boolean,
+	activePricelists: Partial<SupabaseTable<'m_pricelist_version'>['Row']>[] | []
+): FlattenedProduct[] {
+	let filteredProducts: Product[];
+	if (showReport === 'replenish') {
+		filteredProducts = products.filter((product) => {
+			const activeWarehouseStock =
+				product.m_storageonhand.find((item) => item.warehouse_id === activeWarehouse)?.qtyonhand ||
+				0;
+			const activeWarehouseLevelMin =
+				product.level_min.find((item) => item.m_warehouse_id === activeWarehouse)?.level_min || 0;
+			return activeWarehouseStock < activeWarehouseLevelMin;
+		});
+	} else if (showStock) {
+		filteredProducts = products.filter((product) => {
+			const hasNonZeroStock = product.m_storageonhand.some((item) => item.qtyonhand !== 0);
+			const activeWarehouseStock =
+				product.m_storageonhand.find((item) => item.warehouse_id === activeWarehouse)?.qtyonhand ||
+				0;
+			const activeWarehouseLevelMin = product.level_min.find(
+				(item) => item.m_warehouse_id === activeWarehouse
+			)?.level_min;
+
+			return (
+				hasNonZeroStock ||
+				(activeWarehouseLevelMin !== undefined && activeWarehouseLevelMin > activeWarehouseStock)
+			);
+		});
+	} else {
+		filteredProducts = products;
+	}
+
+	return filteredProducts.map((product) =>
+		flattenProduct(product, activeWarehouse, showVat, activePricelists)
+	);
+}
+function flattenProduct(
+	product: Product,
+	activeWarehouse: number,
+	showVat: boolean,
+	activePricelists: Partial<SupabaseTable<'m_pricelist_version'>['Row']>[] | []
+): FlattenedProduct {
+	const smallestPricestd = Math.min(
+		...product.productPrice
+			.filter(
+				(item) =>
+					item.pricestd !== null &&
+					activePricelists.some((pl) => pl.id === item.m_pricelist_version_id)
+			)
+			.map((item) => item.pricestd!)
+	);
+	if (product.id === 1400) {
+		console.log('product', smallestPricestd);
+	}
+	const purchase =
+		product.productPrice.find((item) => item.m_pricelist_version_id === 5)?.pricestd ?? 0;
+	const retail =
+		product.productPrice.find((item) => item.m_pricelist_version_id === 13)?.pricestd ?? 0;
+	const tax = product.c_taxcategory?.c_tax?.[0]?.rate ?? 0;
+
+	const storageLookup = new Map(
+		product.m_storageonhand.map((item) => [item.warehouse_id, item.qtyonhand])
+	);
+	const levelMinLookup = new Map(
+		product.level_min.map((item) => [item.m_warehouse_id, item.level_min])
+	);
+	const levelMaxLookup = new Map(
+		product.level_max.map((item) => [item.m_warehouse_id, item.level_max])
+	);
+	const productPoLookup = new Map(
+		product.m_product_po.map((item) => [item.c_bpartner_id, item.pricelist])
+	);
+
+	const cenoteka = productPoLookup.get(2) ?? 0;
+	const agrofina = productPoLookup.get(480) ?? 0;
+	const mercator = productPoLookup.get(4) ?? 0;
+	const mivex = productPoLookup.get(89) ?? 0;
+	const gros = productPoLookup.get(407) ?? 0;
+
+	const priceRetail = Math.min(retail, smallestPricestd);
+	const action = smallestPricestd < retail;
+
+	return {
+		id: product.id,
+		sku: product.sku,
+		name: product.name,
+		barcode: product.barcode,
+		mpn: product.mpn,
+		unitsperpack: product.unitsperpack,
+		imageurl: product.imageurl,
+		discontinued: product.discontinued,
+		taxRate: tax ? tax / 100 : null,
+		qtyWholesale: storageLookup.get(2) ?? 0,
+		qtyRetail: storageLookup.get(5) ?? 0,
+		pricePurchase: showVat ? purchase * (1 + tax / 100) : purchase,
+		ruc: (priceRetail / (1 + tax / 100) - purchase) / purchase,
+		priceRetail: showVat ? priceRetail : priceRetail / (1 + tax / 100),
+		levelMin: levelMinLookup.get(activeWarehouse) ?? null,
+		levelMax: levelMaxLookup.get(activeWarehouse) ?? null,
+		priceAgrofina: showVat ? agrofina * (1 + tax / 100) : agrofina,
+		priceMercator: showVat ? mercator * (1 + tax / 100) : mercator,
+		priceMivex: showVat ? mivex * (1 + tax / 100) : mivex,
+		priceCenoteka: showVat ? cenoteka * (1 + tax / 100) : cenoteka,
+		priceGros: showVat ? gros * (1 + tax / 100) : gros,
+		action
+	};
 }
 
 export const actions = {
@@ -116,43 +312,7 @@ export const actions = {
 					console.error('Error adding product GTIN:', updateBacodesError);
 				}
 			});
-			//product.replenish?.forEach(async (replenish) => {
-			//	const warehouseID = Number(
-			//		mapWarehouse?.find((item) => item.resource_id === replenish.sifobj.toString())
-			//			?.m_warehouse_id
-			//	);
-			//
-			//	const { error: updateRepelnishError, count: updateRepelnishCount } = await supabase
-			//		.from('m_replenish')
-			//		.update(
-			//			{
-			//				level_min: replenish.iminzal ?? 0,
-			//				level_max: replenish.imaxzal ?? 0
-			//			},
-			//			{ count: 'estimated' }
-			//		)
-			//		.eq('m_warehouse_id', warehouseID)
-			//		.eq('m_product_id', selectProductId.id);
-			//
-			//	if (updateRepelnishError) {
-			//console.log('updateRepelnishError', updateRepelnishError);
 
-			//return { success: false, error: { updateRepelnishError } };
-			//	}
-			//	if (updateRepelnishCount === 0) {
-			//const { error: insertRepelnishError } = await supabase.from('m_replenish').insert({
-			//	m_product_id: selectProductId.id,
-			//	m_warehouse_id: warehouseID,
-			//	level_min: replenish.iminzal ?? 0,
-			//	level_max: replenish.imaxzal ?? 0
-			//});
-			//if (insertRepelnishError) {
-			//	console.log('insertRepelnishError', insertRepelnishError);
-			//
-			//	return { success: false, error: { insertRepelnishError } };
-			//}
-			//	}
-			//});
 			product.m_product_po?.forEach(async (po) => {
 				const { data: erpMapBpartner, error: selectProductIdError } = await supabase
 					.from('c_channel_map_bpartner')
@@ -252,16 +412,6 @@ export const actions = {
 		return {
 			success: true
 		};
-	},
-	deleteCategory: async ({ request, locals: { supabase } }) => {
-		const id = Number((await request.formData()).get('id'));
-		const { error: deleteCategoryError } = await supabase
-			.from('m_product_category')
-			.delete()
-			.eq('id', id);
-		if (deleteCategoryError) {
-			throw deleteCategoryError;
-		}
 	},
 
 	getCenotekaInfo: async ({ request, locals: { supabase } }) => {

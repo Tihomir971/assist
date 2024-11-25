@@ -17,16 +17,10 @@
 	setContext('cartItems', cartItems);
 </script>
 
-<div class="grid h-screen w-screen grid-rows-[auto_1fr] overflow-hidden">
-	<div class="h-full">
-		<Header supabase={data.supabase} profile={data.profile}></Header>
-	</div>
-	<div class="grid h-full w-full grid-cols-1 overflow-hidden md:grid-cols-[auto_1fr]">
-		<div class="hidden md:block">
-			<Aside></Aside>
-		</div>
-		<main class="flex h-full w-full flex-col items-center overflow-hidden p-2">
-			{@render children()}
-		</main>
+<div class="flex h-screen flex-col">
+	<Header supabase={data.supabase} profile={data.profile}></Header>
+	<div class="flex flex-1 overflow-hidden">
+		<Aside></Aside>
+		{@render children()}
 	</div>
 </div>

@@ -9,13 +9,13 @@
 	import { toast } from 'svelte-sonner';
 	import Package from 'lucide-svelte/icons/package';
 	import Trash from 'lucide-svelte/icons/trash-2';
-	import Plus from 'lucide-svelte/icons/plus';
-	import { crudGtinSchema, type CrudGtinSchema } from '../zod.validator';
 	import { isValidGTIN } from '$lib/scripts/gtin';
+	import type { CrudMProductGtinSchema } from './schema';
+	import { invalidate } from '$app/navigation';
 
 	type Props = {
 		isBarcodeDrawerOpen: boolean;
-		validatedForm: SuperValidated<Infer<CrudGtinSchema>>;
+		validatedForm: SuperValidated<Infer<CrudMProductGtinSchema>>;
 		m_product_id: number;
 	};
 
@@ -36,6 +36,8 @@
 			if (form.valid) {
 				toast.success(form.message || 'Barcode operation successful');
 				newBarcode = ''; // Reset input after successful submission
+
+				invalidate('catalog:products');
 			} else {
 				console.error('Form is not valid', form.errors, form.message);
 				toast.error(form.message || 'Barcode operation failed');
@@ -55,7 +57,7 @@
 		}
 
 		// Add the new barcode with required properties
-		$formGtin.barcodes.push({ id: undefined, m_product_id: m_product_id, gtin: newBarcode });
+		$formGtin.barcodes.push({ m_product_id: m_product_id, gtin: newBarcode });
 		$formGtin.barcodes = $formGtin.barcodes;
 		newBarcode = ''; // Reset input
 	}
@@ -67,12 +69,12 @@
 	onOpenChange={(open) => (isBarcodeDrawerOpen = open)}
 	direction="right"
 >
-	<form method="POST" use:enhanceGtin action="?/gtinUPD">
-		<Drawer.Content class="0 inset-x-auto inset-y-0 right-0 mt-0 w-96">
-			<Drawer.Header>
-				<Drawer.Title>Barcodes</Drawer.Title>
-				<Drawer.Description>Manage product barcodes</Drawer.Description>
-			</Drawer.Header>
+	<Drawer.Content class="inset-x-auto inset-y-0 right-0 mt-0 w-96">
+		<Drawer.Header>
+			<Drawer.Title>Barcodes</Drawer.Title>
+			<Drawer.Description>Manage product barcodes</Drawer.Description>
+		</Drawer.Header>
+		<form method="POST" use:enhanceGtin action="?/gtinUPD">
 			<div class="space-y-4 p-4">
 				<ul class="list-inside space-y-2">
 					{#each $formGtin.barcodes as barcode (barcode.gtin)}
@@ -111,10 +113,10 @@
 				{/if}
 				<Form.Button disabled={!isTainted($tainted)}>Save</Form.Button>
 			</div>
-			<SuperDebug data={$formGtin} />
-			<Drawer.Footer>
-				<Drawer.Close>Close</Drawer.Close>
-			</Drawer.Footer>
-		</Drawer.Content>
-	</form>
+		</form>
+		<SuperDebug data={$formGtin} />
+		<Drawer.Footer>
+			<Drawer.Close>Close</Drawer.Close>
+		</Drawer.Footer>
+	</Drawer.Content>
 </Drawer.Root>

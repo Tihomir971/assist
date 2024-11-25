@@ -27,7 +27,7 @@
 				toast.success('Replenish data updated successfully', {
 					description: form.message
 				});
-				invalidate('catalog:product');
+				invalidate('catalog:products');
 			}
 		}
 	});

@@ -2,8 +2,7 @@ import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { log } from 'console';
-import { crudMProductCategorySchema } from './schema';
+import { crudCChannelMapCategorySchema, crudMProductCategorySchema } from './schema';
 
 export const load = (async ({ params, locals: { supabase } }) => {
 	const categoryId = params.slug as unknown as number;
@@ -12,17 +11,29 @@ export const load = (async ({ params, locals: { supabase } }) => {
 		.select('*')
 		.eq('id', categoryId)
 		.maybeSingle();
-	if (params.slug && !category) throw error(404, 'User not found.');
+	const { data: categoryMap } = await supabase
+		.from('c_channel_map_category')
+		.select('*')
+		.eq('m_product_category_id', categoryId)
+		.maybeSingle();
+	//	if (params.slug && !category) throw error(404, 'User not found.');
 
 	const categories =
 		(await supabase.from('m_product_category').select('value:id::text,label:name').order('name'))
 			.data || [];
+	const channels =
+		(await supabase.from('c_channel').select('value:id::text,label:name').order('name')).data || [];
 
 	const formCategory = await superValidate(category, zod(crudMProductCategorySchema));
+	const formCategoryMap = await superValidate(categoryMap, zod(crudCChannelMapCategorySchema));
+
+	console.log('formCategory', formCategory);
 
 	return {
 		formCategory,
-		categories
+		formCategoryMap,
+		categories,
+		channels
 	};
 }) satisfies PageServerLoad;
 
@@ -32,10 +43,17 @@ export const actions = {
 
 		const form = await superValidate(formData, zod(crudMProductCategorySchema));
 		if (!form.valid) return fail(400, { form });
-
+		//console.log('form.data', form.data, typeof form.data.created);
+		//return;
 		if (!form.data.id) {
 			console.log('Create Category');
-
+			const { error: insertProductCategoryError } = await supabase
+				.from('m_product_category')
+				.insert(form.data);
+			if (insertProductCategoryError) {
+				throw error(400, insertProductCategoryError.message);
+			}
+			return message(form, 'Category created!');
 			// CREATE user
 			//const user = { ...form.data, id: userId() };
 			//users.push(user);

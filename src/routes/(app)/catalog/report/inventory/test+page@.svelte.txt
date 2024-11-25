@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { DateTime } from 'luxon';
 
 	const { data } = $props();
 
-	let currentDateTime = $state('');
+	let currentDateTime = $state(DateTime.now());
 	let warehouseName = $state('Loading...');
 
 	async function fetchWarehouseName() {
@@ -26,16 +27,8 @@
 		}
 	}
 
-	function updateDateTime() {
-		const now = new Date();
-		currentDateTime = now.toLocaleString();
-	}
-
 	$effect(() => {
-		updateDateTime();
-		const interval = setInterval(updateDateTime, 60000);
 		fetchWarehouseName();
-		return () => clearInterval(interval);
 	});
 
 	function printReport() {
@@ -48,17 +41,31 @@
 		class="sticky top-0 z-10 mb-2 flex items-center justify-between bg-white print:static print:bg-transparent"
 	>
 		<h1 class="text-xl font-bold text-black">Catalog Stock Report</h1>
-		<button
-			onclick={printReport}
-			class="rounded bg-gray-500 px-3 py-1 text-sm text-white transition-colors hover:bg-gray-600 print:hidden"
-		>
-			Print Report
-		</button>
+		<div>
+			<button
+				onclick={() => window.close()}
+				class="rounded bg-gray-500 px-3 py-1 text-sm text-white transition-colors hover:bg-gray-600 print:hidden"
+			>
+				Close
+			</button>
+			<button
+				onclick={printReport}
+				class="rounded bg-gray-500 px-3 py-1 text-sm text-white transition-colors hover:bg-gray-600 print:hidden"
+			>
+				Print Report
+			</button>
+		</div>
 	</div>
 
-	<div class="mb-4 text-sm text-black/80">
-		<p><strong>Date and Time:</strong> {currentDateTime}</p>
-		<p><strong>Warehouse:</strong> {warehouseName}</p>
+	<div class="mb-4 flex justify-between text-sm text-black/80">
+		<div>
+			<p><strong>Category:</strong> {data.parentCategory?.name}</p>
+			<p><strong>Warehouse:</strong> {warehouseName}</p>
+		</div>
+		<p>
+			<strong>Date and Time:</strong>
+			{currentDateTime.setLocale('sr-Latn').toLocaleString(DateTime.DATETIME_FULL)}
+		</p>
 	</div>
 
 	<div
@@ -73,7 +80,7 @@
 							<tr>
 								<th class="border-b px-2 py-1">SKU</th>
 								<th class="border-b px-2 py-1">Name</th>
-								<th class="border-b px-2 py-1">Stock</th>
+								<th class="border-b px-2 py-1 text-right">Stock</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -81,11 +88,11 @@
 								<tr class="group">
 									<td class="px-2 py-1 group-first:border-t">{product.sku}</td>
 									<td class="px-2 py-1 font-medium group-first:border-t">{product.name}</td>
-									<td class="px-2 py-1 group-first:border-t">{product.stock}</td>
+									<td class="px-2 py-1 text-right group-first:border-t">{product.stock}</td>
 								</tr>
 								{#if product.barcodes.length > 0}
-									<tr class="group">
-										<td colspan="3" class="text-2xs px-2 py-0.5 italic">
+									<tr class="group border-b">
+										<td colspan="3" class="text-2xs px-2 py-0.5">
 											<strong>Barcodes:</strong>
 											{product.barcodes.join(', ')}
 										</td>

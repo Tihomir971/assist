@@ -5,11 +5,8 @@
 
 	import Ellipsis from 'lucide-svelte/icons/ellipsis';
 	import Package from 'lucide-svelte/icons/package';
-	import X from 'lucide-svelte/icons/x';
 
 	import * as Card from '$lib/components/ui/card/index.js';
-	import * as Drawer from '$lib/components/ui/drawer/index.js';
-	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
@@ -17,11 +14,11 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { Button } from '$lib/components/ui/button/index.js';
 
-	import { crudMProductSchema } from '$lib/types/supabase/product.validator';
 	import DrawerBarcodes from './drawer-barcodes.svelte';
 	import ChartVisualization from './ChartVisualization.svelte';
 	import VendorsCard from './card-vendors.svelte';
 	import ReplenishCard from './card-replenish.svelte';
+	import { crudMProductSchema } from './schema';
 
 	let { data } = $props();
 
@@ -34,7 +31,7 @@
 					description: form.message || 'Your changes have been saved.'
 				});
 
-				invalidate('catalog:product');
+				invalidate('catalog:products');
 			} else {
 				toast.error('Failed to update product', {
 					description: form.message || 'Please check the form for errors'
@@ -81,7 +78,7 @@
 
 <div class="mx-auto w-full max-w-[var(--breakpoint-xl)]">
 	<Card.Root class="mb-4">
-		<form method="post" action="?/productUPD" use:enhanceProduct id="product-form">
+		<form method="post" action="?/product" use:enhanceProduct id="product-form">
 			<Card.Header class="border-b">
 				<Card.Description class="text-lg">Product ID: {$formProduct.id}</Card.Description>
 				<div class="grid grid-cols-[1fr_auto] gap-2">
@@ -93,7 +90,7 @@
 									{#snippet children({ props })}
 										<Input
 											{...props}
-											placeholder="Tell us a little bit about yourself"
+											placeholder="Enter Product name..."
 											class="min-w-4xl text-2xl"
 											bind:value={$formProduct.name}
 										/>
@@ -111,7 +108,7 @@
 							>
 						</div>
 						<div class={isProductTainted($productTainted) ? 'hidden' : ''}>
-							<Button type="button" variant="destructive">Delete</Button>
+							<Form.Button name="delete" variant="destructive">Delete</Form.Button>
 						</div>
 					</div>
 				</div>
@@ -372,45 +369,45 @@
 		</form>
 	</Card.Root>
 	<!-- Vendors -->
-	<Card.Root class="mb-4">
-		<Card.Header>
-			<Card.Title>Vendors</Card.Title>
-		</Card.Header>
-		<Card.Content>
-			<VendorsCard productPurchasing={data.productPurchasing} />
-		</Card.Content>
-	</Card.Root>
+	{#if $formProduct.id}
+		<Card.Root class="mb-4">
+			<Card.Header>
+				<Card.Title>Vendors</Card.Title>
+			</Card.Header>
+			<Card.Content>
+				<VendorsCard productPurchasing={data.productPurchasing} />
+			</Card.Content>
+		</Card.Root>
 
-	<Card.Root class="mb-4">
-		<Card.Header>
-			<Card.Title>Replenish</Card.Title>
-			<Card.Description>Manage warehouse replenishment rules</Card.Description>
-		</Card.Header>
-		<Card.Content>
-			{#if $formProduct.id}
-				<ReplenishCard
-					form={data.formReplenish}
-					warehouses={data.warehouses}
-					productId={$formProduct.id}
-				/>
-			{/if}
-		</Card.Content>
-	</Card.Root>
-	<Card.Root class="mb-4">
-		<Card.Header>
-			<Card.Title>Sales Chart</Card.Title>
-			<Card.Description>Monthly Sales Comparison</Card.Description>
-		</Card.Header>
-		<Card.Content>
-			<ChartVisualization data={data.salesByWeeks} />
-		</Card.Content>
-	</Card.Root>
+		<Card.Root class="mb-4">
+			<Card.Header>
+				<Card.Title>Replenish</Card.Title>
+				<Card.Description>Manage warehouse replenishment rules</Card.Description>
+			</Card.Header>
+			<Card.Content>
+				{#if $formProduct.id}
+					<ReplenishCard
+						form={data.formReplenish}
+						warehouses={data.warehouses}
+						productId={$formProduct.id}
+					/>
+				{/if}
+			</Card.Content>
+		</Card.Root>
+		<Card.Root class="mb-4">
+			<Card.Header>
+				<Card.Title>Sales Chart</Card.Title>
+				<Card.Description>Monthly Sales Comparison</Card.Description>
+			</Card.Header>
+			<Card.Content>
+				<ChartVisualization data={data.salesByWeeks} />
+			</Card.Content>
+		</Card.Root>
+
+		<DrawerBarcodes
+			bind:isBarcodeDrawerOpen
+			validatedForm={data.formProductGtin}
+			m_product_id={$formProduct.id}
+		/>
+	{/if}
 </div>
-
-{#if $formProduct.id}
-	<DrawerBarcodes
-		bind:isBarcodeDrawerOpen
-		validatedForm={data.formProductGtin}
-		m_product_id={$formProduct.id}
-	/>
-{/if}

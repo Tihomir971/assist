@@ -3,7 +3,7 @@
 	import { enhance } from '$app/forms';
 </script>
 
-<div class="grid h-full place-items-center">
+<div class="mx-auto grid h-full place-items-center p-2">
 	<div class="card flex space-x-2">
 		<form method="post" use:enhance action="?/importPartners">
 			<Form.Button>Import Partners</Form.Button>

@@ -216,7 +216,10 @@
 		<div class="flex items-center gap-2">
 			<button
 				class="flex items-center gap-2 rounded bg-red-600 px-4 py-2 text-sm text-white transition-colors hover:bg-red-700"
-				onclick={() => (storageCartItems.current = [])}
+				onclick={() => {
+					storageCartItems.current = [];
+					storageCartItems.current = storageCartItems.current;
+				}}
 			>
 				Clear All
 			</button>
