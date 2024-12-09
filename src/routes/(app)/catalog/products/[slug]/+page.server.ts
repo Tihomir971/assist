@@ -3,35 +3,35 @@ import type { Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { ProductService } from '$lib/services/supabase/';
 
-import { message, superValidate } from 'sveltekit-superforms';
+import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { crudReplenishSchema } from '../zod.validator';
-import type { ChartData } from '$lib/types/connector';
+import type { ChartData } from './chart-types';
 import { connector } from '$lib/ky';
-import { crudMProductGtinSchema, crudMProductSchema } from './schema';
+import {
+	crudMProductGtinSchema,
+	crudMProductSchema,
+	crudReplenishSchema,
+	mProductPoInsertSchemaАrray,
+	mStorageonhandInsertSchemaАrray
+} from './schema';
 
-export const load = (async ({ depends, params, locals: { supabase } }) => {
+export const load: PageServerLoad = async ({ depends, params, locals: { supabase } }) => {
 	depends('catalog:products');
 
-	const productId = params.slug as unknown as number;
-	const { data: product, error: productError } = await supabase
-		.from('m_product')
-		.select()
-		.eq('id', productId)
-		.single();
+	const productId = parseInt(params.slug);
+	const { data: product } = await supabase.from('m_product').select().eq('id', productId).single();
 
 	const [
 		uom,
 		categories,
-		c_bpartner,
+		partners,
 		replenishes,
 		warehouses,
-		productPurchasing,
+		purchases,
 		barcodes,
 		tax,
-		m_product_po,
 		salesByWeeks,
-		stock
+		storageonhand
 	] = await Promise.all([
 		ProductService.getUom(supabase),
 		(await supabase.from('m_product_category').select('value:id::text, label:name').order('name'))
@@ -59,22 +59,22 @@ export const load = (async ({ depends, params, locals: { supabase } }) => {
 			: [],
 		(await supabase.from('c_taxcategory').select('value:id::text, label:name').order('name'))
 			.data || [],
-		product
-			? (
-					await supabase
-						.from('m_product_po')
-						.select(
-							'id, m_product_id, vendorproductno, c_bpartner(id, name), pricelist, updated, url'
-						)
-						.eq(' m_product_id', productId)
-				).data || []
-			: [],
-		(await connector.get(`api/sales/${product?.sku}/2`).json<ChartData>()) || [],
+
+		product?.sku
+			? await connector
+					.post('api/sales', {
+						json: {
+							productIds: [product.sku],
+							yearCount: 3
+						}
+					})
+					.json<ChartData>()
+			: { products: [], currentYear: new Date().getFullYear() }, // Return empty ChartData instead of empty array
 		product
 			? (
 					await supabase
 						.from('m_storageonhand')
-						.select('warehouse_id, qtyonhand')
+						.select('warehouse_id, qtyonhand,m_product_id')
 						.eq('m_product_id', productId)
 				).data || []
 			: []
@@ -83,20 +83,27 @@ export const load = (async ({ depends, params, locals: { supabase } }) => {
 	const formProduct = await superValidate(product, zod(crudMProductSchema));
 	const formProductGtin = await superValidate({ barcodes }, zod(crudMProductGtinSchema));
 	const formReplenish = await superValidate({ replenishes }, zod(crudReplenishSchema));
+	const formPurchasing = await superValidate({ purchases }, zod(mProductPoInsertSchemaАrray));
+	const formStorageOnHand = await superValidate(
+		{ storageonhand },
+		zod(mStorageonhandInsertSchemaАrray)
+	);
 
 	return {
 		productId,
 		formProduct,
-		productPurchasing,
+		formPurchasing,
 		formProductGtin,
 		formReplenish,
+		formStorageOnHand,
+		partners,
 		uom,
 		categories,
 		warehouses,
 		tax,
 		salesByWeeks
 	};
-}) satisfies PageServerLoad;
+};
 
 export const actions = {
 	product: async ({ request, locals: { supabase } }) => {
@@ -212,6 +219,57 @@ export const actions = {
 			}
 		} catch (error) {
 			console.error('Replenish update error:', error);
+			return fail(500, {
+				form,
+				error: error instanceof Error ? error.message : 'Unknown error occurred'
+			});
+		}
+
+		return { form };
+	},
+	vendors: async ({ request, locals: { supabase } }) => {
+		console.log('Hello Vendors');
+
+		const form = await superValidate(request, zod(mProductPoInsertSchemaАrray));
+		if (!form.valid) return fail(400, { form });
+
+		// Create new array without created and updated fields
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const purchases = form.data.purchases.map(({ created, updated, ...purchase }) => purchase);
+
+		try {
+			// Separate records into updates and inserts
+			const updatesToProcess = purchases.filter((r) => r.id !== undefined);
+			const insertsToProcess = purchases.filter((r) => r.id === undefined);
+
+			// Perform updates
+			if (updatesToProcess.length > 0) {
+				// Use Promise.all to update multiple records concurrently
+				const updatePromises = updatesToProcess.map((r) =>
+					supabase.from('m_product_po').update(r).eq('id', r.id!)
+				);
+
+				const updateResults = await Promise.all(updatePromises);
+
+				// Check for any errors in the updates
+				const updateErrors = updateResults.filter((result) => result.error);
+				if (updateErrors.length > 0) {
+					throw updateErrors[0].error;
+				}
+			}
+
+			// Perform inserts
+			if (insertsToProcess.length > 0) {
+				const { error: insertError } = await supabase.from('m_product_po').insert(
+					insertsToProcess.map((r) => ({
+						...r
+					}))
+				);
+
+				if (insertError) throw insertError;
+			}
+		} catch (error) {
+			console.error('Vendor update error:', error);
 			return fail(500, {
 				form,
 				error: error instanceof Error ? error.message : 'Unknown error occurred'

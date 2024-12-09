@@ -2,8 +2,9 @@ import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { crudSchema } from './schema';
+import type { PageServerLoad } from './$types';
 
-export const load = async ({ locals: { supabase, session } }) => {
+export const load: PageServerLoad = async ({ locals: { supabase, session } }) => {
 	if (!session) {
 		redirect(303, '/auth');
 	}
@@ -21,7 +22,7 @@ export const load = async ({ locals: { supabase, session } }) => {
 };
 
 export const actions = {
-	update: async ({ request, locals: { supabase, session } }) => {
+	update: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(crudSchema));
 
 		if (!form.valid) {

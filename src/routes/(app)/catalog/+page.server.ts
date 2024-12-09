@@ -1,7 +1,6 @@
-import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import type { SupabaseTable } from '$lib/types/database.types';
-import type { BSProduct } from '$lib/types/biznisoft';
+import type { SupabaseTable } from '$lib/types/supabase.types';
+import type { BSProduct } from '../data/types';
 import { getChannelMap } from '$lib/services/channel-map';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -10,8 +9,9 @@ import { isValidGTIN } from '$lib/scripts/gtin';
 import { connector, scrapper } from '$lib/ky';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { DateTime } from 'luxon';
-import type { FlattenedProduct, Product, Warehouse } from './columns.svelte';
+import type { FlattenedProduct, Product } from './columns.svelte.js';
 import { productSelectSchema } from './schema';
+import { findChildren } from '$lib/scripts/tree';
 
 interface ProductRequest {
 	productId: number;
@@ -41,11 +41,12 @@ export const load: PageServerLoad = async ({ depends, parent, url, locals: { sup
 	const showStock = searchParams.get('stock') === 'true';
 	const showReport = searchParams.get('report');
 	const showVat = searchParams.get('showVat') === 'true';
+	const showSub = searchParams.get('sub') === 'true';
 	const categoryId = searchParams.get('cat');
-	const { activeWarehouse } = await parent();
+	const { activeWarehouse, categories } = await parent();
 
 	const [productsData, activePricelists] = await Promise.all([
-		fetchProducts(supabase, categoryId),
+		fetchProducts(supabase, categoryId, showSub, categories),
 		getPriceLists(supabase)
 	]);
 
@@ -62,11 +63,25 @@ export const load: PageServerLoad = async ({ depends, parent, url, locals: { sup
 		products,
 		activeWarehouse,
 		showStock,
-		showVat
+		showVat,
+		showSub
 	};
 };
 
-async function fetchProducts(supabase: SupabaseClient, categoryIds: string | null) {
+async function fetchProducts(
+	supabase: SupabaseClient,
+	categoryId: string | null,
+	showSub: boolean,
+	categories: {
+		id: number;
+		parent_id: number | null;
+		title: string;
+	}[]
+) {
+	let categoryIds: number[] = [];
+	if (categoryId && showSub) {
+		categoryIds = findChildren(categories, parseInt(categoryId));
+	}
 	const query = supabase
 		.from('m_product')
 		.select(
@@ -75,20 +90,25 @@ async function fetchProducts(supabase: SupabaseClient, categoryIds: string | nul
 			c_taxcategory(c_tax(rate)),
 			m_storageonhand(warehouse_id,qtyonhand),
 			productPrice:m_productprice(m_pricelist_version_id,pricestd,pricelist),
-			level_min:m_replenish(m_warehouse_id,level_min),
+			level_min:m_replenish(m_warehouse_id,level_min,level_max),
 			level_max:m_replenish(m_warehouse_id,level_max),
-			m_product_po(c_bpartner_id,pricelist)
+			m_product_po(c_bpartner_id,pricelist),
+			isactive
 		`
 		)
 		.eq('producttype', 'I')
-		.eq('isactive', true)
+		//.eq('isactive', true)
 		//.eq('m_pricelist_version.m_pricelist_id', 4)
 		.order('name');
-
-	if (categoryIds) {
-		query.eq('m_product_category_id', Number(categoryIds));
+	//.in('m_product_category_id', categoryIds ? [parseInt(categoryIds)] : []);
+	if (categoryIds.length > 0) {
+		query.in('m_product_category_id', categoryIds);
 	} else {
-		query.is('m_product_category_id', null);
+		if (categoryId) {
+			query.eq('m_product_category_id', parseInt(categoryId));
+		} else {
+			query.is('m_product_category_id', null);
+		}
 	}
 
 	const { data, error } = await query;
@@ -98,7 +118,11 @@ async function fetchProducts(supabase: SupabaseClient, categoryIds: string | nul
 		return [];
 	}
 
-	return data as unknown as Product[];
+	// Filter products: include if isactive=true OR has stock in any warehouse
+	return (data as unknown as Product[]).filter((product) => {
+		const hasStock = product.m_storageonhand.some((item) => item.qtyonhand > 0);
+		return product.isactive || hasStock;
+	});
 }
 async function getPriceLists(
 	supabase: SupabaseClient
@@ -188,8 +212,11 @@ function flattenProduct(
 		product.level_min.map((item) => [item.m_warehouse_id, item.level_min])
 	);
 	const levelMaxLookup = new Map(
-		product.level_max.map((item) => [item.m_warehouse_id, item.level_max])
+		product.level_min.map((item) => [item.m_warehouse_id, item.level_max])
 	);
+	/* 	const levelMaxLookup = new Map(
+		product.level_max.map((item) => [item.m_warehouse_id, item.level_max])
+	); */
 	const productPoLookup = new Map(
 		product.m_product_po.map((item) => [item.c_bpartner_id, item.pricelist])
 	);
@@ -456,7 +483,7 @@ export const actions = {
 		const { data: allUom } = await supabase.from('c_uom').select('id,uomsymbol');
 		let updatedCount = 0;
 		let errorCount = 0;
-		let errorMessages: string[] = [];
+		const errorMessages: string[] = [];
 
 		const productRequests: ProductRequest[] = products.map((product) => ({
 			productId: product.id,
@@ -527,7 +554,11 @@ export const actions = {
 					}
 				}
 
-				const priceWithoutTax = product.price ? product.price / (1 + taxRate) : undefined;
+				console.log(`product.price: ${product.price}`);
+				console.log(`taxRate: ${taxRate}`);
+				const priceWithoutTax =
+					product.price || product.price === 0 ? product.price / (1 + taxRate) : undefined;
+				console.log(`priceWithoutTax: ${priceWithoutTax}`);
 				const { error: updateError, data: updatedProduct } = await supabase
 					.from('m_product_po')
 					.update({

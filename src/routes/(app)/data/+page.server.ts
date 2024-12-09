@@ -1,6 +1,6 @@
-import type { GroupBS, PartnerBS } from '$lib/types/biznisoft';
+import type { GroupBS, PartnerBS } from './types';
 import type { Actions } from './$types';
-import * as biznisoft from '$lib/services/biznisoft.js';
+import * as biznisoft from './biznisoft.js';
 
 export const actions = {
 	importPartners: async ({ locals: { supabase } }) => {

@@ -14,13 +14,13 @@
 
 	//Icons
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
-	import { browser } from '$app/environment';
 
 	type Props = {
 		rowSelectionState: RowSelectionState;
 		globalFilterTableState: GlobalFilterTableState | undefined;
 		table: Table<FlattenedProduct>;
 		showStock: boolean;
+		showSub: boolean;
 		showVat: boolean;
 		addToCart: () => void;
 		warehouses: Warehouse[];
@@ -31,12 +31,12 @@
 		rowSelectionState = $bindable(),
 		globalFilterTableState = $bindable(),
 		showStock,
+		showSub,
 		showVat,
 		addToCart,
 		warehouses,
 		activeWarehouse
 	}: Props = $props();
-	let strRowSelectionState = $derived(Object.keys(rowSelectionState).map((x) => x));
 	function handleSearch(e: Event) {
 		const target = e.target as HTMLInputElement;
 		if (target) {
@@ -48,6 +48,25 @@
 	const triggerWarehouseLabel = $derived(
 		warehouses.find((f) => f.value === warehouseValue)?.label ?? 'Select warehouse'
 	);
+	type ReportItem = {
+		value: string;
+		label: string;
+	};
+	const reports: ReportItem[] = [
+		{ value: 'replenish', label: 'Replenish' }
+		// Add more items here as needed
+	];
+	let triggerReportValue = $state('');
+	const triggerReportContent = $derived(
+		reports.find((f) => f.value === triggerReportValue)?.label ?? 'Select a report'
+	);
+
+	function handleSalesGraphClick() {
+		const selectedSkus = Object.keys(rowSelectionState).join(',');
+		if (selectedSkus) {
+			goto(`/report/salesgraph?skus=${selectedSkus}`);
+		}
+	}
 </script>
 
 <div class="flex items-center gap-4">
@@ -59,10 +78,26 @@
 	/>
 	<div class="flex w-full items-center space-x-2">
 		<Checkbox
+			id="subcategories"
+			checked={showSub}
+			onCheckedChange={(checked) => {
+				const newUrl = new URL($page.url);
+				newUrl?.searchParams?.set('sub', checked ? 'true' : 'false');
+				goto(newUrl);
+			}}
+		/>
+		<Label
+			for="only-stock"
+			class="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+		>
+			Subcategories
+		</Label>
+	</div>
+	<div class="flex w-full items-center space-x-2">
+		<Checkbox
 			id="only-stock"
 			checked={showStock}
 			onCheckedChange={(checked) => {
-				console.log('checkedStock', checked);
 				const newUrl = new URL($page.url);
 				newUrl?.searchParams?.set('stock', checked ? 'true' : 'false');
 				goto(newUrl);
@@ -93,9 +128,31 @@
 		</Label>
 	</div>
 	<Button variant="outline" onclick={addToCart}>Add to Cart</Button>
+	<Button variant="outline" onclick={handleSalesGraphClick}>Sales Graph</Button>
 	<Select.Root
 		type="single"
-		name="favoriteFruit"
+		name="report"
+		bind:value={triggerReportValue}
+		onValueChange={(v) => {
+			const newUrl = new URL($page.url);
+			newUrl?.searchParams?.set('report', v);
+			goto(newUrl);
+		}}
+	>
+		<Select.Trigger class={buttonVariants({ variant: 'outline', class: 'w-fit' })}>
+			{triggerReportContent}
+		</Select.Trigger>
+		<Select.Content>
+			<Select.Group>
+				{#each reports as report}
+					<Select.Item value={report.value} label={report.label} />
+				{/each}
+			</Select.Group>
+		</Select.Content>
+	</Select.Root>
+	<Select.Root
+		type="single"
+		name="warehouse"
 		bind:value={warehouseValue}
 		onValueChange={(v) => {
 			const newUrl = new URL($page.url);

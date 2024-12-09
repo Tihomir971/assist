@@ -4,7 +4,7 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { crudCChannelMapCategorySchema, crudMProductCategorySchema } from './schema';
 
-export const load = (async ({ params, locals: { supabase } }) => {
+export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
 	const categoryId = params.slug as unknown as number;
 	const { data: category } = await supabase
 		.from('m_product_category')
@@ -35,7 +35,7 @@ export const load = (async ({ params, locals: { supabase } }) => {
 		categories,
 		channels
 	};
-}) satisfies PageServerLoad;
+};
 
 export const actions = {
 	default: async ({ request, locals: { supabase } }) => {

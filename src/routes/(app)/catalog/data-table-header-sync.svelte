@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { RowSelectionState } from '@tanstack/table-core';
-	import type { SubmitFunction } from '@sveltejs/kit';
 	import { invalidate } from '$app/navigation';
 	import { enhance } from '$app/forms';
 	//Components
@@ -49,62 +48,6 @@
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
-
-<!-- <DropdownMenu.Root>
-	<DropdownMenu.Trigger class={buttonVariants({ variant: 'outline' })}>
-		ERP <ChevronDown class="ml-2 h-4 w-4" />
-	</DropdownMenu.Trigger>
-	<DropdownMenu.Content>
-		<form
-			method="post"
-			action="/catalog?/getErpInfo"
-			use:enhance={submitSyncStock}
-			bind:this={formElErpSyncProd}
-		>
-			<input type="hidden" name="ids" value={strSelectedDataIds} />
-			<DropdownMenu.Item
-				onclick={() => {
-					formElErpSyncProd.requestSubmit();
-				}}
-			>
-				Sync Replenish from ERP
-			</DropdownMenu.Item>
-		</form>
-
-		<form
-			method="post"
-			action="/catalog?/getCenotekaInfo"
-			use:enhance={submitCenotekaSync}
-			bind:this={formElCenoteka}
-		>
-			<input type="hidden" name="ids" value={strSelectedDataIds} />
-			<input type="hidden" name="source" value={2} />
-			<DropdownMenu.Item
-				onclick={() => {
-					formElCenoteka.requestSubmit();
-				}}
-			>
-				Get Cenoteka Info
-			</DropdownMenu.Item>
-		</form>
-		<form
-			method="post"
-			action="/catalog?/getCenotekaInfo"
-			use:enhance={submitCenotekaSync}
-			bind:this={formElIdea}
-		>
-			<input type="hidden" name="ids" value={strSelectedDataIds} />
-			<input type="hidden" name="source" value={4} />
-			<DropdownMenu.Item
-				onclick={() => {
-					formElIdea.requestSubmit();
-				}}
-			>
-				Get Idea Info
-			</DropdownMenu.Item>
-		</form>
-	</DropdownMenu.Content>
-</DropdownMenu.Root> -->
 
 <form
 	bind:this={formElErpSyncProd}

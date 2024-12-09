@@ -3,8 +3,8 @@
 	import Tree from './tree.svelte';
 	import { melt } from '@melt-ui/svelte';
 	import { getCtx } from '../ctx';
-	import PhCaretRight from '$lib/icons/PhCaretRight.svelte';
-	import PhDotBold from '$lib/icons/PhDotBold.svelte';
+	import PhCaretRight from 'phosphor-svelte/lib/CaretRight';
+	import PhDot from 'phosphor-svelte/lib/Dot';
 	import { cn } from '$lib/utils';
 
 	//	export let treeItems: TreeItem[];
@@ -25,14 +25,14 @@
 	<li class="w-full list-none p-0">
 		<div
 			class={cn(
-				'w-full rounded-md hover:bg-surface-2',
+				'hover:bg-surface-2 w-full rounded-md',
 				$isSelected(itemId) ? 'bg-surface-document' : ''
 			)}
 		>
 			<button
 				type="button"
 				class={cn(
-					'flex w-full items-center gap-1 overflow-hidden text-ellipsis text-wrap px-2 py-2 text-left text-sm',
+					'flex w-full items-center gap-1 overflow-hidden px-2 py-2 text-left text-sm text-wrap text-ellipsis',
 					$isSelected(itemId) ? 'text-secondary-foreground' : ''
 				)}
 				style="padding-left: {level * INDENT_SIZE}px;"
@@ -47,11 +47,11 @@
 						class="size-4 flex-shrink-0 transition-transform duration-300"
 						class:rotate-90={$isExpanded(itemId)}
 					>
-						<PhCaretRight class="size-4" />
+						<PhCaretRight />
 					</span>
 				{:else}
 					<span class="size-4 flex-shrink-0">
-						<PhDotBold class="size-4" />
+						<PhDot weight="bold" size="1rem" />
 					</span>
 				{/if}
 				<span class="truncate" {title}>

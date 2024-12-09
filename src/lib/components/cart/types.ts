@@ -2,7 +2,7 @@ export type CartItem = {
 	id: number;
 	name: string;
 	quantity: number;
-	sku: string; // Added SKU property
+	sku: string | null; // Added SKU property
 };
 
 export interface Product {
@@ -16,13 +16,17 @@ export interface Product {
 	discontinued: boolean;
 	c_taxcategory?: { c_tax: { rate: number }[] } | null;
 	m_storageonhand: { warehouse_id: number; qtyonhand: number }[];
-	productPrice: {
+	m_productprice: {
 		m_pricelist_version_id: number;
 		pricestd: number | null;
 		pricelist: number | null;
 	}[];
-	level_min: { m_warehouse_id: number; level_min: number }[];
-	level_max: { m_warehouse_id: number; level_max: number }[];
+	m_replenish: {
+		m_warehouse_id: number;
+		level_min: number;
+		level_max: number;
+		qtybatchsize: number;
+	}[];
 	m_product_po: {
 		c_bpartner_id: number;
 		pricelist: number | null;
@@ -47,8 +51,28 @@ export interface FlattenedProduct {
 	ruc: number;
 	levelMin: number | null;
 	levelMax: number | null;
+	qtyBatchSize: number | null;
 	vendorPrices: { [vendorId: number]: number | null };
 	vendorProductNos: { [vendorId: number]: string | null };
 	action: boolean;
-	[key: string]: any;
+}
+
+export interface ExportData {
+	id: number;
+	sku: string;
+	mpn: string;
+	name: string;
+	quantity: number;
+	unitsperpack: number;
+	taxRate: number;
+	qtyWholesale: number;
+	qtyRetail: number;
+	levelMin: number;
+	levelMax: number;
+	qtyBatchSize: number;
+	pricePurchase: number;
+	ruc: number;
+	priceRetail: number;
+	newPrice?: number;
+	[key: string]: string | number | undefined | null; // Allow null values for dynamic fields
 }

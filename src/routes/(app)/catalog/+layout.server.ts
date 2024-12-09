@@ -3,7 +3,7 @@ import type { LayoutServerLoad } from './$types';
 import type { Warehouse } from './columns.svelte';
 
 let warehousesCache: Warehouse[] | [] = [];
-export const load = (async ({ parent, url, depends, locals: { supabase } }) => {
+export const load: LayoutServerLoad = async ({ url, depends, locals: { supabase } }) => {
 	depends('catalog:categories');
 	const whParam = url.searchParams.get('wh');
 	if (!whParam) {
@@ -15,28 +15,9 @@ export const load = (async ({ parent, url, depends, locals: { supabase } }) => {
 
 	const activeCategory = () => {
 		const param = url.searchParams.get('cat');
-
 		return param ? Number(param) : null;
 	};
 
-	/* 	const paramsCategory = url.searchParams.get('onStock');
-	const defaultExpanded: number[] = [];
- */
-	/* 	if (paramsCategory) {
-		defaultExpanded.push(Number(paramsCategory));
-	} */
-
-	/* 	function getParentIds(categories: Category[], startCategoryId: number): number[] {
-    let parentIds: number[] = [];
-    let currentCategory = categories.find(category => category.id === startCategoryId);
-
-    while (currentCategory && currentCategory.parent_id !== null) {
-        parentIds.push(currentCategory.parent_id);
-        currentCategory = categories.find(category => category.id === currentCategory.parent_id);
-    }
-
-    return parentIds;
-} */
 	type Category = {
 		id: number;
 		parent_id: number | null;
@@ -63,6 +44,7 @@ export const load = (async ({ parent, url, depends, locals: { supabase } }) => {
 		.from('m_product_category')
 		.select('id,parent_id, title:name')
 		.order('name');
+
 	async function getWarehouses(): Promise<Warehouse[]> {
 		if (warehousesCache.length > 0) return warehousesCache;
 
@@ -73,10 +55,11 @@ export const load = (async ({ parent, url, depends, locals: { supabase } }) => {
 		warehousesCache = data || [];
 		return warehousesCache;
 	}
+
 	return {
 		categories: categories || [],
 		expanded: findParents(categories, activeCategory()),
 		warehouses: await getWarehouses(),
 		activeWarehouse
 	};
-}) satisfies LayoutServerLoad;
+};

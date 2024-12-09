@@ -23,19 +23,18 @@
 	import DataTableToolbar from './data-table-toolbar.svelte';
 	import { browser } from '$app/environment';
 	import { LocalStorage } from '$lib/storage.svelte.js';
-	import type { CartItem } from '$lib/components/cart/types.js';
-	import { getContext } from 'svelte';
 	import WalkerTable from '$lib/components/walker-tx/WalkerTable.svelte';
+	import { getCartContext } from '$lib/components/cart/ctx.svelte.js';
 
 	let { data } = $props();
 	//let { products } = data;
 	//let dataState = $state(data.products);
 
-	const storageColumnVisibility = new LocalStorage<VisibilityState>('hiddenColumns', {});
-	let storageCartItems = getContext<LocalStorage<CartItem[]>>('cartItems');
+	const cartStorageCtx = getCartContext();
 	// Define a reactive state to track the row selection state.
 	let rowSelectionState: RowSelectionState = $state({});
 	let sorting = $state<SortingState>([]);
+	const storageColumnVisibility = new LocalStorage<VisibilityState>('hiddenColumns', {});
 	let columnVisibility = $state<VisibilityState>(storageColumnVisibility.current);
 	let globalFilterTableState = $state<GlobalFilterTableState>();
 
@@ -108,14 +107,14 @@
 		if (browser) {
 			table.getRowModel().rows.forEach((row) => {
 				if (row.getIsSelected()) {
-					const existingItemIndex = storageCartItems.current.findIndex(
+					const existingItemIndex = cartStorageCtx.current.findIndex(
 						(item) => item.id === row.original.id
 					);
 
 					if (existingItemIndex !== -1) {
-						storageCartItems.current[existingItemIndex].quantity += 1;
+						cartStorageCtx.current[existingItemIndex].quantity += 1;
 					} else {
-						storageCartItems.current.push({
+						cartStorageCtx.current.push({
 							id: row.original.id,
 							name: row.original.name,
 							quantity: 1,
@@ -144,6 +143,7 @@
 			bind:globalFilterTableState
 			showStock={data.showStock}
 			showVat={data.showVat}
+			showSub={data.showSub}
 			warehouses={data.warehouses}
 			{addToCart}
 			activeWarehouse={data.activeWarehouse}

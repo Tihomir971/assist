@@ -1,34 +1,39 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Html5Qrcode } from 'html5-qrcode';
-	import { getShoppingCartState } from '$lib/components/cart/cart-state.svelte.js';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { LocalStorage } from '$lib/storage.svelte';
+	import type { CartItem } from '$lib/components/cart/types';
 
 	type ProductGTIN = {
 		gtins: string[];
 		m_product: {
 			id: number;
 			name: string;
-			description: string;
-			sku: string;
+			description: string | null;
+			sku: string | null;
 		} | null;
 		storage_info: {
 			qtyonhand: number;
 			m_warehouse: {
 				name: string;
-			};
+			} | null;
 		}[];
 	};
-	let scanResult: string | null = null;
-	let productInfo: ProductGTIN | null = null;
+
+	let { data } = $props();
+	let { supabase } = $derived(data);
+
+	let scanResult: string | null = $state(null);
+	let productInfo: ProductGTIN | null = $state(null);
 	let html5QrCode: Html5Qrcode;
-	let isScanning = false;
-	let manualGtin: string = '';
-	let skuSearch: string = '';
-	let addingToCart = false;
+	let isScanning = $state(false);
+	let skuSearch = $state('');
+	let addingToCart = $state(false);
 
-	const shoppingCartState = getShoppingCartState();
-
+	const shoppingCartState = new LocalStorage<CartItem[]>('cartItems', []);
+	console.log('shoppingCartState', shoppingCartState);
+	$inspect('shoppingCartState', shoppingCartState.current);
 	onMount(() => {
 		html5QrCode = new Html5Qrcode('qr-reader');
 	});
@@ -69,38 +74,103 @@
 	}
 
 	async function checkProduct(barcode: string) {
-		try {
-			const response = await fetch(`/api/product?gtin=${barcode}`, { method: 'GET' });
+		const { data, error } = await supabase
+			.from('m_product_gtin')
+			.select(
+				'm_product!inner(id,name,description,sku,m_product_gtin(gtin),m_storageonhand(qtyonhand,m_warehouse(name)))'
+			)
+			.eq('gtin', barcode)
+			.single();
 
-			if (response.ok) {
-				productInfo = await response.json();
-				console.log('Product Info:', productInfo);
-			} else {
-				productInfo = null;
-				alert('Product not found');
-			}
-		} catch (error) {
+		if (error) {
 			console.error('Error checking product:', error);
 			alert('Failed to check product. Please try again.');
+			productInfo = null;
+			return;
+		}
+
+		if (data) {
+			productInfo = {
+				gtins: data.m_product.m_product_gtin.map((g) => g.gtin ?? ''),
+				m_product: data.m_product
+					? {
+							id: data.m_product.id,
+							name: data.m_product.name,
+							description: data.m_product.description,
+							sku: data.m_product.sku
+						}
+					: null,
+				storage_info: data.m_product.m_storageonhand.map((storage) => ({
+					qtyonhand: storage.qtyonhand ?? 0,
+					m_warehouse: storage.m_warehouse
+						? {
+								name: storage.m_warehouse.name
+							}
+						: null
+				}))
+			};
+			console.log('Product Info:', productInfo);
+		} else {
+			alert('Product not found');
+			productInfo = null;
 		}
 	}
 
 	async function handleSkuSearch() {
 		if (skuSearch) {
-			try {
-				const response = await fetch(`/api/product?sku=${skuSearch}`, { method: 'GET' });
-				console.log('response', response);
+			const { data, error } = await supabase
+				.from('m_product')
+				.select(
+					`
+					id,
+					name,
+					description,
+					sku,
+					m_product_gtin (
+						gtin
+					),
+					m_storageonhand (
+						qtyonhand,
+						m_warehouse (
+							name
+						)
+					)
+				`
+				)
+				.eq('sku', skuSearch)
+				.single();
 
-				if (response.ok) {
-					productInfo = await response.json();
-					console.log('productInfo', productInfo);
-				} else {
-					productInfo = null;
-					alert('Product not found');
-				}
-			} catch (error) {
+			if (error) {
 				console.error('Error searching product by SKU:', error);
 				alert('Failed to search product. Please try again.');
+				productInfo = null;
+				return;
+			}
+
+			if (data) {
+				productInfo = {
+					gtins: data.m_product_gtin.map((g) => g.gtin ?? ''),
+					m_product: data
+						? {
+								id: data.id,
+								name: data.name,
+								description: data.description,
+								sku: data.sku
+							}
+						: null,
+					storage_info: data.m_storageonhand.map((storage) => ({
+						qtyonhand: storage.qtyonhand ?? 0,
+						m_warehouse: storage.m_warehouse
+							? {
+									name: storage.m_warehouse.name
+								}
+							: null
+					}))
+				};
+				console.log('productInfo', productInfo);
+			} else {
+				alert('Product not found');
+				productInfo = null;
 			}
 		}
 	}
@@ -109,12 +179,12 @@
 		if (productInfo && productInfo.m_product && !addingToCart) {
 			addingToCart = true;
 			try {
-				shoppingCartState.add(
-					productInfo.m_product.id,
-					productInfo.m_product.name,
-					1,
-					productInfo.m_product.sku
-				);
+				shoppingCartState.current.push({
+					id: productInfo.m_product.id,
+					name: productInfo.m_product.name,
+					quantity: 1,
+					sku: productInfo.m_product.sku
+				});
 				alert('Product added to cart');
 			} catch (error) {
 				console.error('Error adding product to cart:', error);
@@ -145,9 +215,9 @@
 
 			{#if productInfo}
 				<div class="rounded shadow">
-					<p class="mb-2">SKU: {productInfo.m_product?.sku || 'N/A'}</p>
+					<p class="mb-2">SKU: {productInfo.m_product?.sku ?? 'N/A'}</p>
 					<h2 class="mb-2 text-xl font-semibold">
-						{productInfo.m_product?.name || 'Unknown Product'}
+						{productInfo.m_product?.name ?? 'Unknown Product'}
 					</h2>
 					<h3 class="mb-2 text-lg font-semibold">GTINs:</h3>
 					<ul class="mb-4 list-disc pl-5">
@@ -168,7 +238,7 @@
 								</thead>
 								<tbody>
 									{#each productInfo.storage_info as storage}
-										{#if storage.qtyonhand > 0}
+										{#if storage.qtyonhand > 0 && storage.m_warehouse}
 											<tr>
 												<td class="border border-gray-300 p-2">{storage.m_warehouse.name}</td>
 												<td class="border border-gray-300 p-2">{storage.qtyonhand}</td>
@@ -179,7 +249,7 @@
 							</table>
 						</div>
 						<p class="mt-4">
-							Description: {productInfo.m_product?.description || 'No description available'}
+							Description: {productInfo.m_product?.description}
 						</p>
 					{:else}
 						<p>No storage information available.</p>
@@ -195,7 +265,7 @@
 		</div>
 	</div>
 
-	<div class="fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-white p-2">
+	<div class="fixed right-0 bottom-0 left-0 border-t border-gray-200 bg-white p-2">
 		<div class="flex h-12 items-stretch">
 			<input
 				type="text"

@@ -28,10 +28,13 @@
 	let activeCategory = $derived.by(() => {
 		return selected ? selected.getAttribute('data-id') : null;
 	});
+	let prevCategory: string | undefined = undefined;
 	$effect(() => {
-		if (browser && activeCategory) {
+		if (browser && activeCategory && prevCategory !== activeCategory) {
+			prevCategory = activeCategory;
 			const newUrl = new URL($page.url);
 			newUrl.searchParams.set('cat', activeCategory);
+
 			goto(newUrl);
 		}
 	});

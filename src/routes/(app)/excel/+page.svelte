@@ -12,7 +12,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 
 	// Import utility functions
-	import { handleFileUpload, loadSheetData } from './utils/file-handlers';
+	import { handleFileUpload, loadSheetData } from './utils/xlsx-handlers';
 	import { processExcelData, modifyPrice } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
 

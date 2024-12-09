@@ -69,7 +69,7 @@ const authGuard: Handle = async ({ event, resolve }) => {
 		if (isMobile(userAgent) && !event.url.pathname.startsWith('/mobile')) {
 			return redirect(303, '/mobile');
 		}
-		if (event.url.pathname === '/auth') {
+		if (event.url.pathname === '/auth' || event.url.pathname === '/') {
 			return redirect(303, '/dashboard');
 		}
 	} else if (!event.url.pathname.startsWith('/auth')) {

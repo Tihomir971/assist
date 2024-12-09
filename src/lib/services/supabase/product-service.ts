@@ -1,4 +1,4 @@
-import type { Database, SupabaseTable } from '$lib/types/database.types';
+import type { Database, SupabaseTable } from '$lib/types/supabase.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 type Product = Partial<SupabaseTable<'m_product'>['Row']>;
 
@@ -54,7 +54,7 @@ export const getProductPurchasing = async (
 	const { data: productPurchasing } = await supabase
 		.from('m_product_po')
 		.select(
-			'id,isactive,barcode,c_bpartner_id,pricelist,vendorproductno,url,updated,c_bpartner(name)'
+			'id,isactive,barcode,c_bpartner_id,pricelist,vendorproductno,url,updated,m_product_id,priceeffective'
 		)
 		.eq('m_product_id', productId);
 	return productPurchasing ?? [];

@@ -3,6 +3,7 @@ import { createRawSnippet } from 'svelte';
 import DataTableActions from './data-table-actions.svelte';
 import { createColumnHelper, renderComponent, renderSnippet } from '$lib/components/walker-tx';
 import TableCheckbox from '$lib/components/walker-tx/table-checkbox.svelte';
+import DataTableTitleCell from './data-table-title-cell.svelte';
 
 export interface Warehouse {
 	value: string;
@@ -25,9 +26,10 @@ export interface Product {
 		pricelist: number | null;
 	}[];
 	priceListVersion: { m_pricelist_id: number; validfrom: Date; validto: Date }[];
-	level_min: { m_warehouse_id: number; level_min: number }[];
+	level_min: { m_warehouse_id: number; level_min: number; level_max: number }[];
 	level_max: { m_warehouse_id: number; level_max: number }[];
 	m_product_po: { c_bpartner_id: number; pricelist: number | null }[];
+	isactive: boolean;
 }
 export interface FlattenedProduct {
 	id: number;
@@ -38,6 +40,7 @@ export interface FlattenedProduct {
 	unitsperpack: number;
 	imageurl: string;
 	discontinued: boolean;
+	isactive?: boolean;
 	taxRate: number | null;
 	qtyWholesale: number;
 	qtyRetail: number;
@@ -57,18 +60,26 @@ export interface FlattenedProduct {
 type RawSnippetParams = {
 	value: string | number | null;
 	isDanger?: boolean;
+	action?: boolean;
 };
 
 const rightAlignSnippet = createRawSnippet<[RawSnippetParams]>((getValue) => {
-	const { value, isDanger = false } = getValue();
+	const { value, isDanger = false, action } = getValue();
 	const className = isDanger ? 'text-right text-red-400' : 'text-right';
+	const dotClassName = action
+		? 'inline-block w-1.5 h-1.5 bg-red-400 rounded-full mr-1  align-middle'
+		: '';
 
 	return {
-		render: () => `<div class="${className}">${value}</div>`,
+		render: () => `
+			<div class="${className}">
+				${action ? `<span class="${dotClassName}"></span>` : ''}${value}
+			</div>
+		`,
 		setup: (node) => {
 			$effect(() => {
-				const { value } = getValue();
-				node.textContent = String(value);
+				const { value, action } = getValue();
+				node.innerHTML = `${action ? `<span class="${dotClassName}"></span>` : ''}${String(value)}`;
 			});
 		}
 	};
@@ -97,9 +108,28 @@ export const columnDefs = [
 			}),
 		enableHiding: false
 	}),
-	colHelp.accessor('sku', { header: 'SKU', enableHiding: false }),
+	colHelp.accessor('sku', {
+		header: 'SKU',
+		enableHiding: false
+	}),
 	colHelp.accessor('mpn', { header: 'MPN' }),
-	colHelp.accessor('name', { header: 'Name', enableHiding: false }),
+	colHelp.accessor('name', {
+		header: 'Name',
+		enableHiding: false,
+		cell: ({ row }) => {
+			const labels: { value: string; variant?: 'outline' | 'default' }[] = [];
+			if (row.original.discontinued) {
+				labels.push({ value: 'EOL', variant: 'outline' });
+			}
+			if (row.original.isactive === false) {
+				labels.push({ value: 'Inactive', variant: 'outline' });
+			}
+			return renderComponent(DataTableTitleCell, {
+				value: row.original.name,
+				labels
+			});
+		}
+	}),
 	colHelp.accessor('taxRate', {
 		header: 'Tax',
 		cell: ({ cell }) => {
@@ -173,7 +203,8 @@ export const columnDefs = [
 				isDanger:
 					priceCenoteka !== 0 &&
 					qtyRetail > 0 &&
-					(priceRetail - priceCenoteka) / priceCenoteka >= 0.05
+					(priceRetail - priceCenoteka) / priceCenoteka >= 0.05,
+				action: row.original.action
 			});
 		}
 	}),

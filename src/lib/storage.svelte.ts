@@ -1,7 +1,6 @@
-//https://github.com/Rich-Harris/local-storage-test/blob/main/src/lib/storage.svelte.ts
 import { tick } from 'svelte';
 
-export class LocalStorage<T> {
+export class LocalStorage<T extends object> {
 	#key: string;
 	#version = $state(0);
 	#listeners = 0;
@@ -26,25 +25,28 @@ export class LocalStorage<T> {
 	}
 
 	get current(): T {
-		this.#version;
+		// Create dependency on version changes
+		void this.#version;
 
 		const root =
 			typeof localStorage !== 'undefined'
-				? (JSON.parse(localStorage.getItem(this.#key) as string) as T)
-				: this.#value;
+				? (JSON.parse(localStorage.getItem(this.#key)!) as T)
+				: (this.#value as T);
 
-		const proxies = new WeakMap();
+		const proxies = new WeakMap<object, T>();
 
-		const proxy = (value: any): any => {
+		const proxy = (value: T | unknown): T | unknown => {
 			if (typeof value !== 'object' || value === null) {
 				return value;
 			}
 
-			let p = proxies.get(value);
+			let p = proxies.get(value as object);
 
 			if (!p) {
-				p = new Proxy(value, {
+				p = new Proxy(value as T, {
 					get: (target, property) => {
+						// Create dependency on version changes
+						void this.#version;
 						return proxy(Reflect.get(target, property));
 					},
 					set: (target, property, value) => {
@@ -57,9 +59,9 @@ export class LocalStorage<T> {
 
 						return true;
 					}
-				});
+				}) as T;
 
-				proxies.set(value, p);
+				proxies.set(value as object, p);
 			}
 
 			return p;
@@ -84,7 +86,7 @@ export class LocalStorage<T> {
 			});
 		}
 
-		return proxy(root);
+		return proxy(root) as T;
 	}
 
 	set current(value: T) {

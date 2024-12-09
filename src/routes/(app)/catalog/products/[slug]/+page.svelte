@@ -14,10 +14,11 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { Button } from '$lib/components/ui/button/index.js';
 
-	import DrawerBarcodes from './drawer-barcodes.svelte';
+	import DrawerBarcodes from './barcodes.svelte';
 	import ChartVisualization from './ChartVisualization.svelte';
-	import VendorsCard from './card-vendors.svelte';
-	import ReplenishCard from './card-replenish.svelte';
+	import VendorsCard from './vendors.svelte';
+	import ReplenishCard from './replenish.svelte';
+	import StorageOnHandCard from './storageonhand.svelte';
 	import { crudMProductSchema } from './schema';
 
 	let { data } = $props();
@@ -290,7 +291,7 @@
 										<Form.Label>Net Quantity</Form.Label>
 										<Input
 											type="number"
-											step="0.001"
+											step="0.0001"
 											bind:value={$formProduct.net_quantity}
 											oninput={handleNetQuantityInput}
 											{...props}
@@ -370,12 +371,18 @@
 	</Card.Root>
 	<!-- Vendors -->
 	{#if $formProduct.id}
+		<VendorsCard form={data.formPurchasing} partners={data.partners} productId={data.productId} />
+
 		<Card.Root class="mb-4">
 			<Card.Header>
-				<Card.Title>Vendors</Card.Title>
+				<Card.Title>Stock</Card.Title>
 			</Card.Header>
 			<Card.Content>
-				<VendorsCard productPurchasing={data.productPurchasing} />
+				<StorageOnHandCard
+					form={data.formStorageOnHand}
+					productId={data.productId}
+					warehouses={data.warehouses}
+				/>
 			</Card.Content>
 		</Card.Root>
 

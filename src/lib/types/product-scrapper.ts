@@ -1,5 +1,5 @@
 // Vendor-specific types
-export type VendorId = 'idea' | 'cenoteka'; // Add more vendors as needed
+type VendorId = 'idea' | 'cenoteka'; // Add more vendors as needed
 
 export interface VendorProduct {
 	sku: string;

@@ -1,7 +1,7 @@
 type DateStyle = Intl.DateTimeFormatOptions['dateStyle'];
 type TimeStyle = Intl.DateTimeFormatOptions['timeStyle'];
-type Style = Intl.NumberFormatOptions['style'];
-type Locales = Intl.LocalesArgument;
+//type Style = Intl.NumberFormatOptions['style'];
+//type Locales = Intl.LocalesArgument;
 
 /**
  * Formatting options for the `formatNumber` function.
@@ -19,10 +19,10 @@ interface NumberFormatOptions {
  * @returns The formatted number.
  */
 export function formatNumber(
-	value: number | null,
+	value: number | null | undefined,
 	options: NumberFormatOptions = {}
 ): string | null {
-	if (value === null) return null;
+	if (value === null || value === undefined) return null;
 	const { style = 'decimal', currency = 'RSD', fractionDigits = 2, locale = 'sr-Latn' } = options;
 
 	const formatter = new Intl.NumberFormat(locale, {
@@ -66,7 +66,13 @@ const formatOptions: DateFormatOptions = {
 	time: { hour: 'numeric', minute: 'numeric' }
 };
 
-export function formatDate(date: Date | string | number, format: DateFormat = 'date'): string {
+export function formatDate(
+	date: Date | string | number | null | undefined,
+	format: DateFormat = 'date'
+): string {
+	if (!date) {
+		return '';
+	}
 	const dateObject = date instanceof Date ? date : new Date(date);
 
 	if (isNaN(dateObject.getTime())) {

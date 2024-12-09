@@ -11,7 +11,7 @@
 		DialogTitle,
 		DialogFooter
 	} from '$lib/components/ui/dialog';
-	import type { SupabaseTable } from '$lib/types/database.types.js';
+	import type { SupabaseTable } from '$lib/types/supabase.types.js';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import { writable } from 'svelte/store';
 
@@ -148,8 +148,8 @@
 						{#each data.pricelists as pricelist}
 							<TableShow.Row
 								class={selectedPricelistId === pricelist.id
-									? 'cursor-pointer bg-muted'
-									: 'cursor-pointer hover:bg-muted'}
+									? 'bg-muted cursor-pointer'
+									: 'hover:bg-muted cursor-pointer'}
 								onclick={() => selectPricelist(pricelist.id, data.supabase)}
 							>
 								<TableShow.Cell>{pricelist.name}</TableShow.Cell>
@@ -179,8 +179,8 @@
 							{#each pricelistVersions as version}
 								<TableShow.Row
 									class={selectedVersionId === version.id
-										? 'cursor-pointer bg-muted'
-										: 'cursor-pointer hover:bg-muted'}
+										? 'bg-muted cursor-pointer'
+										: 'hover:bg-muted cursor-pointer'}
 									onclick={() => selectVersion(version.id)}
 								>
 									<TableShow.Cell>{version.name}</TableShow.Cell>

@@ -32,9 +32,7 @@ const userSchema = z
 		}
 	);
 
-type UserFormData = z.infer<typeof userSchema>;
-
-export const load = (async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.safeGetSession();
 	if (!session || !session.user) {
 		throw redirect(302, '/auth');
@@ -57,7 +55,7 @@ export const load = (async ({ locals }) => {
 	const form = await superValidate(userData, zod(userSchema));
 
 	return { form };
-}) satisfies PageServerLoad;
+};
 
 export const actions = {
 	default: async ({ request, locals }) => {
@@ -75,6 +73,9 @@ export const actions = {
 		}
 
 		const { password, confirm_password, ...updateData } = form.data;
+		if (password !== confirm_password) {
+			return fail(400, { form });
+		}
 
 		try {
 			const { error: updateError } = await locals.supabase

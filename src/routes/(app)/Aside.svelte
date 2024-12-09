@@ -2,10 +2,10 @@
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import PhLayout from '$lib/icons/PhLayout.svelte';
-	import PhRepeat from '$lib/icons/PhRepeat.svelte';
-	import PhTag from '$lib/icons/PhTag.svelte';
-	import PhMicrosoftExcelLogo from '$lib/icons/PhMicrosoftExcelLogo.svelte';
+	import PhLayout from 'phosphor-svelte/lib/Layout';
+	import PhRepeat from 'phosphor-svelte/lib/Repeat';
+	import PhTag from 'phosphor-svelte/lib/Tag';
+	import PhMicrosoftExcelLogo from 'phosphor-svelte/lib/MicrosoftExcelLogo';
 	import { Button } from '$lib/components/ui/button/index.js';
 
 	let activePath: string | undefined = $derived(browser ? $page.url.pathname : undefined);
@@ -19,9 +19,9 @@
 					href="/dashboard"
 					variant="ghost"
 					size="icon"
-					class={`${activePath === '/dashboard' ? 'text-accent-foreground' : 'text-muted-foreground'} `}
+					class={`[&_svg]:size-6 ${activePath === '/dashboard' ? '' : 'text-muted-foreground'}`}
 				>
-					<PhLayout class="size-6" />
+					<PhLayout />
 					<span class="sr-only">Dashboard</span>
 				</Button>
 			</Tooltip.Trigger>
@@ -32,13 +32,15 @@
 	<Tooltip.Provider>
 		<Tooltip.Root>
 			<Tooltip.Trigger>
-				<a
+				<Button
 					href="/catalog"
-					class={`${activePath === '/catalog' ? 'text-accent-foreground' : 'text-muted-foreground'} hover:text-foreground flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8`}
+					variant="ghost"
+					size="icon"
+					class={`[&_svg]:size-6 ${activePath === '/catalog' ? '' : 'text-muted-foreground'}`}
 				>
-					<PhTag class="size-6" />
+					<PhTag />
 					<span class="sr-only">Catalog</span>
-				</a>
+				</Button>
 			</Tooltip.Trigger>
 			<Tooltip.Content side="right">Catalog</Tooltip.Content>
 		</Tooltip.Root>
@@ -46,13 +48,15 @@
 	<Tooltip.Provider>
 		<Tooltip.Root>
 			<Tooltip.Trigger>
-				<a
+				<Button
 					href="/data"
-					class={`${activePath === '/data' ? 'text-accent-foreground' : 'text-muted-foreground'} hover:text-foreground flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8`}
+					variant="ghost"
+					size="icon"
+					class={`[&_svg]:size-6 ${activePath === '/data' ? '' : 'text-muted-foreground'}`}
 				>
-					<PhRepeat class="size-6" />
+					<PhRepeat />
 					<span class="sr-only">Export Import</span>
-				</a>
+				</Button>
 			</Tooltip.Trigger>
 			<Tooltip.Content side="right">Export Import</Tooltip.Content>
 		</Tooltip.Root>
@@ -60,13 +64,15 @@
 	<Tooltip.Provider>
 		<Tooltip.Root>
 			<Tooltip.Trigger>
-				<a
+				<Button
 					href="/excel"
-					class={`${activePath === '/excel' ? 'text-accent-foreground' : 'text-muted-foreground'} hover:text-foreground flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8`}
+					variant="ghost"
+					size="icon"
+					class={`[&_svg]:size-6 ${activePath === '/excel' ? '' : 'text-muted-foreground'}`}
 				>
-					<PhMicrosoftExcelLogo class="size-6" />
+					<PhMicrosoftExcelLogo />
 					<span class="sr-only">Import Excel</span>
-				</a>
+				</Button>
 			</Tooltip.Trigger>
 			<Tooltip.Content side="right">Import Excel</Tooltip.Content>
 		</Tooltip.Root>
