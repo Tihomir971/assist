@@ -73,6 +73,7 @@ export interface ExportData {
 	pricePurchase: number;
 	ruc: number;
 	priceRetail: number;
+	qtyTransfer?: number;
 	newPrice?: number;
 	[key: string]: string | number | undefined | null; // Allow null values for dynamic fields
 }

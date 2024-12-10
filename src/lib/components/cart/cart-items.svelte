@@ -169,6 +169,22 @@
 						priceRetail: product.priceRetail || 0
 					};
 
+					if (isInternalTransfer) {
+						const levelMax = product.levelMax || 0;
+						const qtyRetail = product.qtyRetail || 0;
+						const qtyBatchSize = product.qtyBatchSize || 0;
+						const qtyWholesale = product.qtyWholesale || 0;
+
+						if (qtyBatchSize > 0) {
+							// Calculate initial transfer quantity based on levelMax - qtyRetail
+							const initialTransfer =
+								Math.floor((levelMax - qtyRetail) / qtyBatchSize) * qtyBatchSize;
+							// Limit transfer quantity to not exceed qtyWholesale while maintaining qtyBatchSize units
+							data.qtyTransfer =
+								Math.floor(Math.min(initialTransfer, qtyWholesale) / qtyBatchSize) * qtyBatchSize;
+						}
+					}
+
 					selectedVendorIds.forEach((vendorId) => {
 						const vendorName = vendors.find((v) => v.id === vendorId)?.name || 'Unknown';
 						data[`${vendorName}Price`] = product.vendorPrices[vendorId] || null;
