@@ -1,9 +1,6 @@
 @import 'https://unpkg.com/open-props@beta.5/hues.oklch.css';
 @import 'https://unpkg.com/open-props@beta.5/palette.css';
 
-/* @import 'https://unpkg.com/open-props/oklch-hues.min.css';
-@import 'https://unpkg.com/open-props/colors-oklch.min.css'; */
-
 :where(html) {
 	color-scheme: light;
 	--palette-hue: var(--oklch-blue);

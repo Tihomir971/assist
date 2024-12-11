@@ -1,14 +1,13 @@
-@import './open-props.css';
-/* @import './shadow.css'; */
+@import './app-open-props.css';
 @import 'tailwindcss';
 
 @theme {
 	--font-family-sans: 'Nunito Sans Variable', ui-sans-serif, system-ui, sans-serif,
 		'Apple Color Emoji', 'Segoe UI Emoji';
 
-	--color-link: var(-link);
-	--color-link-visited: var(-link-visited);
-	--color-surface-1: var(-surface-11);
+	--color-link: var(--link);
+	--color-link-visited: var(--link-visited);
+	--color-surface-1: var(--surface-1);
 	--color-surface-2: var(--surface-2);
 	--color-surface-3: var(--surface-3);
 	/* --color-surface-3: light-dark(var(--color-red-500), var(--color-red-800)); */

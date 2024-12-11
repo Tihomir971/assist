@@ -4,5 +4,8 @@ import tailwindcss from '@tailwindcss/vite';
 //import { sveltePhosphorOptimize } from 'phosphor-svelte/vite';
 
 export default defineConfig({
-	plugins: [sveltekit(), tailwindcss()]
+	plugins: [tailwindcss(), sveltekit()],
+	define: {
+		'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+	}
 });
