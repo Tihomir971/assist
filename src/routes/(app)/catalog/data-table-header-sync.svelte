@@ -12,14 +12,14 @@
 	let { rowSelectionState = $bindable() }: { rowSelectionState: RowSelectionState } = $props();
 	let strRowSelectionState = $derived(Object.keys(rowSelectionState).map((x) => x));
 
-	let formElCenoteka: HTMLFormElement;
+	let formElMarket: HTMLFormElement;
 	let formElErpSyncProd: HTMLFormElement;
 	let sourceInput: HTMLInputElement;
 
 	const submitWithSource = (source: number) => {
-		if (sourceInput && formElCenoteka) {
+		if (sourceInput && formElMarket) {
 			sourceInput.value = source.toString();
-			formElCenoteka.requestSubmit();
+			formElMarket.requestSubmit();
 		}
 	};
 </script>
@@ -56,8 +56,6 @@
 	class="hidden"
 	use:enhance={() => {
 		return async ({ result }) => {
-			console.log('result', result);
-
 			if (result.type === 'success') {
 				toast.success('Replenish ERP Sync', {
 					description: `Successfully updated!`,
@@ -81,9 +79,9 @@
 </form>
 
 <form
-	bind:this={formElCenoteka}
+	bind:this={formElMarket}
 	method="post"
-	action="/catalog?/getCenotekaInfo"
+	action="/catalog?/getMarketInfo"
 	class="hidden"
 	use:enhance={() => {
 		return async ({ result }) => {

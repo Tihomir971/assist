@@ -131,12 +131,7 @@
 </script>
 
 <Card.Root class="flex flex-1 flex-col overflow-hidden">
-	<Card.Header class="flex-row items-center justify-between">
-		<div>
-			<Card.Title>Card Title</Card.Title>
-			<Card.Description>Card Description</Card.Description>
-		</div>
-
+	<Card.Header>
 		<DataTableToolbar
 			{table}
 			bind:rowSelectionState

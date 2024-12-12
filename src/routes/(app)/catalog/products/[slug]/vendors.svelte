@@ -8,6 +8,7 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 
 	import Ellipsis from 'lucide-svelte/icons/ellipsis';
+	import ArrowSquareOut from 'phosphor-svelte/lib/ArrowSquareOut';
 	import CardVendorsSheet from './vendors-sheet.svelte';
 
 	type Props = {
@@ -76,9 +77,17 @@
 						</Table.Cell>
 						<Table.Cell>{purchase.vendorproductno}</Table.Cell>
 						<Table.Cell class="text-right">{formatNumber(purchase.pricelist)}</Table.Cell>
-						<Table.Cell class="text-right">{formatDate(purchase.priceeffective)}</Table.Cell>
-						<Table.Cell class="text-right">{formatDate(purchase.priceeffective)}</Table.Cell>
-						<Table.Cell><a href={purchase.url} target="_blank">{purchase.url}</a></Table.Cell>
+						<Table.Cell class="text-right">{formatDate(purchase.valid_from)}</Table.Cell>
+						<Table.Cell class="text-right">{formatDate(purchase.valid_to)}</Table.Cell>
+						<Table.Cell>
+							<Button
+								variant="ghost"
+								size="icon"
+								href={purchase.url}
+								target="_blank"
+								disabled={!purchase.url}><ArrowSquareOut size={32} /></Button
+							>
+						</Table.Cell>
 						<Table.Cell class="text-right">{formatDateTime(purchase.updated as string)}</Table.Cell>
 						<Table.Cell>
 							<Button

@@ -2264,13 +2264,14 @@ export const mProductPoRowSchema = z.object({
 	iscurrentvendor: z.boolean(),
 	m_product_id: z.number(),
 	manufacturer: z.string().nullable(),
-	priceeffective: z.string().nullable(),
 	pricelastinv: z.number().nullable(),
 	pricelastpo: z.number().nullable(),
 	pricelist: z.number(),
 	pricepo: z.number().nullable(),
 	updated: z.string(),
 	url: z.string().nullable(),
+	valid_from: z.string().nullable(),
+	valid_to: z.string().nullable(),
 	vendorcategory: z.string().nullable(),
 	vendorproductno: z.string()
 });
@@ -2287,13 +2288,14 @@ export const mProductPoInsertSchema = z.object({
 	iscurrentvendor: z.boolean().optional(),
 	m_product_id: z.number(),
 	manufacturer: z.string().optional().nullable(),
-	priceeffective: z.string().optional().nullable(),
 	pricelastinv: z.number().optional().nullable(),
 	pricelastpo: z.number().optional().nullable(),
 	pricelist: z.number().optional(),
 	pricepo: z.number().optional().nullable(),
 	updated: z.string().optional(),
 	url: z.string().optional().nullable(),
+	valid_from: z.string().optional().nullable(),
+	valid_to: z.string().optional().nullable(),
 	vendorcategory: z.string().optional().nullable(),
 	vendorproductno: z.string()
 });
@@ -2310,13 +2312,14 @@ export const mProductPoUpdateSchema = z.object({
 	iscurrentvendor: z.boolean().optional(),
 	m_product_id: z.number().optional(),
 	manufacturer: z.string().optional().nullable(),
-	priceeffective: z.string().optional().nullable(),
 	pricelastinv: z.number().optional().nullable(),
 	pricelastpo: z.number().optional().nullable(),
 	pricelist: z.number().optional(),
 	pricepo: z.number().optional().nullable(),
 	updated: z.string().optional(),
 	url: z.string().optional().nullable(),
+	valid_from: z.string().optional().nullable(),
+	valid_to: z.string().optional().nullable(),
 	vendorcategory: z.string().optional().nullable(),
 	vendorproductno: z.string().optional()
 });

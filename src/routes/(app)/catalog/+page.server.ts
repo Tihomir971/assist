@@ -258,6 +258,8 @@ function flattenProduct(
 
 export const actions = {
 	getErpInfo: async ({ request, locals: { supabase } }) => {
+		console.log('ERP2');
+
 		const form = await superValidate(request, zod(productSelectSchema));
 		if (!form.valid) return fail(400, { form });
 		const { data: skus } = await supabase
@@ -271,6 +273,7 @@ export const actions = {
 		const data = { sku: sku };
 
 		const erpProduct = await connector.post('api/product', { json: data }).json<BSProduct[]>();
+		console.log('erpProduct', erpProduct[0].trstanje);
 
 		const { data: mapChannel, error: mapChannelError } = await getChannelMap(supabase, 1);
 
@@ -441,9 +444,7 @@ export const actions = {
 		};
 	},
 
-	getCenotekaInfo: async ({ request, locals: { supabase } }) => {
-		console.log('Start getCenotekaInfo');
-
+	getMarketInfo: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(productSelectSchema));
 		if (!form.valid) return fail(400, { form });
 
@@ -556,8 +557,12 @@ export const actions = {
 
 				console.log(`product.price: ${product.price}`);
 				console.log(`taxRate: ${taxRate}`);
-				const priceWithoutTax =
-					product.price || product.price === 0 ? product.price / (1 + taxRate) : undefined;
+				let priceWithoutTax: number | undefined = undefined;
+				// Skip price update for Idea
+				if (source !== 4) {
+					priceWithoutTax =
+						product.price || product.price === 0 ? product.price / (1 + taxRate) : undefined;
+				}
 				console.log(`priceWithoutTax: ${priceWithoutTax}`);
 				const { error: updateError, data: updatedProduct } = await supabase
 					.from('m_product_po')

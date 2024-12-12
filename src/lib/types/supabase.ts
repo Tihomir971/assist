@@ -2236,13 +2236,14 @@ export interface Database {
           iscurrentvendor: boolean
           m_product_id: number
           manufacturer: string | null
-          priceeffective: string | null
           pricelastinv: number | null
           pricelastpo: number | null
           pricelist: number
           pricepo: number | null
           updated: string
           url: string | null
+          valid_from: string | null
+          valid_to: string | null
           vendorcategory: string | null
           vendorproductno: string
         }
@@ -2258,13 +2259,14 @@ export interface Database {
           iscurrentvendor?: boolean
           m_product_id: number
           manufacturer?: string | null
-          priceeffective?: string | null
           pricelastinv?: number | null
           pricelastpo?: number | null
           pricelist?: number
           pricepo?: number | null
           updated?: string
           url?: string | null
+          valid_from?: string | null
+          valid_to?: string | null
           vendorcategory?: string | null
           vendorproductno: string
         }
@@ -2280,13 +2282,14 @@ export interface Database {
           iscurrentvendor?: boolean
           m_product_id?: number
           manufacturer?: string | null
-          priceeffective?: string | null
           pricelastinv?: number | null
           pricelastpo?: number | null
           pricelist?: number
           pricepo?: number | null
           updated?: string
           url?: string | null
+          valid_from?: string | null
+          valid_to?: string | null
           vendorcategory?: string | null
           vendorproductno?: string
         }
