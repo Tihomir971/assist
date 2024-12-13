@@ -571,7 +571,9 @@ export const actions = {
 						barcode: product.barcodes?.join(', '),
 						manufacturer: product.brand,
 						url: product.href,
-						pricelist: priceWithoutTax
+						pricelist: priceWithoutTax,
+						valid_from: product.valid_from,
+						valid_to: product.valid_to
 					})
 					.eq('m_product_id', productId)
 					.eq('c_bpartner_id', source)
@@ -592,7 +594,9 @@ export const actions = {
 						barcode: product.barcodes?.join(', '),
 						manufacturer: product.brand,
 						url: product.href,
-						pricelist: priceWithoutTax
+						pricelist: priceWithoutTax,
+						valid_from: product.valid_from,
+						valid_to: product.valid_to
 					});
 					if (insertError) {
 						console.error('Error inserting product:', insertError);

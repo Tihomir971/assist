@@ -39,12 +39,12 @@ export function formatNumber(
 //minimumFractionDigits: number = 0
 
 export function formatDateTime(
-	value: string | undefined,
+	value: string | null | undefined,
 	locales = 'sr-Latn',
 	dateStyle: DateStyle = 'medium',
 	timeStyle: TimeStyle = 'medium'
 ) {
-	if (value === undefined) {
+	if (value === undefined || value === null) {
 		return;
 	}
 	const formatter = new Intl.DateTimeFormat(locales, { dateStyle, timeStyle });

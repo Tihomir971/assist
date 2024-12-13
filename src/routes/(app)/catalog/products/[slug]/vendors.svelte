@@ -77,8 +77,8 @@
 						</Table.Cell>
 						<Table.Cell>{purchase.vendorproductno}</Table.Cell>
 						<Table.Cell class="text-right">{formatNumber(purchase.pricelist)}</Table.Cell>
-						<Table.Cell class="text-right">{formatDate(purchase.valid_from)}</Table.Cell>
-						<Table.Cell class="text-right">{formatDate(purchase.valid_to)}</Table.Cell>
+						<Table.Cell class="text-right">{formatDateTime(purchase.valid_from)}</Table.Cell>
+						<Table.Cell class="text-right">{formatDateTime(purchase.valid_to)}</Table.Cell>
 						<Table.Cell>
 							<Button
 								variant="ghost"
