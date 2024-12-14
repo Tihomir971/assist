@@ -1,17 +1,22 @@
 <script lang="ts">
-	import * as Card from '$lib/components/ui/card';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import { Button } from '$lib/components/ui/button';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Form from '$lib/components/ui/form/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { loginSchema, type LoginSchema } from './schema';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import * as Form from '$lib/components/ui/form';
+	import { redirect } from '@sveltejs/kit';
 
 	export let data: SuperValidated<Infer<LoginSchema>>;
 
 	const form = superForm(data, {
-		validators: zodClient(loginSchema)
+		validators: zodClient(loginSchema),
+		onUpdate({ form }) {
+			if (form.valid) {
+				redirect(303, '/dashboard');
+			}
+		}
 	});
 	const { form: formData, enhance } = form;
 </script>
