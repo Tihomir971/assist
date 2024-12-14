@@ -17,6 +17,7 @@ export async function importProducts(
 	let importedRows = 0;
 	let insertedRows = 0;
 	const productsNotUpdated: Product[] = [];
+	const notUpdated: Product[] = [];
 
 	try {
 		// Fetch existing products for this supplier
@@ -37,7 +38,6 @@ export async function importProducts(
 
 		// Filter Excel data to create two arrays
 		const productsToUpdate: ProductToUpdate[] = [];
-		const notUpdated: Product[] = [];
 
 		excelData.forEach((product) => {
 			const normalizedVendorProductNo = normalizeVendorProductNo(
@@ -51,7 +51,8 @@ export async function importProducts(
 					id: existingProductId,
 					normalizedVendorProductNo
 				});
-			} else if (product.barcode) {
+			} else {
+				// If no matching vendorproductno is found, add to notUpdated
 				notUpdated.push(product);
 			}
 		});
@@ -66,7 +67,9 @@ export async function importProducts(
 					.from('m_product_po')
 					.update({
 						pricelist: modifyPrice(product.pricelist, priceModificationPercentage),
-						vendorproductno: product.normalizedVendorProductNo
+						vendorproductno: product.normalizedVendorProductNo,
+						valid_from: product.valid_from || null,
+						valid_to: product.valid_to || null
 					})
 					.eq('id', product.id)
 					.eq('c_bpartner_id', selectedSupplier);
@@ -82,7 +85,7 @@ export async function importProducts(
 		}
 
 		// Process products not updated
-		const barcodes = notUpdated.map((p) => p.barcode);
+		const barcodes = notUpdated.map((p: Product) => p.barcode);
 		const matchingProducts = [];
 		const chunkSize = 10;
 
@@ -102,20 +105,24 @@ export async function importProducts(
 		}
 
 		const barcodeMatches = new Map(matchingProducts.map((p) => [p.gtin, p.m_product_id]));
-		const productsWithMatchingBarcodes = notUpdated.filter((p) => barcodeMatches.has(p.barcode));
+		const productsWithMatchingBarcodes = notUpdated.filter((p: Product) =>
+			barcodeMatches.has(p.barcode)
+		);
 
 		// Insert products with matching barcodes
 		const insertChunkSize = 100;
 		for (let i = 0; i < productsWithMatchingBarcodes.length; i += insertChunkSize) {
 			const insertChunk = productsWithMatchingBarcodes.slice(i, i + insertChunkSize);
 
-			const insertData = insertChunk.map((product) => ({
+			const insertData = insertChunk.map((product: Product) => ({
 				m_product_id: barcodeMatches.get(product.barcode),
 				c_bpartner_id: selectedSupplier,
 				vendorproductno: normalizeVendorProductNo(product.vendorproductno, selectedSupplier),
 				manufacturer: product.manufacturer,
 				vendorcategory: product.vendorcategory,
-				pricelist: modifyPrice(product.pricelist, priceModificationPercentage)
+				pricelist: modifyPrice(product.pricelist, priceModificationPercentage),
+				valid_from: product.valid_from || null,
+				valid_to: product.valid_to || null
 			}));
 
 			const { data, error } = await supabase.from('m_product_po').insert(insertData).select();
@@ -135,7 +142,7 @@ export async function importProducts(
 
 		// Update productsNotUpdated to only include products that weren't inserted
 		productsNotUpdated.push(
-			...notUpdated.filter((product) => !barcodeMatches.has(product.barcode))
+			...notUpdated.filter((product: Product) => !barcodeMatches.has(product.barcode))
 		);
 
 		return { importedRows, insertedRows, productsNotUpdated };
@@ -171,7 +178,9 @@ export async function addProduct(
 		m_product_id: productId,
 		c_bpartner_id: selectedSupplier,
 		vendorproductno: normalizeVendorProductNo(product.vendorproductno, selectedSupplier),
-		pricelist: modifyPrice(product.pricelist, priceModificationPercentage)
+		pricelist: modifyPrice(product.pricelist, priceModificationPercentage),
+		valid_from: product.valid_from || null,
+		valid_to: product.valid_to || null
 	});
 
 	if (poError) throw poError;

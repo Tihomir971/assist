@@ -5,6 +5,8 @@ export interface Product {
 	barcode: string;
 	vendorcategory: string;
 	manufacturer: string;
+	valid_from?: string; // ISO date string
+	valid_to?: string; // ISO date string
 }
 // New interface for products during the update process
 export interface ProductToUpdate extends Product {
@@ -19,6 +21,8 @@ export interface Mapping {
 	barcode: string;
 	vendorcategory: string;
 	manufacturer: string;
+	valid_from: string;
+	valid_to: string;
 }
 
 export interface Supplier {

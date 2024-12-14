@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Product, Mapping, Supplier, ProductToUpdate } from './types';
+	import type { Product, Mapping, Supplier } from './types';
 	import { browser } from '$app/environment';
 	import { onDestroy, onMount } from 'svelte';
 	import * as XLSX from 'xlsx';
@@ -25,13 +25,17 @@
 	let sheetNames: string[] = $state([]);
 	let selectedSheet: string = $state('');
 	let showModal = $state(false);
+	let rawData: Array<Record<string, string | number>> = $state([]); // Add state for raw data
+	let showRawData = $state(false); // Add state for toggling raw data view
 	let mappings: Mapping = $state({
 		name: '',
 		vendorproductno: '',
 		pricelist: '',
 		barcode: '',
 		vendorcategory: '',
-		manufacturer: ''
+		manufacturer: '',
+		valid_from: '',
+		valid_to: ''
 	});
 
 	const suppliers: Supplier[] = [
@@ -47,7 +51,9 @@
 		'pricelist',
 		'barcode',
 		'vendorcategory',
-		'manufacturer'
+		'manufacturer',
+		'valid_from',
+		'valid_to'
 	];
 
 	let totalRows = $state(0);
@@ -58,6 +64,8 @@
 	let priceModificationPercentage: number = $state(0);
 	let productsNotUpdated: Product[] = $state([]);
 	let showNotUpdatedProducts = $state(false);
+	$inspect(productsNotUpdated.length);
+	$inspect(showNotUpdatedProducts);
 
 	let processProgress = $derived(totalRows > 0 ? (processedRows / totalRows) * 100 : 0);
 	let importProgress = $derived(excelData.length > 0 ? (importedRows / excelData.length) * 100 : 0);
@@ -78,7 +86,9 @@
 						pricelist: '',
 						barcode: '',
 						vendorcategory: '',
-						manufacturer: ''
+						manufacturer: '',
+						valid_from: '',
+						valid_to: ''
 					};
 				}
 			}
@@ -100,6 +110,8 @@
 		selectedSheet = result.selectedSheet;
 		excelData = result.excelData;
 		headers = result.headers;
+		rawData = result.rawData || []; // Store raw data
+		showRawData = true; // Show raw data initially
 
 		if (selectedSheet) {
 			showModal = true;
@@ -114,6 +126,8 @@
 				const workbook = XLSX.read(data, { type: 'array' });
 				const result = loadSheetData(workbook, selectedSheet);
 				headers = result.headers;
+				rawData = result.rawData || [];
+				showRawData = true;
 				showModal = true;
 			};
 			reader.readAsArrayBuffer(fileInput.files[0]);
@@ -129,7 +143,9 @@
 			totalRows = result.totalRows;
 			processedRows = result.processedRows;
 			excelData = result.excelData;
+			rawData = result.rawData || [];
 			isProcessing = false;
+			showRawData = false; // Hide raw data after processing
 		}
 	}
 
@@ -189,7 +205,7 @@
 		try {
 			await addProduct(supabase, product, selectedSupplier, priceModificationPercentage);
 			alert('Product added successfully!');
-			productsNotUpdated = productsNotUpdated.filter((p) => p.barcode !== product.barcode);
+			// productsNotUpdated = productsNotUpdated.filter((p) => p.barcode !== product.barcode);
 		} catch (error) {
 			console.error('Error adding product:', error);
 			alert(error instanceof Error ? error.message : 'An error occurred while adding the product.');
@@ -212,7 +228,9 @@
 			pricelist: '',
 			barcode: '',
 			vendorcategory: '',
-			manufacturer: ''
+			manufacturer: '',
+			valid_from: '',
+			valid_to: ''
 		};
 		totalRows = 0;
 		processedRows = 0;
@@ -221,6 +239,8 @@
 		isImporting = false;
 		productsNotUpdated = [];
 		showNotUpdatedProducts = false;
+		rawData = [];
+		showRawData = false;
 	}
 
 	function manualReset() {

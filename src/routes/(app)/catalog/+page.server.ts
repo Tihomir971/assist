@@ -450,14 +450,19 @@ export const actions = {
 
 		const { ids, source } = form.data;
 
+		const sourcePath = {
+			2: 'scraper/cenoteka',
+			4: 'scraper/idea',
+			6: 'scraper/tehnomedia'
+		} as const;
+
 		function stringToNumberArray(s: string): number[] {
 			const numbers = s.match(/\d+/g);
 			return numbers ? numbers.map((num) => parseInt(num, 10)) : [];
 		}
-		console.log('source', source);
 
 		const productIds = stringToNumberArray(ids);
-		const sourcePath = source === 2 ? 'scraper/cenoteka' : 'scraper/idea';
+		const path = sourcePath[source as keyof typeof sourcePath];
 
 		const { data: products, error: fetchError } = await supabase
 			.from('m_product')
@@ -494,7 +499,7 @@ export const actions = {
 
 		try {
 			const { data, status, error } = await scrapper
-				.post(sourcePath, { json: { products: productRequests } })
+				.post(path, { json: { products: productRequests } })
 				.json<ApiResponseData<ProductResult[]>>();
 			console.log('data, status, error', data, status, error);
 
