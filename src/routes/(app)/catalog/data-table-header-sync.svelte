@@ -45,6 +45,7 @@
 			<DropdownMenu.Separator />
 			<DropdownMenu.Item onSelect={() => submitWithSource(2)}>Get Cenoteka</DropdownMenu.Item>
 			<DropdownMenu.Item onSelect={() => submitWithSource(4)}>Get Idea</DropdownMenu.Item>
+			<DropdownMenu.Item onSelect={() => submitWithSource(6)}>Get Tehnomedia</DropdownMenu.Item>
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
