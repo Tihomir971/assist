@@ -15,7 +15,6 @@
 
 	// Track the current cart items state
 	let cartItems = $state(storageCartItems.current);
-	$inspect('cartItems', cartItems);
 	function incrementQuantity() {
 		const itemIndex = cartItems.findIndex((item) => item.id === cartItem.id);
 		if (itemIndex !== -1) {

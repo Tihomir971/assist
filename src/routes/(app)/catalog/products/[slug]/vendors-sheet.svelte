@@ -92,7 +92,6 @@
 			(p) => (p.id === undefined && selectedPurchaseId === undefined) || p.id === selectedPurchaseId
 		)
 	);
-	$inspect('selectedVendor', selectedVendor);
 	let currentPurchase = $derived(selectedVendor >= 0 ? $formData.purchases[selectedVendor] : null);
 
 	const triggerContent = $derived(

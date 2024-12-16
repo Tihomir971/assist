@@ -4,6 +4,7 @@ import DataTableActions from './data-table-actions.svelte';
 import { createColumnHelper, renderComponent, renderSnippet } from '$lib/components/walker-tx';
 import TableCheckbox from '$lib/components/walker-tx/table-checkbox.svelte';
 import DataTableTitleCell from './data-table-title-cell.svelte';
+import DataTableActionsVendor from './data-table-actions-vendor.svelte';
 
 export interface Warehouse {
 	value: string;
@@ -28,8 +29,14 @@ export interface Product {
 	priceListVersion: { m_pricelist_id: number; validfrom: Date; validto: Date }[];
 	level_min: { m_warehouse_id: number; level_min: number; level_max: number }[];
 	level_max: { m_warehouse_id: number; level_max: number }[];
-	m_product_po: { c_bpartner_id: number; pricelist: number | null }[];
 	isactive: boolean;
+	m_product_po: {
+		c_bpartner_id: number;
+		pricelist: number | null;
+		c_bpartner: {
+			name: string;
+		};
+	}[];
 }
 export interface FlattenedProduct {
 	id: number;
@@ -54,7 +61,13 @@ export interface FlattenedProduct {
 	priceMivex: number | null;
 	priceCenoteka: number | null;
 	priceGros: number | null;
+	priceMarketBest: number;
 	action: boolean;
+	priceMarket: {
+		name: string;
+		pricelist: number | null;
+		tax: number | null;
+	}[];
 }
 
 type RawSnippetParams = {
@@ -239,6 +252,17 @@ export const columnDefs = [
 		}
 	}),
 
+	colHelp.accessor('priceMarketBest', {
+		header: 'Market',
+		cell: ({ row, cell }) => {
+			return renderComponent(DataTableActionsVendor, {
+				value: formatNumber(cell.getValue()) ?? '',
+				priceMarket: row.original.priceMarket
+			});
+		},
+		enableSorting: false,
+		enableHiding: false
+	}),
 	colHelp.accessor('id', {
 		header: '',
 		cell: ({ row }) => {

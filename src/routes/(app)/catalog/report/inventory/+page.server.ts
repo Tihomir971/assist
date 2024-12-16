@@ -74,7 +74,8 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 
 		const groupedProducts = new Map<number, CategoryWithProducts>();
 
-		products.forEach((product: Product) => {
+		// Type assertion to handle the known inner join guarantee
+		(products as Product[]).forEach((product) => {
 			const stockQty = stockMap.get(product.id) || 0;
 			if (stockQty > 0) {
 				const category = product.m_product_category;

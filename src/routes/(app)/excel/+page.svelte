@@ -64,8 +64,6 @@
 	let priceModificationPercentage: number = $state(0);
 	let productsNotUpdated: Product[] = $state([]);
 	let showNotUpdatedProducts = $state(false);
-	$inspect(productsNotUpdated.length);
-	$inspect(showNotUpdatedProducts);
 
 	let processProgress = $derived(totalRows > 0 ? (processedRows / totalRows) * 100 : 0);
 	let importProgress = $derived(excelData.length > 0 ? (importedRows / excelData.length) * 100 : 0);

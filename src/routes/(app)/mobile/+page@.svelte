@@ -4,6 +4,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { LocalStorage } from '$lib/storage.svelte';
 	import type { CartItem } from '$lib/components/cart/types';
+	import { Input } from '$lib/components/ui/input/index.js';
 
 	type ProductGTIN = {
 		gtins: string[];
@@ -32,8 +33,6 @@
 	let addingToCart = $state(false);
 
 	const shoppingCartState = new LocalStorage<CartItem[]>('cartItems', []);
-	console.log('shoppingCartState', shoppingCartState);
-	$inspect('shoppingCartState', shoppingCartState.current);
 	onMount(() => {
 		html5QrCode = new Html5Qrcode('qr-reader');
 	});
@@ -205,97 +204,76 @@
 <div class="flex min-h-screen flex-col">
 	<div class="flex-1 overflow-y-auto pb-20">
 		<div class="p-4">
-			<h1 class="mb-4 text-2xl font-bold">Mobile Barcode Scanner</h1>
+			{#if !productInfo}
+				<h1 class="mb-4 text-2xl font-bold">Mobile Barcode Scanner</h1>
 
-			<div id="qr-reader" class="mb-4"></div>
-
+				<div id="qr-reader" class="mb-4"></div>
+			{/if}
 			{#if scanResult}
 				<p class="mb-2">Scanned barcode: {scanResult}</p>
 			{/if}
 
 			{#if productInfo}
-				<div class="rounded shadow">
-					<p class="mb-2">SKU: {productInfo.m_product?.sku ?? 'N/A'}</p>
-					<h2 class="mb-2 text-xl font-semibold">
-						{productInfo.m_product?.name ?? 'Unknown Product'}
-					</h2>
+				<div class="mb-2 flex items-center justify-between">
+					<div class="text-2xl font-bold">SKU: {productInfo.m_product?.sku ?? 'N/A'}</div>
+					<Button onclick={addToCart} disabled={addingToCart}>
+						{addingToCart ? 'Adding...' : 'Add to Cart'}
+					</Button>
+				</div>
+
+				<h2 class="mb-2 text-xl font-semibold">
+					{productInfo.m_product?.name ?? 'Unknown Product'}
+				</h2>
+
+				<h3 class="mb-2 text-lg font-semibold">Storage Information:</h3>
+				{#if productInfo.storage_info.length > 0}
+					<div class="overflow-x-auto">
+						<table class="w-full border-collapse border border-gray-300">
+							<thead>
+								<tr class="bg-gray-500">
+									<th class="border border-gray-300 p-2 text-left">Warehouse</th>
+									<th class="border border-gray-300 p-2 text-left">Quantity on Hand</th>
+								</tr>
+							</thead>
+							<tbody>
+								{#each productInfo.storage_info as storage}
+									{#if storage.qtyonhand > 0 && storage.m_warehouse}
+										<tr>
+											<td class="border border-gray-300 p-2">{storage.m_warehouse.name}</td>
+											<td class="border border-gray-300 p-2">{storage.qtyonhand}</td>
+										</tr>
+									{/if}
+								{/each}
+							</tbody>
+						</table>
+					</div>
 					<h3 class="mb-2 text-lg font-semibold">GTINs:</h3>
 					<ul class="mb-4 list-disc pl-5">
 						{#each productInfo.gtins as gtin}
 							<li>{gtin}</li>
 						{/each}
 					</ul>
-
-					<h3 class="mb-2 text-lg font-semibold">Storage Information:</h3>
-					{#if productInfo.storage_info.length > 0}
-						<div class="overflow-x-auto">
-							<table class="w-full border-collapse border border-gray-300">
-								<thead>
-									<tr class="bg-gray-500">
-										<th class="border border-gray-300 p-2 text-left">Warehouse</th>
-										<th class="border border-gray-300 p-2 text-left">Quantity on Hand</th>
-									</tr>
-								</thead>
-								<tbody>
-									{#each productInfo.storage_info as storage}
-										{#if storage.qtyonhand > 0 && storage.m_warehouse}
-											<tr>
-												<td class="border border-gray-300 p-2">{storage.m_warehouse.name}</td>
-												<td class="border border-gray-300 p-2">{storage.qtyonhand}</td>
-											</tr>
-										{/if}
-									{/each}
-								</tbody>
-							</table>
-						</div>
-						<p class="mt-4">
-							Description: {productInfo.m_product?.description}
-						</p>
-					{:else}
-						<p>No storage information available.</p>
-					{/if}
-
-					<Button onclick={addToCart} class="mt-4" disabled={addingToCart}>
-						{addingToCart ? 'Adding...' : 'Add to Cart'}
-					</Button>
-				</div>
+					<p class="mt-4">
+						Description: {productInfo.m_product?.description}
+					</p>
+				{:else}
+					<p>No storage information available.</p>
+				{/if}
 			{:else if scanResult}
 				<p>No product found for this barcode.</p>
 			{/if}
 		</div>
 	</div>
 
-	<div class="fixed right-0 bottom-0 left-0 border-t border-gray-200 bg-white p-2">
-		<div class="flex h-12 items-stretch">
-			<input
-				type="text"
-				bind:value={skuSearch}
-				placeholder="Search by SKU"
-				class="w-1/2 rounded-l border border-r-0 p-2 text-sm"
-			/>
-			<div class="flex w-1/2">
-				<button
-					onclick={handleSkuSearch}
-					class="flex-1 border-r border-white bg-purple-500 px-2 py-2 text-sm text-white"
-				>
-					Search
-				</button>
-				{#if !isScanning}
-					<button
-						onclick={startScanning}
-						class="flex-1 rounded-r bg-blue-500 px-2 py-2 text-sm text-white"
-					>
-						Scan
-					</button>
-				{:else}
-					<button
-						onclick={stopScanning}
-						class="flex-1 rounded-r bg-red-500 px-2 py-2 text-sm text-white"
-					>
-						Stop
-					</button>
-				{/if}
-			</div>
+	<div class="fixed right-0 bottom-0 left-0 border-t border-gray-200 p-1.5">
+		<div class="grid w-full grid-cols-[2fr_1fr_1fr] gap-1.5">
+			<Input type="search" bind:value={skuSearch} placeholder="Search by SKU" class="w-full" />
+			<Button variant="outline" onclick={handleSkuSearch} class="w-full">Search</Button>
+			{#if !isScanning}
+				<Button variant="default" onclick={startScanning}>Scan</Button>
+			{:else}
+				<Button variant="default" onclick={stopScanning}>Stop</Button>
+			{/if}
 		</div>
 	</div>
 </div>

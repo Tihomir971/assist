@@ -12,13 +12,9 @@
 		type VisibilityState
 	} from '$lib/components/walker-tx';
 
-	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 
 	import { columnDefs } from './columns.svelte.js';
-	import ArrowUp from 'lucide-svelte/icons/arrow-up';
-	import ArrowDown from 'lucide-svelte/icons/arrow-down';
-	import ArrowDownUp from 'lucide-svelte/icons/arrow-down-up';
 
 	import DataTableToolbar from './data-table-toolbar.svelte';
 	import { browser } from '$app/environment';

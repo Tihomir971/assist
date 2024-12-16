@@ -92,15 +92,13 @@ async function fetchProducts(
 			productPrice:m_productprice(m_pricelist_version_id,pricestd,pricelist),
 			level_min:m_replenish(m_warehouse_id,level_min,level_max),
 			level_max:m_replenish(m_warehouse_id,level_max),
-			m_product_po(c_bpartner_id,pricelist),
+			m_product_po(c_bpartner_id, pricelist, c_bpartner(name)),
 			isactive
 		`
 		)
 		.eq('producttype', 'I')
-		//.eq('isactive', true)
-		//.eq('m_pricelist_version.m_pricelist_id', 4)
 		.order('name');
-	//.in('m_product_category_id', categoryIds ? [parseInt(categoryIds)] : []);
+
 	if (categoryIds.length > 0) {
 		query.in('m_product_category_id', categoryIds);
 	} else {
@@ -118,12 +116,12 @@ async function fetchProducts(
 		return [];
 	}
 
-	// Filter products: include if isactive=true OR has stock in any warehouse
 	return (data as unknown as Product[]).filter((product) => {
 		const hasStock = product.m_storageonhand.some((item) => item.qtyonhand > 0);
 		return product.isactive || hasStock;
 	});
 }
+
 async function getPriceLists(
 	supabase: SupabaseClient
 ): Promise<Partial<SupabaseTable<'m_pricelist_version'>['Row']>[] | []> {
@@ -140,6 +138,7 @@ async function getPriceLists(
 
 	return data || [];
 }
+
 function filterAndFlattenProducts(
 	products: Product[],
 	showStock: boolean,
@@ -181,6 +180,7 @@ function filterAndFlattenProducts(
 		flattenProduct(product, activeWarehouse, showVat, activePricelists)
 	);
 }
+
 function flattenProduct(
 	product: Product,
 	activeWarehouse: number,
@@ -196,9 +196,7 @@ function flattenProduct(
 			)
 			.map((item) => item.pricestd!)
 	);
-	if (product.id === 1400) {
-		console.log('product', smallestPricestd);
-	}
+
 	const purchase =
 		product.productPrice.find((item) => item.m_pricelist_version_id === 5)?.pricestd ?? 0;
 	const retail =
@@ -214,9 +212,7 @@ function flattenProduct(
 	const levelMaxLookup = new Map(
 		product.level_min.map((item) => [item.m_warehouse_id, item.level_max])
 	);
-	/* 	const levelMaxLookup = new Map(
-		product.level_max.map((item) => [item.m_warehouse_id, item.level_max])
-	); */
+
 	const productPoLookup = new Map(
 		product.m_product_po.map((item) => [item.c_bpartner_id, item.pricelist])
 	);
@@ -227,8 +223,21 @@ function flattenProduct(
 	const mivex = productPoLookup.get(89) ?? 0;
 	const gros = productPoLookup.get(407) ?? 0;
 
+	const minPricelist = Math.min(
+		...Array.from(productPoLookup.values()).filter(
+			(value): value is number => value !== null && value > 0
+		) // Narrow type to 'number'
+	);
+	const finalMinPricelist = minPricelist === Infinity ? 0 : minPricelist;
+
 	const priceRetail = Math.min(retail, smallestPricestd);
 	const action = smallestPricestd < retail;
+
+	const priceMarket = product.m_product_po.map((po) => ({
+		name: po.c_bpartner.name,
+		pricelist: po.pricelist,
+		tax: tax ? tax / 100 : null
+	}));
 
 	return {
 		id: product.id,
@@ -252,14 +261,14 @@ function flattenProduct(
 		priceMivex: showVat ? mivex * (1 + tax / 100) : mivex,
 		priceCenoteka: showVat ? cenoteka * (1 + tax / 100) : cenoteka,
 		priceGros: showVat ? gros * (1 + tax / 100) : gros,
-		action
+		priceMarketBest: showVat ? finalMinPricelist * (1 + tax / 100) : finalMinPricelist,
+		action,
+		priceMarket
 	};
 }
 
 export const actions = {
 	getErpInfo: async ({ request, locals: { supabase } }) => {
-		console.log('ERP2');
-
 		const form = await superValidate(request, zod(productSelectSchema));
 		if (!form.valid) return fail(400, { form });
 		const { data: skus } = await supabase
@@ -273,7 +282,6 @@ export const actions = {
 		const data = { sku: sku };
 
 		const erpProduct = await connector.post('api/product', { json: data }).json<BSProduct[]>();
-		console.log('erpProduct', erpProduct[0].trstanje);
 
 		const { data: mapChannel, error: mapChannelError } = await getChannelMap(supabase, 1);
 
