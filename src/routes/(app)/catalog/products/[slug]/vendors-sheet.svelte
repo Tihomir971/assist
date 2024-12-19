@@ -27,7 +27,7 @@
 	};
 
 	let {
-		formValidated,
+		formValidated = $bindable(),
 		isSheetOpen = $bindable(false),
 		selectedPurchaseId,
 		selectedProductId,
@@ -57,22 +57,7 @@
 		$formData.purchases.push({
 			c_bpartner_id: partners[0].value,
 			m_product_id: selectedProductId,
-			vendorproductno: '',
-			pricelist: 0,
-			isactive: true,
-			iscurrentvendor: false,
-			barcode: null,
-			c_currency_id: null,
-			c_uom_id: null,
-			discontinued: null,
-			manufacturer: null,
-			pricelastinv: null,
-			pricelastpo: null,
-			pricepo: null,
-			url: null,
-			valid_from: null,
-			valid_to: null,
-			vendorcategory: null
+			vendorproductno: ''
 		});
 	}
 	let partnersWithStringValues = $derived(
@@ -81,6 +66,26 @@
 			label: partner.label
 		}))
 	);
+
+	// Initialize new purchase immediately
+	//	$effect(() => {
+	//		if (isNew && isSheetOpen && !selectedPurchaseId && partners.length > 0) {
+	//			$formData.purchases = [
+	//				...$formData.purchases,
+	//				{
+	//					id: undefined,
+	//					m_product_id: selectedProductId,
+	//					c_bpartner_id: partners[0].value,
+	//					vendorproductno: '',
+	//					pricelist: 0,
+	//					barcode: null,
+	//					url: null,
+	//					isactive: true,
+	//					iscurrentvendor: false
+	//				}
+	//			];
+	//		}
+	//	});
 
 	let selectedVendor = $derived(
 		$formData.purchases.findIndex(

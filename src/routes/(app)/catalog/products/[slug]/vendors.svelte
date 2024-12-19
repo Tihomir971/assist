@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { formatDate, formatDateTime, formatNumber } from '$lib/style/locale';
-	import type { SuperValidated } from 'sveltekit-superforms';
+	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import type { MProductPoInsertSchema, МProductPoInsertSchemaАrray } from './schema';
 	import { toast } from 'svelte-sonner';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -20,6 +20,12 @@
 		}[];
 	};
 	let data: Props = $props();
+	const { form, errors } = superForm(data.form, {
+		dataType: 'json',
+		warnings: {
+			duplicateId: false
+		}
+	});
 
 	function selectedPartnerLabel(value: number | null | undefined): string {
 		if (value === null || value === undefined) return '';
@@ -41,7 +47,6 @@
 			toast.error('No partners available');
 			return;
 		}
-
 		selectedPurchaseId = undefined;
 		isNewPurchase = true;
 		isSheetOpen = true;
@@ -70,30 +75,36 @@
 				</Table.Row>
 			</Table.Header>
 			<Table.Body>
-				{#each data.form.data.purchases as purchase}
+				<!-- {#each data.form.data.purchases as purchase} -->
+				{#each $form.purchases as _, i}
 					<Table.Row>
 						<Table.Cell>
-							{selectedPartnerLabel(purchase.c_bpartner_id)}
+							{selectedPartnerLabel($form.purchases[i].c_bpartner_id)}
 						</Table.Cell>
-						<Table.Cell>{purchase.vendorproductno}</Table.Cell>
-						<Table.Cell class="text-right">{formatNumber(purchase.pricelist)}</Table.Cell>
-						<Table.Cell class="text-right">{formatDateTime(purchase.valid_from)}</Table.Cell>
-						<Table.Cell class="text-right">{formatDateTime(purchase.valid_to)}</Table.Cell>
+						<Table.Cell>{$form.purchases[i].vendorproductno}</Table.Cell>
+						<Table.Cell class="text-right">{formatNumber($form.purchases[i].pricelist)}</Table.Cell>
+						<Table.Cell class="text-right"
+							>{formatDateTime($form.purchases[i].valid_from)}</Table.Cell
+						>
+						<Table.Cell class="text-right">{formatDateTime($form.purchases[i].valid_to)}</Table.Cell
+						>
 						<Table.Cell>
 							<Button
 								variant="ghost"
 								size="icon"
-								href={purchase.url}
+								href={$form.purchases[i].url}
 								target="_blank"
-								disabled={!purchase.url}><ArrowSquareOut size={32} /></Button
+								disabled={!$form.purchases[i].url}><ArrowSquareOut size={32} /></Button
 							>
 						</Table.Cell>
-						<Table.Cell class="text-right">{formatDateTime(purchase.updated as string)}</Table.Cell>
+						<Table.Cell class="text-right"
+							>{formatDateTime($form.purchases[i].updated as string)}</Table.Cell
+						>
 						<Table.Cell>
 							<Button
 								variant="ghost"
 								size="icon"
-								onclick={() => handleEllipsisClick(purchase)}
+								onclick={() => handleEllipsisClick($form.purchases[i])}
 								class="-my-3"
 							>
 								<Ellipsis />

@@ -39,6 +39,8 @@
 
 	async function startScanning() {
 		try {
+			productInfo = null;
+			scanResult = null;
 			await html5QrCode.start(
 				{ facingMode: 'environment' },
 				{ fps: 10, qrbox: { width: 250, height: 250 } },
@@ -206,7 +208,6 @@
 		<div class="p-4">
 			{#if !productInfo}
 				<h1 class="mb-4 text-2xl font-bold">Mobile Barcode Scanner</h1>
-
 				<div id="qr-reader" class="mb-4"></div>
 			{/if}
 			{#if scanResult}
