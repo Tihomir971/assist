@@ -12,6 +12,7 @@ import { DateTime } from 'luxon';
 import type { FlattenedProduct, Product } from './columns.svelte.js';
 import { productSelectSchema } from './schema';
 import { findChildren } from '$lib/scripts/tree';
+import { sourceId } from './types';
 
 interface ProductRequest {
 	productId: number;
@@ -458,28 +459,23 @@ export const actions = {
 
 		const { ids, source } = form.data;
 
-		const sourcePath = {
-			2: 'scraper/cenoteka',
-			4: 'scraper/idea',
-			6: 'scraper/tehnomedia'
-		} as const;
-
 		function stringToNumberArray(s: string): number[] {
 			const numbers = s.match(/\d+/g);
 			return numbers ? numbers.map((num) => parseInt(num, 10)) : [];
 		}
 
 		const productIds = stringToNumberArray(ids);
-		const path = sourcePath[source as keyof typeof sourcePath];
+		//const sourceIds = stringToNumberArray(source);
+		// const path = sourcePath[source as keyof typeof sourcePath];
 
 		const { data: products, error: fetchError } = await supabase
 			.from('m_product')
 			.select(
 				'id, m_product_gtin(gtin), m_product_po(c_bpartner_id, url), c_taxcategory(c_tax(rate)),c_taxcategory_id'
 			)
-			.eq('m_product_po.c_bpartner_id', source)
+			//.eq('m_product_po.c_bpartner_id', source)
+			.not('m_product_po.url', 'is', null)
 			.in('id', productIds);
-
 		if (fetchError) {
 			console.error('Error fetching products:', fetchError);
 			return {
@@ -499,17 +495,21 @@ export const actions = {
 		let errorCount = 0;
 		const errorMessages: string[] = [];
 
-		const productRequests: ProductRequest[] = products.map((product) => ({
-			productId: product.id,
-			href: product.m_product_po.length > 0 ? product.m_product_po[0].url : null,
-			barcodes: product.m_product_gtin.map((item: { gtin: string }) => item.gtin)
-		}));
+		const productRequests: ProductRequest[] = products.flatMap((product) =>
+			product.m_product_po
+				.map((po) => ({
+					productId: product.id,
+					href: po.url,
+					barcodes: product.m_product_gtin.map((item: { gtin: string }) => item.gtin)
+				}))
+				.filter((req) => req.href)
+		);
 
 		try {
 			const { data, status, error } = await scrapper
-				.post(path, { json: { products: productRequests } })
+				.post('scraper', { json: { products: productRequests } })
 				.json<ApiResponseData<ProductResult[]>>();
-			console.log('data, status, error', data, status, error);
+			// console.log('data, status, error', data, status, error);
 
 			if (status !== 200 || !data) {
 				console.error('Invalid data received from API', error);
@@ -589,7 +589,7 @@ export const actions = {
 						valid_to: product.valid_to
 					})
 					.eq('m_product_id', productId)
-					.eq('c_bpartner_id', source)
+					.eq('c_bpartner_id', sourceId.get(product.vendorId) ?? 0)
 					.select();
 
 				if (updateError) {
@@ -602,7 +602,7 @@ export const actions = {
 				if (updatedProduct && updatedProduct.length === 0) {
 					const { error: insertError } = await supabase.from('m_product_po').insert({
 						m_product_id: productId,
-						c_bpartner_id: source,
+						c_bpartner_id: sourceId.get(product.vendorId) ?? 0,
 						vendorproductno: product.sku,
 						barcode: product.barcodes?.join(', '),
 						manufacturer: product.brand,

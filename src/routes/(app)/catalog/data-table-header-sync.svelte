@@ -115,5 +115,5 @@
 	}}
 >
 	<input type="hidden" name="ids" value={strRowSelectionState} />
-	<input bind:this={sourceInput} type="hidden" name="source" value={2} />
+	<input type="hidden" name="source" bind:this={sourceInput} value={2} />
 </form>
