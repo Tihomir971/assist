@@ -13,6 +13,11 @@ import type { FlattenedProduct, Product } from './columns.svelte.js';
 import { productSelectSchema } from './schema';
 import { findChildren } from '$lib/scripts/tree';
 import { sourceId } from './types';
+import type {
+	BarcodeSearchRequest,
+	BarcodeSearchResponse,
+	BarcodeSearchVendorResult
+} from './marketApiTypes';
 
 interface ProductRequest {
 	productId: number;
@@ -34,8 +39,8 @@ interface ProductResult {
 interface ApiResponseData<T> {
 	data?: T;
 	error?: string;
-	status: number;
 }
+
 export const load: PageServerLoad = async ({ depends, parent, url, locals: { supabase } }) => {
 	depends('catalog');
 	const { searchParams } = url;
@@ -506,12 +511,11 @@ export const actions = {
 		);
 
 		try {
-			const { data, status, error } = await scrapper
+			const { data, error } = await scrapper
 				.post('scraper', { json: { products: productRequests } })
 				.json<ApiResponseData<ProductResult[]>>();
-			// console.log('data, status, error', data, status, error);
 
-			if (status !== 200 || !data) {
+			if (!data) {
 				console.error('Invalid data received from API', error);
 				return {
 					success: false,
@@ -568,15 +572,12 @@ export const actions = {
 					}
 				}
 
-				console.log(`product.price: ${product.price}`);
-				console.log(`taxRate: ${taxRate}`);
 				let priceWithoutTax: number | undefined = undefined;
 				// Skip price update for Idea
 				if (source !== 4) {
 					priceWithoutTax =
 						product.price || product.price === 0 ? product.price / (1 + taxRate) : undefined;
 				}
-				console.log(`priceWithoutTax: ${priceWithoutTax}`);
 				const { error: updateError, data: updatedProduct } = await supabase
 					.from('m_product_po')
 					.update({
@@ -662,6 +663,146 @@ export const actions = {
 				status: 500,
 				message: 'Error fetching data from API',
 				details: errorMessages
+			};
+		}
+	},
+	searchByBarcode: async ({ request, locals: { supabase } }) => {
+		const form = await superValidate(request, zod(productSelectSchema));
+		if (!form.valid) return fail(400, { form });
+
+		const { ids } = form.data;
+
+		function stringToNumberArray(s: string): number[] {
+			const numbers = s.match(/\d+/g);
+			return numbers ? numbers.map((num) => parseInt(num, 10)) : [];
+		}
+
+		const productIds = stringToNumberArray(ids);
+
+		const { data: products, error: fetchError } = await supabase
+			.from('m_product')
+			.select('id, m_product_gtin(gtin), c_taxcategory_id')
+			.in('id', productIds);
+
+		if (fetchError) {
+			console.error('Error fetching products:', fetchError);
+			return {
+				success: false,
+				status: 500,
+				message: 'Error fetching products from database',
+				error: fetchError.message
+			};
+		}
+
+		if (!products || products.length === 0) {
+			return { success: false, status: 404, message: 'No products found' };
+		}
+
+		try {
+			const allResults: BarcodeSearchVendorResult[] = [];
+
+			for (const product of products) {
+				const gtins = product.m_product_gtin.map((item: { gtin: string }) => item.gtin);
+
+				for (const gtin of gtins) {
+					const barcodeSearchRequest: BarcodeSearchRequest = {
+						productId: product.id,
+						barcodes: [gtin]
+					};
+
+					try {
+						const response = await scrapper
+							.post('scraper/search/barcode', { json: { ...barcodeSearchRequest } })
+							.json<BarcodeSearchResponse>();
+
+						if (response.error) {
+							console.error(`Invalid data received from API for GTIN ${gtin}:`, response.error);
+							continue;
+						}
+
+						if (response.data) {
+							allResults.push(...response.data);
+						}
+					} catch (err) {
+						console.error(`Error searching for GTIN ${gtin}:`, err);
+						continue;
+					}
+				}
+			}
+
+			if (allResults.length === 0) {
+				return {
+					success: false,
+					status: 404,
+					message: 'No results found for any barcodes'
+				};
+			}
+
+			// Process and update database with results
+			for (const result of allResults) {
+				const originalProduct = products.find((p) => p.id === result.productId);
+				if (!originalProduct) {
+					console.error(`Original product not found for productId: ${result.productId}`);
+					continue;
+				}
+
+				const bpartnerId = sourceId.get(result.vendorId);
+
+				if (!bpartnerId) {
+					console.error(`No bpartner ID found for vendor: ${result.vendorId}`);
+					continue;
+				}
+
+				if (result.data?.href) {
+					const { error: updateError, data: updatedProduct } = await supabase
+						.from('m_product_po')
+						.update({
+							url: result.data.href
+						})
+						.eq('m_product_id', result.productId)
+						.eq('c_bpartner_id', bpartnerId)
+						.select();
+
+					if (updateError) {
+						console.error('Error updating product:', updateError);
+						continue;
+					}
+
+					if (updatedProduct && updatedProduct.length === 0) {
+						const { error: insertError } = await supabase.from('m_product_po').insert({
+							m_product_id: result.productId,
+							c_bpartner_id: bpartnerId,
+							url: result.data.href,
+							vendorproductno: ''
+						});
+						if (insertError) {
+							console.error('Error inserting product:', insertError);
+							continue;
+						}
+					}
+				}
+			}
+
+			return {
+				success: true,
+				status: 200,
+				message: `Processed ${allResults.length} results`,
+				data: allResults
+			};
+		} catch (err) {
+			if (err instanceof Error) {
+				console.error('Error searching by barcode:', err);
+				return {
+					success: false,
+					status: 500,
+					message: 'Error searching by barcode',
+					error: err.message
+				};
+			}
+			return {
+				success: false,
+				status: 500,
+				message: 'Unknown error searching by barcode'
 			};
 		}
 	}
