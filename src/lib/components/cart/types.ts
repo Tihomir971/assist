@@ -58,11 +58,11 @@ export interface FlattenedProduct {
 }
 
 export interface ExportData {
-	id: number;
+	id?: number;
 	sku: string;
-	mpn: string;
+	mpn?: string;
 	name: string;
-	quantity: number;
+	quantity?: number;
 	unitsperpack: number;
 	taxRate: number;
 	qtyWholesale: number;
@@ -71,9 +71,37 @@ export interface ExportData {
 	levelMax: number;
 	qtyBatchSize: number;
 	pricePurchase: number;
-	ruc: number;
+	ruc?: number;
 	priceRetail: number;
 	qtyTransfer?: number;
 	newPrice?: number;
 	[key: string]: string | number | undefined | null; // Allow null values for dynamic fields
+}
+
+export interface InternalTransferData {
+	Šifra: string;
+	name: string;
+	unitsperpack: number;
+	qtyWholesale: number;
+	qtyRetail: number;
+	levelMin: number;
+	levelMax: number;
+	qtyBatchSize: number;
+	Količina?: number;
+	'Pack Qty.': number;
+	'Cena u obj.2'?: number;
+}
+
+export interface SalesActionData {
+	Šifra: string;
+	name: string;
+	unitsperpack: number;
+	taxRate: number;
+	qtyWholesale: number;
+	qtyRetail: number;
+	levelMin: number;
+	levelMax: number;
+	qtyBatchSize: number;
+	pricePurchase: number;
+	priceRetail: number;
 }
