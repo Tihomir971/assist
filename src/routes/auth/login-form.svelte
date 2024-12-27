@@ -11,12 +11,7 @@
 	export let data: SuperValidated<Infer<LoginSchema>>;
 
 	const form = superForm(data, {
-		validators: zodClient(loginSchema),
-		onUpdate({ form }) {
-			if (form.valid) {
-				redirect(303, '/dashboard');
-			}
-		}
+		validators: zodClient(loginSchema)
 	});
 	const { form: formData, enhance } = form;
 </script>

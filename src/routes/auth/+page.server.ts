@@ -45,8 +45,8 @@ export const actions = {
 				}
 			});
 		}
-		/* redirect(303, '/dashboard'); */
-		return { form };
+		throw redirect(303, '/dashboard');
+		// return { form };
 	},
 
 	signout: async ({ locals: { supabase, session } }) => {

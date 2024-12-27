@@ -143,8 +143,8 @@ export async function processExport(
 				if (!product) return null;
 
 				if (selectReportValue === 'sales_action') {
-					return {
-						Šifra: product.sku || '',
+					const salesActionData: SalesActionData = {
+						Artikal: product.sku || '',
 						name: item.name,
 						unitsperpack: product.unitsperpack || 0,
 						taxRate: product.taxRate || 0,
@@ -154,8 +154,29 @@ export async function processExport(
 						levelMax: product.levelMax || 0,
 						qtyBatchSize: product.qtyBatchSize || 0,
 						pricePurchase: product.pricePurchase || 0,
-						priceRetail: product.priceRetail || 0
-					} as SalesActionData;
+						priceRetail: product.priceRetail || 0,
+						'Cena bez PDV': product.pricePurchase || 0, // Initialize with pricePurchase, will be updated with max value later
+						'Cena sa PDV': (product.pricePurchase || 0) * (1 + (product.taxRate || 0)) // Initialize with pricePurchase * (1 + taxRate)
+					};
+
+					// Add vendor columns for sales action report
+					const vendorPrices: number[] = [];
+					selectedVendorIds.forEach((vendorId) => {
+						const vendorName = vendors.find((v) => v.id === vendorId)?.name || 'Unknown';
+						const vendorPrice = product.vendorPrices[vendorId] || null;
+						salesActionData[`${vendorName}Price`] = vendorPrice;
+						salesActionData[`${vendorName}ProductNo`] = product.vendorProductNos[vendorId] || '';
+						if (vendorPrice !== null) {
+							vendorPrices.push(vendorPrice);
+						}
+					});
+
+					// Add column with max value between pricePurchase and vendor prices
+					const maxPrice = Math.max(product.pricePurchase || 0, ...vendorPrices);
+					salesActionData['Cena bez PDV'] = maxPrice;
+					salesActionData['Cena sa PDV'] = maxPrice * (1 + (product.taxRate || 0));
+
+					return salesActionData;
 				} else if (selectReportValue === 'internal_transfer') {
 					const levelMax = product.levelMax || 0;
 					const qtyRetail = product.qtyRetail || 0;
@@ -305,8 +326,10 @@ export async function processExport(
 			selectReportValue === 'internal_transfer'
 				? 'Interni račun robe.xlsx'
 				: selectReportValue === 'sales_action'
-					? 'Prodajni nalog.xlsx'
-					: 'cart_items.xlsx'
+					? 'Definisanje prodajnih akcija.xlsx'
+					: selectReportValue === 'vendor_orders'
+						? 'Nardžbine dobavljačima.xlsx'
+						: 'cart_items.xlsx'
 		);
 
 		return true;

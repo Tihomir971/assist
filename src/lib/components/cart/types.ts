@@ -93,7 +93,7 @@ export interface InternalTransferData {
 }
 
 export interface SalesActionData {
-	Šifra: string;
+	Artikal: string;
 	name: string;
 	unitsperpack: number;
 	taxRate: number;
@@ -104,4 +104,7 @@ export interface SalesActionData {
 	qtyBatchSize: number;
 	pricePurchase: number;
 	priceRetail: number;
+	'Cena bez PDV': number;
+	'Cena sa PDV': number;
+	[key: string]: string | number | undefined | null; // Allow dynamic vendor columns
 }

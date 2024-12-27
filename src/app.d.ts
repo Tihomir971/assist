@@ -1,5 +1,6 @@
 import type { Database } from '$lib/types/supabase';
 import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
+import 'unplugin-icons/types/svelte';
 
 declare global {
 	namespace App {

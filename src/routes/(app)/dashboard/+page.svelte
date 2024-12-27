@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { Tree } from '$lib/components/melt/tree/index.js';
 	import Combobox from '$lib/components/Zag/Combobox/Combobox.svelte';
+	import * as Card from '$lib/components/ui/card/index.js';
 
 	let { data } = $props();
 	let { session, profile } = $derived(data);
@@ -28,3 +30,16 @@
 		/>
 	</div>
 {/if}
+
+<Card.Root>
+	<Card.Header>
+		<Card.Title>Card Title</Card.Title>
+		<Card.Description>Card Description</Card.Description>
+	</Card.Header>
+	<Card.Content>
+		<Tree />
+	</Card.Content>
+	<Card.Footer>
+		<p>Card Footer</p>
+	</Card.Footer>
+</Card.Root>
