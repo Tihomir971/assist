@@ -143,38 +143,37 @@ export async function processExport(
 				if (!product) return null;
 
 				if (selectReportValue === 'sales_action') {
-					const salesActionData: SalesActionData = {
-						Artikal: product.sku || '',
-						name: item.name,
-						unitsperpack: product.unitsperpack || 0,
-						taxRate: product.taxRate || 0,
-						qtyWholesale: product.qtyWholesale || 0,
-						qtyRetail: product.qtyRetail || 0,
-						levelMin: product.levelMin || 0,
-						levelMax: product.levelMax || 0,
-						qtyBatchSize: product.qtyBatchSize || 0,
-						pricePurchase: product.pricePurchase || 0,
-						priceRetail: product.priceRetail || 0,
-						'Cena bez PDV': product.pricePurchase || 0, // Initialize with pricePurchase, will be updated with max value later
-						'Cena sa PDV': (product.pricePurchase || 0) * (1 + (product.taxRate || 0)) // Initialize with pricePurchase * (1 + taxRate)
-					};
-
-					// Add vendor columns for sales action report
+					// Collect vendor prices first
 					const vendorPrices: number[] = [];
 					selectedVendorIds.forEach((vendorId) => {
-						const vendorName = vendors.find((v) => v.id === vendorId)?.name || 'Unknown';
 						const vendorPrice = product.vendorPrices[vendorId] || null;
-						salesActionData[`${vendorName}Price`] = vendorPrice;
-						salesActionData[`${vendorName}ProductNo`] = product.vendorProductNos[vendorId] || '';
 						if (vendorPrice !== null) {
 							vendorPrices.push(vendorPrice);
 						}
 					});
 
-					// Add column with max value between pricePurchase and vendor prices
+					// Calculate max price and final prices
 					const maxPrice = Math.max(product.pricePurchase || 0, ...vendorPrices);
+					const cenaSaPdv = Math.ceil(maxPrice * (1 + (product.taxRate || 0))) - 0.01;
+
+					// Create base data without final prices
+					const salesActionData: SalesActionData = {
+						Artikal: product.sku || '',
+						name: item.name,
+						pricePurchase: product.pricePurchase || 0,
+						priceRetail: product.priceRetail || 0
+					};
+
+					// Add vendor columns
+					selectedVendorIds.forEach((vendorId) => {
+						const vendorName = vendors.find((v) => v.id === vendorId)?.name || 'Unknown';
+						salesActionData[`${vendorName}Price`] = product.vendorPrices[vendorId] || null;
+						salesActionData[`${vendorName}ProductNo`] = product.vendorProductNos[vendorId] || '';
+					});
+
+					// Add final prices as last columns
 					salesActionData['Cena bez PDV'] = maxPrice;
-					salesActionData['Cena sa PDV'] = maxPrice * (1 + (product.taxRate || 0));
+					salesActionData['Cena sa PDV'] = cenaSaPdv;
 
 					return salesActionData;
 				} else if (selectReportValue === 'internal_transfer') {

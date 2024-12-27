@@ -95,16 +95,9 @@ export interface InternalTransferData {
 export interface SalesActionData {
 	Artikal: string;
 	name: string;
-	unitsperpack: number;
-	taxRate: number;
-	qtyWholesale: number;
-	qtyRetail: number;
-	levelMin: number;
-	levelMax: number;
-	qtyBatchSize: number;
 	pricePurchase: number;
 	priceRetail: number;
-	'Cena bez PDV': number;
-	'Cena sa PDV': number;
+	'Cena bez PDV'?: number;
+	'Cena sa PDV'?: number;
 	[key: string]: string | number | undefined | null; // Allow dynamic vendor columns
 }
