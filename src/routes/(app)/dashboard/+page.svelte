@@ -33,13 +33,10 @@
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title>Card Title</Card.Title>
+		<Card.Title>Selectred</Card.Title>
 		<Card.Description>Card Description</Card.Description>
 	</Card.Header>
 	<Card.Content>
 		<Tree />
 	</Card.Content>
-	<Card.Footer>
-		<p>Card Footer</p>
-	</Card.Footer>
 </Card.Root>

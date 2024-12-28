@@ -1,9 +1,15 @@
 <script lang="ts">
 	import { Tree, type TreeItem } from 'melt/builders';
+	// Icons
 	import JavaScript from '~icons/devicon/javascript';
 	import Svelte from '~icons/devicon/svelte';
-	import FolderOpen from '~icons/ph/folder-open-fill';
-	import Folder from '~icons/ph/folder-fill';
+	import PhFolder from '~icons/ph/folder';
+	import PhFolderOpen from '~icons/ph/folder-open';
+	import PhFolderFill from '~icons/ph/folder-fill';
+	import PhCaretRight from '~icons/ph/caret-right';
+	import PhCaretDown from '~icons/ph/caret-down';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { back } from '@melt-ui/svelte/internal/helpers';
 
 	type Item = TreeItem<{
 		title: string;
@@ -14,45 +20,45 @@
 			title: 'Root 1'
 		},
 		{
-			id: 'lib',
+			id: '2',
 			title: 'Root 2',
 			children: [
 				{
-					id: 'lib/tree',
+					id: '3',
 					title: 'Child Root 2',
 					children: [
 						{
-							id: 'lib/tree/Tree.svelte',
+							id: '4',
 							title: 'Tree.svelte'
 						},
 						{
-							id: 'lib/tree/TreeItem.svelte',
+							id: '5',
 							title: 'TreeItem.svelte'
 						}
 					]
 				},
 				{
-					id: 'lib/icons',
+					id: '6',
 					title: 'icons',
 					children: [
 						{
-							id: 'lib/icons/JavaScript.svelte',
+							id: '7',
 							title: 'JavaScript.svelte'
 						},
 						{
-							id: 'lib/icons/Svelte.svelte',
+							id: '8',
 							title: 'Svelte.svelte'
 						}
 					]
 				},
 				{
-					id: 'lib/index.js',
+					id: '9',
 					title: 'index.js'
 				}
 			]
 		},
 		{
-			id: 'routes',
+			id: '10',
 			title: 'Root 3',
 			children: [
 				{
@@ -72,6 +78,33 @@
 			]
 		}
 	];
+	const testTree = [
+		{
+			id: 1,
+			title: 'Root 1'
+		},
+		{
+			id: 2,
+			title: 'Root 2',
+			children: [
+				{
+					id: 3,
+					title: 'Child Root 2',
+					children: [
+						{
+							id: 4,
+							title: 'Tree.svelte'
+						},
+						{
+							id: 5,
+							title: 'TreeItem.svelte'
+						}
+					]
+				}
+			]
+		}
+	];
+	type TestTree = typeof testTree;
 
 	const tree = new Tree({
 		items: data,
@@ -84,12 +117,19 @@
 	<!-- {@const icon = item.item.icon} -->
 
 	{#if item.children?.length}
-		<svelte:component this={item.expanded ? FolderOpen : Folder} role="presentation" />
+		<svelte:component this={item.expanded ? PhCaretDown : PhCaretRight} role="presentation" />
 		<!-- {:else if icon === 'svelte'}
-		<Svelte role="presentation" />
-	{:else if icon === 'js'}
-		<JavaScript role="presentation" /> -->
+		<Svelte role="presentation" /> -->
+	{:else}
+		<div class="size-5"></div>
 	{/if}
+	<svelte:component this={item.selected ? PhFolderFill : PhFolder} role="presentation" />
+	<!-- {#if item.selected} -->
+	<!-- {:else if icon === 'svelte'}
+		<Svelte role="presentation" /> -->
+	<!-- {:else} -->
+	<!-- <JavaScript role="presentation" /> -->
+	<!-- {/if} -->
 {/snippet}
 
 {#snippet treeItems(items: (typeof tree)['children'], depth: number = 0)}
@@ -103,7 +143,7 @@
 					class="{item.selected
 						? 'text-secondary-foreground bg-surface-document'
 						: ''} {item.expanded ? 'h-auto' : 'h-0'}
-					ring-accent-500 dark:ring-accent-700 group-hover:bg-surface-2 flex h-full w-full items-center gap-2
+					ring-accent-500 dark:ring-accent-700 group-hover:bg-surface-2 flex h-full w-full items-center gap-0.5
 					rounded-xl px-3 py-1 ring-offset-white transition
 					dark:ring-offset-black"
 				>
@@ -128,7 +168,7 @@
 		</li>
 	{/each}
 {/snippet}
-
+{tree.selected}
 <ul class="mx-auto w-[300px] list-none rounded-md p-4" {...tree.root}>
 	{@render treeItems(tree.children, 0)}
 </ul>
