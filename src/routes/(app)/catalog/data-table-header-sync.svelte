@@ -7,7 +7,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { toast } from 'svelte-sonner';
 	//Icons
-	import ChevronDown from 'lucide-svelte/icons/chevron-down';
+	import PhCaretDown from '~icons/ph/caret-down';
 
 	let { rowSelectionState = $bindable() }: { rowSelectionState: RowSelectionState } = $props();
 	let strRowSelectionState = $derived(Object.keys(rowSelectionState).map((x) => x));
@@ -34,7 +34,7 @@
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
-			<Button {...props} variant="outline">Sync <ChevronDown class="ml-2 size-4" /></Button>
+			<Button {...props} variant="outline">Sync <PhCaretDown class="ml-2" /></Button>
 		{/snippet}
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content>

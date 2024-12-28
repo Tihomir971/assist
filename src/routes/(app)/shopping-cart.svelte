@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ShoppingCart from 'lucide-svelte/icons/shopping-cart';
+	import PhShoppingCart from '~icons/ph/shopping-cart';
 	import CartItems from '$lib/components/cart/cart-items.svelte';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
@@ -17,7 +17,7 @@
 
 <Sheet.Root>
 	<Sheet.Trigger class={buttonVariants({ variant: 'ghost', size: 'icon', class: 'relative' })}>
-		<ShoppingCart size={32} />
+		<PhShoppingCart />
 		{#if cartStorageCtx.current.length > 0}
 			<Badge
 				class="absolute top-1 right-1 size-4 -translate-y-1/3 translate-x-1/3 justify-center p-0"

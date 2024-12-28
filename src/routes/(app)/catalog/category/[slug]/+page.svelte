@@ -11,13 +11,13 @@
 
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { toast } from 'svelte-sonner';
 	import { invalidate } from '$app/navigation';
 	import { crudMProductCategorySchema } from './schema';
 	import DrawerCategoryMap from './drawer-category-map.svelte';
-	import Package from 'lucide-svelte/icons/package';
+	import PhPackage from '~icons/ph/package';
 
 	let { data } = $props();
 
@@ -53,7 +53,7 @@
 		<Card.Root>
 			<Card.Header>
 				<Card.Title class="flex items-center gap-2">
-					<Package class="mb-2 size-8" />
+					<PhPackage class="mb-2 size-8" />
 					<Form.Field form={formCategory} name="name">
 						<Form.Control>
 							{#snippet children({ props })}
@@ -66,12 +66,12 @@
 				</Card.Title>
 				{#if $message}
 					<Card.Description>
-						<h3 class:invalid={$page.status >= 400}>{$message}</h3>
+						<h3 class:invalid={page.status >= 400}>{$message}</h3>
 					</Card.Description>{/if}
 			</Card.Header>
 			<Card.Content class="space-y-2">
 				{#if $message}
-					<h3 class:invalid={$page.status >= 400}>{$message}</h3>
+					<h3 class:invalid={page.status >= 400}>{$message}</h3>
 				{/if}
 				<div class="flex w-full items-center space-x-3">
 					<Form.Field

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { DateTime } from 'luxon';
 
 	const { data } = $props();
@@ -8,7 +8,7 @@
 	let warehouseName = $state('Loading...');
 
 	async function fetchWarehouseName() {
-		const warehouseId = $page.url.searchParams.get('warehouse');
+		const warehouseId = page.url.searchParams.get('warehouse');
 		if (warehouseId) {
 			const { data: warehouse, error } = await data.supabase
 				.from('m_warehouse')

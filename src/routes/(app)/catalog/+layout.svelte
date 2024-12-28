@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { LayoutData } from './$types';
 	import { convertToTreeStructure } from '$lib/scripts/tree';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { TreeView } from '$lib/components/treeview';
@@ -10,7 +10,8 @@
 	import { Button } from '$lib/components/ui/button';
 	import DialogSelectReport from './DialogSelectReport.svelte';
 	import type { Snippet } from 'svelte';
-	import Printer from 'lucide-svelte/icons/printer';
+	// Icons
+	import PhPrinter from '~icons/ph/printer';
 	import ChevronsDownUp from 'lucide-svelte/icons/chevrons-down-up';
 	import FolderPen from 'lucide-svelte/icons/folder-pen';
 	import FolderPlus from 'lucide-svelte/icons/folder-plus';
@@ -32,7 +33,7 @@
 	$effect(() => {
 		if (browser && activeCategory && prevCategory !== activeCategory) {
 			prevCategory = activeCategory;
-			const newUrl = new URL($page.url);
+			const newUrl = new URL(page.url);
 			newUrl.searchParams.set('cat', activeCategory);
 
 			goto(newUrl);
@@ -94,7 +95,7 @@
 									onclick={() => (showReportDialog = !showReportDialog)}
 								>
 									<span class="sr-only">Generate Report</span>
-									<Printer strokeWidth={1.5} class="!size-6" />
+									<PhPrinter class="!size-6" />
 									<!-- <PhPrinter size="24" /> -->
 								</Button>
 							</Tooltip.Trigger>

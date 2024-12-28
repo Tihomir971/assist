@@ -3,7 +3,7 @@
 	import { toast } from 'svelte-sonner';
 	import { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
 	import { Button } from '$lib/components/ui/button';
-	import { X } from 'lucide-svelte';
+	import PhX from '~icons/ph/x';
 	import * as Table from '$lib/components/ui/table';
 	import * as Select from '$lib/components/ui/select';
 	import { Input } from '$lib/components/ui/input';
@@ -144,7 +144,7 @@
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
 						<Button variant="outline" size="icon">
-							<X />
+							<PhX />
 						</Button>
 					</Table.Cell>
 				</Table.Row>

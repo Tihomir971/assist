@@ -3,8 +3,8 @@
 	import Tree from './tree.svelte';
 	import { melt } from '@melt-ui/svelte';
 	import { getCtx } from '../ctx';
-	import PhCaretRight from 'phosphor-svelte/lib/CaretRight';
-	import PhDot from 'phosphor-svelte/lib/Dot';
+	import PhCaretRight from '~icons/ph/caret-right';
+	import PhDotBold from '~icons/ph/dot-bold';
 	import { cn } from '$lib/utils';
 
 	//	export let treeItems: TreeItem[];
@@ -51,7 +51,7 @@
 					</span>
 				{:else}
 					<span class="size-4 flex-shrink-0">
-						<PhDot weight="bold" size="1rem" />
+						<PhDotBold />
 					</span>
 				{/if}
 				<span class="truncate" {title}>

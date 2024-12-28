@@ -7,8 +7,8 @@
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { toast } from 'svelte-sonner';
-	import Package from 'lucide-svelte/icons/package';
-	import Trash from 'lucide-svelte/icons/trash-2';
+	import PhPackage from '~icons/ph/package';
+	import PhTrash from '~icons/ph/trash';
 	import { isValidGTIN } from '$lib/scripts/gtin';
 	import type { CrudMProductGtinSchema } from './schema';
 	import { invalidate } from '$app/navigation';
@@ -80,7 +80,7 @@
 					{#each $formGtin.barcodes as barcode (barcode.gtin)}
 						<li class="flex items-center justify-between gap-2">
 							<div class="flex items-center gap-2">
-								<Package class="h-4 w-4" />
+								<PhPackage />
 								{barcode.gtin}
 							</div>
 							<Button
@@ -90,7 +90,7 @@
 								formaction="?/gtinDEL"
 								value={barcode.id}
 							>
-								<Trash class="h-4 w-4" />
+								<PhTrash />
 							</Button>
 						</li>
 					{/each}

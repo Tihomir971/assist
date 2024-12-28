@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Ellipsis from 'lucide-svelte/icons/ellipsis';
+	import PhDotsThreeBold from '~icons/ph/dots-three-bold';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { goto } from '$app/navigation';
 
@@ -15,5 +15,5 @@
 	class="relative size-8 p-0"
 >
 	<span class="sr-only">Edit product</span>
-	<Ellipsis class="size-4" />
+	<PhDotsThreeBold />
 </Button>

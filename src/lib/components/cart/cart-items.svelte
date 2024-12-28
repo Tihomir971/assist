@@ -1,10 +1,10 @@
 <script lang="ts">
-	import PhMicrosoftExcelLogo from 'phosphor-svelte/lib/MicrosoftExcelLogo';
+	import PhMicrosoftExcelLogo from '~icons/ph/microsoft-excel-logo';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import Minus from 'phosphor-svelte/lib/Minus';
-	import Plus from 'phosphor-svelte/lib/Plus';
-	import Trash from 'phosphor-svelte/lib/Trash';
+	import PhMinus from '~icons/ph/minus';
+	import PhPlus from '~icons/ph/plus';
+	import PhTrash from '~icons/ph/trash';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
@@ -61,7 +61,7 @@
 	<div class="mb-2 flex items-center gap-2">
 		<Button variant="destructive" onclick={clearCart}>Clear All</Button>
 		<Button onclick={() => (showVendorDialog = true)}>
-			<PhMicrosoftExcelLogo size={20} />
+			<PhMicrosoftExcelLogo />
 			Export to Excel
 		</Button>
 	</div>
@@ -92,7 +92,7 @@
 							}
 						}}
 					>
-						<Minus size={14} />
+						<PhMinus />
 					</Button>
 					<span class="w-8 text-center text-sm font-medium">{cartItem.quantity}</span>
 					<Button
@@ -112,7 +112,7 @@
 							}
 						}}
 					>
-						<Plus size={14} />
+						<PhPlus />
 					</Button>
 					<Button
 						size="icon"
@@ -127,7 +127,7 @@
 							}
 						}}
 					>
-						<Trash size={14} />
+						<PhTrash />
 					</Button>
 				</div>
 			</div>

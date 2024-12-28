@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { CartItem } from './types';
-	import Trash from 'phosphor-svelte/lib/Trash';
-	import Plus from 'phosphor-svelte/lib/Plus';
-	import Minus from 'phosphor-svelte/lib/Minus';
+	import PhTrash from '~icons/ph/trash';
+	import PhPlus from '~icons/ph/plus';
+	import PhMinus from '~icons/ph/minus';
 	import { LocalStorage } from '$lib/storage.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 
@@ -48,11 +48,11 @@
 	</div>
 	<div class="flex items-center space-x-2">
 		<Button size="icon" variant="ghost" onclick={decrementQuantity}>
-			<Minus size={14} />
+			<PhMinus />
 		</Button>
 		<span class="w-8 text-center text-sm font-medium">{quantity}</span>
 		<Button size="icon" variant="ghost" onclick={incrementQuantity}>
-			<Plus size={14} />
+			<PhPlus />
 		</Button>
 		<Button
 			size="icon"
@@ -65,7 +65,7 @@
 				}
 			}}
 		>
-			<Trash size={14} />
+			<PhTrash />
 		</Button>
 	</div>
 </div>

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { Package } from 'lucide-svelte';
 	import * as Card from '$lib/components/ui/card';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Button } from '$lib/components/ui/button';
 	import { Badge } from '$lib/components/ui/badge';
 	import * as Table from '$lib/components/ui/table';
-	import { Ellipsis } from 'lucide-svelte';
+	import PhDotsThree from '~icons/ph/dots-three';
+	import PhPackage from '~icons/ph/package';
 
 	// Define types for the props
 	type ProductFormData = {
@@ -51,7 +51,7 @@
 	<Card.Header class="flex flex-row items-center justify-between border-b">
 		<div>
 			<Card.Title class="flex items-center gap-2 text-3xl font-bold">
-				<Package class="h-8 w-8" />
+				<PhPackage class="h-8 w-8" />
 				{formProduct.name}
 			</Card.Title>
 			<Card.Description class="text-lg">Product ID: {formProduct.id}</Card.Description>
@@ -59,7 +59,7 @@
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger>
 				<Button variant="ghost" size="icon">
-					<Ellipsis class="h-4 w-4" />
+					<PhDotsThree />
 				</Button>
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content>
@@ -138,7 +138,7 @@
 				<ul class="list-inside list-disc space-y-2">
 					{#each data.barcodes as barcode}
 						<li class="flex items-center gap-2">
-							<Package class="h-4 w-4" />
+							<PhPackage />
 							{barcode.gtin}
 						</li>
 					{/each}

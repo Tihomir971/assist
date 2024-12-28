@@ -1,14 +1,14 @@
 <script lang="ts">
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { browser } from '$app/environment';
-	import { page } from '$app/stores';
-	import PhLayout from 'phosphor-svelte/lib/Layout';
-	import PhRepeat from 'phosphor-svelte/lib/Repeat';
-	import PhTag from 'phosphor-svelte/lib/Tag';
-	import PhMicrosoftExcelLogo from 'phosphor-svelte/lib/MicrosoftExcelLogo';
+	import { page } from '$app/state';
+	import PhLayout from '~icons/ph/layout';
+	import PhRepeat from '~icons/ph/repeat';
+	import PhTag from '~icons/ph/tag';
+	import PhMicrosoftExcelLogo from '~icons/ph/microsoft-excel-logo';
 	import { Button } from '$lib/components/ui/button/index.js';
 
-	let activePath: string | undefined = $derived(browser ? $page.url.pathname : undefined);
+	let activePath: string | undefined = $derived(browser ? page.url.pathname : undefined);
 </script>
 
 <nav class="bg-well-2 flex h-full flex-col items-center gap-4 border-x px-2 sm:py-5">

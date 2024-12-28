@@ -3,8 +3,8 @@
 	import { toast } from 'svelte-sonner';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
-	import Ellipsis from 'lucide-svelte/icons/ellipsis';
-	import Package from 'lucide-svelte/icons/package';
+	import PhDotsThree from '~icons/ph/dots-three';
+	import PhPackage from '~icons/ph/package';
 
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
@@ -85,7 +85,7 @@
 				<div class="grid grid-cols-[1fr_auto] gap-2">
 					<div>
 						<Card.Title class="flex items-center gap-2">
-							<Package class="mb-2 size-8" />
+							<PhPackage class="mb-2 size-8" />
 							<Form.Field form={productForm} name="name">
 								<Form.Control>
 									{#snippet children({ props })}
@@ -353,13 +353,13 @@
 						<div class="flex items-center justify-between">
 							<h3 class="mb-2 text-lg font-semibold">Barcodes</h3>
 							<Button variant="ghost" size="icon" onclick={() => (isBarcodeDrawerOpen = true)}>
-								<Ellipsis />
+								<PhDotsThree />
 							</Button>
 						</div>
 						<ul class="list-inside list-disc space-y-2">
 							{#each data.formProductGtin.data.barcodes as barcode}
 								<li class="flex items-center gap-2">
-									<Package class="h-4 w-4" />
+									<PhPackage />
 									{barcode.gtin}
 								</li>
 							{/each}

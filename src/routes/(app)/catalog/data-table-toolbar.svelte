@@ -2,7 +2,7 @@
 	import type { RowSelectionState, GlobalFilterTableState, Table } from '$lib/components/walker-tx';
 	import type { FlattenedProduct, Warehouse } from './columns.svelte';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	//Components
 	import DataTableHeaderSync from './data-table-header-sync.svelte';
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -13,7 +13,7 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 
 	//Icons
-	import ChevronDown from 'lucide-svelte/icons/chevron-down';
+	import PhCaretDown from '~icons/ph/caret-down';
 
 	type Props = {
 		rowSelectionState: RowSelectionState;
@@ -81,7 +81,7 @@
 			id="subcategories"
 			checked={showSub}
 			onCheckedChange={(checked) => {
-				const newUrl = new URL($page.url);
+				const newUrl = new URL(page.url);
 				newUrl?.searchParams?.set('sub', checked ? 'true' : 'false');
 				goto(newUrl);
 			}}
@@ -98,7 +98,7 @@
 			id="only-stock"
 			checked={showStock}
 			onCheckedChange={(checked) => {
-				const newUrl = new URL($page.url);
+				const newUrl = new URL(page.url);
 				newUrl?.searchParams?.set('stock', checked ? 'true' : 'false');
 				goto(newUrl);
 			}}
@@ -115,7 +115,7 @@
 			id="show-vat"
 			checked={showVat}
 			onCheckedChange={(checked) => {
-				const newUrl = new URL($page.url);
+				const newUrl = new URL(page.url);
 				newUrl?.searchParams?.set('showVat', checked ? 'true' : 'false');
 				goto(newUrl);
 			}}
@@ -134,7 +134,7 @@
 		name="report"
 		bind:value={triggerReportValue}
 		onValueChange={(v) => {
-			const newUrl = new URL($page.url);
+			const newUrl = new URL(page.url);
 			newUrl?.searchParams?.set('report', v);
 			goto(newUrl);
 		}}
@@ -155,7 +155,7 @@
 		name="warehouse"
 		bind:value={warehouseValue}
 		onValueChange={(v) => {
-			const newUrl = new URL($page.url);
+			const newUrl = new URL(page.url);
 			newUrl?.searchParams?.set('wh', v);
 			goto(newUrl);
 		}}
@@ -175,7 +175,7 @@
 	<DropdownMenu.Root>
 		<DropdownMenu.Trigger>
 			{#snippet child({ props })}
-				<Button {...props} variant="outline">Columns <ChevronDown class="ml-2 size-4" /></Button>
+				<Button {...props} variant="outline">Columns<PhCaretDown class="ml-2" /></Button>
 			{/snippet}
 		</DropdownMenu.Trigger>
 		<DropdownMenu.Content align="end">

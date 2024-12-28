@@ -1,8 +1,8 @@
 <script lang="ts">
 	import * as Table from '$lib/components/ui/table/index.js';
-	import ArrowUp from 'lucide-svelte/icons/arrow-up';
-	import ArrowDown from 'lucide-svelte/icons/arrow-down';
-	import ArrowDownUp from 'lucide-svelte/icons/arrow-down-up';
+	import PhArrowUp from '~icons/ph/arrow-up';
+	import PhArrowDown from '~icons/ph/arrow-down';
+	import PhArrowsDownUp from '~icons/ph/arrows-down-up';
 	import FlexRender from './flex-render.svelte';
 
 	let { table } = $props();
@@ -26,11 +26,11 @@
 							{#if header.column.getCanSort()}
 								<span class="ml-1">
 									{#if header.column.getIsSorted() === 'asc'}
-										<ArrowUp size="14" class="text-ink-1" />
+										<PhArrowUp style="color: white" />
 									{:else if header.column.getIsSorted() === 'desc'}
-										<ArrowDown size="14" class="text-ink-1" />
+										<PhArrowDown style="color: white" />
 									{:else}
-										<ArrowDownUp size={14} />
+										<PhArrowsDownUp />
 									{/if}
 								</span>
 							{/if}

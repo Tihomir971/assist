@@ -1,14 +1,16 @@
 <script lang="ts">
-	import * as Table from '$lib/components/ui/table/index.js';
-	import { formatDate, formatDateTime, formatNumber } from '$lib/style/locale';
+	import { formatDateTime, formatNumber } from '$lib/style/locale';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import type { MProductPoInsertSchema, МProductPoInsertSchemaАrray } from './schema';
 	import { toast } from 'svelte-sonner';
+	// UI Elements
+	import * as Table from '$lib/components/ui/table/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
-
-	import Ellipsis from 'lucide-svelte/icons/ellipsis';
-	import ArrowSquareOut from 'phosphor-svelte/lib/ArrowSquareOut';
+	// Icons
+	import PhDotsThreeBold from '~icons/ph/dots-three-bold';
+	import PhArrowSquareOut from '~icons/ph/arrow-square-out';
+	// Components
 	import CardVendorsSheet from './vendors-sheet.svelte';
 
 	type Props = {
@@ -94,7 +96,7 @@
 								size="icon"
 								href={$form.purchases[i].url}
 								target="_blank"
-								disabled={!$form.purchases[i].url}><ArrowSquareOut size={32} /></Button
+								disabled={!$form.purchases[i].url}><PhArrowSquareOut /></Button
 							>
 						</Table.Cell>
 						<Table.Cell class="text-right"
@@ -107,7 +109,7 @@
 								onclick={() => handleEllipsisClick($form.purchases[i])}
 								class="-my-3"
 							>
-								<Ellipsis />
+								<PhDotsThreeBold />
 							</Button>
 						</Table.Cell>
 					</Table.Row>

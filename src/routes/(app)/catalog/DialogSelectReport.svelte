@@ -3,7 +3,7 @@
 	import * as Select from '$lib/components/ui/select';
 	import { Button } from '$lib/components/ui/button';
 	import type { Warehouse } from './columns.svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
 	type Props = {
 		showReportDialog: boolean;
@@ -58,7 +58,7 @@
 				onclick={() => {
 					showReportDialog = false;
 					window.open(
-						`${$page.url.origin}/catalog/report/${report}?warehouse=${value}&treeCategory=${activeCategory}`,
+						`${page.url.origin}/catalog/report/${report}?warehouse=${value}&treeCategory=${activeCategory}`,
 						'_blank'
 					);
 				}}
