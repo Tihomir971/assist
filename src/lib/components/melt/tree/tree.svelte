@@ -8,20 +8,22 @@
 	import PhFolderFill from '~icons/ph/folder-fill';
 	import PhCaretRight from '~icons/ph/caret-right';
 	import PhCaretDown from '~icons/ph/caret-down';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import { back } from '@melt-ui/svelte/internal/helpers';
+	import PhDotOutline from '~icons/ph/dot-outline';
+	import { fade } from 'svelte/transition';
+	import type { TreeItemTitle } from './types';
 
-	type Item = TreeItem<{
-		title: string;
-	}>;
-	const data: Item[] = [
+	type Props = {
+		treeData: TreeItemTitle[];
+	};
+	let { treeData }: Props = $props();
+	/* const data: Item[] = [
 		{
 			id: '1',
-			title: 'Root 1'
+			title: 'Audio Visual/Photography'
 		},
 		{
 			id: '2',
-			title: 'Root 2',
+			title: 'Automotive Accessories and Maintenance',
 			children: [
 				{
 					id: '3',
@@ -59,7 +61,7 @@
 		},
 		{
 			id: '10',
-			title: 'Root 3',
+			title: 'Beauty/Personal Care/Hygiene',
 			children: [
 				{
 					id: 'routes/contents',
@@ -77,37 +79,10 @@
 				}
 			]
 		}
-	];
-	const testTree = [
-		{
-			id: 1,
-			title: 'Root 1'
-		},
-		{
-			id: 2,
-			title: 'Root 2',
-			children: [
-				{
-					id: 3,
-					title: 'Child Root 2',
-					children: [
-						{
-							id: 4,
-							title: 'Tree.svelte'
-						},
-						{
-							id: 5,
-							title: 'TreeItem.svelte'
-						}
-					]
-				}
-			]
-		}
-	];
-	type TestTree = typeof testTree;
+	]; */
 
 	const tree = new Tree({
-		items: data,
+		items: treeData,
 		expanded: ['lib', 'routes'],
 		expandOnClick: true
 	});
@@ -117,58 +92,45 @@
 	<!-- {@const icon = item.item.icon} -->
 
 	{#if item.children?.length}
-		<svelte:component this={item.expanded ? PhCaretDown : PhCaretRight} role="presentation" />
-		<!-- {:else if icon === 'svelte'}
-		<Svelte role="presentation" /> -->
+		{@const SvelteComponent = item.expanded ? PhCaretDown : PhCaretRight}
+		<SvelteComponent role="presentation" />
 	{:else}
-		<div class="size-5"></div>
+		<PhDotOutline role="presentation" />
 	{/if}
-	<svelte:component this={item.selected ? PhFolderFill : PhFolder} role="presentation" />
+	<!-- <svelte:component this={item.selected ? PhFolderFill : PhFolder} role="presentation" /> -->
 	<!-- {#if item.selected} -->
 	<!-- {:else if icon === 'svelte'}
 		<Svelte role="presentation" /> -->
 	<!-- {:else} -->
-	<!-- <JavaScript role="presentation" /> -->
 	<!-- {/if} -->
 {/snippet}
 
 {#snippet treeItems(items: (typeof tree)['children'], depth: number = 0)}
 	{#each items as item (item.id)}
-		<li
-			{...item.attrs}
-			class="cursor-pointer rounded-sm outline-none first:mt-0 [&:focus-visible>:first-child>div]:ring-4"
-		>
-			<div class="group py-1" style="padding-left: {depth * 1}rem">
-				<div
-					class="{item.selected
-						? 'text-secondary-foreground bg-surface-document'
-						: ''} {item.expanded ? 'h-auto' : 'h-0'}
-					ring-accent-500 dark:ring-accent-700 group-hover:bg-surface-2 flex h-full w-full items-center gap-0.5
-					rounded-xl px-3 py-1 ring-offset-white transition
-					dark:ring-offset-black"
-				>
-					{@render treeItemIcon(item)}
-					<span class="select-none">
+		<li {...item.attrs} class="cursor-pointer outline-none first:mt-0">
+			<div class="group relative transition-colors" style="padding-left: {depth * 1}rem">
+				<div class="absolute inset-0 z-0">
+					{#if item.selected}
+						<div class="bg-surface-document absolute inset-0 rounded-md"></div>
+					{/if}
+					<div class="group-hover:bg-surface-2 absolute inset-0 rounded-md"></div>
+				</div>
+				<div class="relative z-10 flex items-center gap-1 px-3 py-2 text-sm">
+					<div class="size-4">{@render treeItemIcon(item)}</div>
+					<span class="truncate">
 						{item.item.title}
 					</span>
 				</div>
 			</div>
 			{#if item.children?.length && item.expanded}
-				<div
-					{...tree.group}
-					class="relative list-none p-0 {!item.expanded ? 'pointer-events-none' : ''} origin-left"
-				>
-					<div
-						class="absolute top-2 bottom-2 w-px bg-gray-200 dark:bg-gray-700"
-						style="left: {0.5 + depth * 1}rem"
-					></div>
+				<div {...tree.group} class="list-none p-0" transition:fade>
 					{@render treeItems(item.children, depth + 1)}
 				</div>
 			{/if}
 		</li>
 	{/each}
 {/snippet}
-{tree.selected}
+<div>{tree.selected}</div>
 <ul class="mx-auto w-[300px] list-none rounded-md p-4" {...tree.root}>
 	{@render treeItems(tree.children, 0)}
 </ul>

@@ -2,6 +2,7 @@
 	import { Tree } from '$lib/components/melt/tree/index.js';
 	import Combobox from '$lib/components/Zag/Combobox/Combobox.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import { arrayToTreeString } from '$lib/scripts/tree.js';
 
 	let { data } = $props();
 	let { session, profile } = $derived(data);
@@ -16,6 +17,7 @@
 		{ label: 'Japan', value: 'JP' }
 	];
 	let selectedCountry = $state(['US']);
+	let treeData = $derived(arrayToTreeString(data.categories));
 </script>
 
 {#if session}
@@ -37,6 +39,6 @@
 		<Card.Description>Card Description</Card.Description>
 	</Card.Header>
 	<Card.Content>
-		<Tree />
+		<Tree {treeData} />
 	</Card.Content>
 </Card.Root>

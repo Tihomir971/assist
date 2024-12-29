@@ -1,5 +1,7 @@
-import type { TreeItem } from '$lib/components/treeview';
-
+// import type { TreeItemString } from '$lib/components/treeview';
+import type { TreeItemTitle } from '$lib/components/melt/tree/types';
+import type { TreeItem } from '$lib/components/treeview/types';
+// import type { TreeItem } from 'melt/builders';
 interface DataTableRow {
 	id: number;
 	title: string;
@@ -46,6 +48,51 @@ function arrayToTree(items: Array<DataTableRow>) {
 			delete mappedItem.parent_id;
 		}
 	});
+
+	return result;
+}
+
+export function arrayToTreeString(items: Array<DataTableRow> | null | undefined) {
+	if (!items) return [];
+	const itemMap = new Map();
+
+	// Convert numbers to strings and initialize the map
+	const stringItems = items.map((item) => ({
+		...item,
+		id: item.id.toString(),
+		parent_id: item.parent_id ? item.parent_id.toString() : null
+	}));
+
+	stringItems.forEach((item) => {
+		itemMap.set(item.id, { ...item });
+	});
+
+	// Create the tree structure
+	const result: Array<TreeItemTitle> = [];
+	stringItems.forEach((item) => {
+		if (item.parent_id === null) {
+			const newItem = itemMap.get(item.id);
+			if (itemMap.get(item.id).children) {
+				newItem.children = itemMap.get(item.id).children;
+			}
+			result.push(newItem);
+		} else {
+			const parent = itemMap.get(item.parent_id);
+			if (parent) {
+				parent.children = parent.children || [];
+				parent.children.push(itemMap.get(item.id));
+			}
+		}
+	});
+
+	// Remove parent_id from all items
+	stringItems.forEach((item) => {
+		const mappedItem = itemMap.get(item.id);
+		if ('parent_id' in mappedItem) {
+			delete mappedItem.parent_id;
+		}
+	});
+	console.log('result', JSON.stringify(result, null, 2));
 
 	return result;
 }

@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@fontsource-variable/nunito-sans':
-        specifier: ^5.1.0
-        version: 5.1.0
+        specifier: ^5.1.1
+        version: 5.1.1
       '@supabase/ssr':
         specifier: ^0.5.2
         version: 0.5.2(@supabase/supabase-js@2.47.10)
@@ -636,8 +636,8 @@ packages:
   '@floating-ui/utils@0.2.8':
     resolution: {integrity: sha512-kym7SodPp8/wloecOpcmSnWJsK7M0E5Wg8UcFA+uO4B9s5d0ywXOEro/8HM9x0rW+TljRzul/14UYz3TleT3ig==}
 
-  '@fontsource-variable/nunito-sans@5.1.0':
-    resolution: {integrity: sha512-XiX+CmDDROJpUGFHr+XtcOaRaj4ramC8+62lQUO0LvvT2riB3jTBdRB6YbiLTt6Nu0IxSgLwwXzo0WbIako70Q==}
+  '@fontsource-variable/nunito-sans@5.1.1':
+    resolution: {integrity: sha512-BjtLqBKa+ZwxkZf7mAwZSEmX6VOC9Bvri1hXAAHPjkrwq6rXBG9THX3kl4hZQE+U0rT3febuSxSa84zAvzZUQg==}
 
   '@gcornut/valibot-json-schema@0.31.0':
     resolution: {integrity: sha512-3xGptCurm23e7nuPQkdrE5rEs1FeTPHhAUsBuwwqG4/YeZLwJOoYZv+fmsppUEfo5y9lzUwNQrNqLS/q7HMc7g==}
@@ -3238,7 +3238,7 @@ snapshots:
 
   '@floating-ui/utils@0.2.8': {}
 
-  '@fontsource-variable/nunito-sans@5.1.0': {}
+  '@fontsource-variable/nunito-sans@5.1.1': {}
 
   '@gcornut/valibot-json-schema@0.31.0':
     dependencies:
