@@ -60,6 +60,7 @@ export const load: LayoutServerLoad = async ({ url, depends, locals: { supabase 
 		categories: categories || [],
 		expanded: findParents(categories, activeCategory()),
 		warehouses: await getWarehouses(),
-		activeWarehouse
+		activeWarehouse,
+		selectedId: url.searchParams.get('cat')
 	};
 };

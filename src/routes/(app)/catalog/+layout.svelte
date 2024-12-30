@@ -1,10 +1,9 @@
 <script lang="ts">
 	import type { LayoutData } from './$types';
-	import { convertToTreeStructure } from '$lib/scripts/tree';
+	import { arrayToTreeString } from '$lib/scripts/tree';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
-	import { TreeView } from '$lib/components/treeview';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button';
@@ -15,6 +14,7 @@
 	import ChevronsDownUp from 'lucide-svelte/icons/chevrons-down-up';
 	import FolderPen from 'lucide-svelte/icons/folder-pen';
 	import FolderPlus from 'lucide-svelte/icons/folder-plus';
+	import { Tree } from '$lib/components/melt/tree';
 
 	interface Props {
 		data: LayoutData;
@@ -23,28 +23,77 @@
 
 	let { data, children }: Props = $props();
 
-	let treeItems = $derived(convertToTreeStructure(data.categories));
+	let treeData = $derived(arrayToTreeString(data.categories));
+
+	let selectedId: string | null = $state(data.selectedId);
+
 	let showReportDialog = $state(false);
-	let selected: HTMLElement | null = $state(null);
-	let activeCategory = $derived.by(() => {
-		return selected ? selected.getAttribute('data-id') : null;
-	});
-	let prevCategory: string | undefined = undefined;
+
+	let prevSelectedId: string | undefined = $state(undefined);
+
+	// $effect(() => {
+	// 	if (!browser || !selectedId || selectedId === prevSelectedId || isUpdating) return;
+
+	// 	isUpdating = true;
+
+	// 	// Clear any pending navigation
+	// 	if (timeoutId) {
+	// 		clearTimeout(timeoutId);
+	// 	}
+
+	// 	// Debounce navigation updates
+	// 	timeoutId = setTimeout(() => {
+	// 		const currentUrl = new URL(page.url);
+	// 		const currentCat = currentUrl.searchParams.get('cat');
+
+	// 		// Only update if the URL doesn't already match
+	// 		if (currentCat !== selectedId) {
+	// 			const newUrl = new URL(page.url);
+	// 			newUrl.searchParams.set('cat', selectedId!);
+	// 			goto(newUrl);
+	// 		}
+
+	// 		prevSelectedId = selectedId;
+	// 		isUpdating = false;
+	// 	}, 300); // 300ms debounce
+
+	// 	// Cleanup
+	// 	return () => {
+	// 		if (timeoutId) {
+	// 			clearTimeout(timeoutId);
+	// 		}
+	// 		isUpdating = false;
+	// 	};
+	// });
 	$effect(() => {
-		if (browser && activeCategory && prevCategory !== activeCategory) {
-			prevCategory = activeCategory;
+		if (browser && selectedId && prevSelectedId !== selectedId) {
+			prevSelectedId = selectedId;
 			const newUrl = new URL(page.url);
-			newUrl.searchParams.set('cat', activeCategory);
+			newUrl.searchParams.set('cat', selectedId);
 
 			goto(newUrl);
 		}
 	});
+	// $effect(() => {
+	// if (browser && activeCategory && prevCategory !== activeCategory) {
+	// prevCategory = activeCategory;
+	// const newUrl = new URL(page.url);
+	// newUrl.searchParams.set('cat', activeCategory);
+	//
+	// goto(newUrl);
+	// }
+	// });
 
 	function editCategory() {
-		if (selected) {
-			goto('/catalog/category/' + selected.getAttribute('data-id'));
+		if (selectedId) {
+			goto('/catalog/category/' + selectedId);
 		}
 	}
+	// function editCategory() {
+	// 	if (selected) {
+	// 		goto('/catalog/category/' + selected.getAttribute('data-id'));
+	// 	}
+	// }
 </script>
 
 <main class="flex w-full flex-1 gap-2 overflow-hidden p-2">
@@ -55,7 +104,7 @@
 					<Tooltip.Provider>
 						<Tooltip.Root>
 							<Tooltip.Trigger id="edit_tooltip">
-								<Button variant="ghost" size="icon" onclick={editCategory} disabled={!selected}>
+								<Button variant="ghost" size="icon" onclick={editCategory} disabled={!selectedId}>
 									<FolderPen strokeWidth={1.5} class="!size-6" />
 									<span class="sr-only">Edit</span>
 								</Button>
@@ -106,11 +155,12 @@
 			</Card.Title>
 		</Card.Header>
 		<Card.Content class="flex-1 overflow-auto p-1">
-			<TreeView {treeItems} expanded={data.expanded} bind:selected />
+			<!-- <TreeView {treeItems} expanded={data.expanded} bind:selected /> -->
+			<Tree {treeData} bind:selectedId />
 		</Card.Content>
 	</Card.Root>
 
 	{@render children?.()}
 </main>
 
-<DialogSelectReport bind:showReportDialog warehouses={data.warehouses} {activeCategory} />
+<!-- <DialogSelectReport bind:showReportDialog warehouses={data.warehouses} activeCategory={selectedId} /> -->

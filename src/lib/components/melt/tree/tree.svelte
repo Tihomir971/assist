@@ -13,9 +13,10 @@
 	import type { TreeItemTitle } from './types';
 
 	type Props = {
+		selectedId: string | null;
 		treeData: TreeItemTitle[];
 	};
-	let { treeData }: Props = $props();
+	let { selectedId = $bindable(), treeData }: Props = $props();
 	/* const data: Item[] = [
 		{
 			id: '1',
@@ -86,6 +87,9 @@
 		expanded: ['lib', 'routes'],
 		expandOnClick: true
 	});
+	$effect(() => {
+		selectedId = tree.selected ?? null;
+	});
 </script>
 
 {#snippet treeItemIcon(item: (typeof tree)['children'][number])}
@@ -130,7 +134,6 @@
 		</li>
 	{/each}
 {/snippet}
-<div>{tree.selected}</div>
 <ul class="mx-auto w-[300px] list-none rounded-md p-4" {...tree.root}>
 	{@render treeItems(tree.children, 0)}
 </ul>

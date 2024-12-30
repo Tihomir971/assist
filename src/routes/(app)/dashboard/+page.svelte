@@ -18,6 +18,7 @@
 	];
 	let selectedCountry = $state(['US']);
 	let treeData = $derived(arrayToTreeString(data.categories));
+	let selectedId: string | undefined = $state(undefined);
 </script>
 
 {#if session}
@@ -32,13 +33,13 @@
 		/>
 	</div>
 {/if}
-
+{selectedId}
 <Card.Root>
 	<Card.Header>
 		<Card.Title>Selectred</Card.Title>
 		<Card.Description>Card Description</Card.Description>
 	</Card.Header>
 	<Card.Content>
-		<Tree {treeData} />
+		<Tree {treeData} bind:selectedId />
 	</Card.Content>
 </Card.Root>
