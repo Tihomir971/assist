@@ -121,28 +121,29 @@
 			type: 'bar',
 			name: year.year.toString(),
 			data: year.months.map((month) => month.value),
-			markLine: {
-				symbol: ['none', 'none'],
-				label: {
-					formatter: `Avg ${year.year}: {c}`,
-					position: 'end',
-					distance: [0, 10],
-
-					padding: [4, 8],
-					borderRadius: 4,
-					color: 'var(--text-2)'
-				},
-				lineStyle: {
-					type: 'solid',
-					width: 2
-				},
-				data: [
-					{
-						name: `Average ${year.year}`,
-						yAxis: yearlyAverages.get(year.year)
+			markLine: yearlyAverages.get(year.year)
+				? {
+						symbol: ['none', 'none'],
+						label: {
+							formatter: `Avg ${year.year}: {c}`,
+							position: 'end',
+							distance: [0, 10],
+							padding: [4, 8],
+							borderRadius: 4,
+							color: 'var(--text-2)'
+						},
+						lineStyle: {
+							type: 'solid',
+							width: 2
+						},
+						data: [
+							{
+								name: `Average ${year.year}`,
+								yAxis: yearlyAverages.get(year.year)
+							}
+						]
 					}
-				]
-			}
+				: undefined
 		}));
 
 		const option: EChartsOption = {
