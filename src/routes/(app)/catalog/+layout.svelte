@@ -163,4 +163,8 @@
 	{@render children?.()}
 </main>
 
-<!-- <DialogSelectReport bind:showReportDialog warehouses={data.warehouses} activeCategory={selectedId} /> -->
+<DialogSelectReport
+	bind:showReportDialog
+	warehouses={data.warehouses}
+	activeCategory={selectedId}
+/>

@@ -14,9 +14,12 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 		throw error(400, 'Warehouse and tree category parameters are required');
 	}
 
+	const includeOutOfStock = url.searchParams.get('includeOutOfStock') === 'true';
+
 	async function findProductsGroupedByCategory(
 		categories: number[],
-		warehouse: string
+		warehouse: string,
+		includeOutOfStock: boolean
 	): Promise<CategoryWithProducts[]> {
 		const { data: products, error: productsError } = await supabase
 			.from('m_product')
@@ -77,7 +80,7 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 		// Type assertion to handle the known inner join guarantee
 		(products as Product[]).forEach((product) => {
 			const stockQty = stockMap.get(product.id) || 0;
-			if (stockQty > 0) {
+			if (includeOutOfStock || stockQty > 0) {
 				const category = product.m_product_category;
 				if (!groupedProducts.has(category.id)) {
 					groupedProducts.set(category.id, {
@@ -106,7 +109,11 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 		throw error(400, 'No categories found');
 	}
 	const subcategories = findChildren(categories, parseInt(treeCategory));
-	const categoriesWithProducts = await findProductsGroupedByCategory(subcategories, warehouse);
+	const categoriesWithProducts = await findProductsGroupedByCategory(
+		subcategories,
+		warehouse,
+		includeOutOfStock
+	);
 	const { data: parentCategory } = await supabase
 		.from('m_product_category')
 		.select('name')

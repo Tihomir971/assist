@@ -77,19 +77,24 @@
 								<tr>
 									<th class="border-b px-2 py-1">SKU</th>
 									<th class="border-b px-2 py-1">Name</th>
-									<th class="border-b px-2 py-1 text-right">Stock</th>
+									<th class="border-b px-2 py-1 text-right">ERP</th>
+									<th class="border-b px-2 py-1 text-right">Actual</th>
 								</tr>
 							</thead>
 							<tbody>
 								{#each category.products as product}
 									<tr class="group">
-										<td class="px-2 py-1 group-first:border-t">{product.sku}</td>
-										<td class="px-2 py-1 font-medium group-first:border-t">{product.name}</td>
-										<td class="px-2 py-1 text-right group-first:border-t">{product.stock}</td>
+										<td class="px-2 py-0.5 group-first:border-t">{product.sku}</td>
+										<td class="px-2 py-0.5 font-medium group-first:border-t">{product.name}</td>
+										<td class="px-2 py-0.5 text-right group-first:border-t">{product.stock}</td>
+										<td
+											class="border-b-2 border-gray-300 px-4 py-0.5 text-right group-first:border-t"
+											>&nbsp;</td
+										>
 									</tr>
 									{#if product.barcodes.length > 0}
 										<tr class="group border-b">
-											<td colspan="3" class="text-2xs px-2 py-0.5">
+											<td colspan="4" class="text-2xs px-2 py-0.5">
 												<strong>Barcodes:</strong>
 												{product.barcodes.join(', ')}
 											</td>

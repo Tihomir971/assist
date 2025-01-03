@@ -15,8 +15,9 @@
 	type Props = {
 		selectedId: string | null;
 		treeData: TreeItemTitle[];
+		expanded?: string[];
 	};
-	let { selectedId = $bindable(), treeData }: Props = $props();
+	let { selectedId = $bindable(), treeData, expanded }: Props = $props();
 	/* const data: Item[] = [
 		{
 			id: '1',
@@ -84,7 +85,7 @@
 
 	const tree = new Tree({
 		items: treeData,
-		expanded: ['lib', 'routes'],
+		expanded: expanded,
 		expandOnClick: true
 	});
 	$effect(() => {
