@@ -12,9 +12,6 @@ export const load: PageServerLoad = async ({ locals: { supabase, session } }) =>
 		.eq('auth_user_id', session.user.id)
 		/* .single() */
 		.maybeSingle();
-	const { data: categories } = await supabase
-		.from('m_product_category')
-		.select('id,parent_id, title:name')
-		.order('name');
-	return { profile: profile ?? [], categories: categories ?? [] };
+
+	return { profile: profile ?? [] };
 };

@@ -134,6 +134,6 @@
 		</li>
 	{/each}
 {/snippet}
-<ul class="mx-auto w-[300px] list-none rounded-md p-4" {...tree.root}>
+<ul class="mx-auto list-none rounded-md py-4" {...tree.root}>
 	{@render treeItems(tree.children, 0)}
 </ul>
