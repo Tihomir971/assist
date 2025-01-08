@@ -7,23 +7,32 @@
 	let currentDateTime = $state(DateTime.now());
 	let warehouseName = $state('Loading...');
 
-	async function fetchWarehouseName() {
-		const warehouseId = page.url.searchParams.get('warehouse');
-		if (warehouseId) {
-			const { data: warehouse, error } = await data.supabase
-				.from('m_warehouse')
-				.select('name')
-				.eq('id', warehouseId)
-				.single();
+	async function fetchWarehouseName(): Promise<void> {
+		const warehouseIdStr = page.url.searchParams.get('warehouse');
 
-			if (error) {
-				console.error('Error fetching warehouse:', error);
-				warehouseName = 'Unknown Warehouse';
-			} else {
-				warehouseName = warehouse.name;
-			}
-		} else {
-			warehouseName = 'No Warehouse Selected';
+		if (!warehouseIdStr || typeof warehouseIdStr !== 'string') {
+			warehouseName = 'No warehouse specified';
+			return;
+		}
+
+		const warehouseId = Number(warehouseIdStr);
+
+		if (isNaN(warehouseId) || !Number.isInteger(warehouseId) || warehouseId <= 0) {
+			warehouseName = 'Invalid warehouse ID format';
+			return;
+		}
+
+		const { data: warehouse, error } = await data.supabase
+			.from('m_warehouse')
+			.select('name')
+			.eq('id', warehouseId)
+			.single();
+
+		if (error) {
+			console.error('Error fetching warehouse:', error);
+			warehouseName = 'Unknown Warehouse';
+		} else if (warehouse) {
+			warehouseName = warehouse.name;
 		}
 	}
 

@@ -11,7 +11,7 @@
 
 	type Props = {
 		validatedForm: SuperValidated<Infer<CrudCChannelMapCategorySchema>>;
-		categories: Array<{ value: string; label: string }>;
+		categories: Array<{ value: number | null; label: string }>;
 		channels: Array<{ value: string; label: string }>;
 		isCategoryMapDrawerOpen: boolean;
 	};

@@ -13,6 +13,7 @@
 	import SuperDebug, { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { toast } from 'svelte-sonner';
 	import { invalidate } from '$app/navigation';
+	import FormSelect from '$lib/components/my/FormSelect.svelte';
 
 	type Props = {
 		formValidated: SuperValidated<МProductPoInsertSchemaАrray>;
@@ -116,6 +117,12 @@
 				<div class="grid gap-4">
 					<div class="grid gap-2">
 						<Label for="partner">Partner</Label>
+						<FormSelect
+							name="partner"
+							options={partners}
+							bind:value={() => currentPurchase.c_bpartner_id,
+							(v) => ($formData.purchases[selectedVendor].c_bpartner_id = v)}
+						/>
 						<Select.Root
 							type="single"
 							value={currentPurchase.c_bpartner_id.toString()}

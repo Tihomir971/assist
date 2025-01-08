@@ -19,15 +19,13 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 	//	if (params.slug && !category) throw error(404, 'User not found.');
 
 	const categories =
-		(await supabase.from('m_product_category').select('value:id::text,label:name').order('name'))
-			.data || [];
+		(await supabase.from('m_product_category').select('value:id,label:name').order('name')).data ||
+		[];
 	const channels =
 		(await supabase.from('c_channel').select('value:id::text,label:name').order('name')).data || [];
 
 	const formCategory = await superValidate(category, zod(crudMProductCategorySchema));
 	const formCategoryMap = await superValidate(categoryMap, zod(crudCChannelMapCategorySchema));
-
-	console.log('formCategory', formCategory);
 
 	return {
 		formCategory,

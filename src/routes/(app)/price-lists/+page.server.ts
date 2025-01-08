@@ -51,7 +51,10 @@ export const actions = {
 			return fail(400, { id, missing: true });
 		}
 
-		const { error: deleteError } = await supabase.from('m_pricelist').delete().eq('id', id);
+		const { error: deleteError } = await supabase
+			.from('m_pricelist')
+			.delete()
+			.eq('id', parseInt(id));
 
 		if (deleteError) {
 			return fail(500, { id, error: 'Failed to delete price list' });

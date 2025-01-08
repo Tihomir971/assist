@@ -1,3 +1,3 @@
 Use node, typescript, sveltekit, svelte 5, shadcn-svelte, sveltekit-superforms, tailwind, zod and "ky" fetch library.
 Use supabase types defined in supabase.ts under lib/types. you can also use database.types.ts
-Supabase Zod types are in src/lib/types/supabase-zod-schemas.ts
+Supabase Zod types are in src/lib/types/supabase-zod-schemas.ts. It's used only for supabase tables

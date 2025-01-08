@@ -10,19 +10,26 @@ import type {
 import { utils, writeFile } from 'xlsx';
 
 function calculateNewPrice(purchasePrice: number, taxRate: number): number {
+	const lowerBond = 0;
+	const upperBond = 100;
+	const lowerPercentage = 1.25;
+	const upperPercentage = 1.75;
 	const basePrice =
-		purchasePrice <= 20
-			? purchasePrice * 1.75
-			: purchasePrice >= 100
-				? purchasePrice * 1.25
-				: purchasePrice * (1.25 + ((purchasePrice - 100) / (20 - 100)) * (1.75 - 1.25));
+		purchasePrice <= lowerBond
+			? purchasePrice * upperPercentage
+			: purchasePrice >= upperBond
+				? purchasePrice * lowerPercentage
+				: purchasePrice *
+					(lowerPercentage +
+						((purchasePrice - upperBond) / (lowerBond - upperBond)) *
+							(upperPercentage - lowerPercentage));
 
 	return Math.ceil(basePrice * (1 + taxRate)) - 0.01;
 }
 
 export async function fetchProducts(
 	supabase: SupabaseClient<Database>,
-	productIds: (string | number)[]
+	productIds: number[]
 ): Promise<Product[]> {
 	const { data, error } = await supabase
 		.from('m_product')

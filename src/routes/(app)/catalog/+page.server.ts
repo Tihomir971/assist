@@ -13,6 +13,7 @@ import type { FlattenedProduct, Product } from './columns.svelte.js';
 import { productSelectSchema } from './schema';
 import { findChildren } from '$lib/scripts/tree';
 import { sourceId } from './types';
+import { catalogSearchParamsSchema } from './search-params.schema';
 import type {
 	BarcodeSearchRequest,
 	BarcodeSearchResponse,
@@ -43,23 +44,25 @@ interface ApiResponseData<T> {
 
 export const load: PageServerLoad = async ({ depends, parent, url, locals: { supabase } }) => {
 	depends('catalog');
-	const { searchParams } = url;
-	const showStock = searchParams.get('stock') === 'true';
-	const showReport = searchParams.get('report');
-	const showVat = searchParams.get('showVat') === 'true';
-	const showSub = searchParams.get('sub') === 'true';
-	const categoryId = searchParams.get('cat');
+	const params = catalogSearchParamsSchema.parse(Object.fromEntries(url.searchParams));
+	const {
+		stock: showStock,
+		report: showReport,
+		showVat,
+		sub: showSub,
+		cat: categoryId = null
+	} = params;
 	const { activeWarehouse, categories } = await parent();
 
 	const [productsData, activePricelists] = await Promise.all([
-		fetchProducts(supabase, categoryId, showSub, categories),
+		fetchProducts(supabase, categoryId ?? null, showSub, categories),
 		getPriceLists(supabase)
 	]);
 
 	const products = filterAndFlattenProducts(
 		productsData,
 		showStock,
-		showReport,
+		showReport ?? null,
 		activeWarehouse,
 		showVat,
 		activePricelists
@@ -312,7 +315,7 @@ export const actions = {
 			const { data: selectProductId, error: selectProductIdError } = await supabase
 				.from('m_product')
 				.select('id')
-				.eq('sku', product.sifra)
+				.eq('sku', product.sifra.toString())
 				.maybeSingle();
 			if (selectProductIdError) {
 				return { success: false, error: { selectProductIdError } };
@@ -362,7 +365,7 @@ export const actions = {
 					.from('c_channel_map_bpartner')
 					.select('c_bpartner_id')
 					.eq('c_channel_id', 1)
-					.eq('resource_id', po.kupac)
+					.eq('resource_id', po.kupac.toString())
 					.maybeSingle();
 				if (selectProductIdError) {
 					return { success: false, error: { selectProductIdError } };

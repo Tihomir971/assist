@@ -1,4 +1,5 @@
 @import './app-open-props.css';
+@import './app-my-styles.css';
 @import 'tailwindcss';
 
 @theme {

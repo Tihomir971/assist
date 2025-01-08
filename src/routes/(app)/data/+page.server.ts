@@ -83,14 +83,11 @@ export const actions = {
 					throw updateError;
 				}
 				if (updatedData && updatedData.length === 0) {
-					const { data: insertedData, error: insertError } = await supabase
-						.from('c_channel_map_category')
-						.insert({
-							c_channel_id: 1,
-							resource_id: group.sifra.toString(),
-							resource_name: group.naziv
-						})
-						.select();
+					const { error: insertError } = await supabase.from('c_channel_map_category').insert({
+						c_channel_id: 1,
+						resource_id: group.sifra.toString(),
+						resource_name: group.naziv
+					});
 					if (insertError) {
 						throw insertError;
 					}

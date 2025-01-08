@@ -1,9 +1,30 @@
 import { connector } from '$lib/ky';
 import type { PageServerLoad } from './$types';
 import type { ChartData } from '../../catalog/products/[slug]/chart-types';
+import { z } from 'zod';
+
+const searchParamsSchema = z.object({
+	skus: z
+		.string()
+		.refine(
+			(val) => val.split(',').every((id) => /^\d+$/.test(id)),
+			'SKUs must be comma-separated numeric IDs'
+		)
+});
 
 export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
-	const productIds = url.searchParams.get('skus')?.split(',') || [];
+	const params = searchParamsSchema.safeParse(Object.fromEntries(url.searchParams));
+
+	if (!params.success) {
+		return {
+			chartData: {
+				products: [],
+				currentYear: new Date().getFullYear()
+			}
+		};
+	}
+
+	const productIds = params.data.skus.split(',').map((id) => parseInt(id, 10));
 
 	if (productIds.length === 0) {
 		return {

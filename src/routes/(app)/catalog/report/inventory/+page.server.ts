@@ -1,24 +1,38 @@
 import { error } from '@sveltejs/kit';
 import { findChildren } from '$lib/scripts/tree';
+import { z } from 'zod';
 import type { PageServerLoad } from './$types';
 
+const searchParamsSchema = z.object({
+	warehouse: z.number().min(1, 'Warehouse is required'),
+	treeCategory: z.number().min(1, 'Category is required'),
+	includeOutOfStock: z
+		.boolean()
+		.transform((val) => val === true)
+		.default(false)
+});
+
 export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
-	const warehouse = url.searchParams.get('warehouse');
-	const treeCategory = url.searchParams.get('treeCategory');
+	const params = searchParamsSchema.safeParse({
+		warehouse: url.searchParams.get('warehouse'),
+		treeCategory: url.searchParams.get('treeCategory'),
+		includeOutOfStock: url.searchParams.get('includeOutOfStock')
+	});
+
+	if (!params.success) {
+		throw error(400, params.error.errors.map((e) => e.message).join(', '));
+	}
+
+	const { warehouse, treeCategory, includeOutOfStock } = params.data;
+
 	const { data: categories } = await supabase
 		.from('m_product_category')
 		.select('id,parent_id, title:name')
 		.order('name');
 
-	if (!warehouse || !treeCategory) {
-		throw error(400, 'Warehouse and tree category parameters are required');
-	}
-
-	const includeOutOfStock = url.searchParams.get('includeOutOfStock') === 'true';
-
 	async function findProductsGroupedByCategory(
 		categories: number[],
-		warehouse: string,
+		warehouse: number,
 		includeOutOfStock: boolean
 	): Promise<CategoryWithProducts[]> {
 		const { data: products, error: productsError } = await supabase
@@ -108,7 +122,7 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 	if (!categories) {
 		throw error(400, 'No categories found');
 	}
-	const subcategories = findChildren(categories, parseInt(treeCategory));
+	const subcategories = findChildren(categories, treeCategory);
 	const categoriesWithProducts = await findProductsGroupedByCategory(
 		subcategories,
 		warehouse,
@@ -117,7 +131,7 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 	const { data: parentCategory } = await supabase
 		.from('m_product_category')
 		.select('name')
-		.eq('id', parseInt(treeCategory))
+		.eq('id', treeCategory)
 		.single();
 
 	return {

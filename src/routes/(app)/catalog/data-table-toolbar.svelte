@@ -182,7 +182,6 @@
 			{#each table.getAllColumns().filter((col) => col.getCanHide()) as column (column.id)}
 				<DropdownMenu.CheckboxItem
 					class="capitalize"
-					controlledChecked
 					closeOnSelect={false}
 					checked={column.getIsVisible()}
 					onCheckedChange={(value) => {

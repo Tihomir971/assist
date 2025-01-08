@@ -1,27 +1,33 @@
 <script lang="ts">
+	import { page } from '$app/state';
+	import { invalidate } from '$app/navigation';
 	import { browser } from '$app/environment';
+	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import { Field, Control, Label, Description, FieldErrors } from 'formsnap';
+	// Superforms
+	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { crudMProductCategorySchema } from './schema';
+
 	import { formatDateTime } from '$lib/style/locale';
-	import * as Select from '$lib/components/ui/select/index.js';
+	import { toast } from 'svelte-sonner';
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
+	// import * as Select from '$lib/components/ui/select/index.js';
+	// import { Label } from '$lib/components/ui/label/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
-	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { page } from '$app/state';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import { toast } from 'svelte-sonner';
-	import { invalidate } from '$app/navigation';
-	import { crudMProductCategorySchema } from './schema';
 	import DrawerCategoryMap from './drawer-category-map.svelte';
+	// Icons
 	import PhPackage from '~icons/ph/package';
+	import FormSelect from '$lib/components/my/FormSelect.svelte';
+	import Select from '$lib/components/Zag/select/Select.svelte';
 
 	let { data } = $props();
 
-	const formCategory = superForm(data.formCategory, {
+	const form = superForm(data.formCategory, {
 		resetForm: false,
 		validators: zodClient(crudMProductCategorySchema),
 		onUpdated(event) {
@@ -41,20 +47,20 @@
 			}
 		}
 	});
-	const { form: formData, enhance: enhanceCategory, message, isTainted, tainted } = formCategory;
-	let triggerName = $derived(
-		data.categories.find((category) => category.value === $formData.parent_id?.toString())?.label
-	);
+	const { form: formData, enhance, message, isTainted, tainted } = form;
+	// let triggerName = $derived(
+	// data.categories.find((category) => category.value === $formData.parent_id?.toString())?.label
+	// );
 	let isCategoryMapDrawerOpen = $state(false);
 </script>
 
-<form method="post" use:enhanceCategory>
+<form method="POST" use:enhance>
 	<div class="grid grid-cols-[2fr_1fr] gap-2 overflow-hidden">
 		<Card.Root>
 			<Card.Header>
 				<Card.Title class="flex items-center gap-2">
 					<PhPackage class="mb-2 size-8" />
-					<Form.Field form={formCategory} name="name">
+					<Form.Field {form} name="name">
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>Name</Form.Label>
@@ -75,7 +81,7 @@
 				{/if}
 				<div class="flex w-full items-center space-x-3">
 					<Form.Field
-						form={formCategory}
+						{form}
 						name="isactive"
 						class="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4"
 					>
@@ -90,7 +96,7 @@
 						<Form.FieldErrors />
 					</Form.Field>
 					<Form.Field
-						form={formCategory}
+						{form}
 						name="isactive"
 						class="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4"
 					>
@@ -105,7 +111,7 @@
 						<Form.FieldErrors />
 					</Form.Field>
 				</div>
-				<Form.Field form={formCategory} name="description">
+				<Form.Field {form} name="description">
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>Description</Form.Label>
@@ -115,7 +121,7 @@
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<Form.Field form={formCategory} name="parent_id">
+				<!-- <Form.Field form={formCategory} name="parent_id">
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>Parent Category</Form.Label>
@@ -140,7 +146,22 @@
 					</Form.Control>
 
 					<Form.FieldErrors />
+				</Form.Field> -->
+
+				<Form.Field {form} name="parent_id">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Parent Category</Form.Label>
+							<FormSelect
+								name={props.name}
+								bind:value={$formData.parent_id}
+								options={data.categories}
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
 				</Form.Field>
+				<Select />
 				<div class="flex flex-row-reverse items-center">
 					<Form.Button variant="default" disabled={!isTainted($tainted)}>Save</Form.Button>
 					<Form.Button
@@ -158,16 +179,26 @@
 			</Card.Header>
 			<Card.Content class="space-y-2">
 				<div class="grid grid-cols-[1fr_2fr] items-center">
-					<Label>ID</Label>
-					<Input value={$formData.id} readonly />
+					<label for="id">ID</label>
+					<Input id="id" value={$formData.id} readonly />
 				</div>
 				<div class="grid grid-cols-[1fr_2fr] items-center">
-					<Label>Created</Label>
-					<Input type="text" value={formatDateTime($formData.created as string)} readonly />
+					<label for="created">Created</label>
+					<Input
+						id="created"
+						type="text"
+						value={formatDateTime($formData.created as string)}
+						readonly
+					/>
 				</div>
 				<div class="grid grid-cols-[1fr_2fr] items-center">
-					<Label>Updated</Label>
-					<Input type="text" value={formatDateTime($formData.updated as string)} readonly />
+					<label for="updated">Updated</label>
+					<Input
+						id="updated"
+						type="text"
+						value={formatDateTime($formData.updated as string)}
+						readonly
+					/>
 				</div>
 			</Card.Content>
 		</Card.Root>
