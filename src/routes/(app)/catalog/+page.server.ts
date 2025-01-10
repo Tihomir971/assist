@@ -101,7 +101,7 @@ async function fetchProducts(
 			productPrice:m_productprice(m_pricelist_version_id,pricestd,pricelist),
 			level_min:m_replenish(m_warehouse_id,level_min,level_max),
 			level_max:m_replenish(m_warehouse_id,level_max),
-			m_product_po(c_bpartner_id, pricelist, c_bpartner(name)),
+			m_product_po(c_bpartner_id, pricelist, c_bpartner(name, iscustomer)),
 			isactive
 		`
 		)
@@ -232,12 +232,18 @@ function flattenProduct(
 	const mivex = productPoLookup.get(89) ?? 0;
 	const gros = productPoLookup.get(407) ?? 0;
 
-	const minPricelist = Math.min(
-		...Array.from(productPoLookup.values()).filter(
-			(value): value is number => value !== null && value > 0
-		) // Narrow type to 'number'
-	);
-	const finalMinPricelist = minPricelist === Infinity ? 0 : minPricelist;
+	const marketPrices = product.m_product_po
+		.filter((po) => po.c_bpartner.iscustomer)
+		.map((po) => po.pricelist)
+		.filter((value): value is number => value !== null && value > 0);
+
+	const vendorPrices = product.m_product_po
+		.filter((po) => !po.c_bpartner.iscustomer)
+		.map((po) => po.pricelist)
+		.filter((value): value is number => value !== null && value > 0);
+
+	const minMarketPrice = marketPrices.length > 0 ? Math.min(...marketPrices) : 0;
+	const minVendorPrice = vendorPrices.length > 0 ? Math.min(...vendorPrices) : 0;
 
 	const priceRetail = Math.min(retail, smallestPricestd);
 	const action = smallestPricestd < retail;
@@ -245,7 +251,8 @@ function flattenProduct(
 	const priceMarket = product.m_product_po.map((po) => ({
 		name: po.c_bpartner.name,
 		pricelist: po.pricelist,
-		tax: tax ? tax / 100 : null
+		tax: tax ? tax / 100 : null,
+		iscustomer: po.c_bpartner.iscustomer
 	}));
 
 	return {
@@ -270,7 +277,8 @@ function flattenProduct(
 		priceMivex: showVat ? mivex * (1 + tax / 100) : mivex,
 		priceCenoteka: showVat ? cenoteka * (1 + tax / 100) : cenoteka,
 		priceGros: showVat ? gros * (1 + tax / 100) : gros,
-		priceMarketBest: showVat ? finalMinPricelist * (1 + tax / 100) : finalMinPricelist,
+		priceMarketBest: showVat ? minMarketPrice * (1 + tax / 100) : minMarketPrice,
+		priceVendorBest: showVat ? minVendorPrice * (1 + tax / 100) : minVendorPrice,
 		action,
 		priceMarket
 	};

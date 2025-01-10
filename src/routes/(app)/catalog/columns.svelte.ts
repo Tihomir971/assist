@@ -35,6 +35,7 @@ export interface Product {
 		pricelist: number | null;
 		c_bpartner: {
 			name: string;
+			iscustomer: boolean;
 		};
 	}[];
 }
@@ -62,11 +63,13 @@ export interface FlattenedProduct {
 	priceCenoteka: number | null;
 	priceGros: number | null;
 	priceMarketBest: number;
+	priceVendorBest: number;
 	action: boolean;
 	priceMarket: {
 		name: string;
 		pricelist: number | null;
 		tax: number | null;
+		iscustomer: boolean;
 	}[];
 }
 
@@ -251,12 +254,24 @@ export const columnDefs = [
 			return renderSnippet(rightAlignSnippet, { value: formatNumber(cell.getValue()) });
 		}
 	}),
-
+	colHelp.accessor('priceVendorBest', {
+		header: 'Vendors',
+		cell: ({ row, cell }) => {
+			return renderComponent(DataTableActionsVendor, {
+				value: formatNumber(cell.getValue()) ?? '',
+				iscustomer: false,
+				priceMarket: row.original.priceMarket
+			});
+		},
+		enableSorting: false,
+		enableHiding: false
+	}),
 	colHelp.accessor('priceMarketBest', {
 		header: 'Market',
 		cell: ({ row, cell }) => {
 			return renderComponent(DataTableActionsVendor, {
 				value: formatNumber(cell.getValue()) ?? '',
+				iscustomer: true,
 				priceMarket: row.original.priceMarket
 			});
 		},

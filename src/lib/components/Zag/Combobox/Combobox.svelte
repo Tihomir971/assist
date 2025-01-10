@@ -5,6 +5,8 @@
 	import { useMachine, normalizeProps } from '@zag-js/svelte';
 	import type { ComboboxProps } from './types.js';
 	import { useId } from '$lib/internal/use-id.js';
+	import { cn } from '$lib/utils';
+	import { buttonVariants } from '$lib/components/ui/button';
 
 	let {
 		data = $bindable([]),
@@ -98,7 +100,10 @@
 <div {...api.getRootProps()}>
 	<!-- svelte-ignore a11y_label_has_associated_control -->
 	<label {...api.getLabelProps()}>Select country</label>
-	<div {...api.getControlProps()}>
+	<div
+		{...api.getControlProps()}
+		class={cn(buttonVariants({ variant: 'outline' }), 'w-[200px] justify-between')}
+	>
 		<input data-testid="input" {...api.getInputProps()} />
 		<button data-testid="trigger" {...api.getTriggerProps()}> ▼ </button>
 	</div>
@@ -132,26 +137,26 @@
 	[data-scope='combobox'][data-part='label'][data-disabled] {
 		opacity: 0.6;
 	}
-	[data-scope='combobox'][data-part='control'] {
-		display: inline-flex;
-		width: 300px;
-		background: var(--color-background);
-		border-width: 1px;
-		padding-block: 0.25rem;
-		padding-inline: 0.75rem;
-	}
+	/* [data-scope='combobox'][data-part='control'] { */
+	/* display: inline-flex; */
+	/* width: 300px; */
+	/* background: var(--color-background); */
+	/* border-width: 1px; */
+	/* padding-block: 0.25rem; */
+	/* padding-inline: 0.75rem; */
+	/* } */
 	[data-scope='combobox'][data-part='control'][data-disabled] {
 		opacity: 0.6;
 	}
-	[data-scope='combobox'][data-part='input'] {
+	/* [data-scope='combobox'][data-part='input'] {
 		background: var(--color-background);
 		flex: 1 1;
 		padding: 0.25rem;
-	}
-	[data-scope='combobox'][data-part='input']:focus {
+	} */
+	/* [data-scope='combobox'][data-part='input']:focus {
 		outline: 0;
-	}
-	[data-scope='combobox'][data-part='content'] {
+	} */
+	/* 	[data-scope='combobox'][data-part='content'] {
 		list-style-type: none;
 		margin: 0;
 		max-height: 14rem;
@@ -162,23 +167,23 @@
 		isolation: isolate;
 		padding: 0.5rem;
 		background: #dafa08;
-	}
-	[data-scope='combobox'][data-part='item'] {
+	} */
+	/* [data-scope='combobox'][data-part='item'] {
 		padding-inline: 0.5rem;
 		padding-block: 0.25rem;
 		display: flex;
 		align-items: center;
 		cursor: pointer;
-	}
-	[data-scope='combobox'][data-part='item'][data-highlighted] {
+	} */
+	/* [data-scope='combobox'][data-part='item'][data-highlighted] {
 		background: #ba1d1d;
 		color: #fff;
-	}
-	[data-scope='combobox'][data-part='item'][data-highlighted]:hover {
+	} */
+	/* [data-scope='combobox'][data-part='item'][data-highlighted]:hover {
 		background: #09cd33;
-	}
-	[data-scope='combobox'][data-part='item'][data-disabled] {
+	} */
+	/* 	[data-scope='combobox'][data-part='item'][data-disabled] {
 		opacity: 0.5;
 		cursor: unset;
-	}
+	} */
 </style>

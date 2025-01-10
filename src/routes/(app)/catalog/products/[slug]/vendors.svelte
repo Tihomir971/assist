@@ -83,6 +83,9 @@
 						<Table.Cell>
 							{selectedPartnerLabel($form.purchases[i].c_bpartner_id)}
 						</Table.Cell>
+						<!-- <Table.Cell>
+							{selectedPartnerLabel($form.purchases[i].c_bpartner_id)}
+						</Table.Cell> -->
 						<Table.Cell>{$form.purchases[i].vendorproductno}</Table.Cell>
 						<Table.Cell class="text-right">{formatNumber($form.purchases[i].pricelist)}</Table.Cell>
 						<Table.Cell class="text-right"

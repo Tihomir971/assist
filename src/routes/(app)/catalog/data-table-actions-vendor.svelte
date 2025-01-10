@@ -4,13 +4,15 @@
 
 	type Props = {
 		value: string;
+		iscustomer: boolean;
 		priceMarket: {
 			name: string;
 			pricelist: number | null;
 			tax: number | null;
+			iscustomer: boolean;
 		}[];
 	};
-	let { value, priceMarket }: Props = $props();
+	let { value, iscustomer, priceMarket }: Props = $props();
 
 	function calculatePriceWithTax(price: number | null, tax: number | null): number | null {
 		if (price === null || tax === null) return null;
@@ -18,16 +20,18 @@
 	}
 
 	const priceSorted = $derived.by(() =>
-		[...priceMarket].sort((a, b) => {
-			// If both are 0 or null, maintain original order
-			if ((!a.pricelist || a.pricelist === 0) && (!b.pricelist || b.pricelist === 0)) return 0;
-			// If a is 0 or null, put it at the bottom
-			if (!a.pricelist || a.pricelist === 0) return 1;
-			// If b is 0 or null, put it at the bottom
-			if (!b.pricelist || b.pricelist === 0) return -1;
-			// Normal ascending sort for non-zero values
-			return a.pricelist - b.pricelist;
-		})
+		[...priceMarket]
+			.filter((item) => item.iscustomer === iscustomer)
+			.sort((a, b) => {
+				// If both are 0 or null, maintain original order
+				if ((!a.pricelist || a.pricelist === 0) && (!b.pricelist || b.pricelist === 0)) return 0;
+				// If a is 0 or null, put it at the bottom
+				if (!a.pricelist || a.pricelist === 0) return 1;
+				// If b is 0 or null, put it at the bottom
+				if (!b.pricelist || b.pricelist === 0) return -1;
+				// Normal ascending sort for non-zero values
+				return a.pricelist - b.pricelist;
+			})
 	);
 </script>
 

@@ -96,7 +96,7 @@ export const crudMProductPoRowSchema = mProductPoRowSchema
 	.omit({ created: true, updated: true })
 	.passthrough();
 export type CrudMProductPoRowSchema = z.infer<typeof crudMProductPoRowSchema>;
-// Then, create the schema for an array of purchase order rows
+
 export const crudMProductPoSchema = z.object({
 	purchases: z.array(crudMProductPoRowSchema)
 });
