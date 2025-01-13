@@ -11,6 +11,7 @@
 	import PhDotOutline from '~icons/ph/dot-outline';
 	import { fade } from 'svelte/transition';
 	import type { TreeItemTitle } from './types';
+	import { findParent } from '$lib/scripts/tree';
 
 	type Props = {
 		selectedId: string | null;
@@ -85,8 +86,9 @@
 
 	const tree = new Tree({
 		items: treeData,
-		expanded: expanded,
-		expandOnClick: true
+		expanded: findParent(treeData, selectedId),
+		expandOnClick: true,
+		selected: selectedId ?? undefined
 	});
 	$effect(() => {
 		selectedId = tree.selected ?? null;

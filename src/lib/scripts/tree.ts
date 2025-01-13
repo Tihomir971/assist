@@ -1,5 +1,6 @@
 // import type { TreeItemString } from '$lib/components/treeview';
 import type { TreeItemTitle } from '$lib/components/melt/tree/types';
+
 interface DataTableRow {
 	id: number;
 	title: string;
@@ -71,5 +72,28 @@ export function findChildren(categories: Category[], id: number): number[] {
 		childCategories.forEach((child) => queue.push(child.id));
 	}
 
+	return result;
+}
+
+export function findParent(categories: TreeItemTitle[], id: string | null): string[] {
+	const result: string[] = [];
+	if (!id) return result;
+
+	function findParentRecursive(items: TreeItemTitle[], targetId: string, path: string[]): boolean {
+		for (const item of items) {
+			if (item.id === targetId) {
+				result.unshift(...path, item.id);
+				return true;
+			}
+			if (item.children) {
+				if (findParentRecursive(item.children, targetId, [...path, item.id])) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	findParentRecursive(categories, id, []);
 	return result;
 }
