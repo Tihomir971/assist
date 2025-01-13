@@ -12,13 +12,7 @@ export async function load({ parent, url, locals: { supabase } }) {
 	const { data: allProducts } = await supabase
 		.from('m_product')
 		.select(
-			`
-			id, 
-			sku,
-			name, 
-			m_replenish(m_warehouse_id,level_min,level_max),
-			m_storageonhand(warehouse_id,qtyonhand)
-		`
+			'id, sku,name, m_replenish(m_warehouse_id,level_min,level_max,qtybatchsize), m_storageonhand(warehouse_id,qtyonhand)'
 		)
 		.in('m_product_category_id', subcategories)
 		.eq('isactive', true);
@@ -35,11 +29,16 @@ export async function load({ parent, url, locals: { supabase } }) {
 				name: product.name,
 				level_min: replenish?.level_min ?? 0,
 				level_max: replenish?.level_max ?? 0,
+				qtybatchsize: replenish?.qtybatchsize ?? 0,
 				qty_wholesale: wholesale?.qtyonhand ?? 0,
 				qty_retail: retail?.qtyonhand ?? 0
 			};
 		})
-		.filter((product) => product.qty_retail < product.level_min);
+		.filter(
+			(product) =>
+				product.level_max - product.qty_retail >= product.qtybatchsize && product.qtybatchsize > 0
+		);
+	// .filter((product) => product.qty_retail < product.level_min);
 
 	return {
 		products: products || []

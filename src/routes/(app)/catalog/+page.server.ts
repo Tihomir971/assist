@@ -94,16 +94,7 @@ async function fetchProducts(
 	const query = supabase
 		.from('m_product')
 		.select(
-			`
-			id, sku, name, barcode, mpn, unitsperpack, imageurl, discontinued,
-			c_taxcategory(c_tax(rate)),
-			m_storageonhand(warehouse_id,qtyonhand),
-			productPrice:m_productprice(m_pricelist_version_id,pricestd,pricelist),
-			level_min:m_replenish(m_warehouse_id,level_min,level_max),
-			level_max:m_replenish(m_warehouse_id,level_max),
-			m_product_po(c_bpartner_id, pricelist, c_bpartner(name, iscustomer)),
-			isactive
-		`
+			'id, sku, name, barcode, mpn, unitsperpack, imageurl, discontinued,c_taxcategory(c_tax(rate)),m_storageonhand(warehouse_id,qtyonhand),productPrice:m_productprice(m_pricelist_version_id,pricestd,pricelist),m_replenish(m_warehouse_id,level_min,level_max,qtybatchsize),m_product_po(c_bpartner_id, pricelist, c_bpartner(name, iscustomer)),isactive'
 		)
 		.eq('producttype', 'I')
 		.order('name');
@@ -163,7 +154,7 @@ function filterAndFlattenProducts(
 				product.m_storageonhand.find((item) => item.warehouse_id === activeWarehouse)?.qtyonhand ||
 				0;
 			const activeWarehouseLevelMin =
-				product.level_min.find((item) => item.m_warehouse_id === activeWarehouse)?.level_min || 0;
+				product.m_replenish.find((item) => item.m_warehouse_id === activeWarehouse)?.level_min || 0;
 			return activeWarehouseStock < activeWarehouseLevelMin;
 		});
 	} else if (showStock) {
@@ -172,7 +163,7 @@ function filterAndFlattenProducts(
 			const activeWarehouseStock =
 				product.m_storageonhand.find((item) => item.warehouse_id === activeWarehouse)?.qtyonhand ||
 				0;
-			const activeWarehouseLevelMin = product.level_min.find(
+			const activeWarehouseLevelMin = product.m_replenish.find(
 				(item) => item.m_warehouse_id === activeWarehouse
 			)?.level_min;
 
@@ -215,11 +206,14 @@ function flattenProduct(
 	const storageLookup = new Map(
 		product.m_storageonhand.map((item) => [item.warehouse_id, item.qtyonhand])
 	);
-	const levelMinLookup = new Map(
-		product.level_min.map((item) => [item.m_warehouse_id, item.level_min])
+	const getLevelMin = new Map(
+		product.m_replenish.map((item) => [item.m_warehouse_id, item.level_min])
 	);
-	const levelMaxLookup = new Map(
-		product.level_min.map((item) => [item.m_warehouse_id, item.level_max])
+	const getLevelMax = new Map(
+		product.m_replenish.map((item) => [item.m_warehouse_id, item.level_max])
+	);
+	const getQtybatchsize = new Map(
+		product.m_replenish.map((item) => [item.m_warehouse_id, item.qtybatchsize])
 	);
 
 	const productPoLookup = new Map(
@@ -270,8 +264,9 @@ function flattenProduct(
 		pricePurchase: showVat ? purchase * (1 + tax / 100) : purchase,
 		ruc: (priceRetail / (1 + tax / 100) - purchase) / purchase,
 		priceRetail: showVat ? priceRetail : priceRetail / (1 + tax / 100),
-		levelMin: levelMinLookup.get(activeWarehouse) ?? null,
-		levelMax: levelMaxLookup.get(activeWarehouse) ?? null,
+		levelMin: getLevelMin.get(activeWarehouse) ?? null,
+		levelMax: getLevelMax.get(activeWarehouse) ?? null,
+		qtybatchsize: getQtybatchsize.get(activeWarehouse) ?? null,
 		priceAgrofina: showVat ? agrofina * (1 + tax / 100) : agrofina,
 		priceMercator: showVat ? mercator * (1 + tax / 100) : mercator,
 		priceMivex: showVat ? mivex * (1 + tax / 100) : mivex,

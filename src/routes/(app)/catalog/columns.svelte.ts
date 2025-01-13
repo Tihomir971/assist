@@ -27,8 +27,12 @@ export interface Product {
 		pricelist: number | null;
 	}[];
 	priceListVersion: { m_pricelist_id: number; validfrom: Date; validto: Date }[];
-	level_min: { m_warehouse_id: number; level_min: number; level_max: number }[];
-	level_max: { m_warehouse_id: number; level_max: number }[];
+	m_replenish: {
+		m_warehouse_id: number;
+		level_min: number;
+		level_max: number;
+		qtybatchsize: number;
+	}[];
 	isactive: boolean;
 	m_product_po: {
 		c_bpartner_id: number;
@@ -57,6 +61,7 @@ export interface FlattenedProduct {
 	ruc: number;
 	levelMin: number | null;
 	levelMax: number | null;
+	qtybatchsize: number | null;
 	priceAgrofina: number | null;
 	priceMercator: number | null;
 	priceMivex: number | null;
@@ -189,8 +194,15 @@ export const columnDefs = [
 	}),
 	colHelp.accessor('levelMax', {
 		header: 'Max',
-		cell: ({ cell }) => {
-			return renderSnippet(rightAlignSnippet, { value: cell.getValue() ?? '' });
+		cell: ({ row }) => {
+			const levelMin = row.original.levelMin ?? 0;
+			const levelMax = row.original.levelMax ?? 0;
+			const stock = row.original.qtyRetail ?? 0;
+			const batch = row.original.qtybatchsize ?? 0;
+			return renderSnippet(rightAlignSnippet, {
+				value: levelMax ?? '',
+				isDanger: levelMax - stock >= batch && batch !== 0 && levelMin > 0
+			});
 		}
 	}),
 	/* colHelp.accessor('pricePurchase', { header: 'Purchase' }), */
