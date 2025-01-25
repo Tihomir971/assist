@@ -1,4 +1,3 @@
-// import type { TreeItemString } from '$lib/components/treeview';
 import type { TreeItemTitle } from '$lib/components/melt/tree/types';
 
 interface DataTableRow {
