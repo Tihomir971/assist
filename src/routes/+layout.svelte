@@ -3,7 +3,7 @@
 	import '@fontsource-variable/nunito-sans';
 
 	import { invalidate } from '$app/navigation';
-	import { Toaster } from '$lib/components/ui/sonner/index';
+	import { Toaster } from '$lib/components/ui/sonner/index.js';
 
 	let { data, children } = $props();
 	let { session, supabase } = $derived(data);
