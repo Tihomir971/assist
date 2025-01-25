@@ -46,9 +46,9 @@ export const load: PageServerLoad = async ({ depends, parent, url, locals: { sup
 	depends('catalog');
 	const params = catalogSearchParamsSchema.parse(Object.fromEntries(url.searchParams));
 	const {
-		stock: showStock,
-		report: showReport,
-		showVat,
+		stock: checkedStock,
+		report: checkedReport,
+		vat: checkedVat,
 		sub: showSub,
 		cat: categoryId = null
 	} = params;
@@ -61,19 +61,15 @@ export const load: PageServerLoad = async ({ depends, parent, url, locals: { sup
 
 	const products = filterAndFlattenProducts(
 		productsData,
-		showStock,
-		showReport ?? null,
+		checkedStock,
+		checkedReport ?? null,
 		activeWarehouse,
-		showVat,
+		checkedVat,
 		activePricelists
 	);
 
 	return {
-		products,
-		activeWarehouse,
-		showStock,
-		showVat,
-		showSub
+		products
 	};
 };
 
@@ -141,14 +137,14 @@ async function getPriceLists(
 
 function filterAndFlattenProducts(
 	products: Product[],
-	showStock: boolean,
-	showReport: string | null,
+	checkedStock: boolean,
+	checkedReport: string | null,
 	activeWarehouse: number,
-	showVat: boolean,
+	checkedVat: boolean,
 	activePricelists: Partial<SupabaseTable<'m_pricelist_version'>['Row']>[] | []
 ): FlattenedProduct[] {
 	let filteredProducts: Product[];
-	if (showReport === 'replenish') {
+	if (checkedReport === 'replenish') {
 		filteredProducts = products.filter((product) => {
 			const activeWarehouseStock =
 				product.m_storageonhand.find((item) => item.warehouse_id === activeWarehouse)?.qtyonhand ||
@@ -157,7 +153,7 @@ function filterAndFlattenProducts(
 				product.m_replenish.find((item) => item.m_warehouse_id === activeWarehouse)?.level_min || 0;
 			return activeWarehouseStock < activeWarehouseLevelMin;
 		});
-	} else if (showStock) {
+	} else if (checkedStock) {
 		filteredProducts = products.filter((product) => {
 			const hasNonZeroStock = product.m_storageonhand.some((item) => item.qtyonhand !== 0);
 			const activeWarehouseStock =
@@ -177,14 +173,14 @@ function filterAndFlattenProducts(
 	}
 
 	return filteredProducts.map((product) =>
-		flattenProduct(product, activeWarehouse, showVat, activePricelists)
+		flattenProduct(product, activeWarehouse, checkedVat, activePricelists)
 	);
 }
 
 function flattenProduct(
 	product: Product,
 	activeWarehouse: number,
-	showVat: boolean,
+	checkedVat: boolean,
 	activePricelists: Partial<SupabaseTable<'m_pricelist_version'>['Row']>[] | []
 ): FlattenedProduct {
 	const smallestPricestd = Math.min(
@@ -261,19 +257,19 @@ function flattenProduct(
 		taxRate: tax ? tax / 100 : null,
 		qtyWholesale: storageLookup.get(2) ?? 0,
 		qtyRetail: storageLookup.get(5) ?? 0,
-		pricePurchase: showVat ? purchase * (1 + tax / 100) : purchase,
+		pricePurchase: checkedVat ? purchase * (1 + tax / 100) : purchase,
 		ruc: (priceRetail / (1 + tax / 100) - purchase) / purchase,
-		priceRetail: showVat ? priceRetail : priceRetail / (1 + tax / 100),
+		priceRetail: checkedVat ? priceRetail : priceRetail / (1 + tax / 100),
 		levelMin: getLevelMin.get(activeWarehouse) ?? null,
 		levelMax: getLevelMax.get(activeWarehouse) ?? null,
 		qtybatchsize: getQtybatchsize.get(activeWarehouse) ?? null,
-		priceAgrofina: showVat ? agrofina * (1 + tax / 100) : agrofina,
-		priceMercator: showVat ? mercator * (1 + tax / 100) : mercator,
-		priceMivex: showVat ? mivex * (1 + tax / 100) : mivex,
-		priceCenoteka: showVat ? cenoteka * (1 + tax / 100) : cenoteka,
-		priceGros: showVat ? gros * (1 + tax / 100) : gros,
-		priceMarketBest: showVat ? minMarketPrice * (1 + tax / 100) : minMarketPrice,
-		priceVendorBest: showVat ? minVendorPrice * (1 + tax / 100) : minVendorPrice,
+		priceAgrofina: checkedVat ? agrofina * (1 + tax / 100) : agrofina,
+		priceMercator: checkedVat ? mercator * (1 + tax / 100) : mercator,
+		priceMivex: checkedVat ? mivex * (1 + tax / 100) : mivex,
+		priceCenoteka: checkedVat ? cenoteka * (1 + tax / 100) : cenoteka,
+		priceGros: checkedVat ? gros * (1 + tax / 100) : gros,
+		priceMarketBest: checkedVat ? minMarketPrice * (1 + tax / 100) : minMarketPrice,
+		priceVendorBest: checkedVat ? minVendorPrice * (1 + tax / 100) : minVendorPrice,
 		action,
 		priceMarket
 	};

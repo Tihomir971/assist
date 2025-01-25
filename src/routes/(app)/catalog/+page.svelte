@@ -132,12 +132,8 @@
 			{table}
 			bind:rowSelectionState
 			bind:globalFilterTableState
-			showStock={data.showStock}
-			showVat={data.showVat}
-			showSub={data.showSub}
 			warehouses={data.warehouses}
 			{addToCart}
-			activeWarehouse={data.activeWarehouse}
 		/>
 	</Card.Header>
 	<Card.Content class="flex-1 overflow-auto p-4">

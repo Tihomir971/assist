@@ -38,13 +38,13 @@
 		valid_to: ''
 	});
 
-	const suppliers: Supplier[] = [
-		{ id: 480, name: 'Agrofina' },
-		{ id: 407, name: 'Gros' },
-		{ id: 4, name: 'Mercator-S' },
-		{ id: 89, name: 'Mivex' },
-		{ id: 5, name: 'Other' }
-	];
+	// const suppliers: Supplier[] = [
+	// 	{ id: 480, name: 'Agrofina' },
+	// 	{ id: 407, name: 'Gros' },
+	// 	{ id: 4, name: 'Mercator-S' },
+	// 	{ id: 89, name: 'Mivex' },
+	// 	{ id: 5, name: 'Other' }
+	// ];
 	const productProperties: (keyof Product)[] = [
 		'name',
 		'vendorproductno',
@@ -182,7 +182,7 @@
 			productsNotUpdated = result.productsNotUpdated;
 			showNotUpdatedProducts = true;
 
-			const selectedSupplierObj = suppliers.find((s) => s.id === selectedSupplier);
+			const selectedSupplierObj = data.c_bpartner.find((s) => s.id === selectedSupplier);
 			alert(
 				`${result.importedRows} products updated and ${result.insertedRows} products inserted successfully for supplier: ${selectedSupplierObj?.name} (ID: ${selectedSupplierObj?.id})!`
 			);
@@ -266,7 +266,7 @@
 
 	let selectedSupplier: number | undefined = $state(undefined);
 	const triggerSelectedSupplier = $derived(
-		suppliers.find((f) => f.id === selectedSupplier)?.name ?? 'Select Supplier'
+		data.c_bpartner.find((f) => f.id === selectedSupplier)?.name ?? 'Select Supplier'
 	);
 </script>
 
@@ -285,7 +285,7 @@
 						{triggerSelectedSupplier}
 					</Select.Trigger>
 					<Select.Content>
-						{#each suppliers as supplier}
+						{#each data.c_bpartner as supplier}
 							<Select.Item value={supplier.id.toString()}>{supplier.name}</Select.Item>
 						{/each}
 					</Select.Content>

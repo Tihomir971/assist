@@ -19,23 +19,15 @@
 		rowSelectionState: RowSelectionState;
 		globalFilterTableState: GlobalFilterTableState | undefined;
 		table: Table<FlattenedProduct>;
-		showStock: boolean;
-		showSub: boolean;
-		showVat: boolean;
 		addToCart: () => void;
 		warehouses: Warehouse[];
-		activeWarehouse: number;
 	};
 	let {
 		table,
 		rowSelectionState = $bindable(),
 		globalFilterTableState = $bindable(),
-		showStock,
-		showSub,
-		showVat,
 		addToCart,
-		warehouses,
-		activeWarehouse
+		warehouses
 	}: Props = $props();
 	function handleSearch(e: Event) {
 		const target = e.target as HTMLInputElement;
@@ -43,22 +35,21 @@
 			table.setGlobalFilter(target.value);
 		}
 	}
-	let warehouseValue = $state(activeWarehouse.toString());
 
+	let checkedStock = $state(page.url.searchParams.get('stock') === 'true');
+	let checkedVat = $state(page.url.searchParams.get('vat') === 'true');
+	let checkedSubcategories = $state(page.url.searchParams.get('showSub') === 'true');
+
+	let inputValueWarehouse = $state(page.url.searchParams.get('wh') ?? '');
 	const triggerWarehouseLabel = $derived(
-		warehouses.find((f) => f.value === warehouseValue)?.label ?? 'Select warehouse'
+		warehouses.find((f) => f.value === inputValueWarehouse)?.label ?? 'Select warehouse'
 	);
-	type ReportItem = {
-		value: string;
-		label: string;
-	};
-	const reports: ReportItem[] = [
-		{ value: 'replenish', label: 'Replenish' }
-		// Add more items here as needed
-	];
-	let triggerReportValue = $state('');
+
+	const reports = [{ value: 'replenish', label: 'Replenish' }];
+	let inputValueReport = $state(page.url.searchParams.get('report') ?? '');
+	$inspect(inputValueReport);
 	const triggerReportContent = $derived(
-		reports.find((f) => f.value === triggerReportValue)?.label ?? 'Select a report'
+		reports.find((f) => f.value === inputValueReport)?.label ?? 'Select a report'
 	);
 
 	function handleSalesGraphClick() {
@@ -79,10 +70,12 @@
 	<div class="flex w-full items-center space-x-2">
 		<Checkbox
 			id="subcategories"
-			checked={showSub}
+			checked={checkedSubcategories}
 			onCheckedChange={(checked) => {
 				const newUrl = new URL(page.url);
-				newUrl?.searchParams?.set('sub', checked ? 'true' : 'false');
+				checked
+					? newUrl?.searchParams?.set('showSub', 'true')
+					: newUrl?.searchParams?.delete('showSub');
 				goto(newUrl);
 			}}
 		/>
@@ -96,10 +89,12 @@
 	<div class="flex w-full items-center space-x-2">
 		<Checkbox
 			id="only-stock"
-			checked={showStock}
+			checked={checkedStock}
 			onCheckedChange={(checked) => {
 				const newUrl = new URL(page.url);
-				newUrl?.searchParams?.set('stock', checked ? 'true' : 'false');
+				checked
+					? newUrl?.searchParams?.set('stock', 'true')
+					: newUrl?.searchParams?.delete('stock');
 				goto(newUrl);
 			}}
 		/>
@@ -113,10 +108,10 @@
 	<div class="flex w-full items-center space-x-2">
 		<Checkbox
 			id="show-vat"
-			checked={showVat}
+			checked={checkedVat}
 			onCheckedChange={(checked) => {
 				const newUrl = new URL(page.url);
-				newUrl?.searchParams?.set('showVat', checked ? 'true' : 'false');
+				checked ? newUrl?.searchParams?.set('vat', 'true') : newUrl?.searchParams?.delete('vat');
 				goto(newUrl);
 			}}
 		/>
@@ -132,7 +127,7 @@
 	<Select.Root
 		type="single"
 		name="report"
-		bind:value={triggerReportValue}
+		bind:value={inputValueReport}
 		onValueChange={(v) => {
 			const newUrl = new URL(page.url);
 			newUrl?.searchParams?.set('report', v);
@@ -153,7 +148,7 @@
 	<Select.Root
 		type="single"
 		name="warehouse"
-		bind:value={warehouseValue}
+		bind:value={inputValueWarehouse}
 		onValueChange={(v) => {
 			const newUrl = new URL(page.url);
 			newUrl?.searchParams?.set('wh', v);

@@ -56,7 +56,7 @@ export async function fetchProducts(
 export function flattenProduct(
 	product: Product,
 	vendorIds: number[],
-	showVat: boolean = false
+	vat: boolean = false
 ): FlattenedProduct {
 	const tax = product.c_taxcategory?.c_tax?.[0]?.rate ?? 0;
 	const purchase =
@@ -91,7 +91,7 @@ export function flattenProduct(
 		const vendorInfo = productPoLookup.get(vendorId);
 		const price = vendorInfo?.pricelist ?? null;
 		vendorPrices[vendorId] =
-			price === null || price === 0 ? null : showVat ? price * (1 + tax / 100) : price;
+			price === null || price === 0 ? null : vat ? price * (1 + tax / 100) : price;
 		vendorProductNos[vendorId] = vendorInfo?.vendorproductno ?? null;
 	});
 
@@ -118,9 +118,9 @@ export function flattenProduct(
 		taxRate: tax ? tax / 100 : null,
 		qtyWholesale: storageLookup.get(2) ?? 0,
 		qtyRetail: storageLookup.get(5) ?? 0,
-		pricePurchase: showVat ? purchase * (1 + tax / 100) : purchase,
+		pricePurchase: vat ? purchase * (1 + tax / 100) : purchase,
 		ruc: ruc,
-		priceRetail: showVat ? priceRetail : priceRetail / (1 + tax / 100),
+		priceRetail: vat ? priceRetail : priceRetail / (1 + tax / 100),
 		levelMin: replenishInfo.level_min,
 		levelMax: replenishInfo.level_max,
 		qtyBatchSize: replenishInfo.qtybatchsize,

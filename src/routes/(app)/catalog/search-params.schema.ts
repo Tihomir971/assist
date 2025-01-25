@@ -6,7 +6,7 @@ export const catalogSearchParamsSchema = z.object({
 		.optional()
 		.transform((val) => val === 'true'),
 	report: z.string().optional(),
-	showVat: z
+	vat: z
 		.string()
 		.optional()
 		.transform((val) => val === 'true'),
