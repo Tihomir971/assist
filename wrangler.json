@@ -3,6 +3,10 @@
  * https://developers.cloudflare.com/workers/wrangler/configuration/
  */
 {
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "compatibility_date": "2025-01-24"
   /*   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "my-svelte-app",
   "compatibility_date": "2025-01-24",
