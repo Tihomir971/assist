@@ -1,0 +1,8 @@
+{
+    "name": "assist",
+    "compatibility_date": "2025-01-27",
+    "pages_build_output_dir": ".svelte-kit/cloudflare",
+    "compatibility_flags": [
+        "nodejs_compat"
+    ]
+}
