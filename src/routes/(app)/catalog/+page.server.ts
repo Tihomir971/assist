@@ -49,13 +49,13 @@ export const load: PageServerLoad = async ({ depends, parent, url, locals: { sup
 		stock: checkedStock,
 		report: checkedReport,
 		vat: checkedVat,
-		sub: showSub,
+		sub: showSubcategories,
 		cat: categoryId = null
 	} = params;
 	const { activeWarehouse, categories } = await parent();
 
 	const [productsData, activePricelists] = await Promise.all([
-		fetchProducts(supabase, categoryId ?? null, showSub, categories),
+		fetchProducts(supabase, categoryId ?? null, showSubcategories, categories),
 		getPriceLists(supabase)
 	]);
 
@@ -76,7 +76,7 @@ export const load: PageServerLoad = async ({ depends, parent, url, locals: { sup
 async function fetchProducts(
 	supabase: SupabaseClient,
 	categoryId: string | null,
-	showSub: boolean,
+	showSubcategories: boolean,
 	categories: {
 		id: number;
 		parent_id: number | null;
@@ -84,13 +84,13 @@ async function fetchProducts(
 	}[]
 ) {
 	let categoryIds: number[] = [];
-	if (categoryId && showSub) {
+	if (categoryId && showSubcategories) {
 		categoryIds = findChildren(categories, parseInt(categoryId));
 	}
 	const query = supabase
 		.from('m_product')
 		.select(
-			'id, sku, name, barcode, mpn, unitsperpack, imageurl, discontinued,c_taxcategory(c_tax(rate)),m_storageonhand(warehouse_id,qtyonhand),productPrice:m_productprice(m_pricelist_version_id,pricestd,pricelist),m_replenish(m_warehouse_id,level_min,level_max,qtybatchsize),m_product_po(c_bpartner_id, pricelist, c_bpartner(name, iscustomer)),isactive'
+			'id, sku, name, barcode, mpn, unitsperpack, imageurl, discontinued,c_taxcategory(c_tax(rate)),m_storageonhand(warehouse_id,qtyonhand),productPrice:m_productprice(m_pricelist_version_id,pricestd,pricelist),m_replenish(m_warehouse_id,level_min,level_max,qtybatchsize,m_warehousesource_id),m_product_po(c_bpartner_id, pricelist, c_bpartner(name, iscustomer)),isactive'
 		)
 		.eq('producttype', 'I')
 		.order('name');
@@ -146,12 +146,32 @@ function filterAndFlattenProducts(
 	let filteredProducts: Product[];
 	if (checkedReport === 'replenish') {
 		filteredProducts = products.filter((product) => {
+			const m_replenishActiveWH = product.m_replenish.find(
+				(item) => item.m_warehouse_id === activeWarehouse
+			);
 			const activeWarehouseStock =
 				product.m_storageonhand.find((item) => item.warehouse_id === activeWarehouse)?.qtyonhand ||
 				0;
-			const activeWarehouseLevelMin =
-				product.m_replenish.find((item) => item.m_warehouse_id === activeWarehouse)?.level_min || 0;
-			return activeWarehouseStock < activeWarehouseLevelMin;
+			const sourceWarehouseStock =
+				product.m_storageonhand.find(
+					(item) => item.warehouse_id === m_replenishActiveWH?.m_warehousesource_id
+				)?.qtyonhand || 0;
+			if (product.id === 185) {
+				console.log('m_replenishActiveWH', m_replenishActiveWH);
+				console.log('activeWarehouseStock', activeWarehouseStock);
+				console.log('sourceWarehouseStock', sourceWarehouseStock);
+			}
+
+			// const activeWarehouseLevelMin =
+			// 	product.m_replenish.find((item) => item.m_warehouse_id === activeWarehouse)?.level_min || 0;
+
+			return (
+				m_replenishActiveWH &&
+				m_replenishActiveWH.level_max - activeWarehouseStock >= m_replenishActiveWH.qtybatchsize &&
+				m_replenishActiveWH.qtybatchsize > 0 &&
+				m_replenishActiveWH.level_min > 0 &&
+				sourceWarehouseStock > 0
+			);
 		});
 	} else if (checkedStock) {
 		filteredProducts = products.filter((product) => {
@@ -183,6 +203,9 @@ function flattenProduct(
 	checkedVat: boolean,
 	activePricelists: Partial<SupabaseTable<'m_pricelist_version'>['Row']>[] | []
 ): FlattenedProduct {
+	if (product.id === 185) {
+		console.log('product', product);
+	}
 	const smallestPricestd = Math.min(
 		...product.productPrice
 			.filter(

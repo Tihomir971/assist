@@ -3,7 +3,7 @@
 	import '@fontsource-variable/nunito-sans';
 
 	import { invalidate } from '$app/navigation';
-	import { Toaster } from '$lib/components/ui/sonner/index.js';
+	// import { Toaster } from '$lib/components/ui/sonner/index.js';
 
 	let { data, children } = $props();
 	let { session, supabase } = $derived(data);
@@ -19,6 +19,6 @@
 	});
 </script>
 
-<Toaster position="bottom-center" richColors />
+<!-- <Toaster position="bottom-center" richColors /> -->
 
 {@render children?.()}

@@ -32,6 +32,7 @@ export interface Product {
 		level_min: number;
 		level_max: number;
 		qtybatchsize: number;
+		m_warehousesource_id: number | null;
 	}[];
 	isactive: boolean;
 	m_product_po: {

@@ -38,7 +38,7 @@
 
 	let checkedStock = $state(page.url.searchParams.get('stock') === 'true');
 	let checkedVat = $state(page.url.searchParams.get('vat') === 'true');
-	let checkedSubcategories = $state(page.url.searchParams.get('showSub') === 'true');
+	let checkedSubcategories = $state(page.url.searchParams.get('sub') === 'true');
 
 	let inputValueWarehouse = $state(page.url.searchParams.get('wh') ?? '');
 	const triggerWarehouseLabel = $derived(
@@ -73,9 +73,7 @@
 			checked={checkedSubcategories}
 			onCheckedChange={(checked) => {
 				const newUrl = new URL(page.url);
-				checked
-					? newUrl?.searchParams?.set('showSub', 'true')
-					: newUrl?.searchParams?.delete('showSub');
+				checked ? newUrl?.searchParams?.set('sub', 'true') : newUrl?.searchParams?.delete('sub');
 				goto(newUrl);
 			}}
 		/>
