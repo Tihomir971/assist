@@ -68,7 +68,7 @@
 	<div class="h-full overflow-y-auto pr-2">
 		{#each cartStorageCtx.current as cartItem}
 			<div
-				class="bg-surface-3 mb-2 flex flex-col items-start justify-between rounded-md p-3 sm:flex-row sm:items-center"
+				class="mb-2 flex flex-col items-start justify-between rounded-md bg-surface-3 p-3 sm:flex-row sm:items-center"
 			>
 				<div class="mb-2 flex flex-col sm:mb-0">
 					<span class="text-sm font-medium">{cartItem.name}</span>
@@ -142,7 +142,7 @@
 					Choose the vendors whose prices and product numbers you want to include in the export.
 				</Dialog.Description>
 			</Dialog.Header>
-			<Select.Root type="single" bind:value={selectReportValue}>
+			<Select.Root type="single" allowDeselect={true} bind:value={selectReportValue}>
 				<Select.Trigger class="w-full">
 					{selectReportTrigerContent}
 				</Select.Trigger>
