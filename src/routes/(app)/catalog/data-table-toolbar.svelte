@@ -124,11 +124,12 @@
 	<Button variant="outline" onclick={handleSalesGraphClick}>Sales Graph</Button>
 	<Select.Root
 		type="single"
+		allowDeselect={true}
 		name="report"
 		bind:value={inputValueReport}
 		onValueChange={(v) => {
 			const newUrl = new URL(page.url);
-			newUrl?.searchParams?.set('report', v);
+			!v ? newUrl?.searchParams?.delete('report') : newUrl?.searchParams?.set('report', v);
 			goto(newUrl);
 		}}
 	>

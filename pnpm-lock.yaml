@@ -45,8 +45,8 @@ importers:
         specifier: ^3.5.0
         version: 3.5.0
       melt:
-        specifier: ^0.2.1
-        version: 0.2.1(svelte@5.19.3)
+        specifier: ^0.3.0
+        version: 0.3.0(svelte@5.19.3)
       tailwindcss:
         specifier: 4.0.0
         version: 4.0.0
@@ -1912,8 +1912,8 @@ packages:
   magic-string@0.30.15:
     resolution: {integrity: sha512-zXeaYRgZ6ldS1RJJUrMrYgNJ4fdwnyI6tVqoiIhyCyv5IVTK9BU8Ic2l253GGETQHxI4HNUwhJ3fjDhKqEoaAw==}
 
-  melt@0.2.1:
-    resolution: {integrity: sha512-lQnZnYWEPD32N0okhKRlQOdKNO6tS2DV2UoixpTj2mCOkYHW+hqsAScw4LqQiCc0kd5DfAuuiXnyykwCe22kmQ==}
+  melt@0.3.0:
+    resolution: {integrity: sha512-l3YvIPEhV+Xy/w4jv2T8IGobwMJejxHcehVIfketUrujfOGzMmqZJQHUCCnALrdebEdQoZhU16+Gp6HW+g/W4w==}
     peerDependencies:
       svelte: ^5.0.0-next.260
 
@@ -4565,7 +4565,7 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  melt@0.2.1(svelte@5.19.3):
+  melt@0.3.0(svelte@5.19.3):
     dependencies:
       '@floating-ui/dom': 1.6.13
       nanoid: 5.0.9
