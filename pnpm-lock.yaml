@@ -45,8 +45,8 @@ importers:
         specifier: ^3.5.0
         version: 3.5.0
       melt:
-        specifier: ^0.7.0
-        version: 0.7.0(svelte@5.19.3)
+        specifier: ^0.2.1
+        version: 0.2.1(svelte@5.19.3)
       tailwindcss:
         specifier: 4.0.0
         version: 4.0.0
@@ -1918,10 +1918,10 @@ packages:
   magic-string@0.30.15:
     resolution: {integrity: sha512-zXeaYRgZ6ldS1RJJUrMrYgNJ4fdwnyI6tVqoiIhyCyv5IVTK9BU8Ic2l253GGETQHxI4HNUwhJ3fjDhKqEoaAw==}
 
-  melt@0.7.0:
-    resolution: {integrity: sha512-Ne3R6+W4DYuUaqd0PzXLWVNKoZRC8Qv4O7ghcAinFe+78viqYA41xMce8qCMCM4qLIR9hvcXdIt7RipcQJ74qg==}
+  melt@0.2.1:
+    resolution: {integrity: sha512-lQnZnYWEPD32N0okhKRlQOdKNO6tS2DV2UoixpTj2mCOkYHW+hqsAScw4LqQiCc0kd5DfAuuiXnyykwCe22kmQ==}
     peerDependencies:
-      svelte: ^5.0.0
+      svelte: ^5.0.0-next.260
 
   memoize-weak@1.0.2:
     resolution: {integrity: sha512-gj39xkrjEw7nCn4nJ1M5ms6+MyMlyiGmttzsqAUsAKn6bYKwuTHh/AO3cKPF8IBrTIYTxb0wWXFs3E//Y8VoWQ==}
@@ -2287,6 +2287,11 @@ packages:
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
 
+  runed@0.15.4:
+    resolution: {integrity: sha512-kmbpstUd7v2FdlBM+MT78IyuOVd38tq/e7MHvVb0fnVCsPSPMD/m2Xh+wUhzg9qCJgxRjBbIKu68DlH/x5VXJA==}
+    peerDependencies:
+      svelte: ^5.0.0-next.1
+
   runed@0.20.0:
     resolution: {integrity: sha512-YqPxaUdWL5nUXuSF+/v8a+NkVN8TGyEGbQwTA25fLY35MR/2bvZ1c6sCbudoo1kT4CAJPh4kUkcgGVxW127WKw==}
     peerDependencies:
@@ -2294,11 +2299,6 @@ packages:
 
   runed@0.22.0:
     resolution: {integrity: sha512-ZWVXWhOr0P5xdNgtviz6D1ivLUDWKLCbeC5SUEJ3zBkqLReVqWHenFxMNFeFaiC5bfxhFxyxzyzB+98uYFtwdA==}
-    peerDependencies:
-      svelte: ^5.7.0
-
-  runed@0.23.1:
-    resolution: {integrity: sha512-h1ZDmin0LBoSMEZxvHOJbCWsUBz4099cjI+/rQ4FZystgOq294s5Rh+OEeu9HIObc8XQQEya23eAhJeal0VBuA==}
     peerDependencies:
       svelte: ^5.7.0
 
@@ -4581,11 +4581,11 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  melt@0.7.0(svelte@5.19.3):
+  melt@0.2.1(svelte@5.19.3):
     dependencies:
       '@floating-ui/dom': 1.6.13
       nanoid: 5.0.9
-      runed: 0.23.1(svelte@5.19.3)
+      runed: 0.15.4(svelte@5.19.3)
       svelte: 5.19.3
 
   memoize-weak@1.0.2: {}
@@ -4892,17 +4892,17 @@ snapshots:
     dependencies:
       queue-microtask: 1.2.3
 
+  runed@0.15.4(svelte@5.19.3):
+    dependencies:
+      esm-env: 1.2.2
+      svelte: 5.19.3
+
   runed@0.20.0(svelte@5.19.3):
     dependencies:
       esm-env: 1.2.2
       svelte: 5.19.3
 
   runed@0.22.0(svelte@5.19.3):
-    dependencies:
-      esm-env: 1.2.2
-      svelte: 5.19.3
-
-  runed@0.23.1(svelte@5.19.3):
     dependencies:
       esm-env: 1.2.2
       svelte: 5.19.3
