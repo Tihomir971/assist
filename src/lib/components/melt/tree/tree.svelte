@@ -1,11 +1,6 @@
 <script lang="ts">
 	import { Tree, type TreeItem } from 'melt/builders';
 	// Icons
-	import JavaScript from '~icons/devicon/javascript';
-	import Svelte from '~icons/devicon/svelte';
-	import PhFolder from '~icons/ph/folder';
-	import PhFolderOpen from '~icons/ph/folder-open';
-	import PhFolderFill from '~icons/ph/folder-fill';
 	import PhCaretRight from '~icons/ph/caret-right';
 	import PhCaretDown from '~icons/ph/caret-down';
 	import PhDotOutline from '~icons/ph/dot-outline';

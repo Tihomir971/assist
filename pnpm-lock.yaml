@@ -103,8 +103,8 @@ importers:
         specifier: ^15.14.0
         version: 15.14.0
       knip:
-        specifier: ^5.43.4
-        version: 5.43.4(@types/node@22.10.10)(typescript@5.7.3)
+        specifier: ^5.43.5
+        version: 5.43.5(@types/node@22.10.10)(typescript@5.7.3)
       lucide-svelte:
         specifier: ^0.474.0
         version: 0.474.0(svelte@5.19.3)
@@ -1779,8 +1779,8 @@ packages:
     resolution: {integrity: sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==}
     engines: {node: '>=6'}
 
-  knip@5.43.4:
-    resolution: {integrity: sha512-ixDX4LQkM1Ixorj0/5IQu1zJvBV7jjf8I0za0l7KIzFVZrr7q3zu9J6jkkFuDZnEen3qI1ADqjTC6avVbrQ5sw==}
+  knip@5.43.5:
+    resolution: {integrity: sha512-B5cexyDF+me8EjmihxF3XASybB+T8HUzZBSZLNr9CGS8WrceMOR5Qa2qdBXwU0MxphAgH2nzLQcKsCuqXYOJUg==}
     engines: {node: '>=18.18.0'}
     hasBin: true
     peerDependencies:
@@ -4447,7 +4447,7 @@ snapshots:
 
   kleur@4.1.5: {}
 
-  knip@5.43.4(@types/node@22.10.10)(typescript@5.7.3):
+  knip@5.43.5(@types/node@22.10.10)(typescript@5.7.3):
     dependencies:
       '@nodelib/fs.walk': 3.0.1
       '@snyk/github-codeowners': 1.1.0
