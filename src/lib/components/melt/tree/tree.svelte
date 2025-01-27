@@ -104,12 +104,6 @@
 	{:else}
 		<PhDotOutline role="presentation" />
 	{/if}
-	<!-- <svelte:component this={item.selected ? PhFolderFill : PhFolder} role="presentation" /> -->
-	<!-- {#if item.selected} -->
-	<!-- {:else if icon === 'svelte'}
-		<Svelte role="presentation" /> -->
-	<!-- {:else} -->
-	<!-- {/if} -->
 {/snippet}
 
 {#snippet treeItems(items: (typeof tree)['children'], depth: number = 0)}
@@ -118,9 +112,9 @@
 			<div class="group relative transition-colors" style="padding-left: {depth * 1}rem">
 				<div class="absolute inset-0 z-0">
 					{#if item.selected}
-						<div class="bg-surface-document absolute inset-0 rounded-md"></div>
+						<div class="absolute inset-0 rounded-md bg-surface-document"></div>
 					{/if}
-					<div class="group-hover:bg-surface-2 absolute inset-0 rounded-md"></div>
+					<div class="absolute inset-0 rounded-md group-hover:bg-surface-2"></div>
 				</div>
 				<div class="relative z-10 flex items-center gap-1 px-3 py-2 text-sm">
 					<div class="size-4">{@render treeItemIcon(item)}</div>
