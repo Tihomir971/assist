@@ -45,9 +45,12 @@
 		warehouses.find((f) => f.value === inputValueWarehouse)?.label ?? 'Select warehouse'
 	);
 
-	const reports = [{ value: 'replenish', label: 'Replenish' }];
+	const reports = [
+		{ value: 'onstock', label: 'On Stock' },
+		{ value: 'relocation', label: 'Relocation' },
+		{ value: 'replenish', label: 'Replenish' }
+	];
 	let inputValueReport = $state(page.url.searchParams.get('report') ?? '');
-	$inspect(inputValueReport);
 	const triggerReportContent = $derived(
 		reports.find((f) => f.value === inputValueReport)?.label ?? 'Select a report'
 	);
@@ -78,31 +81,13 @@
 			}}
 		/>
 		<Label
-			for="only-stock"
+			for="subcategories"
 			class="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 		>
 			Subcategories
 		</Label>
 	</div>
-	<div class="flex w-full items-center space-x-2">
-		<Checkbox
-			id="only-stock"
-			checked={checkedStock}
-			onCheckedChange={(checked) => {
-				const newUrl = new URL(page.url);
-				checked
-					? newUrl?.searchParams?.set('stock', 'true')
-					: newUrl?.searchParams?.delete('stock');
-				goto(newUrl);
-			}}
-		/>
-		<Label
-			for="only-stock"
-			class="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-		>
-			Only on Stock
-		</Label>
-	</div>
+
 	<div class="flex w-full items-center space-x-2">
 		<Checkbox
 			id="show-vat"

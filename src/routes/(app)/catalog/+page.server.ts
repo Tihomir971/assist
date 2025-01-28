@@ -46,8 +46,7 @@ export const load: PageServerLoad = async ({ depends, parent, url, locals: { sup
 	depends('catalog');
 	const params = catalogSearchParamsSchema.parse(Object.fromEntries(url.searchParams));
 	const {
-		stock: checkedStock,
-		report: checkedReport,
+		report: selectedReport,
 		vat: checkedVat,
 		sub: showSubcategories,
 		cat: categoryId = null
@@ -61,8 +60,7 @@ export const load: PageServerLoad = async ({ depends, parent, url, locals: { sup
 
 	const products = filterAndFlattenProducts(
 		productsData,
-		checkedStock,
-		checkedReport ?? null,
+		selectedReport ?? null,
 		activeWarehouse,
 		checkedVat,
 		activePricelists
@@ -137,14 +135,13 @@ async function getPriceLists(
 
 function filterAndFlattenProducts(
 	products: Product[],
-	checkedStock: boolean,
-	checkedReport: string | null,
+	selectedReport: string | null,
 	activeWarehouse: number,
 	checkedVat: boolean,
 	activePricelists: Partial<SupabaseTable<'m_pricelist_version'>['Row']>[] | []
 ): FlattenedProduct[] {
 	let filteredProducts: Product[];
-	if (checkedReport === 'replenish') {
+	if (selectedReport === 'relocation') {
 		filteredProducts = products.filter((product) => {
 			const m_replenishActiveWH = product.m_replenish.find(
 				(item) => item.m_warehouse_id === activeWarehouse
@@ -156,14 +153,6 @@ function filterAndFlattenProducts(
 				product.m_storageonhand.find(
 					(item) => item.warehouse_id === m_replenishActiveWH?.m_warehousesource_id
 				)?.qtyonhand || 0;
-			if (product.id === 185) {
-				console.log('m_replenishActiveWH', m_replenishActiveWH);
-				console.log('activeWarehouseStock', activeWarehouseStock);
-				console.log('sourceWarehouseStock', sourceWarehouseStock);
-			}
-
-			// const activeWarehouseLevelMin =
-			// 	product.m_replenish.find((item) => item.m_warehouse_id === activeWarehouse)?.level_min || 0;
 
 			return (
 				m_replenishActiveWH &&
@@ -173,7 +162,22 @@ function filterAndFlattenProducts(
 				sourceWarehouseStock > 0
 			);
 		});
-	} else if (checkedStock) {
+	} else if (selectedReport === 'replenish') {
+		filteredProducts = products.filter((product) => {
+			const m_replenishActiveWH = product.m_replenish.find(
+				(item) => item.m_warehouse_id === activeWarehouse
+			);
+			const m_storageonhandActiveStock =
+				product.m_storageonhand.find((item) => item.warehouse_id === activeWarehouse)?.qtyonhand ||
+				0;
+			return (
+				m_replenishActiveWH &&
+				m_replenishActiveWH.level_max - m_storageonhandActiveStock >=
+					m_replenishActiveWH.qtybatchsize &&
+				m_replenishActiveWH.qtybatchsize > 0
+			);
+		});
+	} else if (selectedReport === 'onstock') {
 		filteredProducts = products.filter((product) => {
 			const hasNonZeroStock = product.m_storageonhand.some((item) => item.qtyonhand !== 0);
 			const activeWarehouseStock =

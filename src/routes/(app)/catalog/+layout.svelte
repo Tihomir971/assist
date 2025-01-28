@@ -25,27 +25,20 @@
 
 	let treeData = $derived(arrayToTreeString(data.categories));
 
-	let selectedId: string | undefined = $state();
+	let selectedId: string | undefined = $state(page.url.searchParams.get('cat') || undefined);
 
 	let showReportDialog = $state(false);
 
 	let prevSelectedId: string | undefined = $state(undefined);
-
 	$effect(() => {
 		if (browser && selectedId && prevSelectedId !== selectedId) {
 			prevSelectedId = selectedId;
 			const newUrl = new URL(page.url);
 			newUrl.searchParams.set('cat', selectedId);
 
-			goto(newUrl);
+			goto(newUrl, { invalidate: ['catalog'] });
 		}
 	});
-
-	function editCategory() {
-		if (selectedId) {
-			goto('/catalog/category/' + selectedId);
-		}
-	}
 </script>
 
 <main class="flex w-full flex-1 gap-2 overflow-hidden p-2">
@@ -56,7 +49,16 @@
 					<Tooltip.Provider>
 						<Tooltip.Root>
 							<Tooltip.Trigger id="edit_tooltip">
-								<Button variant="ghost" size="icon" onclick={editCategory} disabled={!selectedId}>
+								<Button
+									variant="ghost"
+									size="icon"
+									onclick={() => {
+										if (selectedId) {
+											goto('/catalog/category/' + selectedId);
+										}
+									}}
+									disabled={!selectedId}
+								>
 									<FolderPen strokeWidth={1.5} class="!size-6" />
 									<span class="sr-only">Edit</span>
 								</Button>

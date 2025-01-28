@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {
 		createSvelteTable,
-		FlexRender,
 		getCoreRowModel,
 		getFilteredRowModel,
 		getSortedRowModel,
@@ -23,8 +22,6 @@
 	import { getCartContext } from '$lib/components/cart/ctx.svelte.js';
 
 	let { data } = $props();
-	//let { products } = data;
-	//let dataState = $state(data.products);
 
 	const cartStorageCtx = getCartContext();
 	// Define a reactive state to track the row selection state.
@@ -49,7 +46,6 @@
 			table.setGlobalFilter(target.value);
 		}
 	}
-
 	// Create the table and bind the row selection state using a getter.
 	const table = createSvelteTable({
 		get data() {
@@ -137,6 +133,10 @@
 		/>
 	</Card.Header>
 	<Card.Content class="flex-1 overflow-auto p-4">
-		<WalkerTable {table} />
+		{#await data.products}
+			<p>Loading...</p>
+		{:then}
+			<WalkerTable {table} />
+		{/await}
 	</Card.Content>
 </Card.Root>

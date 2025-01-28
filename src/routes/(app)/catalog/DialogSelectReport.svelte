@@ -50,7 +50,7 @@
 				>
 				<Select.Content>
 					<Select.Item value="inventory">Inventory</Select.Item>
-					<Select.Item value="replenish">Replenish</Select.Item>
+					<Select.Item value="relocation">Relocation</Select.Item>
 				</Select.Content>
 			</Select.Root>
 
