@@ -4,9 +4,9 @@ import { z } from 'zod';
 import type { PageServerLoad } from './$types';
 
 const searchParamsSchema = z.object({
-	warehouse: z.number().min(1, 'Warehouse is required'),
-	treeCategory: z.number().min(1, 'Category is required'),
-	includeOutOfStock: z
+	warehouse: z.coerce.number().min(1, 'Warehouse is required'),
+	treeCategory: z.coerce.number().min(1, 'Category is required'),
+	includeOutOfStock: z.coerce
 		.boolean()
 		.transform((val) => val === true)
 		.default(false)

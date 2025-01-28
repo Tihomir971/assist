@@ -25,46 +25,12 @@
 
 	let treeData = $derived(arrayToTreeString(data.categories));
 
-	let selectedId: string | null = $state(data.selectedId);
+	let selectedId: string | undefined = $state();
 
 	let showReportDialog = $state(false);
 
 	let prevSelectedId: string | undefined = $state(undefined);
 
-	// $effect(() => {
-	// 	if (!browser || !selectedId || selectedId === prevSelectedId || isUpdating) return;
-
-	// 	isUpdating = true;
-
-	// 	// Clear any pending navigation
-	// 	if (timeoutId) {
-	// 		clearTimeout(timeoutId);
-	// 	}
-
-	// 	// Debounce navigation updates
-	// 	timeoutId = setTimeout(() => {
-	// 		const currentUrl = new URL(page.url);
-	// 		const currentCat = currentUrl.searchParams.get('cat');
-
-	// 		// Only update if the URL doesn't already match
-	// 		if (currentCat !== selectedId) {
-	// 			const newUrl = new URL(page.url);
-	// 			newUrl.searchParams.set('cat', selectedId!);
-	// 			goto(newUrl);
-	// 		}
-
-	// 		prevSelectedId = selectedId;
-	// 		isUpdating = false;
-	// 	}, 300); // 300ms debounce
-
-	// 	// Cleanup
-	// 	return () => {
-	// 		if (timeoutId) {
-	// 			clearTimeout(timeoutId);
-	// 		}
-	// 		isUpdating = false;
-	// 	};
-	// });
 	$effect(() => {
 		if (browser && selectedId && prevSelectedId !== selectedId) {
 			prevSelectedId = selectedId;
@@ -74,26 +40,12 @@
 			goto(newUrl);
 		}
 	});
-	// $effect(() => {
-	// if (browser && activeCategory && prevCategory !== activeCategory) {
-	// prevCategory = activeCategory;
-	// const newUrl = new URL(page.url);
-	// newUrl.searchParams.set('cat', activeCategory);
-	//
-	// goto(newUrl);
-	// }
-	// });
 
 	function editCategory() {
 		if (selectedId) {
 			goto('/catalog/category/' + selectedId);
 		}
 	}
-	// function editCategory() {
-	// 	if (selected) {
-	// 		goto('/catalog/category/' + selected.getAttribute('data-id'));
-	// 	}
-	// }
 </script>
 
 <main class="flex w-full flex-1 gap-2 overflow-hidden p-2">
@@ -156,7 +108,12 @@
 		</Card.Header>
 		<Card.Content class="flex-1 overflow-auto p-1">
 			<!-- <TreeView {treeItems} expanded={data.expanded} bind:selected /> -->
-			<Tree {treeData} bind:selectedId />
+			<Tree
+				{treeData}
+				onSelectedChange={(v) => {
+					selectedId = v;
+				}}
+			/>
 		</Card.Content>
 	</Card.Root>
 

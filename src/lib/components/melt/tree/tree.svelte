@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Tree, type TreeItem } from 'melt/builders';
+	import { Tree } from 'melt/builders';
 	// Icons
 	import PhCaretRight from '~icons/ph/caret-right';
 	import PhCaretDown from '~icons/ph/caret-down';
@@ -7,86 +7,21 @@
 	import { fade } from 'svelte/transition';
 	import type { TreeItemTitle } from './types';
 	import { findParent } from '$lib/scripts/tree';
+	import { page } from '$app/state';
 
 	type Props = {
-		selectedId: string | null;
 		treeData: TreeItemTitle[];
-		expanded?: string[];
+		onSelectedChange: (value: string | undefined) => void;
 	};
-	let { selectedId = $bindable(), treeData, expanded }: Props = $props();
-	/* const data: Item[] = [
-		{
-			id: '1',
-			title: 'Audio Visual/Photography'
-		},
-		{
-			id: '2',
-			title: 'Automotive Accessories and Maintenance',
-			children: [
-				{
-					id: '3',
-					title: 'Child Root 2',
-					children: [
-						{
-							id: '4',
-							title: 'Tree.svelte'
-						},
-						{
-							id: '5',
-							title: 'TreeItem.svelte'
-						}
-					]
-				},
-				{
-					id: '6',
-					title: 'icons',
-					children: [
-						{
-							id: '7',
-							title: 'JavaScript.svelte'
-						},
-						{
-							id: '8',
-							title: 'Svelte.svelte'
-						}
-					]
-				},
-				{
-					id: '9',
-					title: 'index.js'
-				}
-			]
-		},
-		{
-			id: '10',
-			title: 'Beauty/Personal Care/Hygiene',
-			children: [
-				{
-					id: 'routes/contents',
-					title: 'contents',
-					children: [
-						{
-							id: 'routes/contents/+layout.svelte',
-							title: '+layout.svelte'
-						},
-						{
-							id: 'routes/contents/+page.svelte',
-							title: '+page.svelte'
-						}
-					]
-				}
-			]
-		}
-	]; */
+	let { treeData, onSelectedChange }: Props = $props();
 
+	const selected = page.url.searchParams.get('cat');
 	const tree = new Tree({
 		items: treeData,
-		expanded: findParent(treeData, selectedId),
+		expanded: findParent(treeData, selected),
 		expandOnClick: true,
-		selected: selectedId ?? undefined
-	});
-	$effect(() => {
-		selectedId = tree.selected ?? null;
+		selected: selected ?? undefined,
+		onSelectedChange
 	});
 </script>
 

@@ -10,7 +10,7 @@
 	type Props = {
 		showReportDialog: boolean;
 		warehouses: Warehouse[];
-		activeCategory: string | null;
+		activeCategory: string | undefined;
 	};
 	let { showReportDialog = $bindable(false), warehouses, activeCategory }: Props = $props();
 
