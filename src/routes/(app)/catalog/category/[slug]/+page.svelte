@@ -23,7 +23,7 @@
 	// Icons
 	import PhPackage from '~icons/ph/package';
 	import FormSelect from '$lib/components/my/FormSelect.svelte';
-	import Select from '$lib/components/Zag/select/Select.svelte';
+	import ComboboxField from '$lib/components/my/ComboboxField.svelte';
 
 	let { data } = $props();
 
@@ -121,48 +121,15 @@
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<!-- <Form.Field form={formCategory} name="parent_id">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label>Parent Category</Form.Label>
-							<Select.Root
-								type="single"
-								value={$formData.parent_id?.toString()}
-								name={props.name}
-								onValueChange={(v) => {
-									$formData.parent_id = Number.parseInt(v);
-								}}
-							>
-								<Select.Trigger {...props}>
-									{triggerName}
-								</Select.Trigger>
-								<Select.Content>
-									{#each data.categories as category}
-										<Select.Item value={category.value} label={category.label} />
-									{/each}
-								</Select.Content>
-							</Select.Root>
-						{/snippet}
-					</Form.Control>
-
-					<Form.FieldErrors />
-				</Form.Field> -->
-
-				<Form.Field {form} name="parent_id">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label>Parent Category</Form.Label>
-							<FormSelect
-								name={props.name}
-								bind:value={$formData.parent_id}
-								options={data.categories}
-							/>
-						{/snippet}
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field>
-				<Select />
-				<div class="flex flex-row-reverse items-center">
+				<ComboboxField
+					{form}
+					name="parent_id"
+					label="Parent Category"
+					options={data.categories}
+					placeholder="Select parent category"
+					width="w-full"
+				/>
+				<div class="flex flex-row-reverse items-center gap-2">
 					<Form.Button variant="default" disabled={!isTainted($tainted)}>Save</Form.Button>
 					<Form.Button
 						name="delete"

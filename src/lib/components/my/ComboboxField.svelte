@@ -1,0 +1,105 @@
+<script lang="ts">
+	import * as Form from '$lib/components/ui/form/index.js';
+	import * as Popover from '$lib/components/ui/popover/index.js';
+	import * as Command from '$lib/components/ui/command/index.js';
+	import { cn } from '$lib/utils.js';
+	import { buttonVariants } from '$lib/components/ui/button/index.js';
+
+	import { useId } from 'bits-ui';
+	import { tick } from 'svelte';
+	//Icons
+	import PhCaretUpDown from '~icons/ph/caret-up-down';
+	import PhCheck from '~icons/ph/check';
+	import type { SuperForm } from 'sveltekit-superforms';
+
+	interface Props {
+		form: SuperForm<any>; // SuperForm instance
+		name: string;
+		label?: string;
+		description?: string;
+		placeholder?: string;
+		searchPlaceholder?: string;
+		// Accepts both string and number values, but converts numbers to strings for HTML form compatibility
+		options: Array<{ label: string; value: string | number }>;
+		width?: string;
+	}
+
+	const {
+		form,
+		name,
+		label = '',
+		description,
+		placeholder = 'Select option...',
+		searchPlaceholder = 'Search...',
+		options,
+		width = 'w-[200px]'
+	}: Props = $props();
+
+	let open = $state(false);
+	const triggerId = useId();
+
+	function closeAndFocusTrigger(triggerId: string) {
+		open = false;
+		tick().then(() => {
+			document.getElementById(triggerId)?.focus();
+		});
+	}
+	const { form: formData } = form;
+
+	// Convert value to string for comparison since form data will be string
+	const selectedOption = $derived(options.find((f) => f.value === $formData[name]));
+</script>
+
+<Form.Field {form} {name} class="flex flex-col">
+	<Popover.Root bind:open>
+		<Form.Control id={triggerId}>
+			{#snippet children({ props })}
+				{#if label}
+					<Form.Label>{label}</Form.Label>
+				{/if}
+				<Popover.Trigger
+					class={cn(
+						buttonVariants({ variant: 'outline' }),
+						width,
+						'justify-between',
+						!$formData[name] && 'text-muted-foreground'
+					)}
+					role="combobox"
+					{...props}
+				>
+					{selectedOption?.label ?? placeholder}
+					<PhCaretUpDown class="opacity-50" />
+				</Popover.Trigger>
+				<input hidden value={$formData[name]} name={props.name} />
+			{/snippet}
+		</Form.Control>
+		<Popover.Content class={cn(width, 'p-0')}>
+			<Command.Root>
+				<Command.Input autofocus placeholder={searchPlaceholder} class="h-9" />
+				<Command.Empty>No option found.</Command.Empty>
+				<Command.Group class="max-h-80 overflow-y-auto">
+					{#each options as option}
+						<Command.Item
+							value={option.label}
+							onSelect={() => {
+								$formData[name] = option.value;
+								closeAndFocusTrigger(triggerId);
+							}}
+						>
+							{option.label}
+							<PhCheck
+								class={cn('ml-auto', option.value !== $formData[name] && 'text-transparent')}
+							/>
+						</Command.Item>
+					{/each}
+				</Command.Group>
+			</Command.Root>
+		</Popover.Content>
+	</Popover.Root>
+	{#if description}
+		<Form.Description>
+			{description}
+		</Form.Description>
+	{/if}
+	<Form.FieldErrors />
+</Form.Field>
