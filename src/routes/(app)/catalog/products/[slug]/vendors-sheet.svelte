@@ -14,6 +14,7 @@
 	import { toast } from 'svelte-sonner';
 	import { invalidate } from '$app/navigation';
 	import FormSelect from '$lib/components/my/FormSelect.svelte';
+	import ComboboxField from '$lib/components/my/ComboboxField.svelte';
 
 	type Props = {
 		formValidated: SuperValidated<МProductPoInsertSchemaАrray>;
@@ -36,12 +37,7 @@
 		isNew = false
 	}: Props = $props();
 
-	const {
-		form: formData,
-		enhance: enhanceVendor,
-		tainted,
-		isTainted
-	} = superForm(formValidated, {
+	const form = superForm(formValidated, {
 		dataType: 'json',
 		onUpdated({ form }) {
 			if (form.valid) {
@@ -53,6 +49,8 @@
 			}
 		}
 	});
+
+	const { form: formData, enhance: enhanceVendor, tainted, isTainted } = form;
 
 	if (!selectedPurchaseId) {
 		$formData.purchases.push({
@@ -68,26 +66,6 @@
 		}))
 	);
 
-	// Initialize new purchase immediately
-	//	$effect(() => {
-	//		if (isNew && isSheetOpen && !selectedPurchaseId && partners.length > 0) {
-	//			$formData.purchases = [
-	//				...$formData.purchases,
-	//				{
-	//					id: undefined,
-	//					m_product_id: selectedProductId,
-	//					c_bpartner_id: partners[0].value,
-	//					vendorproductno: '',
-	//					pricelist: 0,
-	//					barcode: null,
-	//					url: null,
-	//					isactive: true,
-	//					iscurrentvendor: false
-	//				}
-	//			];
-	//		}
-	//	});
-
 	let selectedVendor = $derived(
 		$formData.purchases.findIndex(
 			(p) => (p.id === undefined && selectedPurchaseId === undefined) || p.id === selectedPurchaseId
@@ -97,8 +75,7 @@
 
 	const triggerContent = $derived(
 		currentPurchase
-			? (partnersWithStringValues.find((p) => p.value === currentPurchase.c_bpartner_id.toString())
-					?.label ?? 'Select partner')
+			? (partners.find((p) => p.value === currentPurchase.c_bpartner_id)?.label ?? 'Select partner')
 			: 'Select partner'
 	);
 </script>
@@ -115,37 +92,15 @@
 		<form method="post" use:enhanceVendor action="?/vendors" class="grid gap-4 py-4">
 			{#if currentPurchase}
 				<div class="grid gap-4">
-					<div class="grid gap-2">
-						<Label for="partner">Partner</Label>
-						<FormSelect
-							name="partner"
-							options={partners}
-							bind:value={() => currentPurchase.c_bpartner_id,
-							(v) => ($formData.purchases[selectedVendor].c_bpartner_id = v)}
-						/>
-						<Select.Root
-							type="single"
-							value={currentPurchase.c_bpartner_id.toString()}
-							onValueChange={(v) => {
-								if (selectedVendor >= 0) {
-									$formData.purchases[selectedVendor].c_bpartner_id = Number.parseInt(v);
-								}
-							}}
-						>
-							<Select.Trigger id="partner" class="w-full">
-								{triggerContent}
-							</Select.Trigger>
-							<Select.Content>
-								<Select.Group>
-									{#each partnersWithStringValues as partner (partner.value)}
-										<Select.Item value={partner.value} label={partner.label}>
-											{partner.label}
-										</Select.Item>
-									{/each}
-								</Select.Group>
-							</Select.Content>
-						</Select.Root>
-					</div>
+					<ComboboxField
+						{form}
+						name="purchases"
+						arrayIndex={selectedVendor}
+						field="c_bpartner_id"
+						label="Vendor"
+						options={partners}
+						width="w-full"
+					/>
 
 					<div class="grid gap-2">
 						<Label for="vendor-product-no">Vendor Product Number</Label>

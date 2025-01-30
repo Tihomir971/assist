@@ -36,7 +36,6 @@
 		}
 	}
 
-	let checkedStock = $state(page.url.searchParams.get('stock') === 'true');
 	let checkedVat = $state(page.url.searchParams.get('vat') === 'true');
 	let checkedSubcategories = $state(page.url.searchParams.get('sub') === 'true');
 

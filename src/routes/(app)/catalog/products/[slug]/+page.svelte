@@ -57,7 +57,6 @@
 		}
 	}
 
-	let isDrawerOpen: boolean = $state(false);
 	let isBarcodeDrawerOpen: boolean = $state(false);
 
 	let selectedUomLabel = $derived(
@@ -66,16 +65,10 @@
 	let selectedTaxLabel = $derived(
 		data.tax?.find((v) => v.value === $formProduct.c_taxcategory_id?.toString())?.label
 	);
-	let selectedCategoryLabel = $derived(
-		data.categories?.find((v) => v.value === $formProduct.m_product_category_id?.toString())?.label
-	);
+
 	let selectedNetQtyUom = $derived(
 		data.uom?.find((v) => v.value === $formProduct.net_qty_uom_id?.toString())?.label
 	);
-	const selectedWarehouseLabel = (value: number | null | undefined) => {
-		if (value === null || value === undefined) return '';
-		return data.warehouses?.find((v) => v.value === value)?.label;
-	};
 </script>
 
 <div class="mx-auto w-full max-w-[var(--breakpoint-xl)]">
@@ -225,33 +218,6 @@
 							</Form.Field>
 						</div>
 
-						<!-- <Form.Field form={productForm} name="m_product_category_id">
-							<Form.Control>
-								{#snippet children({ props })}
-									<Form.Label>Category</Form.Label>
-									<Select.Root
-										type="single"
-										value={$formProduct.m_product_category_id?.toString()}
-										name={props.name}
-										onValueChange={(v) => {
-											$formProduct.m_product_category_id = Number.parseInt(v);
-										}}
-									>
-										<Select.Trigger {...props}>
-											{selectedCategoryLabel ?? 'Select a product category'}
-										</Select.Trigger>
-										<Select.Content>
-											{#if data.categories}
-												{#each data.categories as v}
-													<Select.Item value={v.value} label={v.label} />
-												{/each}
-											{/if}
-										</Select.Content>
-									</Select.Root>
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field> -->
 						<ComboboxField
 							form={productForm}
 							name="m_product_category_id"

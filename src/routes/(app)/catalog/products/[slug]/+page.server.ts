@@ -34,8 +34,8 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		storageonhand
 	] = await Promise.all([
 		ProductService.getUom(supabase),
-		(await supabase.from('m_product_category').select('value:id::text, label:name').order('name'))
-			.data || [],
+		(await supabase.from('m_product_category').select('value:id, label:name').order('name')).data ||
+			[],
 		(
 			await supabase
 				.from('c_bpartner')

@@ -15,6 +15,8 @@
 	interface Props {
 		form: SuperForm<any>; // SuperForm instance
 		name: string;
+		arrayIndex?: number; // Optional index for array fields
+		field?: string; // Optional field name for array items
 		label?: string;
 		description?: string;
 		placeholder?: string;
@@ -27,12 +29,14 @@
 	const {
 		form,
 		name,
+		arrayIndex,
+		field,
 		label = '',
 		description,
 		placeholder = 'Select option...',
 		searchPlaceholder = 'Search...',
 		options,
-		width = 'w-[200px]'
+		width = 'w-full'
 	}: Props = $props();
 
 	let open = $state(false);
@@ -46,8 +50,14 @@
 	}
 	const { form: formData } = form;
 
-	// Convert value to string for comparison since form data will be string
-	const selectedOption = $derived(options.find((f) => f.value === $formData[name]));
+	// Handle both array and non-array fields
+	const selectedOption = $derived(
+		options.find((f) =>
+			arrayIndex !== undefined && field
+				? f.value === $formData[name][arrayIndex][field]
+				: f.value === $formData[name]
+		)
+	);
 </script>
 
 <Form.Field {form} {name} class="flex flex-col">
@@ -70,7 +80,13 @@
 					{selectedOption?.label ?? placeholder}
 					<PhCaretUpDown class="opacity-50" />
 				</Popover.Trigger>
-				<input hidden value={$formData[name]} name={props.name} />
+				<input
+					hidden
+					value={arrayIndex !== undefined && field
+						? $formData[name][arrayIndex][field]
+						: $formData[name]}
+					name={props.name}
+				/>
 			{/snippet}
 		</Form.Control>
 		<Popover.Content class={cn(width, 'p-0')}>
@@ -82,13 +98,24 @@
 						<Command.Item
 							value={option.label}
 							onSelect={() => {
-								$formData[name] = option.value;
+								if (arrayIndex !== undefined && field) {
+									// Update array field
+									$formData[name][arrayIndex][field] = option.value;
+								} else {
+									// Update regular field
+									$formData[name] = option.value;
+								}
 								closeAndFocusTrigger(triggerId);
 							}}
 						>
 							{option.label}
 							<PhCheck
-								class={cn('ml-auto', option.value !== $formData[name] && 'text-transparent')}
+								class={cn(
+									'ml-auto',
+									(arrayIndex !== undefined && field
+										? option.value !== $formData[name][arrayIndex][field]
+										: option.value !== $formData[name]) && 'text-transparent'
+								)}
 							/>
 						</Command.Item>
 					{/each}

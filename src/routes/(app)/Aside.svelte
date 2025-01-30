@@ -9,9 +9,20 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 
 	let activePath: string | undefined = $derived(browser ? page.url.pathname : undefined);
+
+	let catalogHref: string = $derived(
+		(() => {
+			if (!browser) return '/catalog';
+			const params = new URLSearchParams(page.url.search);
+			params.delete('cat');
+			params.delete('sub');
+			const searchParams = params.toString();
+			return `/catalog${searchParams ? `?${searchParams}` : ''}`;
+		})()
+	);
 </script>
 
-<nav class="bg-well-2 flex h-full flex-col items-center gap-4 border-x px-2 sm:py-5">
+<nav class="flex h-full flex-col items-center gap-4 border-x bg-well-2 px-2 sm:py-5">
 	<Tooltip.Provider>
 		<Tooltip.Root>
 			<Tooltip.Trigger>
@@ -33,7 +44,7 @@
 		<Tooltip.Root>
 			<Tooltip.Trigger>
 				<Button
-					href="/catalog"
+					href={catalogHref}
 					variant="ghost"
 					size="icon"
 					class={`[&_svg]:size-6 ${activePath === '/catalog' ? '' : 'text-muted-foreground'}`}
