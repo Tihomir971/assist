@@ -2,9 +2,10 @@
 	import { invalidate } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-
+	// Icons
 	import PhDotsThree from '~icons/ph/dots-three';
 	import PhPackage from '~icons/ph/package';
+	import PhArrowSquareOut from '~icons/ph/arrow-square-out';
 
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
@@ -316,7 +317,19 @@
 								<Form.Control>
 									{#snippet children({ props })}
 										<Form.Label>Manufacturer URL</Form.Label>
-										<Input type="url" bind:value={$formProduct.descriptionurl} {...props} />
+										<div class="flex gap-0.5">
+											<Input type="url" bind:value={$formProduct.descriptionurl} {...props} />
+											<Button
+												type="button"
+												variant="outline"
+												size="icon"
+												href={$formProduct.descriptionurl}
+												target="_blank"
+												disabled={!$formProduct.descriptionurl}
+											>
+												<PhArrowSquareOut />
+											</Button>
+										</div>
 									{/snippet}
 								</Form.Control>
 								<Form.FieldErrors />
