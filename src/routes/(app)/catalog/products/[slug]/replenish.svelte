@@ -49,9 +49,9 @@
 			m_warehouse_id: data.warehouses.reduce((min, warehouse) => {
 				return warehouse.value < min ? warehouse.value : min;
 			}, Number.MAX_SAFE_INTEGER),
-			level_min: 0,
-			level_max: 0,
-			qtybatchsize: null,
+			level_min: 1,
+			level_max: 1,
+			qtybatchsize: 1,
 			m_warehousesource_id: null
 		});
 		$form.replenishes = $form.replenishes;

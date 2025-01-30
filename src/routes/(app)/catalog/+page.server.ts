@@ -158,7 +158,6 @@ function filterAndFlattenProducts(
 				m_replenishActiveWH &&
 				m_replenishActiveWH.level_max - activeWarehouseStock >= m_replenishActiveWH.qtybatchsize &&
 				m_replenishActiveWH.qtybatchsize > 0 &&
-				m_replenishActiveWH.level_min > 0 &&
 				sourceWarehouseStock > 0
 			);
 		});
