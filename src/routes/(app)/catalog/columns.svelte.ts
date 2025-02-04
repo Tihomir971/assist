@@ -196,13 +196,13 @@ export const columnDefs = [
 	colHelp.accessor('levelMax', {
 		header: 'Max',
 		cell: ({ row }) => {
-			const levelMin = row.original.levelMin ?? 0;
+			// const levelMin = row.original.levelMin ?? 0;
 			const levelMax = row.original.levelMax ?? 0;
 			const stock = row.original.qtyRetail ?? 0;
 			const batch = row.original.qtybatchsize ?? 0;
 			return renderSnippet(rightAlignSnippet, {
 				value: levelMax ?? '',
-				isDanger: levelMax - stock >= batch && batch !== 0 && levelMin > 0
+				isDanger: levelMax - stock >= batch && batch !== 0 && levelMax > 0
 			});
 		}
 	}),

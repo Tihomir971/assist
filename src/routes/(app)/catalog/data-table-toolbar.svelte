@@ -36,10 +36,9 @@
 		}
 	}
 
-	let checkedVat = $state(page.url.searchParams.get('vat') === 'true');
-	let checkedSubcategories = $state(page.url.searchParams.get('sub') === 'true');
-
-	let inputValueWarehouse = $state(page.url.searchParams.get('wh') ?? '');
+	let checkedVat = $derived(page.url.searchParams.get('vat') === 'true');
+	let checkedSubcategories = $derived(page.url.searchParams.get('sub') === 'true');
+	let inputValueWarehouse = $derived(page.url.searchParams.get('wh') ?? '');
 	const triggerWarehouseLabel = $derived(
 		warehouses.find((f) => f.value === inputValueWarehouse)?.label ?? 'Select warehouse'
 	);
@@ -114,6 +113,9 @@
 		onValueChange={(v) => {
 			const newUrl = new URL(page.url);
 			!v ? newUrl?.searchParams?.delete('report') : newUrl?.searchParams?.set('report', v);
+			if (v === 'onstock') {
+				newUrl?.searchParams?.delete('sub');
+			}
 			goto(newUrl);
 		}}
 	>
@@ -131,7 +133,7 @@
 	<Select.Root
 		type="single"
 		name="warehouse"
-		bind:value={inputValueWarehouse}
+		value={inputValueWarehouse}
 		onValueChange={(v) => {
 			const newUrl = new URL(page.url);
 			newUrl?.searchParams?.set('wh', v);
