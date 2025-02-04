@@ -27,16 +27,14 @@
 	});
 </script>
 
-{#snippet treeItemIcon(item: (typeof tree)['children'][number])}
-	<!-- {@const icon = item.item.icon} -->
-
+<!-- {#snippet treeItemIcon(item: (typeof tree)['children'][number])}
 	{#if item.children?.length}
 		{@const SvelteComponent = item.expanded ? PhCaretDown : PhCaretRight}
 		<SvelteComponent role="presentation" />
 	{:else}
 		<PhDotOutline role="presentation" />
 	{/if}
-{/snippet}
+{/snippet} -->
 
 {#snippet treeItems(items: (typeof tree)['children'], depth: number = 0)}
 	{#each items as item (item.id)}
@@ -49,7 +47,8 @@
 					<div class="absolute inset-0 rounded-md group-hover:bg-surface-2"></div>
 				</div>
 				<div class="relative z-10 flex items-center gap-1 px-3 py-2 text-sm">
-					<div class="size-4">{@render treeItemIcon(item)}</div>
+					<!-- <div class="size-4">{@render treeItemIcon(item)}</div> -->
+					<div class="size-4"></div>
 					<span class="truncate">
 						{item.item.title}
 					</span>

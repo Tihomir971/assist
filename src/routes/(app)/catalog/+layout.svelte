@@ -14,7 +14,7 @@
 	import ChevronsDownUp from 'lucide-svelte/icons/chevrons-down-up';
 	import FolderPen from 'lucide-svelte/icons/folder-pen';
 	import FolderPlus from 'lucide-svelte/icons/folder-plus';
-	// import { Tree } from '$lib/components/melt/tree';
+	import { Tree } from '$lib/components/melt/tree';
 
 	interface Props {
 		data: LayoutData;
@@ -110,12 +110,12 @@
 		</Card.Header>
 		<Card.Content class="flex-1 overflow-auto p-1">
 			<!-- <TreeView {treeItems} expanded={data.expanded} bind:selected /> -->
-			<!-- <Tree
+			<Tree
 				{treeData}
 				onSelectedChange={(v) => {
 					selectedId = v;
 				}}
-			/> -->
+			/>
 		</Card.Content>
 	</Card.Root>
 
