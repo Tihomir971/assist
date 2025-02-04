@@ -1,17 +1,19 @@
 <script lang="ts">
-	import { Tree } from 'melt/builders';
+	import { page } from '$app/state';
+	import { fade } from 'svelte/transition';
+	import { Tree, type TreeItem } from 'melt/builders';
+	import { findParent } from '$lib/scripts/tree';
 	// Icons
 	import PhCaretRight from '~icons/ph/caret-right';
 	import PhCaretDown from '~icons/ph/caret-down';
 	import PhDotOutline from '~icons/ph/dot-outline';
 
-	import { fade } from 'svelte/transition';
-	import type { TreeItemTitle } from './types';
-	import { findParent } from '$lib/scripts/tree';
-	import { page } from '$app/state';
+	type CustomTreeItem = TreeItem<{
+		title: string;
+	}>;
 
 	type Props = {
-		treeData: TreeItemTitle[];
+		treeData: CustomTreeItem[];
 		onSelectedChange: (value: string | undefined) => void;
 	};
 	let { treeData, onSelectedChange }: Props = $props();
@@ -54,9 +56,9 @@
 				</div>
 			</div>
 			{#if item.children?.length && item.expanded}
-				<!-- <div {...tree.group} class="list-none p-0" transition:fade>
+				<div {...tree.group} class="list-none p-0" transition:fade>
 					{@render treeItems(item.children, depth + 1)}
-				</div> -->
+				</div>
 			{/if}
 		</li>
 	{/each}
