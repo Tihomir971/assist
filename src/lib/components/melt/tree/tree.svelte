@@ -27,37 +27,36 @@
 	});
 </script>
 
-<!-- {#snippet treeItemIcon(item: (typeof tree)['children'][number])}
+{#snippet treeItemIcon(item: (typeof tree)['children'][number])}
 	{#if item.children?.length}
 		{@const SvelteComponent = item.expanded ? PhCaretDown : PhCaretRight}
 		<SvelteComponent role="presentation" />
 	{:else}
 		<PhDotOutline role="presentation" />
 	{/if}
-{/snippet} -->
+{/snippet}
 
 {#snippet treeItems(items: (typeof tree)['children'], depth: number = 0)}
 	{#each items as item (item.id)}
 		<li {...item.attrs} class="cursor-pointer outline-none first:mt-0">
-			<div class="group relative transition-colors" style="padding-left: {depth * 1}rem">
-				<div class="absolute inset-0 z-0">
+			<div class="relative transition-colors" style="padding-left: {depth * 1}rem">
+				<div class="group absolute inset-0 z-0">
 					{#if item.selected}
 						<div class="absolute inset-0 rounded-md bg-surface-document"></div>
 					{/if}
 					<div class="absolute inset-0 rounded-md group-hover:bg-surface-2"></div>
 				</div>
 				<div class="relative z-10 flex items-center gap-1 px-3 py-2 text-sm">
-					<!-- <div class="size-4">{@render treeItemIcon(item)}</div> -->
-					<div class="size-4"></div>
+					<div class="size-4">{@render treeItemIcon(item)}</div>
 					<span class="truncate">
 						{item.item.title}
 					</span>
 				</div>
 			</div>
 			{#if item.children?.length && item.expanded}
-				<div {...tree.group} class="list-none p-0" transition:fade>
+				<!-- <div {...tree.group} class="list-none p-0" transition:fade>
 					{@render treeItems(item.children, depth + 1)}
-				</div>
+				</div> -->
 			{/if}
 		</li>
 	{/each}
