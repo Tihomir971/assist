@@ -4,6 +4,7 @@
 	import PhCaretRight from '~icons/ph/caret-right';
 	import PhCaretDown from '~icons/ph/caret-down';
 	import PhDotOutline from '~icons/ph/dot-outline';
+
 	import { fade } from 'svelte/transition';
 	import type { TreeItemTitle } from './types';
 	import { findParent } from '$lib/scripts/tree';
@@ -16,6 +17,7 @@
 	let { treeData, onSelectedChange }: Props = $props();
 
 	const selected = page.url.searchParams.get('cat');
+
 	const tree = new Tree({
 		items: treeData,
 		expanded: findParent(treeData, selected),
