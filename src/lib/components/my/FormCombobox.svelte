@@ -1,89 +1,132 @@
 <script lang="ts">
-	import PhCheck from '~icons/ph/check';
-	import PhCaretUpDown from '~icons/ph/caret-up-down';
-
-	import { tick } from 'svelte';
-	import { cn } from '$lib/utils.js';
-
-	import { Button } from '$lib/components/ui/button/index.js';
+	import * as Form from '$lib/components/ui/form/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import * as Command from '$lib/components/ui/command/index.js';
+	import { cn } from '$lib/utils.js';
+	import { buttonVariants } from '$lib/components/ui/button/index.js';
 
-	const frameworks = [
-		{
-			value: 'sveltekit',
-			label: 'SvelteKit'
-		},
-		{
-			value: 'next.js',
-			label: 'Next.js'
-		},
-		{
-			value: 'nuxt.js',
-			label: 'Nuxt.js'
-		},
-		{
-			value: 'remix',
-			label: 'Remix'
-		},
-		{
-			value: 'astro',
-			label: 'Astro'
-		}
-	];
+	import { useId } from 'bits-ui';
+	import { tick } from 'svelte';
+	//Icons
+	import PhCaretUpDown from '~icons/ph/caret-up-down';
+	import PhCheck from '~icons/ph/check';
+	import type { SuperForm } from 'sveltekit-superforms';
+
+	interface Props {
+		form: SuperForm<any>; // SuperForm instance
+		name: string;
+		arrayIndex?: number; // Optional index for array fields
+		field?: string; // Optional field name for array items
+		label?: string;
+		description?: string;
+		placeholder?: string;
+		searchPlaceholder?: string;
+		// Accepts both string and number values, but converts numbers to strings for HTML form compatibility
+		options: Array<{ label: string; value: string | number }>;
+		width?: string;
+	}
+
+	const {
+		form,
+		name,
+		arrayIndex,
+		field,
+		label = '',
+		description,
+		placeholder = 'Select option...',
+		searchPlaceholder = 'Search...',
+		options,
+		width = 'w-full'
+	}: Props = $props();
 
 	let open = $state(false);
-	let value = $state('');
-	let triggerRef = $state<HTMLButtonElement>(null!);
+	const triggerId = useId();
 
-	const selectedValue = $derived(frameworks.find((f) => f.value === value)?.label);
-
-	// We want to refocus the trigger button when the user selects
-	// an item from the list so users can continue navigating the
-	// rest of the form with the keyboard.
-	function closeAndFocusTrigger() {
+	function closeAndFocusTrigger(triggerId: string) {
 		open = false;
 		tick().then(() => {
-			triggerRef.focus();
+			document.getElementById(triggerId)?.focus();
 		});
 	}
+	const { form: formData } = form;
+
+	// Handle both array and non-array fields
+	const selectedOption = $derived(
+		options.find((f) =>
+			arrayIndex !== undefined && field
+				? f.value === $formData[name][arrayIndex][field]
+				: f.value === $formData[name]
+		)
+	);
 </script>
 
-<Popover.Root bind:open>
-	<Popover.Trigger bind:ref={triggerRef}>
-		{#snippet child({ props })}
-			<Button
-				variant="outline"
-				class="w-[200px] justify-between"
-				{...props}
-				role="combobox"
-				aria-expanded={open}
-			>
-				{selectedValue || 'Select a framework...'}
-				<PhCaretUpDown class="opacity-50" />
-			</Button>
-		{/snippet}
-	</Popover.Trigger>
-	<Popover.Content class="w-[200px] p-0">
-		<Command.Root>
-			<Command.Input placeholder="Search framework..." />
-			<Command.List>
-				<Command.Empty>No framework found.</Command.Empty>
-				<Command.Group>
-					{#each frameworks as framework}
+<Form.Field {form} {name} class="flex flex-col">
+	<Popover.Root bind:open>
+		<Form.Control id={triggerId}>
+			{#snippet children({ props })}
+				{#if label}
+					<Form.Label>{label}</Form.Label>
+				{/if}
+				<Popover.Trigger
+					class={cn(
+						buttonVariants({ variant: 'outline' }),
+						width,
+						'justify-between',
+						!$formData[name] && 'text-muted-foreground'
+					)}
+					role="combobox"
+					{...props}
+				>
+					{selectedOption?.label ?? placeholder}
+					<PhCaretUpDown class="opacity-50" />
+				</Popover.Trigger>
+				<input
+					hidden
+					value={arrayIndex !== undefined && field
+						? $formData[name][arrayIndex][field]
+						: $formData[name]}
+					name={props.name}
+				/>
+			{/snippet}
+		</Form.Control>
+		<Popover.Content class={cn(width, 'p-0')}>
+			<Command.Root>
+				<Command.Input autofocus placeholder={searchPlaceholder} class="h-9" />
+				<Command.Empty>No option found.</Command.Empty>
+				<Command.Group class="max-h-80 overflow-y-auto">
+					{#each options as option}
 						<Command.Item
-							value={framework.value}
+							value={option.label}
 							onSelect={() => {
-								value = framework.value;
-								closeAndFocusTrigger();
+								if (arrayIndex !== undefined && field) {
+									// Update array field
+									$formData[name][arrayIndex][field] = option.value;
+								} else {
+									// Update regular field
+									$formData[name] = option.value;
+								}
+								closeAndFocusTrigger(triggerId);
 							}}
 						>
-							<PhCheck class={cn(value !== framework.value && 'text-transparent')} />
-							{framework.label}
+							{option.label}
+							<PhCheck
+								class={cn(
+									'ml-auto',
+									(arrayIndex !== undefined && field
+										? option.value !== $formData[name][arrayIndex][field]
+										: option.value !== $formData[name]) && 'text-transparent'
+								)}
+							/>
 						</Command.Item>
 					{/each}
 				</Command.Group>
-			</Command.List>
-		</Command.Root>
-	</Popover.Content>
-</Popover.Root>
+			</Command.Root>
+		</Popover.Content>
+	</Popover.Root>
+	{#if description}
+		<Form.Description>
+			{description}
+		</Form.Description>
+	{/if}
+	<Form.FieldErrors />
+</Form.Field>

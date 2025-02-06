@@ -23,7 +23,7 @@
 	// Icons
 	import PhPackage from '~icons/ph/package';
 	import FormSelect from '$lib/components/my/FormSelect.svelte';
-	import ComboboxField from '$lib/components/my/ComboboxField.svelte';
+	import ComboboxField from '$lib/components/my/FormCombobox.svelte';
 
 	let { data } = $props();
 

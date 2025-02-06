@@ -21,7 +21,7 @@
 	import ReplenishCard from './replenish.svelte';
 	import StorageOnHandCard from './storageonhand.svelte';
 	import { crudMProductSchema } from './schema';
-	import ComboboxField from '$lib/components/my/ComboboxField.svelte';
+	import FormCombobox from '$lib/components/my/FormCombobox.svelte';
 
 	let { data } = $props();
 
@@ -219,7 +219,7 @@
 							</Form.Field>
 						</div>
 
-						<ComboboxField
+						<FormCombobox
 							form={productForm}
 							name="m_product_category_id"
 							label="Category"

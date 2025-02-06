@@ -1,20 +1,13 @@
 <script lang="ts">
 	import * as Sheet from '$lib/components/ui/sheet';
-	import { Button } from '$lib/components/ui/button';
-	import type {
-		CrudMProductPoRowSchema,
-		MProductPoInsertSchema,
-		МProductPoInsertSchemaАrray
-	} from './schema';
+	import type { МProductPoInsertSchemaАrray } from './schema';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import * as Select from '$lib/components/ui/select/index.js';
 	import { Label } from '$lib/components/ui/label';
 	import SuperDebug, { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { toast } from 'svelte-sonner';
 	import { invalidate } from '$app/navigation';
-	import FormSelect from '$lib/components/my/FormSelect.svelte';
-	import ComboboxField from '$lib/components/my/ComboboxField.svelte';
+	import ComboboxField from '$lib/components/my/FormCombobox.svelte';
 
 	type Props = {
 		formValidated: SuperValidated<МProductPoInsertSchemaАrray>;
@@ -50,7 +43,7 @@
 		}
 	});
 
-	const { form: formData, enhance: enhanceVendor, tainted, isTainted } = form;
+	const { form: formData, enhance: enhanceVendor } = form;
 
 	if (!selectedPurchaseId) {
 		$formData.purchases.push({
@@ -59,12 +52,6 @@
 			vendorproductno: ''
 		});
 	}
-	let partnersWithStringValues = $derived(
-		partners.map((partner) => ({
-			value: partner.value.toString(),
-			label: partner.label
-		}))
-	);
 
 	let selectedVendor = $derived(
 		$formData.purchases.findIndex(
@@ -72,12 +59,6 @@
 		)
 	);
 	let currentPurchase = $derived(selectedVendor >= 0 ? $formData.purchases[selectedVendor] : null);
-
-	const triggerContent = $derived(
-		currentPurchase
-			? (partners.find((p) => p.value === currentPurchase.c_bpartner_id)?.label ?? 'Select partner')
-			: 'Select partner'
-	);
 </script>
 
 <Sheet.Root bind:open={isSheetOpen}>
