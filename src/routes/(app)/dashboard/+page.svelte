@@ -1,6 +1,5 @@
 <script lang="ts">
 	import FormCombobox from '$lib/components/my/FormCombobox.svelte';
-	import ComboboxDemo from '$lib/components/bits/combobox-demo.svelte';
 
 	let { data } = $props();
 	let { session, profile } = $derived(data);
@@ -21,4 +20,3 @@
 {/if}
 
 <FormCombobox />
-<ComboboxDemo />

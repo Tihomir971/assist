@@ -2,6 +2,7 @@
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { browser } from '$app/environment';
 	import { page } from '$app/state';
+	const version = import.meta.env.PACKAGE_VERSION;
 	import PhLayout from '~icons/ph/layout';
 	import PhRepeat from '~icons/ph/repeat';
 	import PhTag from '~icons/ph/tag';
@@ -88,4 +89,5 @@
 			<Tooltip.Content side="right">Import Excel</Tooltip.Content>
 		</Tooltip.Root>
 	</Tooltip.Provider>
+	<div class="mt-auto px-2 pb-2 text-center text-xs text-muted-foreground">v{version}</div>
 </nav>

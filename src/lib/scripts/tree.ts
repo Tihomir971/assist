@@ -1,12 +1,15 @@
-import type { TreeItemTitle } from '$lib/components/melt/tree/types';
+import type { TreeItem } from 'melt/builders';
 
-interface DataTableRow {
+interface TableTreeItem {
 	id: number;
 	title: string;
 	parent_id: number | null;
 }
+type CustomTreeItem = TreeItem<{
+	title: string;
+}>;
 
-export function arrayToTreeString(items: Array<DataTableRow> | null | undefined) {
+export function arrayToTreeString(items: Array<TableTreeItem> | null | undefined) {
 	if (!items) return [];
 	const itemMap = new Map();
 
@@ -22,7 +25,7 @@ export function arrayToTreeString(items: Array<DataTableRow> | null | undefined)
 	});
 
 	// Create the tree structure
-	const result: Array<TreeItemTitle> = [];
+	const result: Array<CustomTreeItem> = [];
 	stringItems.forEach((item) => {
 		if (item.parent_id === null) {
 			const newItem = itemMap.get(item.id);
@@ -74,11 +77,11 @@ export function findChildren(categories: Category[], id: number): number[] {
 	return result;
 }
 
-export function findParent(categories: TreeItemTitle[], id: string | null): string[] {
+export function findParent(categories: CustomTreeItem[], id: string | null): string[] {
 	const result: string[] = [];
 	if (!id) return result;
 
-	function findParentRecursive(items: TreeItemTitle[], targetId: string, path: string[]): boolean {
+	function findParentRecursive(items: CustomTreeItem[], targetId: string, path: string[]): boolean {
 		for (const item of items) {
 			if (item.id === targetId) {
 				result.unshift(...path, item.id);
