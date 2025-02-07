@@ -15,6 +15,8 @@
 	import { handleFileUpload, loadSheetData } from './utils/xlsx-handlers';
 	import { processExcelData, modifyPrice } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
+	import FormCombobox from '$lib/components/my/FormCombobox.svelte';
+	import Combobox from '$lib/components/my/Combobox.svelte';
 
 	let { data } = $props();
 	let { supabase } = $derived(data);
@@ -161,7 +163,7 @@
 			const { error: updateError } = await supabase
 				.from('m_product_po')
 				.update({ pricelist: 0 })
-				.eq('c_bpartner_id', selectedSupplier);
+				.eq('c_bpartner_id', Number(selectedSupplier));
 
 			if (updateError) {
 				alert('Error setting prices to zero. Please try again.');
@@ -174,7 +176,7 @@
 			const result = await importProducts(
 				supabase,
 				excelData,
-				selectedSupplier,
+				Number(selectedSupplier),
 				priceModificationPercentage,
 				(rows) => (importedRows = rows)
 			);
@@ -182,9 +184,9 @@
 			productsNotUpdated = result.productsNotUpdated;
 			showNotUpdatedProducts = true;
 
-			const selectedSupplierObj = data.c_bpartner.find((s) => s.id === selectedSupplier);
+			const selectedSupplierObj = data.c_bpartner.find((s) => s.value === selectedSupplier);
 			alert(
-				`${result.importedRows} products updated and ${result.insertedRows} products inserted successfully for supplier: ${selectedSupplierObj?.name} (ID: ${selectedSupplierObj?.id})!`
+				`${result.importedRows} products updated and ${result.insertedRows} products inserted successfully for supplier: ${selectedSupplierObj?.label} (ID: ${selectedSupplierObj?.value})!`
 			);
 		} catch (error) {
 			console.error('Error importing products:', error);
@@ -201,7 +203,7 @@
 		}
 
 		try {
-			await addProduct(supabase, product, selectedSupplier, priceModificationPercentage);
+			await addProduct(supabase, product, Number(selectedSupplier), priceModificationPercentage);
 			alert('Product added successfully!');
 			// productsNotUpdated = productsNotUpdated.filter((p) => p.barcode !== product.barcode);
 		} catch (error) {
@@ -264,35 +266,26 @@
 		resetAll();
 	});
 
-	let selectedSupplier: number | undefined = $state(undefined);
-	const triggerSelectedSupplier = $derived(
-		data.c_bpartner.find((f) => f.id === selectedSupplier)?.name ?? 'Select Supplier'
-	);
+	let selectedSupplier: string | undefined = $state(undefined);
+	// const triggerSelectedSupplier = $derived(
+	// 	data.c_bpartner.find((f) => f.value === selectedSupplier)?.label ?? 'Select Supplier'
+	// );
 </script>
 
 <div class="mx-auto grid h-full grid-rows-[auto_1fr_auto] gap-4 p-2">
 	<h1 class="text-2xl font-bold">Product Data Upload</h1>
 	<div class="flex flex-col gap-4">
-		<div class="flex items-start justify-between gap-2">
-			<div class="grid w-full max-w-sm items-center gap-1.5">
+		<div class="grid grid-cols-3 items-start gap-2">
+			<div class="grid w-full gap-1.5">
 				<Label for="excel-file">Supplier</Label>
-				<Select.Root
-					type="single"
-					value={selectedSupplier?.toString()}
-					onValueChange={(v) => (selectedSupplier = parseInt(v))}
-				>
-					<Select.Trigger class="w-[180px]">
-						{triggerSelectedSupplier}
-					</Select.Trigger>
-					<Select.Content>
-						{#each data.c_bpartner as supplier}
-							<Select.Item value={supplier.id.toString()}>{supplier.name}</Select.Item>
-						{/each}
-					</Select.Content>
-				</Select.Root>
+				<Combobox
+					options={data.c_bpartner}
+					bind:value={selectedSupplier}
+					placeholder="Select Supplier"
+				/>
 			</div>
 
-			<div class="grid items-center gap-1.5">
+			<div class="grid w-full gap-1.5">
 				<Label for="excel-file">Excel File</Label>
 				<Input
 					id="excel-file"
@@ -315,7 +308,7 @@
 			{/if}
 
 			<div>
-				<div class="grid items-center gap-1.5">
+				<div class="grid w-full gap-1.5">
 					<Label for="priceModification">Price Modification (%):</Label>
 					<Input
 						type="number"
@@ -325,7 +318,7 @@
 						min="-100"
 						step="0.5"
 					/>
-					<p class="text-muted-foreground text-sm">
+					<p class="text-sm text-muted-foreground">
 						Enter a percentage to modify prices. Positive values increase prices, negative values
 						decrease prices.
 					</p>

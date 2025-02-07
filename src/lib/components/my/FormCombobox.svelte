@@ -1,16 +1,20 @@
 <script lang="ts">
+	import { tick } from 'svelte';
+
+	import { useId } from 'bits-ui';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import * as Command from '$lib/components/ui/command/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import { cn } from '$lib/utils.js';
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 
-	import { useId } from 'bits-ui';
-	import { tick } from 'svelte';
+	import type { SuperForm } from 'sveltekit-superforms';
+
 	//Icons
+	import X from 'lucide-svelte/icons/x';
 	import PhCaretUpDown from '~icons/ph/caret-up-down';
 	import PhCheck from '~icons/ph/check';
-	import type { SuperForm } from 'sveltekit-superforms';
 
 	interface Props {
 		form: SuperForm<any>; // SuperForm instance
@@ -67,19 +71,29 @@
 				{#if label}
 					<Form.Label>{label}</Form.Label>
 				{/if}
-				<Popover.Trigger
-					class={cn(
-						buttonVariants({ variant: 'outline' }),
-						width,
-						'justify-between',
-						!$formData[name] && 'text-muted-foreground'
-					)}
-					role="combobox"
-					{...props}
-				>
-					{selectedOption?.label ?? placeholder}
-					<PhCaretUpDown class="opacity-50" />
-				</Popover.Trigger>
+				<div class="flex items-center gap-1">
+					<Popover.Trigger
+						class={cn(
+							buttonVariants({ variant: 'outline' }),
+							width,
+							'justify-between',
+							!$formData[name] && 'text-muted-foreground'
+						)}
+						role="combobox"
+						{...props}
+					>
+						{selectedOption?.label ?? placeholder}
+						<PhCaretUpDown class="opacity-50" />
+					</Popover.Trigger>
+					<Button
+						variant="outline"
+						size="icon"
+						onclick={() =>
+							arrayIndex !== undefined && field
+								? ($formData[name][arrayIndex][field] = undefined)
+								: ($formData[name] = undefined)}><X /></Button
+					>
+				</div>
 				<input
 					hidden
 					value={arrayIndex !== undefined && field

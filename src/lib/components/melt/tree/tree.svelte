@@ -7,22 +7,26 @@
 	import PhCaretRight from '~icons/ph/caret-right';
 	import PhCaretDown from '~icons/ph/caret-down';
 	import PhDotOutline from '~icons/ph/dot-outline';
+	import type { SvelteSet } from 'svelte/reactivity';
+	import type { MaybeGetter } from 'melt';
 
 	type CustomTreeItem = TreeItem<{
 		title: string;
 	}>;
 
 	type Props = {
-		treeData: CustomTreeItem[];
+		items: CustomTreeItem[];
+		selected: MaybeGetter<string | undefined>;
+		expanded?: SvelteSet<string> | MaybeGetter<Iterable<string> | undefined>;
 		onSelectedChange: (value: string | undefined) => void;
 	};
-	let { treeData, onSelectedChange }: Props = $props();
+	let { items, selected, expanded, onSelectedChange }: Props = $props();
 
-	const selected = page.url.searchParams.get('cat');
+	// const selected = page.url.searchParams.get('cat');
 
 	const tree = new Tree({
-		items: treeData,
-		expanded: findParent(treeData, selected),
+		items: items,
+		expanded: findParent(items, selected),
 		expandOnClick: true,
 		selected: selected ?? undefined,
 		onSelectedChange

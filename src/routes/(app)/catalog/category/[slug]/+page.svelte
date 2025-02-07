@@ -3,27 +3,24 @@
 	import { invalidate } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
-	import { Field, Control, Label, Description, FieldErrors } from 'formsnap';
 	// Superforms
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { crudMProductCategorySchema } from './schema';
 
 	import { formatDateTime } from '$lib/style/locale';
 	import { toast } from 'svelte-sonner';
+	// Components
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
-	// import * as Select from '$lib/components/ui/select/index.js';
-	// import { Label } from '$lib/components/ui/label/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-
+	import ComboboxField from '$lib/components/my/FormCombobox.svelte';
 	import DrawerCategoryMap from './drawer-category-map.svelte';
+
 	// Icons
 	import PhPackage from '~icons/ph/package';
-	import FormSelect from '$lib/components/my/FormSelect.svelte';
-	import ComboboxField from '$lib/components/my/FormCombobox.svelte';
 
 	let { data } = $props();
 

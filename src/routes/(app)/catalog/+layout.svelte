@@ -26,6 +26,7 @@
 	let treeData = $derived(arrayToTreeString(data.categories));
 
 	let selectedId: string | undefined = $state(page.url.searchParams.get('cat') || undefined);
+	const selected = page.url.searchParams.get('cat') ?? undefined;
 
 	let showReportDialog = $state(false);
 
@@ -111,7 +112,8 @@
 		<Card.Content class="flex-1 overflow-auto p-1">
 			<!-- <TreeView {treeItems} expanded={data.expanded} bind:selected /> -->
 			<Tree
-				{treeData}
+				items={treeData}
+				{selected}
 				onSelectedChange={(v) => {
 					selectedId = v;
 				}}
