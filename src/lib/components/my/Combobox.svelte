@@ -36,16 +36,27 @@
 	<Popover.Root bind:open>
 		<Popover.Trigger bind:ref={triggerRef}>
 			{#snippet child({ props })}
-				<Button
-					variant="outline"
-					class="w-full justify-between"
-					{...props}
-					role="combobox"
-					aria-expanded={open}
-				>
-					{selectedValue || 'Select a option...'}
-					<ChevronsUpDown class="opacity-50" />
-				</Button>
+				<div class="flex w-full">
+					<Button
+						variant="outline"
+						class="w-full justify-between rounded-r-none"
+						{...props}
+						role="combobox"
+						aria-expanded={open}
+					>
+						{selectedValue || 'Select a option...'}
+						<ChevronsUpDown class="opacity-50" />
+					</Button>
+					<Button
+						variant="outline"
+						size="icon"
+						disabled={!value}
+						class="rounded-l-none"
+						onclick={() => (value = undefined)}
+					>
+						<X />
+					</Button>
+				</div>
 			{/snippet}
 		</Popover.Trigger>
 		<Popover.Content class="w-full p-0">
@@ -71,5 +82,4 @@
 			</Command.Root>
 		</Popover.Content>
 	</Popover.Root>
-	<X />
 </div>

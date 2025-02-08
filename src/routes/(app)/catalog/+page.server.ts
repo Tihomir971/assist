@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from './$types';
-import type { SupabaseTable } from '$lib/types/supabase.types';
+import type { Tables } from '$lib/types/supabase/database.types.helper.js';
 import type { BSProduct } from '../data/types';
 import { getChannelMap } from '$lib/services/channel-map';
 import { fail, superValidate } from 'sveltekit-superforms';
@@ -118,7 +118,7 @@ async function fetchProducts(
 
 async function getPriceLists(
 	supabase: SupabaseClient
-): Promise<Partial<SupabaseTable<'m_pricelist_version'>['Row']>[] | []> {
+): Promise<Partial<Tables<'m_pricelist_version'>>[] | []> {
 	const nowBelgrade = DateTime.now().setZone('Europe/Belgrade');
 	const targetDate = nowBelgrade.toFormat("yyyy-MM-dd'T'HH:mm:ssZZ");
 
@@ -138,7 +138,7 @@ function filterAndFlattenProducts(
 	selectedReport: string | null,
 	activeWarehouse: number,
 	checkedVat: boolean,
-	activePricelists: Partial<SupabaseTable<'m_pricelist_version'>['Row']>[] | []
+	activePricelists: Partial<Tables<'m_pricelist_version'>>[] | []
 ): FlattenedProduct[] {
 	let filteredProducts: Product[];
 	if (selectedReport === 'relocation') {
@@ -204,7 +204,7 @@ function flattenProduct(
 	product: Product,
 	activeWarehouse: number,
 	checkedVat: boolean,
-	activePricelists: Partial<SupabaseTable<'m_pricelist_version'>['Row']>[] | []
+	activePricelists: Partial<Tables<'m_pricelist_version'>>[] | []
 ): FlattenedProduct {
 	if (product.id === 185) {
 		console.log('product', product);

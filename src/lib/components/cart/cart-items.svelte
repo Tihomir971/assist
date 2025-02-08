@@ -1,16 +1,19 @@
 <script lang="ts">
-	import PhMicrosoftExcelLogo from '~icons/ph/microsoft-excel-logo';
 	import type { SupabaseClient } from '@supabase/supabase-js';
+	// Utils
+	import { getCartContext } from './ctx.svelte';
+	import { processExport } from './export-utils';
+	// Components
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import PhMinus from '~icons/ph/minus';
-	import PhPlus from '~icons/ph/plus';
-	import PhTrash from '~icons/ph/trash';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import type { Database } from '$lib/types/supabase';
-	import { getCartContext } from './ctx.svelte';
-	import { processExport } from './export-utils';
+	import type { Database } from '$lib/types/supabase/database.types';
+	// Icons
+	import PhPlus from '~icons/ph/plus';
+	import PhMinus from '~icons/ph/minus';
+	import PhTrash from '~icons/ph/trash';
+	import PhMicrosoftExcelLogo from '~icons/ph/microsoft-excel-logo';
 
 	interface Props {
 		supabase: SupabaseClient<Database>;

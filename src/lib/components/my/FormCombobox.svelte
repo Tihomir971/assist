@@ -71,12 +71,12 @@
 				{#if label}
 					<Form.Label>{label}</Form.Label>
 				{/if}
-				<div class="flex items-center gap-1">
+				<div class="flex w-full items-center">
 					<Popover.Trigger
 						class={cn(
 							buttonVariants({ variant: 'outline' }),
 							width,
-							'justify-between',
+							'justify-between rounded-r-none',
 							!$formData[name] && 'text-muted-foreground'
 						)}
 						role="combobox"
@@ -88,11 +88,16 @@
 					<Button
 						variant="outline"
 						size="icon"
-						onclick={() =>
+						disabled={!$formData[name]}
+						class="rounded-l-none"
+						onclick={() => {
 							arrayIndex !== undefined && field
-								? ($formData[name][arrayIndex][field] = undefined)
-								: ($formData[name] = undefined)}><X /></Button
+								? ($formData[name][arrayIndex][field] = null)
+								: ($formData[name] = null);
+						}}
 					>
+						<X />
+					</Button>
 				</div>
 				<input
 					hidden

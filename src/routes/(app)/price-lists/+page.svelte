@@ -1,24 +1,21 @@
 <script lang="ts">
-	import { DateTime } from 'luxon';
-	import * as TableShow from '$lib/components/ui/table/index.js';
-	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
-	import { Input } from '$lib/components/ui/input';
-	import { Button } from '$lib/components/ui/button';
-	import {
-		Dialog,
-		DialogContent,
-		DialogHeader,
-		DialogTitle,
-		DialogFooter
-	} from '$lib/components/ui/dialog';
-	import type { SupabaseTable } from '$lib/types/supabase.types.js';
-	import type { SupabaseClient } from '@supabase/supabase-js';
+	// Libs
 	import { writable } from 'svelte/store';
+	import { DateTime } from 'luxon';
+	// Types
+	import type { Tables } from '$lib/types/supabase/database.types.helper.js';
+	import type { SupabaseClient } from '@supabase/supabase-js';
+	// Components
+	import * as TableShow from '$lib/components/ui/table/index.js';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Dialog from '$lib/components/ui/dialog/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 
 	let { data } = $props();
 
-	let pricelistVersions = $state<SupabaseTable<'m_pricelist_version'>['Row'][]>([]);
-	let productPrices = $state<SupabaseTable<'m_productprice'>['Row'][]>([]);
+	let pricelistVersions = $state<Tables<'m_pricelist_version'>[]>([]);
+	let productPrices = $state<Tables<'m_productprice'>[]>([]);
 
 	let selectedPricelistId = $state<number | null>(null);
 	let selectedVersionId = $state<number | null>(null);
@@ -54,7 +51,7 @@
 			.eq('m_pricelist_id', id);
 		if (data) {
 			console.log('data', data);
-			pricelistVersions = data as SupabaseTable<'m_pricelist_version'>['Row'][];
+			pricelistVersions = data as Tables<'m_pricelist_version'>[];
 			console.log('pricelistVersions', pricelistVersions);
 		}
 		selectedPricelistId = id;
@@ -65,13 +62,13 @@
 		selectedVersionId = id;
 	}
 
-	function updatePrice(price: SupabaseTable<'m_productprice'>['Row'], supabase: SupabaseClient) {
+	function updatePrice(price: Tables<'m_productprice'>, supabase: SupabaseClient) {
 		console.log('price', price);
 		// Implement the update logic here
 	}
 
 	function updateVersionDate(
-		version: SupabaseTable<'m_pricelist_version'>['Row'],
+		version: Tables<'m_pricelist_version'>,
 		field: 'validfrom' | 'validto',
 		newDate: string
 	) {
@@ -82,7 +79,7 @@
 	function addNewVersion() {
 		if (selectedPricelistId) {
 			const newId = Math.max(...pricelistVersions.map((v) => v.id), 0) + 1;
-			const newVersionObj: SupabaseTable<'m_pricelist_version'>['Row'] = {
+			const newVersionObj: Tables<'m_pricelist_version'> = {
 				id: newId,
 				m_pricelist_id: selectedPricelistId,
 				name: newVersion.name,
@@ -110,7 +107,7 @@
 	function addNewProduct() {
 		if (selectedVersionId) {
 			const newId = Math.max(...productPrices.map((p) => p.id), 0) + 1;
-			const newProductObj: SupabaseTable<'m_productprice'>['Row'] = {
+			const newProductObj: Tables<'m_productprice'> = {
 				id: newId,
 				m_pricelist_version_id: selectedVersionId,
 				m_product_id: 0, // You might want to set this to a real product ID
@@ -133,11 +130,11 @@
 <div class="mx-auto w-full p-4">
 	<h1 class="mb-4 text-2xl font-bold">Pricelist Management</h1>
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-[1fr_2fr_2fr]">
-		<Card>
-			<CardHeader>
-				<CardTitle>Pricelists</CardTitle>
-			</CardHeader>
-			<CardContent>
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>Pricelists</Card.Title>
+			</Card.Header>
+			<Card.Content>
 				<TableShow.Root>
 					<TableShow.Header>
 						<TableShow.Row>
@@ -148,8 +145,8 @@
 						{#each data.pricelists as pricelist}
 							<TableShow.Row
 								class={selectedPricelistId === pricelist.id
-									? 'bg-muted cursor-pointer'
-									: 'hover:bg-muted cursor-pointer'}
+									? 'cursor-pointer bg-muted'
+									: 'cursor-pointer hover:bg-muted'}
 								onclick={() => selectPricelist(pricelist.id, data.supabase)}
 							>
 								<TableShow.Cell>{pricelist.name}</TableShow.Cell>
@@ -157,14 +154,14 @@
 						{/each}
 					</TableShow.Body>
 				</TableShow.Root>
-			</CardContent>
-		</Card>
+			</Card.Content>
+		</Card.Root>
 
-		<Card>
-			<CardHeader>
-				<CardTitle>Pricelist Versions</CardTitle>
-			</CardHeader>
-			<CardContent>
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>Pricelist Versions</Card.Title>
+			</Card.Header>
+			<Card.Content>
 				{#if pricelistVersions.length > 0}
 					<TableShow.Table>
 						<TableShow.Header>
@@ -179,8 +176,8 @@
 							{#each pricelistVersions as version}
 								<TableShow.Row
 									class={selectedVersionId === version.id
-										? 'bg-muted cursor-pointer'
-										: 'hover:bg-muted cursor-pointer'}
+										? 'cursor-pointer bg-muted'
+										: 'cursor-pointer hover:bg-muted'}
 									onclick={() => selectVersion(version.id)}
 								>
 									<TableShow.Cell>{version.name}</TableShow.Cell>
@@ -213,14 +210,14 @@
 				{:else}
 					<p class="text-muted-foreground">Select a pricelist to view versions</p>
 				{/if}
-			</CardContent>
-		</Card>
+			</Card.Content>
+		</Card.Root>
 
-		<Card>
-			<CardHeader>
-				<CardTitle>Product Prices</CardTitle>
-			</CardHeader>
-			<CardContent>
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>Product Prices</Card.Title>
+			</Card.Header>
+			<Card.Content>
 				{#if selectedVersionId}
 					<TableShow.Table>
 						<TableShow.Header>
@@ -250,38 +247,38 @@
 				{:else}
 					<p class="text-muted-foreground">Select a version to view product prices</p>
 				{/if}
-			</CardContent>
-		</Card>
+			</Card.Content>
+		</Card.Root>
 	</div>
 </div>
 
-<Dialog bind:open={showNewVersionDialog}>
-	<DialogContent>
-		<DialogHeader>
-			<DialogTitle>Add New Version</DialogTitle>
-		</DialogHeader>
+<Dialog.Root bind:open={showNewVersionDialog}>
+	<Dialog.Content>
+		<Dialog.Header>
+			<Dialog.Title>Add New Version</Dialog.Title>
+		</Dialog.Header>
 		<div class="grid gap-4 py-4">
 			<Input placeholder="Version Name" bind:value={newVersion.name} />
 			<input type="text" bind:value={newVersion.fromDate} placeholder="DD/MM/YYYY" />
 			<input type="text" bind:value={newVersion.toDate} placeholder="DD/MM/YYYY" />
 		</div>
-		<DialogFooter>
+		<Dialog.Footer>
 			<Button onclick={addNewVersion}>Add Version</Button>
-		</DialogFooter>
-	</DialogContent>
-</Dialog>
+		</Dialog.Footer>
+	</Dialog.Content>
+</Dialog.Root>
 
-<Dialog bind:open={showNewProductDialog}>
-	<DialogContent>
-		<DialogHeader>
-			<DialogTitle>Add New Product</DialogTitle>
-		</DialogHeader>
+<Dialog.Root bind:open={showNewProductDialog}>
+	<Dialog.Content>
+		<Dialog.Header>
+			<Dialog.Title>Add New Product</Dialog.Title>
+		</Dialog.Header>
 		<div class="grid gap-4 py-4">
 			<Input placeholder="Product ID" bind:value={newProduct.productName} />
 			<Input type="number" placeholder="Price" bind:value={newProduct.price} />
 		</div>
-		<DialogFooter>
+		<Dialog.Footer>
 			<Button onclick={addNewProduct}>Add Product</Button>
-		</DialogFooter>
-	</DialogContent>
-</Dialog>
+		</Dialog.Footer>
+	</Dialog.Content>
+</Dialog.Root>

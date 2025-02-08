@@ -1,11 +1,11 @@
-import type { Database, SupabaseTable } from '$lib/types/supabase.types';
-import type { SupabaseClient } from '@supabase/supabase-js';
-type Product = Partial<SupabaseTable<'m_product'>['Row']>;
+import type { Database } from '$lib/types/supabase/database.types.js';
+import type { Tables } from '$lib/types/supabase/database.types.helper.js';
 
+import type { SupabaseClient } from '@supabase/supabase-js';
+type Product = Partial<Tables<'m_product'>>;
 // Get product details
 export const getProduct = async (supabase: SupabaseClient<Database>, id: number) => {
 	const { data: product } = await supabase.from('m_product').select('*').eq('id', id).maybeSingle();
-	/* ', m_product_category_id' */
 
 	return product;
 };
@@ -31,7 +31,7 @@ export const delProduct = async (supabase: SupabaseClient<Database>, productId: 
 // Add Replanish for product
 export const addReplenishes = async (
 	supabase: SupabaseClient<Database>,
-	data: { m_product_id: number; m_warehouse_id: number } & Partial<SupabaseTable<'m_replenish'>>
+	data: { m_product_id: number; m_warehouse_id: number } & Partial<Tables<'m_replenish'>>
 ) => {
 	const { error: addReplenishesError } = await supabase.from('m_replenish').insert(data);
 	return { error: addReplenishesError };
@@ -41,7 +41,7 @@ export const addReplenishes = async (
 export const getReplenishes = async (supabase: SupabaseClient<Database>, id: number) => {
 	const { data: replenishes } = await supabase
 		.from('m_replenish')
-		.select()
+		.select('*')
 		.order('m_warehouse_id')
 		.eq('m_product_id', id);
 	return replenishes;
@@ -63,7 +63,7 @@ export const getProductPurchasing = async (
 export const addProductPurchasing = async (
 	supabase: SupabaseClient<Database>,
 	data: { c_bpartner_id: number; m_product_id: number; vendorproductno: string } & Partial<
-		SupabaseTable<'m_product_po'>['Row']
+		Tables<'m_product_po'>
 	>
 ) => {
 	const { error: productPurchasingError } = await supabase.from('m_product_po').insert(data);

@@ -1,6 +1,5 @@
 import { error, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import type { SupabaseTable } from '$lib/types/supabase.types';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const { supabase } = locals;
@@ -25,7 +24,7 @@ export const actions = {
 		if (!name) {
 			return fail(400, { name, missing: true });
 		}
-		const pricelistData: SupabaseTable<'m_pricelist'>['Insert'] = {
+		const pricelistData = {
 			name: name,
 			c_currency_id: 2
 		};
