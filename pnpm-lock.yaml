@@ -36,8 +36,8 @@ importers:
         specifier: ^3.5.0
         version: 3.5.0
       melt:
-        specifier: ^0.2.2
-        version: 0.2.2(svelte@5.19.9)
+        specifier: ^0.11.0
+        version: 0.11.0(@floating-ui/dom@1.6.13)(svelte@5.19.9)
       tailwindcss:
         specifier: 4.0.5
         version: 4.0.5
@@ -1944,10 +1944,11 @@ packages:
   magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
 
-  melt@0.2.2:
-    resolution: {integrity: sha512-Q8k2sMX54LT4c+HVBQ7vzdViqtgIRBEOJif79CKoqh2KCImKSB0SbZuXm/JMBeMIBEaT4I9EHwsvYOzn2EGkpw==}
+  melt@0.11.0:
+    resolution: {integrity: sha512-OrQiA/sm0zL7+uDclmTK0jODs6KUQNIC6Jk7y7O/DRoruXlRnrvILbOOeDnrUq2C0ngI7XMsITrzu3CtJAdG4w==}
     peerDependencies:
-      svelte: ^5.0.0-next.260
+      '@floating-ui/dom': ^1.6.0
+      svelte: ^5.0.0
 
   memoize-weak@1.0.2:
     resolution: {integrity: sha512-gj39xkrjEw7nCn4nJ1M5ms6+MyMlyiGmttzsqAUsAKn6bYKwuTHh/AO3cKPF8IBrTIYTxb0wWXFs3E//Y8VoWQ==}
@@ -2343,11 +2344,6 @@ packages:
 
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
-
-  runed@0.15.4:
-    resolution: {integrity: sha512-kmbpstUd7v2FdlBM+MT78IyuOVd38tq/e7MHvVb0fnVCsPSPMD/m2Xh+wUhzg9qCJgxRjBbIKu68DlH/x5VXJA==}
-    peerDependencies:
-      svelte: ^5.0.0-next.1
 
   runed@0.23.2:
     resolution: {integrity: sha512-AhHCb5/B+YQW6ar1pzhGQOQy+byfjCH63ofuhrexSWwQKhC0EbQ60Z/wMYwETLo3ZubhwlNryxBt0seOMOrVFQ==}
@@ -4666,11 +4662,11 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  melt@0.2.2(svelte@5.19.9):
+  melt@0.11.0(@floating-ui/dom@1.6.13)(svelte@5.19.9):
     dependencies:
       '@floating-ui/dom': 1.6.13
       nanoid: 5.0.9
-      runed: 0.15.4(svelte@5.19.9)
+      runed: 0.23.2(svelte@5.19.9)
       svelte: 5.19.9
 
   memoize-weak@1.0.2: {}
@@ -4990,11 +4986,6 @@ snapshots:
   run-parallel@1.2.0:
     dependencies:
       queue-microtask: 1.2.3
-
-  runed@0.15.4(svelte@5.19.9):
-    dependencies:
-      esm-env: 1.2.2
-      svelte: 5.19.9
 
   runed@0.23.2(svelte@5.19.9):
     dependencies:
