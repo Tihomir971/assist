@@ -5,6 +5,7 @@ compatibility_flags = [ "nodejs_compat" ]
 compatibility_date = "2025-01-24"
 
 [vars]
+NODE_VERSION = "22.13"
 BIZNISOFT_API = "https://biznisoft-api.kalisi.rs"
 CONNECTOR_API_URL = "http://connector.kalisi.rs"
 PUBLIC_SUPABASE_URL = "https://supa.kalisi.rs"
@@ -14,6 +15,7 @@ SCRAPPER_API_URL = "http://scrapper.kalisi.rs"
 compatibility_date = "2024-11-11"
 
 [env.production.vars]
+NODE_VERSION = "22.13"
 BIZNISOFT_API = "https://biznisoft-api.kalisi.rs"
 CONNECTOR_API_URL = "http://connector.kalisi.rs"
 PUBLIC_SUPABASE_URL = "https://supa.kalisi.rs"
