@@ -9,7 +9,7 @@
 </script>
 
 <Table.Root class="table-auto">
-	<Table.Header class="bg-well-2 sticky top-0 z-10">
+	<Table.Header class="sticky top-0 z-10 bg-card">
 		<Table.Row>
 			{#each table.getHeaderGroups() as headerGroup}
 				{#each headerGroup.headers as header}
@@ -51,8 +51,8 @@
 			</Table.Row>
 		{/each}
 	</Table.Body>
-	<Table.Footer class="bg-well-2 text-muted-foreground sticky bottom-0 z-10">
-		<Table.Row>
+	<Table.Footer class="sticky bottom-0 z-10 bg-card text-muted-foreground">
+		<Table.Row class="border-none">
 			<Table.Cell colspan={table.getVisibleFlatColumns().length} class="h-12 py-0 text-center">
 				{table.getSelectedRowModel().rows.length} of {table.getRowCount()}
 				row(s) selected.

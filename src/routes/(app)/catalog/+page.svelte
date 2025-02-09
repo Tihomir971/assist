@@ -12,6 +12,7 @@
 	} from '$lib/components/walker-tx';
 
 	import * as Card from '$lib/components/ui/card/index.js';
+	import { Separator } from '$lib/components/ui/separator/index.js';
 
 	import { columnDefs } from './columns.svelte.js';
 
@@ -122,8 +123,8 @@
 	}
 </script>
 
-<Card.Root class="flex flex-1 flex-col overflow-hidden">
-	<Card.Header>
+<Card.Root class="flex flex-1 flex-col overflow-hidden border-0">
+	<Card.Header class="p-3">
 		<DataTableToolbar
 			{table}
 			bind:rowSelectionState
@@ -132,7 +133,8 @@
 			{addToCart}
 		/>
 	</Card.Header>
-	<Card.Content class="flex-1 overflow-auto p-4">
+	<Separator />
+	<Card.Content class="flex-1 overflow-auto pt-0">
 		{#await data.products}
 			<p>Loading...</p>
 		{:then}

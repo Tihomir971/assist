@@ -317,15 +317,15 @@
 								<Form.Control>
 									{#snippet children({ props })}
 										<Form.Label>Manufacturer URL</Form.Label>
-										<div class="flex gap-0.5">
+										<div class="flex">
 											<Input type="url" bind:value={$formProduct.descriptionurl} {...props} />
 											<Button
-												type="button"
-												variant="outline"
+												variant="link"
 												size="icon"
 												href={$formProduct.descriptionurl}
 												target="_blank"
 												disabled={!$formProduct.descriptionurl}
+												class="rounded-l-none"
 											>
 												<PhArrowSquareOut />
 											</Button>

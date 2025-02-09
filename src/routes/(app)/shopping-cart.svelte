@@ -17,7 +17,7 @@
 
 <Sheet.Root>
 	<Sheet.Trigger class={buttonVariants({ variant: 'ghost', size: 'icon', class: 'relative' })}>
-		<PhShoppingCart />
+		<PhShoppingCart class="!size-6" />
 		{#if cartStorageCtx.current.length > 0}
 			<Badge
 				class="absolute top-1 right-1 size-4 -translate-y-1/3 translate-x-1/3 justify-center p-0"

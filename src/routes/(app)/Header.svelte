@@ -19,15 +19,15 @@
 	let { supabase, profile }: Props = $props();
 </script>
 
-<header class="grid w-full grid-cols-3 border-b p-3">
+<header class="grid w-full grid-cols-3 p-3">
 	<div class="flex items-center gap-x-1.5">Bredcrumb</div>
 	<div class="relative ml-auto flex-1 md:grow-0">
-		<PhMagnifyingGlass class="text-muted-foreground absolute top-2.5 left-2.5" />
+		<PhMagnifyingGlass class="absolute top-2.5 left-2.5 text-muted-foreground" />
 		<Input
 			id="searchApp"
 			type="search"
 			placeholder="Search..."
-			class="bg-background w-full rounded-lg pl-8 md:w-[200px] lg:w-[336px]"
+			class="w-full pl-8  md:w-[200px] lg:w-[336px]"
 		/>
 	</div>
 	<div class="flex items-center justify-end gap-x-3">

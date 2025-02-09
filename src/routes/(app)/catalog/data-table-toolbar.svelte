@@ -119,7 +119,7 @@
 			goto(newUrl);
 		}}
 	>
-		<Select.Trigger class={buttonVariants({ variant: 'outline', class: 'w-fit text-red-400' })}>
+		<Select.Trigger class={buttonVariants({ variant: 'outline', class: 'w-fit text-pink-700' })}>
 			{triggerReportContent}
 		</Select.Trigger>
 		<Select.Content>
@@ -151,6 +151,7 @@
 			</Select.Group>
 		</Select.Content>
 	</Select.Root>
+
 	<DataTableHeaderSync bind:rowSelectionState />
 	<DropdownMenu.Root>
 		<DropdownMenu.Trigger>

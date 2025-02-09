@@ -52,7 +52,7 @@
 			<div>
 				<button
 					onclick={() => window.close()}
-					class="rounded bg-gray-500 px-3 py-1 text-sm text-white transition-colors hover:bg-gray-600 print:hidden"
+					class="rounded-sm bg-gray-500 px-3 py-1 text-sm text-white transition-colors hover:bg-gray-600 print:hidden"
 				>
 					Close
 				</button>

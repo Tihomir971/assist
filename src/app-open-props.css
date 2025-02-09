@@ -10,11 +10,15 @@
 	--link: oklch(50% 100% var(--palette-hue));
 	--link-visited: oklch(50% 100% calc(var(--palette-hue) * 1.2));
 	--surface-1: white;
-	--surface-2: var(--color-1);
-	--surface-3: var(--color-3);
-	--surface-document: var(--color-4);
-	--well-1: var(--color-5);
-	--well-2: var(--color-6);
+	/* --surface-2: var(--color-1); */
+	--surface-2: var(--color-gray-300);
+	/* --surface-3: var(--color-3); */
+	--surface-3: var(--color-gray-200);
+	/* --surface-document: var(--color-4); */
+	--surface-document: var(--color-gray-50);
+	--well-1: var(--color-50);
+	/* --well-2: var(--color-6); */
+	--well-2: var(--color-white);
 	--text-1: var(--color-16);
 	--text-2: var(--color-12);
 	--scrollthumb-color: var(--text-2);
@@ -46,12 +50,16 @@
 
 		--link: oklch(90% 80% var(--palette-hue));
 		--link-visited: oklch(90% 80% calc(var(--palette-hue) * 1.2));
-		--surface-1: var(--color-11);
-		--surface-2: var(--color-12);
-		--surface-3: var(--color-13);
-		--surface-document: var(--color-14);
+		--surface-1: var(--color-gray-600);
+		/* --surface-2: var(--color-12); */
+		--surface-2: var(--color-gray-700);
+		/* --surface-3: var(--color-13); */
+		--surface-3: var(--color-gray-800);
+		/* --surface-document: var(--color-14); */
+		--surface-document: var(--color-gray-900);
 		--well-1: var(--color-15);
-		--well-2: var(--color-16);
+		/* --well-2: var(--color-16); */
+		--well-2: var(--color-gray-950);
 		--text-1: var(--color-1);
 		--text-2: var(--color-5);
 		--scrollthumb-color: var(--text-2);
@@ -62,8 +70,9 @@
 	scrollbar-color: var(--scrollthumb-color) transparent;
 	accent-color: var(--brand, var(--link));
 	caret-color: var(--brand, var(--link));
-	color: var(--text-1);
-	background-color: var(--surface-document);
+	/* color: light-dark(var(--color-gray-900), var(--color-gray-200)); */
+	/* color: var(--text-1); */
+	/* background-color: var(--surface-document); */
 }
 
 /* :where(a[href]) {

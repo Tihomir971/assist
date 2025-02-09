@@ -86,22 +86,24 @@ type RawSnippetParams = {
 };
 
 const rightAlignSnippet = createRawSnippet<[RawSnippetParams]>((getValue) => {
-	const { value, isDanger = false, action } = getValue();
-	const className = isDanger ? 'text-right text-red-400' : 'text-right';
-	const dotClassName = action
-		? 'inline-block w-1.5 h-1.5 bg-red-400 rounded-full mr-1  align-middle'
-		: '';
-
-	return {
-		render: () => `
+	function refreshDisplay(): string {
+		const { value, isDanger = false, action } = getValue();
+		const className = isDanger ? 'text-right text-pink-700' : 'text-right';
+		const dotClassName = action
+			? 'inline-block w-1.5 h-1.5 bg-pink-700 rounded-full mr-1  align-middle'
+			: '';
+		return `
 			<div class="${className}">
 				${action ? `<span class="${dotClassName}"></span>` : ''}${value}
 			</div>
-		`,
+		`;
+	}
+
+	return {
+		render: () => refreshDisplay(),
 		setup: (node) => {
 			$effect(() => {
-				const { value, action } = getValue();
-				node.innerHTML = `${action ? `<span class="${dotClassName}"></span>` : ''}${String(value)}`;
+				node.innerHTML = refreshDisplay();
 			});
 		}
 	};
