@@ -6,15 +6,8 @@ compatibility_date = "2025-01-24"
 
 [vars]
 BIZNISOFT_API = "https://biznisoft-api.kalisi.rs"
-BIZNISOFT_BEARER_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0aWhvbWlyIiwiZXhwIjoxNzQ3MzI2NzQ3LCJpYXQiOjE3MTEwMzg3NDd9.u0lBVZsMmWv18OSB6ybyQmItnjpfbjnVJ-m41FgA-cM"
-CONNECTOR_API_BEARER = "5MLi2NhKOzEdeCGYpv7qcPW6TartwHmb"
 CONNECTOR_API_URL = "http://connector.kalisi.rs"
-NODE_VERSION = "22.13"
-PNPM_VERSION = "9.15.4"
-PUBLIC_BEARER_TOKEN = "2be6a370df8fee54201fd6d53d7726240de5a2756493abd19877956ec0716855"
-PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICJyb2xlIjogImFub24iLAogICJpc3MiOiAic3VwYWJhc2UiLAogICJpYXQiOiAxNzAxNjQ0NDAwLAogICJleHAiOiAxODU5NDk3MjAwCn0.VyX6Mme8fON0cTH4OvQMtGnNV0b1riM4DeOli4WTOpM"
 PUBLIC_SUPABASE_URL = "https://supa.kalisi.rs"
-SCRAPPER_API_BEARER = "DPMUm7Yv4L8GnuwxFOVIeH5E2hi9yTkB"
 SCRAPPER_API_URL = "http://scrapper.kalisi.rs"
 
 [env.production]
@@ -23,10 +16,5 @@ compatibility_date = "2024-11-11"
 [env.production.vars]
 BIZNISOFT_API = "https://biznisoft-api.kalisi.rs"
 CONNECTOR_API_URL = "http://connector.kalisi.rs"
-NODE_VERSION = "22.13"
-PNPM_VERSION = "9.15"
-PUBLIC_BEARER_TOKEN = "2be6a370df8fee54201fd6d53d7726240de5a2756493abd19877956ec0716855"
-PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICJyb2xlIjogImFub24iLAogICJpc3MiOiAic3VwYWJhc2UiLAogICJpYXQiOiAxNzAxNjQ0NDAwLAogICJleHAiOiAxODU5NDk3MjAwCn0.VyX6Mme8fON0cTH4OvQMtGnNV0b1riM4DeOli4WTOpM"
 PUBLIC_SUPABASE_URL = "https://supa.kalisi.rs"
-SCRAPPER_API_BEARER = "DPMUm7Yv4L8GnuwxFOVIeH5E2hi9yTkB"
 SCRAPPER_API_URL = "http://scrapper.kalisi.rs"
