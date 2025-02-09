@@ -24,4 +24,5 @@ vite.config.ts.timestamp-*
 /package
 /supabase
 .claude-instruction.txt
+wrangler.toml
 wrangler copy.toml
