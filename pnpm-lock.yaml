@@ -46,8 +46,8 @@ importers:
         version: https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz
     devDependencies:
       '@iconify-json/devicon':
-        specifier: ^1.2.13
-        version: 1.2.13
+        specifier: ^1.2.14
+        version: 1.2.14
       '@iconify-json/ph':
         specifier: ^1.2.2
         version: 1.2.2
@@ -73,8 +73,8 @@ importers:
         specifier: ^22.13.1
         version: 22.13.1
       bits-ui:
-        specifier: 1.0.0-next.90
-        version: 1.0.0-next.90(svelte@5.19.9)
+        specifier: 1.0.0-next.91
+        version: 1.0.0-next.91(svelte@5.19.9)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -659,8 +659,8 @@ packages:
     resolution: {integrity: sha512-c7hNEllBlenFTHBky65mhq8WD2kbN9Q6gk0bTk8lSBvc554jpXSkST1iePudpt7+A/AQvuHs9EMqjHDXMY1lrA==}
     engines: {node: '>=18.18'}
 
-  '@iconify-json/devicon@1.2.13':
-    resolution: {integrity: sha512-EPwXcB25EF8iMyYUnu1NM/HBz7x9VpfTPH0gyWPU9Co+fjVpTz1M93ePdOPvQ+XSgNSTi7tkLlQio0BEe2pFag==}
+  '@iconify-json/devicon@1.2.14':
+    resolution: {integrity: sha512-W0h9c9yIKr+MNEYBmPn7a5pQFDTOgjrxOjWDk2wgc+VGRmmYOrAWwK5rOPtT5FkWmBzfGkiJiXyHe/Xi23AjeQ==}
 
   '@iconify-json/ph@1.2.2':
     resolution: {integrity: sha512-PgkEZNtqa8hBGjHXQa4pMwZa93hmfu8FUSjs/nv4oUU6yLsgv+gh9nu28Kqi8Fz9CCVu4hj1MZs9/60J57IzFw==}
@@ -1207,8 +1207,8 @@ packages:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
     engines: {node: '>=8'}
 
-  bits-ui@1.0.0-next.90:
-    resolution: {integrity: sha512-BT+SzWzYuHwL8Q7L7/TsOiZElvsWUq10W3SDQwt3k6ofkaIVsrvaaqn6iKS5uHPZs7ztzJgqp+KdtsG2+xbWJw==}
+  bits-ui@1.0.0-next.91:
+    resolution: {integrity: sha512-TEsucylfPkWS2yoj7g4JbqJ9+TcqdICv11MvqysN+pAGimNcbDnG3Fu6d+AQbsKZaNUkf/nx2A+6WYTNctlAdg==}
     engines: {node: '>=18', pnpm: '>=8.7.0'}
     peerDependencies:
       svelte: ^5.11.0
@@ -3293,7 +3293,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.1': {}
 
-  '@iconify-json/devicon@1.2.13':
+  '@iconify-json/devicon@1.2.14':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -3884,7 +3884,7 @@ snapshots:
 
   binary-extensions@2.3.0: {}
 
-  bits-ui@1.0.0-next.90(svelte@5.19.9):
+  bits-ui@1.0.0-next.91(svelte@5.19.9):
     dependencies:
       '@floating-ui/core': 1.6.9
       '@floating-ui/dom': 1.6.13
@@ -5395,7 +5395,7 @@ snapshots:
 
   vaul-svelte@1.0.0-next.3(svelte@5.19.9):
     dependencies:
-      bits-ui: 1.0.0-next.90(svelte@5.19.9)
+      bits-ui: 1.0.0-next.91(svelte@5.19.9)
       svelte: 5.19.9
       svelte-toolbelt: 0.4.6(svelte@5.19.9)
 

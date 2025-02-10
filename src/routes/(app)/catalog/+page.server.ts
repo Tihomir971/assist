@@ -1,6 +1,6 @@
 import type { Actions, PageServerLoad } from './$types';
 import type { Tables } from '$lib/types/supabase/database.types.helper.js';
-import type { BSProduct } from '../data/types';
+import type { BSProduct } from '../data/types.js';
 import { getChannelMap } from '$lib/services/channel-map';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
