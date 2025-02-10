@@ -15,7 +15,6 @@
 	import { handleFileUpload, loadSheetData } from './utils/xlsx-handlers';
 	import { processExcelData, modifyPrice } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
-	import FormCombobox from '$lib/components/my/FormCombobox.svelte';
 	import Combobox from '$lib/components/my/Combobox.svelte';
 
 	let { data } = $props();
@@ -40,13 +39,6 @@
 		valid_to: ''
 	});
 
-	// const suppliers: Supplier[] = [
-	// 	{ id: 480, name: 'Agrofina' },
-	// 	{ id: 407, name: 'Gros' },
-	// 	{ id: 4, name: 'Mercator-S' },
-	// 	{ id: 89, name: 'Mivex' },
-	// 	{ id: 5, name: 'Other' }
-	// ];
 	const productProperties: (keyof Product)[] = [
 		'name',
 		'vendorproductno',
@@ -221,7 +213,7 @@
 		sheetNames = [];
 		selectedSheet = '';
 		showModal = false;
-		selectedSupplier = undefined;
+		selectedSupplier = '';
 		mappings = {
 			name: '',
 			vendorproductno: '',
@@ -266,7 +258,7 @@
 		resetAll();
 	});
 
-	let selectedSupplier: string | undefined = $state(undefined);
+	let selectedSupplier: string = $state('');
 	// const triggerSelectedSupplier = $derived(
 	// 	data.c_bpartner.find((f) => f.value === selectedSupplier)?.label ?? 'Select Supplier'
 	// );
@@ -278,10 +270,11 @@
 		<div class="grid grid-cols-3 items-start gap-2">
 			<div class="grid w-full gap-1.5">
 				<Label for="excel-file">Supplier</Label>
+
 				<Combobox
-					options={data.c_bpartner}
 					bind:value={selectedSupplier}
-					placeholder="Select Supplier"
+					options={data.c_bpartner}
+					placeholder="Select supplier..."
 				/>
 			</div>
 

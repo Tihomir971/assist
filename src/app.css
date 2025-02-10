@@ -3,8 +3,9 @@
 @import 'tailwindcss';
 
 @theme {
-	--font-family-sans: 'Nunito Sans Variable', ui-sans-serif, system-ui, sans-serif,
-		'Apple Color Emoji', 'Segoe UI Emoji';
+	--font-family-sans:
+		'Nunito Sans Variable', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+		'Segoe UI Emoji';
 
 	--color-link: var(--link);
 	--color-link-visited: var(--link-visited);
@@ -36,7 +37,7 @@
 	/* Border color for inputs such as <Input />, <Select />, <Textarea /> */
 	--color-input: light-dark(var(--color-gray-300), var(--color-gray-600));
 	/* Primary colors for <Button /> */
-	--color-primary: light-dark(var(--color-indigo-300), var(--color-indigo-800));
+	--color-primary: light-dark(var(--color-indigo-300), var(--color-indigo-700));
 	--color-primary-foreground: light-dark(var(--color-zinc-900), var(--color-gray-200));
 	/* Secondary colors for <Button /> */
 	--color-secondary: hsl(var(--secondary));
@@ -45,7 +46,7 @@
 	--color-accent: light-dark(var(--color-zinc-100), var(--color-gray-800));
 	--color-accent-foreground: light-dark(var(--color-zinc-100), var(--color-white));
 	/* Used for destructive actions such as <Button variant='destructive'> */
-	--color-destructive: light-dark(var(--color-pink-300), var(--color-pink-800));
+	--color-destructive: light-dark(var(--color-pink-300), var(--color-pink-700));
 	--color-destructive-foreground: light-dark(var(--color-zinc-900), var(--color-gray-200));
 	/* Used for focus ring */
 	--color-ring: oklch(30% 100% var(--palette-hue));

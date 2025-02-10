@@ -57,22 +57,7 @@
 			<Tooltip.Content side="right">Catalog</Tooltip.Content>
 		</Tooltip.Root>
 	</Tooltip.Provider>
-	<Tooltip.Provider>
-		<Tooltip.Root>
-			<Tooltip.Trigger>
-				<Button
-					href="/data"
-					variant="ghost"
-					size="icon"
-					class={`[&_svg]:size-6 ${activePath === '/data' ? '' : 'text-muted-foreground'}`}
-				>
-					<PhRepeat />
-					<span class="sr-only">Export Import</span>
-				</Button>
-			</Tooltip.Trigger>
-			<Tooltip.Content side="right">Export Import</Tooltip.Content>
-		</Tooltip.Root>
-	</Tooltip.Provider>
+
 	<Tooltip.Provider>
 		<Tooltip.Root>
 			<Tooltip.Trigger>
