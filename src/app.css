@@ -1,5 +1,4 @@
 @import './app-open-props.css';
-@import './app-my-styles.css';
 @import 'tailwindcss';
 
 @theme {
@@ -62,8 +61,6 @@
 	html {
 		@apply bg-background text-foreground;
 	}
-}
-@layer base {
 	input,
 	textarea,
 	select,
@@ -73,5 +70,10 @@
 		padding: 0;
 		color: inherit;
 		background-color: transparent;
+	}
+}
+@layer components {
+	.select {
+		@apply flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 aria-[invalid]:border-destructive [&>span]:line-clamp-1 data-[placeholder]:[&>span]:text-muted-foreground;
 	}
 }
