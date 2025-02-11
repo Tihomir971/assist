@@ -6,18 +6,9 @@
 		'Nunito Sans Variable', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
 		'Segoe UI Emoji';
 
-	--color-link: var(--link);
-	--color-link-visited: var(--link-visited);
-	--color-surface-1: var(--surface-1);
 	--color-surface-2: var(--surface-2);
 	--color-surface-3: var(--surface-3);
-	/* --color-surface-3: light-dark(var(--color-red-500), var(--color-red-800)); */
-	/* --color-surface-document: light-dark(var(--color-zink-500), var(--color-slate-800)); */
 	--color-surface-document: var(--surface-document);
-	--color-well-1: var(--well-1);
-	--color-well-2: var(--well-2);
-	--color-ink-1: var(--text-1);
-	--color-ink-2: var(--text-2);
 
 	/* Default background color of <body />...etc */
 	--color-background: light-dark(var(--color-zinc-100), var(--color-gray-900));
@@ -39,8 +30,8 @@
 	--color-primary: light-dark(var(--color-indigo-300), var(--color-indigo-700));
 	--color-primary-foreground: light-dark(var(--color-zinc-900), var(--color-gray-200));
 	/* Secondary colors for <Button /> */
-	--color-secondary: hsl(var(--secondary));
-	--color-secondary-foreground: hsl(var(--secondary-foreground));
+	--color-secondary: light-dark(var(--color-red-100), var(--color-red-900));
+	--color-secondary-foreground: light-dark(var(--color-red-100), var(--color-red-900));
 	/* Used for accents such as hover effects on <DropdownMenuItem>, <SelectItem>...etc */
 	--color-accent: light-dark(var(--color-zinc-100), var(--color-gray-800));
 	--color-accent-foreground: light-dark(var(--color-zinc-100), var(--color-white));
@@ -48,7 +39,7 @@
 	--color-destructive: light-dark(var(--color-pink-300), var(--color-pink-700));
 	--color-destructive-foreground: light-dark(var(--color-zinc-900), var(--color-gray-200));
 	/* Used for focus ring */
-	--color-ring: oklch(30% 100% var(--palette-hue));
+	--color-ring: light-dark(var(--color-indigo-300), var(--color-indigo-700));
 	/* --color-ring: hsl(215 20.2% 65.1%); */
 	/* Border radius for card, input and buttons */
 	--radius: var(--radius-md);

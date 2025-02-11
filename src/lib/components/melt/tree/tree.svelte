@@ -20,9 +20,7 @@
 		expanded?: SvelteSet<string> | MaybeGetter<Iterable<string> | undefined>;
 		onSelectedChange: (value: string | undefined) => void;
 	};
-	let { items, selected, expanded, onSelectedChange }: Props = $props();
-
-	// const selected = page.url.searchParams.get('cat');
+	let { items, selected, onSelectedChange }: Props = $props();
 
 	const tree = new Tree({
 		items: items,
@@ -45,13 +43,13 @@
 {#snippet treeItems(items: (typeof tree)['children'], depth: number = 0)}
 	{#each items as item (item.id)}
 		<li {...item.attrs} class="cursor-pointer outline-none first:mt-0">
-			<div class="relative transition-colors" style="padding-left: {depth * 1}rem">
-				<div class="group absolute inset-0 z-0">
-					{#if item.selected}
-						<div class="absolute inset-0 rounded-md bg-surface-document"></div>
-					{/if}
-					<div class="absolute inset-0 rounded-md group-hover:bg-surface-2"></div>
-				</div>
+			<div class="group relative" style="padding-left: {depth * 1}rem">
+				<div
+					class="absolute inset-0 z-10 rounded-md transition-colors group-hover:bg-muted/50"
+				></div>
+				{#if item.selected}
+					<div class="absolute inset-0 rounded-md bg-muted"></div>
+				{/if}
 				<div class="relative z-10 flex items-center gap-1 px-3 py-2 text-sm">
 					<div class="size-4">{@render treeItemIcon(item)}</div>
 					<span class="truncate">
