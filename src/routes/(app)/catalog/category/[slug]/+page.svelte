@@ -16,7 +16,7 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import ComboboxField from '$lib/components/my/FormCombobox.svelte';
+	import ComboboxField from '$lib/components/my/MyComboboxForm.svelte';
 	import DrawerCategoryMap from './drawer-category-map.svelte';
 
 	// Icons

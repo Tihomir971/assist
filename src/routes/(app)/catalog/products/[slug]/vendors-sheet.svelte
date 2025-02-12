@@ -7,7 +7,7 @@
 	import SuperDebug, { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { toast } from 'svelte-sonner';
 	import { invalidate } from '$app/navigation';
-	import ComboboxField from '$lib/components/my/FormCombobox.svelte';
+	import ComboboxField from '$lib/components/my/MyComboboxForm.svelte';
 
 	type Props = {
 		formValidated: SuperValidated<МProductPoInsertSchemaАrray>;

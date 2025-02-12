@@ -15,7 +15,8 @@
 	import { handleFileUpload, loadSheetData } from './utils/xlsx-handlers';
 	import { processExcelData, modifyPrice } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
-	import Combobox from '$lib/components/my/Combobox.svelte';
+	import Combobox from '$lib/components/my/MyCombobox.svelte';
+	import MySelect from '$lib/components/my/MySelect.svelte';
 
 	let { data } = $props();
 	let { supabase } = $derived(data);
@@ -23,7 +24,7 @@
 	let fileInput: HTMLInputElement | null = $state(null);
 	let excelData: Product[] = $state([]);
 	let headers: string[] = $state([]);
-	let sheetNames: string[] = $state([]);
+	let sheetNames: { value: string; label: string }[] = $state([]);
 	let selectedSheet: string = $state('');
 	let showModal = $state(false);
 	let rawData: Array<Record<string, string | number>> = $state([]); // Add state for raw data
@@ -98,7 +99,10 @@
 
 	async function handleFileSelect(event: Event) {
 		const result = await handleFileUpload(event);
-		sheetNames = result.sheetNames;
+		sheetNames = result.sheetNames.map((str) => ({
+			value: str,
+			label: str
+		}));
 		selectedSheet = result.selectedSheet;
 		excelData = result.excelData;
 		headers = result.headers;
@@ -292,12 +296,22 @@
 			</div>
 			<div>
 				{#if sheetNames.length > 1}
-					<select class="border p-2" bind:value={selectedSheet} onchange={handleSheetSelect}>
-						<option value="">Select a sheet</option>
-						{#each sheetNames as sheet}
-							<option value={sheet}>{sheet}</option>
-						{/each}
-					</select>
+					<MySelect
+						name="excel-sheet"
+						options={sheetNames}
+						bind:value={selectedSheet}
+						label="Select a sheet"
+						onValueChange={handleSheetSelect}
+					></MySelect>
+					<!-- <div class="grid w-full gap-1.5">
+						<Label for="excel-sheet">Supplier</Label>
+						<select class="border p-2" bind:value={selectedSheet} onchange={handleSheetSelect}>
+							<option value="">Select a sheet</option>
+							{#each sheetNames as sheet}
+								<option value={sheet}>{sheet}</option>
+							{/each}
+						</select>
+					</div> -->
 				{/if}
 			</div>
 

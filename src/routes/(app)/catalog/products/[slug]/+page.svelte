@@ -21,7 +21,7 @@
 	import ReplenishCard from './replenish.svelte';
 	import StorageOnHandCard from './storageonhand.svelte';
 	import { crudMProductSchema } from './schema';
-	import FormCombobox from '$lib/components/my/FormCombobox.svelte';
+	import FormCombobox from '$lib/components/my/MyComboboxForm.svelte';
 
 	let { data } = $props();
 
