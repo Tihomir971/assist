@@ -6,9 +6,10 @@ interface TableTreeItem {
 	title: string;
 	parent_id: number | null;
 }
-type CustomTreeItem = TreeItem<{
+type CustomTreeItem = TreeItem & {
 	title: string;
-}>;
+	children?: CustomTreeItem[];
+};
 
 export function arrayToTreeString(items: Array<TableTreeItem> | null | undefined) {
 	if (!items) return [];

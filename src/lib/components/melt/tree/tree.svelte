@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import { fade } from 'svelte/transition';
 	import { Tree, type TreeItem } from 'melt/builders';
 	import { findParent } from '$lib/scripts/tree';
@@ -10,9 +9,10 @@
 	import type { SvelteSet } from 'svelte/reactivity';
 	import type { MaybeGetter } from 'melt';
 
-	type CustomTreeItem = TreeItem<{
+	type CustomTreeItem = TreeItem & {
 		title: string;
-	}>;
+		children?: CustomTreeItem[];
+	};
 
 	type Props = {
 		items: CustomTreeItem[];
