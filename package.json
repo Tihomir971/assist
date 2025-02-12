@@ -31,7 +31,7 @@
     "@types/node": "^22.13.1",
     "bits-ui": "1.0.0-next.94",
     "clsx": "^2.1.1",
-    "eslint": "^9.20.0",
+    "eslint": "^9.20.1",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-svelte": "^2.46.1",
     "formsnap": "2.0.0",
@@ -42,9 +42,9 @@
     "prettier": "^3.5.0",
     "prettier-plugin-svelte": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
-    "supabase": "^2.12.0",
+    "supabase": "^2.12.1",
     "supabase-to-zod": "^1.0.7",
-    "svelte": "^5.19.9",
+    "svelte": "^5.19.10",
     "svelte-check": "^4.1.4",
     "svelte-sonner": "^0.3.28",
     "sveltekit-superforms": "^2.23.1",
@@ -56,7 +56,7 @@
     "vaul-svelte": "1.0.0-next.3",
     "vite": "^6.1.0",
     "wrangler": "^3.107.3",
-    "zod": "^3.24.1"
+    "zod": "^3.24.2"
   },
   "dependencies": {
     "@fontsource-variable/nunito-sans": "^5.1.1",
@@ -66,7 +66,7 @@
     "@tanstack/table-core": "^8.20.5",
     "echarts": "^5.6.0",
     "html5-qrcode": "^2.3.8",
-    "ky": "^1.7.4",
+    "ky": "^1.7.5",
     "luxon": "^3.5.0",
     "melt": "^0.11.0",
     "tailwindcss": "4.0.6",
