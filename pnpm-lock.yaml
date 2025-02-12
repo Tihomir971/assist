@@ -112,8 +112,8 @@ importers:
         specifier: ^0.6.11
         version: 0.6.11(prettier-plugin-svelte@3.3.3(prettier@3.5.0)(svelte@5.19.9))(prettier@3.5.0)
       supabase:
-        specifier: ^2.12.0
-        version: 2.12.0
+        specifier: ^2.12.1
+        version: 2.12.1
       supabase-to-zod:
         specifier: ^1.0.7
         version: 1.0.7
@@ -2541,8 +2541,8 @@ packages:
     resolution: {integrity: sha512-w4yDnCEZqrvAbhAWhjM7Dm4VqHpZFA2maXP9jYLIz2H5VnFWpbBI0NqYpb21YxaeCs30D49j9fVfOl30uiBbYQ==}
     hasBin: true
 
-  supabase@2.12.0:
-    resolution: {integrity: sha512-2Of41ZuR4XNZ/OoOx/O+m5Owx0iZ+5y28fRTg2lzw8b5C3/vU73E3osOC5Acg64hiP5uLF4Qw+ibyl0lcDYHdQ==}
+  supabase@2.12.1:
+    resolution: {integrity: sha512-vB6LX1KGrqku8AFlp2vJw49IUB9g6Rz2b84qpcWSZ3mMDFumA6hDSbXbFJUnr3hcvyPzoOsQlhMTZN7a6o3hfA==}
     engines: {npm: '>=8'}
     hasBin: true
 
@@ -5159,7 +5159,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  supabase@2.12.0:
+  supabase@2.12.1:
     dependencies:
       bin-links: 5.0.0
       https-proxy-agent: 7.0.6
