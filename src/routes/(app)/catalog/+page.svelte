@@ -134,7 +134,7 @@
 		/>
 	</Card.Header>
 	<Separator />
-	<Card.Content class="flex-1 overflow-auto pt-0">
+	<Card.Content class="flex-1 overflow-auto px-3 pt-0">
 		{#await data.products}
 			<p>Loading...</p>
 		{:then}
