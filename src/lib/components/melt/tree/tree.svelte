@@ -1,23 +1,21 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import { fade } from 'svelte/transition';
-	import { Tree, type TreeItem } from 'melt/builders';
+	import { Tree, type TreeItem, type TreeProps } from 'melt/builders';
 	import { findParent } from '$lib/scripts/tree';
 	// Icons
 	import PhCaretRight from '~icons/ph/caret-right';
 	import PhCaretDown from '~icons/ph/caret-down';
 	import PhDotOutline from '~icons/ph/dot-outline';
-	import type { SvelteSet } from 'svelte/reactivity';
-	import type { MaybeGetter } from 'melt';
 
-	type CustomTreeItem = TreeItem<{
+	type CustomTreeItem = TreeItem & {
 		title: string;
-	}>;
+		children?: CustomTreeItem[];
+	};
 
 	type Props = {
 		items: CustomTreeItem[];
-		selected: MaybeGetter<string | undefined>;
-		expanded?: SvelteSet<string> | MaybeGetter<Iterable<string> | undefined>;
+		selected: TreeProps<any>['selected'];
+		expanded?: TreeProps<any>['expanded'];
 		onSelectedChange: (value: string | undefined) => void;
 	};
 	let { items, selected, onSelectedChange }: Props = $props();

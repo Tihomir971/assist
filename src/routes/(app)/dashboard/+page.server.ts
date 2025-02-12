@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ locals: { supabase, session } }) =>
 
 	const { data: profile } = await supabase
 		.from('ad_user')
-		.select('full_name')
+		.select('full_name, email')
 		.eq('auth_user_id', session.user.id)
 		/* .single() */
 		.maybeSingle();

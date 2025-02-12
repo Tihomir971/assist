@@ -264,10 +264,10 @@
 	// );
 </script>
 
-<div class="mx-auto grid h-full grid-rows-[auto_1fr_auto] gap-4 p-2">
+<div class="mx-auto grid h-full max-w-7xl grid-rows-[auto_1fr_auto] gap-4 p-2">
 	<h1 class="text-2xl font-bold">Product Data Upload</h1>
 	<div class="flex flex-col gap-4">
-		<div class="grid grid-cols-3 items-start gap-2">
+		<div class="grid grid-cols-4 items-start gap-2">
 			<div class="grid w-full gap-1.5">
 				<Label for="excel-file">Supplier</Label>
 
@@ -290,15 +290,16 @@
 					bind:ref={fileInput}
 				/>
 			</div>
-
-			{#if sheetNames.length > 1}
-				<select class="border p-2" bind:value={selectedSheet} onchange={handleSheetSelect}>
-					<option value="">Select a sheet</option>
-					{#each sheetNames as sheet}
-						<option value={sheet}>{sheet}</option>
-					{/each}
-				</select>
-			{/if}
+			<div>
+				{#if sheetNames.length > 1}
+					<select class="border p-2" bind:value={selectedSheet} onchange={handleSheetSelect}>
+						<option value="">Select a sheet</option>
+						{#each sheetNames as sheet}
+							<option value={sheet}>{sheet}</option>
+						{/each}
+					</select>
+				{/if}
+			</div>
 
 			<div>
 				<div class="grid w-full gap-1.5">
