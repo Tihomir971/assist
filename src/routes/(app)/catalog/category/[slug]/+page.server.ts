@@ -41,8 +41,6 @@ export const actions = {
 
 		const form = await superValidate(formData, zod(crudMProductCategorySchema));
 		if (!form.valid) return fail(400, { form });
-		//console.log('form.data', form.data, typeof form.data.created);
-		//return;
 		if (!form.data.id) {
 			console.log('Create Category');
 			const { error: insertProductCategoryError } = await supabase
@@ -52,15 +50,7 @@ export const actions = {
 				throw error(400, insertProductCategoryError.message);
 			}
 			return message(form, 'Category created!');
-			// CREATE user
-			//const user = { ...form.data, id: userId() };
-			//users.push(user);
-			//
-			//return message(form, 'User created!');
 		} else {
-			//const index = users.findIndex((u) => u.id == form.data.id);
-			//if (index == -1) throw error(404, 'User not found.');
-
 			if (formData.has('delete')) {
 				console.log('Delete Category');
 				// DELETE Category
@@ -88,34 +78,5 @@ export const actions = {
 				return message(form, 'User updated!');
 			}
 		}
-		//if (form.data.id) {
-		//	if (formData.has('delete')) {
-		//		console.log('Deleting Category', form.data.id);
-		//		// DELETE
-		//		const { error: deleteProductCategoryError } = await supabase
-		//			.from('m_product_category')
-		//			.delete()
-		//			.eq('id', form.data.id);
-		//		if (deleteProductCategoryError) {
-		//			console.log('deleteProductCategoryError', deleteProductCategoryError);
-		//
-		//			return fail(500, { supabaseErrorMessage: deleteProductCategoryError.message });
-		//		}
-		//		throw redirect(303, '/catalog/test-table');
-		//	} else {
-		//		const { created, updated, ...updateData } = form.data;
-		//		const { error: updateProductCategoryError } = await supabase
-		//			.from('m_product_category')
-		//			.update(updateData)
-		//			.eq('id', form.data.id);
-		//
-		//		if (updateProductCategoryError) {
-		//			console.log('updateProductCategoryError', updateProductCategoryError);
-		//
-		//			return fail(500, { supabaseErrorMessage: updateProductCategoryError.message });
-		//		}
-		//	}
-		//}
-		return { form };
 	}
 } satisfies Actions;

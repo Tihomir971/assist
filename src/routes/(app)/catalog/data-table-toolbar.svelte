@@ -56,7 +56,9 @@
 	function handleSalesGraphClick() {
 		const selectedSkus = Object.keys(rowSelectionState).join(',');
 		if (selectedSkus) {
-			goto(`/report/salesgraph?skus=${selectedSkus}`);
+			window.open(`/report/salesgraph?skus=${selectedSkus}`, '_blank');
+
+			// goto(`/report/salesgraph?skus=${selectedSkus}`);
 		}
 	}
 </script>

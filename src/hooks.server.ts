@@ -16,6 +16,11 @@ const supabase: Handle = async ({ event, resolve }) => {
 		}
 	});
 
+	/**
+	 * Unlike `supabase.auth.getSession()`, which returns the session _without_
+	 * validating the JWT, this function also calls `getUser()` to validate the
+	 * JWT before returning the session.
+	 */
 	event.locals.safeGetSession = async () => {
 		const {
 			data: { session }

@@ -144,7 +144,7 @@
 			<Card.Content class="space-y-2">
 				<div class="grid grid-cols-[1fr_2fr] items-center">
 					<label for="id">ID</label>
-					<Input id="id" value={$formData.id} readonly />
+					<Input name="id" id="id" value={$formData.id} readonly />
 				</div>
 				<div class="grid grid-cols-[1fr_2fr] items-center">
 					<label for="created">Created</label>

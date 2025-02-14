@@ -1,10 +1,10 @@
 <script lang="ts">
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
 	import { enhance } from '$app/forms';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import type { SubmitFunction } from '@sveltejs/kit';
+	import { goto } from '$app/navigation';
 	type Props = {
 		supabase: SupabaseClient;
 		profile: {
@@ -61,10 +61,10 @@
 	<DropdownMenu.Content align="end">
 		<DropdownMenu.Label>My Account</DropdownMenu.Label>
 		<DropdownMenu.Separator />
-		<DropdownMenu.Item>Settings</DropdownMenu.Item>
+		<DropdownMenu.Item onSelect={() => goto('/user')}>Settings</DropdownMenu.Item>
 		<DropdownMenu.Item>Support</DropdownMenu.Item>
 		<DropdownMenu.Separator />
-		<form method="post" action="/?/signout" use:enhance={handleSignOut} bind:this={formEl}>
+		<form method="post" action="/auth?/signout" use:enhance={handleSignOut} bind:this={formEl}>
 			<DropdownMenu.Item
 				onclick={() => {
 					formEl.requestSubmit();
