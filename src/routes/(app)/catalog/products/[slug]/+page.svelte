@@ -344,7 +344,7 @@
 							</Button>
 						</div>
 						<ul class="list-inside list-disc space-y-2">
-							{#each data.formProductGtin.data.barcodes as barcode}
+							{#each data.formProductPacking.data.productPacking as barcode}
 								<li class="flex items-center gap-2">
 									<PhPackage />
 									{barcode.gtin}
@@ -400,7 +400,7 @@
 
 		<DrawerBarcodes
 			bind:isBarcodeDrawerOpen
-			validatedForm={data.formProductGtin}
+			validatedForm={data.formProductPacking}
 			m_product_id={$formProduct.id}
 		/>
 	{/if}

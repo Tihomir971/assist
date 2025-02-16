@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
   graphql_public: {
     Tables: {
       [_ in never]: never
@@ -59,37 +59,6 @@ export interface Database {
   }
   public: {
     Tables: {
-      _template: {
-        Row: {
-          ad_org_id: number
-          created: string
-          id: number
-          isactive: boolean
-          updated: string
-        }
-        Insert: {
-          ad_org_id?: number
-          created?: string
-          id?: number
-          isactive?: boolean
-          updated?: string
-        }
-        Update: {
-          ad_org_id?: number
-          created?: string
-          id?: number
-          isactive?: boolean
-          updated?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "_template_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
       ad_client: {
         Row: {
           ad_language: string | null
@@ -166,7 +135,7 @@ export interface Database {
             columns: ["ad_client_id"]
             referencedRelation: "ad_client"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       ad_user: {
@@ -229,12 +198,6 @@ export interface Database {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "ad_user_auth_user_id_fkey"
-            columns: ["auth_user_id"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "ad_user_c_bpartner_id_fkey"
             columns: ["c_bpartner_id"]
             referencedRelation: "c_bpartner"
@@ -245,7 +208,7 @@ export interface Database {
             columns: ["supervisor_id"]
             referencedRelation: "ad_user"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       asset: {
@@ -351,7 +314,7 @@ export interface Database {
             columns: ["po_pricelist_id"]
             referencedRelation: "m_pricelist"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       c_bpartner_location: {
@@ -406,7 +369,7 @@ export interface Database {
             columns: ["c_bpartner_id"]
             referencedRelation: "c_bpartner"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       c_channel: {
@@ -446,7 +409,7 @@ export interface Database {
             columns: ["ad_org_id"]
             referencedRelation: "ad_org"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       c_channel_map: {
@@ -495,7 +458,7 @@ export interface Database {
             columns: ["c_channel_id"]
             referencedRelation: "c_channel"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       c_channel_map_bpartner: {
@@ -556,7 +519,7 @@ export interface Database {
             columns: ["c_channel_id"]
             referencedRelation: "c_channel"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       c_channel_map_category: {
@@ -602,7 +565,7 @@ export interface Database {
             columns: ["m_product_category_id"]
             referencedRelation: "m_product_category"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       c_channel_map_tax: {
@@ -654,7 +617,7 @@ export interface Database {
             columns: ["c_taxcategory_id"]
             referencedRelation: "c_taxcategory"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       c_channel_map_warehouse: {
@@ -706,7 +669,7 @@ export interface Database {
             columns: ["m_warehouse_id"]
             referencedRelation: "m_warehouse"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       c_country: {
@@ -755,7 +718,7 @@ export interface Database {
             columns: ["c_currency_id"]
             referencedRelation: "c_currency"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       c_currency: {
@@ -831,7 +794,7 @@ export interface Database {
             columns: ["municipality_id"]
             referencedRelation: "c_loc_municipality"
             referencedColumns: ["code"]
-          }
+          },
         ]
       }
       c_loc_municipality: {
@@ -877,7 +840,7 @@ export interface Database {
             columns: ["region_id"]
             referencedRelation: "c_loc_region"
             referencedColumns: ["code"]
-          }
+          },
         ]
       }
       c_loc_region: {
@@ -914,7 +877,7 @@ export interface Database {
             columns: ["parent_region"]
             referencedRelation: "c_loc_region"
             referencedColumns: ["code"]
-          }
+          },
         ]
       }
       c_loc_settlement: {
@@ -960,7 +923,7 @@ export interface Database {
             columns: ["municipality_id"]
             referencedRelation: "c_loc_municipality"
             referencedColumns: ["code"]
-          }
+          },
         ]
       }
       c_location: {
@@ -1015,7 +978,7 @@ export interface Database {
             columns: ["c_region_id"]
             referencedRelation: "c_loc_region"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       c_postal: {
@@ -1097,7 +1060,7 @@ export interface Database {
             columns: ["c_taxcategory_id"]
             referencedRelation: "c_taxcategory"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       c_taxcategory: {
@@ -1146,7 +1109,7 @@ export interface Database {
             columns: ["ad_org_id"]
             referencedRelation: "ad_org"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       c_uom: {
@@ -1201,7 +1164,7 @@ export interface Database {
             columns: ["ad_org_id"]
             referencedRelation: "ad_org"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       c_uom_conversion: {
@@ -1274,7 +1237,7 @@ export interface Database {
             columns: ["m_product_id"]
             referencedRelation: "m_product"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       countries: {
@@ -1401,7 +1364,7 @@ export interface Database {
             columns: ["attribute_group_id"]
             referencedRelation: "m_attributegroup"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       m_attributegroup: {
@@ -1498,7 +1461,7 @@ export interface Database {
             columns: ["m_attributevalue_id"]
             referencedRelation: "m_attributevalue"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       m_attributeset: {
@@ -1553,7 +1516,7 @@ export interface Database {
             columns: ["ad_org_id"]
             referencedRelation: "ad_org"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       m_attributesetinstance: {
@@ -1611,7 +1574,7 @@ export interface Database {
             columns: ["m_attributeset_id"]
             referencedRelation: "m_attributeset"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       m_attributeuse: {
@@ -1669,7 +1632,7 @@ export interface Database {
             columns: ["m_attributeset_id"]
             referencedRelation: "m_attributeset"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       m_attributevalue: {
@@ -1727,7 +1690,7 @@ export interface Database {
             columns: ["m_attribute_id"]
             referencedRelation: "m_attribute"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       m_discountschema: {
@@ -1776,7 +1739,7 @@ export interface Database {
             columns: ["ad_org_id"]
             referencedRelation: "ad_org"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       m_locator: {
@@ -1840,7 +1803,7 @@ export interface Database {
             columns: ["m_warehouse_id"]
             referencedRelation: "m_warehouse"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       m_pricelist: {
@@ -1919,7 +1882,7 @@ export interface Database {
             columns: ["c_currency_id"]
             referencedRelation: "c_currency"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       m_pricelist_version: {
@@ -1998,7 +1961,7 @@ export interface Database {
             columns: ["m_pricelist_version_base_id"]
             referencedRelation: "m_pricelist_version"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       m_product: {
@@ -2146,7 +2109,7 @@ export interface Database {
             columns: ["net_qty_uom_id"]
             referencedRelation: "c_uom"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       m_product_category: {
@@ -2186,7 +2149,7 @@ export interface Database {
             columns: ["parent_id"]
             referencedRelation: "m_product_category"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       m_product_gtin: {
@@ -2220,8 +2183,69 @@ export interface Database {
             columns: ["m_product_id"]
             referencedRelation: "m_product"
             referencedColumns: ["id"]
-          }
+          },
         ]
+      }
+      m_product_packing: {
+        Row: {
+          created_at: string
+          gtin: string | null
+          id: number
+          m_product_id: number
+          m_product_packing_type_id: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          gtin?: string | null
+          id?: number
+          m_product_id: number
+          m_product_packing_type_id?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          gtin?: string | null
+          id?: number
+          m_product_id?: number
+          m_product_packing_type_id?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "m_product_packing_m_product_id_fkey"
+            columns: ["m_product_id"]
+            referencedRelation: "m_product"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_product_packing_m_product_packing_type_id_fkey"
+            columns: ["m_product_packing_type_id"]
+            referencedRelation: "m_product_packing_type"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      m_product_packing_type: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       m_product_po: {
         Row: {
@@ -2317,7 +2341,7 @@ export interface Database {
             columns: ["m_product_id"]
             referencedRelation: "m_product"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       m_productprice: {
@@ -2384,7 +2408,7 @@ export interface Database {
             columns: ["m_product_id"]
             referencedRelation: "m_product"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       m_replenish: {
@@ -2475,7 +2499,7 @@ export interface Database {
             columns: ["m_warehousesource_id"]
             referencedRelation: "m_warehouse"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       m_storageonhand: {
@@ -2545,7 +2569,7 @@ export interface Database {
             columns: ["warehouse_id"]
             referencedRelation: "m_warehouse"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       m_substitute: {
@@ -2606,7 +2630,7 @@ export interface Database {
             columns: ["substitute_id"]
             referencedRelation: "m_product"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       m_warehouse: {
@@ -2649,7 +2673,7 @@ export interface Database {
             columns: ["ad_client_id"]
             referencedRelation: "ad_client"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       w_basket: {
@@ -2722,7 +2746,7 @@ export interface Database {
             columns: ["m_pricelist_id"]
             referencedRelation: "m_pricelist"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       w_basketline: {
@@ -2792,7 +2816,7 @@ export interface Database {
             columns: ["w_basket_id"]
             referencedRelation: "w_basket"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
     }
@@ -2910,6 +2934,7 @@ export interface Database {
           owner_id: string | null
           path_tokens: string[] | null
           updated_at: string | null
+          user_metadata: Json | null
           version: string | null
         }
         Insert: {
@@ -2923,6 +2948,7 @@ export interface Database {
           owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
+          user_metadata?: Json | null
           version?: string | null
         }
         Update: {
@@ -2936,6 +2962,7 @@ export interface Database {
           owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
+          user_metadata?: Json | null
           version?: string | null
         }
         Relationships: [
@@ -2944,7 +2971,102 @@ export interface Database {
             columns: ["bucket_id"]
             referencedRelation: "buckets"
             referencedColumns: ["id"]
-          }
+          },
+        ]
+      }
+      s3_multipart_uploads: {
+        Row: {
+          bucket_id: string
+          created_at: string
+          id: string
+          in_progress_size: number
+          key: string
+          owner_id: string | null
+          upload_signature: string
+          user_metadata: Json | null
+          version: string
+        }
+        Insert: {
+          bucket_id: string
+          created_at?: string
+          id: string
+          in_progress_size?: number
+          key: string
+          owner_id?: string | null
+          upload_signature: string
+          user_metadata?: Json | null
+          version: string
+        }
+        Update: {
+          bucket_id?: string
+          created_at?: string
+          id?: string
+          in_progress_size?: number
+          key?: string
+          owner_id?: string | null
+          upload_signature?: string
+          user_metadata?: Json | null
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "s3_multipart_uploads_bucket_id_fkey"
+            columns: ["bucket_id"]
+            referencedRelation: "buckets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      s3_multipart_uploads_parts: {
+        Row: {
+          bucket_id: string
+          created_at: string
+          etag: string
+          id: string
+          key: string
+          owner_id: string | null
+          part_number: number
+          size: number
+          upload_id: string
+          version: string
+        }
+        Insert: {
+          bucket_id: string
+          created_at?: string
+          etag: string
+          id?: string
+          key: string
+          owner_id?: string | null
+          part_number: number
+          size?: number
+          upload_id: string
+          version: string
+        }
+        Update: {
+          bucket_id?: string
+          created_at?: string
+          etag?: string
+          id?: string
+          key?: string
+          owner_id?: string | null
+          part_number?: number
+          size?: number
+          upload_id?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "s3_multipart_uploads_parts_bucket_id_fkey"
+            columns: ["bucket_id"]
+            referencedRelation: "buckets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "s3_multipart_uploads_parts_upload_id_fkey"
+            columns: ["upload_id"]
+            referencedRelation: "s3_multipart_uploads"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
@@ -2977,7 +3099,7 @@ export interface Database {
         Args: {
           name: string
         }
-        Returns: unknown
+        Returns: string[]
       }
       get_size_by_bucket: {
         Args: Record<PropertyKey, never>
@@ -2985,6 +3107,41 @@ export interface Database {
           size: number
           bucket_id: string
         }[]
+      }
+      list_multipart_uploads_with_delimiter: {
+        Args: {
+          bucket_id: string
+          prefix_param: string
+          delimiter_param: string
+          max_keys?: number
+          next_key_token?: string
+          next_upload_token?: string
+        }
+        Returns: {
+          key: string
+          id: string
+          created_at: string
+        }[]
+      }
+      list_objects_with_delimiter: {
+        Args: {
+          bucket_id: string
+          prefix_param: string
+          delimiter_param: string
+          max_keys?: number
+          start_after?: string
+          next_token?: string
+        }
+        Returns: {
+          name: string
+          id: string
+          metadata: Json
+          updated_at: string
+        }[]
+      }
+      operation: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       search: {
         Args: {
@@ -3015,3 +3172,100 @@ export interface Database {
     }
   }
 }
+
+type PublicSchema = Database[Extract<keyof Database, "public">]
+
+export type Tables<
+  PublicTableNameOrOptions extends
+    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+        Database[PublicTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
+        PublicSchema["Views"])
+    ? (PublicSchema["Tables"] &
+        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  PublicTableNameOrOptions extends
+    | keyof PublicSchema["Tables"]
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  PublicTableNameOrOptions extends
+    | keyof PublicSchema["Tables"]
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  PublicEnumNameOrOptions extends
+    | keyof PublicSchema["Enums"]
+    | { schema: keyof Database },
+  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = PublicEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
+    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never

@@ -1,6 +1,6 @@
 import { isValidGTIN } from '$lib/scripts/gtin';
 import {
-	mProductGtinRowSchema,
+	mProductPackingInsertSchema,
 	mProductPoInsertSchema,
 	mProductPoRowSchema,
 	mProductRowSchema,
@@ -19,23 +19,35 @@ export const crudMProductSchema = mProductRowSchema
 export type CrudMProductSchema = typeof crudMProductSchema;
 
 // Gtin
+// export const crudMProductGtinSchema = z.object({
+// 	barcodes: z.array(
+// 		mProductGtinRowSchema
+// 			.extend({
+// 				id: mProductRowSchema.shape.id.optional(),
+// 				isactive: mProductRowSchema.shape.isactive.optional()
+// 			})
+// 			.omit({ created: true, updated: true })
+// 			.passthrough()
+// 			.refine(
+// 				(barcodes) => {
+// 					return isValidGTIN(barcodes.gtin);
+// 				},
+// 				{
+// 					message: 'All GTINs must be valid (8, 12, 13, or 14 digits)'
+// 				}
+// 			)
+// 	)
+// });
 export const crudMProductGtinSchema = z.object({
-	barcodes: z.array(
-		mProductGtinRowSchema
-			.extend({
-				id: mProductRowSchema.shape.id.optional(),
-				isactive: mProductRowSchema.shape.isactive.optional()
-			})
-			.omit({ created: true, updated: true })
-			.passthrough()
-			.refine(
-				(barcodes) => {
-					return isValidGTIN(barcodes.gtin);
-				},
-				{
-					message: 'All GTINs must be valid (8, 12, 13, or 14 digits)'
-				}
-			)
+	productPacking: z.array(
+		mProductPackingInsertSchema.passthrough().refine(
+			(barcodes) => {
+				return barcodes.gtin ? isValidGTIN(barcodes.gtin) : true;
+			},
+			{
+				message: 'All GTINs must be valid (8, 12, 13, or 14 digits)'
+			}
+		)
 	)
 });
 //export type CrudMProductGtinSchema = typeof crudMProductGtinSchema;

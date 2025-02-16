@@ -378,7 +378,7 @@ export const actions = {
 
 			product.barcodes?.forEach(async (element) => {
 				const { error: updateBacodesError } = await supabase
-					.from('m_product_gtin')
+					.from('m_product_packing')
 					.insert({ m_product_id: selectProductId.id, gtin: element });
 				if (updateBacodesError) {
 					console.error('Error adding product GTIN:', updateBacodesError);
@@ -504,10 +504,11 @@ export const actions = {
 		const { data: products, error: fetchError } = await supabase
 			.from('m_product')
 			.select(
-				'id, m_product_gtin(gtin), m_product_po(c_bpartner_id, url), c_taxcategory(c_tax(rate)),c_taxcategory_id'
+				'id, m_product_packing(gtin), m_product_po(c_bpartner_id, url), c_taxcategory(c_tax(rate)),c_taxcategory_id'
 			)
 			//.eq('m_product_po.c_bpartner_id', source)
 			.not('m_product_po.url', 'is', null)
+			.not('m_product_packing.gtin', 'is', null)
 			.in('id', productIds);
 		if (fetchError) {
 			console.error('Error fetching products:', fetchError);
@@ -533,7 +534,9 @@ export const actions = {
 				.map((po) => ({
 					productId: product.id,
 					href: po.url,
-					barcodes: product.m_product_gtin.map((item: { gtin: string }) => item.gtin)
+					barcodes: product.m_product_packing
+						.map((item: { gtin: string | null }) => item.gtin)
+						.filter((gtin): gtin is string => gtin !== null)
 				}))
 				.filter((req) => req.href)
 		);
@@ -573,16 +576,16 @@ export const actions = {
 
 				// Update GTINs
 				if (product.barcodes) {
-					const allGtins = originalProduct.m_product_gtin.map(
-						(item: { gtin: string }) => item.gtin
-					);
+					const allGtins = originalProduct.m_product_packing
+						.map((item: { gtin: string | null }) => item.gtin)
+						.filter((gtin): gtin is string => gtin !== null);
 					const newBarcodes = product.barcodes.filter(
 						(barcode: string) =>
 							typeof barcode === 'string' && !allGtins.includes(barcode) && isValidGTIN(barcode)
 					);
 
 					if (newBarcodes.length > 0) {
-						const { error: insertError } = await supabase.from('m_product_gtin').insert(
+						const { error: insertError } = await supabase.from('m_product_packing').insert(
 							newBarcodes.map((barcode: string) => ({
 								m_product_id: productId,
 								gtin: barcode
@@ -709,7 +712,8 @@ export const actions = {
 
 		const { data: products, error: fetchError } = await supabase
 			.from('m_product')
-			.select('id, m_product_gtin(gtin), c_taxcategory_id')
+			.select('id, m_product_packing(gtin), c_taxcategory_id')
+			.not('m_product_packing.gtin', 'is', null)
 			.in('id', productIds);
 
 		if (fetchError) {
@@ -730,7 +734,9 @@ export const actions = {
 			const allResults: BarcodeSearchVendorResult[] = [];
 
 			for (const product of products) {
-				const gtins = product.m_product_gtin.map((item: { gtin: string }) => item.gtin);
+				const gtins = product.m_product_packing
+					.map((item: { gtin: string | null }) => item.gtin)
+					.filter((gtin): gtin is string => gtin !== null);
 
 				for (const gtin of gtins) {
 					const barcodeSearchRequest: BarcodeSearchRequest = {

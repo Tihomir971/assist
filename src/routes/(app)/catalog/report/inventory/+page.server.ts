@@ -69,12 +69,14 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 		}
 
 		const { data: gtins, error: gtinError } = await supabase
-			.from('m_product_gtin')
+			.from('m_product_packing')
 			.select('m_product_id, gtin')
 			.in(
 				'm_product_id',
 				products.map((p) => p.id)
-			);
+			)
+			.eq('m_product_packing_type_id', 1)
+			.not('gtin', 'is', null);
 
 		if (gtinError) {
 			throw error(500, 'Error fetching GTIN information');
@@ -86,7 +88,9 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 			if (!gtinMap.has(g.m_product_id)) {
 				gtinMap.set(g.m_product_id, []);
 			}
-			gtinMap.get(g.m_product_id)!.push(g.gtin);
+			if (g.gtin) {
+				gtinMap.get(g.m_product_id)!.push(g.gtin);
+			}
 		});
 
 		const groupedProducts = new Map<number, CategoryWithProducts>();

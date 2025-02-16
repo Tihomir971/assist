@@ -41,8 +41,8 @@
 	});
 
 	const productProperties: (keyof Product)[] = [
-		'name',
 		'vendorproductno',
+		'name',
 		'pricelist',
 		'barcode',
 		'vendorcategory',
@@ -303,15 +303,6 @@
 						label="Select a sheet"
 						onValueChange={handleSheetSelect}
 					></MySelect>
-					<!-- <div class="grid w-full gap-1.5">
-						<Label for="excel-sheet">Supplier</Label>
-						<select class="border p-2" bind:value={selectedSheet} onchange={handleSheetSelect}>
-							<option value="">Select a sheet</option>
-							{#each sheetNames as sheet}
-								<option value={sheet}>{sheet}</option>
-							{/each}
-						</select>
-					</div> -->
 				{/if}
 			</div>
 

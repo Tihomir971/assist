@@ -44,21 +44,21 @@
 			}
 		}
 	});
-	let isDuplicatedBarcode = $derived($formGtin.barcodes.some((b) => b.gtin === newBarcode));
+	let isDuplicatedBarcode = $derived($formGtin.productPacking.some((b) => b.gtin === newBarcode));
 
 	function handleAddBarcode() {
 		if (!isValidBarcode) {
 			return;
 		}
 		// Basic validation - you might want to add more robust validation
-		if ($formGtin.barcodes.some((b) => b.gtin === newBarcode)) {
+		if ($formGtin.productPacking.some((b) => b.gtin === newBarcode)) {
 			toast.error('Barcode already exists');
 			return;
 		}
 
 		// Add the new barcode with required properties
-		$formGtin.barcodes.push({ m_product_id: m_product_id, gtin: newBarcode });
-		$formGtin.barcodes = $formGtin.barcodes;
+		$formGtin.productPacking.push({ m_product_id: m_product_id, gtin: newBarcode });
+		$formGtin.productPacking = $formGtin.productPacking;
 		newBarcode = ''; // Reset input
 	}
 </script>
@@ -77,10 +77,13 @@
 		<form method="POST" use:enhanceGtin action="?/gtinUPD">
 			<div class="space-y-4 p-4">
 				<ul class="list-inside space-y-2">
-					{#each $formGtin.barcodes as barcode (barcode.gtin)}
+					{#each $formGtin.productPacking as barcode (barcode.gtin)}
 						<li class="flex items-center justify-between gap-2">
 							<div class="flex items-center gap-2">
 								<PhPackage />
+								{barcode.m_product_packing_type_id}
+							</div>
+							<div class="flex items-center gap-2">
 								{barcode.gtin}
 							</div>
 							<Button

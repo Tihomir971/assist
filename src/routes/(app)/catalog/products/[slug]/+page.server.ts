@@ -20,7 +20,83 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 
 	const productId = parseInt(params.slug);
 	const { data: product } = await supabase.from('m_product').select().eq('id', productId).single();
+	if (!product) throw error(404, 'Product not found');
 
+	const getCategories = async () => {
+		const { data } = await supabase
+			.from('m_product_category')
+			.select('value:id, label:name')
+			.order('name');
+		return data || [];
+	};
+	const getBPartner = async () => {
+		const { data } = await supabase
+			.from('c_bpartner')
+			.select('value:id, label:name')
+			.eq('isvendor', true)
+			.order('name');
+		return data || [];
+	};
+	const getReplenishes = async () => {
+		const { data } = await supabase
+			.from('m_replenish')
+			.select(
+				'id,m_warehouse_id,m_product_id,level_max,level_min,m_warehousesource_id,qtybatchsize'
+			)
+			.eq('m_product_id', productId)
+			.order('m_warehouse_id');
+		return data || [];
+	};
+	const getWarehouses = async () => {
+		const { data } = await supabase
+			.from('m_warehouse')
+			.select('value:id, label:name')
+			.order('name');
+		return data || [];
+	};
+	const getProductPacking = async () => {
+		const { data } = await supabase
+			.from('m_product_packing')
+			.select('*')
+			.eq('m_product_id', productId);
+		return data || [];
+	};
+	const getProductPackingType = async () => {
+		const { data } = await supabase
+			.from('m_product_packing_type')
+			.select('value:id,label:name')
+			.eq('m_product_id', productId);
+		return data || [];
+	};
+
+	const getTaxes = async () => {
+		const { data } = await supabase
+			.from('c_taxcategory')
+			.select('value:id::text, label:name')
+			.order('name');
+		return data || [];
+	};
+	const getSalesData = async (sku: string | null) => {
+		if (!sku) {
+			return { currentYear: new Date().getFullYear(), products: [] };
+		}
+		const { currentYear, products } = await connector
+			.post('api/sales', {
+				json: {
+					productIds: [sku],
+					yearCount: 3
+				}
+			})
+			.json<ChartData>();
+		return { currentYear, products };
+	};
+	const getStorageOnHand = async () => {
+		const { data } = await supabase
+			.from('m_storageonhand')
+			.select('warehouse_id, qtyonhand,m_product_id')
+			.eq('m_product_id', productId);
+		return data || [];
+	};
 	const [
 		uom,
 		categories,
@@ -28,60 +104,27 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		replenishes,
 		warehouses,
 		purchases,
-		barcodes,
+		productPacking,
+		productPackingType,
 		tax,
 		salesByWeeks,
 		storageonhand
 	] = await Promise.all([
 		ProductService.getUom(supabase),
-		(await supabase.from('m_product_category').select('value:id, label:name').order('name')).data ||
-			[],
-		(
-			await supabase
-				.from('c_bpartner')
-				.select('value:id, label:name')
-				.eq('isvendor', true)
-				.order('name')
-		).data || [],
-		(
-			await supabase
-				.from('m_replenish')
-				.select(
-					'id,m_warehouse_id,m_product_id,level_max,level_min,m_warehousesource_id,qtybatchsize'
-				)
-				.eq('m_product_id', productId)
-				.order('m_warehouse_id')
-		).data || [],
-		(await supabase.from('m_warehouse').select('value:id, label:name')).data || [],
-		product ? ProductService.getProductPurchasing(supabase, productId) : [],
-		product
-			? (await supabase.from('m_product_gtin').select('*').eq('m_product_id', productId)).data || []
-			: [],
-		(await supabase.from('c_taxcategory').select('value:id::text, label:name').order('name'))
-			.data || [],
-
-		product?.sku
-			? await connector
-					.post('api/sales', {
-						json: {
-							productIds: [product.sku],
-							yearCount: 3
-						}
-					})
-					.json<ChartData>()
-			: { products: [], currentYear: new Date().getFullYear() }, // Return empty ChartData instead of empty array
-		product
-			? (
-					await supabase
-						.from('m_storageonhand')
-						.select('warehouse_id, qtyonhand,m_product_id')
-						.eq('m_product_id', productId)
-				).data || []
-			: []
+		getCategories(),
+		getBPartner(),
+		getReplenishes(),
+		getWarehouses(),
+		ProductService.getProductPurchasing(supabase, productId),
+		getProductPacking(),
+		getProductPackingType(),
+		getTaxes(),
+		getSalesData(product.sku),
+		getStorageOnHand()
 	]);
 
 	const formProduct = await superValidate(product, zod(crudMProductSchema));
-	const formProductGtin = await superValidate({ barcodes }, zod(crudMProductGtinSchema));
+	const formProductPacking = await superValidate({ productPacking }, zod(crudMProductGtinSchema));
 	const formReplenish = await superValidate({ replenishes }, zod(crudReplenishSchema));
 	const formPurchasing = await superValidate({ purchases }, zod(mProductPoInsertSchemaАrray));
 	const formStorageOnHand = await superValidate(
@@ -93,7 +136,8 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		productId,
 		formProduct,
 		formPurchasing,
-		formProductGtin,
+		formProductPacking,
+		productPackingType,
 		formReplenish,
 		formStorageOnHand,
 		partners,
@@ -188,14 +232,14 @@ export const actions = {
 		}
 		try {
 			// Separate records into updates and inserts
-			const updatesToProcess = form.data.barcodes.filter((r) => r.id !== undefined);
-			const insertsToProcess = form.data.barcodes.filter((r) => r.id === undefined);
+			const updatesToProcess = form.data.productPacking.filter((r) => r.id !== undefined);
+			const insertsToProcess = form.data.productPacking.filter((r) => r.id === undefined);
 
 			// Perform updates
 			if (updatesToProcess.length > 0) {
 				// Use Promise.all to update multiple records concurrently
 				const updatePromises = updatesToProcess.map((r) =>
-					supabase.from('m_product_gtin').update(r).eq('id', r.id!)
+					supabase.from('m_product_packing').update(r).eq('id', r.id!)
 				);
 
 				const updateResults = await Promise.all(updatePromises);
@@ -209,7 +253,7 @@ export const actions = {
 
 			// Perform inserts
 			if (insertsToProcess.length > 0) {
-				const { error: insertError } = await supabase.from('m_product_gtin').insert(
+				const { error: insertError } = await supabase.from('m_product_packing').insert(
 					insertsToProcess.map((r) => ({
 						...r
 					}))

@@ -93,7 +93,7 @@ export async function importProducts(
 			const barcodeChunk = barcodes.slice(i, i + chunkSize);
 
 			const { data: chunkMatchingProducts, error: barcodeError } = await supabase
-				.from('m_product_gtin')
+				.from('m_product_packaging')
 				.select('gtin, m_product_id')
 				.in('gtin', barcodeChunk);
 
@@ -186,7 +186,7 @@ export async function addProduct(
 	if (poError) throw poError;
 
 	// Insert into m_product_gtin
-	const { error: gtinError } = await supabase.from('m_product_gtin').insert({
+	const { error: gtinError } = await supabase.from('m_product_packing').insert({
 		m_product_id: productId,
 		gtin: product.barcode
 	});

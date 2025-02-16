@@ -76,9 +76,9 @@
 
 	async function checkProduct(barcode: string) {
 		const { data, error } = await supabase
-			.from('m_product_gtin')
+			.from('m_product_packing')
 			.select(
-				'm_product!inner(id,name,description,sku,m_product_gtin(gtin),m_storageonhand(qtyonhand,m_warehouse(name)))'
+				'm_product!inner(id,name,description,sku,m_product_packing(gtin),m_storageonhand(qtyonhand,m_warehouse(name)))'
 			)
 			.eq('gtin', barcode)
 			.single();
@@ -92,7 +92,7 @@
 
 		if (data) {
 			productInfo = {
-				gtins: data.m_product.m_product_gtin.map((g) => g.gtin ?? ''),
+				gtins: data.m_product.m_product_packing.map((g) => g.gtin ?? ''),
 				m_product: data.m_product
 					? {
 							id: data.m_product.id,
@@ -127,7 +127,7 @@
 					name,
 					description,
 					sku,
-					m_product_gtin (
+					m_product_packing (
 						gtin
 					),
 					m_storageonhand (
@@ -150,7 +150,7 @@
 
 			if (data) {
 				productInfo = {
-					gtins: data.m_product_gtin.map((g) => g.gtin ?? ''),
+					gtins: data.m_product_packing.map((g) => g.gtin ?? ''),
 					m_product: data
 						? {
 								id: data.id,

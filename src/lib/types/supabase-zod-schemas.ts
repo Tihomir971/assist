@@ -14,39 +14,6 @@ export const jsonSchema: z.ZodSchema<Json> = z.lazy(() =>
 		.nullable()
 );
 
-export const templateRowSchema = z.object({
-	ad_org_id: z.number(),
-	created: z.string(),
-	id: z.number(),
-	isactive: z.boolean(),
-	updated: z.string()
-});
-
-export const templateInsertSchema = z.object({
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
-	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	updated: z.string().optional()
-});
-
-export const templateUpdateSchema = z.object({
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
-	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	updated: z.string().optional()
-});
-
-export const templateRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('_template_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	})
-]);
-
 export const adClientRowSchema = z.object({
 	ad_language: z.string().nullable(),
 	created: z.string(),
@@ -189,12 +156,6 @@ export const adUserRelationshipsSchema = z.tuple([
 		foreignKeyName: z.literal('ad_user_ad_org_id_fkey'),
 		columns: z.tuple([z.literal('ad_org_id')]),
 		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('ad_user_auth_user_id_fkey'),
-		columns: z.tuple([z.literal('auth_user_id')]),
-		referencedRelation: z.literal('users'),
 		referencedColumns: z.tuple([z.literal('id')])
 	}),
 	z.object({
@@ -2251,6 +2212,71 @@ export const mProductGtinRelationshipsSchema = z.tuple([
 		referencedColumns: z.tuple([z.literal('id')])
 	})
 ]);
+
+export const mProductPackingRowSchema = z.object({
+	created_at: z.string(),
+	gtin: z.string().nullable(),
+	id: z.number(),
+	m_product_id: z.number(),
+	m_product_packing_type_id: z.number(),
+	updated_at: z.string()
+});
+
+export const mProductPackingInsertSchema = z.object({
+	created_at: z.string().optional(),
+	gtin: z.string().optional().nullable(),
+	id: z.number().optional(),
+	m_product_id: z.number(),
+	m_product_packing_type_id: z.number().optional(),
+	updated_at: z.string().optional()
+});
+
+export const mProductPackingUpdateSchema = z.object({
+	created_at: z.string().optional(),
+	gtin: z.string().optional().nullable(),
+	id: z.number().optional(),
+	m_product_id: z.number().optional(),
+	m_product_packing_type_id: z.number().optional(),
+	updated_at: z.string().optional()
+});
+
+export const mProductPackingRelationshipsSchema = z.tuple([
+	z.object({
+		foreignKeyName: z.literal('m_product_packing_m_product_id_fkey'),
+		columns: z.tuple([z.literal('m_product_id')]),
+		referencedRelation: z.literal('m_product'),
+		referencedColumns: z.tuple([z.literal('id')])
+	}),
+	z.object({
+		foreignKeyName: z.literal('m_product_packing_m_product_packing_type_id_fkey'),
+		columns: z.tuple([z.literal('m_product_packing_type_id')]),
+		referencedRelation: z.literal('m_product_packing_type'),
+		referencedColumns: z.tuple([z.literal('id')])
+	})
+]);
+
+export const mProductPackingTypeRowSchema = z.object({
+	created_at: z.string(),
+	id: z.number(),
+	name: z.string(),
+	updated_at: z.string()
+});
+
+export const mProductPackingTypeInsertSchema = z.object({
+	created_at: z.string().optional(),
+	id: z.number().optional(),
+	name: z.string(),
+	updated_at: z.string().optional()
+});
+
+export const mProductPackingTypeUpdateSchema = z.object({
+	created_at: z.string().optional(),
+	id: z.number().optional(),
+	name: z.string().optional(),
+	updated_at: z.string().optional()
+});
+
+export const mProductPackingTypeRelationshipsSchema = z.tuple([]);
 
 export const mProductPoRowSchema = z.object({
 	barcode: z.string().nullable(),
