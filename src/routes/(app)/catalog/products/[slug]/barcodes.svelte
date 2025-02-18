@@ -61,14 +61,10 @@
 		$formGtin.productPacking = $formGtin.productPacking;
 		newBarcode = ''; // Reset input
 	}
+	$inspect('isBarcodeDrawerOpen', isBarcodeDrawerOpen);
 </script>
 
-<Drawer.Root
-	bind:open={isBarcodeDrawerOpen}
-	dismissible={false}
-	onOpenChange={(open) => (isBarcodeDrawerOpen = open)}
-	direction="right"
->
+<Drawer.Root bind:open={isBarcodeDrawerOpen} dismissible={true} direction="right">
 	<Drawer.Content class="inset-x-auto inset-y-0 right-0 mt-0 w-96">
 		<Drawer.Header>
 			<Drawer.Title>Barcodes</Drawer.Title>

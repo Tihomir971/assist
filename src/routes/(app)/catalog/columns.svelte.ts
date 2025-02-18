@@ -5,6 +5,7 @@ import { createColumnHelper, renderComponent, renderSnippet } from '$lib/compone
 import TableCheckbox from '$lib/components/walker-tx/table-checkbox.svelte';
 import DataTableTitleCell from './data-table-title-cell.svelte';
 import DataTableActionsVendor from './data-table-actions-vendor.svelte';
+import type { Update } from '$lib/types/supabase/database.helper';
 
 export interface Warehouse {
 	value: string;
@@ -12,29 +13,23 @@ export interface Warehouse {
 }
 export interface Product {
 	id: number;
-	sku: string;
+	sku: string | null;
 	name: string;
-	barcode: string;
-	mpn: string;
+	mpn: string | null;
 	unitsperpack: number;
-	imageurl: string;
+	isactive: boolean;
+	imageurl: string | null;
 	discontinued: boolean;
+	m_storageonhand: Update<'m_storageonhand'>[];
+	m_product_packing: Update<'m_product_packing'>[];
+	m_replenish: Update<'m_replenish'>[];
 	c_taxcategory?: { c_tax: { rate: number }[] } | null;
-	m_storageonhand: { warehouse_id: number; qtyonhand: number }[];
 	productPrice: {
 		m_pricelist_version_id: number;
 		pricestd: number | null;
 		pricelist: number | null;
 	}[];
-	priceListVersion: { m_pricelist_id: number; validfrom: Date; validto: Date }[];
-	m_replenish: {
-		m_warehouse_id: number;
-		level_min: number;
-		level_max: number;
-		qtybatchsize: number;
-		m_warehousesource_id: number | null;
-	}[];
-	isactive: boolean;
+	// priceListVersion: { m_pricelist_id: number; validfrom: Date; validto: Date }[];
 	m_product_po: {
 		c_bpartner_id: number;
 		pricelist: number | null;
@@ -46,12 +41,11 @@ export interface Product {
 }
 export interface FlattenedProduct {
 	id: number;
-	sku: string;
+	sku: string | null;
 	name: string;
-	barcode: string;
-	mpn: string;
-	unitsperpack: number;
-	imageurl: string;
+	mpn: string | null;
+	unitsperpack: number | null;
+	imageurl: string | null;
 	discontinued: boolean;
 	isactive?: boolean;
 	taxRate: number | null;
@@ -88,13 +82,14 @@ type RawSnippetParams = {
 const rightAlignSnippet = createRawSnippet<[RawSnippetParams]>((getValue) => {
 	function refreshDisplay(): string {
 		const { value, isDanger = false, action } = getValue();
+
 		const className = isDanger ? 'text-right text-pink-700' : 'text-right';
 		const dotClassName = action
 			? 'inline-block w-1.5 h-1.5 bg-pink-700 rounded-full mr-1  align-middle'
 			: '';
 		return `
 			<div class="${className}">
-				${action ? `<span class="${dotClassName}"></span>` : ''}${value}
+				${action ? `<span class="${dotClassName}"></span>` : ''}${value ?? ''}
 			</div>
 		`;
 	}

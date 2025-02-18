@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from './$types';
-import type { Tables } from '$lib/types/supabase/database.types.helper.js';
+import type { Tables } from '$lib/types/supabase/database.helper.js';
 import type { BSProduct } from '../data/types.js';
 import { getChannelMap } from '$lib/services/channel-map';
 import { fail, superValidate } from 'sveltekit-superforms';
@@ -19,6 +19,7 @@ import type {
 	BarcodeSearchResponse,
 	BarcodeSearchVendorResult
 } from './marketApiTypes';
+import type { Database } from '$lib/types/supabase/database.types';
 
 interface ProductRequest {
 	productId: number;
@@ -72,7 +73,7 @@ export const load: PageServerLoad = async ({ depends, parent, url, locals: { sup
 };
 
 async function fetchProducts(
-	supabase: SupabaseClient,
+	supabase: SupabaseClient<Database>,
 	categoryId: string | null,
 	showSubcategories: boolean,
 	categories: {
@@ -85,21 +86,23 @@ async function fetchProducts(
 	if (categoryId && showSubcategories) {
 		categoryIds = findChildren(categories, parseInt(categoryId));
 	}
-	const query = supabase
+	let query = supabase
 		.from('m_product')
 		.select(
-			'id, sku, name, barcode, mpn, unitsperpack, imageurl, discontinued,c_taxcategory(c_tax(rate)),m_storageonhand(warehouse_id,qtyonhand),productPrice:m_productprice(m_pricelist_version_id,pricestd,pricelist),m_replenish(m_warehouse_id,level_min,level_max,qtybatchsize,m_warehousesource_id),m_product_po(c_bpartner_id, pricelist, c_bpartner(name, iscustomer)),isactive'
+			'id, sku, name, mpn, unitsperpack, m_product_packing(m_product_packing_type_id,unitsperpack), imageurl, discontinued,c_taxcategory(c_tax(rate)),m_storageonhand(warehouse_id,qtyonhand),productPrice:m_productprice(m_pricelist_version_id,pricestd,pricelist),m_replenish(m_warehouse_id,level_min,level_max,qtybatchsize,m_warehousesource_id),m_product_po(c_bpartner_id, pricelist, c_bpartner(name, iscustomer)),isactive'
 		)
 		.eq('producttype', 'I')
+		.in('m_product_packing.m_product_packing_type_id', [2, 3])
+
 		.order('name');
 
 	if (categoryIds.length > 0) {
-		query.in('m_product_category_id', categoryIds);
+		query = query.in('m_product_category_id', categoryIds);
 	} else {
 		if (categoryId) {
-			query.eq('m_product_category_id', parseInt(categoryId));
+			query = query.eq('m_product_category_id', parseInt(categoryId));
 		} else {
-			query.is('m_product_category_id', null);
+			query = query.is('m_product_category_id', null);
 		}
 	}
 
@@ -110,14 +113,14 @@ async function fetchProducts(
 		return [];
 	}
 
-	return (data as unknown as Product[]).filter((product) => {
+	return data.filter((product) => {
 		const hasStock = product.m_storageonhand.some((item) => item.qtyonhand > 0);
 		return product.isactive || hasStock;
 	});
 }
 
 async function getPriceLists(
-	supabase: SupabaseClient
+	supabase: SupabaseClient<Database>
 ): Promise<Partial<Tables<'m_pricelist_version'>>[] | []> {
 	const nowBelgrade = DateTime.now().setZone('Europe/Belgrade');
 	const targetDate = nowBelgrade.toFormat("yyyy-MM-dd'T'HH:mm:ssZZ");
@@ -156,6 +159,9 @@ function filterAndFlattenProducts(
 
 			return (
 				m_replenishActiveWH &&
+				m_replenishActiveWH.level_max !== undefined &&
+				m_replenishActiveWH.qtybatchsize !== null &&
+				m_replenishActiveWH.qtybatchsize !== undefined &&
 				m_replenishActiveWH.level_max - activeWarehouseStock >= m_replenishActiveWH.qtybatchsize &&
 				m_replenishActiveWH.qtybatchsize > 0 &&
 				sourceWarehouseStock > 0
@@ -171,6 +177,9 @@ function filterAndFlattenProducts(
 				0;
 			return (
 				m_replenishActiveWH &&
+				m_replenishActiveWH.level_max !== undefined &&
+				m_replenishActiveWH.qtybatchsize !== null &&
+				m_replenishActiveWH.qtybatchsize !== undefined &&
 				m_replenishActiveWH.level_max - m_storageonhandActiveStock >=
 					m_replenishActiveWH.qtybatchsize &&
 				m_replenishActiveWH.qtybatchsize > 0
@@ -206,9 +215,6 @@ function flattenProduct(
 	checkedVat: boolean,
 	activePricelists: Partial<Tables<'m_pricelist_version'>>[] | []
 ): FlattenedProduct {
-	if (product.id === 185) {
-		console.log('product', product);
-	}
 	const smallestPricestd = Math.min(
 		...product.productPrice
 			.filter(
@@ -275,9 +281,12 @@ function flattenProduct(
 		id: product.id,
 		sku: product.sku,
 		name: product.name,
-		barcode: product.barcode,
 		mpn: product.mpn,
-		unitsperpack: product.unitsperpack,
+		unitsperpack:
+			product.m_product_packing.find((p) => p.m_product_packing_type_id === 2)?.unitsperpack ||
+			product.m_product_packing.find((p) => p.m_product_packing_type_id === 3)?.unitsperpack ||
+			null,
+		// unitsperpack: product.unitsperpack,
 		imageurl: product.imageurl,
 		discontinued: product.discontinued,
 		taxRate: tax ? tax / 100 : null,

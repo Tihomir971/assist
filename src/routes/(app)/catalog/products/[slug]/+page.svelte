@@ -7,6 +7,7 @@
 	import PhPackage from '~icons/ph/package';
 	import PhArrowSquareOut from '~icons/ph/arrow-square-out';
 
+	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
@@ -338,19 +339,36 @@
 					</div>
 					<div>
 						<div class="flex items-center justify-between">
-							<h3 class="mb-2 text-lg font-semibold">Barcodes</h3>
+							<h3 class="mb-2 flex items-center gap-2 text-lg font-semibold">
+								<PhPackage /> Barcodes
+							</h3>
 							<Button variant="ghost" size="icon" onclick={() => (isBarcodeDrawerOpen = true)}>
 								<PhDotsThree />
 							</Button>
 						</div>
-						<ul class="list-inside list-disc space-y-2">
-							{#each data.formProductPacking.data.productPacking as barcode}
-								<li class="flex items-center gap-2">
-									<PhPackage />
-									{barcode.gtin}
-								</li>
-							{/each}
-						</ul>
+						<Table.Root class="w-full">
+							<Table.Header>
+								<Table.Row>
+									<Table.Head>Package</Table.Head>
+									<Table.Head>Qty.</Table.Head>
+									<Table.Head>Barcode</Table.Head>
+									<Table.Head></Table.Head>
+								</Table.Row>
+							</Table.Header>
+							<Table.Body>
+								{#each data.formProductPacking.data.productPacking as barcode}
+									<Table.Row>
+										<Table.Cell>
+											{data.productPackingType.find(
+												(v) => v.value === barcode.m_product_packing_type_id
+											)?.label}
+										</Table.Cell>
+										<Table.Cell>{barcode.unitsperpack}</Table.Cell>
+										<Table.Cell>{barcode.gtin}</Table.Cell>
+									</Table.Row>
+								{/each}
+							</Table.Body>
+						</Table.Root>
 					</div>
 				</div>
 			</Card.Content>

@@ -3,7 +3,7 @@
 	import { writable } from 'svelte/store';
 	import { DateTime } from 'luxon';
 	// Types
-	import type { Tables } from '$lib/types/supabase/database.types.helper.js';
+	import type { Tables } from '$lib/types/supabase/database.helper.js';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	// Components
 	import * as TableShow from '$lib/components/ui/table/index.js';
@@ -11,6 +11,7 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import type { Database } from '$lib/types/supabase/database.types.js';
 
 	let { data } = $props();
 
@@ -44,7 +45,7 @@
 		);
 	}
 
-	async function selectPricelist(id: number, supabase: SupabaseClient) {
+	async function selectPricelist(id: number, supabase: SupabaseClient<Database>) {
 		const { data } = await supabase
 			.from('m_pricelist_version')
 			.select('*')
@@ -62,7 +63,7 @@
 		selectedVersionId = id;
 	}
 
-	function updatePrice(price: Tables<'m_productprice'>, supabase: SupabaseClient) {
+	function updatePrice(price: Tables<'m_productprice'>, supabase: SupabaseClient<Database>) {
 		console.log('price', price);
 		// Implement the update logic here
 	}

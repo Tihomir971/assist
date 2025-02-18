@@ -134,11 +134,13 @@
 				</Table.Root>
 			</div>
 			<div>
-				<h3 class="mb-2 text-lg font-semibold">Barcodes</h3>
+				<h3 class="mb-2 text-lg font-semibold">Barcodes2</h3>
 				<ul class="list-inside list-disc space-y-2">
 					{#each data.barcodes as barcode}
 						<li class="flex items-center gap-2">
 							<PhPackage />
+							hello
+							{barcode.gtin}
 							{barcode.gtin}
 						</li>
 					{/each}

@@ -6,9 +6,10 @@
 	import HeaderUserProfile from './header-user-menu.svelte';
 	//Icons
 	import PhMagnifyingGlass from '~icons/ph/magnifying-glass';
+	import type { Database } from '$lib/types/supabase/database.types';
 
 	interface Props {
-		supabase: SupabaseClient;
+		supabase: SupabaseClient<Database>;
 		profile: {
 			username: string | null;
 			full_name: string | null;

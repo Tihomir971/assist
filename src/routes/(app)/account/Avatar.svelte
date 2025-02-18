@@ -1,11 +1,12 @@
 <!-- src/routes/account/Avatar.svelte -->
 <script lang="ts">
+	import type { Database } from '$lib/types/supabase/database.types';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 
 	interface Props {
 		size?: number;
 		url: string | null;
-		supabase: SupabaseClient;
+		supabase: SupabaseClient<Database>;
 	}
 
 	let { size = 10, url = $bindable(), supabase }: Props = $props();

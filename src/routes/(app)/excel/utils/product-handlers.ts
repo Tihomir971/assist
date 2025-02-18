@@ -2,9 +2,11 @@ import type { Product, ProductToUpdate } from '../types';
 import { normalizeVendorProductNo, modifyPrice } from './data-processors';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { isValidGTIN } from '$lib/scripts/gtin';
+import type { Database } from '$lib/types/supabase/database.types';
+import type { Insert } from '$lib/types/supabase/database.helper';
 
 export async function importProducts(
-	supabase: SupabaseClient,
+	supabase: SupabaseClient<Database>,
 	excelData: Product[],
 	selectedSupplier: number,
 	priceModificationPercentage: number,
@@ -93,7 +95,7 @@ export async function importProducts(
 			const barcodeChunk = barcodes.slice(i, i + chunkSize);
 
 			const { data: chunkMatchingProducts, error: barcodeError } = await supabase
-				.from('m_product_packaging')
+				.from('m_product_packing')
 				.select('gtin, m_product_id')
 				.in('gtin', barcodeChunk);
 
@@ -113,17 +115,28 @@ export async function importProducts(
 		const insertChunkSize = 100;
 		for (let i = 0; i < productsWithMatchingBarcodes.length; i += insertChunkSize) {
 			const insertChunk = productsWithMatchingBarcodes.slice(i, i + insertChunkSize);
-
-			const insertData = insertChunk.map((product: Product) => ({
-				m_product_id: barcodeMatches.get(product.barcode),
-				c_bpartner_id: selectedSupplier,
-				vendorproductno: normalizeVendorProductNo(product.vendorproductno, selectedSupplier),
-				manufacturer: product.manufacturer,
-				vendorcategory: product.vendorcategory,
-				pricelist: modifyPrice(product.pricelist, priceModificationPercentage),
-				valid_from: product.valid_from || null,
-				valid_to: product.valid_to || null
-			}));
+			const insertData = insertChunk
+				.map((product: Product) => {
+					const m_product_id = barcodeMatches.get(product.barcode);
+					if (typeof m_product_id !== 'number') {
+						return null; // Skip this product if m_product_id is not a number
+					}
+					const vendorproductno = normalizeVendorProductNo(
+						product.vendorproductno,
+						selectedSupplier
+					);
+					return {
+						m_product_id: m_product_id,
+						c_bpartner_id: selectedSupplier,
+						vendorproductno: vendorproductno,
+						manufacturer: product.manufacturer,
+						vendorcategory: product.vendorcategory,
+						pricelist: modifyPrice(product.pricelist, priceModificationPercentage),
+						valid_from: product.valid_from || null,
+						valid_to: product.valid_to || null
+					};
+				})
+				.filter(Boolean) as Insert<'m_product_po'>[];
 
 			const { data, error } = await supabase.from('m_product_po').insert(insertData).select();
 
@@ -135,9 +148,6 @@ export async function importProducts(
 			insertedRows += data.length;
 			importedRows += data.length;
 			onProgress(importedRows);
-
-			// Add a small delay to allow UI updates
-			await new Promise((resolve) => setTimeout(resolve, 10));
 		}
 
 		// Update productsNotUpdated to only include products that weren't inserted
@@ -153,7 +163,7 @@ export async function importProducts(
 }
 
 export async function addProduct(
-	supabase: SupabaseClient,
+	supabase: SupabaseClient<Database>,
 	product: Product,
 	selectedSupplier: number,
 	priceModificationPercentage: number

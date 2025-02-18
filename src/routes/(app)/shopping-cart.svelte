@@ -6,9 +6,10 @@
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import { buttonVariants } from '$lib/components/ui/button/button.svelte';
 	import { getCartContext } from '$lib/components/cart/ctx.svelte';
+	import type { Database } from '$lib/types/supabase/database.types';
 
 	type Props = {
-		supabase: SupabaseClient;
+		supabase: SupabaseClient<Database>;
 	};
 	let { supabase }: Props = $props();
 

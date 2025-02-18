@@ -1,7 +1,7 @@
 import {
 	cChannelMapCategoryRowSchema,
 	mProductCategoryRowSchema
-} from '$lib/types/supabase-zod-schemas';
+} from '$lib/types/supabase/supabase-zod-schemas';
 
 export const crudMProductCategorySchema = mProductCategoryRowSchema
 	.extend({

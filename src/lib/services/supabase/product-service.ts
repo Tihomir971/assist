@@ -1,5 +1,5 @@
 import type { Database } from '$lib/types/supabase/database.types.js';
-import type { Tables } from '$lib/types/supabase/database.types.helper.js';
+import type { Tables } from '$lib/types/supabase/database.helper.js';
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 type Product = Partial<Tables<'m_product'>>;

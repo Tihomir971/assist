@@ -5,8 +5,9 @@
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { goto } from '$app/navigation';
+	import type { Database } from '$lib/types/supabase/database.types';
 	type Props = {
-		supabase: SupabaseClient;
+		supabase: SupabaseClient<Database>;
 		profile: {
 			username: string | null;
 			full_name: string | null;

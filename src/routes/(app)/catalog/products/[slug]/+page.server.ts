@@ -62,10 +62,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		return data || [];
 	};
 	const getProductPackingType = async () => {
-		const { data } = await supabase
-			.from('m_product_packing_type')
-			.select('value:id,label:name')
-			.eq('m_product_id', productId);
+		const { data } = await supabase.from('m_product_packing_type').select('value:id,label:name');
 		return data || [];
 	};
 

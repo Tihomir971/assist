@@ -1969,7 +1969,6 @@ export type Database = {
           ad_client_id: number
           ad_org_id: number
           attributes: Json | null
-          barcode: string | null
           brand: string | null
           c_taxcategory_id: number
           c_uom_id: number
@@ -2001,9 +2000,8 @@ export type Database = {
           ad_client_id?: number
           ad_org_id?: number
           attributes?: Json | null
-          barcode?: string | null
           brand?: string | null
-          c_taxcategory_id: number
+          c_taxcategory_id?: number
           c_uom_id?: number
           condition?: string | null
           created?: string
@@ -2033,7 +2031,6 @@ export type Database = {
           ad_client_id?: number
           ad_org_id?: number
           attributes?: Json | null
-          barcode?: string | null
           brand?: string | null
           c_taxcategory_id?: number
           c_uom_id?: number
@@ -2193,6 +2190,7 @@ export type Database = {
           id: number
           m_product_id: number
           m_product_packing_type_id: number
+          unitsperpack: number
           updated_at: string
         }
         Insert: {
@@ -2201,6 +2199,7 @@ export type Database = {
           id?: number
           m_product_id: number
           m_product_packing_type_id?: number
+          unitsperpack?: number
           updated_at?: string
         }
         Update: {
@@ -2209,6 +2208,7 @@ export type Database = {
           id?: number
           m_product_id?: number
           m_product_packing_type_id?: number
+          unitsperpack?: number
           updated_at?: string
         }
         Relationships: [

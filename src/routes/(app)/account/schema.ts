@@ -1,4 +1,4 @@
-import { adUserRowSchema } from '$lib/types/supabase-zod-schemas';
+import { adUserRowSchema } from '$lib/types/supabase/supabase-zod-schemas';
 
 export const crudSchema = adUserRowSchema.extend({
 	id: adUserRowSchema.shape.id.optional(),
