@@ -35,7 +35,7 @@ export async function fetchProducts(
 		.from('m_product')
 		.select(
 			`
-            id, sku, name, barcode, mpn, unitsperpack, imageurl, discontinued,
+            id, sku, name, mpn, unitsperpack, imageurl, discontinued,
             c_taxcategory(c_tax(rate)),
             m_storageonhand(warehouse_id,qtyonhand),
             m_productprice(m_pricelist_version_id,pricestd,pricelist),
@@ -110,7 +110,6 @@ export function flattenProduct(
 		id: product.id,
 		sku: product.sku,
 		name: product.name,
-		barcode: product.barcode,
 		mpn: product.mpn,
 		unitsperpack: product.unitsperpack,
 		imageurl: product.imageurl,

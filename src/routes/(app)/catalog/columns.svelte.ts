@@ -5,13 +5,13 @@ import { createColumnHelper, renderComponent, renderSnippet } from '$lib/compone
 import TableCheckbox from '$lib/components/walker-tx/table-checkbox.svelte';
 import DataTableTitleCell from './data-table-title-cell.svelte';
 import DataTableActionsVendor from './data-table-actions-vendor.svelte';
-import type { Update } from '$lib/types/supabase/database.helper';
+import type { Tables, Update } from '$lib/types/supabase/database.helper';
 
 export interface Warehouse {
 	value: string;
 	label: string;
 }
-export interface Product {
+export interface ProductWithDetails {
 	id: number;
 	sku: string | null;
 	name: string;
@@ -24,19 +24,11 @@ export interface Product {
 	m_product_packing: Update<'m_product_packing'>[];
 	m_replenish: Update<'m_replenish'>[];
 	c_taxcategory?: { c_tax: { rate: number }[] } | null;
-	productPrice: {
-		m_pricelist_version_id: number;
-		pricestd: number | null;
-		pricelist: number | null;
-	}[];
-	// priceListVersion: { m_pricelist_id: number; validfrom: Date; validto: Date }[];
+	m_productprice: Update<'m_productprice'>[];
 	m_product_po: {
 		c_bpartner_id: number;
 		pricelist: number | null;
-		c_bpartner: {
-			name: string;
-			iscustomer: boolean;
-		};
+		c_bpartner: Partial<Tables<'c_bpartner'>>;
 	}[];
 }
 export interface FlattenedProduct {

@@ -9,7 +9,6 @@ export interface Product {
 	id: number;
 	sku: string;
 	name: string;
-	barcode: string;
 	mpn: string;
 	unitsperpack: number;
 	imageurl: string;
@@ -38,7 +37,6 @@ export interface FlattenedProduct {
 	id: number;
 	sku: string;
 	name: string;
-	barcode: string;
 	mpn: string;
 	unitsperpack: number;
 	imageurl: string;

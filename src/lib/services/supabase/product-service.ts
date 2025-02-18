@@ -54,7 +54,7 @@ export const getProductPurchasing = async (
 	const { data: productPurchasing } = await supabase
 		.from('m_product_po')
 		.select(
-			'id,isactive,barcode,c_bpartner_id,pricelist,vendorproductno,url,updated,m_product_id,valid_from,valid_to'
+			'id,isactive,c_bpartner_id,pricelist,vendorproductno,url,updated,m_product_id,valid_from,valid_to'
 		)
 		.eq('m_product_id', productId);
 	return productPurchasing ?? [];

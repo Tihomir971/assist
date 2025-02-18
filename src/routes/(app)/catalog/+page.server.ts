@@ -9,7 +9,7 @@ import { isValidGTIN } from '$lib/scripts/gtin';
 import { connector, scrapper } from '$lib/ky';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { DateTime } from 'luxon';
-import type { FlattenedProduct, Product } from './columns.svelte.js';
+import type { FlattenedProduct, ProductWithDetails } from './columns.svelte.js';
 import { productSelectSchema } from './schema';
 import { findChildren } from '$lib/scripts/tree';
 import { sourceId } from './types';
@@ -89,7 +89,49 @@ async function fetchProducts(
 	let query = supabase
 		.from('m_product')
 		.select(
-			'id, sku, name, mpn, unitsperpack, m_product_packing(m_product_packing_type_id,unitsperpack), imageurl, discontinued,c_taxcategory(c_tax(rate)),m_storageonhand(warehouse_id,qtyonhand),productPrice:m_productprice(m_pricelist_version_id,pricestd,pricelist),m_replenish(m_warehouse_id,level_min,level_max,qtybatchsize,m_warehousesource_id),m_product_po(c_bpartner_id, pricelist, c_bpartner(name, iscustomer)),isactive'
+			`
+			id,
+			sku,
+			name,
+			isactive,
+			mpn,
+			unitsperpack,
+			imageurl,
+			discontinued,
+			m_product_packing(
+				m_product_packing_type_id,
+				unitsperpack
+			),
+			c_taxcategory(
+				c_tax(
+					rate
+				)
+			),
+			m_storageonhand(
+				warehouse_id,
+				qtyonhand
+			),
+			m_productprice(
+				m_pricelist_version_id,
+				pricestd,
+				pricelist
+			),
+			m_replenish(
+				m_warehouse_id,
+				level_min,
+				level_max,
+				qtybatchsize,
+				m_warehousesource_id
+			),
+			m_product_po(
+				c_bpartner_id,
+				pricelist,
+				c_bpartner(
+					name,
+					iscustomer
+				)
+			)
+			`
 		)
 		.eq('producttype', 'I')
 		.in('m_product_packing.m_product_packing_type_id', [2, 3])
@@ -137,13 +179,13 @@ async function getPriceLists(
 }
 
 function filterAndFlattenProducts(
-	products: Product[],
+	products: ProductWithDetails[],
 	selectedReport: string | null,
 	activeWarehouse: number,
 	checkedVat: boolean,
 	activePricelists: Partial<Tables<'m_pricelist_version'>>[] | []
 ): FlattenedProduct[] {
-	let filteredProducts: Product[];
+	let filteredProducts: ProductWithDetails[];
 	if (selectedReport === 'relocation') {
 		filteredProducts = products.filter((product) => {
 			const m_replenishActiveWH = product.m_replenish.find(
@@ -210,13 +252,13 @@ function filterAndFlattenProducts(
 }
 
 function flattenProduct(
-	product: Product,
+	product: ProductWithDetails,
 	activeWarehouse: number,
 	checkedVat: boolean,
 	activePricelists: Partial<Tables<'m_pricelist_version'>>[] | []
 ): FlattenedProduct {
 	const smallestPricestd = Math.min(
-		...product.productPrice
+		...product.m_productprice
 			.filter(
 				(item) =>
 					item.pricestd !== null &&
@@ -226,9 +268,9 @@ function flattenProduct(
 	);
 
 	const purchase =
-		product.productPrice.find((item) => item.m_pricelist_version_id === 5)?.pricestd ?? 0;
+		product.m_productprice.find((item) => item.m_pricelist_version_id === 5)?.pricestd ?? 0;
 	const retail =
-		product.productPrice.find((item) => item.m_pricelist_version_id === 13)?.pricestd ?? 0;
+		product.m_productprice.find((item) => item.m_pricelist_version_id === 13)?.pricestd ?? 0;
 	const tax = product.c_taxcategory?.c_tax?.[0]?.rate ?? 0;
 
 	const storageLookup = new Map(
@@ -306,7 +348,11 @@ function flattenProduct(
 		priceMarketBest: checkedVat ? minMarketPrice * (1 + tax / 100) : minMarketPrice,
 		priceVendorBest: checkedVat ? minVendorPrice * (1 + tax / 100) : minVendorPrice,
 		action,
-		priceMarket
+		priceMarket: priceMarket.map((pm) => ({
+			...pm,
+			name: pm.name ?? 'N/A',
+			iscustomer: pm.iscustomer ?? false
+		}))
 	};
 }
 
