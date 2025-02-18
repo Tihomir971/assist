@@ -5,7 +5,7 @@ import { createColumnHelper, renderComponent, renderSnippet } from '$lib/compone
 import TableCheckbox from '$lib/components/walker-tx/table-checkbox.svelte';
 import DataTableTitleCell from './data-table-title-cell.svelte';
 import DataTableActionsVendor from './data-table-actions-vendor.svelte';
-import type { Tables, Update } from '$lib/types/supabase/database.helper';
+import type { Update } from '$lib/types/supabase/database.helper';
 
 export interface Warehouse {
 	value: string;
@@ -28,7 +28,7 @@ export interface ProductWithDetails {
 	m_product_po: {
 		c_bpartner_id: number;
 		pricelist: number | null;
-		c_bpartner: Partial<Tables<'c_bpartner'>>;
+		c_bpartner: Update<'c_bpartner'>;
 	}[];
 }
 export interface FlattenedProduct {

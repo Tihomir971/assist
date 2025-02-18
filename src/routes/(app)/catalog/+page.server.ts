@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from './$types';
-import type { Tables } from '$lib/types/supabase/database.helper.js';
+import type { Tables, Update } from '$lib/types/supabase/database.helper.js';
 import type { BSProduct } from '../data/types.js';
 import { getChannelMap } from '$lib/services/channel-map';
 import { fail, superValidate } from 'sveltekit-superforms';
@@ -255,7 +255,7 @@ function flattenProduct(
 	product: ProductWithDetails,
 	activeWarehouse: number,
 	checkedVat: boolean,
-	activePricelists: Partial<Tables<'m_pricelist_version'>>[] | []
+	activePricelists: Update<'m_pricelist_version'>[]
 ): FlattenedProduct {
 	const smallestPricestd = Math.min(
 		...product.m_productprice
