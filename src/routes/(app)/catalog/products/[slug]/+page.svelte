@@ -16,7 +16,7 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { Button } from '$lib/components/ui/button/index.js';
 
-	import DrawerBarcodes from './barcodes.svelte';
+	import DrawerBarcodes from './drawer-barcodes.svelte';
 	import ChartVisualization from './ChartVisualization.svelte';
 	import VendorsCard from './vendors.svelte';
 	import ReplenishCard from './replenish.svelte';
@@ -420,6 +420,7 @@
 			bind:isBarcodeDrawerOpen
 			validatedForm={data.formProductPacking}
 			m_product_id={$formProduct.id}
+			formProductPackingId={undefined}
 		/>
 	{/if}
 </div>

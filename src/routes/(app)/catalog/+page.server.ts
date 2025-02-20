@@ -233,13 +233,18 @@ function filterAndFlattenProducts(
 			const activeWarehouseStock =
 				product.m_storageonhand.find((item) => item.warehouse_id === activeWarehouse)?.qtyonhand ||
 				0;
-			const activeWarehouseLevelMin = product.m_replenish.find(
-				(item) => item.m_warehouse_id === activeWarehouse
-			)?.level_min;
+			// const activeWarehouseLevelMin = product.m_replenish.find(
+			// (item) => item.m_warehouse_id === activeWarehouse
+			// )?.level_min;
+			const activeWarehouseLevelMax =
+				product.m_replenish.find((item) => item.m_warehouse_id === activeWarehouse)?.level_max || 0;
+			const activeWarehouseBatch =
+				product.m_replenish.find((item) => item.m_warehouse_id === activeWarehouse)?.qtybatchsize ||
+				0;
 
 			return (
-				hasNonZeroStock ||
-				(activeWarehouseLevelMin !== undefined && activeWarehouseLevelMin > activeWarehouseStock)
+				hasNonZeroStock || activeWarehouseLevelMax - activeWarehouseBatch > activeWarehouseStock
+				// (activeWarehouseLevelMin !== undefined && activeWarehouseLevelMin > activeWarehouseStock)
 			);
 		});
 	} else {

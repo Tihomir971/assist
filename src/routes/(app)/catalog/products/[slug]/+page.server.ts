@@ -58,7 +58,8 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		const { data } = await supabase
 			.from('m_product_packing')
 			.select('*')
-			.eq('m_product_id', productId);
+			.eq('m_product_id', productId)
+			.order('m_product_packing_type_id', { ascending: false });
 		return data || [];
 	};
 	const getProductPackingType = async () => {
