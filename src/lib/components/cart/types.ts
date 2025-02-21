@@ -49,31 +49,31 @@ export interface FlattenedProduct {
 	ruc: number;
 	levelMin: number | null;
 	levelMax: number | null;
+	levelMinWarehouse2: number | null;
+	levelMaxWarehouse2: number | null;
 	qtyBatchSize: number | null;
+	qtyBatchSizeWarehouse2: number | null;
 	vendorPrices: { [vendorId: number]: number | null };
 	vendorProductNos: { [vendorId: number]: string | null };
 	action: boolean;
 }
 
 export interface ExportData {
-	id?: number;
-	sku: string;
-	mpn?: string;
-	name: string;
-	quantity?: number;
-	unitsperpack: number;
-	taxRate: number;
-	qtyWholesale: number;
-	qtyRetail: number;
-	levelMin: number;
-	levelMax: number;
-	qtyBatchSize: number;
+	SKU: string;
+	MPN: string;
+	Name: string;
+	'Order Qty.': number;
+	'Pack Qty.': number;
+	Tax: number;
+	'VP Qty.': number;
+	'MP Qty.': number;
+	'MP Max': number;
+	'MP Batch': number;
 	pricePurchase: number;
-	ruc?: number;
 	priceRetail: number;
-	qtyTransfer?: number;
-	newPrice?: number;
-	[key: string]: string | number | undefined | null; // Allow null values for dynamic fields
+	'VP Max': number;
+	'VP Batch': number;
+	[vendorName: string]: number | string | null;
 }
 
 export interface InternalTransferData {

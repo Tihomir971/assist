@@ -100,7 +100,13 @@ export function flattenProduct(
 
 	const ruc = purchase ? (priceRetail / (1 + tax / 100) - purchase) / purchase : 0;
 
-	const replenishInfo = replenishLookup.get(5) ?? {
+	const replenishInfoWarehouse5 = replenishLookup.get(5) ?? {
+		level_min: null,
+		level_max: null,
+		qtybatchsize: null
+	};
+
+	const replenishInfoWarehouse2 = replenishLookup.get(2) ?? {
 		level_min: null,
 		level_max: null,
 		qtybatchsize: null
@@ -120,9 +126,12 @@ export function flattenProduct(
 		pricePurchase: vat ? purchase * (1 + tax / 100) : purchase,
 		ruc: ruc,
 		priceRetail: vat ? priceRetail : priceRetail / (1 + tax / 100),
-		levelMin: replenishInfo.level_min,
-		levelMax: replenishInfo.level_max,
-		qtyBatchSize: replenishInfo.qtybatchsize,
+		levelMin: replenishInfoWarehouse5.level_min,
+		levelMax: replenishInfoWarehouse5.level_max,
+		qtyBatchSize: replenishInfoWarehouse5.qtybatchsize,
+		levelMinWarehouse2: replenishInfoWarehouse2.level_min,
+		levelMaxWarehouse2: replenishInfoWarehouse2.level_max,
+		qtyBatchSizeWarehouse2: replenishInfoWarehouse2.qtybatchsize,
 		vendorPrices,
 		vendorProductNos,
 		action
@@ -210,20 +219,19 @@ export async function processExport(
 				} else {
 					// Default export
 					const data: ExportData = {
-						id: item.id,
-						sku: product.sku || '',
-						mpn: product.mpn || '',
-						name: item.name,
-						quantity: item.quantity,
-						unitsperpack: product.unitsperpack || 0,
-						taxRate: product.taxRate || 0,
-						qtyWholesale: product.qtyWholesale || 0,
-						qtyRetail: product.qtyRetail || 0,
-						levelMin: product.levelMin || 0,
-						levelMax: product.levelMax || 0,
-						qtyBatchSize: product.qtyBatchSize || 0,
+						SKU: product.sku || '',
+						MPN: product.mpn || '',
+						Name: item.name,
+						'Order Qty.': item.quantity,
+						'Pack Qty.': product.unitsperpack || 0,
+						Tax: product.taxRate || 0,
+						'VP Qty.': product.qtyWholesale || 0,
+						'MP Qty.': product.qtyRetail || 0,
+						'VP Max': product.levelMaxWarehouse2 || 0,
+						'VP Batch': product.qtyBatchSizeWarehouse2 || 0,
+						'MP Max': product.levelMax || 0,
+						'MP Batch': product.qtyBatchSize || 0,
 						pricePurchase: product.pricePurchase || 0,
-						ruc: product.ruc || 0,
 						priceRetail: product.priceRetail || 0
 					};
 
@@ -318,6 +326,19 @@ export async function processExport(
 					const priceAddress = utils.encode_cell({ r: R, c: C });
 					if (worksheet[priceAddress]) {
 						worksheet[priceAddress].z = '#,##0.00';
+					}
+				}
+			}
+
+			if (
+				cell.v.toString().includes('levelMinWarehouse2') ||
+				cell.v.toString().includes('levelMaxWarehouse2') ||
+				cell.v.toString().includes('qtyBatchSizeWarehouse2')
+			) {
+				for (let R = finalRange.s.r + 1; R <= finalRange.e.r; ++R) {
+					const address = utils.encode_cell({ r: R, c: C });
+					if (worksheet[address]) {
+						worksheet[address].z = '#,##0.00';
 					}
 				}
 			}
