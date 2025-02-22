@@ -20,6 +20,25 @@
 *   Component-based architecture.
 *   Form object pattern (sveltekit-superforms).
 *   Utility-first CSS (Tailwind CSS).
+*   Storage-agnostic pattern for cart implementation:
+    ```typescript
+    // Abstract storage interface allowing swapping between localStorage and Supabase
+    interface ICartStorage<T> {
+      get(): Promise<T[]>;
+      set(items: T[]): Promise<void>;
+      update(id: number, updates: Partial<T>): Promise<void>;
+      delete(id: number): Promise<void>;
+      subscribe(callback: (items: T[]) => void): () => void;
+    }
+    ```
+    - Implementations:
+      - LocalCartStorage: Uses LocalStorage class with Svelte's $state
+      - SupabaseCartStorage: Uses Supabase client for persistence
+    - Benefits:
+      - Easy switching between storage implementations
+      - Maintains reactivity
+      - Type-safe operations
+      - Async-first design
 
 **Component Relationships:**
 

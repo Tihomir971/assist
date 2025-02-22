@@ -24,7 +24,7 @@
 
 	let { data } = $props();
 
-	const cartStorageCtx = getCartContext();
+	const cartService = getCartContext();
 	// Define a reactive state to track the row selection state.
 	let rowSelectionState: RowSelectionState = $state({});
 	let sorting = $state<SortingState>([]);
@@ -96,18 +96,20 @@
 		},
 		getRowId: (originalRow) => originalRow.id.toString()
 	});
-	function addToCart(): void {
-		if (browser) {
+	async function addToCart(): Promise<void> {
+		if (browser && cartService) {
+			const cartItems = await cartService.getCartItems();
 			table.getRowModel().rows.forEach((row) => {
 				if (row.getIsSelected()) {
-					const existingItemIndex = cartStorageCtx.current.findIndex(
-						(item) => item.id === row.original.id
-					);
+					const existingItemIndex = cartItems.findIndex((item) => item.id === row.original.id);
 
 					if (existingItemIndex !== -1) {
-						cartStorageCtx.current[existingItemIndex].quantity += 1;
+						cartService.updateItemQuantity(
+							row.original.id,
+							cartItems[existingItemIndex].quantity + 1
+						);
 					} else {
-						cartStorageCtx.current.push({
+						cartService.addItem({
 							id: row.original.id,
 							name: row.original.name,
 							quantity: 1,

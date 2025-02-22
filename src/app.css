@@ -1,14 +1,9 @@
-@import './app-open-props.css';
 @import 'tailwindcss';
 
 @theme {
 	--font-family-sans:
 		'Nunito Sans Variable', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
 		'Segoe UI Emoji';
-
-	--color-surface-2: var(--surface-2);
-	--color-surface-3: var(--surface-3);
-	--color-surface-document: var(--surface-document);
 
 	/* Default background color of <body />...etc */
 	--color-background: light-dark(var(--color-zinc-100), var(--color-gray-900));

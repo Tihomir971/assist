@@ -2,17 +2,12 @@
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	// Utils
 	import { getCartContext } from './ctx.svelte';
-	import { processExport } from './export-utils';
-	// Components
-	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
-	import * as Select from '$lib/components/ui/select/index.js';
 	import type { Database } from '$lib/types/supabase/database.types';
+	// Components
+	import { Button } from '$lib/components/ui/button/index.js';
+	import CartItem from './cart-item.svelte';
+	import ExportDialog from './components/export/ExportDialog.svelte';
 	// Icons
-	import PhPlus from '~icons/ph/plus';
-	import PhMinus from '~icons/ph/minus';
-	import PhTrash from '~icons/ph/trash';
 	import PhMicrosoftExcelLogo from '~icons/ph/microsoft-excel-logo';
 
 	interface Props {
@@ -20,43 +15,12 @@
 	}
 
 	let { supabase }: Props = $props();
-	const cartStorageCtx = getCartContext();
+	const cartService = getCartContext();
 
 	let showVendorDialog = $state(false);
 
-	let selectReportValue = $state<string | undefined>(undefined);
-	const selectReportOptions = [
-		{ value: 'sales_action', label: 'Definisanje prodajnih akcija' },
-		{ value: 'internal_transfer', label: 'Interni račun robe' },
-		{ value: 'vendor_orders', label: 'Nardžbine dobavljačima' }
-	];
-	const selectReportTrigerContent = $derived(
-		selectReportOptions.find((f) => f.value === selectReportValue)?.label ?? 'Select report type'
-	);
-
-	let vendors = $state([
-		{ id: 480, name: 'Agrofina', selected: false },
-		{ id: 4, name: 'Mercator', selected: false },
-		{ id: 89, name: 'Mivex', selected: false },
-		{ id: 2, name: 'Cenoteka', selected: false },
-		{ id: 714, name: 'Harizma', selected: false }
-	]);
-
-	function clearCart() {
-		cartStorageCtx.current = [];
-	}
-
-	async function handleExport() {
-		const success = await processExport(
-			cartStorageCtx.current,
-			vendors,
-			selectReportValue,
-			supabase
-		);
-		if (success) {
-			showVendorDialog = false;
-			vendors = vendors.map((v) => ({ ...v, selected: false }));
-		}
+	async function clearCart() {
+		await cartService.clearCart();
 	}
 </script>
 
@@ -69,108 +33,14 @@
 		</Button>
 	</div>
 	<div class="h-full overflow-y-auto pr-2">
-		{#each cartStorageCtx.current as cartItem}
-			<div
-				class="mb-2 flex flex-col items-start justify-between rounded-md bg-surface-3 p-3 sm:flex-row sm:items-center"
-			>
-				<div class="mb-2 flex flex-col sm:mb-0">
-					<span class="text-sm font-medium">{cartItem.name}</span>
-					<span class="text-xs text-gray-500">SKU: {cartItem.sku}</span>
-				</div>
-				<div class="flex items-center space-x-2">
-					<Button
-						size="icon"
-						variant="ghost"
-						onclick={() => {
-							const index = cartStorageCtx.current.findIndex((item) => item.id === cartItem.id);
-							if (index !== -1 && cartItem.quantity > 1) {
-								cartStorageCtx.current = [
-									...cartStorageCtx.current.slice(0, index),
-									{
-										...cartStorageCtx.current[index],
-										quantity: cartStorageCtx.current[index].quantity - 1
-									},
-									...cartStorageCtx.current.slice(index + 1)
-								];
-							}
-						}}
-					>
-						<PhMinus />
-					</Button>
-					<span class="w-8 text-center text-sm font-medium">{cartItem.quantity}</span>
-					<Button
-						size="icon"
-						variant="ghost"
-						onclick={() => {
-							const index = cartStorageCtx.current.findIndex((item) => item.id === cartItem.id);
-							if (index !== -1) {
-								cartStorageCtx.current = [
-									...cartStorageCtx.current.slice(0, index),
-									{
-										...cartStorageCtx.current[index],
-										quantity: cartStorageCtx.current[index].quantity + 1
-									},
-									...cartStorageCtx.current.slice(index + 1)
-								];
-							}
-						}}
-					>
-						<PhPlus />
-					</Button>
-					<Button
-						size="icon"
-						variant="destructive"
-						onclick={() => {
-							const index = cartStorageCtx.current.findIndex((item) => item.id === cartItem.id);
-							if (index !== -1) {
-								cartStorageCtx.current = [
-									...cartStorageCtx.current.slice(0, index),
-									...cartStorageCtx.current.slice(index + 1)
-								];
-							}
-						}}
-					>
-						<PhTrash />
-					</Button>
-				</div>
-			</div>
-		{/each}
+		{#await cartService.getCartItems() then cartItems}
+			{#each cartItems as cartItem}
+				<CartItem {cartItem} />
+			{/each}
+		{:catch error}
+			<p>Error: {error.message}</p>
+		{/await}
 	</div>
 
-	<Dialog.Root open={showVendorDialog}>
-		<Dialog.Content class="w-full max-w-sm sm:max-w-md">
-			<Dialog.Header>
-				<Dialog.Title>Select Vendors</Dialog.Title>
-				<Dialog.Description>
-					Choose the vendors whose prices and product numbers you want to include in the export.
-				</Dialog.Description>
-			</Dialog.Header>
-			<Select.Root type="single" allowDeselect={true} bind:value={selectReportValue}>
-				<Select.Trigger class="w-full">
-					{selectReportTrigerContent}
-				</Select.Trigger>
-				<Select.Content>
-					{#each selectReportOptions as reportOption}
-						<Select.Item value={reportOption.value} label={reportOption.label}>
-							{reportOption.label}
-						</Select.Item>
-					{/each}
-				</Select.Content>
-			</Select.Root>
-			<div class="flex max-h-[40vh] flex-col space-y-4">
-				<div class="flex flex-col space-y-2 overflow-y-auto">
-					{#each vendors as vendor}
-						<label class="flex items-center space-x-2">
-							<Checkbox bind:checked={vendor.selected} />
-							<span>{vendor.name}</span>
-						</label>
-					{/each}
-				</div>
-			</div>
-			<Dialog.Footer>
-				<Button onclick={() => (showVendorDialog = false)}>Cancel</Button>
-				<Button onclick={handleExport}>Export</Button>
-			</Dialog.Footer>
-		</Dialog.Content>
-	</Dialog.Root>
+	<ExportDialog {supabase} open={showVendorDialog} />
 </div>

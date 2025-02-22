@@ -355,7 +355,7 @@ export async function processExport(
 				: selectReportValue === 'sales_action'
 					? 'Definisanje prodajnih akcija.xlsx'
 					: selectReportValue === 'vendor_orders'
-						? 'Nardžbine dobavljačima.xlsx'
+						? 'Narudžbine dobavljačima.xlsx'
 						: 'cart_items.xlsx'
 		);
 

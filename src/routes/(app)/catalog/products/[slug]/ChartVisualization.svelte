@@ -130,7 +130,7 @@
 							distance: [0, 10],
 							padding: [4, 8],
 							borderRadius: 4,
-							color: 'var(--text-2)'
+							color: 'var(--color-muted-foreground)'
 						},
 						lineStyle: {
 							type: 'solid',
@@ -157,7 +157,7 @@
 			legend: {
 				data: sortedYears.map((year) => year.year.toString()),
 				bottom: 0,
-				textStyle: { color: 'var(--text-2)' }
+				textStyle: { color: 'var(--color-muted-foreground)' }
 			},
 			grid: {
 				top: '15%', // Increased to accommodate labels
