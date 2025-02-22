@@ -1,5 +1,6 @@
 {
   "name": "assist",
+  "private": true,
   "version": "0.0.2",
   "type": "module",
   "packageManager": "pnpm@9.15.4",
@@ -10,6 +11,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
+    "prepare": "svelte-kit sync || echo ''",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "update-deps": "pnpx npm-check-updates -i --format group --install always",
     "update-next": "pnpx npm-check-updates -i --format group --install always --target \"@next\"",
@@ -20,6 +22,8 @@
     "knip": "knip --dependencies"
   },
   "devDependencies": {
+    "@eslint/compat": "^1.2.7",
+    "@eslint/js": "^9.21.0",
     "@iconify-json/devicon": "^1.2.16",
     "@iconify-json/ph": "^1.2.2",
     "@sveltejs/adapter-cloudflare": "5.0.3",
@@ -71,5 +75,10 @@
     "melt": "^0.14.1",
     "tailwindcss": "4.0.8",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

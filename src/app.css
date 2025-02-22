@@ -6,7 +6,7 @@
 		'Segoe UI Emoji';
 
 	/* Default background color of <body />...etc */
-	--color-background: light-dark(var(--color-zinc-100), var(--color-gray-900));
+	--color-background: light-dark(var(--color-zinc-100), var(--color-zinc-300));
 	--color-foreground: light-dark(var(--color-zinc-950), var(--color-white));
 	/* Muted backgrounds such as <TabsList />, <Skeleton /> and <Switch /> */
 	--color-muted: light-dark(var(--color-zinc-500), var(--color-gray-700));
@@ -35,7 +35,6 @@
 	--color-destructive-foreground: light-dark(var(--color-zinc-900), var(--color-gray-200));
 	/* Used for focus ring */
 	--color-ring: light-dark(var(--color-indigo-300), var(--color-indigo-700));
-	/* --color-ring: hsl(215 20.2% 65.1%); */
 	/* Border radius for card, input and buttons */
 	--radius: var(--radius-md);
 }
@@ -44,7 +43,7 @@
 	* {
 		@apply border-border;
 	}
-	html {
+	body {
 		@apply bg-background text-foreground;
 	}
 	input,
