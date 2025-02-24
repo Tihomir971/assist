@@ -40,11 +40,11 @@
 }
 
 @layer base {
-	:root {
-		@apply scheme-light-dark;
-	}
 	* {
 		@apply border-border;
+	}
+	html {
+		@apply scheme-light-dark;
 	}
 	body {
 		@apply bg-background text-foreground;
