@@ -2,9 +2,11 @@ import { isValidGTIN } from '$lib/scripts/gtin';
 import type { Tables } from '$lib/types/supabase/database.helper';
 import { mProductPackingInsertSchema } from '$lib/types/supabase/supabase-zod-schemas';
 import { z } from 'zod';
+
 export const packingInsertSchema = mProductPackingInsertSchema.refine((data) => {
 	return data.gtin ? isValidGTIN(data.gtin) : true;
 });
+
 export const packingSchema = z.object({
 	id: z.number().optional(),
 	m_product_id: z.number(),

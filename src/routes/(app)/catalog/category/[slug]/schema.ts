@@ -8,8 +8,8 @@ export const crudMProductCategorySchema = mProductCategoryRowSchema
 		id: mProductCategoryRowSchema.shape.id.optional()
 	})
 	.omit({
-		created: true,
-		updated: true
+		created_at: true,
+		updated_at: true
 	})
 	.passthrough();
 export type CrudMProductCategorySchema = typeof crudMProductCategorySchema;
@@ -19,8 +19,8 @@ export const crudCChannelMapCategorySchema = cChannelMapCategoryRowSchema
 		id: cChannelMapCategoryRowSchema.shape.id.optional()
 	})
 	.omit({
-		created: true,
-		updated: true
+		created_at: true,
+		updated_at: true
 	})
 	.passthrough();
 export type CrudCChannelMapCategorySchema = typeof crudCChannelMapCategorySchema;

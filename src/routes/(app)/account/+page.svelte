@@ -21,7 +21,7 @@
 	let valueCreated = $state<DateTimeMaybeValid>();
 
 	$effect(() => {
-		valueCreated = $formData.created ? DateTime.fromISO($formData.created) : undefined;
+		valueCreated = $formData.created_at ? DateTime.fromISO($formData.created_at) : undefined;
 	});
 </script>
 
@@ -68,7 +68,7 @@
 							{#snippet children({ props })}
 								<Label>Created</Label>
 								<Input value={valueCreated?.toISODate()} readonly type="date" />
-								<input hidden value={$formData.created} name={props.name} />
+								<input hidden value={$formData.created_at} name={props.name} />
 							{/snippet}
 						</Form.Control>
 						<Form.Description />
@@ -76,7 +76,7 @@
 					</Form.Field>
 					<div>
 						<Label>Updated</Label>
-						<Input value={formatDateTime($formData.updated)} readonly />
+						<Input value={formatDateTime($formData.updated_at)} readonly />
 					</div>
 				</div>
 			</form>

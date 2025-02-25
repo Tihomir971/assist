@@ -2,34 +2,31 @@ import { superValidate } from 'sveltekit-superforms/server';
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { zod } from 'sveltekit-superforms/adapters';
-import { packingSchema } from './schema';
+import { packingInsertSchema } from './schema';
 
 export const load = (async ({ locals: { supabase } }) => {
 	// Fetch all packing types for the select
-	const { data: packingTypes } = await supabase.from('m_product_packing_type').select('*');
+	const { data: packingTypes } = await supabase.from('m_product_packing_type').select('id, name');
 
 	// Fetch all packing records with their types
 	const { data: packings } = await supabase
 		.from('m_product_packing')
-		.select('*')
+		.select('id, m_product_id, m_product_packing_type_id, unitsperpack, gtin')
 		.eq('m_product_id', 6109);
 
 	// Initialize form for create/edit operations
-	const form = await superValidate(zod(packingSchema));
+	const form = await superValidate(zod(packingInsertSchema));
 
 	return { packings, packingTypes, form };
 }) satisfies PageServerLoad;
 
 export const actions = {
 	create: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(packingSchema));
+		const form = await superValidate(request, zod(packingInsertSchema));
 		if (!form.valid) return fail(400, { form });
 
 		const { error } = await supabase.from('m_product_packing').insert({
-			m_product_id: form.data.m_product_id,
-			m_product_packing_type_id: form.data.m_product_packing_type_id,
-			unitsperpack: form.data.unitsperpack,
-			gtin: form.data.gtin
+			...form.data
 		});
 
 		if (error) {
@@ -45,7 +42,7 @@ export const actions = {
 	},
 
 	update: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(packingSchema));
+		const form = await superValidate(request, zod(packingInsertSchema));
 		if (!form.valid) return fail(400, { form });
 
 		const { error } = await supabase

@@ -62,7 +62,7 @@
 								variant="outline"
 								onclick={() => {
 									editingId = packing.id;
-									$form = packing as Tables<'m_product_packing'>;
+									$form = packing;
 								}}
 							>
 								Edit

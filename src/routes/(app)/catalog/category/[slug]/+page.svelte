@@ -84,7 +84,7 @@
 					>
 						<Form.Control>
 							{#snippet children({ props })}
-								<Checkbox {...props} bind:checked={$formData.isactive} />
+								<Checkbox {...props} bind:checked={$formData.is_active} />
 								<div class="space-y-1 leading-none">
 									<Form.Label>Is Active?</Form.Label>
 								</div>
@@ -99,7 +99,7 @@
 					>
 						<Form.Control>
 							{#snippet children({ props })}
-								<Checkbox {...props} bind:checked={$formData.isselfservice} />
+								<Checkbox {...props} bind:checked={$formData.is_self_service} />
 								<div class="space-y-1 leading-none">
 									<Form.Label>Is Self Service?</Form.Label>
 								</div>
@@ -151,7 +151,7 @@
 					<Input
 						id="created"
 						type="text"
-						value={formatDateTime($formData.created as string)}
+						value={formatDateTime($formData.created_at as string)}
 						readonly
 					/>
 				</div>

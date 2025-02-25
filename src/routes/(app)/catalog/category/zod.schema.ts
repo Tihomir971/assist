@@ -1,15 +1,14 @@
 import { z } from 'zod';
 
 export const productCategorySchema = z.object({
-	ad_org_id: z.number().optional(),
-	created: z.string(),
+	created_at: z.string(),
 	description: z.string().nullable(),
 	id: z.number(),
-	isactive: z.boolean(),
-	isselfservice: z.boolean(),
+	is_active: z.boolean(),
+	is_self_service: z.boolean(),
 	name: z.string(),
 	parent_id: z.number().nullable(),
-	updated: z.string(),
+	updated_at: z.string(),
 	value: z.string().nullable()
 });
 export const crudProductCategorySchema = productCategorySchema.extend({

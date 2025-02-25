@@ -11,12 +11,12 @@ export const load: PageServerLoad = async ({ locals: { supabase, session } }) =>
 
 	const { data: profile } = await supabase
 		.from('ad_user')
-		.select('id, created, updated, full_name, username, email, avatar_url')
+		.select('id, created_at, updated_at, full_name, username, email, avatar_url')
 		.eq('auth_user_id', session.user.id)
 		.single();
 
 	const form = await superValidate(profile, zod(crudSchema));
-	console.log('form.data', form.data.created, ' ', form.data.updated);
+	console.log('form.data', form.data.created_at, ' ', form.data.updated_at);
 
 	return { session, form };
 };

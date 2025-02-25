@@ -103,7 +103,7 @@
 							>
 						</Table.Cell>
 						<Table.Cell class="text-right"
-							>{formatDateTime($form.purchases[i].updated as string)}</Table.Cell
+							>{formatDateTime($form.purchases[i].updated_at as string)}</Table.Cell
 						>
 						<Table.Cell>
 							<Button

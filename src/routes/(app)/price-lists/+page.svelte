@@ -86,11 +86,9 @@
 				name: newVersion.name,
 				validfrom: parseDate(newVersion.fromDate),
 				validto: parseDate(newVersion.toDate),
-				ad_client_id: 0, // Add default values for required fields
-				ad_org_id: 0,
-				created: new Date().toISOString(),
-				updated: new Date().toISOString(),
-				isactive: true,
+				created_at: new Date().toISOString(),
+				updated_at: new Date().toISOString(),
+				is_active: true,
 				m_discountschema_id: 0,
 				m_pricelist_version_base_id: null,
 				description: null
@@ -113,11 +111,9 @@
 				m_pricelist_version_id: selectedVersionId,
 				m_product_id: 0, // You might want to set this to a real product ID
 				pricestd: parseFloat(newProduct.price),
-				ad_client_id: 0, // Add default values for required fields
-				ad_org_id: 0,
-				created: new Date().toISOString(),
-				updated: new Date().toISOString(),
-				isactive: true,
+				created_at: new Date().toISOString(),
+				updated_at: new Date().toISOString(),
+				is_active: true,
 				pricelimit: null,
 				pricelist: null
 			};

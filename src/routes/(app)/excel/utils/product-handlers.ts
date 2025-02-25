@@ -195,9 +195,9 @@ export async function addProduct(
 
 	if (poError) throw poError;
 
-	// Insert into m_product_gtin
 	const { error: gtinError } = await supabase.from('m_product_packing').insert({
 		m_product_id: productId,
+		m_product_packing_type_id: 1,
 		gtin: product.barcode
 	});
 
