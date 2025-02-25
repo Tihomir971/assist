@@ -14,30 +14,10 @@ export const crudMProductSchema = mProductRowSchema
 	.extend({
 		id: mProductRowSchema.shape.id.optional()
 	})
-	.omit({ created: true, updated: true })
+	.omit({ created_at: true, updated_at: true })
 	.passthrough();
 export type CrudMProductSchema = typeof crudMProductSchema;
 
-// Gtin
-// export const crudMProductGtinSchema = z.object({
-// 	barcodes: z.array(
-// 		mProductGtinRowSchema
-// 			.extend({
-// 				id: mProductRowSchema.shape.id.optional(),
-// 				isactive: mProductRowSchema.shape.isactive.optional()
-// 			})
-// 			.omit({ created: true, updated: true })
-// 			.passthrough()
-// 			.refine(
-// 				(barcodes) => {
-// 					return isValidGTIN(barcodes.gtin);
-// 				},
-// 				{
-// 					message: 'All GTINs must be valid (8, 12, 13, or 14 digits)'
-// 				}
-// 			)
-// 	)
-// });
 export const crudMProductGtinSchema = z.object({
 	productPacking: z.array(
 		mProductPackingInsertSchema.passthrough().refine(
@@ -57,11 +37,9 @@ export type CrudMProductGtinSchema = z.infer<typeof crudMProductGtinSchema>;
 // Replenish
 export const replenishSchema = mReplenishRowSchema
 	.omit({
-		ad_client_id: true,
-		ad_org_id: true,
-		isactive: true,
-		created: true,
-		updated: true,
+		is_active: true,
+		created_at: true,
+		updated_at: true,
 		m_locator_id: true,
 		m_replenish_uu: true,
 		replenishtype: true
@@ -93,7 +71,7 @@ export type CrudReplenishSchema = z.infer<typeof crudReplenishSchema>;
 export const crudMProductPoRowSchema = mProductPoRowSchema
 	.extend({
 		id: mProductPoRowSchema.shape.id.optional(),
-		isactive: mProductPoRowSchema.shape.isactive.optional(),
+		is_active: mProductPoRowSchema.shape.is_active.optional(),
 		c_currency_id: mProductPoRowSchema.shape.c_currency_id.optional(),
 		c_uom_id: mProductPoRowSchema.shape.c_uom_id.optional(),
 		discontinued: mProductPoRowSchema.shape.discontinued.optional(),
@@ -105,7 +83,7 @@ export const crudMProductPoRowSchema = mProductPoRowSchema
 		pricepo: mProductPoRowSchema.shape.pricepo.optional(),
 		vendorcategory: mProductPoRowSchema.shape.vendorcategory.optional()
 	})
-	.omit({ created: true, updated: true })
+	.omit({ created_at: true, updated_at: true })
 	.passthrough();
 export type CrudMProductPoRowSchema = z.infer<typeof crudMProductPoRowSchema>;
 

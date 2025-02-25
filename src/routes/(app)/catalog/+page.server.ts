@@ -93,7 +93,7 @@ async function fetchProducts(
 			id,
 			sku,
 			name,
-			isactive,
+			is_active,
 			mpn,
 			unitsperpack,
 			imageurl,
@@ -157,7 +157,7 @@ async function fetchProducts(
 
 	return data.filter((product) => {
 		const hasStock = product.m_storageonhand.some((item) => item.qtyonhand > 0);
-		return product.isactive || hasStock;
+		return product.is_active || hasStock;
 	});
 }
 
@@ -170,7 +170,7 @@ async function getPriceLists(
 	const { data } = await supabase
 		.from('m_pricelist_version')
 		.select('id')
-		.eq('isactive', true)
+		.eq('is_active', true)
 		.eq('m_pricelist_id', 4)
 		.or(`validfrom.lte.${targetDate},validfrom.is.null`)
 		.or(`validto.gte.${targetDate},validto.is.null`);
@@ -437,9 +437,11 @@ export const actions = {
 			}
 
 			product.barcodes?.forEach(async (element) => {
-				const { error: updateBacodesError } = await supabase
-					.from('m_product_packing')
-					.insert({ m_product_id: selectProductId.id, gtin: element });
+				const { error: updateBacodesError } = await supabase.from('m_product_packing').insert({
+					m_product_id: selectProductId.id,
+					gtin: element,
+					m_product_packing_type_id: 1
+				});
 				if (updateBacodesError) {
 					console.error('Error adding product GTIN:', updateBacodesError);
 				}
@@ -648,6 +650,7 @@ export const actions = {
 						const { error: insertError } = await supabase.from('m_product_packing').insert(
 							newBarcodes.map((barcode: string) => ({
 								m_product_id: productId,
+								m_product_packing_type_id: 1,
 								gtin: barcode
 							}))
 						);

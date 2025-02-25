@@ -6,7 +6,7 @@
 		'Segoe UI Emoji';
 
 	/* Default background color of <body />...etc */
-	--color-background: light-dark(var(--color-zinc-100), var(--color-zinc-300));
+	--color-background: light-dark(var(--color-zinc-100), var(--color-gray-900));
 	--color-foreground: light-dark(var(--color-zinc-950), var(--color-white));
 	/* Muted backgrounds such as <TabsList />, <Skeleton /> and <Switch /> */
 	--color-muted: light-dark(var(--color-zinc-500), var(--color-gray-700));
@@ -42,6 +42,9 @@
 @layer base {
 	* {
 		@apply border-border;
+	}
+	:root {
+		@apply scheme-light-dark;
 	}
 	body {
 		@apply bg-background text-foreground;

@@ -68,7 +68,7 @@
 				>
 					<Form.Control>
 						{#snippet children({ props })}
-							<Checkbox {...props} bind:checked={$formData.isactive} />
+							<Checkbox {...props} bind:checked={$formData.is_active} />
 							<div class="space-y-1 leading-none">
 								<Form.Label>Is Active?</Form.Label>
 							</div>

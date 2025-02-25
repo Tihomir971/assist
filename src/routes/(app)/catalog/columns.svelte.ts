@@ -17,7 +17,7 @@ export interface ProductWithDetails {
 	name: string;
 	mpn: string | null;
 	unitsperpack: number;
-	isactive: boolean;
+	is_active: boolean;
 	imageurl: string | null;
 	discontinued: boolean;
 	m_storageonhand: Update<'m_storageonhand'>[];
@@ -39,7 +39,7 @@ export interface FlattenedProduct {
 	unitsperpack: number | null;
 	imageurl: string | null;
 	discontinued: boolean;
-	isactive?: boolean;
+	is_active?: boolean;
 	taxRate: number | null;
 	qtyWholesale: number;
 	qtyRetail: number;
@@ -132,7 +132,7 @@ export const columnDefs = [
 			if (row.original.discontinued) {
 				labels.push({ value: 'EOL', variant: 'outline' });
 			}
-			if (row.original.isactive === false) {
+			if (row.original.is_active === false) {
 				labels.push({ value: 'Inactive', variant: 'outline' });
 			}
 			return renderComponent(DataTableTitleCell, {

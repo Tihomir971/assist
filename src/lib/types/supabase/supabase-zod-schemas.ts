@@ -14,150 +14,49 @@ export const jsonSchema: z.ZodSchema<Json> = z.lazy(() =>
 		.nullable()
 );
 
-export const adClientRowSchema = z.object({
-	ad_language: z.string().nullable(),
-	created: z.string(),
-	createdby: z.string().nullable(),
-	id: z.number(),
-	isactive: z.boolean(),
-	name: z.string(),
-	updated: z.string(),
-	updatedby: z.string().nullable(),
-	value: z.string()
-});
-
-export const adClientInsertSchema = z.object({
-	ad_language: z.string().optional().nullable(),
-	created: z.string().optional(),
-	createdby: z.string().optional().nullable(),
-	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	name: z.string(),
-	updated: z.string().optional(),
-	updatedby: z.string().optional().nullable(),
-	value: z.string()
-});
-
-export const adClientUpdateSchema = z.object({
-	ad_language: z.string().optional().nullable(),
-	created: z.string().optional(),
-	createdby: z.string().optional().nullable(),
-	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	name: z.string().optional(),
-	updated: z.string().optional(),
-	updatedby: z.string().optional().nullable(),
-	value: z.string().optional()
-});
-
-export const adClientRelationshipsSchema = z.tuple([]);
-
-export const adOrgRowSchema = z.object({
-	ad_client_id: z.number(),
-	code: z.string().nullable(),
-	created: z.string(),
-	description: z.string().nullable(),
-	id: z.number(),
-	isactive: z.boolean(),
-	name: z.string(),
-	updated: z.string(),
-	value: z.string()
-});
-
-export const adOrgInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	code: z.string().optional().nullable(),
-	created: z.string().optional(),
-	description: z.string().optional().nullable(),
-	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	name: z.string(),
-	updated: z.string().optional(),
-	value: z.string()
-});
-
-export const adOrgUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	code: z.string().optional().nullable(),
-	created: z.string().optional(),
-	description: z.string().optional().nullable(),
-	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	name: z.string().optional(),
-	updated: z.string().optional(),
-	value: z.string().optional()
-});
-
-export const adOrgRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('ad_org_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	})
-]);
-
 export const adUserRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
 	auth_user_id: z.string().nullable(),
 	avatar_url: z.string().nullable(),
 	c_bpartner_id: z.number().nullable(),
-	created: z.string(),
+	created_at: z.string(),
 	email: z.string().nullable(),
 	full_name: z.string().nullable(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	supervisor_id: z.number().nullable(),
-	updated: z.string(),
+	updated_at: z.string(),
 	username: z.string().nullable()
 });
 
 export const adUserInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
 	auth_user_id: z.string().optional().nullable(),
 	avatar_url: z.string().optional().nullable(),
 	c_bpartner_id: z.number().optional().nullable(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	email: z.string().optional().nullable(),
 	full_name: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	supervisor_id: z.number().optional().nullable(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	username: z.string().optional().nullable()
 });
 
 export const adUserUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
 	auth_user_id: z.string().optional().nullable(),
 	avatar_url: z.string().optional().nullable(),
 	c_bpartner_id: z.number().optional().nullable(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	email: z.string().optional().nullable(),
 	full_name: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	supervisor_id: z.number().optional().nullable(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	username: z.string().optional().nullable()
 });
 
 export const adUserRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('ad_user_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('ad_user_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('ad_user_c_bpartner_id_fkey'),
 		columns: z.tuple([z.literal('c_bpartner_id')]),
@@ -173,33 +72,33 @@ export const adUserRelationshipsSchema = z.tuple([
 ]);
 
 export const assetRowSchema = z.object({
-	created: z.string(),
+	created_at: z.string(),
 	id: z.number(),
 	mimeType: z.string().nullable(),
 	name: z.string(),
 	source: z.string(),
 	type: z.string().nullable(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const assetInsertSchema = z.object({
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
 	mimeType: z.string().optional().nullable(),
 	name: z.string(),
 	source: z.string(),
 	type: z.string().optional().nullable(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const assetUpdateSchema = z.object({
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
 	mimeType: z.string().optional().nullable(),
 	name: z.string().optional(),
 	source: z.string().optional(),
 	type: z.string().optional().nullable(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const assetRelationshipsSchema = z.tuple([]);
@@ -207,10 +106,10 @@ export const assetRelationshipsSchema = z.tuple([]);
 export const cBpartnerRowSchema = z.object({
 	ad_language: z.string().nullable(),
 	bpartner_parent_id: z.number().nullable(),
-	created: z.string(),
+	created_at: z.string(),
 	duns: z.string().nullable(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	iscustomer: z.boolean(),
 	isemployee: z.boolean(),
 	issalesrep: z.boolean(),
@@ -219,17 +118,17 @@ export const cBpartnerRowSchema = z.object({
 	name: z.string(),
 	po_pricelist_id: z.number().nullable(),
 	taxid: z.string().nullable(),
-	updated: z.string(),
+	updated_at: z.string(),
 	value: z.string().nullable()
 });
 
 export const cBpartnerInsertSchema = z.object({
 	ad_language: z.string().optional().nullable(),
 	bpartner_parent_id: z.number().optional().nullable(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	duns: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	iscustomer: z.boolean().optional(),
 	isemployee: z.boolean().optional(),
 	issalesrep: z.boolean().optional(),
@@ -238,17 +137,17 @@ export const cBpartnerInsertSchema = z.object({
 	name: z.string(),
 	po_pricelist_id: z.number().optional().nullable(),
 	taxid: z.string().optional().nullable(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	value: z.string().optional().nullable()
 });
 
 export const cBpartnerUpdateSchema = z.object({
 	ad_language: z.string().optional().nullable(),
 	bpartner_parent_id: z.number().optional().nullable(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	duns: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	iscustomer: z.boolean().optional(),
 	isemployee: z.boolean().optional(),
 	issalesrep: z.boolean().optional(),
@@ -257,7 +156,7 @@ export const cBpartnerUpdateSchema = z.object({
 	name: z.string().optional(),
 	po_pricelist_id: z.number().optional().nullable(),
 	taxid: z.string().optional().nullable(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	value: z.string().optional().nullable()
 });
 
@@ -283,54 +182,45 @@ export const cBpartnerRelationshipsSchema = z.tuple([
 ]);
 
 export const cBpartnerLocationRowSchema = z.object({
-	ad_org_id: z.number(),
 	c_bpartner_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	isbillto: z.boolean(),
 	isshipto: z.boolean(),
 	name: z.string(),
 	phone: z.string().nullable(),
 	phone2: z.string().nullable(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const cBpartnerLocationInsertSchema = z.object({
-	ad_org_id: z.number().optional(),
 	c_bpartner_id: z.number(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	isbillto: z.boolean().optional(),
 	isshipto: z.boolean().optional(),
 	name: z.string().optional(),
 	phone: z.string().optional().nullable(),
 	phone2: z.string().optional().nullable(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cBpartnerLocationUpdateSchema = z.object({
-	ad_org_id: z.number().optional(),
 	c_bpartner_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	isbillto: z.boolean().optional(),
 	isshipto: z.boolean().optional(),
 	name: z.string().optional(),
 	phone: z.string().optional().nullable(),
 	phone2: z.string().optional().nullable(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cBpartnerLocationRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('c_bpartner_location_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('c_bpartner_location_c_bpartner_id_fkey'),
 		columns: z.tuple([z.literal('c_bpartner_id')]),
@@ -340,46 +230,36 @@ export const cBpartnerLocationRelationshipsSchema = z.tuple([
 ]);
 
 export const cChannelRowSchema = z.object({
-	ad_org_id: z.number(),
 	c_channel_uu: z.string().nullable(),
-	created: z.string(),
+	created_at: z.string(),
 	description: z.string().nullable(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	name: z.string(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const cChannelInsertSchema = z.object({
-	ad_org_id: z.number().optional(),
 	c_channel_uu: z.string().optional().nullable(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	name: z.string(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cChannelUpdateSchema = z.object({
-	ad_org_id: z.number().optional(),
 	c_channel_uu: z.string().optional().nullable(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	name: z.string().optional(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
-export const cChannelRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('c_channel_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	})
-]);
+export const cChannelRelationshipsSchema = z.tuple([]);
 
 export const entitySchema = z.union([
 	z.literal('Category'),
@@ -389,36 +269,28 @@ export const entitySchema = z.union([
 ]);
 
 export const cChannelMapInsertSchema = z.object({
-	ad_org_id: z.number().optional(),
 	c_channel_id: z.number(),
 	channel_code: z.string(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	entity_type: entitySchema.optional(),
 	id: z.number().optional(),
 	internal_code: z.string(),
-	isactive: z.boolean().optional(),
-	updated: z.string().optional()
+	is_active: z.boolean().optional(),
+	updated_at: z.string().optional()
 });
 
 export const cChannelMapUpdateSchema = z.object({
-	ad_org_id: z.number().optional(),
 	c_channel_id: z.number().optional(),
 	channel_code: z.string().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	entity_type: entitySchema.optional(),
 	id: z.number().optional(),
 	internal_code: z.string().optional(),
-	isactive: z.boolean().optional(),
-	updated: z.string().optional()
+	is_active: z.boolean().optional(),
+	updated_at: z.string().optional()
 });
 
 export const cChannelMapRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('c_channel_map_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('c_channel_map_c_channel_id_fkey'),
 		columns: z.tuple([z.literal('c_channel_id')]),
@@ -428,54 +300,36 @@ export const cChannelMapRelationshipsSchema = z.tuple([
 ]);
 
 export const cChannelMapBpartnerRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
 	c_bpartner_id: z.number(),
 	c_channel_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	resource_id: z.string(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const cChannelMapBpartnerInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
 	c_bpartner_id: z.number(),
 	c_channel_id: z.number(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	resource_id: z.string(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cChannelMapBpartnerUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
 	c_bpartner_id: z.number().optional(),
 	c_channel_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	resource_id: z.string().optional(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cChannelMapBpartnerRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('c_channel_map_bpartner_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('c_channel_map_bpartner_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('c_channel_map_bpartner_c_bpartner_id_fkey'),
 		columns: z.tuple([z.literal('c_bpartner_id')]),
@@ -492,35 +346,35 @@ export const cChannelMapBpartnerRelationshipsSchema = z.tuple([
 
 export const cChannelMapCategoryRowSchema = z.object({
 	c_channel_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	m_product_category_id: z.number().nullable(),
 	resource_id: z.string(),
 	resource_name: z.string(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const cChannelMapCategoryInsertSchema = z.object({
 	c_channel_id: z.number(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	m_product_category_id: z.number().optional().nullable(),
 	resource_id: z.string(),
 	resource_name: z.string(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cChannelMapCategoryUpdateSchema = z.object({
 	c_channel_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	m_product_category_id: z.number().optional().nullable(),
 	resource_id: z.string().optional(),
 	resource_name: z.string().optional(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cChannelMapCategoryRelationshipsSchema = z.tuple([
@@ -539,45 +393,36 @@ export const cChannelMapCategoryRelationshipsSchema = z.tuple([
 ]);
 
 export const cChannelMapTaxRowSchema = z.object({
-	ad_org_id: z.number(),
 	c_channel_id: z.number(),
 	c_taxcategory_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	resource_id: z.string(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const cChannelMapTaxInsertSchema = z.object({
-	ad_org_id: z.number().optional(),
 	c_channel_id: z.number(),
 	c_taxcategory_id: z.number(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	resource_id: z.string(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cChannelMapTaxUpdateSchema = z.object({
-	ad_org_id: z.number().optional(),
 	c_channel_id: z.number().optional(),
 	c_taxcategory_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	resource_id: z.string().optional(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cChannelMapTaxRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('c_channel_map_tax_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('c_channel_map_tax_c_channel_id_fkey'),
 		columns: z.tuple([z.literal('c_channel_id')]),
@@ -593,45 +438,36 @@ export const cChannelMapTaxRelationshipsSchema = z.tuple([
 ]);
 
 export const cChannelMapWarehouseRowSchema = z.object({
-	ad_org_id: z.number(),
 	c_channel_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	m_warehouse_id: z.number(),
 	resource_id: z.string(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const cChannelMapWarehouseInsertSchema = z.object({
-	ad_org_id: z.number().optional(),
 	c_channel_id: z.number(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	m_warehouse_id: z.number(),
 	resource_id: z.string(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cChannelMapWarehouseUpdateSchema = z.object({
-	ad_org_id: z.number().optional(),
 	c_channel_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	m_warehouse_id: z.number().optional(),
 	resource_id: z.string().optional(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cChannelMapWarehouseRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('c_channel_map_warehouse_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('c_channel_map_warehouse_c_channel_id_fkey'),
 		columns: z.tuple([z.literal('c_channel_id')]),
@@ -647,48 +483,39 @@ export const cChannelMapWarehouseRelationshipsSchema = z.tuple([
 ]);
 
 export const cCountryRowSchema = z.object({
-	ad_org_id: z.number(),
 	alpha_2: z.string(),
 	c_currency_id: z.number().nullable(),
-	created: z.string(),
+	created_at: z.string(),
 	full_name: z.string().nullable(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	short_name: z.string(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const cCountryInsertSchema = z.object({
-	ad_org_id: z.number().optional(),
 	alpha_2: z.string(),
 	c_currency_id: z.number().optional().nullable(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	full_name: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	short_name: z.string(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cCountryUpdateSchema = z.object({
-	ad_org_id: z.number().optional(),
 	alpha_2: z.string().optional(),
 	c_currency_id: z.number().optional().nullable(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	full_name: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	short_name: z.string().optional(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cCountryRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('c_country_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('c_country_c_currency_id_fkey'),
 		columns: z.tuple([z.literal('c_currency_id')]),
@@ -699,350 +526,115 @@ export const cCountryRelationshipsSchema = z.tuple([
 
 export const cCurrencyRowSchema = z.object({
 	alphabetic_code: z.string(),
-	created: z.string(),
+	created_at: z.string(),
 	cursymbol: z.string().nullable(),
 	id: z.number(),
 	is_enabled: z.boolean(),
 	minor_unit: z.number(),
 	name: z.string(),
 	numeric_code: z.string(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const cCurrencyInsertSchema = z.object({
 	alphabetic_code: z.string(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	cursymbol: z.string().optional().nullable(),
 	id: z.number().optional(),
 	is_enabled: z.boolean().optional(),
 	minor_unit: z.number().optional(),
 	name: z.string(),
 	numeric_code: z.string(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cCurrencyUpdateSchema = z.object({
 	alphabetic_code: z.string().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	cursymbol: z.string().optional().nullable(),
 	id: z.number().optional(),
 	is_enabled: z.boolean().optional(),
 	minor_unit: z.number().optional(),
 	name: z.string().optional(),
 	numeric_code: z.string().optional(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cCurrencyRelationshipsSchema = z.tuple([]);
 
-export const cLocAddressRowSchema = z.object({
-	ad_org_id: z.number(),
-	created: z.string(),
-	id: z.number(),
-	isactive: z.boolean(),
-	municipality_id: z.string(),
-	updated: z.string()
-});
-
-export const cLocAddressInsertSchema = z.object({
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
-	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	municipality_id: z.string(),
-	updated: z.string().optional()
-});
-
-export const cLocAddressUpdateSchema = z.object({
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
-	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	municipality_id: z.string().optional(),
-	updated: z.string().optional()
-});
-
-export const cLocAddressRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('c_loc_address_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('c_loc_address_municipality_id_fkey'),
-		columns: z.tuple([z.literal('municipality_id')]),
-		referencedRelation: z.literal('c_loc_municipality'),
-		referencedColumns: z.tuple([z.literal('code')])
-	})
-]);
-
-export const cLocMunicipalityRowSchema = z.object({
-	ad_org_id: z.number(),
+export const cPostalCodeRowSchema = z.object({
+	c_country_id: z.number(),
 	code: z.string(),
-	created: z.string(),
+	created_at: z.string(),
 	id: z.number(),
-	isactive: z.boolean(),
-	name: z.string(),
-	region_id: z.string(),
-	updated: z.string()
+	is_active: z.boolean(),
+	updated_at: z.string()
 });
 
-export const cLocMunicipalityInsertSchema = z.object({
-	ad_org_id: z.number().optional(),
+export const cPostalCodeInsertSchema = z.object({
+	c_country_id: z.number(),
 	code: z.string(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	name: z.string(),
-	region_id: z.string(),
-	updated: z.string().optional()
+	is_active: z.boolean().optional(),
+	updated_at: z.string().optional()
 });
 
-export const cLocMunicipalityUpdateSchema = z.object({
-	ad_org_id: z.number().optional(),
+export const cPostalCodeUpdateSchema = z.object({
+	c_country_id: z.number().optional(),
 	code: z.string().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	name: z.string().optional(),
-	region_id: z.string().optional(),
-	updated: z.string().optional()
+	is_active: z.boolean().optional(),
+	updated_at: z.string().optional()
 });
 
-export const cLocMunicipalityRelationshipsSchema = z.tuple([
+export const cPostalCodeRelationshipsSchema = z.tuple([
 	z.object({
-		foreignKeyName: z.literal('c_loc_municipality_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('c_loc_municipality_region_id_fkey'),
-		columns: z.tuple([z.literal('region_id')]),
-		referencedRelation: z.literal('c_loc_region'),
-		referencedColumns: z.tuple([z.literal('code')])
-	})
-]);
-
-export const regionTypeSchema = z.union([
-	z.literal('city'),
-	z.literal('district'),
-	z.literal('autonomous province')
-]);
-
-export const cLocRegionInsertSchema = z.object({
-	code: z.string(),
-	created: z.string().optional(),
-	id: z.number().optional(),
-	name: z.string(),
-	parent_region: z.string().optional().nullable(),
-	type: regionTypeSchema.optional().nullable(),
-	updated: z.string().optional()
-});
-
-export const cLocRegionUpdateSchema = z.object({
-	code: z.string().optional(),
-	created: z.string().optional(),
-	id: z.number().optional(),
-	name: z.string().optional(),
-	parent_region: z.string().optional().nullable(),
-	type: regionTypeSchema.optional().nullable(),
-	updated: z.string().optional()
-});
-
-export const cLocRegionRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('c_loc_region_parent_region_fkey'),
-		columns: z.tuple([z.literal('parent_region')]),
-		referencedRelation: z.literal('c_loc_region'),
-		referencedColumns: z.tuple([z.literal('code')])
-	})
-]);
-
-export const cLocSettlementRowSchema = z.object({
-	ad_org_id: z.number(),
-	code: z.string(),
-	created: z.string(),
-	id: z.number(),
-	isactive: z.boolean(),
-	municipality_id: z.string().nullable(),
-	name: z.string(),
-	updated: z.string()
-});
-
-export const cLocSettlementInsertSchema = z.object({
-	ad_org_id: z.number().optional(),
-	code: z.string(),
-	created: z.string().optional(),
-	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	municipality_id: z.string().optional().nullable(),
-	name: z.string(),
-	updated: z.string().optional()
-});
-
-export const cLocSettlementUpdateSchema = z.object({
-	ad_org_id: z.number().optional(),
-	code: z.string().optional(),
-	created: z.string().optional(),
-	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	municipality_id: z.string().optional().nullable(),
-	name: z.string().optional(),
-	updated: z.string().optional()
-});
-
-export const cLocSettlementRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('c_loc_settlement_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('c_loc_settlement_municipality_id_fkey'),
-		columns: z.tuple([z.literal('municipality_id')]),
-		referencedRelation: z.literal('c_loc_municipality'),
-		referencedColumns: z.tuple([z.literal('code')])
-	})
-]);
-
-export const cLocationRowSchema = z.object({
-	address1: z.string().nullable(),
-	address2: z.string().nullable(),
-	c_country_id: z.number().nullable(),
-	c_loc_municipality_id: z.number().nullable(),
-	c_region_id: z.number().nullable(),
-	created: z.string(),
-	id: z.number(),
-	isactive: z.boolean(),
-	updated: z.string()
-});
-
-export const cLocationInsertSchema = z.object({
-	address1: z.string().optional().nullable(),
-	address2: z.string().optional().nullable(),
-	c_country_id: z.number().optional().nullable(),
-	c_loc_municipality_id: z.number().optional().nullable(),
-	c_region_id: z.number().optional().nullable(),
-	created: z.string().optional(),
-	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	updated: z.string().optional()
-});
-
-export const cLocationUpdateSchema = z.object({
-	address1: z.string().optional().nullable(),
-	address2: z.string().optional().nullable(),
-	c_country_id: z.number().optional().nullable(),
-	c_loc_municipality_id: z.number().optional().nullable(),
-	c_region_id: z.number().optional().nullable(),
-	created: z.string().optional(),
-	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	updated: z.string().optional()
-});
-
-export const cLocationRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('c_location_c_country_id_fkey'),
+		foreignKeyName: z.literal('c_postal_code_c_country_id_fkey'),
 		columns: z.tuple([z.literal('c_country_id')]),
 		referencedRelation: z.literal('c_country'),
 		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('c_location_c_loc_municipality_id_fkey'),
-		columns: z.tuple([z.literal('c_loc_municipality_id')]),
-		referencedRelation: z.literal('c_loc_municipality'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('c_location_c_region_id_fkey'),
-		columns: z.tuple([z.literal('c_region_id')]),
-		referencedRelation: z.literal('c_loc_region'),
-		referencedColumns: z.tuple([z.literal('id')])
 	})
 ]);
 
-export const cPostalRowSchema = z.object({
-	created: z.string(),
-	id: z.number(),
-	isactive: z.boolean(),
-	updated: z.string()
-});
-
-export const cPostalInsertSchema = z.object({
-	created: z.string().optional(),
-	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	updated: z.string().optional()
-});
-
-export const cPostalUpdateSchema = z.object({
-	created: z.string().optional(),
-	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	updated: z.string().optional()
-});
-
-export const cPostalRelationshipsSchema = z.tuple([]);
-
 export const cTaxRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
 	c_taxcategory_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	description: z.string().nullable(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	isdefault: z.boolean(),
 	name: z.string(),
 	rate: z.number(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const cTaxInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
 	c_taxcategory_id: z.number(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	isdefault: z.boolean().optional(),
 	name: z.string(),
 	rate: z.number(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cTaxUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
 	c_taxcategory_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	isdefault: z.boolean().optional(),
 	name: z.string().optional(),
 	rate: z.number().optional(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cTaxRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('c_tax_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('c_tax_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('c_tax_c_taxcategory_id_fkey'),
 		columns: z.tuple([z.literal('c_taxcategory_id')]),
@@ -1052,168 +644,112 @@ export const cTaxRelationshipsSchema = z.tuple([
 ]);
 
 export const cTaxcategoryRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	description: z.string().nullable(),
 	id: z.number(),
-	isactive: z.boolean(),
-	isdefault: z.boolean(),
+	is_active: z.boolean(),
+	is_default: z.boolean(),
 	name: z.string(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const cTaxcategoryInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	isdefault: z.boolean().optional(),
+	is_active: z.boolean().optional(),
+	is_default: z.boolean().optional(),
 	name: z.string(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cTaxcategoryUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	isdefault: z.boolean().optional(),
+	is_active: z.boolean().optional(),
+	is_default: z.boolean().optional(),
 	name: z.string().optional(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
-export const cTaxcategoryRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('c_taxcategory_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('c_taxcategory_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	})
-]);
+export const cTaxcategoryRelationshipsSchema = z.tuple([]);
 
 export const cUomRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	description: z.string().nullable(),
 	id: z.number(),
-	isactive: z.boolean(),
-	isdefault: z.boolean(),
+	is_active: z.boolean(),
+	is_default: z.boolean(),
 	name: z.string(),
 	stdprecision: z.number(),
 	uomsymbol: z.string().nullable(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const cUomInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	isdefault: z.boolean().optional(),
+	is_active: z.boolean().optional(),
+	is_default: z.boolean().optional(),
 	name: z.string(),
 	stdprecision: z.number(),
 	uomsymbol: z.string().optional().nullable(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const cUomUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	isdefault: z.boolean().optional(),
+	is_active: z.boolean().optional(),
+	is_default: z.boolean().optional(),
 	name: z.string().optional(),
 	stdprecision: z.number().optional(),
 	uomsymbol: z.string().optional().nullable(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
-export const cUomRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('c_uom_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('c_uom_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	})
-]);
+export const cUomRelationshipsSchema = z.tuple([]);
 
 export const cUomConversionRowSchema = z.object({
-	ad_client_id: z.number().nullable(),
-	ad_org_id: z.number().nullable(),
 	c_uom_id: z.number().nullable(),
 	c_uom_to_id: z.number().nullable(),
-	created: z.string(),
+	created_at: z.string(),
 	dividerate: z.number().nullable(),
 	id: z.number(),
-	isactive: z.boolean().nullable(),
+	is_active: z.boolean().nullable(),
 	m_product_id: z.number().nullable(),
 	multiplyrate: z.number().nullable(),
-	updated: z.string().nullable()
+	updated_at: z.string().nullable()
 });
 
 export const cUomConversionInsertSchema = z.object({
-	ad_client_id: z.number().optional().nullable(),
-	ad_org_id: z.number().optional().nullable(),
 	c_uom_id: z.number().optional().nullable(),
 	c_uom_to_id: z.number().optional().nullable(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	dividerate: z.number().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional().nullable(),
+	is_active: z.boolean().optional().nullable(),
 	m_product_id: z.number().optional().nullable(),
 	multiplyrate: z.number().optional().nullable(),
-	updated: z.string().optional().nullable()
+	updated_at: z.string().optional().nullable()
 });
 
 export const cUomConversionUpdateSchema = z.object({
-	ad_client_id: z.number().optional().nullable(),
-	ad_org_id: z.number().optional().nullable(),
 	c_uom_id: z.number().optional().nullable(),
 	c_uom_to_id: z.number().optional().nullable(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	dividerate: z.number().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional().nullable(),
+	is_active: z.boolean().optional().nullable(),
 	m_product_id: z.number().optional().nullable(),
 	multiplyrate: z.number().optional().nullable(),
-	updated: z.string().optional().nullable()
+	updated_at: z.string().optional().nullable()
 });
 
 export const cUomConversionRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('c_uom_conversion_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('c_uom_conversion_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('c_uom_conversion_c_uom_id_fkey'),
 		columns: z.tuple([z.literal('c_uom_id')]),
@@ -1291,75 +827,57 @@ export const crudHistoryUpdateSchema = z.object({
 export const crudHistoryRelationshipsSchema = z.tuple([]);
 
 export const mAttributeRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
 	attribute_group_id: z.number(),
 	attribute_type: z.string().nullable(),
 	attributevaluetype: z.string(),
 	backend_type: z.string().nullable(),
 	code: z.string(),
-	created: z.string(),
+	created_at: z.string(),
 	description: z.string().nullable(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	isinstanceattribute: z.boolean(),
 	ismandatory: z.boolean(),
 	label: z.string().nullable(),
 	name: z.string(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const mAttributeInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
 	attribute_group_id: z.number().optional(),
 	attribute_type: z.string().optional().nullable(),
 	attributevaluetype: z.string().optional(),
 	backend_type: z.string().optional().nullable(),
 	code: z.string(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	isinstanceattribute: z.boolean().optional(),
 	ismandatory: z.boolean().optional(),
 	label: z.string().optional().nullable(),
 	name: z.string(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mAttributeUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
 	attribute_group_id: z.number().optional(),
 	attribute_type: z.string().optional().nullable(),
 	attributevaluetype: z.string().optional(),
 	backend_type: z.string().optional().nullable(),
 	code: z.string().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	isinstanceattribute: z.boolean().optional(),
 	ismandatory: z.boolean().optional(),
 	label: z.string().optional().nullable(),
 	name: z.string().optional(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mAttributeRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('m_attribute_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('m_attribute_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('m_attribute_attribute_group_id_fkey'),
 		columns: z.tuple([z.literal('attribute_group_id')]),
@@ -1369,86 +887,65 @@ export const mAttributeRelationshipsSchema = z.tuple([
 ]);
 
 export const mAttributegroupRowSchema = z.object({
-	code: z.string(),
-	created: z.string(),
+	created_at: z.string(),
 	id: z.number(),
-	label: z.string().nullable(),
-	updated: z.string()
+	name: z.string(),
+	updated_at: z.string()
 });
 
 export const mAttributegroupInsertSchema = z.object({
-	code: z.string(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	label: z.string().optional().nullable(),
-	updated: z.string().optional()
+	name: z.string(),
+	updated_at: z.string().optional()
 });
 
 export const mAttributegroupUpdateSchema = z.object({
-	code: z.string().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	label: z.string().optional().nullable(),
-	updated: z.string().optional()
+	name: z.string().optional(),
+	updated_at: z.string().optional()
 });
 
 export const mAttributegroupRelationshipsSchema = z.tuple([]);
 
 export const mAttributeinstanceRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
-	created: z.string(),
-	isactive: z.boolean(),
+	created_at: z.string(),
+	is_active: z.boolean(),
 	m_attribute_id: z.number(),
 	m_attributesetinstance_id: z.number(),
 	m_attributevalue_id: z.number().nullable(),
-	updated: z.string(),
+	updated_at: z.string(),
 	value: z.string().nullable(),
 	valuedate: z.string().nullable(),
 	valuenumber: z.number().nullable()
 });
 
 export const mAttributeinstanceInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
-	isactive: z.boolean().optional(),
+	created_at: z.string().optional(),
+	is_active: z.boolean().optional(),
 	m_attribute_id: z.number().optional(),
 	m_attributesetinstance_id: z.number(),
 	m_attributevalue_id: z.number().optional().nullable(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	value: z.string().optional().nullable(),
 	valuedate: z.string().optional().nullable(),
 	valuenumber: z.number().optional().nullable()
 });
 
 export const mAttributeinstanceUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
-	isactive: z.boolean().optional(),
+	created_at: z.string().optional(),
+	is_active: z.boolean().optional(),
 	m_attribute_id: z.number().optional(),
 	m_attributesetinstance_id: z.number().optional(),
 	m_attributevalue_id: z.number().optional().nullable(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	value: z.string().optional().nullable(),
 	valuedate: z.string().optional().nullable(),
 	valuenumber: z.number().optional().nullable()
 });
 
 export const mAttributeinstanceRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('m_attributeinstance_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('m_attributeinstance_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('m_attributeinstance_m_attribute_id_fkey'),
 		columns: z.tuple([z.literal('m_attribute_id')]),
@@ -1470,114 +967,77 @@ export const mAttributeinstanceRelationshipsSchema = z.tuple([
 ]);
 
 export const mAttributesetRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	description: z.string().nullable(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	isguaranteedate: z.boolean(),
 	isinstanceattribute: z.boolean(),
 	mandatorytype: z.string(),
 	name: z.string(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const mAttributesetInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	isguaranteedate: z.boolean().optional(),
 	isinstanceattribute: z.boolean().optional(),
 	mandatorytype: z.string().optional(),
 	name: z.string(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mAttributesetUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	isguaranteedate: z.boolean().optional(),
 	isinstanceattribute: z.boolean().optional(),
 	mandatorytype: z.string().optional(),
 	name: z.string().optional(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
-export const mAttributesetRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('m_attributeset_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('m_attributeset_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	})
-]);
+export const mAttributesetRelationshipsSchema = z.tuple([]);
 
 export const mAttributesetinstanceRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	guaranteedate: z.string().nullable(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	lot: z.string().nullable(),
 	m_attributeset_id: z.number().nullable(),
 	serno: z.string().nullable(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const mAttributesetinstanceInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	guaranteedate: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	lot: z.string().optional().nullable(),
 	m_attributeset_id: z.number().optional().nullable(),
 	serno: z.string().optional().nullable(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mAttributesetinstanceUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	guaranteedate: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	lot: z.string().optional().nullable(),
 	m_attributeset_id: z.number().optional().nullable(),
 	serno: z.string().optional().nullable(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mAttributesetinstanceRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('m_attributesetinstance_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('m_attributesetinstance_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('m_attributesetinstance_m_attributeset_id_fkey'),
 		columns: z.tuple([z.literal('m_attributeset_id')]),
@@ -1587,51 +1047,33 @@ export const mAttributesetinstanceRelationshipsSchema = z.tuple([
 ]);
 
 export const mAttributeuseRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
-	created: z.string(),
-	isactive: z.boolean(),
+	created_at: z.string(),
+	is_active: z.boolean(),
 	m_attribute_id: z.number(),
 	m_attributeset_id: z.number(),
 	seqno: z.number().nullable(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const mAttributeuseInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
-	isactive: z.boolean().optional(),
+	created_at: z.string().optional(),
+	is_active: z.boolean().optional(),
 	m_attribute_id: z.number(),
 	m_attributeset_id: z.number(),
 	seqno: z.number().optional().nullable(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mAttributeuseUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
-	isactive: z.boolean().optional(),
+	created_at: z.string().optional(),
+	is_active: z.boolean().optional(),
 	m_attribute_id: z.number().optional(),
 	m_attributeset_id: z.number().optional(),
 	seqno: z.number().optional().nullable(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mAttributeuseRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('m_attributeuse_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('m_attributeuse_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('m_attributeuse_m_attribute_id_fkey'),
 		columns: z.tuple([z.literal('m_attribute_id')]),
@@ -1647,57 +1089,39 @@ export const mAttributeuseRelationshipsSchema = z.tuple([
 ]);
 
 export const mAttributevalueRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	description: z.string().nullable(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	m_attribute_id: z.number(),
 	name: z.string(),
-	updated: z.string(),
+	updated_at: z.string(),
 	value: z.string()
 });
 
 export const mAttributevalueInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	m_attribute_id: z.number(),
 	name: z.string(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	value: z.string()
 });
 
 export const mAttributevalueUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	m_attribute_id: z.number().optional(),
 	name: z.string().optional(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	value: z.string().optional()
 });
 
 export const mAttributevalueRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('m_attributevalue_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('m_attributevalue_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('m_attributevalue_m_attribute_id_fkey'),
 		columns: z.tuple([z.literal('m_attribute_id')]),
@@ -1707,65 +1131,44 @@ export const mAttributevalueRelationshipsSchema = z.tuple([
 ]);
 
 export const mDiscountschemaRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	flatdiscount: z.number().nullable(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	name: z.string(),
-	updated: z.string(),
+	updated_at: z.string(),
 	validfrom: z.string().nullable()
 });
 
 export const mDiscountschemaInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	flatdiscount: z.number().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	name: z.string(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	validfrom: z.string().optional().nullable()
 });
 
 export const mDiscountschemaUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	flatdiscount: z.number().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	name: z.string().optional(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	validfrom: z.string().optional().nullable()
 });
 
-export const mDiscountschemaRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('m_discountschema_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('m_discountschema_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	})
-]);
+export const mDiscountschemaRelationshipsSchema = z.tuple([]);
 
 export const mLocatorRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	id: z.number(),
-	isactive: z.boolean(),
-	isdefault: z.boolean(),
+	is_active: z.boolean(),
+	is_default: z.boolean(),
 	m_warehouse_id: z.number(),
-	updated: z.string(),
+	updated_at: z.string(),
 	value: z.string(),
 	x: z.string().nullable(),
 	y: z.string().nullable(),
@@ -1773,14 +1176,12 @@ export const mLocatorRowSchema = z.object({
 });
 
 export const mLocatorInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	isdefault: z.boolean().optional(),
+	is_active: z.boolean().optional(),
+	is_default: z.boolean().optional(),
 	m_warehouse_id: z.number(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	value: z.string(),
 	x: z.string().optional().nullable(),
 	y: z.string().optional().nullable(),
@@ -1788,14 +1189,12 @@ export const mLocatorInsertSchema = z.object({
 });
 
 export const mLocatorUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	isdefault: z.boolean().optional(),
+	is_active: z.boolean().optional(),
+	is_default: z.boolean().optional(),
 	m_warehouse_id: z.number().optional(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	value: z.string().optional(),
 	x: z.string().optional().nullable(),
 	y: z.string().optional().nullable(),
@@ -1803,18 +1202,6 @@ export const mLocatorUpdateSchema = z.object({
 });
 
 export const mLocatorRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('m_locator_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('m_locator_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('m_locator_m_warehouse_id_fkey'),
 		columns: z.tuple([z.literal('m_warehouse_id')]),
@@ -1824,72 +1211,54 @@ export const mLocatorRelationshipsSchema = z.tuple([
 ]);
 
 export const mPricelistRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
 	basepricelist_id: z.number().nullable(),
 	c_currency_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	description: z.string().nullable(),
 	enforcepricelimit: z.boolean(),
 	id: z.number(),
-	isactive: z.boolean(),
-	isdefault: z.boolean(),
+	is_active: z.boolean(),
+	is_default: z.boolean(),
+	is_taxincluded: z.boolean().nullable(),
 	issopricelist: z.boolean(),
-	istaxincluded: z.boolean().nullable(),
 	name: z.string(),
 	priceprecision: z.number(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const mPricelistInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
 	basepricelist_id: z.number().optional().nullable(),
 	c_currency_id: z.number(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	enforcepricelimit: z.boolean().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	isdefault: z.boolean().optional(),
+	is_active: z.boolean().optional(),
+	is_default: z.boolean().optional(),
+	is_taxincluded: z.boolean().optional().nullable(),
 	issopricelist: z.boolean().optional(),
-	istaxincluded: z.boolean().optional().nullable(),
 	name: z.string(),
 	priceprecision: z.number().optional(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mPricelistUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
 	basepricelist_id: z.number().optional().nullable(),
 	c_currency_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	enforcepricelimit: z.boolean().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	isdefault: z.boolean().optional(),
+	is_active: z.boolean().optional(),
+	is_default: z.boolean().optional(),
+	is_taxincluded: z.boolean().optional().nullable(),
 	issopricelist: z.boolean().optional(),
-	istaxincluded: z.boolean().optional().nullable(),
 	name: z.string().optional(),
 	priceprecision: z.number().optional(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mPricelistRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('m_pricelist_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('m_pricelist_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('m_pricelist_basepricelist_id_fkey'),
 		columns: z.tuple([z.literal('basepricelist_id')]),
@@ -1905,66 +1274,48 @@ export const mPricelistRelationshipsSchema = z.tuple([
 ]);
 
 export const mPricelistVersionRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	description: z.string().nullable(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	m_discountschema_id: z.number(),
 	m_pricelist_id: z.number(),
 	m_pricelist_version_base_id: z.number().nullable(),
 	name: z.string(),
-	updated: z.string(),
+	updated_at: z.string(),
 	validfrom: z.string(),
 	validto: z.string().nullable()
 });
 
 export const mPricelistVersionInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	m_discountschema_id: z.number(),
 	m_pricelist_id: z.number(),
 	m_pricelist_version_base_id: z.number().optional().nullable(),
 	name: z.string(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	validfrom: z.string(),
 	validto: z.string().optional().nullable()
 });
 
 export const mPricelistVersionUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	m_discountschema_id: z.number().optional(),
 	m_pricelist_id: z.number().optional(),
 	m_pricelist_version_base_id: z.number().optional().nullable(),
 	name: z.string().optional(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	validfrom: z.string().optional(),
 	validto: z.string().optional().nullable()
 });
 
 export const mPricelistVersionRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('m_pricelist_version_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('m_pricelist_version_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('m_pricelist_version_m_discountschema_id_fkey'),
 		columns: z.tuple([z.literal('m_discountschema_id')]),
@@ -1986,22 +1337,20 @@ export const mPricelistVersionRelationshipsSchema = z.tuple([
 ]);
 
 export const mProductRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
 	attributes: jsonSchema.nullable(),
 	brand: z.string().nullable(),
 	c_taxcategory_id: z.number(),
 	c_uom_id: z.number(),
 	condition: z.string().nullable(),
-	created: z.string(),
+	created_at: z.string(),
 	description: z.string().nullable(),
 	descriptionurl: z.string().nullable(),
 	discontinued: z.boolean(),
 	featuredAssetId: z.number().nullable(),
 	id: z.number(),
 	imageurl: z.string().nullable(),
-	isactive: z.boolean(),
-	isselfservice: z.boolean(),
+	is_active: z.boolean(),
+	is_self_service: z.boolean(),
 	m_attributeset_id: z.number().nullable(),
 	m_product_category_id: z.number().nullable(),
 	m_product_uu: z.string().nullable(),
@@ -2014,26 +1363,24 @@ export const mProductRowSchema = z.object({
 	sku: z.string().nullable(),
 	unitsperpack: z.number(),
 	unitsperpallet: z.number().nullable(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const mProductInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
 	attributes: jsonSchema.optional().nullable(),
 	brand: z.string().optional().nullable(),
 	c_taxcategory_id: z.number().optional(),
 	c_uom_id: z.number().optional(),
 	condition: z.string().optional().nullable(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	descriptionurl: z.string().optional().nullable(),
 	discontinued: z.boolean().optional(),
 	featuredAssetId: z.number().optional().nullable(),
 	id: z.number().optional(),
 	imageurl: z.string().optional().nullable(),
-	isactive: z.boolean().optional(),
-	isselfservice: z.boolean().optional(),
+	is_active: z.boolean().optional(),
+	is_self_service: z.boolean().optional(),
 	m_attributeset_id: z.number().optional().nullable(),
 	m_product_category_id: z.number().optional().nullable(),
 	m_product_uu: z.string().optional().nullable(),
@@ -2046,26 +1393,24 @@ export const mProductInsertSchema = z.object({
 	sku: z.string().optional().nullable(),
 	unitsperpack: z.number().optional(),
 	unitsperpallet: z.number().optional().nullable(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mProductUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
 	attributes: jsonSchema.optional().nullable(),
 	brand: z.string().optional().nullable(),
 	c_taxcategory_id: z.number().optional(),
 	c_uom_id: z.number().optional(),
 	condition: z.string().optional().nullable(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	descriptionurl: z.string().optional().nullable(),
 	discontinued: z.boolean().optional(),
 	featuredAssetId: z.number().optional().nullable(),
 	id: z.number().optional(),
 	imageurl: z.string().optional().nullable(),
-	isactive: z.boolean().optional(),
-	isselfservice: z.boolean().optional(),
+	is_active: z.boolean().optional(),
+	is_self_service: z.boolean().optional(),
 	m_attributeset_id: z.number().optional().nullable(),
 	m_product_category_id: z.number().optional().nullable(),
 	m_product_uu: z.string().optional().nullable(),
@@ -2078,22 +1423,10 @@ export const mProductUpdateSchema = z.object({
 	sku: z.string().optional().nullable(),
 	unitsperpack: z.number().optional(),
 	unitsperpallet: z.number().optional().nullable(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mProductRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('m_product_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('m_product_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('m_product_c_taxcategory_id_fkey'),
 		columns: z.tuple([z.literal('c_taxcategory_id')]),
@@ -2133,36 +1466,36 @@ export const mProductRelationshipsSchema = z.tuple([
 ]);
 
 export const mProductCategoryRowSchema = z.object({
-	created: z.string(),
+	created_at: z.string(),
 	description: z.string().nullable(),
 	id: z.number(),
-	isactive: z.boolean(),
-	isselfservice: z.boolean(),
+	is_active: z.boolean(),
+	is_self_service: z.boolean(),
 	name: z.string(),
 	parent_id: z.number().nullable(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const mProductCategoryInsertSchema = z.object({
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	isselfservice: z.boolean().optional(),
+	is_active: z.boolean().optional(),
+	is_self_service: z.boolean().optional(),
 	name: z.string(),
 	parent_id: z.number().optional().nullable(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mProductCategoryUpdateSchema = z.object({
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	isselfservice: z.boolean().optional(),
+	is_active: z.boolean().optional(),
+	is_self_service: z.boolean().optional(),
 	name: z.string().optional(),
 	parent_id: z.number().optional().nullable(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mProductCategoryRelationshipsSchema = z.tuple([
@@ -2170,42 +1503,6 @@ export const mProductCategoryRelationshipsSchema = z.tuple([
 		foreignKeyName: z.literal('m_product_category_parent_id_fkey'),
 		columns: z.tuple([z.literal('parent_id')]),
 		referencedRelation: z.literal('m_product_category'),
-		referencedColumns: z.tuple([z.literal('id')])
-	})
-]);
-
-export const mProductGtinRowSchema = z.object({
-	created: z.string(),
-	gtin: z.string(),
-	id: z.number(),
-	isactive: z.boolean(),
-	m_product_id: z.number(),
-	updated: z.string()
-});
-
-export const mProductGtinInsertSchema = z.object({
-	created: z.string().optional(),
-	gtin: z.string(),
-	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	m_product_id: z.number(),
-	updated: z.string().optional()
-});
-
-export const mProductGtinUpdateSchema = z.object({
-	created: z.string().optional(),
-	gtin: z.string().optional(),
-	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	m_product_id: z.number().optional(),
-	updated: z.string().optional()
-});
-
-export const mProductGtinRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('m_product_gtin_m_product_id_fkey'),
-		columns: z.tuple([z.literal('m_product_id')]),
-		referencedRelation: z.literal('m_product'),
 		referencedColumns: z.tuple([z.literal('id')])
 	})
 ]);
@@ -2225,7 +1522,7 @@ export const mProductPackingInsertSchema = z.object({
 	gtin: z.string().optional().nullable(),
 	id: z.number().optional(),
 	m_product_id: z.number(),
-	m_product_packing_type_id: z.number().optional(),
+	m_product_packing_type_id: z.number(),
 	unitsperpack: z.number().optional(),
 	updated_at: z.string().optional()
 });
@@ -2283,10 +1580,10 @@ export const mProductPoRowSchema = z.object({
 	c_bpartner_id: z.number(),
 	c_currency_id: z.number().nullable(),
 	c_uom_id: z.number().nullable(),
-	created: z.string(),
+	created_at: z.string(),
 	discontinued: z.boolean().nullable(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	iscurrentvendor: z.boolean(),
 	m_product_id: z.number(),
 	manufacturer: z.string().nullable(),
@@ -2294,7 +1591,7 @@ export const mProductPoRowSchema = z.object({
 	pricelastpo: z.number().nullable(),
 	pricelist: z.number(),
 	pricepo: z.number().nullable(),
-	updated: z.string(),
+	updated_at: z.string(),
 	url: z.string().nullable(),
 	valid_from: z.string().nullable(),
 	valid_to: z.string().nullable(),
@@ -2307,10 +1604,10 @@ export const mProductPoInsertSchema = z.object({
 	c_bpartner_id: z.number(),
 	c_currency_id: z.number().optional().nullable(),
 	c_uom_id: z.number().optional().nullable(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	discontinued: z.boolean().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	iscurrentvendor: z.boolean().optional(),
 	m_product_id: z.number(),
 	manufacturer: z.string().optional().nullable(),
@@ -2318,7 +1615,7 @@ export const mProductPoInsertSchema = z.object({
 	pricelastpo: z.number().optional().nullable(),
 	pricelist: z.number().optional(),
 	pricepo: z.number().optional().nullable(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	url: z.string().optional().nullable(),
 	valid_from: z.string().optional().nullable(),
 	valid_to: z.string().optional().nullable(),
@@ -2331,10 +1628,10 @@ export const mProductPoUpdateSchema = z.object({
 	c_bpartner_id: z.number().optional(),
 	c_currency_id: z.number().optional().nullable(),
 	c_uom_id: z.number().optional().nullable(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	discontinued: z.boolean().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	iscurrentvendor: z.boolean().optional(),
 	m_product_id: z.number().optional(),
 	manufacturer: z.string().optional().nullable(),
@@ -2342,7 +1639,7 @@ export const mProductPoUpdateSchema = z.object({
 	pricelastpo: z.number().optional().nullable(),
 	pricelist: z.number().optional(),
 	pricepo: z.number().optional().nullable(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	url: z.string().optional().nullable(),
 	valid_from: z.string().optional().nullable(),
 	valid_to: z.string().optional().nullable(),
@@ -2378,60 +1675,42 @@ export const mProductPoRelationshipsSchema = z.tuple([
 ]);
 
 export const mProductpriceRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	m_pricelist_version_id: z.number(),
 	m_product_id: z.number(),
 	pricelimit: z.number().nullable(),
 	pricelist: z.number().nullable(),
 	pricestd: z.number().nullable(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const mProductpriceInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	m_pricelist_version_id: z.number(),
 	m_product_id: z.number(),
 	pricelimit: z.number().optional().nullable(),
 	pricelist: z.number().optional().nullable(),
 	pricestd: z.number().optional().nullable(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mProductpriceUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	m_pricelist_version_id: z.number().optional(),
 	m_product_id: z.number().optional(),
 	pricelimit: z.number().optional().nullable(),
 	pricelist: z.number().optional().nullable(),
 	pricestd: z.number().optional().nullable(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mProductpriceRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('m_productprice_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('m_productprice_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('m_productprice_m_pricelist_version_id_fkey'),
 		columns: z.tuple([z.literal('m_pricelist_version_id')]),
@@ -2447,11 +1726,9 @@ export const mProductpriceRelationshipsSchema = z.tuple([
 ]);
 
 export const mReplenishRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	level_max: z.number(),
 	level_min: z.number(),
 	m_locator_id: z.number().nullable(),
@@ -2461,15 +1738,13 @@ export const mReplenishRowSchema = z.object({
 	m_warehousesource_id: z.number().nullable(),
 	qtybatchsize: z.number().nullable(),
 	replenishtype: z.string(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const mReplenishInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	level_max: z.number().optional(),
 	level_min: z.number().optional(),
 	m_locator_id: z.number().optional().nullable(),
@@ -2479,15 +1754,13 @@ export const mReplenishInsertSchema = z.object({
 	m_warehousesource_id: z.number().optional().nullable(),
 	qtybatchsize: z.number().optional().nullable(),
 	replenishtype: z.string().optional(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mReplenishUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	level_max: z.number().optional(),
 	level_min: z.number().optional(),
 	m_locator_id: z.number().optional().nullable(),
@@ -2497,22 +1770,10 @@ export const mReplenishUpdateSchema = z.object({
 	m_warehousesource_id: z.number().optional().nullable(),
 	qtybatchsize: z.number().optional().nullable(),
 	replenishtype: z.string().optional(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mReplenishRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('m_replenish_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('m_replenish_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('m_replenish_m_locator_id_fkey'),
 		columns: z.tuple([z.literal('m_locator_id')]),
@@ -2540,57 +1801,39 @@ export const mReplenishRelationshipsSchema = z.tuple([
 ]);
 
 export const mStorageonhandRowSchema = z.object({
-	ad_client_id: z.number().nullable(),
-	ad_org_id: z.number().nullable(),
-	created: z.string(),
+	created_at: z.string(),
 	id: z.number(),
-	isactive: z.boolean().nullable(),
+	is_active: z.boolean().nullable(),
 	m_locator_id: z.number().nullable(),
 	m_product_id: z.number(),
 	qtyonhand: z.number(),
-	updated: z.string(),
+	updated_at: z.string(),
 	warehouse_id: z.number()
 });
 
 export const mStorageonhandInsertSchema = z.object({
-	ad_client_id: z.number().optional().nullable(),
-	ad_org_id: z.number().optional().nullable(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional().nullable(),
+	is_active: z.boolean().optional().nullable(),
 	m_locator_id: z.number().optional().nullable(),
 	m_product_id: z.number(),
 	qtyonhand: z.number(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	warehouse_id: z.number()
 });
 
 export const mStorageonhandUpdateSchema = z.object({
-	ad_client_id: z.number().optional().nullable(),
-	ad_org_id: z.number().optional().nullable(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional().nullable(),
+	is_active: z.boolean().optional().nullable(),
 	m_locator_id: z.number().optional().nullable(),
 	m_product_id: z.number().optional(),
 	qtyonhand: z.number().optional(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	warehouse_id: z.number().optional()
 });
 
 export const mStorageonhandRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('m_storageonhand_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('m_storageonhand_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('m_storageonhand_m_locator_id_fkey'),
 		columns: z.tuple([z.literal('m_locator_id')]),
@@ -2612,54 +1855,36 @@ export const mStorageonhandRelationshipsSchema = z.tuple([
 ]);
 
 export const mSubstituteRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	description: z.string().nullable(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	m_product_id: z.number(),
 	name: z.string().nullable(),
 	substitute_id: z.number(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const mSubstituteInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	m_product_id: z.number(),
 	name: z.string().optional().nullable(),
 	substitute_id: z.number(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mSubstituteUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	m_product_id: z.number().optional(),
 	name: z.string().optional().nullable(),
 	substitute_id: z.number().optional(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mSubstituteRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('m_substitute_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('m_substitute_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('m_substitute_m_product_id_fkey'),
 		columns: z.tuple([z.literal('m_product_id')]),
@@ -2675,105 +1900,74 @@ export const mSubstituteRelationshipsSchema = z.tuple([
 ]);
 
 export const mWarehouseRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number().nullable(),
 	code: z.string(),
-	created: z.string(),
+	created_at: z.string(),
 	id: z.number(),
-	isactive: z.boolean(),
-	isselfservice: z.boolean(),
+	is_active: z.boolean(),
+	is_self_service: z.boolean(),
 	name: z.string(),
-	updated: z.string()
+	updated_at: z.string()
 });
 
 export const mWarehouseInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional().nullable(),
 	code: z.string(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	isselfservice: z.boolean().optional(),
+	is_active: z.boolean().optional(),
+	is_self_service: z.boolean().optional(),
 	name: z.string(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
 export const mWarehouseUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional().nullable(),
 	code: z.string().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
-	isselfservice: z.boolean().optional(),
+	is_active: z.boolean().optional(),
+	is_self_service: z.boolean().optional(),
 	name: z.string().optional(),
-	updated: z.string().optional()
+	updated_at: z.string().optional()
 });
 
-export const mWarehouseRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('m_warehouse_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	})
-]);
+export const mWarehouseRelationshipsSchema = z.tuple([]);
 
 export const wBasketRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
 	ad_user_id: z.number(),
 	c_bpartner_id: z.number().nullable(),
-	created: z.string(),
+	created_at: z.string(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	m_pricelist_id: z.number().nullable(),
 	session_id: z.string().nullable(),
-	updated: z.string(),
+	updated_at: z.string(),
 	w_basket_uu: z.string()
 });
 
 export const wBasketInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
 	ad_user_id: z.number(),
 	c_bpartner_id: z.number().optional().nullable(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	m_pricelist_id: z.number().optional().nullable(),
 	session_id: z.string().optional().nullable(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	w_basket_uu: z.string().optional()
 });
 
 export const wBasketUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
 	ad_user_id: z.number().optional(),
 	c_bpartner_id: z.number().optional().nullable(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	m_pricelist_id: z.number().optional().nullable(),
 	session_id: z.string().optional().nullable(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	w_basket_uu: z.string().optional()
 });
 
 export const wBasketRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('w_basket_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('w_basket_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('w_basket_ad_user_id_fkey'),
 		columns: z.tuple([z.literal('ad_user_id')]),
@@ -2795,63 +1989,45 @@ export const wBasketRelationshipsSchema = z.tuple([
 ]);
 
 export const wBasketlineRowSchema = z.object({
-	ad_client_id: z.number(),
-	ad_org_id: z.number(),
-	created: z.string(),
+	created_at: z.string(),
 	description: z.string().nullable(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	m_product_id: z.number().nullable(),
 	price: z.number(),
 	product: z.string().nullable(),
 	qty: z.number(),
-	updated: z.string(),
+	updated_at: z.string(),
 	w_basket_id: z.number()
 });
 
 export const wBasketlineInsertSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	m_product_id: z.number().optional().nullable(),
 	price: z.number().optional(),
 	product: z.string().optional().nullable(),
 	qty: z.number().optional(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	w_basket_id: z.number()
 });
 
 export const wBasketlineUpdateSchema = z.object({
-	ad_client_id: z.number().optional(),
-	ad_org_id: z.number().optional(),
-	created: z.string().optional(),
+	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
 	id: z.number().optional(),
-	isactive: z.boolean().optional(),
+	is_active: z.boolean().optional(),
 	m_product_id: z.number().optional().nullable(),
 	price: z.number().optional(),
 	product: z.string().optional().nullable(),
 	qty: z.number().optional(),
-	updated: z.string().optional(),
+	updated_at: z.string().optional(),
 	w_basket_id: z.number().optional()
 });
 
 export const wBasketlineRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('w_basketline_ad_client_id_fkey'),
-		columns: z.tuple([z.literal('ad_client_id')]),
-		referencedRelation: z.literal('ad_client'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('w_basketline_ad_org_id_fkey'),
-		columns: z.tuple([z.literal('ad_org_id')]),
-		referencedRelation: z.literal('ad_org'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
 	z.object({
 		foreignKeyName: z.literal('w_basketline_m_product_id_fkey'),
 		columns: z.tuple([z.literal('m_product_id')]),
@@ -2870,26 +2046,21 @@ export const deleteAvatarReturnsSchema = z.record(z.unknown());
 
 export const deleteStorageObjectReturnsSchema = z.record(z.unknown());
 
+export const regionTypeSchema = z.union([
+	z.literal('city'),
+	z.literal('district'),
+	z.literal('autonomous province')
+]);
+
 export const cChannelMapRowSchema = z.object({
-	ad_org_id: z.number(),
 	c_channel_id: z.number(),
 	channel_code: z.string(),
-	created: z.string(),
+	created_at: z.string(),
 	entity_type: entitySchema,
 	id: z.number(),
 	internal_code: z.string(),
-	isactive: z.boolean(),
-	updated: z.string()
-});
-
-export const cLocRegionRowSchema = z.object({
-	code: z.string(),
-	created: z.string(),
-	id: z.number(),
-	name: z.string(),
-	parent_region: z.string().nullable(),
-	type: regionTypeSchema.nullable(),
-	updated: z.string()
+	is_active: z.boolean(),
+	updated_at: z.string()
 });
 
 export const countriesRowSchema = z.object({

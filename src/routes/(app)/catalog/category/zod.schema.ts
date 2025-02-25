@@ -5,7 +5,7 @@ export const productCategorySchema = z.object({
 	created: z.string(),
 	description: z.string().nullable(),
 	id: z.number(),
-	isactive: z.boolean(),
+	is_active: z.boolean(),
 	isselfservice: z.boolean(),
 	name: z.string(),
 	parent_id: z.number().nullable(),

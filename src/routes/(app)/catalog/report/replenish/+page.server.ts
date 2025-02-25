@@ -15,7 +15,7 @@ export async function load({ parent, url, locals: { supabase } }) {
 			'id, sku,name, m_replenish(m_warehouse_id,level_min,level_max,qtybatchsize), m_storageonhand(warehouse_id,qtyonhand)'
 		)
 		.in('m_product_category_id', subcategories)
-		.eq('isactive', true);
+		.eq('is_active', true);
 
 	const products = allProducts
 		?.map((product) => {

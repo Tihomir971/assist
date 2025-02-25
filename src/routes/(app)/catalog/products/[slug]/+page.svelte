@@ -114,12 +114,12 @@
 				<div class="mb-4 flex flex-wrap gap-4">
 					<div class="mb-4 flex flex-wrap gap-4">
 						<Badge
-							variant={$formProduct.isactive ? 'default' : 'outline'}
+							variant={$formProduct.is_active ? 'default' : 'outline'}
 							onclick={() => {
-								$formProduct.isactive = !$formProduct.isactive;
+								$formProduct.is_active = !$formProduct.is_active;
 							}}
 						>
-							{$formProduct.isactive ? 'Active' : 'Inactive'}
+							{$formProduct.is_active ? 'Active' : 'Inactive'}
 						</Badge>
 						<Badge
 							variant={$formProduct.isselfservice ? 'default' : 'outline'}

@@ -58,7 +58,11 @@
 		}
 
 		// Add the new barcode with required properties
-		$formGtin.productPacking.push({ m_product_id: m_product_id, gtin: newBarcode });
+		$formGtin.productPacking.push({
+			m_product_id: m_product_id,
+			m_product_packing_type_id: 1,
+			gtin: newBarcode
+		});
 		$formGtin.productPacking = $formGtin.productPacking;
 		newBarcode = ''; // Reset input
 	}

@@ -59,144 +59,47 @@ export type Database = {
   }
   public: {
     Tables: {
-      ad_client: {
-        Row: {
-          ad_language: string | null
-          created: string
-          createdby: string | null
-          id: number
-          isactive: boolean
-          name: string
-          updated: string
-          updatedby: string | null
-          value: string
-        }
-        Insert: {
-          ad_language?: string | null
-          created?: string
-          createdby?: string | null
-          id?: number
-          isactive?: boolean
-          name: string
-          updated?: string
-          updatedby?: string | null
-          value: string
-        }
-        Update: {
-          ad_language?: string | null
-          created?: string
-          createdby?: string | null
-          id?: number
-          isactive?: boolean
-          name?: string
-          updated?: string
-          updatedby?: string | null
-          value?: string
-        }
-        Relationships: []
-      }
-      ad_org: {
-        Row: {
-          ad_client_id: number
-          code: string | null
-          created: string
-          description: string | null
-          id: number
-          isactive: boolean
-          name: string
-          updated: string
-          value: string
-        }
-        Insert: {
-          ad_client_id?: number
-          code?: string | null
-          created?: string
-          description?: string | null
-          id?: number
-          isactive?: boolean
-          name: string
-          updated?: string
-          value: string
-        }
-        Update: {
-          ad_client_id?: number
-          code?: string | null
-          created?: string
-          description?: string | null
-          id?: number
-          isactive?: boolean
-          name?: string
-          updated?: string
-          value?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "ad_org_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       ad_user: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
           auth_user_id: string | null
           avatar_url: string | null
           c_bpartner_id: number | null
-          created: string
+          created_at: string
           email: string | null
           full_name: string | null
           id: number
-          isactive: boolean
+          is_active: boolean
           supervisor_id: number | null
-          updated: string
+          updated_at: string
           username: string | null
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
           auth_user_id?: string | null
           avatar_url?: string | null
           c_bpartner_id?: number | null
-          created?: string
+          created_at?: string
           email?: string | null
           full_name?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           supervisor_id?: number | null
-          updated?: string
+          updated_at?: string
           username?: string | null
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
           auth_user_id?: string | null
           avatar_url?: string | null
           c_bpartner_id?: number | null
-          created?: string
+          created_at?: string
           email?: string | null
           full_name?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           supervisor_id?: number | null
-          updated?: string
+          updated_at?: string
           username?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "ad_user_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "ad_user_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "ad_user_c_bpartner_id_fkey"
             columns: ["c_bpartner_id"]
@@ -213,31 +116,31 @@ export type Database = {
       }
       asset: {
         Row: {
-          created: string
+          created_at: string
           id: number
           mimeType: string | null
           name: string
           source: string
           type: string | null
-          updated: string
+          updated_at: string
         }
         Insert: {
-          created?: string
+          created_at?: string
           id?: number
           mimeType?: string | null
           name: string
           source: string
           type?: string | null
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          created?: string
+          created_at?: string
           id?: number
           mimeType?: string | null
           name?: string
           source?: string
           type?: string | null
-          updated?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -245,10 +148,10 @@ export type Database = {
         Row: {
           ad_language: string | null
           bpartner_parent_id: number | null
-          created: string
+          created_at: string
           duns: string | null
           id: number
-          isactive: boolean
+          is_active: boolean
           iscustomer: boolean
           isemployee: boolean
           issalesrep: boolean
@@ -257,16 +160,16 @@ export type Database = {
           name: string
           po_pricelist_id: number | null
           taxid: string | null
-          updated: string
+          updated_at: string
           value: string | null
         }
         Insert: {
           ad_language?: string | null
           bpartner_parent_id?: number | null
-          created?: string
+          created_at?: string
           duns?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           iscustomer?: boolean
           isemployee?: boolean
           issalesrep?: boolean
@@ -275,16 +178,16 @@ export type Database = {
           name: string
           po_pricelist_id?: number | null
           taxid?: string | null
-          updated?: string
+          updated_at?: string
           value?: string | null
         }
         Update: {
           ad_language?: string | null
           bpartner_parent_id?: number | null
-          created?: string
+          created_at?: string
           duns?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           iscustomer?: boolean
           isemployee?: boolean
           issalesrep?: boolean
@@ -293,7 +196,7 @@ export type Database = {
           name?: string
           po_pricelist_id?: number | null
           taxid?: string | null
-          updated?: string
+          updated_at?: string
           value?: string | null
         }
         Relationships: [
@@ -319,51 +222,42 @@ export type Database = {
       }
       c_bpartner_location: {
         Row: {
-          ad_org_id: number
           c_bpartner_id: number
-          created: string
+          created_at: string
           id: number
-          isactive: boolean
+          is_active: boolean
           isbillto: boolean
           isshipto: boolean
           name: string
           phone: string | null
           phone2: string | null
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_org_id?: number
           c_bpartner_id: number
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           isbillto?: boolean
           isshipto?: boolean
           name?: string
           phone?: string | null
           phone2?: string | null
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_org_id?: number
           c_bpartner_id?: number
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           isbillto?: boolean
           isshipto?: boolean
           name?: string
           phone?: string | null
           phone2?: string | null
-          updated?: string
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "c_bpartner_location_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "c_bpartner_location_c_bpartner_id_fkey"
             columns: ["c_bpartner_id"]
@@ -374,85 +268,66 @@ export type Database = {
       }
       c_channel: {
         Row: {
-          ad_org_id: number
           c_channel_uu: string | null
-          created: string
+          created_at: string
           description: string | null
           id: number
-          isactive: boolean
+          is_active: boolean
           name: string
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_org_id?: number
           c_channel_uu?: string | null
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           name: string
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_org_id?: number
           c_channel_uu?: string | null
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           name?: string
-          updated?: string
+          updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "c_channel_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       c_channel_map: {
         Row: {
-          ad_org_id: number
           c_channel_id: number
           channel_code: string
-          created: string
+          created_at: string
           entity_type: Database["public"]["Enums"]["Entity"]
           id: number
           internal_code: string
-          isactive: boolean
-          updated: string
+          is_active: boolean
+          updated_at: string
         }
         Insert: {
-          ad_org_id?: number
           c_channel_id: number
           channel_code: string
-          created?: string
+          created_at?: string
           entity_type?: Database["public"]["Enums"]["Entity"]
           id?: number
           internal_code: string
-          isactive?: boolean
-          updated?: string
+          is_active?: boolean
+          updated_at?: string
         }
         Update: {
-          ad_org_id?: number
           c_channel_id?: number
           channel_code?: string
-          created?: string
+          created_at?: string
           entity_type?: Database["public"]["Enums"]["Entity"]
           id?: number
           internal_code?: string
-          isactive?: boolean
-          updated?: string
+          is_active?: boolean
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "c_channel_map_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "c_channel_map_c_channel_id_fkey"
             columns: ["c_channel_id"]
@@ -463,51 +338,33 @@ export type Database = {
       }
       c_channel_map_bpartner: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
           c_bpartner_id: number
           c_channel_id: number
-          created: string
+          created_at: string
           id: number
-          isactive: boolean
+          is_active: boolean
           resource_id: string
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
           c_bpartner_id: number
           c_channel_id: number
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           resource_id: string
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
           c_bpartner_id?: number
           c_channel_id?: number
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           resource_id?: string
-          updated?: string
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "c_channel_map_bpartner_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "c_channel_map_bpartner_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "c_channel_map_bpartner_c_bpartner_id_fkey"
             columns: ["c_bpartner_id"]
@@ -525,33 +382,33 @@ export type Database = {
       c_channel_map_category: {
         Row: {
           c_channel_id: number
-          created: string
+          created_at: string
           id: number
-          isactive: boolean
+          is_active: boolean
           m_product_category_id: number | null
           resource_id: string
           resource_name: string
-          updated: string
+          updated_at: string
         }
         Insert: {
           c_channel_id: number
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           m_product_category_id?: number | null
           resource_id: string
           resource_name: string
-          updated?: string
+          updated_at?: string
         }
         Update: {
           c_channel_id?: number
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           m_product_category_id?: number | null
           resource_id?: string
           resource_name?: string
-          updated?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -570,42 +427,33 @@ export type Database = {
       }
       c_channel_map_tax: {
         Row: {
-          ad_org_id: number
           c_channel_id: number
           c_taxcategory_id: number
-          created: string
+          created_at: string
           id: number
-          isactive: boolean
+          is_active: boolean
           resource_id: string
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_org_id?: number
           c_channel_id: number
           c_taxcategory_id: number
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           resource_id: string
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_org_id?: number
           c_channel_id?: number
           c_taxcategory_id?: number
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           resource_id?: string
-          updated?: string
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "c_channel_map_tax_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "c_channel_map_tax_c_channel_id_fkey"
             columns: ["c_channel_id"]
@@ -622,42 +470,33 @@ export type Database = {
       }
       c_channel_map_warehouse: {
         Row: {
-          ad_org_id: number
           c_channel_id: number
-          created: string
+          created_at: string
           id: number
-          isactive: boolean
+          is_active: boolean
           m_warehouse_id: number
           resource_id: string
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_org_id?: number
           c_channel_id: number
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           m_warehouse_id: number
           resource_id: string
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_org_id?: number
           c_channel_id?: number
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           m_warehouse_id?: number
           resource_id?: string
-          updated?: string
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "c_channel_map_warehouse_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "c_channel_map_warehouse_c_channel_id_fkey"
             columns: ["c_channel_id"]
@@ -674,45 +513,36 @@ export type Database = {
       }
       c_country: {
         Row: {
-          ad_org_id: number
           alpha_2: string
           c_currency_id: number | null
-          created: string
+          created_at: string
           full_name: string | null
           id: number
-          isactive: boolean
+          is_active: boolean
           short_name: string
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_org_id?: number
           alpha_2: string
           c_currency_id?: number | null
-          created?: string
+          created_at?: string
           full_name?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           short_name: string
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_org_id?: number
           alpha_2?: string
           c_currency_id?: number | null
-          created?: string
+          created_at?: string
           full_name?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           short_name?: string
-          updated?: string
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "c_country_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "c_country_c_currency_id_fkey"
             columns: ["c_currency_id"]
@@ -724,337 +554,108 @@ export type Database = {
       c_currency: {
         Row: {
           alphabetic_code: string
-          created: string
+          created_at: string
           cursymbol: string | null
           id: number
           is_enabled: boolean
           minor_unit: number
           name: string
           numeric_code: string
-          updated: string
+          updated_at: string
         }
         Insert: {
           alphabetic_code: string
-          created?: string
+          created_at?: string
           cursymbol?: string | null
           id?: number
           is_enabled?: boolean
           minor_unit?: number
           name: string
           numeric_code: string
-          updated?: string
+          updated_at?: string
         }
         Update: {
           alphabetic_code?: string
-          created?: string
+          created_at?: string
           cursymbol?: string | null
           id?: number
           is_enabled?: boolean
           minor_unit?: number
           name?: string
           numeric_code?: string
-          updated?: string
+          updated_at?: string
         }
         Relationships: []
       }
-      c_loc_address: {
+      c_postal_code: {
         Row: {
-          ad_org_id: number
-          created: string
+          c_country_id: number
+          code: string
+          created_at: string
           id: number
-          isactive: boolean
-          municipality_id: string
-          updated: string
+          is_active: boolean
+          updated_at: string
         }
         Insert: {
-          ad_org_id?: number
-          created?: string
+          c_country_id: number
+          code: string
+          created_at?: string
           id?: number
-          isactive?: boolean
-          municipality_id: string
-          updated?: string
+          is_active?: boolean
+          updated_at?: string
         }
         Update: {
-          ad_org_id?: number
-          created?: string
-          id?: number
-          isactive?: boolean
-          municipality_id?: string
-          updated?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "c_loc_address_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "c_loc_address_municipality_id_fkey"
-            columns: ["municipality_id"]
-            referencedRelation: "c_loc_municipality"
-            referencedColumns: ["code"]
-          },
-        ]
-      }
-      c_loc_municipality: {
-        Row: {
-          ad_org_id: number
-          code: string
-          created: string
-          id: number
-          isactive: boolean
-          name: string
-          region_id: string
-          updated: string
-        }
-        Insert: {
-          ad_org_id?: number
-          code: string
-          created?: string
-          id?: number
-          isactive?: boolean
-          name: string
-          region_id: string
-          updated?: string
-        }
-        Update: {
-          ad_org_id?: number
+          c_country_id?: number
           code?: string
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
-          name?: string
-          region_id?: string
-          updated?: string
+          is_active?: boolean
+          updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "c_loc_municipality_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "c_loc_municipality_region_id_fkey"
-            columns: ["region_id"]
-            referencedRelation: "c_loc_region"
-            referencedColumns: ["code"]
-          },
-        ]
-      }
-      c_loc_region: {
-        Row: {
-          code: string
-          created: string
-          id: number
-          name: string
-          parent_region: string | null
-          type: Database["public"]["Enums"]["region_type"] | null
-          updated: string
-        }
-        Insert: {
-          code: string
-          created?: string
-          id?: number
-          name: string
-          parent_region?: string | null
-          type?: Database["public"]["Enums"]["region_type"] | null
-          updated?: string
-        }
-        Update: {
-          code?: string
-          created?: string
-          id?: number
-          name?: string
-          parent_region?: string | null
-          type?: Database["public"]["Enums"]["region_type"] | null
-          updated?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "c_loc_region_parent_region_fkey"
-            columns: ["parent_region"]
-            referencedRelation: "c_loc_region"
-            referencedColumns: ["code"]
-          },
-        ]
-      }
-      c_loc_settlement: {
-        Row: {
-          ad_org_id: number
-          code: string
-          created: string
-          id: number
-          isactive: boolean
-          municipality_id: string | null
-          name: string
-          updated: string
-        }
-        Insert: {
-          ad_org_id?: number
-          code: string
-          created?: string
-          id?: number
-          isactive?: boolean
-          municipality_id?: string | null
-          name: string
-          updated?: string
-        }
-        Update: {
-          ad_org_id?: number
-          code?: string
-          created?: string
-          id?: number
-          isactive?: boolean
-          municipality_id?: string | null
-          name?: string
-          updated?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "c_loc_settlement_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "c_loc_settlement_municipality_id_fkey"
-            columns: ["municipality_id"]
-            referencedRelation: "c_loc_municipality"
-            referencedColumns: ["code"]
-          },
-        ]
-      }
-      c_location: {
-        Row: {
-          address1: string | null
-          address2: string | null
-          c_country_id: number | null
-          c_loc_municipality_id: number | null
-          c_region_id: number | null
-          created: string
-          id: number
-          isactive: boolean
-          updated: string
-        }
-        Insert: {
-          address1?: string | null
-          address2?: string | null
-          c_country_id?: number | null
-          c_loc_municipality_id?: number | null
-          c_region_id?: number | null
-          created?: string
-          id?: number
-          isactive?: boolean
-          updated?: string
-        }
-        Update: {
-          address1?: string | null
-          address2?: string | null
-          c_country_id?: number | null
-          c_loc_municipality_id?: number | null
-          c_region_id?: number | null
-          created?: string
-          id?: number
-          isactive?: boolean
-          updated?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "c_location_c_country_id_fkey"
+            foreignKeyName: "c_postal_code_c_country_id_fkey"
             columns: ["c_country_id"]
             referencedRelation: "c_country"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "c_location_c_loc_municipality_id_fkey"
-            columns: ["c_loc_municipality_id"]
-            referencedRelation: "c_loc_municipality"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "c_location_c_region_id_fkey"
-            columns: ["c_region_id"]
-            referencedRelation: "c_loc_region"
-            referencedColumns: ["id"]
-          },
         ]
-      }
-      c_postal: {
-        Row: {
-          created: string
-          id: number
-          isactive: boolean
-          updated: string
-        }
-        Insert: {
-          created?: string
-          id?: number
-          isactive?: boolean
-          updated?: string
-        }
-        Update: {
-          created?: string
-          id?: number
-          isactive?: boolean
-          updated?: string
-        }
-        Relationships: []
       }
       c_tax: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
           c_taxcategory_id: number
-          created: string
+          created_at: string
           description: string | null
           id: number
-          isactive: boolean
+          is_active: boolean
           isdefault: boolean
           name: string
           rate: number
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
           c_taxcategory_id: number
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           isdefault?: boolean
           name: string
           rate: number
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
           c_taxcategory_id?: number
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           isdefault?: boolean
           name?: string
           rate?: number
-          updated?: string
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "c_tax_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "c_tax_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "c_tax_c_taxcategory_id_fkey"
             columns: ["c_taxcategory_id"]
@@ -1065,161 +666,105 @@ export type Database = {
       }
       c_taxcategory: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
-          created: string
+          created_at: string
           description: string | null
           id: number
-          isactive: boolean
-          isdefault: boolean
+          is_active: boolean
+          is_default: boolean
           name: string
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
-          isdefault?: boolean
+          is_active?: boolean
+          is_default?: boolean
           name: string
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
-          isdefault?: boolean
+          is_active?: boolean
+          is_default?: boolean
           name?: string
-          updated?: string
+          updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "c_taxcategory_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "c_taxcategory_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       c_uom: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
-          created: string
+          created_at: string
           description: string | null
           id: number
-          isactive: boolean
-          isdefault: boolean
+          is_active: boolean
+          is_default: boolean
           name: string
           stdprecision: number
           uomsymbol: string | null
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
-          isdefault?: boolean
+          is_active?: boolean
+          is_default?: boolean
           name: string
           stdprecision: number
           uomsymbol?: string | null
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
-          isdefault?: boolean
+          is_active?: boolean
+          is_default?: boolean
           name?: string
           stdprecision?: number
           uomsymbol?: string | null
-          updated?: string
+          updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "c_uom_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "c_uom_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       c_uom_conversion: {
         Row: {
-          ad_client_id: number | null
-          ad_org_id: number | null
           c_uom_id: number | null
           c_uom_to_id: number | null
-          created: string
+          created_at: string
           dividerate: number | null
           id: number
-          isactive: boolean | null
+          is_active: boolean | null
           m_product_id: number | null
           multiplyrate: number | null
-          updated: string | null
+          updated_at: string | null
         }
         Insert: {
-          ad_client_id?: number | null
-          ad_org_id?: number | null
           c_uom_id?: number | null
           c_uom_to_id?: number | null
-          created?: string
+          created_at?: string
           dividerate?: number | null
           id?: number
-          isactive?: boolean | null
+          is_active?: boolean | null
           m_product_id?: number | null
           multiplyrate?: number | null
-          updated?: string | null
+          updated_at?: string | null
         }
         Update: {
-          ad_client_id?: number | null
-          ad_org_id?: number | null
           c_uom_id?: number | null
           c_uom_to_id?: number | null
-          created?: string
+          created_at?: string
           dividerate?: number | null
           id?: number
-          isactive?: boolean | null
+          is_active?: boolean | null
           m_product_id?: number | null
           multiplyrate?: number | null
-          updated?: string | null
+          updated_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "c_uom_conversion_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "c_uom_conversion_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "c_uom_conversion_c_uom_id_fkey"
             columns: ["c_uom_id"]
@@ -1293,72 +838,54 @@ export type Database = {
       }
       m_attribute: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
           attribute_group_id: number
           attribute_type: string | null
           attributevaluetype: string
           backend_type: string | null
           code: string
-          created: string
+          created_at: string
           description: string | null
           id: number
-          isactive: boolean
+          is_active: boolean
           isinstanceattribute: boolean
           ismandatory: boolean
           label: string | null
           name: string
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
           attribute_group_id?: number
           attribute_type?: string | null
           attributevaluetype?: string
           backend_type?: string | null
           code: string
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           isinstanceattribute?: boolean
           ismandatory?: boolean
           label?: string | null
           name: string
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
           attribute_group_id?: number
           attribute_type?: string | null
           attributevaluetype?: string
           backend_type?: string | null
           code?: string
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           isinstanceattribute?: boolean
           ismandatory?: boolean
           label?: string | null
           name?: string
-          updated?: string
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "m_attribute_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_attribute_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "m_attribute_attribute_group_id_fkey"
             columns: ["attribute_group_id"]
@@ -1369,81 +896,60 @@ export type Database = {
       }
       m_attributegroup: {
         Row: {
-          code: string
-          created: string
+          created_at: string
           id: number
-          label: string | null
-          updated: string
+          name: string
+          updated_at: string
         }
         Insert: {
-          code: string
-          created?: string
+          created_at?: string
           id?: number
-          label?: string | null
-          updated?: string
+          name: string
+          updated_at?: string
         }
         Update: {
-          code?: string
-          created?: string
+          created_at?: string
           id?: number
-          label?: string | null
-          updated?: string
+          name?: string
+          updated_at?: string
         }
         Relationships: []
       }
       m_attributeinstance: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
-          created: string
-          isactive: boolean
+          created_at: string
+          is_active: boolean
           m_attribute_id: number
           m_attributesetinstance_id: number
           m_attributevalue_id: number | null
-          updated: string
+          updated_at: string
           value: string | null
           valuedate: string | null
           valuenumber: number | null
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
-          isactive?: boolean
+          created_at?: string
+          is_active?: boolean
           m_attribute_id?: number
           m_attributesetinstance_id: number
           m_attributevalue_id?: number | null
-          updated?: string
+          updated_at?: string
           value?: string | null
           valuedate?: string | null
           valuenumber?: number | null
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
-          isactive?: boolean
+          created_at?: string
+          is_active?: boolean
           m_attribute_id?: number
           m_attributesetinstance_id?: number
           m_attributevalue_id?: number | null
-          updated?: string
+          updated_at?: string
           value?: string | null
           valuedate?: string | null
           valuenumber?: number | null
         }
         Relationships: [
-          {
-            foreignKeyName: "m_attributeinstance_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_attributeinstance_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "m_attributeinstance_m_attribute_id_fkey"
             columns: ["m_attribute_id"]
@@ -1466,109 +972,72 @@ export type Database = {
       }
       m_attributeset: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
-          created: string
+          created_at: string
           description: string | null
           id: number
-          isactive: boolean
+          is_active: boolean
           isguaranteedate: boolean
           isinstanceattribute: boolean
           mandatorytype: string
           name: string
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           isguaranteedate?: boolean
           isinstanceattribute?: boolean
           mandatorytype?: string
           name: string
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           isguaranteedate?: boolean
           isinstanceattribute?: boolean
           mandatorytype?: string
           name?: string
-          updated?: string
+          updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "m_attributeset_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_attributeset_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       m_attributesetinstance: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
-          created: string
+          created_at: string
           guaranteedate: string | null
           id: number
-          isactive: boolean
+          is_active: boolean
           lot: string | null
           m_attributeset_id: number | null
           serno: string | null
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           guaranteedate?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           lot?: string | null
           m_attributeset_id?: number | null
           serno?: string | null
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           guaranteedate?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           lot?: string | null
           m_attributeset_id?: number | null
           serno?: string | null
-          updated?: string
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "m_attributesetinstance_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_attributesetinstance_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "m_attributesetinstance_m_attributeset_id_fkey"
             columns: ["m_attributeset_id"]
@@ -1579,48 +1048,30 @@ export type Database = {
       }
       m_attributeuse: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
-          created: string
-          isactive: boolean
+          created_at: string
+          is_active: boolean
           m_attribute_id: number
           m_attributeset_id: number
           seqno: number | null
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
-          isactive?: boolean
+          created_at?: string
+          is_active?: boolean
           m_attribute_id: number
           m_attributeset_id: number
           seqno?: number | null
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
-          isactive?: boolean
+          created_at?: string
+          is_active?: boolean
           m_attribute_id?: number
           m_attributeset_id?: number
           seqno?: number | null
-          updated?: string
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "m_attributeuse_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_attributeuse_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "m_attributeuse_m_attribute_id_fkey"
             columns: ["m_attribute_id"]
@@ -1637,54 +1088,36 @@ export type Database = {
       }
       m_attributevalue: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
-          created: string
+          created_at: string
           description: string | null
           id: number
-          isactive: boolean
+          is_active: boolean
           m_attribute_id: number
           name: string
-          updated: string
+          updated_at: string
           value: string
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           m_attribute_id: number
           name: string
-          updated?: string
+          updated_at?: string
           value: string
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           m_attribute_id?: number
           name?: string
-          updated?: string
+          updated_at?: string
           value?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "m_attributevalue_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_attributevalue_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "m_attributevalue_m_attribute_id_fkey"
             columns: ["m_attribute_id"]
@@ -1695,109 +1128,72 @@ export type Database = {
       }
       m_discountschema: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
-          created: string
+          created_at: string
           flatdiscount: number | null
           id: number
-          isactive: boolean
+          is_active: boolean
           name: string
-          updated: string
+          updated_at: string
           validfrom: string | null
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           flatdiscount?: number | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           name: string
-          updated?: string
+          updated_at?: string
           validfrom?: string | null
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           flatdiscount?: number | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           name?: string
-          updated?: string
+          updated_at?: string
           validfrom?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "m_discountschema_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_discountschema_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       m_locator: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
-          created: string
+          created_at: string
           id: number
-          isactive: boolean
-          isdefault: boolean
+          is_active: boolean
+          is_default: boolean
           m_warehouse_id: number
-          updated: string
+          updated_at: string
           value: string
           x: string | null
           y: string | null
           z: string | null
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
-          isdefault?: boolean
+          is_active?: boolean
+          is_default?: boolean
           m_warehouse_id: number
-          updated?: string
+          updated_at?: string
           value: string
           x?: string | null
           y?: string | null
           z?: string | null
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
-          isdefault?: boolean
+          is_active?: boolean
+          is_default?: boolean
           m_warehouse_id?: number
-          updated?: string
+          updated_at?: string
           value?: string
           x?: string | null
           y?: string | null
           z?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "m_locator_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_locator_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "m_locator_m_warehouse_id_fkey"
             columns: ["m_warehouse_id"]
@@ -1808,69 +1204,51 @@ export type Database = {
       }
       m_pricelist: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
           basepricelist_id: number | null
           c_currency_id: number
-          created: string
+          created_at: string
           description: string | null
           enforcepricelimit: boolean
           id: number
-          isactive: boolean
-          isdefault: boolean
+          is_active: boolean
+          is_default: boolean
+          is_taxincluded: boolean | null
           issopricelist: boolean
-          istaxincluded: boolean | null
           name: string
           priceprecision: number
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
           basepricelist_id?: number | null
           c_currency_id: number
-          created?: string
+          created_at?: string
           description?: string | null
           enforcepricelimit?: boolean
           id?: number
-          isactive?: boolean
-          isdefault?: boolean
+          is_active?: boolean
+          is_default?: boolean
+          is_taxincluded?: boolean | null
           issopricelist?: boolean
-          istaxincluded?: boolean | null
           name: string
           priceprecision?: number
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
           basepricelist_id?: number | null
           c_currency_id?: number
-          created?: string
+          created_at?: string
           description?: string | null
           enforcepricelimit?: boolean
           id?: number
-          isactive?: boolean
-          isdefault?: boolean
+          is_active?: boolean
+          is_default?: boolean
+          is_taxincluded?: boolean | null
           issopricelist?: boolean
-          istaxincluded?: boolean | null
           name?: string
           priceprecision?: number
-          updated?: string
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "m_pricelist_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_pricelist_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "m_pricelist_basepricelist_id_fkey"
             columns: ["basepricelist_id"]
@@ -1887,63 +1265,45 @@ export type Database = {
       }
       m_pricelist_version: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
-          created: string
+          created_at: string
           description: string | null
           id: number
-          isactive: boolean
+          is_active: boolean
           m_discountschema_id: number
           m_pricelist_id: number
           m_pricelist_version_base_id: number | null
           name: string
-          updated: string
+          updated_at: string
           validfrom: string
           validto: string | null
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           m_discountschema_id: number
           m_pricelist_id: number
           m_pricelist_version_base_id?: number | null
           name: string
-          updated?: string
+          updated_at?: string
           validfrom: string
           validto?: string | null
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           m_discountschema_id?: number
           m_pricelist_id?: number
           m_pricelist_version_base_id?: number | null
           name?: string
-          updated?: string
+          updated_at?: string
           validfrom?: string
           validto?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "m_pricelist_version_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_pricelist_version_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "m_pricelist_version_m_discountschema_id_fkey"
             columns: ["m_discountschema_id"]
@@ -1966,22 +1326,20 @@ export type Database = {
       }
       m_product: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
           attributes: Json | null
           brand: string | null
           c_taxcategory_id: number
           c_uom_id: number
           condition: string | null
-          created: string
+          created_at: string
           description: string | null
           descriptionurl: string | null
           discontinued: boolean
           featuredAssetId: number | null
           id: number
           imageurl: string | null
-          isactive: boolean
-          isselfservice: boolean
+          is_active: boolean
+          is_self_service: boolean
           m_attributeset_id: number | null
           m_product_category_id: number | null
           m_product_uu: string | null
@@ -1994,25 +1352,23 @@ export type Database = {
           sku: string | null
           unitsperpack: number
           unitsperpallet: number | null
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
           attributes?: Json | null
           brand?: string | null
           c_taxcategory_id?: number
           c_uom_id?: number
           condition?: string | null
-          created?: string
+          created_at?: string
           description?: string | null
           descriptionurl?: string | null
           discontinued?: boolean
           featuredAssetId?: number | null
           id?: number
           imageurl?: string | null
-          isactive?: boolean
-          isselfservice?: boolean
+          is_active?: boolean
+          is_self_service?: boolean
           m_attributeset_id?: number | null
           m_product_category_id?: number | null
           m_product_uu?: string | null
@@ -2025,25 +1381,23 @@ export type Database = {
           sku?: string | null
           unitsperpack?: number
           unitsperpallet?: number | null
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
           attributes?: Json | null
           brand?: string | null
           c_taxcategory_id?: number
           c_uom_id?: number
           condition?: string | null
-          created?: string
+          created_at?: string
           description?: string | null
           descriptionurl?: string | null
           discontinued?: boolean
           featuredAssetId?: number | null
           id?: number
           imageurl?: string | null
-          isactive?: boolean
-          isselfservice?: boolean
+          is_active?: boolean
+          is_self_service?: boolean
           m_attributeset_id?: number | null
           m_product_category_id?: number | null
           m_product_uu?: string | null
@@ -2056,21 +1410,9 @@ export type Database = {
           sku?: string | null
           unitsperpack?: number
           unitsperpallet?: number | null
-          updated?: string
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "m_product_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_product_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "m_product_c_taxcategory_id_fkey"
             columns: ["c_taxcategory_id"]
@@ -2111,74 +1453,40 @@ export type Database = {
       }
       m_product_category: {
         Row: {
-          created: string
+          created_at: string
           description: string | null
           id: number
-          isactive: boolean
-          isselfservice: boolean
+          is_active: boolean
+          is_self_service: boolean
           name: string
           parent_id: number | null
-          updated: string
+          updated_at: string
         }
         Insert: {
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
-          isselfservice?: boolean
+          is_active?: boolean
+          is_self_service?: boolean
           name: string
           parent_id?: number | null
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
-          isselfservice?: boolean
+          is_active?: boolean
+          is_self_service?: boolean
           name?: string
           parent_id?: number | null
-          updated?: string
+          updated_at?: string
         }
         Relationships: [
           {
             foreignKeyName: "m_product_category_parent_id_fkey"
             columns: ["parent_id"]
             referencedRelation: "m_product_category"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      m_product_gtin: {
-        Row: {
-          created: string
-          gtin: string
-          id: number
-          isactive: boolean
-          m_product_id: number
-          updated: string
-        }
-        Insert: {
-          created?: string
-          gtin: string
-          id?: number
-          isactive?: boolean
-          m_product_id: number
-          updated?: string
-        }
-        Update: {
-          created?: string
-          gtin?: string
-          id?: number
-          isactive?: boolean
-          m_product_id?: number
-          updated?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "m_product_gtin_m_product_id_fkey"
-            columns: ["m_product_id"]
-            referencedRelation: "m_product"
             referencedColumns: ["id"]
           },
         ]
@@ -2198,7 +1506,7 @@ export type Database = {
           gtin?: string | null
           id?: number
           m_product_id: number
-          m_product_packing_type_id?: number
+          m_product_packing_type_id: number
           unitsperpack?: number
           updated_at?: string
         }
@@ -2253,10 +1561,10 @@ export type Database = {
           c_bpartner_id: number
           c_currency_id: number | null
           c_uom_id: number | null
-          created: string
+          created_at: string
           discontinued: boolean | null
           id: number
-          isactive: boolean
+          is_active: boolean
           iscurrentvendor: boolean
           m_product_id: number
           manufacturer: string | null
@@ -2264,7 +1572,7 @@ export type Database = {
           pricelastpo: number | null
           pricelist: number
           pricepo: number | null
-          updated: string
+          updated_at: string
           url: string | null
           valid_from: string | null
           valid_to: string | null
@@ -2276,10 +1584,10 @@ export type Database = {
           c_bpartner_id: number
           c_currency_id?: number | null
           c_uom_id?: number | null
-          created?: string
+          created_at?: string
           discontinued?: boolean | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           iscurrentvendor?: boolean
           m_product_id: number
           manufacturer?: string | null
@@ -2287,7 +1595,7 @@ export type Database = {
           pricelastpo?: number | null
           pricelist?: number
           pricepo?: number | null
-          updated?: string
+          updated_at?: string
           url?: string | null
           valid_from?: string | null
           valid_to?: string | null
@@ -2299,10 +1607,10 @@ export type Database = {
           c_bpartner_id?: number
           c_currency_id?: number | null
           c_uom_id?: number | null
-          created?: string
+          created_at?: string
           discontinued?: boolean | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           iscurrentvendor?: boolean
           m_product_id?: number
           manufacturer?: string | null
@@ -2310,7 +1618,7 @@ export type Database = {
           pricelastpo?: number | null
           pricelist?: number
           pricepo?: number | null
-          updated?: string
+          updated_at?: string
           url?: string | null
           valid_from?: string | null
           valid_to?: string | null
@@ -2346,57 +1654,39 @@ export type Database = {
       }
       m_productprice: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
-          created: string
+          created_at: string
           id: number
-          isactive: boolean
+          is_active: boolean
           m_pricelist_version_id: number
           m_product_id: number
           pricelimit: number | null
           pricelist: number | null
           pricestd: number | null
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           m_pricelist_version_id: number
           m_product_id: number
           pricelimit?: number | null
           pricelist?: number | null
           pricestd?: number | null
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           m_pricelist_version_id?: number
           m_product_id?: number
           pricelimit?: number | null
           pricelist?: number | null
           pricestd?: number | null
-          updated?: string
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "m_productprice_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_productprice_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "m_productprice_m_pricelist_version_id_fkey"
             columns: ["m_pricelist_version_id"]
@@ -2413,11 +1703,9 @@ export type Database = {
       }
       m_replenish: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
-          created: string
+          created_at: string
           id: number
-          isactive: boolean
+          is_active: boolean
           level_max: number
           level_min: number
           m_locator_id: number | null
@@ -2427,14 +1715,12 @@ export type Database = {
           m_warehousesource_id: number | null
           qtybatchsize: number | null
           replenishtype: string
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           level_max?: number
           level_min?: number
           m_locator_id?: number | null
@@ -2444,14 +1730,12 @@ export type Database = {
           m_warehousesource_id?: number | null
           qtybatchsize?: number | null
           replenishtype?: string
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           level_max?: number
           level_min?: number
           m_locator_id?: number | null
@@ -2461,21 +1745,9 @@ export type Database = {
           m_warehousesource_id?: number | null
           qtybatchsize?: number | null
           replenishtype?: string
-          updated?: string
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "m_replenish_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_replenish_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "m_replenish_m_locator_id_fkey"
             columns: ["m_locator_id"]
@@ -2504,54 +1776,36 @@ export type Database = {
       }
       m_storageonhand: {
         Row: {
-          ad_client_id: number | null
-          ad_org_id: number | null
-          created: string
+          created_at: string
           id: number
-          isactive: boolean | null
+          is_active: boolean | null
           m_locator_id: number | null
           m_product_id: number
           qtyonhand: number
-          updated: string
+          updated_at: string
           warehouse_id: number
         }
         Insert: {
-          ad_client_id?: number | null
-          ad_org_id?: number | null
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean | null
+          is_active?: boolean | null
           m_locator_id?: number | null
           m_product_id: number
           qtyonhand: number
-          updated?: string
+          updated_at?: string
           warehouse_id: number
         }
         Update: {
-          ad_client_id?: number | null
-          ad_org_id?: number | null
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean | null
+          is_active?: boolean | null
           m_locator_id?: number | null
           m_product_id?: number
           qtyonhand?: number
-          updated?: string
+          updated_at?: string
           warehouse_id?: number
         }
         Relationships: [
-          {
-            foreignKeyName: "m_storageonhand_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_storageonhand_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "m_storageonhand_m_locator_id_fkey"
             columns: ["m_locator_id"]
@@ -2574,51 +1828,33 @@ export type Database = {
       }
       m_substitute: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
-          created: string
+          created_at: string
           description: string | null
-          isactive: boolean
+          is_active: boolean
           m_product_id: number
           name: string | null
           substitute_id: number
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           description?: string | null
-          isactive?: boolean
+          is_active?: boolean
           m_product_id: number
           name?: string | null
           substitute_id: number
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           description?: string | null
-          isactive?: boolean
+          is_active?: boolean
           m_product_id?: number
           name?: string | null
           substitute_id?: number
-          updated?: string
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "m_substitute_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_substitute_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "m_substitute_m_product_id_fkey"
             columns: ["m_product_id"]
@@ -2635,100 +1871,69 @@ export type Database = {
       }
       m_warehouse: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number | null
           code: string
-          created: string
+          created_at: string
           id: number
-          isactive: boolean
-          isselfservice: boolean
+          is_active: boolean
+          is_self_service: boolean
           name: string
-          updated: string
+          updated_at: string
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number | null
           code: string
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
-          isselfservice?: boolean
+          is_active?: boolean
+          is_self_service?: boolean
           name: string
-          updated?: string
+          updated_at?: string
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number | null
           code?: string
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
-          isselfservice?: boolean
+          is_active?: boolean
+          is_self_service?: boolean
           name?: string
-          updated?: string
+          updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "m_warehouse_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       w_basket: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
           ad_user_id: number
           c_bpartner_id: number | null
-          created: string
+          created_at: string
           id: number
-          isactive: boolean
+          is_active: boolean
           m_pricelist_id: number | null
           session_id: string | null
-          updated: string
+          updated_at: string
           w_basket_uu: string
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
           ad_user_id: number
           c_bpartner_id?: number | null
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           m_pricelist_id?: number | null
           session_id?: string | null
-          updated?: string
+          updated_at?: string
           w_basket_uu?: string
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
           ad_user_id?: number
           c_bpartner_id?: number | null
-          created?: string
+          created_at?: string
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           m_pricelist_id?: number | null
           session_id?: string | null
-          updated?: string
+          updated_at?: string
           w_basket_uu?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "w_basket_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "w_basket_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "w_basket_ad_user_id_fkey"
             columns: ["ad_user_id"]
@@ -2751,60 +1956,42 @@ export type Database = {
       }
       w_basketline: {
         Row: {
-          ad_client_id: number
-          ad_org_id: number
-          created: string
+          created_at: string
           description: string | null
           id: number
-          isactive: boolean
+          is_active: boolean
           m_product_id: number | null
           price: number
           product: string | null
           qty: number
-          updated: string
+          updated_at: string
           w_basket_id: number
         }
         Insert: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           m_product_id?: number | null
           price?: number
           product?: string | null
           qty?: number
-          updated?: string
+          updated_at?: string
           w_basket_id: number
         }
         Update: {
-          ad_client_id?: number
-          ad_org_id?: number
-          created?: string
+          created_at?: string
           description?: string | null
           id?: number
-          isactive?: boolean
+          is_active?: boolean
           m_product_id?: number | null
           price?: number
           product?: string | null
           qty?: number
-          updated?: string
+          updated_at?: string
           w_basket_id?: number
         }
         Relationships: [
-          {
-            foreignKeyName: "w_basketline_ad_client_id_fkey"
-            columns: ["ad_client_id"]
-            referencedRelation: "ad_client"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "w_basketline_ad_org_id_fkey"
-            columns: ["ad_org_id"]
-            referencedRelation: "ad_org"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "w_basketline_m_product_id_fkey"
             columns: ["m_product_id"]
