@@ -98,28 +98,29 @@
 	});
 	async function addToCart(): Promise<void> {
 		if (browser && cartService) {
-			const cartItems = await cartService.getCartItems();
-			table.getRowModel().rows.forEach((row) => {
-				if (row.getIsSelected()) {
-					const existingItemIndex = cartItems.findIndex((item) => item.id === row.original.id);
+			// Get selected rows first
+			const selectedRows = table.getRowModel().rows.filter((row) => row.getIsSelected());
 
-					if (existingItemIndex !== -1) {
-						cartService.updateItemQuantity(
-							row.original.id,
-							cartItems[existingItemIndex].quantity + 1
-						);
-					} else {
-						cartService.addItem({
-							id: row.original.id,
-							name: row.original.name,
-							quantity: 1,
-							sku: row.original.sku
-						});
-					}
+			// Process each selected row
+			for (const row of selectedRows) {
+				const cartItems = await cartService.getCartItems();
+				const existingItemIndex = cartItems.findIndex((item) => item.id === row.original.id);
+
+				if (existingItemIndex !== -1) {
+					await cartService.updateItemQuantity(
+						row.original.id,
+						cartItems[existingItemIndex].quantity + 1
+					);
+				} else {
+					await cartService.addItem({
+						id: row.original.id,
+						name: row.original.name,
+						quantity: 1,
+						sku: row.original.sku
+					});
 				}
-			});
+			}
 
-			//cartItems.current = currentItems;
 			rowSelectionState = {};
 		}
 	}

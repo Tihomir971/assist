@@ -276,10 +276,7 @@ export const actions = {
 		if (!form.valid) return fail(400, { form });
 
 		// Create new array without created and updated fields
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const purchases = form.data.purchases.map(
-			({ created_at, updated_at, ...purchase }) => purchase
-		);
+		const purchases = form.data.purchases.map(({ ...purchase }) => purchase);
 
 		try {
 			// Separate records into updates and inserts
