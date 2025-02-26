@@ -1,12 +1,14 @@
 <script lang="ts">
+	import type { Database } from '$lib/types/supabase/database.types.js';
+	import type { SupabaseClient } from '@supabase/supabase-js';
+	// Icons
 	import PhShoppingCart from '~icons/ph/shopping-cart';
+	// Componets
+	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import CartItems from '$lib/components/cart/cart-items.svelte';
 	import { Badge } from '$lib/components/ui/badge/index.js';
-	import * as Sheet from '$lib/components/ui/sheet/index.js';
-	import type { SupabaseClient } from '@supabase/supabase-js';
 	import { buttonVariants } from '$lib/components/ui/button/button.svelte';
 	import { getCartContext } from '$lib/components/cart/ctx.svelte';
-	import type { Database } from '$lib/types/supabase/database.types';
 
 	type Props = {
 		supabase: SupabaseClient<Database>;
@@ -22,7 +24,7 @@
 		{#await cartService.getCartItems() then cartItems}
 			{#if cartItems.length > 0}
 				<Badge
-					class="absolute top-1 right-1 size-4 -translate-y-1/3 translate-x-1/3 justify-center p-0"
+					class="absolute top-1 right-1 size-4 translate-x-1/3 -translate-y-1/3 justify-center p-0"
 				>
 					{cartItems.length}
 				</Badge>

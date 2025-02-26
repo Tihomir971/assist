@@ -3,12 +3,16 @@
 	// Utils
 	import { getCartContext } from './ctx.svelte';
 	import type { Database } from '$lib/types/supabase/database.types';
+	import type { CartItem } from './types';
 	// Components
 	import { Button } from '$lib/components/ui/button/index.js';
-	import CartItem from './cart-item.svelte';
 	import ExportDialog from './components/export/ExportDialog.svelte';
 	// Icons
 	import PhMicrosoftExcelLogo from '~icons/ph/microsoft-excel-logo';
+	import PhTrash from '~icons/ph/trash';
+	import PhPlus from '~icons/ph/plus';
+	import PhMinus from '~icons/ph/minus';
+	import * as Table from '$lib/components/ui/table/index.js';
 
 	interface Props {
 		supabase: SupabaseClient<Database>;
@@ -22,6 +26,20 @@
 	async function clearCart() {
 		await cartService.clearCart();
 	}
+
+	async function incrementQuantity(cartItem: CartItem) {
+		await cartService.updateItemQuantity(cartItem.id, cartItem.quantity + 1);
+	}
+
+	async function decrementQuantity(cartItem: CartItem) {
+		if (cartItem.quantity > 1) {
+			await cartService.updateItemQuantity(cartItem.id, cartItem.quantity - 1);
+		}
+	}
+
+	async function removeItem(cartItem: CartItem) {
+		await cartService.removeItem(cartItem.id);
+	}
 </script>
 
 <div class="flex h-full flex-col">
@@ -34,9 +52,55 @@
 	</div>
 	<div class="h-full overflow-y-auto pr-2">
 		{#await cartService.getCartItems() then cartItems}
-			{#each cartItems as cartItem}
-				<CartItem {cartItem} />
-			{/each}
+			{#if cartItems.length === 0}
+				<div class="flex h-32 items-center justify-center text-muted-foreground">
+					Your cart is empty
+				</div>
+			{:else}
+				<Table.Root>
+					<Table.Header>
+						<Table.Row>
+							<Table.Head>SKU</Table.Head>
+							<Table.Head>Item</Table.Head>
+							<Table.Head class="text-center">Quantity</Table.Head>
+							<Table.Head class="text-right">Actions</Table.Head>
+						</Table.Row>
+					</Table.Header>
+					<Table.Body>
+						{#each cartItems as cartItem}
+							<Table.Row>
+								<Table.Cell>{cartItem.sku || '-'}</Table.Cell>
+								<Table.Cell>{cartItem.name}</Table.Cell>
+								<Table.Cell class="text-right">
+									<div class="flex items-center justify-end space-x-2">
+										<button
+											class="size-icon variant-ghost"
+											onclick={() => decrementQuantity(cartItem)}
+										>
+											<PhMinus />
+										</button>
+										<span class="w-8 text-center text-sm font-medium">{cartItem.quantity}</span>
+										<button
+											class="size-icon variant-ghost"
+											onclick={() => incrementQuantity(cartItem)}
+										>
+											<PhPlus />
+										</button>
+									</div>
+								</Table.Cell>
+								<Table.Cell class="text-center">
+									<button
+										class="size-icon variant-destructive"
+										onclick={() => removeItem(cartItem)}
+									>
+										<PhTrash />
+									</button>
+								</Table.Cell>
+							</Table.Row>
+						{/each}
+					</Table.Body>
+				</Table.Root>
+			{/if}
 		{:catch error}
 			<p>Error: {error.message}</p>
 		{/await}

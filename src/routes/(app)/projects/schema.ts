@@ -11,7 +11,7 @@ export const packingSchema = z.object({
 	id: z.number().optional(),
 	m_product_id: z.number(),
 	m_product_packing_type_id: z.number(),
-	unitsperpack: z.number(),
+	unitsperpack: z.number().default(1),
 	gtin: z
 		.string()
 		.nullable()
