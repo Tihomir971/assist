@@ -1,11 +1,11 @@
 import { formatNumber } from '$lib/style/locale';
-import { createRawSnippet } from 'svelte';
 import DataTableActions from './data-table-actions.svelte';
 import { createColumnHelper, renderComponent, renderSnippet } from '$lib/components/walker-tx';
 import TableCheckbox from '$lib/components/walker-tx/table-checkbox.svelte';
 import DataTableTitleCell from './data-table-title-cell.svelte';
 import DataTableActionsVendor from './data-table-actions-vendor.svelte';
-import type { Update } from '$lib/types/supabase/database.helper';
+import type { Update } from '$lib/types/supabase/database.helper.js';
+import { createRawSnippet } from 'svelte';
 
 export interface Warehouse {
 	value: string;
