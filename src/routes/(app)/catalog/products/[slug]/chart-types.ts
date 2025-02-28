@@ -5,9 +5,7 @@ export const SalesDataRequestSchema = z.object({
 	yearCount: z.number().min(1).max(3).optional().default(1)
 });
 
-export type SalesDataRequest = z.infer<typeof SalesDataRequestSchema>;
-
-export interface MonthData {
+interface MonthData {
 	month: number;
 	value: number;
 }
@@ -17,7 +15,7 @@ export interface YearData {
 	months: MonthData[];
 }
 
-export interface ProductChartData {
+interface ProductChartData {
 	productId: string;
 	years: YearData[];
 }
@@ -25,9 +23,4 @@ export interface ProductChartData {
 export interface ChartData {
 	products: ProductChartData[];
 	currentYear: number;
-}
-
-export interface SalesQueryResult {
-	month: number;
-	total_izlaz: number;
 }

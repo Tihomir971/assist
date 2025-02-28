@@ -1,6 +1,5 @@
 <script lang="ts">
 	// Libs
-	import { writable } from 'svelte/store';
 	import { DateTime } from 'luxon';
 	// Types
 	import type { Tables } from '$lib/types/supabase/database.helper.js';
@@ -12,6 +11,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import type { Database } from '$lib/types/supabase/database.types.js';
+	import { formatDate } from '$lib/style/locale.js';
 
 	let { data } = $props();
 
@@ -28,12 +28,6 @@
 		toDate: DateTime.now().setZone('Europe/Belgrade').toFormat('dd/MM/yyyy')
 	});
 	let newProduct = $state({ productName: '', price: '' });
-
-	let fromStore = writable();
-
-	function formatDate(date: string | null): string {
-		return date ? DateTime.fromISO(date).setZone('Europe/Belgrade').toFormat('dd/MM/yyyy') : '';
-	}
 
 	function parseDate(dateString: string): string {
 		const [day, month, year] = dateString.split('/');

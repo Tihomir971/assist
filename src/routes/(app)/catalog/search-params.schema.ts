@@ -16,5 +16,3 @@ export const catalogSearchParamsSchema = z.object({
 		.transform((val) => val === 'true'),
 	cat: z.string().optional()
 });
-
-export type CatalogSearchParams = z.infer<typeof catalogSearchParamsSchema>;

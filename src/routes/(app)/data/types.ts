@@ -48,10 +48,8 @@ export const partnerBS = z.object({
 	punnaziv: z.string().nullable(),
 	aktivan: z.number()
 });
-export type PartnerBS = z.infer<typeof partnerBS>;
 
 export const groupBS = z.object({
 	sifra: z.number(),
 	naziv: z.string()
 });
-export type GroupBS = z.infer<typeof groupBS>;

@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 type DateStyle = Intl.DateTimeFormatOptions['dateStyle'];
 type TimeStyle = Intl.DateTimeFormatOptions['timeStyle'];
 //type Style = Intl.NumberFormatOptions['style'];
@@ -52,32 +54,6 @@ export function formatDateTime(
 	return formatter.format(new Date(value));
 }
 
-type DateFormat = 'date' | 'dateTime' | 'time';
-
-interface DateFormatOptions {
-	date: Intl.DateTimeFormatOptions;
-	dateTime: Intl.DateTimeFormatOptions;
-	time: Intl.DateTimeFormatOptions;
-}
-
-const formatOptions: DateFormatOptions = {
-	date: { year: 'numeric', month: 'long', day: 'numeric' },
-	dateTime: { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' },
-	time: { hour: 'numeric', minute: 'numeric' }
-};
-
-export function formatDate(
-	date: Date | string | number | null | undefined,
-	format: DateFormat = 'date'
-): string {
-	if (!date) {
-		return '';
-	}
-	const dateObject = date instanceof Date ? date : new Date(date);
-
-	if (isNaN(dateObject.getTime())) {
-		throw new Error('Invalid date provided');
-	}
-
-	return new Intl.DateTimeFormat('sr-Latn', formatOptions[format]).format(dateObject);
+export function formatDate(date: string | null): string {
+	return date ? DateTime.fromISO(date).setZone('Europe/Belgrade').toFormat('dd/MM/yyyy') : '';
 }

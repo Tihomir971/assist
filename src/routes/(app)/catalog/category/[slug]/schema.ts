@@ -12,7 +12,6 @@ export const crudMProductCategorySchema = mProductCategoryRowSchema
 		updated_at: true
 	})
 	.passthrough();
-export type CrudMProductCategorySchema = typeof crudMProductCategorySchema;
 
 export const crudCChannelMapCategorySchema = cChannelMapCategoryRowSchema
 	.extend({

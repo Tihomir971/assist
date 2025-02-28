@@ -16,7 +16,6 @@ export const crudMProductSchema = mProductRowSchema
 	})
 	.omit({ created_at: true, updated_at: true })
 	.passthrough();
-export type CrudMProductSchema = typeof crudMProductSchema;
 
 export const crudMProductGtinSchema = z.object({
 	productPacking: z.array(
@@ -47,7 +46,6 @@ export const replenishSchema = mReplenishRowSchema
 	.extend({
 		id: mReplenishRowSchema.shape.id.optional()
 	});
-export type ReplenishSchema = z.infer<typeof replenishSchema>;
 
 export const crudReplenishSchema = z.object({
 	replenishes: z.array(replenishSchema).refine(
@@ -68,7 +66,7 @@ export type CrudReplenishSchema = z.infer<typeof crudReplenishSchema>;
 // Product PO
 
 // First, define the individual purchase order row schema
-export const crudMProductPoRowSchema = mProductPoRowSchema
+const crudMProductPoRowSchema = mProductPoRowSchema
 	.extend({
 		id: mProductPoRowSchema.shape.id.optional(),
 		is_active: mProductPoRowSchema.shape.is_active.optional(),
@@ -85,12 +83,10 @@ export const crudMProductPoRowSchema = mProductPoRowSchema
 	})
 	.omit({ created_at: true, updated_at: true })
 	.passthrough();
-export type CrudMProductPoRowSchema = z.infer<typeof crudMProductPoRowSchema>;
 
 export const crudMProductPoSchema = z.object({
 	purchases: z.array(crudMProductPoRowSchema)
 });
-export type CrudMProductPoSchema = z.infer<typeof crudMProductPoSchema>;
 
 export const mProductPoInsertSchemaАrray = z.object({
 	purchases: z.array(mProductPoInsertSchema)

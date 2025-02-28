@@ -4,7 +4,6 @@
 	import { page } from '$app/state';
 	const version = import.meta.env.PACKAGE_VERSION;
 	import PhLayout from '~icons/ph/layout';
-	import PhRepeat from '~icons/ph/repeat';
 	import PhTag from '~icons/ph/tag';
 	import PhMicrosoftExcelLogo from '~icons/ph/microsoft-excel-logo';
 	import { Button } from '$lib/components/ui/button/index.js';
