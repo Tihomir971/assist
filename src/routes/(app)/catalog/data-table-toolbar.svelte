@@ -44,7 +44,7 @@
 	);
 
 	const reports = [
-		{ value: 'onstock', label: 'On Stock' },
+		{ value: 'all', label: 'All Products' },
 		{ value: 'relocation', label: 'Relocation' },
 		{ value: 'replenish', label: 'Replenish' }
 	];
@@ -115,7 +115,7 @@
 		onValueChange={(v) => {
 			const newUrl = new URL(page.url);
 			!v ? newUrl?.searchParams?.delete('report') : newUrl?.searchParams?.set('report', v);
-			if (v === 'onstock') {
+			if (v === 'all') {
 				newUrl?.searchParams?.delete('sub');
 			}
 			goto(newUrl);

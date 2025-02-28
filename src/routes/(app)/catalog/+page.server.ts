@@ -227,15 +227,15 @@ function filterAndFlattenProducts(
 				m_replenishActiveWH.qtybatchsize > 0
 			);
 		});
-	} else if (selectedReport === 'onstock') {
+	} else if (selectedReport === 'all') {
+		filteredProducts = products;
+	} else {
 		filteredProducts = products.filter((product) => {
 			const hasNonZeroStock = product.m_storageonhand.some((item) => item.qtyonhand !== 0);
 			const activeWarehouseStock =
 				product.m_storageonhand.find((item) => item.warehouse_id === activeWarehouse)?.qtyonhand ||
 				0;
-			// const activeWarehouseLevelMin = product.m_replenish.find(
-			// (item) => item.m_warehouse_id === activeWarehouse
-			// )?.level_min;
+
 			const activeWarehouseLevelMax =
 				product.m_replenish.find((item) => item.m_warehouse_id === activeWarehouse)?.level_max || 0;
 			const activeWarehouseBatch =
@@ -244,11 +244,8 @@ function filterAndFlattenProducts(
 
 			return (
 				hasNonZeroStock || activeWarehouseLevelMax - activeWarehouseBatch > activeWarehouseStock
-				// (activeWarehouseLevelMin !== undefined && activeWarehouseLevelMin > activeWarehouseStock)
 			);
 		});
-	} else {
-		filteredProducts = products;
 	}
 
 	return filteredProducts.map((product) =>
@@ -437,13 +434,11 @@ export const actions = {
 			}
 
 			product.barcodes?.forEach(async (element) => {
-				const { error: updateBacodesError } = await supabase
-					.from('m_product_packing')
-					.insert({
-						m_product_id: selectProductId.id,
-						gtin: element,
-						m_product_packing_type_id: 1
-					});
+				const { error: updateBacodesError } = await supabase.from('m_product_packing').insert({
+					m_product_id: selectProductId.id,
+					gtin: element,
+					m_product_packing_type_id: 1
+				});
 				if (updateBacodesError) {
 					console.error('Error adding product GTIN:', updateBacodesError);
 				}
