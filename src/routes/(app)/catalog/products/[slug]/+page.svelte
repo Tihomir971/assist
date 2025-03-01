@@ -230,36 +230,7 @@
 					</div>
 					<div>
 						<h3 class="mb-2 pb-2 text-lg font-semibold">Packaging Information</h3>
-						<div class="grid grid-cols-2 gap-4">
-							<Form.Field form={productForm} name="unitsperpack">
-								<Form.Control>
-									{#snippet children({ props })}
-										<Form.Label>Units Per Pack</Form.Label>
-										<Input
-											type="number"
-											min="1"
-											bind:value={$formProduct.unitsperpack}
-											{...props}
-										/>
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-							<Form.Field form={productForm} name="unitsperpallet">
-								<Form.Control>
-									{#snippet children({ props })}
-										<Form.Label>Units Per Pallet</Form.Label>
-										<Input
-											type="number"
-											bind:value={$formProduct.unitsperpallet}
-											{...props}
-											min="1"
-										/>
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-						</div>
+
 						<div class="grid grid-cols-2 gap-4">
 							<Form.Field form={productForm} name="net_quantity">
 								<Form.Control>
