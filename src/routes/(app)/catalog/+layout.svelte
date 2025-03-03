@@ -36,6 +36,7 @@
 			prevSelectedId = selectedId;
 			const newUrl = new URL(page.url);
 			newUrl.searchParams.set('cat', selectedId);
+			newUrl.searchParams.delete('search');
 
 			goto(newUrl, { invalidate: ['catalog'] });
 		}

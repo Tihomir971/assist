@@ -39,6 +39,12 @@
 	let checkedVat = $derived(page.url.searchParams.get('vat') === 'true');
 	let checkedSubcategories = $derived(page.url.searchParams.get('sub') === 'true');
 	let inputValueWarehouse = $derived(page.url.searchParams.get('wh') ?? '');
+	let inputGlobaSearch = $derived(page.url.searchParams.get('search'));
+	$effect(() => {
+		if (inputGlobaSearch) {
+			table.setGlobalFilter(inputGlobaSearch);
+		}
+	});
 	const triggerWarehouseLabel = $derived(
 		warehouses.find((f) => f.value === inputValueWarehouse)?.label ?? 'Select warehouse'
 	);

@@ -2024,6 +2024,18 @@ export type Database = {
         }
         Returns: boolean
       }
+      search_products: {
+        Args: {
+          search_term: string
+        }
+        Returns: {
+          id: number
+          name: string
+          mpn: string
+          sku: string
+          m_product_category_id: number
+        }[]
+      }
     }
     Enums: {
       continents:
