@@ -39,9 +39,9 @@
 					<table class="w-full">
 						<thead>
 							<tr class="border-b">
-								<th class="p-2 text-left">Name</th>
-								<th class="p-2 text-left">MPN</th>
 								<th class="p-2 text-left">SKU</th>
+								<th class="p-2 text-left">MPN</th>
+								<th class="p-2 text-left">Name</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -50,9 +50,9 @@
 									class="cursor-pointer border-b transition-colors hover:bg-muted/50"
 									onclick={() => selectProduct(product)}
 								>
-									<td class="p-2">{product.name}</td>
-									<td class="p-2">{product.mpn || '-'}</td>
 									<td class="p-2">{product.sku || '-'}</td>
+									<td class="p-2">{product.mpn || '-'}</td>
+									<td class="p-2">{product.name}</td>
 								</tr>
 							{/each}
 						</tbody>
