@@ -22,7 +22,7 @@
 	let { supabase, profile }: Props = $props();
 
 	// Search functionality
-	let searchTimeout: ReturnType<typeof setTimeout> | null = null;
+	let searchTerm = $state('');
 	let searchResults = $state<
 		Array<{
 			id: number;
@@ -35,30 +35,26 @@
 	>([]);
 	let dialogOpen = $state(false);
 
-	const handleSearch = (event: Event) => {
-		const target = event.target as HTMLInputElement;
-		const value = target.value;
-
-		// Clear any existing timeout
-		if (searchTimeout) clearTimeout(searchTimeout);
-
-		// Set a new timeout
-		if (value.length >= 2) {
-			searchTimeout = setTimeout(async () => {
-				try {
-					const response = await ky
-						.get(`/api/search?term=${encodeURIComponent(value)}`)
-						.json<{ products: typeof searchResults }>();
-					searchResults = response.products;
-					dialogOpen = searchResults.length > 0;
-				} catch (error) {
-					console.error('Search failed:', error);
-					searchResults = [];
-				}
-			}, 300); // 300ms debounce
-		} else {
+	const handleSearch = async () => {
+		// Only proceed if value is at least 2 characters
+		if (searchTerm.length < 2) {
 			searchResults = [];
 			dialogOpen = false;
+			return;
+		}
+
+		try {
+			const response = await ky
+				.get(`/api/search?term=${encodeURIComponent(searchTerm)}`)
+				.json<{ products: typeof searchResults }>();
+			searchResults = response.products;
+
+			// Always open the dialog, even when there are no results
+			dialogOpen = true;
+		} catch (error) {
+			console.error('Search failed:', error);
+			searchResults = [];
+			dialogOpen = true; // Show dialog with error message
 		}
 	};
 </script>
@@ -72,7 +68,12 @@
 			type="search"
 			placeholder="Search..."
 			class="w-full pl-8  md:w-[200px] lg:w-[336px]"
-			oninput={handleSearch}
+			bind:value={searchTerm}
+			onkeydown={(event: KeyboardEvent) => {
+				if (event.key === 'Enter') {
+					handleSearch();
+				}
+			}}
 		/>
 	</div>
 	<div class="flex items-center justify-end gap-x-3">
