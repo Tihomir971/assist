@@ -1337,8 +1337,6 @@ export const mPricelistVersionRelationshipsSchema = z.tuple([
 ]);
 
 export const mProductRowSchema = z.object({
-	attributes: jsonSchema.nullable(),
-	brand: z.string().nullable(),
 	c_taxcategory_id: z.number(),
 	c_uom_id: z.number(),
 	condition: z.string().nullable(),
@@ -1367,8 +1365,6 @@ export const mProductRowSchema = z.object({
 });
 
 export const mProductInsertSchema = z.object({
-	attributes: jsonSchema.optional().nullable(),
-	brand: z.string().optional().nullable(),
 	c_taxcategory_id: z.number().optional(),
 	c_uom_id: z.number().optional(),
 	condition: z.string().optional().nullable(),
@@ -1397,8 +1393,6 @@ export const mProductInsertSchema = z.object({
 });
 
 export const mProductUpdateSchema = z.object({
-	attributes: jsonSchema.optional().nullable(),
-	brand: z.string().optional().nullable(),
 	c_taxcategory_id: z.number().optional(),
 	c_uom_id: z.number().optional(),
 	condition: z.string().optional().nullable(),

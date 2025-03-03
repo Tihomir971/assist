@@ -1326,8 +1326,6 @@ export type Database = {
       }
       m_product: {
         Row: {
-          attributes: Json | null
-          brand: string | null
           c_taxcategory_id: number
           c_uom_id: number
           condition: string | null
@@ -1355,8 +1353,6 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          attributes?: Json | null
-          brand?: string | null
           c_taxcategory_id?: number
           c_uom_id?: number
           condition?: string | null
@@ -1384,8 +1380,6 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          attributes?: Json | null
-          brand?: string | null
           c_taxcategory_id?: number
           c_uom_id?: number
           condition?: string | null
