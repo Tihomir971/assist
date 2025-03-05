@@ -2,7 +2,8 @@ import { superValidate } from 'sveltekit-superforms/server';
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { zod } from 'sveltekit-superforms/adapters';
-import { packingInsertSchema } from './schema';
+import { packingInsertSchema, packingUpdateSchema } from './schema';
+import { message } from 'sveltekit-superforms';
 
 export const load = (async ({ locals: { supabase } }) => {
 	// Fetch all packing types for the select
@@ -15,61 +16,60 @@ export const load = (async ({ locals: { supabase } }) => {
 		.eq('m_product_id', 6109);
 
 	// Initialize form for create/edit operations
-	const form = await superValidate(zod(packingInsertSchema));
+	const form = await superValidate(zod(packingUpdateSchema));
 
 	return { packings, packingTypes, form };
 }) satisfies PageServerLoad;
 
 export const actions = {
-	create: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(packingInsertSchema));
+	upsert: async ({ request, locals: { supabase } }) => {
+		const formData = await request.formData();
+		const form = await superValidate(formData, zod(packingInsertSchema));
 		if (!form.valid) return fail(400, { form });
 
-		const { error } = await supabase.from('m_product_packing').insert({
-			...form.data
-		});
-
-		if (error) {
+		if (!form.data.id) {
+			// CREATE Barcode
+			const { error } = await supabase.from('m_product_packing').insert({ ...form.data });
 			console.log('error', error);
 
-			return fail(500, {
-				form,
-				message: error.message
-			});
+			if (error) {
+				return fail(500, {
+					form,
+					message: error.message
+				});
+			}
+
+			return message(form, 'Barcode created!');
+		} else {
+			// UPDATE Barcode
+			const { error } = await supabase
+				.from('m_product_packing')
+				.update({ ...form.data })
+				.eq('id', form.data.id as number);
+
+			if (error) {
+				console.log('error', error);
+
+				return fail(500, {
+					form,
+					message: error.message
+				});
+			}
 		}
 
-		return { form };
+		return message(form, 'Barcode updated!');
 	},
 
-	update: async ({ request, locals: { supabase } }) => {
+	delete: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(packingInsertSchema));
-		if (!form.valid) return fail(400, { form });
-
-		const { error } = await supabase
-			.from('m_product_packing')
-			.update({
-				m_product_id: form.data.m_product_id,
-				m_product_packing_type_id: form.data.m_product_packing_type_id,
-				unitsperpack: form.data.unitsperpack,
-				gtin: form.data.gtin
-			})
-			.eq('id', form.data.id as number);
-
-		if (error) {
-			return fail(500, {
-				form,
-				message: error.message
-			});
+		if (!form.valid) {
+			return message(form, 'Invalid ID for constellation.');
 		}
 
-		return { form };
-	},
+		if (!form.id) return message(form, 'Invalid ID for barcode.');
 
-	delete: async ({ url, locals: { supabase } }) => {
-		const id = url.searchParams.get('id');
-		if (!id) return fail(400, { message: 'Missing ID' });
-
-		const { error } = await supabase.from('m_product_packing').delete().eq('id', parseInt(id));
+		// const { error } = await supabase.from('m_product_packing').delete().eq('id', parseInt(id));
+		const { error } = await supabase.from('m_product_packing').delete().eq('id', parseInt(form.id));
 
 		if (error) {
 			return fail(500, {
@@ -77,6 +77,6 @@ export const actions = {
 			});
 		}
 
-		return { success: true };
+		return message(form, 'Deleted.');
 	}
 } satisfies Actions;

@@ -1,29 +1,53 @@
 <script lang="ts">
 	import { superForm } from 'sveltekit-superforms/client';
-	import type { PageData } from './$types';
+	import SuperDebug from 'sveltekit-superforms';
+	import { zod } from 'sveltekit-superforms/adapters';
+	import { packingInsertSchema } from './schema';
+
+	import { toast } from 'svelte-sonner';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-	import MySelectForm from '$lib/components/my/MySelectForm.svelte';
-	import { toast } from 'svelte-sonner';
-	import type { Tables } from '$lib/types/supabase/database.types';
 	import * as Table from '$lib/components/ui/table/index.js';
-	import { zod } from 'sveltekit-superforms/adapters';
-	import { packingSchema } from './schema';
-	import SuperDebug from 'sveltekit-superforms';
+	import MySelectForm from '$lib/components/my/MySelectForm.svelte';
+
+	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 
 	let { data } = $props();
 
-	const { form, enhance, reset } = superForm(data.form, {
-		validators: zod(packingSchema),
+	const { form, formId, enhance, reset, delayed, message } = superForm(data.form, {
+		validators: zod(packingInsertSchema),
 		dataType: 'json',
+		onSubmit: () => {
+			// Set operation type based on whether we're editing or creating
+			const operationType = editingId ? 'update' : 'create';
+			console.log(`Starting ${operationType} operation`);
+		},
 		onUpdated: ({ form }) => {
 			if (form.valid) {
-				toast.success('Operation successful');
-				editingId = null;
+				// Check the form message to determine which action was performed
+				if (form.message === 'Deleted.') {
+					toast.success('Product packing deleted successfully');
+				} else {
+					toast.success(
+						editingId
+							? 'Product packing updated successfully'
+							: 'Product packing created successfully'
+					);
+					editingId = null;
+				}
 			} else {
 				console.log('JSON.stringify(form.errors)', JSON.stringify(form.errors));
 
-				toast.error(form.message || 'Operation failed');
+				// Extract more specific error messages
+				const errorFields = Object.keys(form.errors);
+				if (errorFields.length > 0) {
+					// Show more descriptive error message based on specific fields
+					const errorMessage = `Please check the following fields: ${errorFields.join(', ')}`;
+					toast.error(errorMessage);
+				} else {
+					// Fallback for other errors
+					toast.error(form.message || 'Operation failed');
+				}
 			}
 		}
 	});
@@ -60,6 +84,7 @@
 						<Table.Cell class="space-x-2 px-6 py-4 whitespace-nowrap">
 							<Button
 								variant="outline"
+								disabled={$delayed}
 								onclick={() => {
 									editingId = packing.id;
 									$form = packing;
@@ -67,8 +92,24 @@
 							>
 								Edit
 							</Button>
-							<form method="POST" action="?/delete&id={packing.id}" use:enhance class="inline">
-								<Button type="submit" variant="destructive">Delete</Button>
+							<form method="POST" action="?/delete" use:enhance class="inline">
+								<Button
+									type="submit"
+									name="id"
+									value={packing.id}
+									variant="destructive"
+									disabled={$delayed && $formId !== packing.id.toString()}
+									onclick={() => {
+										$form = packing;
+										$formId = packing.id.toString();
+									}}
+								>
+									{#if $delayed && $formId == packing.id.toString()}
+										<LoaderCircle class="animate-spin" />
+									{:else}
+										Delete
+									{/if}
+								</Button>
 							</form>
 						</Table.Cell>
 					</Table.Row>
@@ -78,12 +119,7 @@
 	</div>
 
 	<!-- Edit/Create Form -->
-	<form
-		method="POST"
-		action={editingId ? '?/update' : '?/create'}
-		use:enhance
-		class="mt-8 max-w-xl space-y-4"
-	>
+	<form method="POST" action="?/upsert" use:enhance class="mt-8 max-w-xl space-y-4">
 		{#if editingId}
 			<input type="hidden" name="id" bind:value={$form.id} />
 		{/if}
@@ -91,12 +127,7 @@
 		<div class="grid grid-cols-2 gap-4">
 			<div class="space-y-2">
 				<label for="m_product_id" class="text-sm font-medium">Product ID</label>
-				<Input
-					id="m_product_id"
-					type="number"
-					bind:value={$form.m_product_id}
-					placeholder="Product ID"
-				/>
+				<Input id="m_product_id" type="number" bind:value={$form.m_product_id} required />
 			</div>
 
 			<div class="space-y-2">
@@ -128,19 +159,39 @@
 		</div>
 
 		<div class="flex gap-2">
-			<Button type="submit">
+			<Button type="submit" disabled={$delayed}>
+				{#if $delayed}
+					<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
+				{/if}
 				{editingId ? 'Update' : 'Create'} Packing
 			</Button>
+
 			{#if editingId}
 				<Button
 					variant="outline"
 					type="button"
+					disabled={$delayed}
 					onclick={() => {
 						editingId = null;
 						reset();
 					}}
 				>
 					Cancel
+				</Button>
+			{/if}
+			{#if $form.id}
+				<Button
+					type="submit"
+					name="delete"
+					variant="destructive"
+					disabled={$delayed}
+					onclick={(e) => !confirm('Are you sure?') && e.preventDefault()}
+				>
+					{#if $delayed}
+						<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
+					{:else}
+						Delete
+					{/if}
 				</Button>
 			{/if}
 		</div>
