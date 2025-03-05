@@ -1349,7 +1349,6 @@ export type Database = {
           shelf_life: number | null
           sku: string | null
           unitsperpack: number
-          unitsperpallet: number | null
           updated_at: string
         }
         Insert: {
@@ -1376,7 +1375,6 @@ export type Database = {
           shelf_life?: number | null
           sku?: string | null
           unitsperpack?: number
-          unitsperpallet?: number | null
           updated_at?: string
         }
         Update: {
@@ -1403,7 +1401,6 @@ export type Database = {
           shelf_life?: number | null
           sku?: string | null
           unitsperpack?: number
-          unitsperpallet?: number | null
           updated_at?: string
         }
         Relationships: [

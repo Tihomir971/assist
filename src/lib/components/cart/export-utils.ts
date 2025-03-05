@@ -27,10 +27,7 @@ function calculateNewPrice(purchasePrice: number, taxRate: number): number {
 	return Math.ceil(basePrice * (1 + taxRate)) - 0.01;
 }
 
-async function fetchProducts(
-	supabase: SupabaseClient<Database>,
-	productIds: number[]
-): Promise<Product[]> {
+async function fetchProducts(supabase: SupabaseClient<Database>, productIds: number[]) {
 	const { data, error } = await supabase
 		.from('m_product')
 		.select(
@@ -50,7 +47,7 @@ async function fetchProducts(
 		return [];
 	}
 
-	return data as unknown as Product[];
+	return data;
 }
 
 function flattenProduct(

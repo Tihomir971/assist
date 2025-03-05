@@ -7,11 +7,11 @@ export type CartItem = {
 
 export interface Product {
 	id: number;
-	sku: string;
+	sku: string | null;
 	name: string;
-	mpn: string;
+	mpn: string | null;
 	unitsperpack: number;
-	imageurl: string;
+	imageurl: string | null;
 	discontinued: boolean;
 	c_taxcategory?: { c_tax: { rate: number }[] } | null;
 	m_storageonhand: { warehouse_id: number; qtyonhand: number }[];
@@ -24,7 +24,7 @@ export interface Product {
 		m_warehouse_id: number;
 		level_min: number;
 		level_max: number;
-		qtybatchsize: number;
+		qtybatchsize: number | null;
 	}[];
 	m_product_po: {
 		c_bpartner_id: number;
@@ -35,11 +35,11 @@ export interface Product {
 
 export interface FlattenedProduct {
 	id: number;
-	sku: string;
+	sku: string | null;
 	name: string;
-	mpn: string;
+	mpn: string | null;
 	unitsperpack: number;
-	imageurl: string;
+	imageurl: string | null;
 	discontinued: boolean;
 	taxRate: number | null;
 	qtyWholesale: number;

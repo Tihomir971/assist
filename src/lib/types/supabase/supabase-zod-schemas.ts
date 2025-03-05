@@ -1360,7 +1360,6 @@ export const mProductRowSchema = z.object({
 	shelf_life: z.number().nullable(),
 	sku: z.string().nullable(),
 	unitsperpack: z.number(),
-	unitsperpallet: z.number().nullable(),
 	updated_at: z.string()
 });
 
@@ -1388,7 +1387,6 @@ export const mProductInsertSchema = z.object({
 	shelf_life: z.number().optional().nullable(),
 	sku: z.string().optional().nullable(),
 	unitsperpack: z.number().optional(),
-	unitsperpallet: z.number().optional().nullable(),
 	updated_at: z.string().optional()
 });
 
@@ -1416,7 +1414,6 @@ export const mProductUpdateSchema = z.object({
 	shelf_life: z.number().optional().nullable(),
 	sku: z.string().optional().nullable(),
 	unitsperpack: z.number().optional(),
-	unitsperpallet: z.number().optional().nullable(),
 	updated_at: z.string().optional()
 });
 
