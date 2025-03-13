@@ -1487,6 +1487,7 @@ export type Database = {
           created_at: string
           gtin: string | null
           id: number
+          is_display: boolean
           m_product_id: number
           m_product_packing_type_id: number
           unitsperpack: number
@@ -1496,6 +1497,7 @@ export type Database = {
           created_at?: string
           gtin?: string | null
           id?: number
+          is_display?: boolean
           m_product_id: number
           m_product_packing_type_id: number
           unitsperpack?: number
@@ -1505,6 +1507,7 @@ export type Database = {
           created_at?: string
           gtin?: string | null
           id?: number
+          is_display?: boolean
           m_product_id?: number
           m_product_packing_type_id?: number
           unitsperpack?: number
