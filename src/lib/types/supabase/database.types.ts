@@ -2020,7 +2020,7 @@ export type Database = {
         | "North America"
         | "South America"
       Entity: "Category" | "Source" | "Uom" | "Tax"
-      PackingType: "Individual" | "Box" | "Pallet"
+      PackingType: "Individual" | "Pack" | "Pallet"
       region_type: "city" | "district" | "autonomous province"
     }
     CompositeTypes: {

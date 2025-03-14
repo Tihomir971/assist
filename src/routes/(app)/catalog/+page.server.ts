@@ -134,7 +134,7 @@ async function fetchProducts(
 			`
 		)
 		.eq('producttype', 'I')
-		// .eq('m_product_packing.product_type', 'Box')
+		// .eq('m_product_packing.product_type', 'Pack')
 		.order('name');
 
 	if (categoryIds.length > 0) {
@@ -326,7 +326,7 @@ function flattenProduct(
 		name: product.name,
 		mpn: product.mpn,
 		unitsperpack:
-			product.m_product_packing.find((p) => p.packing_type === 'Box')?.unitsperpack || null,
+			product.m_product_packing.find((p) => p.packing_type === 'Pack')?.unitsperpack || null,
 		imageurl: product.imageurl,
 		discontinued: product.discontinued,
 		taxRate: tax ? tax / 100 : null,

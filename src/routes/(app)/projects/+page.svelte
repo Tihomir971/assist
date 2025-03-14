@@ -136,7 +136,7 @@
 					bind:value={$formData.packing_type}
 					options={[
 						{ value: 'Individual', label: 'Individual' },
-						{ value: 'Box', label: 'Box' },
+						{ value: 'Pack', label: 'Pack' },
 						{ value: 'Pallet', label: 'Pallet' }
 					]}
 				/>
