@@ -7,14 +7,17 @@
 	import { toast } from 'svelte-sonner';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
+	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
+
 	import * as Table from '$lib/components/ui/table/index.js';
+	import * as Form from '$lib/components/ui/form/index.js';
+
 	import MySelectForm from '$lib/components/my/MySelectForm.svelte';
 
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 
 	let { data } = $props();
-
-	const { form, formId, enhance, reset, delayed, message } = superForm(data.form, {
+	const form = superForm(data.form, {
 		validators: zod(packingInsertSchema),
 		dataType: 'json',
 		onSubmit: () => {
@@ -51,7 +54,7 @@
 			}
 		}
 	});
-
+	const { form: formData, formId, enhance, reset, delayed, message } = form;
 	let editingId: number | null = $state(null);
 </script>
 
@@ -74,6 +77,7 @@
 						<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.id}</Table.Cell>
 						<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.m_product_id}</Table.Cell>
 						<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.packing_type}</Table.Cell>
+						<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.is_display}</Table.Cell>
 						<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.unitsperpack}</Table.Cell>
 						<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.gtin}</Table.Cell>
 						<Table.Cell class="space-x-2 px-6 py-4 whitespace-nowrap">
@@ -82,7 +86,7 @@
 								disabled={$delayed}
 								onclick={() => {
 									editingId = packing.id;
-									$form = packing;
+									$formData = packing;
 								}}
 							>
 								Edit
@@ -95,7 +99,7 @@
 									variant="destructive"
 									disabled={$delayed && $formId !== packing.id.toString()}
 									onclick={() => {
-										$form = packing;
+										$formData = packing;
 										$formId = packing.id.toString();
 									}}
 								>
@@ -116,20 +120,20 @@
 	<!-- Edit/Create Form -->
 	<form method="POST" action="?/upsert" use:enhance class="mt-8 max-w-xl space-y-4">
 		{#if editingId}
-			<input type="hidden" name="id" bind:value={$form.id} />
+			<input type="hidden" name="id" bind:value={$formData.id} />
 		{/if}
 
 		<div class="grid grid-cols-2 gap-4">
 			<div class="space-y-2">
 				<label for="m_product_id" class="text-sm font-medium">Product ID</label>
-				<Input id="m_product_id" type="number" bind:value={$form.m_product_id} required />
+				<Input id="m_product_id" type="number" bind:value={$formData.m_product_id} required />
 			</div>
 
 			<div class="space-y-2">
 				<label for="packing_type" class="text-sm font-medium">Packing Type</label>
 				<MySelectForm
 					name="packing_type"
-					bind:value={$form.packing_type}
+					bind:value={$formData.packing_type}
 					options={[
 						{ value: 'Individual', label: 'Individual' },
 						{ value: 'Box', label: 'Box' },
@@ -143,15 +147,40 @@
 				<Input
 					id="unitsperpack"
 					type="number"
-					bind:value={$form.unitsperpack}
+					bind:value={$formData.unitsperpack}
 					placeholder="Units Per Pack"
 				/>
 			</div>
 
 			<div class="space-y-2">
 				<label for="gtin" class="text-sm font-medium">GTIN</label>
-				<Input id="gtin" type="text" bind:value={$form.gtin} placeholder="GTIN" />
+				<Input id="gtin" type="text" bind:value={$formData.gtin} placeholder="GTIN" />
 			</div>
+			<Form.Field
+				{form}
+				name="is_display"
+				class="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4"
+			>
+				<Form.Control>
+					{#snippet children({ props })}
+						<Checkbox
+							{...props}
+							checked={$formData.is_display ?? false}
+							onclick={() => {
+								$formData.is_display = !($formData.is_display ?? false);
+							}}
+						/>
+						<div class="space-y-1 leading-none">
+							<Form.Label>Use different settings for my mobile devices</Form.Label>
+							<Form.Description>
+								You can manage your mobile notifications in the <a href="/examples/forms"
+									>mobile settings</a
+								> page.
+							</Form.Description>
+						</div>
+					{/snippet}
+				</Form.Control>
+			</Form.Field>
 		</div>
 
 		<div class="flex gap-2">
@@ -175,7 +204,7 @@
 					Cancel
 				</Button>
 			{/if}
-			{#if $form.id}
+			{#if $formData.id}
 				<Button
 					type="submit"
 					name="delete"
@@ -192,5 +221,5 @@
 			{/if}
 		</div>
 	</form>
-	<SuperDebug data={$form} />
+	<SuperDebug data={$formData} />
 </div>

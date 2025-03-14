@@ -2,7 +2,7 @@ import { superValidate } from 'sveltekit-superforms/server';
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { zod } from 'sveltekit-superforms/adapters';
-import { packingInsertSchema, packingUpdateSchema } from './schema';
+import { packingInsertSchema } from './schema';
 import { message } from 'sveltekit-superforms';
 
 export const load = (async ({ locals: { supabase } }) => {
@@ -11,11 +11,11 @@ export const load = (async ({ locals: { supabase } }) => {
 	// Fetch all packing records with their types
 	const { data: packings } = await supabase
 		.from('m_product_packing')
-		.select('id, m_product_id, packing_type, unitsperpack, gtin')
+		.select('id, m_product_id, packing_type, unitsperpack, gtin, is_display')
 		.eq('m_product_id', 6109);
 
 	// Initialize form for create/edit operations
-	const form = await superValidate(zod(packingUpdateSchema));
+	const form = await superValidate(zod(packingInsertSchema));
 
 	return { packings, form };
 }) satisfies PageServerLoad;

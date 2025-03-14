@@ -1489,7 +1489,6 @@ export type Database = {
           id: number
           is_display: boolean
           m_product_id: number
-          m_product_packing_type_id: number
           packing_type: Database["public"]["Enums"]["PackingType"]
           unitsperpack: number
           updated_at: string
@@ -1500,7 +1499,6 @@ export type Database = {
           id?: number
           is_display?: boolean
           m_product_id: number
-          m_product_packing_type_id?: number
           packing_type?: Database["public"]["Enums"]["PackingType"]
           unitsperpack?: number
           updated_at?: string
@@ -1511,7 +1509,6 @@ export type Database = {
           id?: number
           is_display?: boolean
           m_product_id?: number
-          m_product_packing_type_id?: number
           packing_type?: Database["public"]["Enums"]["PackingType"]
           unitsperpack?: number
           updated_at?: string
@@ -1523,34 +1520,7 @@ export type Database = {
             referencedRelation: "m_product"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "m_product_packing_m_product_packing_type_id_fkey"
-            columns: ["m_product_packing_type_id"]
-            referencedRelation: "m_product_packing_type"
-            referencedColumns: ["id"]
-          },
         ]
-      }
-      m_product_packing_type: {
-        Row: {
-          created_at: string
-          id: number
-          name: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          name: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          name?: string
-          updated_at?: string
-        }
-        Relationships: []
       }
       m_product_po: {
         Row: {
