@@ -53,9 +53,6 @@
 	});
 
 	let editingId: number | null = $state(null);
-	function getPackageLabel(id: number) {
-		return data.packingTypes?.find((type) => type.id === id)?.name ?? '';
-	}
 </script>
 
 <div class="container mx-auto p-4">
@@ -76,9 +73,7 @@
 					<Table.Row>
 						<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.id}</Table.Cell>
 						<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.m_product_id}</Table.Cell>
-						<Table.Cell class="px-6 py-4 whitespace-nowrap"
-							>{getPackageLabel(packing.m_product_packing_type_id)}</Table.Cell
-						>
+						<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.packing_type}</Table.Cell>
 						<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.unitsperpack}</Table.Cell>
 						<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.gtin}</Table.Cell>
 						<Table.Cell class="space-x-2 px-6 py-4 whitespace-nowrap">
@@ -131,14 +126,15 @@
 			</div>
 
 			<div class="space-y-2">
-				<label for="m_product_packing_type_id" class="text-sm font-medium">Packing Type</label>
+				<label for="packing_type" class="text-sm font-medium">Packing Type</label>
 				<MySelectForm
-					name="m_product_packing_type_id"
-					bind:value={$form.m_product_packing_type_id}
-					options={data.packingTypes?.map((type) => ({
-						value: type.id,
-						label: type.name
-					})) ?? []}
+					name="packing_type"
+					bind:value={$form.packing_type}
+					options={[
+						{ value: 'Individual', label: 'Individual' },
+						{ value: 'Box', label: 'Box' },
+						{ value: 'Pallet', label: 'Pallet' }
+					]}
 				/>
 			</div>
 

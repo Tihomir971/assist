@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from './$types';
-import type { Tables, Update } from '$lib/types/supabase/database.helper.js';
+import type { Enums, Tables, Update } from '$lib/types/supabase/database.helper.js';
 import type { BSProduct } from '../data/types.js';
 import { getChannelMap } from '$lib/services/channel-map';
 import { fail, superValidate } from 'sveltekit-superforms';
@@ -99,7 +99,7 @@ async function fetchProducts(
 			imageurl,
 			discontinued,
 			m_product_packing(
-				m_product_packing_type_id,
+				packing_type,
 				unitsperpack
 			),
 			c_taxcategory(
@@ -134,8 +134,7 @@ async function fetchProducts(
 			`
 		)
 		.eq('producttype', 'I')
-		.in('m_product_packing.m_product_packing_type_id', [2, 3])
-
+		// .eq('m_product_packing.product_type', 'Box')
 		.order('name');
 
 	if (categoryIds.length > 0) {
@@ -327,10 +326,7 @@ function flattenProduct(
 		name: product.name,
 		mpn: product.mpn,
 		unitsperpack:
-			product.m_product_packing.find((p) => p.m_product_packing_type_id === 2)?.unitsperpack ||
-			product.m_product_packing.find((p) => p.m_product_packing_type_id === 3)?.unitsperpack ||
-			null,
-		// unitsperpack: product.unitsperpack,
+			product.m_product_packing.find((p) => p.packing_type === 'Box')?.unitsperpack || null,
 		imageurl: product.imageurl,
 		discontinued: product.discontinued,
 		taxRate: tax ? tax / 100 : null,
@@ -437,7 +433,7 @@ export const actions = {
 				const { error: updateBacodesError } = await supabase.from('m_product_packing').insert({
 					m_product_id: selectProductId.id,
 					gtin: element,
-					m_product_packing_type_id: 1
+					packing_type: 'Individual' as Enums<'PackingType'>
 				});
 				if (updateBacodesError) {
 					console.error('Error adding product GTIN:', updateBacodesError);
@@ -647,7 +643,7 @@ export const actions = {
 						const { error: insertError } = await supabase.from('m_product_packing').insert(
 							newBarcodes.map((barcode: string) => ({
 								m_product_id: productId,
-								m_product_packing_type_id: 1,
+								packing_type: 'Individual' as Enums<'PackingType'>,
 								gtin: barcode
 							}))
 						);

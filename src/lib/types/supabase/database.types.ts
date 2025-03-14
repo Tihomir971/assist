@@ -1490,6 +1490,7 @@ export type Database = {
           is_display: boolean
           m_product_id: number
           m_product_packing_type_id: number
+          packing_type: Database["public"]["Enums"]["PackingType"]
           unitsperpack: number
           updated_at: string
         }
@@ -1499,7 +1500,8 @@ export type Database = {
           id?: number
           is_display?: boolean
           m_product_id: number
-          m_product_packing_type_id: number
+          m_product_packing_type_id?: number
+          packing_type?: Database["public"]["Enums"]["PackingType"]
           unitsperpack?: number
           updated_at?: string
         }
@@ -1510,6 +1512,7 @@ export type Database = {
           is_display?: boolean
           m_product_id?: number
           m_product_packing_type_id?: number
+          packing_type?: Database["public"]["Enums"]["PackingType"]
           unitsperpack?: number
           updated_at?: string
         }
@@ -2047,6 +2050,7 @@ export type Database = {
         | "North America"
         | "South America"
       Entity: "Category" | "Source" | "Uom" | "Tax"
+      PackingType: "Individual" | "Box" | "Pallet"
       region_type: "city" | "district" | "autonomous province"
     }
     CompositeTypes: {

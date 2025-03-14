@@ -75,7 +75,7 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 				'm_product_id',
 				products.map((p) => p.id)
 			)
-			.eq('m_product_packing_type_id', 1)
+			.eq('packing_type', 'Individual')
 			.not('gtin', 'is', null);
 
 		if (gtinError) {

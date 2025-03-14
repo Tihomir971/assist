@@ -21,7 +21,6 @@
 		onSelectedChange: (value: string | undefined) => void;
 	};
 	let { items, selected, onSelectedChange }: Props = $props();
-	console.log('tree.svelte selected', selected);
 
 	const tree = new Tree({
 		items: items,

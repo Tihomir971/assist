@@ -7,18 +7,17 @@ import { message } from 'sveltekit-superforms';
 
 export const load = (async ({ locals: { supabase } }) => {
 	// Fetch all packing types for the select
-	const { data: packingTypes } = await supabase.from('m_product_packing_type').select('id, name');
 
 	// Fetch all packing records with their types
 	const { data: packings } = await supabase
 		.from('m_product_packing')
-		.select('id, m_product_id, m_product_packing_type_id, unitsperpack, gtin')
+		.select('id, m_product_id, packing_type, unitsperpack, gtin')
 		.eq('m_product_id', 6109);
 
 	// Initialize form for create/edit operations
 	const form = await superValidate(zod(packingUpdateSchema));
 
-	return { packings, packingTypes, form };
+	return { packings, form };
 }) satisfies PageServerLoad;
 
 export const actions = {

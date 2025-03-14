@@ -6,6 +6,7 @@
 	import PhLayout from '~icons/ph/layout';
 	import PhTag from '~icons/ph/tag';
 	import PhMicrosoftExcelLogo from '~icons/ph/microsoft-excel-logo';
+	import PhMegaphone from '~icons/ph/megaphone';
 	import { Button } from '$lib/components/ui/button/index.js';
 
 	let activePath: string | undefined = $derived(browser ? page.url.pathname : undefined);
@@ -67,6 +68,22 @@
 					class={`[&_svg]:size-6 ${activePath === '/excel' ? '' : 'text-muted-foreground'}`}
 				>
 					<PhMicrosoftExcelLogo />
+					<span class="sr-only">Import Excel</span>
+				</Button>
+			</Tooltip.Trigger>
+			<Tooltip.Content side="right">Import Excel</Tooltip.Content>
+		</Tooltip.Root>
+	</Tooltip.Provider>
+	<Tooltip.Provider>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				<Button
+					href="/excel"
+					variant="ghost"
+					size="icon"
+					class={`[&_svg]:size-6 ${activePath === '/excel' ? '' : 'text-muted-foreground'}`}
+				>
+					<PhMegaphone />
 					<span class="sr-only">Import Excel</span>
 				</Button>
 			</Tooltip.Trigger>

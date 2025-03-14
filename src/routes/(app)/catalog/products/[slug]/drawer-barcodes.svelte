@@ -61,7 +61,7 @@
 		$formGtin.productPacking.push({
 			m_product_id: m_product_id,
 			gtin: newBarcode,
-			m_product_packing_type_id: 1
+			packing_type: 'Individual'
 		});
 		$formGtin.productPacking = $formGtin.productPacking;
 		newBarcode = ''; // Reset input
@@ -81,7 +81,7 @@
 						<li class="flex items-center justify-between gap-2">
 							<div class="flex items-center gap-2">
 								<PhPackage />
-								{barcode.m_product_packing_type_id}
+								{barcode.packing_type}
 							</div>
 							<div class="flex items-center gap-2">
 								{barcode.gtin}

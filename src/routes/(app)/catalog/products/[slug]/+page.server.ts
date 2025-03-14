@@ -59,11 +59,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 			.from('m_product_packing')
 			.select('*')
 			.eq('m_product_id', productId)
-			.order('m_product_packing_type_id', { ascending: false });
-		return data || [];
-	};
-	const getProductPackingType = async () => {
-		const { data } = await supabase.from('m_product_packing_type').select('value:id,label:name');
+			.order('packing_type', { ascending: false });
 		return data || [];
 	};
 
@@ -103,7 +99,6 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		warehouses,
 		purchases,
 		productPacking,
-		productPackingType,
 		tax,
 		salesByWeeks,
 		storageonhand
@@ -115,7 +110,6 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		getWarehouses(),
 		ProductService.getProductPurchasing(supabase, productId),
 		getProductPacking(),
-		getProductPackingType(),
 		getTaxes(),
 		getSalesData(product.sku),
 		getStorageOnHand()
@@ -135,7 +129,6 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		formProduct,
 		formPurchasing,
 		formProductPacking,
-		productPackingType,
 		formReplenish,
 		formStorageOnHand,
 		partners,

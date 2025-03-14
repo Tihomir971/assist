@@ -329,11 +329,7 @@
 							<Table.Body>
 								{#each data.formProductPacking.data.productPacking as barcode}
 									<Table.Row>
-										<Table.Cell>
-											{data.productPackingType.find(
-												(v) => v.value === barcode.m_product_packing_type_id
-											)?.label}
-										</Table.Cell>
+										<Table.Cell>{barcode.packing_type}</Table.Cell>
 										<Table.Cell>{barcode.unitsperpack}</Table.Cell>
 										<Table.Cell>{barcode.gtin}</Table.Cell>
 									</Table.Row>

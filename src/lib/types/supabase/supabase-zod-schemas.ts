@@ -1498,22 +1498,20 @@ export const mProductCategoryRelationshipsSchema = z.tuple([
 	})
 ]);
 
-export const mProductPackingRowSchema = z.object({
-	created_at: z.string(),
-	gtin: z.string().nullable(),
-	id: z.number(),
-	m_product_id: z.number(),
-	m_product_packing_type_id: z.number(),
-	unitsperpack: z.number(),
-	updated_at: z.string()
-});
+export const packingTypeSchema = z.union([
+	z.literal('Individual'),
+	z.literal('Box'),
+	z.literal('Pallet')
+]);
 
 export const mProductPackingInsertSchema = z.object({
 	created_at: z.string().optional(),
 	gtin: z.string().optional().nullable(),
 	id: z.number().optional(),
+	is_display: z.boolean().optional(),
 	m_product_id: z.number(),
-	m_product_packing_type_id: z.number(),
+	m_product_packing_type_id: z.number().optional(),
+	packing_type: packingTypeSchema.optional(),
 	unitsperpack: z.number().optional(),
 	updated_at: z.string().optional()
 });
@@ -1522,8 +1520,10 @@ export const mProductPackingUpdateSchema = z.object({
 	created_at: z.string().optional(),
 	gtin: z.string().optional().nullable(),
 	id: z.number().optional(),
+	is_display: z.boolean().optional(),
 	m_product_id: z.number().optional(),
 	m_product_packing_type_id: z.number().optional(),
+	packing_type: packingTypeSchema.optional(),
 	unitsperpack: z.number().optional(),
 	updated_at: z.string().optional()
 });
@@ -2061,4 +2061,16 @@ export const countriesRowSchema = z.object({
 	iso3: z.string().nullable(),
 	local_name: z.string().nullable(),
 	name: z.string().nullable()
+});
+
+export const mProductPackingRowSchema = z.object({
+	created_at: z.string(),
+	gtin: z.string().nullable(),
+	id: z.number(),
+	is_display: z.boolean(),
+	m_product_id: z.number(),
+	m_product_packing_type_id: z.number(),
+	packing_type: packingTypeSchema,
+	unitsperpack: z.number(),
+	updated_at: z.string()
 });
