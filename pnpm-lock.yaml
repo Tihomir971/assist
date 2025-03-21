@@ -52,8 +52,8 @@ importers:
         specifier: ^9.22.0
         version: 9.22.0
       '@iconify-json/devicon':
-        specifier: ^1.2.20
-        version: 1.2.20
+        specifier: ^1.2.21
+        version: 1.2.21
       '@iconify-json/ph':
         specifier: ^1.2.2
         version: 1.2.2
@@ -637,8 +637,8 @@ packages:
     resolution: {integrity: sha512-xeO57FpIu4p1Ri3Jq/EXq4ClRm86dVF2z/+kvFnyqVYRavTZmaFaUBbWCOuuTh0o/g7DSsk6kc2vrS4Vl5oPOQ==}
     engines: {node: '>=18.18'}
 
-  '@iconify-json/devicon@1.2.20':
-    resolution: {integrity: sha512-aUJLqSQB1O1d5La/YXhZaKV10OrMgCpG954gIo2X34nqhZml+/MOj3ILrggb1EozDiheZq5ISUC0SD96+pTAZw==}
+  '@iconify-json/devicon@1.2.21':
+    resolution: {integrity: sha512-L3bCNYhffg6++0TJ6HpsRKjFaki2/yaFxjyQX4DzG14LevVAGo63VQY2NSKcxRcAWzOCZEhRumDP02zu1zMSxg==}
 
   '@iconify-json/ph@1.2.2':
     resolution: {integrity: sha512-PgkEZNtqa8hBGjHXQa4pMwZa93hmfu8FUSjs/nv4oUU6yLsgv+gh9nu28Kqi8Fz9CCVu4hj1MZs9/60J57IzFw==}
@@ -3299,7 +3299,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.2': {}
 
-  '@iconify-json/devicon@1.2.20':
+  '@iconify-json/devicon@1.2.21':
     dependencies:
       '@iconify/types': 2.0.0
 
