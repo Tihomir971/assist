@@ -12,7 +12,8 @@ import {
 	crudMProductSchema,
 	crudReplenishSchema,
 	mProductPoInsertSchemaАrray,
-	mStorageonhandInsertSchemaАrray
+	mStorageonhandInsertSchemaАrray,
+	packingInsertSchema
 } from './schema';
 
 export const load: PageServerLoad = async ({ depends, params, locals: { supabase } }) => {
@@ -116,7 +117,8 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 	]);
 
 	const formProduct = await superValidate(product, zod(crudMProductSchema));
-	const formProductPacking = await superValidate({ productPacking }, zod(crudMProductGtinSchema));
+	//const formProductPacking = await superValidate({ productPacking }, zod(crudMProductGtinSchema));
+	const formProductPacking = await superValidate(zod(packingInsertSchema));
 	const formReplenish = await superValidate({ replenishes }, zod(crudReplenishSchema));
 	const formPurchasing = await superValidate({ purchases }, zod(mProductPoInsertSchemaАrray));
 	const formStorageOnHand = await superValidate(
@@ -129,6 +131,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		formProduct,
 		formPurchasing,
 		formProductPacking,
+		productPacking,
 		formReplenish,
 		formStorageOnHand,
 		partners,

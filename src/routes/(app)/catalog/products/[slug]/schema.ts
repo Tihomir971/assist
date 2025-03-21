@@ -1,6 +1,7 @@
 import { isValidGTIN } from '$lib/scripts/gtin';
 import {
 	mProductPackingInsertSchema,
+	mProductPackingUpdateSchema,
 	mProductPoInsertSchema,
 	mProductPoRowSchema,
 	mProductRowSchema,
@@ -98,3 +99,16 @@ export const mStorageonhandInsertSchemaАrray = z.object({
 	storageonhand: z.array(mStorageonhandInsertSchema)
 });
 export type MStorageonhandInsertSchemaАrray = z.infer<typeof mStorageonhandInsertSchemaАrray>;
+
+// Product Packing
+// First, define the individual packing row schema
+export const packingInsertSchema = mProductPackingInsertSchema
+	.extend({ is_display: mProductPackingInsertSchema.shape.is_display.default(false) })
+	.refine((data) => {
+		return data.gtin ? isValidGTIN(data.gtin) : true;
+	});
+export type PackingInsertSchema = z.infer<typeof packingInsertSchema>;
+
+export const packingUpdateSchema = mProductPackingUpdateSchema.refine((data) => {
+	return data.gtin ? isValidGTIN(data.gtin) : true;
+});

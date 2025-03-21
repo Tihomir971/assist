@@ -17,6 +17,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 
 	import DrawerBarcodes from './drawer-barcodes.svelte';
+	import DrawerBarcodes2 from './drawer-barcodes2.svelte';
 	import ChartVisualization from './ChartVisualization.svelte';
 	import VendorsCard from './vendors.svelte';
 	import ReplenishCard from './replenish.svelte';
@@ -60,6 +61,7 @@
 	}
 
 	let isBarcodeDrawerOpen: boolean = $state(false);
+	let isBarcodeDrawerOpen2: boolean = $state(false);
 
 	let selectedUomLabel = $derived(
 		data.uom.find((v) => v.value === $formProduct.c_uom_id?.toString())?.label
@@ -313,7 +315,7 @@
 							<h3 class="mb-2 flex items-center gap-2 text-lg font-semibold">
 								<PhPackage /> Barcodes
 							</h3>
-							<Button variant="ghost" size="icon" onclick={() => (isBarcodeDrawerOpen = true)}>
+							<Button variant="ghost" size="icon" onclick={() => (isBarcodeDrawerOpen2 = true)}>
 								<PhDotsThree />
 							</Button>
 						</div>
@@ -327,7 +329,7 @@
 								</Table.Row>
 							</Table.Header>
 							<Table.Body>
-								{#each data.formProductPacking.data.productPacking as barcode}
+								{#each data.productPacking as barcode}
 									<Table.Row>
 										<Table.Cell>{barcode.packing_type}</Table.Cell>
 										<Table.Cell>{barcode.unitsperpack}</Table.Cell>
@@ -383,8 +385,15 @@
 			</Card.Content>
 		</Card.Root>
 
-		<DrawerBarcodes
+		<!-- <DrawerBarcodes
 			bind:isBarcodeDrawerOpen
+			validatedForm={data.formProductPacking}
+			m_product_id={$formProduct.id}
+			formProductPackingId={undefined}
+		/> -->
+		<DrawerBarcodes2
+			bind:isBarcodeDrawerOpen2
+			productPacking={data.productPacking}
 			validatedForm={data.formProductPacking}
 			m_product_id={$formProduct.id}
 			formProductPackingId={undefined}

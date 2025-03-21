@@ -15,6 +15,7 @@
 	import MySelectForm from '$lib/components/my/MySelectForm.svelte';
 
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
+	import MyCheckboxForm from '$lib/components/my/MyCheckboxForm.svelte';
 
 	let { data } = $props();
 	const form = superForm(data.form, {
@@ -156,31 +157,11 @@
 				<label for="gtin" class="text-sm font-medium">GTIN</label>
 				<Input id="gtin" type="text" bind:value={$formData.gtin} placeholder="GTIN" />
 			</div>
-			<Form.Field
-				{form}
+			<MyCheckboxForm
 				name="is_display"
-				class="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4"
-			>
-				<Form.Control>
-					{#snippet children({ props })}
-						<Checkbox
-							{...props}
-							checked={$formData.is_display ?? false}
-							onclick={() => {
-								$formData.is_display = !($formData.is_display ?? false);
-							}}
-						/>
-						<div class="space-y-1 leading-none">
-							<Form.Label>Use different settings for my mobile devices</Form.Label>
-							<Form.Description>
-								You can manage your mobile notifications in the <a href="/examples/forms"
-									>mobile settings</a
-								> page.
-							</Form.Description>
-						</div>
-					{/snippet}
-				</Form.Control>
-			</Form.Field>
+				bind:checked={$formData.is_display}
+				labelText="Is display box?"
+			/>
 		</div>
 
 		<div class="flex gap-2">
