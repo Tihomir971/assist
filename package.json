@@ -79,6 +79,7 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "sharp",
       "esbuild",
       "supabase",
       "workerd"
