@@ -395,7 +395,7 @@
 			bind:isBarcodeDrawerOpen2
 			productPacking={data.productPacking}
 			validatedForm={data.formProductPacking}
-			m_product_id={$formProduct.id}
+			m_product_id={data.productId}
 			formProductPackingId={undefined}
 		/>
 	{/if}

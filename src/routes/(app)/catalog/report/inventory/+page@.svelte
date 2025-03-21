@@ -127,7 +127,7 @@
 			@bottom-center {
 				content: 'Page ' counter(page) ' of ' counter(pages);
 				padding-bottom: 1.5cm;
-				font-size: 12pt;
+				font-size: 10pt;
 			}
 		}
 

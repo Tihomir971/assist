@@ -3,7 +3,7 @@ import type { Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { ProductService } from '$lib/services/supabase/';
 
-import { superValidate } from 'sveltekit-superforms';
+import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { ChartData } from './chart-types';
 import { connector } from '$lib/ky';
@@ -119,6 +119,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 	const formProduct = await superValidate(product, zod(crudMProductSchema));
 	//const formProductPacking = await superValidate({ productPacking }, zod(crudMProductGtinSchema));
 	const formProductPacking = await superValidate(zod(packingInsertSchema));
+	formProductPacking.data.m_product_id = productId;
 	const formReplenish = await superValidate({ replenishes }, zod(crudReplenishSchema));
 	const formPurchasing = await superValidate({ purchases }, zod(mProductPoInsertSchemaАrray));
 	const formStorageOnHand = await superValidate(
@@ -144,6 +145,43 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 };
 
 export const actions = {
+	upsert: async ({ request, locals: { supabase } }) => {
+		const formData = await request.formData();
+		const form = await superValidate(formData, zod(packingInsertSchema));
+		if (!form.valid) return fail(400, { form });
+
+		if (!form.data.id) {
+			// CREATE Barcode
+			const { error } = await supabase.from('m_product_packing').insert({ ...form.data });
+			console.log('error', error);
+
+			if (error) {
+				return fail(500, {
+					form,
+					message: error.message
+				});
+			}
+
+			return message(form, 'Barcode created!');
+		} else {
+			// UPDATE Barcode
+			const { error } = await supabase
+				.from('m_product_packing')
+				.update({ ...form.data })
+				.eq('id', form.data.id as number);
+
+			if (error) {
+				console.log('error', error);
+
+				return fail(500, {
+					form,
+					message: error.message
+				});
+			}
+		}
+
+		return message(form, 'Barcode updated!');
+	},
 	product: async ({ request, locals: { supabase } }) => {
 		const formData = await request.formData();
 		const form = await superValidate(formData, zod(crudMProductSchema));

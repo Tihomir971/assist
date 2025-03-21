@@ -18,6 +18,7 @@
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 	import MySelectForm from '$lib/components/my/MySelectForm.svelte';
 	import MyCheckboxForm from '$lib/components/my/MyCheckboxForm.svelte';
+	import { dataTool } from 'echarts';
 
 	type Props = {
 		isBarcodeDrawerOpen2: boolean;
@@ -137,9 +138,9 @@
 				<div class="grid grid-cols-2 gap-4">
 					<div class="space-y-2">
 						<label for="m_product_id" class="text-sm font-medium">Product ID</label>
-						<Input id="m_product_id" type="number" bind:value={$formData.m_product_id} required />
+						<Input id="m_product_id" type="number" value={$formData.m_product_id} required />
+						{m_product_id}
 					</div>
-
 					<div class="space-y-2">
 						<label for="packing_type" class="text-sm font-medium">Packing Type</label>
 						<MySelectForm
