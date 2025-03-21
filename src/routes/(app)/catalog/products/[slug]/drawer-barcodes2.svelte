@@ -1,24 +1,19 @@
 <script lang="ts">
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
-	import * as Form from '$lib/components/ui/form/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
 
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import type { SuperValidated } from 'sveltekit-superforms';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { toast } from 'svelte-sonner';
-	import PhPackage from '~icons/ph/package';
-	import PhTrash from '~icons/ph/trash';
 	import { isValidGTIN } from '$lib/scripts/gtin';
-	import type { CrudMProductGtinSchema } from './schema';
 	import { invalidate } from '$app/navigation';
 	import type { Tables } from '$lib/types/supabase/database.helper';
 	import type { PackingInsertSchema } from './schema';
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 	import MySelectForm from '$lib/components/my/MySelectForm.svelte';
 	import MyCheckboxForm from '$lib/components/my/MyCheckboxForm.svelte';
-	import { dataTool } from 'echarts';
 
 	type Props = {
 		isBarcodeDrawerOpen2: boolean;
@@ -89,9 +84,9 @@
 								<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.packing_type}</Table.Cell>
 								<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.unitsperpack}</Table.Cell>
 								<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.gtin}</Table.Cell>
-								<Table.Cell class="px-6 py-4 whitespace-nowrap"
-									><MyCheckboxForm checked={packing.is_display} /></Table.Cell
-								>
+								<Table.Cell class="px-6 py-4 whitespace-nowrap">
+									<MyCheckboxForm checked={packing.is_display} />
+								</Table.Cell>
 								<Table.Cell class="space-x-2 px-6 py-4 whitespace-nowrap">
 									<Button
 										variant="outline"
