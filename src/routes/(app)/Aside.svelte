@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as Tooltip from '$lib/components/ui/tooltip';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { browser } from '$app/environment';
 	import { page } from '$app/state';
 	const version = import.meta.env.PACKAGE_VERSION;
@@ -7,9 +8,17 @@
 	import PhTag from '~icons/ph/tag';
 	import PhMicrosoftExcelLogo from '~icons/ph/microsoft-excel-logo';
 	import PhMegaphone from '~icons/ph/megaphone';
+	import PhSquaresFour from '~icons/ph/squares-four';
+	import PhList from '~icons/ph/list';
+	import PhFolders from '~icons/ph/folders';
 	import { Button } from '$lib/components/ui/button/index.js';
 
 	let activePath: string | undefined = $derived(browser ? page.url.pathname : undefined);
+
+	// Check if any product-attributes route is active
+	let isProductAttributesActive: boolean = $derived(
+		browser && activePath ? activePath.startsWith('/catalog/product-attributes') : false
+	);
 
 	let catalogHref: string = $derived(
 		(() => {
@@ -55,6 +64,49 @@
 				</Button>
 			</Tooltip.Trigger>
 			<Tooltip.Content side="right">Catalog</Tooltip.Content>
+		</Tooltip.Root>
+	</Tooltip.Provider>
+
+	<Tooltip.Provider>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				<DropdownMenu.DropdownMenu>
+					<DropdownMenu.DropdownMenuTrigger>
+						<Button
+							variant="ghost"
+							size="icon"
+							class={`[&_svg]:size-6 ${isProductAttributesActive ? '' : 'text-muted-foreground'}`}
+						>
+							<PhSquaresFour />
+							<span class="sr-only">Product Attributes</span>
+						</Button>
+					</DropdownMenu.DropdownMenuTrigger>
+					<DropdownMenu.DropdownMenuContent side="right">
+						<DropdownMenu.DropdownMenuItem>
+							<a href="/catalog/product-attributes/attributes" class="flex w-full items-center">
+								<PhTag class="mr-2 h-4 w-4" />
+								<span>Attributes</span>
+							</a>
+						</DropdownMenu.DropdownMenuItem>
+						<DropdownMenu.DropdownMenuItem>
+							<a
+								href="/catalog/product-attributes/attribute-groups"
+								class="flex w-full items-center"
+							>
+								<PhList class="mr-2 h-4 w-4" />
+								<span>Attribute Groups</span>
+							</a>
+						</DropdownMenu.DropdownMenuItem>
+						<DropdownMenu.DropdownMenuItem>
+							<a href="/catalog/product-attributes/attribute-sets" class="flex w-full items-center">
+								<PhFolders class="mr-2 h-4 w-4" />
+								<span>Attribute Sets</span>
+							</a>
+						</DropdownMenu.DropdownMenuItem>
+					</DropdownMenu.DropdownMenuContent>
+				</DropdownMenu.DropdownMenu>
+			</Tooltip.Trigger>
+			<Tooltip.Content side="right">Product Attributes</Tooltip.Content>
 		</Tooltip.Root>
 	</Tooltip.Provider>
 

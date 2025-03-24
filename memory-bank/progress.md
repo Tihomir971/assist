@@ -8,6 +8,7 @@
 *   Detailed SvelteKit project structure and web standards information has been added to the memory bank.
 *   Advanced SvelteKit features have been documented, including routing, hooks, error handling, link options, service workers, server-only modules, snapshots, shallow routing, and packaging.
 *   SvelteKit best practices have been documented, including authentication, performance optimization, image handling, accessibility, and SEO.
+*   A comprehensive product attributes schema design has been created, supporting multiple attribute types (single-select, multi-select, text, numeric, boolean, date) with attribute sets for organizing attributes by product type.
 
 **What's Left to Build:**
 

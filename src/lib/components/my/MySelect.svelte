@@ -3,6 +3,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 
 	type Props = {
+		type?: 'single' | 'multiple';
 		value?: any;
 		options: { value: any; label: string }[];
 		name: string;
@@ -10,7 +11,14 @@
 		onValueChange?: (value: any) => void;
 	};
 
-	let { value = $bindable(), options, name, label, onValueChange }: Props = $props();
+	let {
+		type = 'single',
+		value = $bindable(),
+		options,
+		name,
+		label,
+		onValueChange
+	}: Props = $props();
 
 	const triggerContent = $derived(
 		options.find((f) => f.value === value)?.label ?? 'Select a fruit'
@@ -19,7 +27,7 @@
 
 <div class="grid w-full gap-1.5">
 	<Label for={name}>{label}</Label>
-	<Select.Root type="single" {name} bind:value {onValueChange}>
+	<Select.Root {type} {name} bind:value {onValueChange}>
 		<Select.Trigger class="w-full">
 			{triggerContent}
 		</Select.Trigger>

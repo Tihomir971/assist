@@ -147,3 +147,156 @@
 *   Shadcn-Svelte components are used to build the UI.
 *   sveltekit-superforms handles form data and validation.
 *   Supabase provides data storage and authentication.
+
+## Database Schema
+
+### Product Attributes System
+
+We've designed a flexible product attributes system that supports multiple attribute types (single-select, multi-select, text, numeric, boolean, date) using attribute sets to organize attributes by product type.
+
+#### Core Tables Structure
+
+1. **m_attribute**: Defines attribute metadata
+   - `id`: Primary key
+   - `name`: Human-readable name
+   - `code`: Unique identifier for programmatic reference
+   - `attribute_type`: Enum ('single_select', 'multi_select', 'text', 'number', 'boolean', 'date')
+   - `description`: Optional description
+   - `is_active`: Boolean flag
+   - `attribute_group_id`: Optional reference to attribute group
+   - `created_at/updated_at`: Timestamps
+
+2. **m_attribute_option**: Stores predefined values for selection attributes
+   - `id`: Primary key
+   - `attribute_id`: Reference to m_attribute
+   - `code`: Unique identifier within the attribute
+   - `name`: Display name
+   - `sort_order`: For UI ordering
+   - `is_active`: Boolean flag
+   - `created_at/updated_at`: Timestamps
+
+3. **m_attributeset**: Defines templates of attributes for different product types
+   - `id`: Primary key
+   - `name`: Display name
+   - `code`: Unique identifier
+   - `description`: Optional description
+   - `is_active`: Boolean flag
+   - `created_at/updated_at`: Timestamps
+
+4. **m_attributeset_attribute**: Maps attributes to attribute sets
+   - `id`: Primary key
+   - `attributeset_id`: Reference to attribute set
+   - `attribute_id`: Reference to attribute
+   - `sequence`: For UI ordering
+   - `is_required`: Whether this attribute is required for this set
+   - `is_active`: Boolean flag
+   - `created_at/updated_at`: Timestamps
+
+5. **m_product_attribute_value**: Stores non-selection attribute values
+   - `id`: Primary key
+   - `product_id`: Reference to product
+   - `attribute_id`: Reference to attribute
+   - `text_value/number_value/date_value/boolean_value`: Type-specific values
+   - `is_active`: Boolean flag
+   - `created_at/updated_at`: Timestamps
+
+6. **m_product_attribute_option**: Stores selected options for single/multi-select
+   - `id`: Primary key
+   - `product_id`: Reference to product
+   - `attribute_id`: Reference to attribute
+   - `option_id`: Reference to selected option
+   - `is_active`: Boolean flag
+   - `created_at/updated_at`: Timestamps
+
+#### Key Features
+
+1. **Attribute Types**: Supports different data types through the `attribute_type` enum
+2. **Consistent Naming**: Uses `name`/`code` pattern across all reference tables
+3. **Attribute Sets**: Groups attributes by product type for easier management
+4. **Requirements Control**: Attribute requirements defined at the set level
+5. **Performance Optimized**: Proper indexes and constraints
+6. **Data Integrity**: Unique constraints prevent duplicates
+
+#### Usage Patterns
+
+- **Single Select**: Store a single row in m_product_attribute_option
+- **Multi-Select**: Store multiple rows in m_product_attribute_option
+- **Text/Number/Date/Boolean**: Store in appropriate column in m_product_attribute_value
+
+#### Relationship Diagram
+
+```mermaid
+erDiagram
+    m_product {
+        int id PK
+        string name
+        int attributeset_id FK
+    }
+    
+    m_attributeset {
+        int id PK
+        string name
+        string code
+        boolean is_active
+    }
+    
+    m_attribute {
+        int id PK
+        string name
+        string code
+        attribute_type attribute_type
+        boolean is_active
+    }
+    
+    m_attribute_option {
+        int id PK
+        int attribute_id FK
+        string code
+        string name
+    }
+    
+    m_attributeset_attribute {
+        int id PK
+        int attributeset_id FK
+        int attribute_id FK
+        int sequence
+        boolean is_required
+    }
+    
+    m_product_attribute_value {
+        int id PK
+        int product_id FK
+        int attribute_id FK
+        string text_value
+        number number_value
+        date date_value
+        boolean boolean_value
+    }
+    
+    m_product_attribute_option {
+        int id PK
+        int product_id FK 
+        int attribute_id FK
+        int option_id FK
+    }
+    
+    m_attributegroup {
+        int id PK
+        string name
+        string code
+    }
+    
+    m_product ||--o| m_attributeset : "is categorized by"
+    m_product ||--o{ m_product_attribute_value : "has attribute values"
+    m_product ||--o{ m_product_attribute_option : "has selected options"
+    
+    m_attributeset ||--o{ m_attributeset_attribute : "contains"
+    m_attribute ||--o{ m_attributeset_attribute : "belongs to sets"
+    
+    m_attribute ||--o{ m_attribute_option : "has options"
+    m_attribute ||--o{ m_product_attribute_value : "has values"
+    m_attribute ||--o{ m_product_attribute_option : "has selections"
+    
+    m_attribute_option ||--o{ m_product_attribute_option : "is selected for products"
+    m_attributegroup ||--o{ m_attribute : "groups"
+```

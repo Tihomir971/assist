@@ -2,8 +2,8 @@
 
 **Current Work Focus:**
 
-*   The user is currently working on the catalog page, as indicated by the open tab for `src/routes/(app)/catalog/+layout.svelte`.
-*   The user is also reviewing SvelteKit documentation, as indicated by the open tab for `sveltekit-llms4-Bestpractices.md`.
+*   The user is currently working on the product catalog functionality, specifically on product attributes implementation, as indicated by the open tabs for product-related files.
+*   The focus is on designing and implementing a flexible product attributes system that can handle different attribute types (single-select, multi-select, text, numeric, boolean, date).
 
 **Recent Changes:**
 

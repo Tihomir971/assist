@@ -839,49 +839,34 @@ export type Database = {
       m_attribute: {
         Row: {
           attribute_group_id: number
-          attribute_type: string | null
-          attributevaluetype: string
-          backend_type: string | null
+          attribute_type: Database["public"]["Enums"]["attribute_type"]
           code: string
           created_at: string
           description: string | null
           id: number
           is_active: boolean
-          isinstanceattribute: boolean
-          ismandatory: boolean
-          label: string | null
           name: string
           updated_at: string
         }
         Insert: {
           attribute_group_id?: number
-          attribute_type?: string | null
-          attributevaluetype?: string
-          backend_type?: string | null
+          attribute_type: Database["public"]["Enums"]["attribute_type"]
           code: string
           created_at?: string
           description?: string | null
           id?: number
           is_active?: boolean
-          isinstanceattribute?: boolean
-          ismandatory?: boolean
-          label?: string | null
           name: string
           updated_at?: string
         }
         Update: {
           attribute_group_id?: number
-          attribute_type?: string | null
-          attributevaluetype?: string
-          backend_type?: string | null
+          attribute_type?: Database["public"]["Enums"]["attribute_type"]
           code?: string
           created_at?: string
           description?: string | null
           id?: number
           is_active?: boolean
-          isinstanceattribute?: boolean
-          ismandatory?: boolean
-          label?: string | null
           name?: string
           updated_at?: string
         }
@@ -889,239 +874,147 @@ export type Database = {
           {
             foreignKeyName: "m_attribute_attribute_group_id_fkey"
             columns: ["attribute_group_id"]
-            referencedRelation: "m_attributegroup"
+            referencedRelation: "m_attribute_group"
             referencedColumns: ["id"]
           },
         ]
       }
-      m_attributegroup: {
+      m_attribute_group: {
         Row: {
           created_at: string
           id: number
+          is_active: boolean | null
           name: string
           updated_at: string
         }
         Insert: {
           created_at?: string
           id?: number
+          is_active?: boolean | null
           name: string
           updated_at?: string
         }
         Update: {
           created_at?: string
           id?: number
+          is_active?: boolean | null
           name?: string
           updated_at?: string
         }
         Relationships: []
       }
-      m_attributeinstance: {
+      m_attribute_option: {
         Row: {
-          created_at: string
-          is_active: boolean
-          m_attribute_id: number
-          m_attributesetinstance_id: number
-          m_attributevalue_id: number | null
-          updated_at: string
-          value: string | null
-          valuedate: string | null
-          valuenumber: number | null
+          attribute_id: number
+          code: string
+          created_at: string | null
+          id: number
+          is_active: boolean | null
+          name: string
+          sort_order: number | null
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
-          is_active?: boolean
-          m_attribute_id?: number
-          m_attributesetinstance_id: number
-          m_attributevalue_id?: number | null
-          updated_at?: string
-          value?: string | null
-          valuedate?: string | null
-          valuenumber?: number | null
+          attribute_id: number
+          code: string
+          created_at?: string | null
+          id?: number
+          is_active?: boolean | null
+          name: string
+          sort_order?: number | null
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
-          is_active?: boolean
-          m_attribute_id?: number
-          m_attributesetinstance_id?: number
-          m_attributevalue_id?: number | null
-          updated_at?: string
-          value?: string | null
-          valuedate?: string | null
-          valuenumber?: number | null
+          attribute_id?: number
+          code?: string
+          created_at?: string | null
+          id?: number
+          is_active?: boolean | null
+          name?: string
+          sort_order?: number | null
+          updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "m_attributeinstance_m_attribute_id_fkey"
-            columns: ["m_attribute_id"]
+            foreignKeyName: "m_attribute_option_attribute_id_fkey"
+            columns: ["attribute_id"]
             referencedRelation: "m_attribute"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_attributeinstance_m_attributesetinstance_id_fkey"
-            columns: ["m_attributesetinstance_id"]
-            referencedRelation: "m_attributesetinstance"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_attributeinstance_m_attributevalue_id_fkey"
-            columns: ["m_attributevalue_id"]
-            referencedRelation: "m_attributevalue"
             referencedColumns: ["id"]
           },
         ]
       }
       m_attributeset: {
         Row: {
+          code: string
           created_at: string
           description: string | null
           id: number
           is_active: boolean
-          isguaranteedate: boolean
-          isinstanceattribute: boolean
-          mandatorytype: string
           name: string
           updated_at: string
         }
         Insert: {
+          code: string
           created_at?: string
           description?: string | null
           id?: number
           is_active?: boolean
-          isguaranteedate?: boolean
-          isinstanceattribute?: boolean
-          mandatorytype?: string
           name: string
           updated_at?: string
         }
         Update: {
+          code?: string
           created_at?: string
           description?: string | null
           id?: number
           is_active?: boolean
-          isguaranteedate?: boolean
-          isinstanceattribute?: boolean
-          mandatorytype?: string
           name?: string
           updated_at?: string
         }
         Relationships: []
       }
-      m_attributesetinstance: {
+      m_attributeset_attribute: {
         Row: {
+          attribute_id: number
+          attributeset_id: number
           created_at: string
-          guaranteedate: string | null
           id: number
           is_active: boolean
-          lot: string | null
-          m_attributeset_id: number | null
-          serno: string | null
+          is_required: boolean
+          sequence: number | null
           updated_at: string
         }
         Insert: {
+          attribute_id: number
+          attributeset_id: number
           created_at?: string
-          guaranteedate?: string | null
           id?: number
           is_active?: boolean
-          lot?: string | null
-          m_attributeset_id?: number | null
-          serno?: string | null
+          is_required?: boolean
+          sequence?: number | null
           updated_at?: string
         }
         Update: {
+          attribute_id?: number
+          attributeset_id?: number
           created_at?: string
-          guaranteedate?: string | null
           id?: number
           is_active?: boolean
-          lot?: string | null
-          m_attributeset_id?: number | null
-          serno?: string | null
+          is_required?: boolean
+          sequence?: number | null
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "m_attributesetinstance_m_attributeset_id_fkey"
-            columns: ["m_attributeset_id"]
-            referencedRelation: "m_attributeset"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      m_attributeuse: {
-        Row: {
-          created_at: string
-          is_active: boolean
-          m_attribute_id: number
-          m_attributeset_id: number
-          seqno: number | null
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          is_active?: boolean
-          m_attribute_id: number
-          m_attributeset_id: number
-          seqno?: number | null
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          is_active?: boolean
-          m_attribute_id?: number
-          m_attributeset_id?: number
-          seqno?: number | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "m_attributeuse_m_attribute_id_fkey"
-            columns: ["m_attribute_id"]
+            foreignKeyName: "m_attributeset_attribute_attribute_id_fkey"
+            columns: ["attribute_id"]
             referencedRelation: "m_attribute"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "m_attributeuse_m_attributeset_id_fkey"
-            columns: ["m_attributeset_id"]
+            foreignKeyName: "m_attributeset_attribute_attributeset_id_fkey"
+            columns: ["attributeset_id"]
             referencedRelation: "m_attributeset"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      m_attributevalue: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: number
-          is_active: boolean
-          m_attribute_id: number
-          name: string
-          updated_at: string
-          value: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: number
-          is_active?: boolean
-          m_attribute_id: number
-          name: string
-          updated_at?: string
-          value: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: number
-          is_active?: boolean
-          m_attribute_id?: number
-          name?: string
-          updated_at?: string
-          value?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "m_attributevalue_m_attribute_id_fkey"
-            columns: ["m_attribute_id"]
-            referencedRelation: "m_attribute"
             referencedColumns: ["id"]
           },
         ]
@@ -1326,6 +1219,7 @@ export type Database = {
       }
       m_product: {
         Row: {
+          attributeset_id: number | null
           c_taxcategory_id: number
           c_uom_id: number
           condition: string | null
@@ -1338,7 +1232,6 @@ export type Database = {
           imageurl: string | null
           is_active: boolean
           is_self_service: boolean
-          m_attributeset_id: number | null
           m_product_category_id: number | null
           m_product_uu: string | null
           mpn: string | null
@@ -1352,6 +1245,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          attributeset_id?: number | null
           c_taxcategory_id?: number
           c_uom_id?: number
           condition?: string | null
@@ -1364,7 +1258,6 @@ export type Database = {
           imageurl?: string | null
           is_active?: boolean
           is_self_service?: boolean
-          m_attributeset_id?: number | null
           m_product_category_id?: number | null
           m_product_uu?: string | null
           mpn?: string | null
@@ -1378,6 +1271,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          attributeset_id?: number | null
           c_taxcategory_id?: number
           c_uom_id?: number
           condition?: string | null
@@ -1390,7 +1284,6 @@ export type Database = {
           imageurl?: string | null
           is_active?: boolean
           is_self_service?: boolean
-          m_attributeset_id?: number | null
           m_product_category_id?: number | null
           m_product_uu?: string | null
           mpn?: string | null
@@ -1404,6 +1297,12 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "m_product_attributeset_id_fkey"
+            columns: ["attributeset_id"]
+            referencedRelation: "m_attributeset"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "m_product_c_taxcategory_id_fkey"
             columns: ["c_taxcategory_id"]
@@ -1424,7 +1323,7 @@ export type Database = {
           },
           {
             foreignKeyName: "m_product_m_attributeset_id_fkey"
-            columns: ["m_attributeset_id"]
+            columns: ["attributeset_id"]
             referencedRelation: "m_attributeset"
             referencedColumns: ["id"]
           },
@@ -1438,6 +1337,107 @@ export type Database = {
             foreignKeyName: "m_product_net_qty_uom_id_fkey"
             columns: ["net_qty_uom_id"]
             referencedRelation: "c_uom"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      m_product_attribute_option: {
+        Row: {
+          attribute_id: number
+          created_at: string | null
+          id: number
+          is_active: boolean | null
+          option_id: number
+          product_id: number
+          updated_at: string | null
+        }
+        Insert: {
+          attribute_id: number
+          created_at?: string | null
+          id?: number
+          is_active?: boolean | null
+          option_id: number
+          product_id: number
+          updated_at?: string | null
+        }
+        Update: {
+          attribute_id?: number
+          created_at?: string | null
+          id?: number
+          is_active?: boolean | null
+          option_id?: number
+          product_id?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "m_product_attribute_option_attribute_id_fkey"
+            columns: ["attribute_id"]
+            referencedRelation: "m_attribute"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_product_attribute_option_option_id_fkey"
+            columns: ["option_id"]
+            referencedRelation: "m_attribute_option"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_product_attribute_option_product_id_fkey"
+            columns: ["product_id"]
+            referencedRelation: "m_product"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      m_product_attribute_value: {
+        Row: {
+          attribute_id: number
+          boolean_value: boolean | null
+          created_at: string | null
+          date_value: string | null
+          id: number
+          is_active: boolean | null
+          number_value: number | null
+          product_id: number
+          text_value: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          attribute_id: number
+          boolean_value?: boolean | null
+          created_at?: string | null
+          date_value?: string | null
+          id?: number
+          is_active?: boolean | null
+          number_value?: number | null
+          product_id: number
+          text_value?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          attribute_id?: number
+          boolean_value?: boolean | null
+          created_at?: string | null
+          date_value?: string | null
+          id?: number
+          is_active?: boolean | null
+          number_value?: number | null
+          product_id?: number
+          text_value?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "m_product_attribute_value_attribute_id_fkey"
+            columns: ["attribute_id"]
+            referencedRelation: "m_attribute"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_product_attribute_value_product_id_fkey"
+            columns: ["product_id"]
+            referencedRelation: "m_product"
             referencedColumns: ["id"]
           },
         ]
@@ -2011,6 +2011,13 @@ export type Database = {
       }
     }
     Enums: {
+      attribute_type:
+        | "single_select"
+        | "multi_select"
+        | "text"
+        | "number"
+        | "boolean"
+        | "date"
       continents:
         | "Africa"
         | "Antarctica"
