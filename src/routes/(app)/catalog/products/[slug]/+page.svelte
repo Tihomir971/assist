@@ -17,7 +17,6 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 
 	import DrawerBarcodes from './drawer-barcodes.svelte';
-	import DrawerBarcodes2 from './drawer-barcodes2.svelte';
 	import ChartVisualization from './ChartVisualization.svelte';
 	import VendorsCard from './vendors.svelte';
 	import ReplenishCard from './replenish.svelte';
@@ -224,6 +223,13 @@
 
 						<FormCombobox
 							form={productForm}
+							name="attributeset_id"
+							label="Attribute Set"
+							options={data.attributeSets}
+							width="w-full"
+						/>
+						<FormCombobox
+							form={productForm}
 							name="m_product_category_id"
 							label="Category"
 							options={data.categories}
@@ -385,13 +391,7 @@
 			</Card.Content>
 		</Card.Root>
 
-		<!-- <DrawerBarcodes
-			bind:isBarcodeDrawerOpen
-			validatedForm={data.formProductPacking}
-			m_product_id={$formProduct.id}
-			formProductPackingId={undefined}
-		/> -->
-		<DrawerBarcodes2
+		<DrawerBarcodes
 			bind:isBarcodeDrawerOpen2
 			productPacking={data.productPacking}
 			validatedForm={data.formProductPacking}

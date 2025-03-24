@@ -1,35 +1,46 @@
 <script lang="ts">
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
-	import * as Form from '$lib/components/ui/form/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
 
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import type { SuperValidated } from 'sveltekit-superforms';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { toast } from 'svelte-sonner';
-	import PhPackage from '~icons/ph/package';
-	import PhTrash from '~icons/ph/trash';
 	import { isValidGTIN } from '$lib/scripts/gtin';
-	import type { CrudMProductGtinSchema } from './schema';
 	import { invalidate } from '$app/navigation';
+	import type { Tables } from '$lib/types/supabase/database.helper';
+	import type { PackingInsertSchema } from './schema';
+	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
+	import MySelectForm from '$lib/components/my/MySelectForm.svelte';
+	import MyCheckboxForm from '$lib/components/my/MyCheckboxForm.svelte';
 
 	type Props = {
-		isBarcodeDrawerOpen: boolean;
-		validatedForm: SuperValidated<CrudMProductGtinSchema>;
+		isBarcodeDrawerOpen2: boolean;
+		validatedForm: SuperValidated<PackingInsertSchema>;
 		m_product_id: number;
 		formProductPackingId: number | undefined;
+		productPacking: Tables<'m_product_packing'>[];
 	};
 
-	let { isBarcodeDrawerOpen = $bindable(), validatedForm, m_product_id }: Props = $props();
+	let {
+		isBarcodeDrawerOpen2 = $bindable(),
+		validatedForm,
+		m_product_id,
+		productPacking
+	}: Props = $props();
 	//let data: Props = $props();
 	let newBarcode = $state('');
 	let isValidBarcode = $derived(newBarcode === '' || isValidGTIN(newBarcode));
 
 	const {
-		form: formGtin,
+		form: formData,
 		enhance: enhanceGtin,
 		tainted,
-		isTainted
+		isTainted,
+		delayed,
+		formId,
+		reset
 	} = superForm(validatedForm, {
 		dataType: 'json',
 		//validators: zodClient(crudGtinSchema),
@@ -45,79 +56,161 @@
 			}
 		}
 	});
-	let isDuplicatedBarcode = $derived($formGtin.productPacking.some((b) => b.gtin === newBarcode));
-
-	function handleAddBarcode() {
-		if (!isValidBarcode) {
-			return;
-		}
-		// Basic validation - you might want to add more robust validation
-		if ($formGtin.productPacking.some((b) => b.gtin === newBarcode)) {
-			toast.error('Barcode already exists');
-			return;
-		}
-
-		// Add the new barcode with required properties
-		$formGtin.productPacking.push({
-			m_product_id: m_product_id,
-			gtin: newBarcode,
-			packing_type: 'Individual'
-		});
-		$formGtin.productPacking = $formGtin.productPacking;
-		newBarcode = ''; // Reset input
-	}
+	// let isDuplicatedBarcode = $derived($formData.productPacking.some((b) => b.gtin === newBarcode));
+	let editingId: number | null = $state(null);
 </script>
 
-<Drawer.Root bind:open={isBarcodeDrawerOpen} dismissible={true} direction="right">
-	<Drawer.Content class="inset-x-auto inset-y-0 right-0 mt-0 w-96">
+<Drawer.Root bind:open={isBarcodeDrawerOpen2} dismissible={true} direction="right">
+	<Drawer.Content class="inset-x-auto inset-y-0 right-0 mt-0 w-1/3">
 		<Drawer.Header>
 			<Drawer.Title>Barcodes</Drawer.Title>
 			<Drawer.Description>Manage product barcodes</Drawer.Description>
 		</Drawer.Header>
-		<form method="POST" use:enhanceGtin action="?/gtinUPD">
-			<div class="space-y-4 p-4">
-				<ul class="list-inside space-y-2">
-					{#each $formGtin.productPacking as barcode (barcode.gtin)}
-						<li class="flex items-center justify-between gap-2">
-							<div class="flex items-center gap-2">
-								<PhPackage />
-								{barcode.packing_type}
-							</div>
-							<div class="flex items-center gap-2">
-								{barcode.gtin}
-							</div>
-							<Button
-								variant="destructive"
-								type="submit"
-								size="default"
-								formaction="?/gtinDEL"
-								value={barcode.id}
-							>
-								<PhTrash />
-							</Button>
-						</li>
-					{/each}
-				</ul>
+		<div class="container mx-auto p-4">
+			<div class="rounded-md border">
+				<Table.Root class="min-w-full">
+					<Table.Header>
+						<Table.Row>
+							<Table.Head>Packing Type</Table.Head>
+							<Table.Head>Units Per Pack</Table.Head>
+							<Table.Head>GTIN</Table.Head>
+							<Table.Head>Display</Table.Head>
+							<Table.Head>Actions</Table.Head>
+						</Table.Row>
+					</Table.Header>
+					<Table.Body>
+						{#each productPacking ?? [] as packing}
+							<Table.Row>
+								<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.packing_type}</Table.Cell>
+								<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.unitsperpack}</Table.Cell>
+								<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.gtin}</Table.Cell>
+								<Table.Cell class="px-6 py-4 whitespace-nowrap">
+									<MyCheckboxForm checked={packing.is_display} />
+								</Table.Cell>
+								<Table.Cell class="space-x-2 px-6 py-4 whitespace-nowrap">
+									<Button
+										variant="outline"
+										disabled={$delayed}
+										onclick={() => {
+											editingId = packing.id;
+											$formData = packing;
+										}}
+									>
+										Edit
+									</Button>
+									<form method="POST" action="?/delete" use:enhanceGtin class="inline">
+										<Button
+											type="submit"
+											name="id"
+											value={packing.id}
+											variant="destructive"
+											disabled={$delayed && $formId !== packing.id.toString()}
+											onclick={() => {
+												$formData = packing;
+												$formId = packing.id.toString();
+											}}
+										>
+											{#if $delayed && $formId == packing.id.toString()}
+												<LoaderCircle class="animate-spin" />
+											{:else}
+												Delete
+											{/if}
+										</Button>
+									</form>
+								</Table.Cell>
+							</Table.Row>
+						{/each}
+					</Table.Body>
+				</Table.Root>
+			</div>
+
+			<!-- Edit/Create Form -->
+			<form method="POST" action="?/upsert" use:enhanceGtin class="mt-8 max-w-xl space-y-4">
+				{#if editingId}
+					<input type="hidden" name="id" bind:value={$formData.id} />
+				{/if}
+
+				<div class="grid grid-cols-2 gap-4">
+					<div class="space-y-2">
+						<label for="m_product_id" class="text-sm font-medium">Product ID</label>
+						<Input id="m_product_id" type="number" value={$formData.m_product_id} required />
+						{m_product_id}
+					</div>
+					<div class="space-y-2">
+						<label for="packing_type" class="text-sm font-medium">Packing Type</label>
+						<MySelectForm
+							name="packing_type"
+							bind:value={$formData.packing_type}
+							options={[
+								{ value: 'Individual', label: 'Individual' },
+								{ value: 'Pack', label: 'Pack' },
+								{ value: 'Pallet', label: 'Pallet' }
+							]}
+						/>
+					</div>
+
+					<div class="space-y-2">
+						<label for="unitsperpack" class="text-sm font-medium">Units Per Pack</label>
+						<Input
+							id="unitsperpack"
+							type="number"
+							bind:value={$formData.unitsperpack}
+							placeholder="Units Per Pack"
+						/>
+					</div>
+
+					<div class="space-y-2">
+						<label for="gtin" class="text-sm font-medium">GTIN</label>
+						<Input id="gtin" type="text" bind:value={$formData.gtin} placeholder="GTIN" />
+					</div>
+					<MyCheckboxForm
+						name="is_display"
+						bind:checked={$formData.is_display}
+						labelText="Is display box?"
+					/>
+				</div>
 
 				<div class="flex gap-2">
-					<Input
-						type="text"
-						placeholder="Enter new barcode"
-						bind:value={newBarcode}
-						class="flex-grow"
-					/>
-					<Button disabled={newBarcode === ''} onclick={handleAddBarcode}>Add</Button>
+					<Button type="submit" disabled={$delayed}>
+						{#if $delayed}
+							<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
+						{/if}
+						{editingId ? 'Update' : 'Create'} Packing
+					</Button>
+
+					{#if editingId}
+						<Button
+							variant="outline"
+							type="button"
+							disabled={$delayed}
+							onclick={() => {
+								editingId = null;
+								reset();
+							}}
+						>
+							Cancel
+						</Button>
+					{/if}
+					{#if $formData.id}
+						<Button
+							type="submit"
+							name="delete"
+							variant="destructive"
+							disabled={$delayed}
+							onclick={(e) => !confirm('Are you sure?') && e.preventDefault()}
+						>
+							{#if $delayed}
+								<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
+							{:else}
+								Delete
+							{/if}
+						</Button>
+					{/if}
 				</div>
-				{#if !isValidBarcode}
-					<p class="w-full text-center text-red-500">Invalid Barcode</p>
-				{/if}
-				{#if isDuplicatedBarcode}
-					<p class="w-full text-center text-red-500">Duplicated Barcode</p>
-				{/if}
-				<Form.Button disabled={!isTainted($tainted)}>Save</Form.Button>
-			</div>
-		</form>
-		<SuperDebug data={$formGtin} />
+			</form>
+			<SuperDebug data={$formData} />
+		</div>
+
 		<Drawer.Footer>
 			<Drawer.Close>Close</Drawer.Close>
 		</Drawer.Footer>

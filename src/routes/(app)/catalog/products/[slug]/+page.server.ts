@@ -92,6 +92,13 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 			.eq('m_product_id', productId);
 		return data || [];
 	};
+	const getAttributeSets = async () => {
+		const { data } = await supabase
+			.from('m_attributeset')
+			.select('value:id, label:name')
+			.order('name', { ascending: true });
+		return data || [];
+	};
 	const [
 		uom,
 		categories,
@@ -102,7 +109,8 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		productPacking,
 		tax,
 		salesByWeeks,
-		storageonhand
+		storageonhand,
+		attributeSets
 	] = await Promise.all([
 		ProductService.getUom(supabase),
 		getCategories(),
@@ -113,7 +121,8 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		getProductPacking(),
 		getTaxes(),
 		getSalesData(product.sku),
-		getStorageOnHand()
+		getStorageOnHand(),
+		getAttributeSets()
 	]);
 
 	const formProduct = await superValidate(product, zod(crudMProductSchema));
@@ -140,7 +149,8 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		categories,
 		warehouses,
 		tax,
-		salesByWeeks
+		salesByWeeks,
+		attributeSets
 	};
 };
 
