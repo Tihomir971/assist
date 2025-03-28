@@ -1,8 +1,7 @@
-import { error } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import { attributeGroupsSearchParamsSchema } from './schema.js';
 import { superValidate } from 'sveltekit-superforms/server';
 import { createAttributeGroupSchema, deleteAttributeGroupSchema } from './schema.js';
-import { fail } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export const load = async ({ locals, url }: { locals: App.Locals; url: URL }) => {
@@ -73,13 +72,16 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const { name } = form.data;
+		const { name, code } = form.data;
 
-		const { error: insertError } = await locals.supabase.from('m_attribute_group').insert({
-			name,
-			created_at: new Date().toISOString(),
-			updated_at: new Date().toISOString()
-		});
+		const { data: newGroup, error: insertError } = await locals.supabase
+			.from('m_attribute_group')
+			.insert({
+				name,
+				code
+			})
+			.select('id') // Return the ID of the newly created record
+			.single();
 
 		if (insertError) {
 			console.error('Error creating attribute group:', insertError);
@@ -89,7 +91,8 @@ export const actions = {
 			});
 		}
 
-		return { form };
+		// Redirect to the edit page
+		throw redirect(303, `/catalog/product-attributes/attribute-groups/${newGroup.id}`);
 	},
 
 	delete: async ({ request, locals }: { request: Request; locals: App.Locals }) => {

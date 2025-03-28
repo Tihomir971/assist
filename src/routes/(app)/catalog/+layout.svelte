@@ -11,9 +11,9 @@
 	import type { Snippet } from 'svelte';
 	// Icons
 	import PhPrinter from '~icons/ph/printer';
-	import ChevronsDownUp from 'lucide-svelte/icons/chevrons-down-up';
-	import FolderPen from 'lucide-svelte/icons/folder-pen';
-	import FolderPlus from 'lucide-svelte/icons/folder-plus';
+	import ChevronsDownUp from '@lucide/svelte/icons/chevrons-down-up';
+	import FolderPen from '@lucide/svelte/icons/folder-pen';
+	import FolderPlus from '@lucide/svelte/icons/folder-plus';
 	import { Tree } from '$lib/components/melt/tree';
 
 	interface Props {

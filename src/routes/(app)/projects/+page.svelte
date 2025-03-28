@@ -7,14 +7,12 @@
 	import { toast } from 'svelte-sonner';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 
 	import * as Table from '$lib/components/ui/table/index.js';
-	import * as Form from '$lib/components/ui/form/index.js';
 
 	import MySelectForm from '$lib/components/my/MySelectForm.svelte';
 
-	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
+	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import MyCheckboxForm from '$lib/components/my/MyCheckboxForm.svelte';
 
 	let { data } = $props();

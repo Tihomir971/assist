@@ -11,7 +11,7 @@
 	import { invalidate } from '$app/navigation';
 	import type { Tables } from '$lib/types/supabase/database.helper';
 	import type { PackingInsertSchema } from './schema';
-	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
+	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import MySelectForm from '$lib/components/my/MySelectForm.svelte';
 	import MyCheckboxForm from '$lib/components/my/MyCheckboxForm.svelte';
 

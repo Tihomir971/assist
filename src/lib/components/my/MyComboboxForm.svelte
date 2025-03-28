@@ -12,7 +12,7 @@
 	import type { SuperForm } from 'sveltekit-superforms';
 
 	//Icons
-	import X from 'lucide-svelte/icons/x';
+	import X from '@lucide/svelte/icons/x';
 	import PhCaretUpDown from '~icons/ph/caret-up-down';
 	import PhCheck from '~icons/ph/check';
 

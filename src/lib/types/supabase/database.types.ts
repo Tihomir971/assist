@@ -881,6 +881,7 @@ export type Database = {
       }
       m_attribute_group: {
         Row: {
+          code: string
           created_at: string
           id: number
           is_active: boolean | null
@@ -888,6 +889,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          code: string
           created_at?: string
           id?: number
           is_active?: boolean | null
@@ -895,6 +897,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          code?: string
           created_at?: string
           id?: number
           is_active?: boolean | null

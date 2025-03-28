@@ -1,3 +1,4 @@
+import { mAttributeGroupInsertSchema } from '$lib/types/supabase/supabase-zod-schemas';
 import { z } from 'zod';
 
 // Schema for attribute group list filtering and sorting
@@ -13,14 +14,9 @@ export const attributeGroupsSearchParamsSchema = z.object({
 export type AttributeGroupsSearchParams = z.infer<typeof attributeGroupsSearchParamsSchema>;
 
 // Schema for creating a new attribute group
-export const createAttributeGroupSchema = z.object({
-	name: z.string().min(1, { message: 'Name is required' }).max(100)
-});
-
-// Schema for updating an attribute group
-export const updateAttributeGroupSchema = z.object({
-	id: z.number(),
-	name: z.string().min(1, { message: 'Name is required' }).max(100)
+export const createAttributeGroupSchema = mAttributeGroupInsertSchema.extend({
+	name: z.string().min(1, { message: 'Name is required' }).max(100),
+	code: z.string().min(1, { message: 'Code is required' }).max(50)
 });
 
 // Schema for deleting an attribute group

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input';
@@ -9,10 +8,7 @@
 	import { superForm } from 'sveltekit-superforms/client';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import { attributeTypeSchema } from '$lib/types/supabase/supabase-zod-schemas';
 	import type { Enums } from '$lib/types/supabase/database.helper.js';
-	import { Textarea } from '$lib/components/ui/textarea';
-	import { Separator } from '$lib/components/ui/separator';
 
 	let { data } = $props();
 

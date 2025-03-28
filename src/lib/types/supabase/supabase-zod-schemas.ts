@@ -869,6 +869,7 @@ export const mAttributeRelationshipsSchema = z.tuple([
 ]);
 
 export const mAttributeGroupRowSchema = z.object({
+	code: z.string(),
 	created_at: z.string(),
 	id: z.number(),
 	is_active: z.boolean().nullable(),
@@ -877,6 +878,7 @@ export const mAttributeGroupRowSchema = z.object({
 });
 
 export const mAttributeGroupInsertSchema = z.object({
+	code: z.string(),
 	created_at: z.string().optional(),
 	id: z.number().optional(),
 	is_active: z.boolean().optional().nullable(),
@@ -885,6 +887,7 @@ export const mAttributeGroupInsertSchema = z.object({
 });
 
 export const mAttributeGroupUpdateSchema = z.object({
+	code: z.string().optional(),
 	created_at: z.string().optional(),
 	id: z.number().optional(),
 	is_active: z.boolean().optional().nullable(),
