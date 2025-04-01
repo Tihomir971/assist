@@ -9,6 +9,7 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import type { Enums } from '$lib/types/supabase/database.helper.js';
+	import { generateCodeFromName } from '$lib/scripts/code-name-generation.js';
 
 	let { data } = $props();
 
@@ -70,11 +71,6 @@
 	$effect(() => {
 		selectedAttributeType = $createForm.attribute_type || '';
 	});
-
-	// Function to generate code from name
-	function generateCodeFromName(name: string): string {
-		return name.toLowerCase().replace(/\s+/g, '_');
-	}
 
 	// Handle name change to update code
 	function handleNameChange(event: Event) {

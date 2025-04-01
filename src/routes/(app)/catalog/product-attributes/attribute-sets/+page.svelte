@@ -9,6 +9,7 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Textarea } from '$lib/components/ui/textarea';
+	import { generateCodeFromName } from '$lib/scripts/code-name-generation.js';
 
 	let { data } = $props();
 
@@ -64,6 +65,15 @@
 		});
 		deleteDialogOpen = true;
 	}
+
+	$effect(() => {
+		if (createDialogOpen) {
+			const newCode = generateCodeFromName($createForm.name);
+			if (newCode !== $createForm.code) {
+				$createForm.code = newCode;
+			}
+		}
+	});
 </script>
 
 <div class="container mx-auto py-6">

@@ -1,34 +1,34 @@
 <script lang="ts">
-	import { Combobox } from 'melt/builders';
+	import { Combobox, type ComboboxProps } from 'melt/builders';
 	import Check from '~icons/ph/check';
 	import PhCaretDown from '~icons/ph/caret-down';
 	import { cn } from '$lib/utils';
+	import type { MaybeGetter } from 'melt';
 
 	type OptionType = {
 		value: number;
 		label: string;
 	};
 
-	interface ComboboxProps {
-		options: OptionType[];
-		value?: string;
-		onValueChange?: (value: string) => void;
+	type Props<T extends string> = ComboboxProps<T> & {
+		options: OptionType[]; // Keep OptionType value as number
 		label?: string;
 		placeholder?: string;
 		icon?: any;
 		class?: string;
-	}
+	};
 
 	// Define props with Svelte 5 syntax
 	let {
-		options,
+		multiple = false,
 		value = $bindable(),
-		onValueChange,
+		onValueChange = $bindable(),
+		options,
 		label = 'Select an option',
 		placeholder = 'Search...',
 		icon: Icon = undefined,
 		class: className = ''
-	}: ComboboxProps = $props();
+	}: Props<string> = $props();
 
 	// Map between option values and full option objects
 	const optionMap = $derived.by(() => {
@@ -38,29 +38,31 @@
 	});
 
 	// Convert between string and number for internal/external use
-	const getNumberValue = (val: string | undefined): number | undefined =>
+	const getNumberValue = (val: MaybeGetter<string | undefined>): number | undefined =>
 		val !== undefined ? Number(val) : undefined;
 
 	// Setup the combobox - Melt requires string type
-	const combobox = new Combobox<string, false>({
+	const combobox = new Combobox<string>({
 		forceVisible: true,
-		value: value
+		value: value,
+		multiple: multiple,
+		onValueChange: onValueChange
 	});
 
 	// Watch for value changes
-	$effect(() => {
+	/* 	$effect(() => {
 		if (combobox.value !== undefined && combobox.value !== value) {
-			value = combobox.value;
+			value = combobox.;
 			if (onValueChange) onValueChange(combobox.value);
 		}
-	});
+	}); */
 
 	// Update combobox value when external value changes
-	$effect(() => {
+	/* 	$effect(() => {
 		if (value !== undefined && value !== combobox.value) {
 			combobox.select(value);
 		}
-	});
+	}); */
 
 	// Filter options using derived state
 	const filtered = $derived.by(() => {

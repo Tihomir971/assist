@@ -112,3 +112,4 @@ export type PackingInsertSchema = z.infer<typeof packingInsertSchema>;
 export const packingUpdateSchema = mProductPackingUpdateSchema.refine((data) => {
 	return data.gtin ? isValidGTIN(data.gtin) : true;
 });
+export const packingDeleteSchema = z.object({});

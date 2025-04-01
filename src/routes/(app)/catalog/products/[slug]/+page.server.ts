@@ -13,6 +13,7 @@ import {
 	crudReplenishSchema,
 	mProductPoInsertSchemaАrray,
 	mStorageonhandInsertSchemaАrray,
+	packingDeleteSchema,
 	packingInsertSchema
 } from './schema';
 
@@ -191,6 +192,15 @@ export const actions = {
 		}
 
 		return message(form, 'Barcode updated!');
+	},
+	packingDelete: async ({ request, locals: { supabase } }) => {
+		const formData = await request.formData();
+		const form = await superValidate(formData, zod(packingDeleteSchema));
+		console.log('form', form);
+		if (!form.valid) return fail(400, { form });
+		const { error } = await supabase.from('m_product_packing').delete().eq('id', parseInt(form.id));
+		if (error) return fail(500, { form, message: error.message });
+		return message(form, 'Product packaging deleted successfully!');
 	},
 	product: async ({ request, locals: { supabase } }) => {
 		const formData = await request.formData();

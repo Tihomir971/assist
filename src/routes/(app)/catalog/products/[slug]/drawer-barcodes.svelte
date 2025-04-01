@@ -14,6 +14,7 @@
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import MySelectForm from '$lib/components/my/MySelectForm.svelte';
 	import MyCheckboxForm from '$lib/components/my/MyCheckboxForm.svelte';
+	import MyInput from '$lib/components/my/MyInput.svelte';
 
 	type Props = {
 		isBarcodeDrawerOpen2: boolean;
@@ -66,7 +67,7 @@
 			<Drawer.Title>Barcodes</Drawer.Title>
 			<Drawer.Description>Manage product barcodes</Drawer.Description>
 		</Drawer.Header>
-		<div class="container mx-auto p-4">
+		<div class="container mx-auto overflow-y-auto p-4">
 			<div class="rounded-md border">
 				<Table.Root class="min-w-full">
 					<Table.Header>
@@ -98,23 +99,17 @@
 									>
 										Edit
 									</Button>
-									<form method="POST" action="?/delete" use:enhanceGtin class="inline">
+									<form method="POST" use:enhanceGtin class="inline">
 										<Button
 											type="submit"
+											formaction="?/packingDelete"
 											name="id"
 											value={packing.id}
 											variant="destructive"
-											disabled={$delayed && $formId !== packing.id.toString()}
-											onclick={() => {
-												$formData = packing;
-												$formId = packing.id.toString();
-											}}
+											disabled={$delayed}
+											onclick={() => ($formId = packing.id.toString())}
 										>
-											{#if $delayed && $formId == packing.id.toString()}
-												<LoaderCircle class="animate-spin" />
-											{:else}
-												Delete
-											{/if}
+											Delete
 										</Button>
 									</form>
 								</Table.Cell>
@@ -133,7 +128,13 @@
 				<div class="grid grid-cols-2 gap-4">
 					<div class="space-y-2">
 						<label for="m_product_id" class="text-sm font-medium">Product ID</label>
-						<Input id="m_product_id" type="number" value={$formData.m_product_id} required />
+						<MyInput
+							id="m_product_id"
+							type="number"
+							value={$formData.m_product_id}
+							required
+							readonly
+						/>
 						{m_product_id}
 					</div>
 					<div class="space-y-2">

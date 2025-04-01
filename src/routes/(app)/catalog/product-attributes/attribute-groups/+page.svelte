@@ -8,6 +8,7 @@
 	import { superForm } from 'sveltekit-superforms/client';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
+	import { generateCodeFromName } from '$lib/scripts/code-name-generation.js';
 
 	let { data } = $props();
 
@@ -61,6 +62,14 @@
 		});
 		deleteDialogOpen = true;
 	}
+	$effect(() => {
+		if (createDialogOpen) {
+			const newCode = generateCodeFromName($createForm.name);
+			if (newCode !== $createForm.code) {
+				$createForm.code = newCode;
+			}
+		}
+	});
 </script>
 
 <div class="container mx-auto py-6">
@@ -126,6 +135,7 @@
 				<Table.Header>
 					<Table.Row>
 						<Table.Head>ID</Table.Head>
+						<Table.Head>Code</Table.Head>
 						<Table.Head>Name</Table.Head>
 						<Table.Head>Created</Table.Head>
 						<Table.Head>Updated</Table.Head>
@@ -137,6 +147,7 @@
 						{#each data.attributeGroups as group}
 							<Table.Row>
 								<Table.Cell>{group.id}</Table.Cell>
+								<Table.Cell>{group.code}</Table.Cell>
 								<Table.Cell>{group.name}</Table.Cell>
 								<Table.Cell>{new Date(group.created_at).toLocaleString()}</Table.Cell>
 								<Table.Cell>{new Date(group.updated_at).toLocaleString()}</Table.Cell>
@@ -219,6 +230,13 @@
 					<Input id="name" name="name" bind:value={$createForm.name} required />
 					{#if $createErrors.name}
 						<p class="text-sm text-red-500">{$createErrors.name}</p>
+					{/if}
+				</div>
+				<div class="grid gap-2">
+					<Label for="code">Code</Label>
+					<Input id="code" name="code" bind:value={$createForm.code} required />
+					{#if $createErrors.code}
+						<p class="text-sm text-red-500">{$createErrors.code}</p>
 					{/if}
 				</div>
 			</div>
