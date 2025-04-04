@@ -6,9 +6,9 @@
 	import PhX from '~icons/ph/x';
 	import * as Table from '$lib/components/ui/table';
 	import * as Select from '$lib/components/ui/select';
-	import { Input } from '$lib/components/ui/input';
 	import * as Form from '$lib/components/ui/form';
 	import type { CrudReplenishSchema } from './schema';
+	import { MyNumberInput } from '$lib/components/my/input';
 
 	interface Props {
 		form: SuperValidated<CrudReplenishSchema>;
@@ -101,25 +101,22 @@
 						</Select.Root>
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
-						<Input
-							type="number"
-							min="0"
+						<MyNumberInput
+							min={0}
 							bind:value={$form.replenishes[i].level_min}
 							placeholder="Min level..."
 						/>
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
-						<Input
-							type="number"
-							min="0"
+						<MyNumberInput
+							min={0}
 							bind:value={$form.replenishes[i].level_max}
 							placeholder="Max level..."
 						/>
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
-						<Input
-							type="number"
-							min="0"
+						<MyNumberInput
+							min={0}
 							bind:value={$form.replenishes[i].qtybatchsize}
 							placeholder="Batch size..."
 						/>

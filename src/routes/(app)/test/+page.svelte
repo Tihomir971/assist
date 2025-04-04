@@ -1,21 +1,15 @@
 <script lang="ts">
-	import MyInput from '$lib/components/my/MyInput.svelte';
-	import MyTextArea from '$lib/components/my/MyTextArea.svelte';
-
-	// import CustomCombobox from './CustomCombobox.svelte';
-
-	const items = [
-		{ value: 'mango', label: 'Mango' },
-		{ value: 'watermelon', label: 'Watermelon' },
-		{ value: 'apple', label: 'Apple' }
-	];
+	import { Button } from '$lib/components/ui/button';
 </script>
 
-<!-- <CustomCombobox {items} /> -->
-<div class="flex flex-col gap-4">
-	<MyInput type="text" />
-	<MyInput type="number" />
-	<MyInput type="url" />
-	<MyInput type="file" />
-	<MyTextArea />
+<div class="container mx-auto p-4">
+	<h1 class="mb-6 text-2xl font-bold">Test Pages</h1>
+
+	<div class="grid gap-4">
+		<a href="/test/input-components" class="no-underline">
+			<Button variant="outline" class="w-full justify-start">Input Components Demo</Button>
+		</a>
+
+		<!-- Add other test pages here as needed -->
+	</div>
 </div>

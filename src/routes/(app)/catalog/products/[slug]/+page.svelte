@@ -23,7 +23,9 @@
 	import StorageOnHandCard from './storageonhand.svelte';
 	import { crudMProductSchema } from './schema';
 	import FormCombobox from '$lib/components/my/MyComboboxForm.svelte';
-	import MyInput from '$lib/components/my/MyInput.svelte';
+	import MyNumberInput from '$lib/components/my/input/number-input.svelte';
+	import MyUrlInput from '$lib/components/my/input/url-input.svelte';
+	import { MyTextInput } from '$lib/components/my/input';
 
 	let { data } = $props();
 
@@ -87,7 +89,7 @@
 							<Form.Field form={productForm} name="name">
 								<Form.Control>
 									{#snippet children({ props })}
-										<MyInput
+										<MyTextInput
 											{...props}
 											placeholder="Enter Product name..."
 											class="min-w-4xl text-2xl"
@@ -149,7 +151,7 @@
 								<Form.Control>
 									{#snippet children({ props })}
 										<Form.Label>SKU</Form.Label>
-										<MyInput {...props} bind:value={$formProduct.sku} readonly />
+										<MyTextInput {...props} bind:value={$formProduct.sku} readonly />
 									{/snippet}
 								</Form.Control>
 								<Form.FieldErrors />
@@ -158,7 +160,7 @@
 								<Form.Control>
 									{#snippet children({ props })}
 										<Form.Label>MPN</Form.Label>
-										<MyInput {...props} autocomplete="off" bind:value={$formProduct.mpn} />
+										<MyTextInput {...props} autocomplete="off" bind:value={$formProduct.mpn} />
 									{/snippet}
 								</Form.Control>
 								<Form.FieldErrors />
@@ -245,11 +247,9 @@
 								<Form.Control>
 									{#snippet children({ props })}
 										<Form.Label>Net Quantity</Form.Label>
-										<MyInput
-											type="number"
-											step="0.0001"
+										<MyNumberInput
+											step={0.0001}
 											bind:value={$formProduct.net_quantity}
-											oninput={handleNetQuantityInput}
 											{...props}
 										/>
 									{/snippet}
@@ -289,7 +289,7 @@
 								<Form.Control>
 									{#snippet children({ props })}
 										<Form.Label>Shelf Life (days)</Form.Label>
-										<MyInput type="number" bind:value={$formProduct.shelf_life} {...props} />
+										<MyNumberInput bind:value={$formProduct.shelf_life} {...props} />
 									{/snippet}
 								</Form.Control>
 								<Form.FieldErrors />
@@ -298,7 +298,7 @@
 								<Form.Control>
 									{#snippet children({ props })}
 										<Form.Label>Manufacturer URL</Form.Label>
-										<MyInput type="url" bind:value={$formProduct.descriptionurl} {...props} />
+										<MyUrlInput bind:value={$formProduct.descriptionurl} {...props} />
 									{/snippet}
 								</Form.Control>
 								<Form.FieldErrors />

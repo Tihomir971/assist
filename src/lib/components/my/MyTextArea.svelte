@@ -1,15 +1,6 @@
 <script lang="ts">
 	import type { SvelteHTMLElements } from 'svelte/elements';
 	import { cn } from '$lib/utils.js';
-	import PhTextAa from '~icons/ph/text-aa';
-	import PhNumpad from '~icons/ph/numpad';
-	import PhPlusCircle from '~icons/ph/plus-circle';
-	import PhPlus from '~icons/ph/plus';
-	import PhMinus from '~icons/ph/minus';
-	import PhMagnifyingGlass from '~icons/ph/magnifying-glass';
-	import PhArrowSquareUpLeft from '~icons/ph/arrow-square-up-left';
-	import PhCursorClick from '~icons/ph/cursor-click';
-	import PhFile from '~icons/ph/file';
 
 	type Props = SvelteHTMLElements['textarea'] & {
 		ref?: HTMLTextAreaElement | null;
