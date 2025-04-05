@@ -322,7 +322,7 @@
 
 {#snippet numberActions()}
 	{#if !readonly}
-		<div class="ml-auto flex h-full items-center gap-0.5 text-muted-foreground">
+		<div class="ml-auto flex h-full items-center gap-1 text-muted-foreground">
 			<button
 				type="button"
 				onclick={() => updateValue(false)}
