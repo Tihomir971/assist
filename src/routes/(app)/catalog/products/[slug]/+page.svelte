@@ -23,9 +23,9 @@
 	import StorageOnHandCard from './storageonhand.svelte';
 	import { crudMProductSchema } from './schema';
 	import FormCombobox from '$lib/components/my/MyComboboxForm.svelte';
-	import MyNumberInput from '$lib/components/my/input/number-input.svelte';
-	import MyUrlInput from '$lib/components/my/input/url-input.svelte';
-	import { MyTextInput } from '$lib/components/my/input';
+	import MyNumberInput from '$lib/components/my/input/input-number.svelte';
+	import MyUrlInput from '$lib/components/my/input/input-url.svelte';
+	import { MyCombobox, MyTextInput } from '$lib/components/my/input';
 
 	let { data } = $props();
 
@@ -63,7 +63,6 @@
 	}
 
 	let isBarcodeDrawerOpen: boolean = $state(false);
-	let isBarcodeDrawerOpen2: boolean = $state(false);
 
 	let selectedUomLabel = $derived(
 		data.uom.find((v) => v.value === $formProduct.c_uom_id?.toString())?.label
@@ -194,7 +193,13 @@
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
-
+							<MyCombobox
+								bind:value={$formProduct.c_taxcategory_id}
+								items={data.tax}
+								name="c_taxcategory_id"
+								placeholder="Select a fruit..."
+								labelText="Fruit (Bits-UI)"
+							/>
 							<Form.Field form={productForm} name="c_taxcategory_id">
 								<Form.Control>
 									{#snippet children({ props })}
@@ -310,7 +315,7 @@
 							<h3 class="mb-2 flex items-center gap-2 text-lg font-semibold">
 								<PhPackage /> Barcodes
 							</h3>
-							<Button variant="ghost" size="icon" onclick={() => (isBarcodeDrawerOpen2 = true)}>
+							<Button variant="ghost" size="icon" onclick={() => (isBarcodeDrawerOpen = true)}>
 								<PhDotsThree />
 							</Button>
 						</div>
@@ -381,7 +386,7 @@
 		</Card.Root>
 
 		<DrawerBarcodes
-			bind:isBarcodeDrawerOpen2
+			bind:isBarcodeDrawerOpen
 			productPacking={data.productPacking}
 			validatedForm={data.formProductPacking}
 			m_product_id={data.productId}

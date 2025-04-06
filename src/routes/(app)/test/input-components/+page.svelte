@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-
 	import {
+		MyCombobox,
+		MyComboboxZag,
 		MyCurrencyInput,
 		MyDateInput,
 		MyFileInput,
@@ -16,6 +17,33 @@
 	let dateValue = $state(new Date());
 	let urlValue = $state('https://example.com');
 	let currencyValue = $state(1250.75);
+
+	// Combobox data
+	type Fruit = { id: number; label: string };
+	let selectedFruitId = $state<number | null>(null);
+	let selectedFruitIdZag = $state<number | null>(null);
+	const fruits = [
+		{ value: 1, label: 'Apple' },
+		{ value: 2, label: 'Banana' },
+		{ value: 3, label: 'Orange' },
+		{ value: 4, label: 'Strawberry' },
+		{ value: 5, label: 'Blueberry' },
+		{ value: 6, label: 'Mango' },
+		{ value: 7, label: 'Pineapple' },
+		{ value: 8, label: 'Watermelon' },
+		{ value: 9, label: 'Peach' },
+		{ value: 10, label: 'Grapes' },
+		{ value: 11, label: 'Kiwi' },
+		{ value: 12, label: 'Papaya' },
+		{ value: 13, label: 'Cherry' },
+		{ value: 14, label: 'Pear' },
+		{ value: 15, label: 'Plum' },
+		{ value: 16, label: 'Apricot' },
+		{ value: 17, label: 'Avocado' },
+		{ value: 18, label: 'Coconut' },
+		{ value: 19, label: 'Fig' },
+		{ value: 20, label: 'Date' }
+	];
 
 	// Error state examples
 	let textError = $state('');
@@ -37,8 +65,18 @@
 			numberValue,
 			dateValue,
 			urlValue,
-			currencyValue
+			currencyValue,
+			selectedFruitId
 		});
+	});
+
+	// Log combobox value changes
+	$effect(() => {
+		console.log('Selected fruit ID changed:', selectedFruitId);
+	});
+
+	$effect(() => {
+		console.log('Selected fruit ID (Zag) changed:', selectedFruitIdZag);
 	});
 
 	// Log value changes
@@ -67,15 +105,94 @@
 	<h1 class="mb-6 text-2xl font-bold">Input Components Demo</h1>
 
 	<div class="grid gap-6">
-		<!-- Text Input -->
+		<!-- Bits-UI Combobox Input -->
 		<div class="card rounded-md border p-4">
-			<h2 class="mb-2 text-lg font-semibold">Text Input</h2>
+			<h2 class="mb-2 text-lg font-semibold">Bits-UI Combobox Input</h2>
 			<div class="mb-2">
-				<MyTextInput bind:value={textValue} placeholder="Enter text..." error={textError} />
+				<MyCombobox
+					bind:value={selectedFruitId}
+					items={fruits}
+					placeholder="Select a fruit..."
+					labelText="Fruit (Bits-UI)"
+					inline
+				/>
 			</div>
 			<div class="flex gap-2">
 				<button
-					class="rounded-md bg-primary px-3 py-1 text-primary-foreground"
+					class="rounded-md bg-primary px-3 py-1"
+					onclick={() => {
+						selectedFruitId = fruits[0].value;
+					}}
+				>
+					Select Apple
+				</button>
+				<button
+					class="rounded-md bg-secondary px-3 py-1"
+					onclick={() => {
+						selectedFruitId = null;
+					}}
+				>
+					Clear
+				</button>
+			</div>
+			<div class="mt-2">
+				Current value: {selectedFruitId !== null
+					? fruits.find((f) => f.value === selectedFruitId)?.label || 'None'
+					: 'None'}
+			</div>
+		</div>
+
+		<!-- Zag Combobox Input (Legacy) -->
+		<div class="card rounded-md border p-4">
+			<h2 class="mb-2 text-lg font-semibold">Zag Combobox Input (Legacy)</h2>
+			<div class="mb-2">
+				<MyComboboxZag
+					bind:value={selectedFruitIdZag}
+					items={fruits}
+					placeholder="Select a fruit..."
+					labelText="Fruit (Zag)"
+					inline
+				/>
+			</div>
+			<div class="flex gap-2">
+				<button
+					class="rounded-md bg-primary px-3 py-1"
+					onclick={() => {
+						selectedFruitIdZag = fruits[0].value;
+					}}
+				>
+					Select Apple
+				</button>
+				<button
+					class="rounded-md bg-secondary px-3 py-1 text-secondary-foreground"
+					onclick={() => {
+						selectedFruitIdZag = null;
+					}}
+				>
+					Clear
+				</button>
+			</div>
+			<div class="mt-2">
+				Current value: {selectedFruitIdZag !== null
+					? fruits.find((f) => f.value === selectedFruitIdZag)?.label || 'None'
+					: 'None'}
+			</div>
+		</div>
+
+		<!-- Text Input -->
+		<div class="card rounded-md border p-4">
+			<div class="mb-2">
+				<MyTextInput
+					bind:value={textValue}
+					placeholder="Enter text..."
+					error={textError}
+					labelText="Text Input"
+					inline
+				/>
+			</div>
+			<div class="flex gap-2">
+				<button
+					class="rounded-md bg-primary px-3 py-1"
 					onclick={() => {
 						textValue = 'Reset text';
 					}}
@@ -110,7 +227,7 @@
 			</div>
 			<div class="flex gap-2">
 				<button
-					class="rounded-md bg-primary px-3 py-1 text-primary-foreground"
+					class="rounded-md bg-primary px-3 py-1"
 					onclick={() => {
 						numberValue = 50;
 					}}
@@ -135,7 +252,7 @@
 			</div>
 			<div class="flex gap-2">
 				<button
-					class="rounded-md bg-primary px-3 py-1 text-primary-foreground"
+					class="rounded-md bg-primary px-3 py-1"
 					onclick={() => {
 						dateValue = new Date();
 					}}
@@ -156,7 +273,7 @@
 			</div>
 			<div class="flex gap-2">
 				<button
-					class="rounded-md bg-primary px-3 py-1 text-primary-foreground"
+					class="rounded-md bg-primary px-3 py-1"
 					onclick={() => {
 						urlValue = 'https://svelte.dev';
 					}}
@@ -198,7 +315,7 @@
 			</div>
 			<div class="flex gap-2">
 				<button
-					class="rounded-md bg-primary px-3 py-1 text-primary-foreground"
+					class="rounded-md bg-primary px-3 py-1"
 					onclick={() => {
 						currencyValue = 1000;
 					}}

@@ -3,12 +3,14 @@
 	import { cn } from '$lib/utils.js';
 	import PhArrowSquareUpLeft from '~icons/ph/arrow-square-up-left';
 	import PhCursorClick from '~icons/ph/cursor-click';
-	import BaseInput from './base-input.svelte';
+	import BaseInput from './input-base.svelte';
 
 	type Props = HTMLInputAttributes & {
 		ref?: HTMLInputElement | null;
 		class?: string;
 		error?: string;
+		labelText?: string; // New param for label
+		inline?: boolean; // New param for positioning
 	};
 
 	let {
@@ -16,8 +18,13 @@
 		value = $bindable(''),
 		class: className = '',
 		error,
+		labelText,
+		inline,
 		...restProps
 	}: Props = $props();
+
+	// Generate a unique ID for input-label association if none provided
+	const inputId = restProps.id || `input-${Math.random().toString(36).slice(2, 11)}`;
 
 	// URL validation function
 	function isValidUrl(url: string): boolean {
@@ -66,10 +73,8 @@
 		bind:this={ref}
 		bind:value
 		type="url"
-		class={cn(
-			'peer flex h-full w-full items-center border-none pl-2',
-			'text-primary-foreground outline-none'
-		)}
+		id={inputId}
+		class="peer w-full border-none bg-transparent outline-none"
 		{...restProps}
 	/>
 {/snippet}
@@ -95,6 +100,8 @@
 	bind:ref
 	class={className}
 	{error}
+	{labelText}
+	{inline}
 	Icon={urlIcon}
 	Content={urlContent}
 	Action={urlActions}

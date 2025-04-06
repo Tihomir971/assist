@@ -3,7 +3,7 @@
 	import { DateTime } from 'luxon';
 	import { cn } from '$lib/utils.js';
 	import PhCalendar from '~icons/ph/calendar';
-	import BaseInput from './base-input.svelte';
+	import BaseInput from './input-base.svelte';
 
 	type Props = HTMLInputAttributes & {
 		ref?: HTMLInputElement | null;
@@ -12,6 +12,8 @@
 		format?: string; // Date format string
 		class?: string;
 		error?: string;
+		labelText?: string; // New param for label
+		inline?: boolean; // New param for positioning
 	};
 
 	let {
@@ -21,8 +23,13 @@
 		format = 'dd.MM.yyyy', // Default format for Serbian locale
 		class: className = '',
 		error,
+		labelText,
+		inline,
 		...restProps
 	}: Props = $props();
+
+	// Generate a unique ID for input-label association if none provided
+	const inputId = restProps.id || `input-${Math.random().toString(36).slice(2, 11)}`;
 
 	// Internal state
 	let internalDate = $state<DateTime | null>(null);
@@ -119,10 +126,8 @@
 		onblur={handleBlur}
 		onfocus={handleFocus}
 		placeholder={format.toLowerCase()}
-		class={cn(
-			'peer flex h-full w-full items-center border-none pl-2',
-			'text-primary-foreground outline-none'
-		)}
+		id={inputId}
+		class="peer w-full border-none bg-transparent outline-none"
 		{...restProps}
 	/>
 {/snippet}
@@ -135,6 +140,8 @@
 	bind:ref
 	class={className}
 	{error}
+	{labelText}
+	{inline}
 	Icon={dateIcon}
 	Content={dateContent}
 	Action={emptyActions}

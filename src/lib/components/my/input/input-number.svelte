@@ -1,36 +1,37 @@
 <script lang="ts">
 	import type { HTMLInputAttributes } from 'svelte/elements';
 	import { cn } from '$lib/utils.js';
-	import PhCurrencyCircleDollar from '~icons/ph/currency-circle-dollar';
+	import PhNumpad from '~icons/ph/numpad';
 	import PhPlus from '~icons/ph/plus';
 	import PhMinus from '~icons/ph/minus';
+	import BaseInput from './input-base.svelte';
 
 	type Props = HTMLInputAttributes & {
 		ref?: HTMLInputElement | null;
 		locale?: string;
 		min?: number;
 		max?: number;
+		precision?: number; // Number of decimal places
 		readonly?: boolean;
 		class?: string;
 		error?: string;
-		currency?: string; // Currency code (e.g., 'RSD', 'EUR', 'USD')
-		currencyDisplay?: 'symbol' | 'code' | 'name'; // How to display the currency
-		currencyPosition?: 'prefix' | 'suffix'; // Where to display the currency
+		labelText?: string; // New param for label
+		inline?: boolean; // New param for positioning
+		type?: string; // Allow type to be passed, but we'll override it
 	};
 
 	let {
 		ref = $bindable(null),
-		value = $bindable(),
-		locale = 'sr-Latn-RS',
-		min = 0, // Default min for currency is 0
+		value = $bindable(), // Allow null/undefined, handle internally
+		locale = 'sr-Latn-RS', // Default locale Serbian Latin
+		min = Number.MIN_SAFE_INTEGER,
 		max = Number.MAX_SAFE_INTEGER,
-		step = 0.01, // Default step for currency is 0.01 (2 decimal places)
+		step = 1,
 		readonly = false,
 		class: className,
 		error,
-		currency = 'RSD', // Default currency for Serbian locale
-		currencyDisplay = 'symbol',
-		currencyPosition = 'suffix',
+		labelText,
+		inline,
 		...restProps
 	}: Props = $props();
 
@@ -38,6 +39,9 @@
 	let rawValue = $state<number | null>(null); // Actual number value for data binding
 	let displayValue = $state(''); // Formatted string for display
 	let isFocused = $state(false);
+
+	// Generate a unique ID for input-label association if none provided
+	const inputId = restProps.id || `input-${Math.random().toString(36).slice(2, 11)}`;
 
 	// References to input elements
 	let hiddenInputRef = $state<HTMLInputElement | null>(null);
@@ -69,30 +73,19 @@
 
 		let decimalSep = '.';
 		let thousandSep = ',';
-		let currencySymbol = '';
+		let currency = '';
 
 		for (const part of parts) {
 			if (part.type === 'decimal') {
 				decimalSep = part.value;
 			} else if (part.type === 'group') {
 				thousandSep = part.value;
+			} else if (part.type === 'currency') {
+				currency = part.value;
 			}
 		}
 
-		// Get currency symbol
-		const currencyFormatter = new Intl.NumberFormat(locale, {
-			style: 'currency',
-			currency,
-			currencyDisplay
-		});
-		const currencyParts = currencyFormatter.formatToParts(123);
-		for (const part of currencyParts) {
-			if (part.type === 'currency') {
-				currencySymbol = part.value;
-			}
-		}
-
-		return { decimalSep, thousandSep, currencySymbol };
+		return { decimalSep, thousandSep, currency };
 	});
 
 	// Calculate precision from step
@@ -108,7 +101,7 @@
 	let formatter = $derived(() => {
 		return new Intl.NumberFormat(locale, {
 			maximumFractionDigits: precision,
-			minimumFractionDigits: precision,
+			minimumFractionDigits: 0,
 			useGrouping: true
 		});
 	});
@@ -119,17 +112,11 @@
 		if (text === null || text === undefined) return null;
 
 		// Convert to string if it's not already
-		let textStr = String(text);
-
-		// Remove currency symbol if present
-		const { currencySymbol } = formatData();
-		if (currencySymbol) {
-			textStr = textStr.replace(currencySymbol, '').trim();
-		}
-
+		const textStr = String(text);
 		if (textStr.trim() === '') return null;
 
 		const trimmedText = textStr.trim();
+		console.log(`MyNumberInput: Parsing "${trimmedText}" with locale "${locale}"`);
 
 		try {
 			// Step 1: Remove thousand separators
@@ -151,7 +138,7 @@
 				const decimalCount = (processedText.match(new RegExp(escDecimalSep, 'g')) || []).length;
 
 				if (decimalCount > 1) {
-					console.error(`MyCurrencyInput: Multiple decimal separators in "${processedText}"`);
+					console.error(`MyNumberInput: Multiple decimal separators in "${processedText}"`);
 					return null;
 				}
 
@@ -162,7 +149,7 @@
 			const validNumberRegex = /^-?\d*\.?\d*$/;
 
 			if (!validNumberRegex.test(processedText)) {
-				console.warn(`MyCurrencyInput: Invalid number format: "${processedText}"`);
+				console.warn(`MyNumberInput: Invalid number format: "${processedText}"`);
 
 				// Try a more lenient approach for common cases
 				const num = parseFloat(processedText);
@@ -170,15 +157,17 @@
 			}
 
 			const num = parseFloat(processedText);
+			console.log(`MyNumberInput: Successfully parsed number: ${num}`);
 			return isNaN(num) ? null : num;
 		} catch (error) {
-			console.error(`MyCurrencyInput: Error parsing number:`, error);
+			console.error(`MyNumberInput: Error parsing number:`, error);
 
 			// Fallback approach for common cases
 			// If we see a pattern that looks like a number with a comma decimal separator
 			if (/^-?\d+,\d+$/.test(trimmedText)) {
 				const withDot = trimmedText.replace(',', '.');
 				const num = parseFloat(withDot);
+				console.log(`MyNumberInput: Fallback parsed with comma as decimal: ${num}`);
 				return isNaN(num) ? null : num;
 			}
 
@@ -186,20 +175,13 @@
 		}
 	}
 
-	// Function to format a number for display according to locale with currency
-	function formatCurrencyNumber(num: number | null): string {
+	// Function to format a number for display according to locale
+	function formatLocaleNumber(num: number | null): string {
 		if (num === null || isNaN(num)) return '';
 		try {
-			const formattedNumber = formatter().format(num);
-			const { currencySymbol } = formatData();
-
-			if (currencyPosition === 'prefix') {
-				return `${currencySymbol} ${formattedNumber}`;
-			} else {
-				return `${formattedNumber} ${currencySymbol}`;
-			}
+			return formatter().format(num);
 		} catch (e) {
-			console.error(`MyCurrencyInput: Error formatting number:`, e);
+			console.error(`MyNumberInput: Error formatting number:`, e);
 			return String(num);
 		}
 	}
@@ -236,7 +218,7 @@
 
 			// Update display value if not focused
 			if (!isFocused) {
-				displayValue = formatCurrencyNumber(rawValue);
+				displayValue = formatLocaleNumber(rawValue);
 			}
 
 			// Update hidden input value
@@ -268,7 +250,7 @@
 		value = constrainedValue === null ? null : Number(constrainedValue);
 
 		// Format display value
-		displayValue = formatCurrencyNumber(rawValue);
+		displayValue = formatLocaleNumber(rawValue);
 	}
 
 	// Handle form resets
@@ -288,8 +270,8 @@
 		if (readonly) return;
 
 		const currentVal = rawValue ?? 0;
-		// Use the actual step value provided, not a derived value
-		const validStep = typeof step === 'number' && !isNaN(step) ? step : 0.01;
+		// Use the actual step value provided, not a default of 1
+		const validStep = typeof step === 'number' && !isNaN(step) ? step : 1;
 
 		let newValue = currentVal + (increment ? validStep : -validStep);
 
@@ -305,18 +287,17 @@
 
 		// Update all values consistently
 		rawValue = newValue;
-		displayValue = formatCurrencyNumber(newValue);
+		displayValue = formatLocaleNumber(newValue);
 		value = Number(newValue);
 		updateHiddenInput();
 	}
-	import BaseInput from './base-input.svelte';
 </script>
 
-{#snippet currencyIcon()}
-	<PhCurrencyCircleDollar class="text-muted-foreground" />
+{#snippet numberIcon()}
+	<PhNumpad class="text-muted-foreground" />
 {/snippet}
 
-{#snippet currencyContent()}
+{#snippet numberContent()}
 	<!-- Hidden input for raw value storage and form submission -->
 	<input
 		bind:this={hiddenInputRef}
@@ -336,19 +317,16 @@
 		onfocus={handleFocus}
 		onreset={handleFormReset}
 		{readonly}
-		class={cn(
-			'peer flex h-full w-full [appearance:textfield] items-center border-none pl-2',
-			'text-primary-foreground outline-none',
-			'[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none'
-		)}
-		aria-label={visibleInputProps['aria-label'] || 'Currency input'}
+		id={inputId}
+		class="peer w-full [appearance:textfield] border-none bg-transparent outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+		aria-label={visibleInputProps['aria-label'] || 'Numeric input'}
 		{...visibleInputProps}
 	/>
 {/snippet}
 
-{#snippet currencyActions()}
+{#snippet numberActions()}
 	{#if !readonly}
-		<div class="ml-auto flex h-full items-center text-muted-foreground">
+		<div class="flex h-full gap-1">
 			<button
 				type="button"
 				onclick={() => updateValue(false)}
@@ -360,7 +338,7 @@
 			<button
 				type="button"
 				onclick={() => updateValue(true)}
-				class="flex aspect-square h-full w-full items-center justify-center rounded-sm hover:text-primary-foreground"
+				class="flex h-full items-center justify-center rounded-sm hover:text-primary-foreground"
 				aria-label="Increment"
 			>
 				<PhPlus />
@@ -373,7 +351,9 @@
 	bind:ref
 	class={className}
 	{error}
-	Icon={currencyIcon}
-	Content={currencyContent}
-	Action={currencyActions}
+	{labelText}
+	{inline}
+	Icon={numberIcon}
+	Content={numberContent}
+	Action={numberActions}
 />

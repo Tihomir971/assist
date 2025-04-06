@@ -2,15 +2,27 @@
 	import type { HTMLInputAttributes } from 'svelte/elements';
 	import { cn } from '$lib/utils.js';
 	import PhFile from '~icons/ph/file';
-	import BaseInput from './base-input.svelte';
+	import BaseInput from './input-base.svelte';
 
 	type Props = HTMLInputAttributes & {
 		ref?: HTMLInputElement | null;
 		class?: string;
 		error?: string;
+		labelText?: string; // New param for label
+		inline?: boolean; // New param for positioning
 	};
 
-	let { ref = $bindable(null), class: className = '', error, ...restProps }: Props = $props();
+	let {
+		ref = $bindable(null),
+		class: className = '',
+		error,
+		labelText,
+		inline,
+		...restProps
+	}: Props = $props();
+
+	// Generate a unique ID for input-label association if none provided
+	const inputId = restProps.id || `input-${Math.random().toString(36).slice(2, 11)}`;
 
 	let fileName = $state('');
 
@@ -33,13 +45,12 @@
 		<input
 			bind:this={ref}
 			type="file"
+			id={inputId}
 			class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
 			onchange={handleFileChange}
 			{...restProps}
 		/>
-		<div
-			class="peer flex h-full w-full items-center overflow-hidden border-none pl-2 text-ellipsis whitespace-nowrap text-primary-foreground"
-		>
+		<div class="peer w-full overflow-hidden text-ellipsis whitespace-nowrap">
 			{fileName || 'Select file...'}
 		</div>
 	</div>
@@ -53,6 +64,8 @@
 	bind:ref
 	class={className}
 	{error}
+	{labelText}
+	{inline}
 	Icon={fileIcon}
 	Content={fileContent}
 	Action={emptyActions}
