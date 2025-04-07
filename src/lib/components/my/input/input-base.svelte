@@ -9,6 +9,7 @@
 		error?: string;
 		labelText?: string; // New param for label
 		inline?: boolean; // New param for positioning
+		Label?: Snippet;
 		Icon?: Snippet;
 		Content?: Snippet;
 		Action?: Snippet;

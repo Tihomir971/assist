@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import {
 		MyCombobox,
+		MyComboboxMelt,
 		MyComboboxZag,
 		MyCurrencyInput,
 		MyDateInput,
@@ -103,7 +104,7 @@
 
 <div class="container mx-auto max-w-3xl overflow-auto p-4">
 	<h1 class="mb-6 text-2xl font-bold">Input Components Demo</h1>
-
+	<MyComboboxMelt />
 	<div class="grid gap-6">
 		<!-- Bits-UI Combobox Input -->
 		<div class="card rounded-md border p-4">
