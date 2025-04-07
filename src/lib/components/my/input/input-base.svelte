@@ -9,7 +9,6 @@
 		error?: string;
 		labelText?: string; // New param for label
 		inline?: boolean; // New param for positioning
-		Label?: Snippet;
 		Icon?: Snippet;
 		Content?: Snippet;
 		Action?: Snippet;
@@ -52,7 +51,10 @@
 				className
 			)}
 		> -->
-		<div class="absolute start-2 top-1/2 -translate-y-1/2 text-muted-foreground">
+		<div
+			aria-hidden="true"
+			class="pointer-events-none absolute start-2 top-1/2 -translate-y-1/2 text-muted-foreground"
+		>
 			{@render Icon?.()}
 		</div>
 
@@ -61,13 +63,11 @@
 		>
 			{@render Content?.()}
 		</div>
-
-		<div
-			class="absolute end-2 top-1/2 flex h-full -translate-y-1/2 items-center text-muted-foreground"
-		>
-			{@render Action?.()}
-		</div>
-		<!-- </div> -->
+		{#if Action}
+			<div class="absolute end-2 top-1/2 flex -translate-y-1/2 items-center text-muted-foreground">
+				{@render Action()}
+			</div>
+		{/if}
 
 		{#if error}
 			<div class="mt-1 text-sm text-destructive">{error}</div>

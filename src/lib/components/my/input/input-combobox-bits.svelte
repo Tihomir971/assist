@@ -177,7 +177,7 @@
 				'data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
 				'z-50 h-fit max-h-[min(var(--bits-combobox-content-available-height),18rem)]',
 				'w-[var(--bits-combobox-anchor-width)] min-w-[var(--bits-combobox-anchor-width)]',
-				'rounded-sm border border-muted bg-popover px-1 py-3 shadow-popover outline-hidden select-none',
+				'rounded-sm border border-muted bg-popover shadow-popover outline-hidden select-none',
 				'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1',
 				'data-[side=top]:-translate-y-1',
 				contentClass
@@ -186,7 +186,7 @@
 			<Combobox.ScrollUpButton class="flex w-full items-center justify-center py-1">
 				<PhCaretDoubleUp class="size-3" />
 			</Combobox.ScrollUpButton>
-			<Combobox.Viewport class="p-1">
+			<Combobox.Viewport>
 				{#each filteredItems as item (item.value)}
 					<Combobox.Item
 						value={item.value}

@@ -132,7 +132,7 @@
 			}}
 			onclick={() => !api.open && api.setOpen(true)}
 			class={cn(
-				'peer flex h-full w-full items-center border-none pl-2',
+				'peer flex h-full w-full items-center border-none ',
 				'text-primary-foreground outline-none'
 			)}
 			{...restProps}
