@@ -5,14 +5,12 @@
 	// Icons
 	import PhDotsThree from '~icons/ph/dots-three';
 	import PhPackage from '~icons/ph/package';
-	import PhArrowSquareOut from '~icons/ph/arrow-square-out';
 
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
 	import { superForm } from 'sveltekit-superforms';
 	import { Button } from '$lib/components/ui/button/index.js';
 
@@ -85,27 +83,19 @@
 					<div>
 						<Card.Title class="flex items-center gap-2">
 							<PhPackage class="mb-2 size-8" />
-							<Form.Field form={productForm} name="name">
-								<Form.Control>
-									{#snippet children({ props })}
-										<MyTextInput
-											{...props}
-											placeholder="Enter Product name..."
-											class="min-w-4xl text-2xl"
-											bind:value={$formProduct.name}
-										/>
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
+							<MyTextInput
+								placeholder="Enter Product name..."
+								class="min-w-4xl text-2xl"
+								bind:value={$formProduct.name}
+							/>
 						</Card.Title>
 					</div>
 					<div class="mb-2">
 						<div class={!isProductTainted($productTainted) ? 'hidden' : ''}>
 							<Button type="submit">Save</Button>
-							<Button type="button" variant="outline" onclick={() => productForm.reset()}
-								>Reset</Button
-							>
+							<Button type="button" variant="outline" onclick={() => productForm.reset()}>
+								Reset
+							</Button>
 						</div>
 						<div class={isProductTainted($productTainted) ? 'hidden' : ''}>
 							<Form.Button name="delete" variant="destructive">Delete</Form.Button>
