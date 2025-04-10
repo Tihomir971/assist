@@ -24,7 +24,7 @@
 	--primary-contrast: var(--gray-1);
 
 	/* New Color */
-	--pink-red: oklch(from var(--primary) l c var(--oklch-red));
+	--destructive: oklch(from var(--primary) l c var(--hue-red));
 
 	/* Text */
 	--text-color-1: light-dark(var(--gray-15), var(--gray-1));

@@ -45,12 +45,6 @@
 
 	<!-- Input container -->
 	<div bind:this={rootElement} class={cn('relative w-full')}>
-		<!-- 	<div
-			class={cn(
-				'flex h-10 w-full items-center rounded-sm border border-solid border-input bg-background px-2 focus-within:border-primary',
-				className
-			)}
-		> -->
 		<div
 			aria-hidden="true"
 			class="pointer-events-none absolute start-2 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -59,7 +53,7 @@
 		</div>
 
 		<div
-			class="inline-flex h-10 w-full truncate rounded-sm border bg-surface-document px-8 text-base transition-colors placeholder:text-muted-foreground focus-within:border-primary hover:border-surface-2 sm:text-sm"
+			class="inline-flex h-10 w-full truncate rounded-sm border bg-surface-document px-8 text-base ring-primary transition-colors placeholder:text-muted-foreground focus-within:border-primary focus-within:ring hover:border-surface-2 sm:text-sm"
 		>
 			{@render Content?.()}
 		</div>
