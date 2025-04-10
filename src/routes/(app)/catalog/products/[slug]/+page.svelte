@@ -38,6 +38,9 @@
 
 				invalidate('catalog:products');
 			} else {
+				console.error('Failed to update product', {
+					description: form.errors || 'Please check the form for errors'
+				});
 				toast.error('Failed to update product', {
 					description: form.message || 'Please check the form for errors'
 				});
@@ -77,20 +80,21 @@
 <div class="mx-auto w-full max-w-[var(--breakpoint-xl)]">
 	<Card.Root class="mb-4">
 		<form method="post" action="?/product" use:enhanceProduct id="product-form">
-			<Card.Header class="border-b">
-				<Card.Description class="text-lg">Product ID: {$formProduct.id}</Card.Description>
-				<div class="grid grid-cols-[1fr_auto] gap-2">
+			<Card.Header class="border-b pb-6">
+				<Card.Title class="mb-6 flex items-center justify-between">
+					<div>Product details</div>
+					<p class="text-sm text-muted-foreground">
+						ID: {$formProduct.id}
+					</p>
+				</Card.Title>
+				<div class="grid w-full grid-cols-[1fr_auto] items-center gap-2">
+					<MyTextInput
+						placeholder="Enter Product name..."
+						labelText="Product Name"
+						bind:value={$formProduct.name}
+						inline
+					/>
 					<div>
-						<Card.Title class="flex items-center gap-2">
-							<PhPackage class="mb-2 size-8" />
-							<MyTextInput
-								placeholder="Enter Product name..."
-								class="min-w-4xl text-2xl"
-								bind:value={$formProduct.name}
-							/>
-						</Card.Title>
-					</div>
-					<div class="mb-2">
 						<div class={!isProductTainted($productTainted) ? 'hidden' : ''}>
 							<Button type="submit">Save</Button>
 							<Button type="button" variant="outline" onclick={() => productForm.reset()}>
@@ -183,13 +187,13 @@
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
-							<MyCombobox
+							<!-- <MyCombobox
 								bind:value={$formProduct.c_taxcategory_id}
 								items={data.tax}
 								name="c_taxcategory_id"
 								placeholder="Select a fruit..."
 								labelText="Fruit (Bits-UI)"
-							/>
+							/> -->
 							<Form.Field form={productForm} name="c_taxcategory_id">
 								<Form.Control>
 									{#snippet children({ props })}

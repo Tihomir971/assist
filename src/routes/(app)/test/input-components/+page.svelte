@@ -107,8 +107,8 @@
 	<MyComboboxMelt />
 	<div class="grid gap-6">
 		<!-- Bits-UI Combobox Input -->
-		<div class="card rounded-md border p-4">
-			<h2 class="mb-2 text-lg font-semibold">Bits-UI Combobox Input</h2>
+		<div class="rounded-md border border-surface-3 bg-surface-2 p-4">
+			<h2 class="mb-2">Bits-UI Combobox Input</h2>
 			<div class="mb-2">
 				<MyCombobox
 					bind:value={selectedFruitId}
@@ -120,7 +120,7 @@
 			</div>
 			<div class="flex gap-2">
 				<button
-					class="rounded-md bg-primary px-3 py-1"
+					class="rounded-xs bg-brand px-3 py-1"
 					onclick={() => {
 						selectedFruitId = fruits[0].value;
 					}}

@@ -37,7 +37,7 @@
 	{#if labelText}
 		<label
 			for={inputId}
-			class={cn('text-sm font-medium text-foreground', inline ? 'min-w-[120px] shrink-0' : 'mb-2')}
+			class={cn(' text-sm text-muted-foreground ', inline ? 'min-w-[120px] shrink-0' : 'mb-2')}
 		>
 			{labelText}
 		</label>
@@ -59,7 +59,7 @@
 		</div>
 
 		<div
-			class="inline-flex h-10 w-full truncate border bg-background px-8 text-base transition-colors placeholder:text-muted-foreground focus-within:border-primary focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background focus:outline-hidden sm:text-sm"
+			class="inline-flex h-10 w-full truncate rounded-sm border bg-surface-document px-8 text-base transition-colors placeholder:text-muted-foreground focus-within:border-primary hover:border-surface-2 sm:text-sm"
 		>
 			{@render Content?.()}
 		</div>

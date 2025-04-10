@@ -59,8 +59,8 @@
 	};
 </script>
 
-<header class="grid w-full grid-cols-3 p-3">
-	<div class="flex items-center gap-x-1.5">Kalisi</div>
+<header class="grid w-full grid-cols-3 border-b border-surface-1 bg-well-1 p-3">
+	<div class="flex items-center gap-x-1.5 text-2xl">KALISI</div>
 	<div class="relative ml-auto flex-1 md:grow-0">
 		<PhMagnifyingGlass class="absolute top-2.5 left-2.5 text-muted-foreground" />
 		<Input
