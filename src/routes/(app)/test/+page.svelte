@@ -12,25 +12,25 @@
 
 		<!-- Add other test pages here as needed -->
 	</div>
-	<div class="flex">
-		<div class="aspect-square size-20 bg-(--color-1)">Hello</div>
-		<div class="aspect-square size-20 bg-(--color-2)">Hello</div>
-		<div class="aspect-square size-20 bg-(--color-3)">Hello</div>
-		<div class="aspect-square size-20 bg-(--color-4)">Hello</div>
-		<div class="aspect-square size-20 bg-(--color-5)">Hello</div>
-		<div class="aspect-square size-20 bg-(--color-6)">Hello</div>
-		<div class="aspect-square size-20 bg-(--color-7)">Hello</div>
-		<div class="aspect-square size-20 bg-(--color-8)">Hello</div>
-		<div class="aspect-square size-20 bg-(--color-9)">Hello</div>
-		<div class="aspect-square size-20 bg-(--color-10)">Hello</div>
-		<div class="aspect-square size-20 bg-(--color-11)">Hello</div>
-		<div class="aspect-square size-20 bg-(--color-12)">Hello</div>
-		<div class="aspect-square size-20 bg-(--color-13)">Hello</div>
-		<div class="aspect-square size-20 bg-(--color-14)">Hello</div>
-		<div class="aspect-square size-20 bg-(--color-15)">Hello</div>
+	<div class="flex gap-1 *:rounded *:p-1">
+		<div class="aspect-square size-20 bg-(--color-1) text-surface-2">1</div>
+		<div class="aspect-square size-20 bg-(--color-2) text-surface-2">2</div>
+		<div class="aspect-square size-20 bg-(--color-3) text-surface-2">3</div>
+		<div class="aspect-square size-20 bg-(--color-4) text-surface-2">4</div>
+		<div class="aspect-square size-20 bg-(--color-5)">5</div>
+		<div class="aspect-square size-20 bg-(--color-6)">6</div>
+		<div class="aspect-square size-20 bg-(--color-7)">7</div>
+		<div class="aspect-square size-20 bg-(--color-8)">8</div>
+		<div class="aspect-square size-20 bg-(--color-9)">9</div>
+		<div class="aspect-square size-20 bg-(--color-10)">10</div>
+		<div class="aspect-square size-20 bg-(--color-11)">11</div>
+		<div class="aspect-square size-20 bg-(--color-12)">13</div>
+		<div class="aspect-square size-20 bg-(--color-13)">13</div>
+		<div class="aspect-square size-20 bg-(--color-14)">14</div>
+		<div class="aspect-square size-20 bg-(--color-15)">15</div>
 		<div class="aspect-square size-20 bg-(--color-16)">16</div>
 	</div>
-	<div class="flex justify-center gap-4">
+	<div class="flex justify-center gap-2 *:rounded *:p-1">
 		<div class="aspect-square size-20 bg-(--color-max)">Max</div>
 		<div class="aspect-square size-20 bg-(--color-primary)">Primary</div>
 		<div class="aspect-square size-20 bg-(--error)">error</div>
@@ -38,9 +38,7 @@
 		<div class="aspect-square size-20 bg-(--good)">good</div>
 		<div class="aspect-square size-20 bg-(--warning)">warning</div>
 	</div>
-	<div
-		class="m-10 flex w-full items-center justify-center *:m-2 *:size-40 *:rounded *:border *:shadow-3"
-	>
+	<div class="flex justify-center gap-2 *:size-40 *:rounded-xl *:border *:p-2 *:shadow-3">
 		<div class="bg-surface-3">Surface 3</div>
 		<div class="bg-surface-2">Surface 2</div>
 		<div class="bg-surface-1">Surface 1</div>
@@ -48,7 +46,7 @@
 		<div class="bg-well-1">Well 1</div>
 		<div class="bg-well-2">Well 2</div>
 	</div>
-	<div class="m-10 flex justify-center *:m-2 *:size-40 *:rounded *:border *:bg-surface-1">
+	<div class="flex justify-center gap-2 *:size-40 *:rounded *:border *:bg-surface-1 *:p-2">
 		<div class="">Shadow 0</div>
 		<div class="shadow-1">Shadow 1</div>
 		<div class="shadow-2">Shadow 2</div>
