@@ -126,8 +126,8 @@
 	}
 </script>
 
-<Card.Root class="flex flex-1 flex-col overflow-hidden ">
-	<Card.Header class="p-3">
+<Card.Root class="flex flex-1 flex-col overflow-hidden bg-transparent ">
+	<Card.Header class="bg-surface-1 p-3">
 		<DataTableToolbar
 			{table}
 			bind:rowSelectionState
@@ -137,7 +137,7 @@
 		/>
 	</Card.Header>
 	<Separator />
-	<Card.Content class="flex-1 overflow-auto px-3 pt-0">
+	<Card.Content class="flex-1 overflow-auto px-0 py-0">
 		{#await data.products}
 			<p>Loading...</p>
 		{:then}

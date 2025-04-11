@@ -12,7 +12,7 @@
 	--color-surface-1: light-dark(var(--color-4), var(--color-12));
 	--color-surface-2: light-dark(var(--color-5), var(--color-11));
 	--color-surface-3: light-dark(var(--color-6), var(--color-10));
-	--color-ink: light-dark(var(--color-16), var(--color-1));
+	--color-ink: light-dark(var(--color-16), var(--color-3));
 	--color-ink-dim: light-dark(var(--color-12), var(--color-5));
 
 	--color-error: var(--error);
@@ -41,7 +41,7 @@
 	--color-card: var(--color-surface-1);
 	--color-card-foreground: var(--color-ink);
 	/* Default border color */
-	--color-border: var(--color-surface-2);
+	--color-border: var(--color-surface-1);
 	/* Border color for inputs such as <Input />, <Select />, <Textarea /> */
 	--color-input: var(--color-surface-2);
 	/* Primary colors for <Button /> */
