@@ -43,10 +43,8 @@
 	});
 </script>
 
-<main class="flex w-full flex-1 gap-2 overflow-hidden pr-2 pb-2">
-	<Card.Root
-		class="flex w-64 flex-col rounded-none border-0 border-r border-surface-2  bg-transparent"
-	>
+<main class="flex w-full flex-1 gap-2 overflow-hidden px-2 py-2">
+	<Card.Root class="flex w-64 flex-col border-surface-2 bg-transparent">
 		<Card.Header class="border-b p-3">
 			<Card.Title>
 				<div class="flex items-center gap-2">

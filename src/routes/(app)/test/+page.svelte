@@ -58,7 +58,14 @@
 				<span>Well 2</span>
 			</div>
 		</div>
-		<div class="m-10 size-40 rounded border bg-surface-1">Card</div>
+		<div class="m-10 flex *:m-2 *:size-40 *:rounded *:border *:bg-surface-1">
+			<div class="shadow-1">Shadow 1</div>
+			<div class="shadow-2">Shadow 2</div>
+			<div class="shadow-3">Shadow 3</div>
+			<div class="shadow-4">Shadow 4</div>
+			<div class="shadow-5">Shadow 5</div>
+			<div class="shadow-6">Shadow 6</div>
+		</div>
 	</div>
 	<!-- 	<div class="flex">
 		<div class="aspect-square size-20 bg-(--gray-0)">Hello</div>
