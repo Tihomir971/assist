@@ -6,12 +6,12 @@
 		'Nunito Sans Variable', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
 		'Segoe UI Emoji';
 	/* Open-props */
-	--color-well-2: light-dark(var(--color-1), var(--color-16));
-	--color-well-1: light-dark(var(--color-2), var(--color-15));
-	--color-surface-document: light-dark(var(--color-3), var(--color-14));
-	--color-surface-1: light-dark(var(--color-4), var(--color-13));
-	--color-surface-2: light-dark(var(--color-5), var(--color-12));
-	--color-surface-3: light-dark(var(--color-6), var(--color-11));
+	--color-well-2: light-dark(var(--color-1), var(--color-15));
+	--color-well-1: light-dark(var(--color-2), var(--color-14));
+	--color-surface-document: light-dark(var(--color-3), var(--color-13));
+	--color-surface-1: light-dark(var(--color-4), var(--color-12));
+	--color-surface-2: light-dark(var(--color-5), var(--color-11));
+	--color-surface-3: light-dark(var(--color-6), var(--color-10));
 	--color-ink: light-dark(var(--color-16), var(--color-1));
 	--color-ink-dim: light-dark(var(--color-12), var(--color-5));
 
