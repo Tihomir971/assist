@@ -6,14 +6,19 @@
 		'Nunito Sans Variable', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
 		'Segoe UI Emoji';
 	/* Open-props */
-	--color-well-2: light-dark(var(--color-6), var(--gray-15));
-	--color-well-1: light-dark(var(--color-5), var(--gray-14));
-	--color-surface-document: light-dark(var(--color-4), var(--gray-13));
-	--color-surface-1: light-dark(white, var(--gray-12));
-	--color-surface-2: light-dark(var(--color-1), var(--gray-11));
-	--color-surface-3: light-dark(var(--color-3), var(--gray-10));
-	--color-ink: light-dark(var(--color-16), var(--gray-0));
-	--color-ink-dim: light-dark(var(--color-12), var(--gray-3));
+	--color-well-2: light-dark(var(--color-1), var(--color-16));
+	--color-well-1: light-dark(var(--color-2), var(--color-15));
+	--color-surface-document: light-dark(var(--color-3), var(--color-14));
+	--color-surface-1: light-dark(var(--color-4), var(--color-13));
+	--color-surface-2: light-dark(var(--color-5), var(--color-12));
+	--color-surface-3: light-dark(var(--color-6), var(--color-11));
+	--color-ink: light-dark(var(--color-16), var(--color-1));
+	--color-ink-dim: light-dark(var(--color-12), var(--color-5));
+
+	--color-error: var(--error);
+	--color-warning: var(--warning);
+	--color-warning: var(--warning);
+	--color-warning: var(--warning);
 
 	--shadow-1: var(--shadow-1);
 	--shadow-2: var(--shadow-2);
@@ -36,21 +41,21 @@
 	--color-card: var(--color-surface-1);
 	--color-card-foreground: var(--color-ink);
 	/* Default border color */
-	--color-border: var(--color-surface-3);
+	--color-border: var(--color-surface-2);
 	/* Border color for inputs such as <Input />, <Select />, <Textarea /> */
-	--color-input: var(--color-surface-3);
+	--color-input: var(--color-surface-2);
 	/* Primary colors for <Button /> */
 	/* --color-primary: light-dark(var(--color-indigo-300), hsl(var(--indigo-9-hsl))); */
 	--color-primary: var(--primary);
 	--color-primary-foreground: var(--color-ink);
 	/* Secondary colors for <Button /> */
-	--color-secondary: light-dark(var(--color-red-100), var(--color-red-900));
+	--color-secondary: var(--color-warning);
 	--color-secondary-foreground: var(--color-ink);
 	/* Used for accents such as hover effects on <DropdownMenuItem>, <SelectItem>...etc */
 	--color-accent: var(--color-surface-1);
 	--color-accent-foreground: var(--color-ink);
 	/* Used for destructive actions such as <Button variant='destructive'> */
-	--color-destructive: var(--error);
+	--color-destructive: var(--color-error);
 	--color-destructive-foreground: var(--color-ink);
 	/* Used for focus ring */
 	--color-ring: var(--primary);

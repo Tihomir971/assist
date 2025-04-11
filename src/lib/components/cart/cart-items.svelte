@@ -43,20 +43,20 @@
 </script>
 
 <div class="flex h-full flex-col">
-	<div class="mb-2 flex items-center gap-2">
-		<Button variant="destructive" onclick={clearCart}>Clear All</Button>
-		<Button onclick={() => (showVendorDialog = true)}>
-			<PhMicrosoftExcelLogo />
-			Export to Excel
-		</Button>
-	</div>
-	<div class="h-full overflow-y-auto pr-2">
-		{#await cartService.getCartItems() then cartItems}
-			{#if cartItems.length === 0}
-				<div class="flex h-32 items-center justify-center text-muted-foreground">
-					Your cart is empty
-				</div>
-			{:else}
+	{#await cartService.getCartItems() then cartItems}
+		{#if cartItems.length === 0}
+			<div class="flex h-32 items-center justify-center text-muted-foreground">
+				Your cart is empty
+			</div>
+		{:else}
+			<div class="mb-2 flex items-center justify-end gap-2">
+				<Button variant="destructive" onclick={clearCart}>Clear All</Button>
+				<Button onclick={() => (showVendorDialog = true)}>
+					<PhMicrosoftExcelLogo />
+					Export to Excel
+				</Button>
+			</div>
+			<div class="h-full overflow-y-auto pr-2">
 				<Table.Root>
 					<Table.Header>
 						<Table.Row>
@@ -100,11 +100,11 @@
 						{/each}
 					</Table.Body>
 				</Table.Root>
-			{/if}
-		{:catch error}
-			<p>Error: {error.message}</p>
-		{/await}
-	</div>
-
-	<ExportDialog {supabase} open={showVendorDialog} />
+			</div>
+		{/if}
+	{:catch error}
+		<p>Error: {error.message}</p>
+	{/await}
 </div>
+
+<ExportDialog {supabase} open={showVendorDialog} />

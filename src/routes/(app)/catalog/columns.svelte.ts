@@ -75,7 +75,7 @@ const rightAlignSnippet = createRawSnippet<[RawSnippetParams]>((getValue) => {
 	function refreshDisplay(): string {
 		const { value, isDanger = false, action } = getValue();
 
-		const className = isDanger ? 'text-right text-pink-700' : 'text-right';
+		const className = isDanger ? 'text-right text-warning' : 'text-right';
 		const dotClassName = action
 			? 'inline-block w-1.5 h-1.5 bg-pink-700 rounded-full mr-1  align-middle'
 			: '';

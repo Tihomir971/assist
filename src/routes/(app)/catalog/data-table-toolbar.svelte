@@ -127,7 +127,7 @@
 			goto(newUrl);
 		}}
 	>
-		<Select.Trigger class={buttonVariants({ variant: 'outline', class: 'w-fit text-pink-700' })}>
+		<Select.Trigger class={buttonVariants({ variant: 'outline', class: 'w-fit text-warning' })}>
 			{triggerReportContent}
 		</Select.Trigger>
 		<Select.Content>

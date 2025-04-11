@@ -53,7 +53,7 @@
 		</div>
 
 		<div
-			class="inline-flex h-10 w-full truncate rounded-sm border bg-surface-document px-8 text-base ring-primary transition-colors placeholder:text-muted-foreground focus-within:border-primary focus-within:ring hover:border-surface-2 sm:text-sm"
+			class="inline-flex h-10 w-full truncate rounded-sm border bg-surface-document px-8 text-base ring-primary transition-colors placeholder:text-muted-foreground focus-within:border-primary focus-within:ring hover:border-surface-3 sm:text-sm"
 		>
 			{@render Content?.()}
 		</div>

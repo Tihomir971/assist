@@ -1,23 +1,30 @@
-@import './oklch-hues.min.css';
-@import './colors-oklch.min.css';
-@import './gray-oklch.min.css';
-@import './shadows.css';
+/* @import './oklch-hues.min.css'; */
+/* @import './colors-oklch.min.css'; */
+/* @import './gray-oklch.min.css'; */
+/* @import './beta/shadows.css'; */
+@import './open-props/css/color/hues.oklch.css';
+@import './open-props/css/color/palette.oklch.css';
+@import './open-props/css/media-queries.css';
+@import './open-props/css/shadows.css';
 
 :root {
 	color-scheme: light dark;
+	--palette-hue: var(--oklch-indigo);
+	--palette-hue-rotate-by: -5;
+	--palette-chroma: 0.1;
 
-	--gray-hue: 240;
-	--gray-chroma: 0.02;
-
+	--color-max: oklch(70% 100% var(--palette-hue));
+	/* --primary: oklch(70% 100% var(--palette-hue)); */
+	/* --primary: oklch(from var(--color-max) l c var(--oklch-red)); */
 	/* Primary */
-	--primary: oklch(50% 40% var(--hue-indigo));
+	--primary: oklch(50% 40% var(--palette-hue));
 	--primary-light: oklch(from var(--primary) calc(l * 1.25) c h);
 	--primary-dark: oklch(from var(--primary) calc(l * 0.75) c h);
 	--primary-contrast: var(--gray-1);
 
 	/* Highlight colors */
-	--error: oklch(from var(--primary) l c var(--hue-red));
-	--ok: oklch(from var(--primary) l c var(--hue-blue));
-	--good: oklch(from var(--primary) l c var(--hue-green));
-	--warning: oklch(from var(--primary) l c var(--hue-orange));
+	--error: oklch(from var(--primary) l c var(--oklch-red));
+	--ok: oklch(from var(--primary) l c var(--oklch-blue));
+	--good: oklch(from var(--primary) l c var(--oklch-green));
+	--warning: oklch(from var(--primary) l 0.5 var(--oklch-yellow));
 }

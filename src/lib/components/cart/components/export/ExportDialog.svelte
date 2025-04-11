@@ -6,16 +6,15 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import type { Database } from '$lib/types/supabase/database.types';
 	import { getCartContext } from '../../ctx.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 
 	interface Props {
 		supabase: SupabaseClient<Database>;
 		open: boolean;
 	}
 
-	let { supabase, open }: Props = $props();
+	let { supabase, open = $bindable() }: Props = $props();
 	const cartService = getCartContext();
-
-	let showVendorDialog = $state(open);
 
 	let selectReportValue = $state<string | undefined>(undefined);
 	const selectReportOptions = [
@@ -39,7 +38,7 @@
 		const cartItems = await cartService.getCartItems();
 		const success = await processExport(cartItems, vendors, selectReportValue, supabase);
 		if (success) {
-			showVendorDialog = false;
+			open = false;
 			vendors = vendors.map((v) => ({ ...v, selected: false }));
 		}
 	}
@@ -76,8 +75,8 @@
 			</div>
 		</div>
 		<Dialog.Footer>
-			<button onclick={() => (showVendorDialog = false)}>Cancel</button>
-			<button onclick={handleExport}>Export</button>
+			<Button variant="secondary" onclick={() => (open = false)}>Cancel</Button>
+			<Button variant="default" onclick={handleExport}>Export</Button>
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>
