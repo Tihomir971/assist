@@ -50,4 +50,5 @@
 	Content={textContent}
 	Action={emptyActions}
 	id={restProps.id}
+	{...restProps}
 />

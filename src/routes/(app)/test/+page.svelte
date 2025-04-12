@@ -38,7 +38,9 @@
 		<div class="aspect-square size-20 bg-(--good)">good</div>
 		<div class="aspect-square size-20 bg-(--warning)">warning</div>
 	</div>
-	<div class="flex justify-center gap-2 *:size-40 *:rounded-xl *:border *:p-2 *:shadow-3">
+	<div
+		class="flex justify-center gap-2 *:size-40 *:rounded-xl *:border *:border-surface-2 *:p-2 *:shadow-3"
+	>
 		<div class="bg-surface-3">Surface 3</div>
 		<div class="bg-surface-2">Surface 2</div>
 		<div class="bg-surface-1">Surface 1</div>
@@ -46,7 +48,9 @@
 		<div class="bg-well-1">Well 1</div>
 		<div class="bg-well-2">Well 2</div>
 	</div>
-	<div class="flex justify-center gap-2 *:size-40 *:rounded *:border *:bg-surface-1 *:p-2">
+	<div
+		class="flex justify-center gap-2 *:size-40 *:rounded *:border *:border-surface-2 *:bg-surface-1 *:p-2"
+	>
 		<div class="">Shadow 0</div>
 		<div class="shadow-1">Shadow 1</div>
 		<div class="shadow-2">Shadow 2</div>

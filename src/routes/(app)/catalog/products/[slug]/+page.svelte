@@ -6,6 +6,8 @@
 	import PhDotsThree from '~icons/ph/dots-three';
 	import PhPackage from '~icons/ph/package';
 
+	import * as Tabs from '$lib/components/ui/tabs/index.js';
+
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
@@ -55,14 +57,6 @@
 		isTainted: isProductTainted
 	} = productForm;
 
-	function handleNetQuantityInput(event: Event) {
-		const input = event.target as HTMLInputElement;
-		const value = parseFloat(input.value);
-		if (!isNaN(value)) {
-			$formProduct.net_quantity = value;
-		}
-	}
-
 	let isBarcodeDrawerOpen: boolean = $state(false);
 
 	let selectedUomLabel = $derived(
@@ -80,8 +74,8 @@
 <div class="mx-auto w-full max-w-[var(--breakpoint-xl)]">
 	<Card.Root class="mb-4">
 		<form method="post" action="?/product" use:enhanceProduct id="product-form">
-			<Card.Header class="border-b pb-6">
-				<Card.Title class="mb-6 flex items-center justify-between">
+			<Card.Header class="border-b border-surface-2 pb-6">
+				<Card.Title class="mb-2 flex items-center justify-between">
 					<div>Product details</div>
 					<p class="text-sm text-muted-foreground">
 						ID: {$formProduct.id}
@@ -109,119 +103,111 @@
 			</Card.Header>
 			<Card.Content>
 				<div class="mb-4 flex flex-wrap gap-4">
-					<div class="mb-4 flex flex-wrap gap-4">
-						<Badge
-							variant={$formProduct.is_active ? 'default' : 'outline'}
-							onclick={() => {
-								$formProduct.is_active = !$formProduct.is_active;
-							}}
-						>
-							{$formProduct.is_active ? 'Active' : 'Inactive'}
-						</Badge>
-						<Badge
-							variant={$formProduct.is_self_service ? 'default' : 'outline'}
-							onclick={() => {
-								$formProduct.is_self_service = !$formProduct.is_self_service;
-							}}
-						>
-							{$formProduct.is_self_service ? 'Self Service' : 'Not Self Service'}
-						</Badge>
-						<Badge
-							variant={$formProduct.discontinued ? 'default' : 'outline'}
-							onclick={() => {
-								$formProduct.discontinued = !$formProduct.discontinued;
-							}}
-						>
-							{$formProduct.discontinued ? 'Discontinued' : 'Not Discontinued'}
-						</Badge>
-					</div>
+					<Badge
+						variant={$formProduct.is_active ? 'default' : 'outline'}
+						onclick={() => {
+							$formProduct.is_active = !$formProduct.is_active;
+						}}
+					>
+						{$formProduct.is_active ? 'Active' : 'Inactive'}
+					</Badge>
+					<Badge
+						variant={$formProduct.is_self_service ? 'default' : 'outline'}
+						onclick={() => {
+							$formProduct.is_self_service = !$formProduct.is_self_service;
+						}}
+					>
+						{$formProduct.is_self_service ? 'Self Service' : 'Not Self Service'}
+					</Badge>
+					<Badge
+						variant={$formProduct.discontinued ? 'default' : 'outline'}
+						onclick={() => {
+							$formProduct.discontinued = !$formProduct.discontinued;
+						}}
+					>
+						{$formProduct.discontinued ? 'Discontinued' : 'Not Discontinued'}
+					</Badge>
+				</div>
+				<div class="grid grid-cols-4 gap-4">
+					<Form.Field form={productForm} name="sku">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>SKU</Form.Label>
+								<MyTextInput {...props} bind:value={$formProduct.sku} readonly />
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field form={productForm} name="mpn">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>MPN</Form.Label>
+								<MyTextInput {...props} autocomplete="off" bind:value={$formProduct.mpn} />
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field form={productForm} name="c_uom_id">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>UoM</Form.Label>
+								<Select.Root
+									type="single"
+									value={$formProduct.c_uom_id?.toString()}
+									name={props.name}
+									onValueChange={(v) => {
+										$formProduct.c_uom_id = Number.parseInt(v);
+									}}
+								>
+									<Select.Trigger {...props}>
+										{selectedUomLabel}
+									</Select.Trigger>
+									<Select.Content>
+										{#if data.uom}
+											{#each data.uom as v}
+												<Select.Item value={v.value} label={v.label} />
+											{/each}
+										{/if}
+									</Select.Content>
+								</Select.Root>
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+
+					<Form.Field form={productForm} name="c_taxcategory_id">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Tax</Form.Label>
+								<Select.Root
+									type="single"
+									value={$formProduct.c_taxcategory_id?.toString()}
+									name={props.name}
+									onValueChange={(v) => {
+										$formProduct.c_taxcategory_id = Number.parseInt(v);
+									}}
+								>
+									<Select.Trigger {...props}>
+										{selectedTaxLabel}
+									</Select.Trigger>
+									<Select.Content>
+										{#if data.tax}
+											{#each data.tax as v}
+												<Select.Item value={v.value} label={v.label} />
+											{/each}
+										{/if}
+									</Select.Content>
+								</Select.Root>
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
 				</div>
 				<div class="grid grid-cols-1 divide-x *:px-3 md:grid-cols-[2fr_2fr_1fr]">
 					<div>
 						<h3 class="mb-2 pb-2 text-lg font-semibold">Basic Information</h3>
-						<div class="grid grid-cols-2 gap-4">
-							<Form.Field form={productForm} name="sku">
-								<Form.Control>
-									{#snippet children({ props })}
-										<Form.Label>SKU</Form.Label>
-										<MyTextInput {...props} bind:value={$formProduct.sku} readonly />
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-							<Form.Field form={productForm} name="mpn">
-								<Form.Control>
-									{#snippet children({ props })}
-										<Form.Label>MPN</Form.Label>
-										<MyTextInput {...props} autocomplete="off" bind:value={$formProduct.mpn} />
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-						</div>
-						<div class="grid grid-cols-2 gap-4">
-							<Form.Field form={productForm} name="c_uom_id">
-								<Form.Control>
-									{#snippet children({ props })}
-										<Form.Label>UoM</Form.Label>
-										<Select.Root
-											type="single"
-											value={$formProduct.c_uom_id?.toString()}
-											name={props.name}
-											onValueChange={(v) => {
-												$formProduct.c_uom_id = Number.parseInt(v);
-											}}
-										>
-											<Select.Trigger {...props}>
-												{selectedUomLabel}
-											</Select.Trigger>
-											<Select.Content>
-												{#if data.uom}
-													{#each data.uom as v}
-														<Select.Item value={v.value} label={v.label} />
-													{/each}
-												{/if}
-											</Select.Content>
-										</Select.Root>
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-							<!-- <MyCombobox
-								bind:value={$formProduct.c_taxcategory_id}
-								items={data.tax}
-								name="c_taxcategory_id"
-								placeholder="Select a fruit..."
-								labelText="Fruit (Bits-UI)"
-							/> -->
-							<Form.Field form={productForm} name="c_taxcategory_id">
-								<Form.Control>
-									{#snippet children({ props })}
-										<Form.Label>Tax</Form.Label>
-										<Select.Root
-											type="single"
-											value={$formProduct.c_taxcategory_id?.toString()}
-											name={props.name}
-											onValueChange={(v) => {
-												$formProduct.c_taxcategory_id = Number.parseInt(v);
-											}}
-										>
-											<Select.Trigger {...props}>
-												{selectedTaxLabel}
-											</Select.Trigger>
-											<Select.Content>
-												{#if data.tax}
-													{#each data.tax as v}
-														<Select.Item value={v.value} label={v.label} />
-													{/each}
-												{/if}
-											</Select.Content>
-										</Select.Root>
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-						</div>
+
+						<div class="grid grid-cols-2 gap-4"></div>
 
 						<FormCombobox
 							form={productForm}
@@ -315,7 +301,7 @@
 						</div>
 						<Table.Root class="w-full">
 							<Table.Header>
-								<Table.Row>
+								<Table.Row class="border-surface-2">
 									<Table.Head>Package</Table.Head>
 									<Table.Head>Qty.</Table.Head>
 									<Table.Head>Barcode</Table.Head>
@@ -339,45 +325,63 @@
 	</Card.Root>
 	<!-- Vendors -->
 	{#if $formProduct.id}
-		<VendorsCard form={data.formPurchasing} partners={data.partners} productId={data.productId} />
-
-		<Card.Root class="mb-4">
-			<Card.Header>
-				<Card.Title>Stock</Card.Title>
-			</Card.Header>
-			<Card.Content>
-				<StorageOnHandCard
-					form={data.formStorageOnHand}
+		<Tabs.Root value="vendors" class="w-full">
+			<Tabs.List class="grid w-full grid-cols-4">
+				<Tabs.Trigger value="vendors">Vendors</Tabs.Trigger>
+				<Tabs.Trigger value="stock">Stock</Tabs.Trigger>
+				<Tabs.Trigger value="replenish">Replenish</Tabs.Trigger>
+				<Tabs.Trigger value="sales-chart">Sales Chart</Tabs.Trigger>
+			</Tabs.List>
+			<Tabs.Content value="vendors">
+				<VendorsCard
+					form={data.formPurchasing}
+					partners={data.partners}
 					productId={data.productId}
-					warehouses={data.warehouses}
 				/>
-			</Card.Content>
-		</Card.Root>
-
-		<Card.Root class="mb-4">
-			<Card.Header>
-				<Card.Title>Replenish</Card.Title>
-				<Card.Description>Manage warehouse replenishment rules</Card.Description>
-			</Card.Header>
-			<Card.Content>
-				{#if $formProduct.id}
-					<ReplenishCard
-						form={data.formReplenish}
-						warehouses={data.warehouses}
-						productId={$formProduct.id}
-					/>
-				{/if}
-			</Card.Content>
-		</Card.Root>
-		<Card.Root class="mb-4">
-			<Card.Header>
-				<Card.Title>Sales Chart</Card.Title>
-				<Card.Description>Monthly Sales Comparison</Card.Description>
-			</Card.Header>
-			<Card.Content>
-				<ChartVisualization data={data.salesByWeeks} />
-			</Card.Content>
-		</Card.Root>
+			</Tabs.Content>
+			<Tabs.Content value="stock">
+				<Card.Root>
+					<Card.Header>
+						<Card.Title>Stock</Card.Title>
+					</Card.Header>
+					<Card.Content>
+						<StorageOnHandCard
+							form={data.formStorageOnHand}
+							productId={data.productId}
+							warehouses={data.warehouses}
+						/>
+					</Card.Content>
+				</Card.Root>
+			</Tabs.Content>
+			<Tabs.Content value="replenish">
+				<Card.Root>
+					<Card.Header>
+						<Card.Title>Replenish</Card.Title>
+						<Card.Description>Manage warehouse replenishment rules</Card.Description>
+					</Card.Header>
+					<Card.Content>
+						{#if $formProduct.id}
+							<ReplenishCard
+								form={data.formReplenish}
+								warehouses={data.warehouses}
+								productId={$formProduct.id}
+							/>
+						{/if}
+					</Card.Content>
+				</Card.Root>
+			</Tabs.Content>
+			<Tabs.Content value="sales-chart">
+				<Card.Root>
+					<Card.Header>
+						<Card.Title>Sales Chart</Card.Title>
+						<Card.Description>Monthly Sales Comparison</Card.Description>
+					</Card.Header>
+					<Card.Content>
+						<ChartVisualization data={data.salesByWeeks} />
+					</Card.Content>
+				</Card.Root>
+			</Tabs.Content>
+		</Tabs.Root>
 
 		<DrawerBarcodes
 			bind:isBarcodeDrawerOpen

@@ -2,7 +2,7 @@
 	import type { HTMLInputAttributes } from 'svelte/elements';
 	import type { Snippet } from 'svelte';
 	import { cn } from '$lib/utils.js';
-
+	import PhPencilSimpleSlash from '~icons/ph/pencil-simple-slash';
 	type Props = HTMLInputAttributes & {
 		ref?: HTMLInputElement | null;
 		class?: string;
@@ -35,10 +35,7 @@
 <!-- Container div that handles the inline layout -->
 <div class={cn('w-full', inline ? 'flex items-center gap-3' : '')}>
 	{#if labelText}
-		<label
-			for={inputId}
-			class={cn(' text-sm text-muted-foreground ', inline ? 'min-w-[120px] shrink-0' : 'mb-2')}
-		>
+		<label for={inputId} class={cn('', inline ? 'min-w-[120px] shrink-0' : 'mb-1')}>
 			{labelText}
 		</label>
 	{/if}
@@ -53,13 +50,17 @@
 		</div>
 
 		<div
-			class="inline-flex h-10 w-full truncate rounded-sm border bg-surface-document px-8 text-base ring-primary transition-colors placeholder:text-muted-foreground focus-within:border-primary focus-within:ring hover:border-surface-3 sm:text-sm"
+			class="inline-flex h-10 w-full truncate rounded-sm border border-surface-2 bg-surface-document px-8 text-base ring-primary transition-colors placeholder:text-muted-foreground focus-within:border-primary focus-within:ring hover:border-surface-3 sm:text-sm"
 		>
 			{@render Content?.()}
 		</div>
-		{#if Action}
+		{#if Action || restProps.readonly}
 			<div class="absolute end-2 top-1/2 flex -translate-y-1/2 items-center text-muted-foreground">
-				{@render Action()}
+				{#if restProps.readonly}
+					<PhPencilSimpleSlash />
+				{:else if Action}
+					{@render Action()}
+				{/if}
 			</div>
 		{/if}
 

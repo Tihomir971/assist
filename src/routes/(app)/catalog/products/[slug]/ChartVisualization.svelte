@@ -180,36 +180,59 @@
 		chartInstance.setOption(option);
 	}
 
-	// Initialize chart when data changes
+	// Re-initialize chart options when data changes, only if chart exists
 	$effect(() => {
-		if (chartInstance) {
-			initializeChart();
+		if (chartInstance && data?.products) {
+			console.log('Data changed, re-initializing chart options');
+			initializeChart(); // Re-calculates options based on new data and applies them
 		}
 	});
 
 	let chartInstance: echarts.ECharts | null = null;
 	let chartContainer: HTMLDivElement;
 
-	onMount(() => {
-		initializeChart();
+	let chartWidth = $state(0);
+	let chartHeight = $state(0);
 
-		// Handle window resize
-		const resizeHandler = () => {
-			console.log('Window resized');
-			if (chartInstance) {
+	// Effect for handling initialization and resize based on container dimensions
+	$effect(() => {
+		const width = chartWidth;
+		const height = chartHeight;
+
+		if (width > 0 && height > 0) {
+			if (!chartInstance && chartContainer) {
+				// Initialize chart only when container has dimensions and chart is not already initialized
+				console.log(`Container dimensions available: ${width}x${height}, initializing chart...`);
+				initializeChart();
+			} else if (chartInstance) {
+				// Resize existing chart instance
+				console.log(`Chart container resized: ${width}x${height}, resizing chart...`);
 				chartInstance.resize();
 			}
-		};
-		window.addEventListener('resize', resizeHandler);
+		} else if (chartInstance) {
+			// Optional: Log when dimensions become zero (e.g., tab hidden)
+			// console.log(`Chart container dimensions became zero.`);
+		}
+	});
 
+	onMount(() => {
+		// Chart initialization is now handled by the $effect watching dimensions
 		// Cleanup on destroy
 		return () => {
-			window.removeEventListener('resize', resizeHandler);
 			if (chartInstance) {
 				chartInstance.dispose();
+				chartInstance = null;
 			}
 		};
 	});
 </script>
 
-<div bind:this={chartContainer} style="width: 100%; height: 500px;"></div>
+<div
+	bind:this={chartContainer}
+	bind:clientWidth={chartWidth}
+	bind:clientHeight={chartHeight}
+	style="width: 100%; height: 500px;"
+></div>
+
+<!-- Debug output -->
+<!-- <p>Container Size: {chartWidth} x {chartHeight}</p> -->
