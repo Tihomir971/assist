@@ -1,4 +1,4 @@
 // import MyCurrencyInput from './currency-input.svelte';
-import MyTabsMelt from './my-tabs-melt.svelte';
+// import MyTabsMelt from './my-tabs-melt.svelte';
 
-export { MyTabsMelt as MyTabsMelt };
+// export { MyTabsMelt as MyTabsMelt };
