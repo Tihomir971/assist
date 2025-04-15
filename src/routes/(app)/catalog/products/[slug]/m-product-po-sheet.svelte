@@ -1,5 +1,10 @@
 <script lang="ts">
-	import { MyComboboxMelt, MyNumberInput, MyTextInput } from '$lib/components/my/input/index.js';
+	import {
+		MyComboboxMelt,
+		MyNumberInput,
+		MyTextInput,
+		MyUrlInput
+	} from '$lib/components/my/input/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { MProductPoInsertSchema } from './schema.js';
@@ -45,11 +50,7 @@
 				bind:value={$formData.manufacturer}
 				labelText="manufacturer"
 			/>
-			<MyNumberInput
-				name="c_bpartner_id"
-				bind:value={$formData.c_bpartner_id}
-				labelText="c_bpartner_id"
-			/>
+
 			<MySelectMelt
 				name="c_bpartner_id"
 				bind:value={$formData.c_bpartner_id}
@@ -67,6 +68,7 @@
 			/>
 			<MyTextInput value={$formData.created_at} labelText="created_at" />
 			<MyTextInput value={$formData.updated_at} labelText="updated_at" />
+			<MyUrlInput value={$formData.url} labelText="url" />
 			<MyTextInput name="valid_from" bind:value={$formData.valid_from} labelText="valid_from" />
 			<MyTextInput name="valid_to" bind:value={$formData.valid_to} labelText="valid_to" />
 			<Sheet.Footer class="flex gap-2 sm:flex-col">
