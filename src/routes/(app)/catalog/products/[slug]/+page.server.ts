@@ -288,52 +288,38 @@ export const actions = {
 		return { form };
 	},
 
-	vendors: async ({ request, locals: { supabase } }) => {
+	mProductPoUpsert: async ({ request, locals: { supabase } }) => {
 		console.log('Hello Vendors');
 
-		const form = await superValidate(request, zod(mProductPoInsertSchemaАrray));
+		const form = await superValidate(request, zod(mProductPoInsertSchema));
 		if (!form.valid) return fail(400, { form });
 
 		// Create new array without created and updated fields
-		const purchases = form.data.purchases.map(({ ...purchase }) => purchase);
+		// const purchases = form.data.purchases.map(({ ...purchase }) => purchase);
+		console.log('form.data', JSON.stringify(form.data, null, 2));
 
-		try {
-			// Separate records into updates and inserts
-			const updatesToProcess = purchases.filter((r) => r.id !== undefined);
-			const insertsToProcess = purchases.filter((r) => r.id === undefined);
-
-			// Perform updates
-			if (updatesToProcess.length > 0) {
-				// Use Promise.all to update multiple records concurrently
-				const updatePromises = updatesToProcess.map((r) =>
-					supabase.from('m_product_po').update(r).eq('id', r.id!)
-				);
-
-				const updateResults = await Promise.all(updatePromises);
-
-				// Check for any errors in the updates
-				const updateErrors = updateResults.filter((result) => result.error);
-				if (updateErrors.length > 0) {
-					throw updateErrors[0].error;
-				}
+		if (form.data.id) {
+			// UPDATE m_product_po
+			const { id, ...updateData } = form.data;
+			console.log('id, ...rest', id, JSON.stringify(updateData, null, 2));
+			const { error } = await supabase.from('m_product_po').update(updateData).eq('id', id);
+			if (error) {
+				console.log('error', error);
+				return fail(500, {
+					form,
+					message: error.message
+				});
 			}
-
-			// Perform inserts
-			if (insertsToProcess.length > 0) {
-				const { error: insertError } = await supabase.from('m_product_po').insert(
-					insertsToProcess.map((r) => ({
-						...r
-					}))
-				);
-
-				if (insertError) throw insertError;
+		} else {
+			// INSERT m_product_po
+			const { error } = await supabase.from('m_product_po').insert(form.data);
+			if (error) {
+				console.log('error', error);
+				return fail(500, {
+					form,
+					message: error.message
+				});
 			}
-		} catch (error) {
-			console.error('Vendor update error:', error);
-			return fail(500, {
-				form,
-				error: error instanceof Error ? error.message : 'Unknown error occurred'
-			});
 		}
 
 		return { form };

@@ -14,7 +14,7 @@
 	// Components
 	import ProductPoSheet from './m-product-po-sheet.svelte';
 	let isProductPoSheetOpen = $state(false);
-	$inspect(isProductPoSheetOpen, 'isProductPoSheetOpen');
+
 	type Props = {
 		form: SuperValidated<MProductPoInsertSchema>;
 		productId: number;

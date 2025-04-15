@@ -6,7 +6,6 @@
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { loginSchema, type LoginSchema } from './schema';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { redirect } from '@sveltejs/kit';
 
 	export let data: SuperValidated<Infer<LoginSchema>>;
 
@@ -16,7 +15,7 @@
 	const { form: formData, enhance } = form;
 </script>
 
-<Card.Root class="mx-auto max-w-sm">
+<Card.Root class="mx-auto max-w-sm shadow-4">
 	<Card.Header>
 		<Card.Title class="text-2xl">Login</Card.Title>
 		<Card.Description>Enter your email and password below to login to your account</Card.Description

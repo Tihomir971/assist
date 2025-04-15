@@ -4,8 +4,8 @@
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { MProductPoInsertSchema } from './schema.js';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
-	import { map } from 'zod';
 	import { MySelectMelt } from '$lib/components/my/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 
 	type Props = {
 		isSheetOpen: boolean;
@@ -17,28 +17,41 @@
 	const { form: formData, enhance, errors, constraints } = superForm(form);
 	if (data) {
 		$formData = { ...data };
+		console.log('$fromData', $formData);
 	}
 </script>
 
 <Sheet.Root bind:open={isSheetOpen}>
 	<Sheet.Content class="overflow-y-auto">
-		<Sheet.Header>
-			<Sheet.Title>Are you sure absolutely sure?</Sheet.Title>
-			<Sheet.Description>
-				This action cannot be undone. This will permanently delete your account and remove your data
-				from our servers.
-			</Sheet.Description>
-		</Sheet.Header>
-		<form method="post" use:enhance>
+		<form method="post" action="?/mProductPoUpsert" use:enhance>
+			<Sheet.Header>
+				<Sheet.Title>Are you sure absolutely sure?</Sheet.Title>
+				<Sheet.Description>
+					This action cannot be undone. This will permanently delete your account and remove your
+					data from our servers.
+				</Sheet.Description>
+			</Sheet.Header>
 			<!-- <MyNumberInput value={$formData.id} labelText="ID" /> -->
+			<input value={$formData.id} name="id" hidden />
+			<input value={$formData.m_product_id} name="m_product_id" hidden />
 			<MyTextInput
+				name="vendorproductno"
 				bind:value={$formData.vendorproductno}
 				labelText="Vendor PN"
 				required={$constraints?.vendorproductno?.required}
 			/>
-			<MyTextInput bind:value={$formData.manufacturer} labelText="manufacturer" />
-			<MyNumberInput bind:value={$formData.c_bpartner_id} labelText="c_bpartner_id" />
+			<MyTextInput
+				name="manufacturer"
+				bind:value={$formData.manufacturer}
+				labelText="manufacturer"
+			/>
+			<MyNumberInput
+				name="c_bpartner_id"
+				bind:value={$formData.c_bpartner_id}
+				labelText="c_bpartner_id"
+			/>
 			<MySelectMelt
+				name="c_bpartner_id"
 				bind:value={$formData.c_bpartner_id}
 				labelText="c_bpartner_id"
 				options={partners}
@@ -46,14 +59,20 @@
 				required={$constraints?.c_bpartner_id?.required}
 			/>
 			<!-- <MyComboboxMelt /> -->
-			<MyNumberInput bind:value={$formData.pricelist} step={0.01} labelText="pricelist" />
-			<MyTextInput bind:value={$formData.created_at} labelText="created_at" />
-			<MyTextInput bind:value={$formData.updated_at} labelText="updated_at" />
-			<MyTextInput bind:value={$formData.valid_from} labelText="valid_from" />
-			<MyTextInput bind:value={$formData.valid_to} labelText="valid_to" />
+			<MyNumberInput
+				name="pricelist"
+				bind:value={$formData.pricelist}
+				step={0.01}
+				labelText="pricelist"
+			/>
+			<MyTextInput value={$formData.created_at} labelText="created_at" />
+			<MyTextInput value={$formData.updated_at} labelText="updated_at" />
+			<MyTextInput name="valid_from" bind:value={$formData.valid_from} labelText="valid_from" />
+			<MyTextInput name="valid_to" bind:value={$formData.valid_to} labelText="valid_to" />
+			<Sheet.Footer class="flex gap-2 sm:flex-col">
+				<Button type="submit" variant="default" class="w-full">Submit</Button>
+				<SuperDebug data={formData} />
+			</Sheet.Footer>
 		</form>
-		<Sheet.Footer>
-			<SuperDebug data={formData} />
-		</Sheet.Footer>
 	</Sheet.Content>
 </Sheet.Root>
