@@ -10,6 +10,7 @@
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { attributeTypeSchema } from '$lib/types/supabase/supabase-zod-schemas';
 	import type { Enums } from '$lib/types/supabase/database.helper.js';
+	import SuperDebug from 'sveltekit-superforms';
 
 	const { data } = $props();
 
@@ -260,6 +261,7 @@
 					<Button type="submit">Save Changes</Button>
 				</div>
 			</form>
+			<SuperDebug data={form} />
 		</Card.Content>
 	</Card.Root>
 </div>

@@ -1,4 +1,4 @@
-// import MyCurrencyInput from './currency-input.svelte';
+import MySelectMelt from './select/select-melt-builder.svelte';
 // import MyTabsMelt from './my-tabs-melt.svelte';
 
-// export { MyTabsMelt as MyTabsMelt };
+export { MySelectMelt as MySelectMelt };

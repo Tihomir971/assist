@@ -812,30 +812,6 @@ export type Database = {
         }
         Relationships: []
       }
-      crud_history: {
-        Row: {
-          changed_data: string
-          created_at: string
-          id: number
-          sku: string
-          status: boolean
-        }
-        Insert: {
-          changed_data: string
-          created_at?: string
-          id?: number
-          sku: string
-          status?: boolean
-        }
-        Update: {
-          changed_data?: string
-          created_at?: string
-          id?: number
-          sku?: string
-          status?: boolean
-        }
-        Relationships: []
-      }
       m_attribute: {
         Row: {
           attribute_group_id: number

@@ -27,7 +27,7 @@
 </script>
 
 <label for={combobox.ids.input}>Favorite Character</label>
-<input {...combobox.input} name="hello" />
+<input {...combobox.input} name="hello" hidden />
 <input value={selectedLabel} />
 <button {...combobox.trigger}>open</button>
 <div {...combobox.content}>

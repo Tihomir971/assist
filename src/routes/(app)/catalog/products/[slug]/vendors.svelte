@@ -2,22 +2,25 @@
 	import { formatDateTime, formatNumber } from '$lib/style/locale';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import type { MProductPoInsertSchema, МProductPoInsertSchemaАrray } from './schema';
+
 	import { toast } from 'svelte-sonner';
 	// UI Elements
+	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import * as Card from '$lib/components/ui/card/index.js';
 	// Icons
 	import PhDotsThreeBold from '~icons/ph/dots-three-bold';
 	import PhArrowSquareOut from '~icons/ph/arrow-square-out';
 	// Components
-	import CardVendorsSheet from './vendors-sheet.svelte';
-
+	import ProductPoSheet from './m-product-po-sheet.svelte';
+	let isProductPoSheetOpen = $state(false);
+	$inspect(isProductPoSheetOpen, 'isProductPoSheetOpen');
 	type Props = {
-		form: SuperValidated<МProductPoInsertSchemaАrray>;
+		form: SuperValidated<MProductPoInsertSchema>;
 		productId: number;
+		data: MProductPoInsertSchema[];
 		partners: {
-			value: number;
+			value: string;
 			label: string;
 		}[];
 	};
@@ -29,7 +32,7 @@
 		}
 	});
 
-	function selectedPartnerLabel(value: number | null | undefined): string {
+	function selectedPartnerLabel(value: string | null | undefined): string {
 		if (value === null || value === undefined) return '';
 		return data.partners?.find((v) => v.value === value)?.label ?? '';
 	}
@@ -51,8 +54,11 @@
 		}
 		selectedPurchaseId = undefined;
 		isNewPurchase = true;
-		isSheetOpen = true;
+		isProductPoSheetOpen = true;
 	}
+	let selectedVendor = $derived.by(() => {
+		return data.data.find((v) => v.id === selectedPurchaseId);
+	});
 </script>
 
 <Card.Root class="mb-4">
@@ -78,38 +84,39 @@
 			</Table.Header>
 			<Table.Body>
 				<!-- {#each data.form.data.purchases as purchase} -->
-				{#each $form.purchases as _, i}
+				{#each data.data as purchases}
 					<Table.Row>
 						<Table.Cell>
-							{selectedPartnerLabel($form.purchases[i].c_bpartner_id)}
+							{selectedPartnerLabel(purchases.c_bpartner_id.toString())}
 						</Table.Cell>
 						<!-- <Table.Cell>
 							{selectedPartnerLabel($form.purchases[i].c_bpartner_id)}
 						</Table.Cell> -->
-						<Table.Cell>{$form.purchases[i].vendorproductno}</Table.Cell>
-						<Table.Cell class="text-right">{formatNumber($form.purchases[i].pricelist)}</Table.Cell>
-						<Table.Cell class="text-right"
-							>{formatDateTime($form.purchases[i].valid_from)}</Table.Cell
-						>
-						<Table.Cell class="text-right">{formatDateTime($form.purchases[i].valid_to)}</Table.Cell
-						>
+						<Table.Cell>{purchases.vendorproductno}</Table.Cell>
+						<Table.Cell class="text-right">{formatNumber(purchases.pricelist)}</Table.Cell>
+						<Table.Cell class="text-right">{formatDateTime(purchases.valid_from)}</Table.Cell>
+						<Table.Cell class="text-right">{formatDateTime(purchases.valid_to)}</Table.Cell>
 						<Table.Cell>
 							<Button
 								variant="ghost"
 								size="icon"
-								href={$form.purchases[i].url}
+								href={purchases.url}
 								target="_blank"
-								disabled={!$form.purchases[i].url}><PhArrowSquareOut /></Button
+								disabled={!purchases.url}><PhArrowSquareOut /></Button
 							>
 						</Table.Cell>
 						<Table.Cell class="text-right"
-							>{formatDateTime($form.purchases[i].updated_at as string)}</Table.Cell
+							>{formatDateTime(purchases.updated_at as string)}</Table.Cell
 						>
+						<!-- onclick={() => handleEllipsisClick($form.purchases[i])} -->
 						<Table.Cell>
 							<Button
 								variant="ghost"
 								size="icon"
-								onclick={() => handleEllipsisClick($form.purchases[i])}
+								onclick={() => {
+									selectedPurchaseId = purchases.id;
+									isProductPoSheetOpen = !isProductPoSheetOpen;
+								}}
 								class="-my-3"
 							>
 								<PhDotsThreeBold />
@@ -122,7 +129,7 @@
 	</Card.Content>
 </Card.Root>
 
-{#if isSheetOpen}
+<!-- {#if isSheetOpen}
 	<CardVendorsSheet
 		bind:isSheetOpen
 		selectedProductId={data.productId}
@@ -130,5 +137,14 @@
 		{selectedPurchaseId}
 		partners={data.partners}
 		isNew={isNewPurchase}
+	/>
+{/if} -->
+
+{#if isProductPoSheetOpen}
+	<ProductPoSheet
+		bind:isSheetOpen={isProductPoSheetOpen}
+		data={selectedVendor}
+		form={data.form}
+		partners={data.partners}
 	/>
 {/if}

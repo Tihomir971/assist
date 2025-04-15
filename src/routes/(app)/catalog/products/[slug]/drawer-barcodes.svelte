@@ -10,7 +10,7 @@
 	import { isValidGTIN } from '$lib/scripts/gtin';
 	import { invalidate } from '$app/navigation';
 	import type { Tables } from '$lib/types/supabase/database.helper';
-	import type { PackingInsertSchema } from './schema';
+	import type { ProductPackingInsertSchema } from './schema';
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import MySelectForm from '$lib/components/my/MySelectForm.svelte';
 	import MyCheckboxForm from '$lib/components/my/MyCheckboxForm.svelte';
@@ -18,7 +18,7 @@
 
 	type Props = {
 		isBarcodeDrawerOpen: boolean;
-		validatedForm: SuperValidated<PackingInsertSchema>;
+		validatedForm: SuperValidated<ProductPackingInsertSchema>;
 		m_product_id: number;
 		formProductPackingId: number | undefined;
 		productPacking: Tables<'m_product_packing'>[];
@@ -102,7 +102,7 @@
 									<form method="POST" use:enhanceGtin class="inline">
 										<Button
 											type="submit"
-											formaction="?/packingDelete"
+											formaction="?/productPackingDelete"
 											name="id"
 											value={packing.id}
 											variant="destructive"
@@ -120,7 +120,12 @@
 			</div>
 
 			<!-- Edit/Create Form -->
-			<form method="POST" action="?/upsert" use:enhanceGtin class="mt-8 max-w-xl space-y-4">
+			<form
+				method="POST"
+				action="?/productPackingUpsert"
+				use:enhanceGtin
+				class="mt-8 max-w-xl space-y-4"
+			>
 				{#if editingId}
 					<input type="hidden" name="id" bind:value={$formData.id} />
 				{/if}

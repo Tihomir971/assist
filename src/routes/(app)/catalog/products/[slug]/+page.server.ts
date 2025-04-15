@@ -8,14 +8,14 @@ import { zod } from 'sveltekit-superforms/adapters';
 import type { ChartData } from './chart-types';
 import { connector } from '$lib/ky';
 import {
-	crudMProductGtinSchema,
 	crudMProductSchema,
 	crudReplenishSchema,
 	mProductPoInsertSchemaАrray,
 	mStorageonhandInsertSchemaАrray,
-	packingDeleteSchema,
-	packingInsertSchema
+	productPackingDeleteSchema,
+	productPackingInsertSchema
 } from './schema';
+import { mProductPoInsertSchema } from '$lib/types/supabase/supabase-zod-schemas';
 
 export const load: PageServerLoad = async ({ depends, params, locals: { supabase } }) => {
 	depends('catalog:products');
@@ -34,7 +34,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 	const getBPartner = async () => {
 		const { data } = await supabase
 			.from('c_bpartner')
-			.select('value:id, label:name')
+			.select('value:id::text, label:name')
 			.eq('isvendor', true)
 			.order('name');
 		return data || [];
@@ -134,10 +134,13 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 
 	const formProduct = await superValidate(product, zod(crudMProductSchema));
 	//const formProductPacking = await superValidate({ productPacking }, zod(crudMProductGtinSchema));
-	const formProductPacking = await superValidate(zod(packingInsertSchema));
+	const formProductPacking = await superValidate(zod(productPackingInsertSchema));
 	formProductPacking.data.m_product_id = productId;
 	const formReplenish = await superValidate({ replenishes }, zod(crudReplenishSchema));
 	const formPurchasing = await superValidate({ purchases }, zod(mProductPoInsertSchemaАrray));
+	const formProductPo = await superValidate(zod(mProductPoInsertSchema));
+	formProductPo.data.m_product_id = productId;
+
 	const formStorageOnHand = await superValidate(
 		{ storageonhand },
 		zod(mStorageonhandInsertSchemaАrray)
@@ -146,6 +149,8 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 	return {
 		productId,
 		formProduct,
+		formProductPo,
+		purchases,
 		formPurchasing,
 		formProductPacking,
 		productPacking,
@@ -163,9 +168,9 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 };
 
 export const actions = {
-	upsert: async ({ request, locals: { supabase } }) => {
+	productPackingUpsert: async ({ request, locals: { supabase } }) => {
 		const formData = await request.formData();
-		const form = await superValidate(formData, zod(packingInsertSchema));
+		const form = await superValidate(formData, zod(productPackingInsertSchema));
 		if (!form.valid) return fail(400, { form });
 
 		if (!form.data.id) {
@@ -200,9 +205,9 @@ export const actions = {
 
 		return message(form, 'Barcode updated!');
 	},
-	packingDelete: async ({ request, locals: { supabase } }) => {
+	productPackingDelete: async ({ request, locals: { supabase } }) => {
 		const formData = await request.formData();
-		const form = await superValidate(formData, zod(packingDeleteSchema));
+		const form = await superValidate(formData, zod(productPackingDeleteSchema));
 		console.log('form', form);
 		if (!form.valid) return fail(400, { form });
 		const { error } = await supabase.from('m_product_packing').delete().eq('id', parseInt(form.id));
@@ -283,53 +288,6 @@ export const actions = {
 		return { form };
 	},
 
-	gtinUPD: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(crudMProductGtinSchema));
-		if (!form.valid) {
-			console.error('Form validation failed:', form.errors);
-			return fail(400, { form });
-		}
-		try {
-			// Separate records into updates and inserts
-			const updatesToProcess = form.data.productPacking.filter((r) => r.id !== undefined);
-			const insertsToProcess = form.data.productPacking.filter((r) => r.id === undefined);
-
-			// Perform updates
-			if (updatesToProcess.length > 0) {
-				// Use Promise.all to update multiple records concurrently
-				const updatePromises = updatesToProcess.map((r) =>
-					supabase.from('m_product_packing').update(r).eq('id', r.id!)
-				);
-
-				const updateResults = await Promise.all(updatePromises);
-
-				// Check for any errors in the updates
-				const updateErrors = updateResults.filter((result) => result.error);
-				if (updateErrors.length > 0) {
-					throw updateErrors[0].error;
-				}
-			}
-
-			// Perform inserts
-			if (insertsToProcess.length > 0) {
-				const { error: insertError } = await supabase.from('m_product_packing').insert(
-					insertsToProcess.map((r) => ({
-						...r
-					}))
-				);
-
-				if (insertError) throw insertError;
-			}
-		} catch (error) {
-			console.error('Replenish update error:', error);
-			return fail(500, {
-				form,
-				error: error instanceof Error ? error.message : 'Unknown error occurred'
-			});
-		}
-
-		return { form };
-	},
 	vendors: async ({ request, locals: { supabase } }) => {
 		console.log('Hello Vendors');
 

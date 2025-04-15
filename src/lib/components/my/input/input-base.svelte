@@ -33,10 +33,12 @@
 </script>
 
 <!-- Container div that handles the inline layout -->
-<div class={cn('w-full', inline ? 'flex items-center gap-3' : '')}>
+<div
+	class={cn('mb-2 w-full', inline ? 'flex items-center gap-3' : 'flex flex-col gap-0.5', className)}
+>
 	{#if labelText}
 		<label for={inputId} class={cn('', inline ? 'min-w-[120px] shrink-0' : 'mb-1')}>
-			{labelText}
+			{labelText}{#if restProps.required}<span class="ml-1 text-warning">*</span>{/if}
 		</label>
 	{/if}
 

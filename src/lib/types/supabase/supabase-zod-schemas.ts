@@ -800,32 +800,6 @@ export const countriesUpdateSchema = z.object({
 
 export const countriesRelationshipsSchema = z.tuple([]);
 
-export const crudHistoryRowSchema = z.object({
-	changed_data: z.string(),
-	created_at: z.string(),
-	id: z.number(),
-	sku: z.string(),
-	status: z.boolean()
-});
-
-export const crudHistoryInsertSchema = z.object({
-	changed_data: z.string(),
-	created_at: z.string().optional(),
-	id: z.number().optional(),
-	sku: z.string(),
-	status: z.boolean().optional()
-});
-
-export const crudHistoryUpdateSchema = z.object({
-	changed_data: z.string().optional(),
-	created_at: z.string().optional(),
-	id: z.number().optional(),
-	sku: z.string().optional(),
-	status: z.boolean().optional()
-});
-
-export const crudHistoryRelationshipsSchema = z.tuple([]);
-
 export const attributeTypeSchema = z.union([
 	z.literal('single_select'),
 	z.literal('multi_select'),

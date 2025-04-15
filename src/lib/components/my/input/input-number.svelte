@@ -11,8 +11,6 @@
 		locale?: string;
 		min?: number;
 		max?: number;
-		precision?: number; // Number of decimal places
-		readonly?: boolean;
 		class?: string;
 		error?: string;
 		labelText?: string; // New param for label

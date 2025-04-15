@@ -68,10 +68,13 @@ export const load = async ({ params, locals }: { params: { id: string }; locals:
 		options
 	};
 	const form = await superValidate(formData, zod(updateAttributeWithOptionsSchema));
+	const optionsForm = await superValidate(zod(updateAttributeWithOptionsSchema));
 
 	return {
 		form,
-		attributeGroups
+		attributeGroups,
+		options,
+		optionsForm
 	};
 };
 

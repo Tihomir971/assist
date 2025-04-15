@@ -14,7 +14,7 @@
 
 	let {
 		ref = $bindable(null),
-		value = $bindable(''),
+		value = $bindable(),
 		class: className = '',
 		error,
 		labelText, // New param

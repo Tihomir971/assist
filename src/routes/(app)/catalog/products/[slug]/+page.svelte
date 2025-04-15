@@ -22,6 +22,7 @@
 	import ReplenishCard from './replenish.svelte';
 	import StorageOnHandCard from './storageonhand.svelte';
 	import { crudMProductSchema } from './schema';
+	import { mProductPoInsertSchema } from '$lib/types/supabase/supabase-zod-schemas';
 	import FormCombobox from '$lib/components/my/MyComboboxForm.svelte';
 	import MyNumberInput from '$lib/components/my/input/input-number.svelte';
 	import MyUrlInput from '$lib/components/my/input/input-url.svelte';
@@ -87,6 +88,7 @@
 						labelText="Product Name"
 						bind:value={$formProduct.name}
 						inline
+						required
 					/>
 					<div>
 						<div class={!isProductTainted($productTainted) ? 'hidden' : ''}>
@@ -334,9 +336,10 @@
 			</Tabs.List>
 			<Tabs.Content value="vendors">
 				<VendorsCard
-					form={data.formPurchasing}
+					form={data.formProductPo}
 					partners={data.partners}
 					productId={data.productId}
+					data={data.purchases}
 				/>
 			</Tabs.Content>
 			<Tabs.Content value="stock">
