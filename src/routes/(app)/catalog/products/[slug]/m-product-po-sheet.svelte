@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {
+		MyCombobox,
 		MyComboboxMelt,
 		MyNumberInput,
 		MyTextInput,
@@ -11,6 +12,7 @@
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { MySelectMelt } from '$lib/components/my/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import MyComboboxForm from '$lib/components/my/MyComboboxForm.svelte';
 
 	type Props = {
 		isSheetOpen: boolean;
@@ -51,11 +53,11 @@
 				labelText="manufacturer"
 			/>
 
-			<MySelectMelt
+			<MyCombobox
 				name="c_bpartner_id"
 				bind:value={$formData.c_bpartner_id}
 				labelText="c_bpartner_id"
-				options={partners}
+				items={partners}
 				placeholder="Select a partner"
 				required={$constraints?.c_bpartner_id?.required}
 			/>

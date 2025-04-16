@@ -10,7 +10,7 @@
 	import BaseInput from './input-base.svelte';
 
 	type Item = {
-		value: string | number;
+		value: string;
 		label: string;
 		[key: string]: any; // Allow additional properties
 	};
@@ -18,7 +18,7 @@
 	type Props = HTMLInputAttributes & {
 		ref?: HTMLInputElement | null;
 		items: Item[]; // Array of items to select from
-		value?: string | number | null; // ID of the selected item
+		value?: number | null; // ID of the selected item
 		placeholder?: string;
 		disabled?: boolean;
 		error?: string;
@@ -43,7 +43,8 @@
 		itemClass = '',
 		...restProps
 	}: Props = $props();
-
+	$inspect('value', value);
+	$inspect('restProps.required', restProps.required);
 	// Internal state
 	let searchValue = $state('');
 	let open = $state(false);
@@ -80,11 +81,11 @@
 	// Handle when bits-ui updates the value
 	$effect(() => {
 		if (comboboxValue !== undefined) {
-			const originalItem = items.find((item) => String(item.value) === comboboxValue);
+			const originalItem = items.find((item) => item.value === comboboxValue);
 			if (originalItem) {
-				value = originalItem.value;
+				value = parseInt(originalItem.value);
 			} else {
-				value = comboboxValue; // Fallback
+				value = parseInt(comboboxValue); // Fallback
 			}
 		} else {
 			value = null;
@@ -93,7 +94,7 @@
 
 	// Sync external value changes to internal comboboxValue
 	$effect(() => {
-		const externalValueStr = value !== null && value !== undefined ? String(value) : undefined;
+		const externalValueStr = value !== null && value !== undefined ? value : undefined;
 		if (externalValueStr !== comboboxValue) {
 			comboboxValue = externalValueStr;
 			if (!open) {
@@ -114,7 +115,7 @@
 			searchValue = '';
 
 			// Then set the display value to the selected item's label
-			const selectedItem = items.find((item) => String(item.value) === comboboxValue);
+			const selectedItem = items.find((item) => item.value === comboboxValue);
 			if (selectedItem) {
 				searchValue = selectedItem.label;
 			}
@@ -136,13 +137,15 @@
 		bind:ref
 		{placeholder}
 		{disabled}
-		defaultValue={comboboxValue}
+		defaultValue={String(comboboxValue)}
 		class="w-full border-none bg-transparent outline-none"
 		oninput={(e) => {
 			searchValue = e.currentTarget.value;
 			isFiltering = true; // Enable filtering when user types
 			if (!open) open = true;
 		}}
+		name={restProps.name}
+		required={restProps.required}
 	/>
 {/snippet}
 

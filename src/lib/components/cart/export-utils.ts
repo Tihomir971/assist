@@ -180,7 +180,7 @@ export async function processExport(
 					selectedVendorIds.forEach((vendorId) => {
 						const vendorName = vendors.find((v) => v.id === vendorId)?.name || 'Unknown';
 						salesActionData[`${vendorName}Price`] = product.vendorPrices[vendorId] || null;
-						salesActionData[`${vendorName}ProductNo`] = product.vendorProductNos[vendorId] || '';
+						salesActionData[`${vendorName}PN`] = product.vendorProductNos[vendorId] || '';
 					});
 
 					// Add final prices as last columns
@@ -235,7 +235,7 @@ export async function processExport(
 					selectedVendorIds.forEach((vendorId) => {
 						const vendorName = vendors.find((v) => v.id === vendorId)?.name || 'Unknown';
 						data[`${vendorName}Price`] = product.vendorPrices[vendorId] || null;
-						data[`${vendorName}ProductNo`] = product.vendorProductNos[vendorId] || '';
+						data[`${vendorName}PN`] = product.vendorProductNos[vendorId] || '';
 					});
 
 					return data;
