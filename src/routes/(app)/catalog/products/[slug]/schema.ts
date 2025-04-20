@@ -2,7 +2,6 @@ import { isValidGTIN } from '$lib/scripts/gtin';
 import {
 	mProductPackingInsertSchema,
 	mProductPoInsertSchema as baseMProductPoInsertSchema, // Rename import
-	mProductPoRowSchema,
 	mProductRowSchema,
 	mReplenishRowSchema,
 	mStorageonhandInsertSchema
@@ -29,9 +28,7 @@ export const crudMProductGtinSchema = z.object({
 		)
 	)
 });
-//export type CrudMProductGtinSchema = typeof crudMProductGtinSchema;
 export type CrudMProductGtinSchema = z.infer<typeof crudMProductGtinSchema>;
-// Create new schema based on mReplenishRowSchema but omitting ad_client_id and ad_org_id
 
 // Replenish
 export const replenishSchema = mReplenishRowSchema
@@ -79,33 +76,6 @@ export const mProductPoFormSchema = baseMProductPoInsertSchema.extend({
 });
 export type MProductPoFormSchema = z.infer<typeof mProductPoFormSchema>;
 
-// First, define the individual purchase order row schema for potential other uses
-const crudMProductPoRowSchema = mProductPoRowSchema
-	.extend({
-		id: mProductPoRowSchema.shape.id.optional(),
-		is_active: mProductPoRowSchema.shape.is_active.optional(),
-		c_currency_id: mProductPoRowSchema.shape.c_currency_id.optional(),
-		c_uom_id: mProductPoRowSchema.shape.c_uom_id.optional(),
-		discontinued: mProductPoRowSchema.shape.discontinued.optional(),
-		manufacturer: mProductPoRowSchema.shape.manufacturer.optional(),
-		valid_from: mProductPoRowSchema.shape.valid_from.optional(),
-		valid_to: mProductPoRowSchema.shape.valid_to.optional(),
-		pricelastinv: mProductPoRowSchema.shape.pricelastinv.optional(),
-		pricelastpo: mProductPoRowSchema.shape.pricelastpo.optional(),
-		pricepo: mProductPoRowSchema.shape.pricepo.optional(),
-		vendorcategory: mProductPoRowSchema.shape.vendorcategory.optional()
-	})
-	.omit({ created_at: true, updated_at: true })
-	.passthrough();
-
-export const crudMProductPoSchema = z.object({
-	purchases: z.array(crudMProductPoRowSchema)
-});
-
-export const mProductPoInsertSchemaАrray = z.object({
-	purchases: z.array(baseMProductPoInsertSchema) // Use base here if needed
-});
-export type МProductPoInsertSchemaАrray = z.infer<typeof mProductPoInsertSchemaАrray>;
 export type MProductPoInsertSchema = z.infer<typeof baseMProductPoInsertSchema>; // Keep original type export
 
 export const mStorageonhandInsertSchemaАrray = z.object({

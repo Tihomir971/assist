@@ -10,7 +10,6 @@ import { connector } from '$lib/ky';
 import {
 	crudMProductSchema,
 	crudReplenishSchema,
-	mProductPoInsertSchemaАrray,
 	mStorageonhandInsertSchemaАrray,
 	productPackingDeleteSchema,
 	productPackingInsertSchema,
@@ -139,7 +138,6 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 	const formProductPacking = await superValidate(zod(productPackingInsertSchema));
 	formProductPacking.data.m_product_id = productId;
 	const formReplenish = await superValidate({ replenishes }, zod(crudReplenishSchema));
-	const formPurchasing = await superValidate({ purchases }, zod(mProductPoInsertSchemaАrray));
 	const formProductPo = await superValidate(zod(mProductPoFormSchema)); // Use the new form schema
 	formProductPo.data.m_product_id = productId;
 
@@ -153,7 +151,6 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		formProduct,
 		formProductPo,
 		purchases,
-		formPurchasing,
 		formProductPacking,
 		productPacking,
 		formReplenish,

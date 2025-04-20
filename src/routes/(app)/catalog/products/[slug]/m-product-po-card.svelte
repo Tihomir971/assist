@@ -1,11 +1,7 @@
 <script lang="ts">
 	import { formatDateTime, formatNumber } from '$lib/style/locale';
-	import { superForm, type SuperValidated } from 'sveltekit-superforms';
-	import type {
-		MProductPoFormSchema,
-		MProductPoInsertSchema,
-		МProductPoInsertSchemaАrray
-	} from './schema';
+	import { type SuperValidated } from 'sveltekit-superforms';
+	import type { MProductPoFormSchema } from './schema';
 
 	import { toast } from 'svelte-sonner';
 	// UI Elements
@@ -117,17 +113,6 @@
 		</Table.Root>
 	</Card.Content>
 </Card.Root>
-
-<!-- {#if isSheetOpen}
-	<CardVendorsSheet
-		bind:isSheetOpen
-		selectedProductId={data.productId}
-		formValidated={data.form}
-		{selectedPurchaseId}
-		partners={data.partners}
-		isNew={isNewPurchase}
-	/>
-{/if} -->
 
 {#if isProductPoSheetOpen}
 	<ProductPoSheet

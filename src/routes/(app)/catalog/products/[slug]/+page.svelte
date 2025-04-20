@@ -18,7 +18,7 @@
 
 	import DrawerBarcodes from './drawer-barcodes.svelte';
 	import ChartVisualization from './ChartVisualization.svelte';
-	import VendorsCard from './vendors.svelte';
+	import ProductPOCard from './m-product-po-card.svelte';
 	import ReplenishCard from './replenish.svelte';
 	import StorageOnHandCard from './storageonhand.svelte';
 	import { crudMProductSchema } from './schema';
@@ -334,7 +334,7 @@
 				<Tabs.Trigger value="sales-chart">Sales Chart</Tabs.Trigger>
 			</Tabs.List>
 			<Tabs.Content value="vendors">
-				<VendorsCard
+				<ProductPOCard
 					form={data.formProductPo}
 					partners={data.partners}
 					productId={data.productId}
