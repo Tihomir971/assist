@@ -17,7 +17,7 @@
 	import { MyNumberInput } from '$lib/components/my/input';
 
 	type Props = {
-		isBarcodeDrawerOpen: boolean;
+		isProductPackingDrawerOpen: boolean;
 		validatedForm: SuperValidated<ProductPackingInsertSchema>;
 		m_product_id: number;
 		formProductPackingId: number | undefined;
@@ -25,7 +25,7 @@
 	};
 
 	let {
-		isBarcodeDrawerOpen = $bindable(),
+		isProductPackingDrawerOpen = $bindable(),
 		validatedForm,
 		m_product_id,
 		productPacking
@@ -61,7 +61,7 @@
 	let editingId: number | null = $state(null);
 </script>
 
-<Drawer.Root bind:open={isBarcodeDrawerOpen} dismissible={true} direction="right">
+<Drawer.Root bind:open={isProductPackingDrawerOpen} dismissible={true} direction="right">
 	<Drawer.Content class="inset-x-auto inset-y-0 right-0 mt-0 w-1/3">
 		<Drawer.Header>
 			<Drawer.Title>Barcodes</Drawer.Title>

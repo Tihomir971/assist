@@ -16,11 +16,11 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { Button } from '$lib/components/ui/button/index.js';
 
-	import DrawerBarcodes from './drawer-barcodes.svelte';
+	import ProductPackingDrawer from './m-product-packing-drawer.svelte';
 	import ChartVisualization from './ChartVisualization.svelte';
 	import ProductPOCard from './m-product-po-card.svelte';
-	import ReplenishCard from './replenish.svelte';
-	import StorageOnHandCard from './storageonhand.svelte';
+	import ReplenishCard from './m-replenish-card.svelte';
+	import StorageOnHandCard from './m-storageonhand-card.svelte';
 	import { crudMProductSchema } from './schema';
 	import FormCombobox from '$lib/components/my/MyComboboxForm.svelte';
 	import MyNumberInput from '$lib/components/my/input/input-number.svelte';
@@ -57,7 +57,7 @@
 		isTainted: isProductTainted
 	} = productForm;
 
-	let isBarcodeDrawerOpen: boolean = $state(false);
+	let isProductPackingDrawerOpen: boolean = $state(false);
 
 	let selectedUomLabel = $derived(
 		data.uom.find((v) => v.value === $formProduct.c_uom_id?.toString())?.label
@@ -296,7 +296,11 @@
 							<h3 class="mb-2 flex items-center gap-2 text-lg font-semibold">
 								<PhPackage /> Barcodes
 							</h3>
-							<Button variant="ghost" size="icon" onclick={() => (isBarcodeDrawerOpen = true)}>
+							<Button
+								variant="ghost"
+								size="icon"
+								onclick={() => (isProductPackingDrawerOpen = true)}
+							>
 								<PhDotsThree />
 							</Button>
 						</div>
@@ -385,8 +389,8 @@
 			</Tabs.Content>
 		</Tabs.Root>
 
-		<DrawerBarcodes
-			bind:isBarcodeDrawerOpen
+		<ProductPackingDrawer
+			bind:isProductPackingDrawerOpen
 			productPacking={data.productPacking}
 			validatedForm={data.formProductPacking}
 			m_product_id={data.productId}
