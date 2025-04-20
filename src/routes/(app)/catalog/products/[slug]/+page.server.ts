@@ -73,10 +73,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 			.order('name');
 		return data || [];
 	};
-	const getTaxes2 = async () => {
-		const { data } = await supabase.from('c_taxcategory').select('id, label:name').order('name');
-		return data || [];
-	};
+
 	const getSalesData = async (sku: string | null) => {
 		if (!sku) {
 			return { currentYear: new Date().getFullYear(), products: [] };
@@ -114,7 +111,6 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		purchases,
 		productPacking,
 		tax,
-		tax2,
 		salesByWeeks,
 		storageonhand,
 		attributeSets
@@ -127,7 +123,6 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		ProductService.getProductPurchasing(supabase, productId),
 		getProductPacking(),
 		getTaxes(),
-		getTaxes2(),
 		getSalesData(product.sku),
 		getStorageOnHand(),
 		getAttributeSets()
@@ -160,7 +155,6 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		categories,
 		warehouses,
 		tax,
-		tax2,
 		salesByWeeks,
 		attributeSets
 	};
