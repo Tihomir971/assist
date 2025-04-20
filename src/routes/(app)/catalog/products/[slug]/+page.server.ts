@@ -13,9 +13,11 @@ import {
 	mProductPoInsertSchemaАrray,
 	mStorageonhandInsertSchemaАrray,
 	productPackingDeleteSchema,
-	productPackingInsertSchema
+	productPackingInsertSchema,
+	mProductPoFormSchema // Add the new form schema import
 } from './schema';
-import { mProductPoInsertSchema } from '$lib/types/supabase/supabase-zod-schemas';
+// Remove the direct import of the base schema if no longer needed elsewhere in this file
+// import { mProductPoInsertSchema } from '$lib/types/supabase/supabase-zod-schemas';
 
 export const load: PageServerLoad = async ({ depends, params, locals: { supabase } }) => {
 	depends('catalog:products');
@@ -34,7 +36,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 	const getBPartner = async () => {
 		const { data } = await supabase
 			.from('c_bpartner')
-			.select('value:id::text, label:name')
+			.select('value:id, label:name')
 			.eq('isvendor', true)
 			.order('name');
 		return data || [];
@@ -138,7 +140,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 	formProductPacking.data.m_product_id = productId;
 	const formReplenish = await superValidate({ replenishes }, zod(crudReplenishSchema));
 	const formPurchasing = await superValidate({ purchases }, zod(mProductPoInsertSchemaАrray));
-	const formProductPo = await superValidate(zod(mProductPoInsertSchema));
+	const formProductPo = await superValidate(zod(mProductPoFormSchema)); // Use the new form schema
 	formProductPo.data.m_product_id = productId;
 
 	const formStorageOnHand = await superValidate(
@@ -290,18 +292,22 @@ export const actions = {
 
 	mProductPoUpsert: async ({ request, locals: { supabase } }) => {
 		console.log('Hello Vendors');
+		// const data = await request.formData();
 
-		const form = await superValidate(request, zod(mProductPoInsertSchema));
+		// Display the key/value pairs
+		// for (const pair of data.entries()) {
+		// console.log(pair[0], pair[1], typeof pair[1]);
+		// }
+
+		const form = await superValidate(request, zod(mProductPoFormSchema)); // Use the explicit FormData object
+		console.log('form.', JSON.stringify(form, null, 4));
+
 		if (!form.valid) return fail(400, { form });
-
-		// Create new array without created and updated fields
-		// const purchases = form.data.purchases.map(({ ...purchase }) => purchase);
-		console.log('form.data', JSON.stringify(form.data, null, 2));
 
 		if (form.data.id) {
 			// UPDATE m_product_po
 			const { id, ...updateData } = form.data;
-			console.log('id, ...rest', id, JSON.stringify(updateData, null, 2));
+			console.log('id, ...rest:', id, JSON.stringify(updateData, null, 2));
 			const { error } = await supabase.from('m_product_po').update(updateData).eq('id', id);
 			if (error) {
 				console.log('error', error);

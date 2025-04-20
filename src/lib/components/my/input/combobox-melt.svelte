@@ -2,12 +2,13 @@
 	import { Combobox } from 'melt/builders';
 
 	type Item = { value: string; label: string };
-	const options: Item[] = [
-		{ value: '1', label: 'Mango' },
-		{ value: '2', label: 'Ananas' }
-	];
+	type Props = { value: string; options: Item[] };
 
-	const combobox = new Combobox<string, false>({ value: '2' });
+	type Option = (typeof options)[number]['value'];
+
+	let { value = $bindable(), options }: Props = $props();
+
+	const combobox = new Combobox<Option>();
 
 	const filtered = $derived.by(() => {
 		if (!combobox.touched) return options;

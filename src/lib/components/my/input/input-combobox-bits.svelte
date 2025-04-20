@@ -18,7 +18,7 @@
 	type Props = HTMLInputAttributes & {
 		ref?: HTMLInputElement | null;
 		items: Item[]; // Array of items to select from
-		value?: number | null; // ID of the selected item
+		value?: string | null; // ID of the selected item
 		placeholder?: string;
 		disabled?: boolean;
 		error?: string;
@@ -27,12 +27,14 @@
 		class?: string;
 		contentClass?: string; // Optional class for dropdown content
 		itemClass?: string; // Optional class for dropdown items
+		onValueChange?: (value: string | string[]) => void; // Callback when value changes
 	};
 
 	let {
 		ref = $bindable(null),
 		items = [],
 		value = $bindable(), // This will be the ID
+		onValueChange = $bindable(),
 		placeholder = 'Select an option',
 		disabled = false,
 		error,
@@ -105,27 +107,17 @@
 		}
 	});
 
-	// Handle open state changes
-	function handleOpenChange(isOpen: boolean) {
-		if (isOpen) {
-			// When opening, temporarily disable filtering to show all items
-			isFiltering = false;
-		} else {
-			// When closing, reset the search value
-			searchValue = '';
-
-			// Then set the display value to the selected item's label
-			const selectedItem = items.find((item) => item.value === comboboxValue);
-			if (selectedItem) {
-				searchValue = selectedItem.label;
-			}
-		}
-	}
-
 	// Reference to the BaseInput's root element for anchoring
 	let baseInputRootElement: HTMLDivElement | null = $state(null);
 
-	// We're handling input changes directly in the oninput event handler
+	// Use a Function Binding for complete control over the state's reads and writes.
+	let myValue = $state('');
+	function getValue() {
+		return myValue;
+	}
+	function setValue(newValue: string) {
+		myValue = newValue;
+	}
 </script>
 
 {#snippet Icon()}
@@ -158,7 +150,7 @@
 	</Combobox.Trigger>
 {/snippet}
 
-<Combobox.Root type="single" bind:value={comboboxValue} bind:open onOpenChange={handleOpenChange}>
+<Combobox.Root type="single" bind:value={getValue, setValue} bind:open>
 	<BaseInput
 		bind:rootElement={baseInputRootElement}
 		class={className}

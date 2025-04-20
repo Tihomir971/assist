@@ -21,6 +21,7 @@
 		inline, // New param
 		...restProps
 	}: Props = $props();
+	const id = $props.id(); // Generate a unique ID for input-label association if none provided
 </script>
 
 {#snippet textIcon()}
@@ -29,6 +30,7 @@
 
 {#snippet textContent()}
 	<input
+		{id}
 		bind:value
 		type="text"
 		class="peer w-full border-none bg-transparent outline-none"

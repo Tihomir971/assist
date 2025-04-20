@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { HTMLInputAttributes } from 'svelte/elements';
-	import { cn } from '$lib/utils.js';
 	import PhArrowSquareUpLeft from '~icons/ph/arrow-square-up-left';
 	import PhCursorClick from '~icons/ph/cursor-click';
 	import BaseInput from './input-base.svelte';
@@ -24,7 +23,7 @@
 	}: Props = $props();
 
 	// Generate a unique ID for input-label association if none provided
-	const inputId = restProps.id || `input-${Math.random().toString(36).slice(2, 11)}`;
+	const inputId = $props.id();
 
 	// URL validation function
 	function isValidUrl(url: string): boolean {

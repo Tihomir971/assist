@@ -6,10 +6,11 @@ import NumberInput from './input-number.svelte';
 import TextInput from './input-text.svelte';
 import UrlInput from './input-url.svelte';
 // Old Zag-based combobox (kept for reference)
-import ComboboxZagInput from './input-combobox.svelte';
-import ComboboxMeltInput from './input-combobox-melt.svelte';
+import ComboboxZag from './combobox-zag.svelte';
+import ComboboxMelt from './combobox-melt.svelte';
 // New Bits-UI based combobox (default)
-import ComboboxInput from './input-combobox-bits.svelte';
+import ComboboxInputBits from './input-combobox-bits.svelte';
+import ComboboxShad from './input-combobox-shad.svelte';
 
 export {
 	CurrencyInput as MyCurrencyInput,
@@ -17,8 +18,9 @@ export {
 	FileInput as MyFileInput,
 	NumberInput as MyNumberInput,
 	TextInput as MyTextInput,
-	ComboboxInput as MyCombobox,
-	ComboboxZagInput as MyComboboxZag,
-	ComboboxMeltInput as MyComboboxMelt,
+	ComboboxInputBits as ComboboxBits,
+	ComboboxZag as ComboboxZag,
+	ComboboxMelt as ComboboxMelt,
+	ComboboxShad as ComboboxShad,
 	UrlInput as MyUrlInput
 };

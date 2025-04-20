@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { formatDateTime, formatNumber } from '$lib/style/locale';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
-	import type { MProductPoInsertSchema, МProductPoInsertSchemaАrray } from './schema';
+	import type {
+		MProductPoFormSchema,
+		MProductPoInsertSchema,
+		МProductPoInsertSchemaАrray
+	} from './schema';
 
 	import { toast } from 'svelte-sonner';
 	// UI Elements
@@ -16,36 +20,22 @@
 	let isProductPoSheetOpen = $state(false);
 
 	type Props = {
-		form: SuperValidated<MProductPoInsertSchema>;
+		form: SuperValidated<MProductPoFormSchema>;
 		productId: number;
-		data: MProductPoInsertSchema[];
+		data: MProductPoFormSchema[];
 		partners: {
-			value: string;
+			value: number;
 			label: string;
 		}[];
 	};
 	let data: Props = $props();
-	const { form, errors } = superForm(data.form, {
-		dataType: 'json',
-		warnings: {
-			duplicateId: false
-		}
-	});
 
-	function selectedPartnerLabel(value: string | null | undefined): string {
+	function selectedPartnerLabel(value: number | null | undefined): string {
 		if (value === null || value === undefined) return '';
 		return data.partners?.find((v) => v.value === value)?.label ?? '';
 	}
 
-	let isSheetOpen = $state(false);
 	let selectedPurchaseId: number | undefined = $state(undefined);
-	let isNewPurchase = $state(false);
-
-	function handleEllipsisClick(purchase: MProductPoInsertSchema) {
-		selectedPurchaseId = purchase.id;
-		isNewPurchase = false;
-		isSheetOpen = !isSheetOpen;
-	}
 
 	function handleAddClick() {
 		if (data.partners.length === 0) {
@@ -53,7 +43,6 @@
 			return;
 		}
 		selectedPurchaseId = undefined;
-		isNewPurchase = true;
 		isProductPoSheetOpen = true;
 	}
 	let selectedVendor = $derived.by(() => {
@@ -87,7 +76,7 @@
 				{#each data.data as purchases}
 					<Table.Row>
 						<Table.Cell>
-							{selectedPartnerLabel(purchases.c_bpartner_id.toString())}
+							{selectedPartnerLabel(purchases.c_bpartner_id)}
 						</Table.Cell>
 						<!-- <Table.Cell>
 							{selectedPartnerLabel($form.purchases[i].c_bpartner_id)}

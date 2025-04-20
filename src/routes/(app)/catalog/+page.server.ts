@@ -27,7 +27,7 @@ interface ProductRequest {
 	barcodes?: string[];
 }
 enum ProductStatus {
-	OK = 'ok',
+	OK = 'OK',
 	NOT_FOUND_BY_HREF = 'Not found by href',
 	NOT_FOUND_BY_BARCODE = 'Not found by barcode',
 	ERROR = 'error'
@@ -598,7 +598,7 @@ export const actions = {
 
 		try {
 			const { data, error } = await scrapper
-				.post('scraper', { json: { products: productRequests } })
+				.post('products', { json: { products: productRequests } })
 				.json<ApiResponseData<ProductResult[]>>();
 
 			if (!data) {
@@ -613,6 +613,8 @@ export const actions = {
 
 			for (const result of data) {
 				const { product, status, productId } = result;
+				console.log('status, productId', status, productId);
+				console.log('bool', status !== ProductStatus.OK);
 				const originalProduct = products.find((p) => p.id === productId);
 
 				if (!originalProduct) {

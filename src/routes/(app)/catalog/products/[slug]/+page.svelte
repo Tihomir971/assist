@@ -22,11 +22,10 @@
 	import ReplenishCard from './replenish.svelte';
 	import StorageOnHandCard from './storageonhand.svelte';
 	import { crudMProductSchema } from './schema';
-	import { mProductPoInsertSchema } from '$lib/types/supabase/supabase-zod-schemas';
 	import FormCombobox from '$lib/components/my/MyComboboxForm.svelte';
 	import MyNumberInput from '$lib/components/my/input/input-number.svelte';
 	import MyUrlInput from '$lib/components/my/input/input-url.svelte';
-	import { MyCombobox, MyTextInput } from '$lib/components/my/input';
+	import { MyTextInput } from '$lib/components/my/input';
 
 	let { data } = $props();
 

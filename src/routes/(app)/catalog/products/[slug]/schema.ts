@@ -1,7 +1,7 @@
 import { isValidGTIN } from '$lib/scripts/gtin';
 import {
 	mProductPackingInsertSchema,
-	mProductPoInsertSchema,
+	mProductPoInsertSchema as baseMProductPoInsertSchema, // Rename import
 	mProductPoRowSchema,
 	mProductRowSchema,
 	mReplenishRowSchema,
@@ -65,7 +65,21 @@ export type CrudReplenishSchema = z.infer<typeof crudReplenishSchema>;
 
 // Product PO
 
-// First, define the individual purchase order row schema
+// Schema for the form, extending the base insert schema with coercions
+export const mProductPoFormSchema = baseMProductPoInsertSchema.extend({
+	c_bpartner_id: z.coerce.number(),
+	c_currency_id: z.coerce.number().optional().nullable(),
+	c_uom_id: z.coerce.number().optional().nullable(),
+	id: z.coerce.number().optional(),
+	m_product_id: z.coerce.number(),
+	pricelastinv: z.coerce.number().optional().nullable(),
+	pricelastpo: z.coerce.number().optional().nullable(),
+	pricelist: z.coerce.number().optional(),
+	pricepo: z.coerce.number().optional().nullable()
+});
+export type MProductPoFormSchema = z.infer<typeof mProductPoFormSchema>;
+
+// First, define the individual purchase order row schema for potential other uses
 const crudMProductPoRowSchema = mProductPoRowSchema
 	.extend({
 		id: mProductPoRowSchema.shape.id.optional(),
@@ -89,10 +103,10 @@ export const crudMProductPoSchema = z.object({
 });
 
 export const mProductPoInsertSchemaАrray = z.object({
-	purchases: z.array(mProductPoInsertSchema)
+	purchases: z.array(baseMProductPoInsertSchema) // Use base here if needed
 });
 export type МProductPoInsertSchemaАrray = z.infer<typeof mProductPoInsertSchemaАrray>;
-export type MProductPoInsertSchema = z.infer<typeof mProductPoInsertSchema>;
+export type MProductPoInsertSchema = z.infer<typeof baseMProductPoInsertSchema>; // Keep original type export
 
 export const mStorageonhandInsertSchemaАrray = z.object({
 	storageonhand: z.array(mStorageonhandInsertSchema)

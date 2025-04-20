@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { onMount, type Snippet } from 'svelte';
 	import {
-		MyCombobox,
-		MyComboboxMelt,
-		MyComboboxZag,
+		ComboboxBits,
+		ComboboxMelt,
+		ComboboxShad,
+		ComboboxZag,
 		MyCurrencyInput,
 		MyDateInput,
 		MyFileInput,
@@ -27,9 +28,11 @@
 
 	// Combobox data
 	type Fruit = { id: number; label: string };
-	let selectedFruitId = $state<number | null>(null);
-	let selectedFruitIdZag = $state<number | null>(null);
-	const fruits = [
+	let selectedFruitId = $state<string | null>(null);
+	let selectedFruitIdZag = $state<number | null>();
+	let selectedFruitIdShad = $state<string | null>();
+
+	const fruitsNum = [
 		{ value: 1, label: 'Apple' },
 		{ value: 2, label: 'Banana' },
 		{ value: 3, label: 'Orange' },
@@ -39,17 +42,19 @@
 		{ value: 7, label: 'Pineapple' },
 		{ value: 8, label: 'Watermelon' },
 		{ value: 9, label: 'Peach' },
-		{ value: 10, label: 'Grapes' },
-		{ value: 11, label: 'Kiwi' },
-		{ value: 12, label: 'Papaya' },
-		{ value: 13, label: 'Cherry' },
-		{ value: 14, label: 'Pear' },
-		{ value: 15, label: 'Plum' },
-		{ value: 16, label: 'Apricot' },
-		{ value: 17, label: 'Avocado' },
-		{ value: 18, label: 'Coconut' },
-		{ value: 19, label: 'Fig' },
-		{ value: 20, label: 'Date' }
+		{ value: 10, label: 'Grapes' }
+	];
+	const fruitsStr = [
+		{ value: '1', label: 'Apple' },
+		{ value: '2', label: 'Banana' },
+		{ value: '3', label: 'Orange' },
+		{ value: '4', label: 'Strawberry' },
+		{ value: '5', label: 'Blueberry' },
+		{ value: '6', label: 'Mango' },
+		{ value: '7', label: 'Pineapple' },
+		{ value: '8', label: 'Watermelon' },
+		{ value: '9', label: 'Peach' },
+		{ value: '10', label: 'Grapes' }
 	];
 
 	// Error state examples
@@ -78,13 +83,9 @@
 	});
 
 	// Log combobox value changes
-	$effect(() => {
-		console.log('Selected fruit ID changed:', selectedFruitId);
-	});
+	$inspect('Selected fruit ID changed:', selectedFruitId);
 
-	$effect(() => {
-		console.log('Selected fruit ID (Zag) changed:', selectedFruitIdZag);
-	});
+	$inspect('Selected fruit ID (Zag) changed:', selectedFruitIdZag);
 
 	// Log value changes
 	$effect(() => {
@@ -116,13 +117,13 @@
 	>
 		<div>
 			<div>Melt Combobox</div>
-			<MyComboboxMelt />
+			<!-- <ComboboxMelt /> -->
 		</div>
 		<!-- Bits-UI Combobox Input -->
 		<div>
-			<MyCombobox
-				bind:value={selectedFruitId}
-				items={fruits}
+			<ComboboxBits
+				value={selectedFruitId?.toString()}
+				items={fruitsStr}
 				placeholder="Select a fruit..."
 				labelText="Bits-UI Combobox"
 				inline
@@ -131,7 +132,7 @@
 				<Button
 					variant="default"
 					onclick={() => {
-						selectedFruitId = fruits[0].value;
+						selectedFruitId = fruitsStr[0].value;
 					}}
 				>
 					Select Apple
@@ -147,24 +148,19 @@
 			</div>
 			<div>
 				Current value: {selectedFruitId !== null
-					? fruits.find((f) => f.value === selectedFruitId)?.label || 'None'
+					? fruitsStr.find((f) => f.value === selectedFruitId)?.label || 'None'
 					: 'None'}
 			</div>
 		</div>
 
 		<!-- Zag Combobox Input (Legacy) -->
 		<div class="card rounded-md border p-4">
-			<MyComboboxZag
-				bind:value={selectedFruitIdZag}
-				items={fruits}
-				placeholder="Select a fruit..."
-				labelText="Zag Combobox"
-				inline
-			/>
+			<ComboboxZag bind:value={selectedFruitIdZag} items={fruitsNum} />
+			{selectedFruitIdZag}
 			<div class="flex gap-2">
 				<Button
 					onclick={() => {
-						selectedFruitIdZag = fruits[0].value;
+						selectedFruitIdZag = fruitsNum[0].value;
 					}}
 				>
 					Select Apple
@@ -180,7 +176,34 @@
 			</div>
 			<div>
 				Current value: {selectedFruitIdZag !== null
-					? fruits.find((f) => f.value === selectedFruitIdZag)?.label || 'None'
+					? fruitsNum.find((f) => f.value === selectedFruitIdZag)?.label || 'None'
+					: 'None'}
+			</div>
+		</div>
+		<!-- ShadCN Combobox Input (Legacy) -->
+		<div class="card rounded-md border p-4">
+			<ComboboxShad bind:value={selectedFruitIdShad} items={fruitsStr} />
+			{selectedFruitIdShad}
+			<div class="flex gap-2">
+				<Button
+					onclick={() => {
+						selectedFruitIdShad = fruitsStr[0].value;
+					}}
+				>
+					Select Apple
+				</Button>
+				<Button
+					variant="destructive"
+					onclick={() => {
+						selectedFruitIdShad = null;
+					}}
+				>
+					Clear
+				</Button>
+			</div>
+			<div>
+				Current value: {selectedFruitIdZag !== null
+					? fruitsStr.find((f) => f.value === selectedFruitIdShad)?.label || 'None'
 					: 'None'}
 			</div>
 		</div>

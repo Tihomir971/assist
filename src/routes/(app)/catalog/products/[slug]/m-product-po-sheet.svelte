@@ -1,27 +1,46 @@
 <script lang="ts">
 	import {
-		MyCombobox,
-		MyComboboxMelt,
+		ComboboxBits,
+		ComboboxMelt,
+		ComboboxZag,
 		MyNumberInput,
 		MyTextInput,
 		MyUrlInput
 	} from '$lib/components/my/input/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import type { MProductPoInsertSchema } from './schema.js';
+	import type { MProductPoFormSchema } from './schema.js'; // Add MProductPoFormSchema
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
-	import { MySelectMelt } from '$lib/components/my/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import MyComboboxForm from '$lib/components/my/MyComboboxForm.svelte';
 
+	type Item = { value: number; label: string };
 	type Props = {
 		isSheetOpen: boolean;
-		data: MProductPoInsertSchema | undefined;
-		form: SuperValidated<MProductPoInsertSchema>;
-		partners: { value: string; label: string }[];
+		data: MProductPoFormSchema | undefined; // Use MProductPoFormSchema
+		form: SuperValidated<MProductPoFormSchema>; // Use MProductPoFormSchema
+		partners: Item[];
 	};
 	let { isSheetOpen = $bindable(), data, form, partners }: Props = $props();
-	const { form: formData, enhance, errors, constraints } = superForm(form);
+	const {
+		form: formData,
+		enhance,
+		errors,
+		constraints
+	} = superForm(form, {
+		onResult({ result }) {
+			if (result.type === 'success') {
+				// Handle success, e.g., show a success message or redirect
+				console.log('Form submitted successfully:', result.data);
+			} else {
+				// Handle error, e.g., show an error message
+				console.error('Form submission failed:', result.status);
+			}
+		},
+		onError({ result }) {
+			// Handle error, e.g., show an error message
+			console.error('Form submission failed:', result.error);
+		}
+	});
 	if (data) {
 		$formData = { ...data };
 		console.log('$fromData', $formData);
@@ -39,21 +58,21 @@
 				</Sheet.Description>
 			</Sheet.Header>
 			<!-- <MyNumberInput value={$formData.id} labelText="ID" /> -->
-			<input value={$formData.id} name="id" hidden />
-			<input value={$formData.m_product_id} name="m_product_id" hidden />
+			<input type="hidden" name="id" value={$formData.id?.toString() || ''} />
+			<input type="hidden" name="m_product_id" value={$formData.m_product_id?.toString() || ''} />
 			<MyTextInput
 				name="vendorproductno"
 				bind:value={$formData.vendorproductno}
 				labelText="Vendor PN"
 				required={$constraints?.vendorproductno?.required}
 			/>
-			<MyTextInput
+			<!-- <MyTextInput
 				name="manufacturer"
 				bind:value={$formData.manufacturer}
 				labelText="manufacturer"
-			/>
-
-			<MyCombobox
+			/> -->
+			<!-- <ComboboxMelt value={$formData.c_bpartner_id.toString()} options={partners} /> -->
+			<ComboboxZag
 				name="c_bpartner_id"
 				bind:value={$formData.c_bpartner_id}
 				labelText="c_bpartner_id"
@@ -68,14 +87,14 @@
 				step={0.01}
 				labelText="pricelist"
 			/>
-			<MyTextInput value={$formData.created_at} labelText="created_at" />
-			<MyTextInput value={$formData.updated_at} labelText="updated_at" />
-			<MyUrlInput value={$formData.url} labelText="url" />
-			<MyTextInput name="valid_from" bind:value={$formData.valid_from} labelText="valid_from" />
-			<MyTextInput name="valid_to" bind:value={$formData.valid_to} labelText="valid_to" />
+			<!-- <MyTextInput value={$formData.created_at} labelText="created_at" /> -->
+			<!-- <MyTextInput value={$formData.updated_at} labelText="updated_at" /> -->
+			<MyUrlInput name="url" bind:value={$formData.url} labelText="url" />
+			<!-- <MyTextInput name="valid_from" bind:value={$formData.valid_from} labelText="valid_from" /> -->
+			<!-- <MyTextInput name="valid_to" bind:value={$formData.valid_to} labelText="valid_to" /> -->
 			<Sheet.Footer class="flex gap-2 sm:flex-col">
 				<Button type="submit" variant="default" class="w-full">Submit</Button>
-				<SuperDebug data={formData} />
+				<SuperDebug data={formData} status />
 			</Sheet.Footer>
 		</form>
 	</Sheet.Content>
