@@ -1,13 +1,13 @@
 <script lang="ts">
 	import * as combobox from '@zag-js/combobox';
 	import { useMachine, normalizeProps } from '@zag-js/svelte';
-	import type { HTMLInputAttributes } from 'svelte/elements';
+	import PhListPlus from '~icons/ph/list-plus';
+	import PhPencilSimpleSlash from '~icons/ph/pencil-simple-slash';
+	import PhCaretDown from '~icons/ph/caret-down';
+	import { cn } from '$lib/utils';
+	// Reference to the BaseInput's root element for anchoring
+	let baseInputRootElement: HTMLDivElement | null = $state(null);
 
-	// const comboboxData = [
-	// 	{ label: 'Zambia', code: 'ZA' },
-	// 	{ label: 'Benin', code: 'BN' }
-	// 	//...
-	// ];
 	type Item = { value: number; label: string };
 
 	type Props = {
@@ -17,9 +17,18 @@
 		labelText?: string; // Label for the input field
 		placeholder?: string; // Placeholder text for the input field
 		required?: boolean | undefined; // Placeholder text for the input field
+		readonly?: boolean; // If true, the input is read-only
 	};
 
-	let { name, value = $bindable(undefined), items, placeholder = '', required }: Props = $props();
+	let {
+		name,
+		value = $bindable(undefined),
+		items,
+		labelText,
+		placeholder = '',
+		required,
+		readonly = false
+	}: Props = $props();
 
 	let options = $state.raw(items);
 
@@ -32,7 +41,6 @@
 			return item.label;
 		}
 	});
-	$inspect('value', value, typeof value);
 	const id = $props.id();
 	const service = useMachine(combobox.machine, {
 		id: id,
@@ -52,42 +60,56 @@
 			options = newOptions;
 		},
 		onValueChange({ value: selectedValue }) {
-			// Update the Svelte state (bindable prop)
-			const selectedId = parseInt(selectedValue[0]);
-			value = selectedId;
-
-			// Explicitly set the Zag.js machine's input value to the ID string.
-			// This should make the <input {...api.getInputProps()} /> render with the ID as its value.
-			// We use the ID string here because the input's value attribute expects a string.
-			// Superforms/Zod will parse this string back to a number on the server.
-			/* if (selectedValue.length > 0) {
-				api.setInputValue(selectedValue[0]);
-			} else {
-				// Clear input if selection is cleared
-				api.setInputValue('');
-			} */
+			value = parseInt(selectedValue[0]);
 		}
 	});
 	const api = $derived(combobox.connect(service, normalizeProps));
 </script>
 
 <input type="hidden" {name} value={value?.toString() || ''} />
-<label {...api.getLabelProps()}>Vendor</label>
-<div {...api.getRootProps()}>
-	<div
-		{...api.getControlProps()}
-		class="flex w-full items-center gap-2 rounded-md border border-surface-2 bg-surface-document p-2"
-	>
-		<input type="number" {...api.getInputProps()} />
-		<button {...api.getTriggerProps()}>▼</button>
+
+<div {...api.getRootProps()} class="flex flex-col gap-1">
+	<!-- <BaseInput bind:rootElement={baseInputRootElement} {Icon} {Action} {labelText} /> -->
+	<label {...api.getLabelProps()} class="text-sm data-disabled:opacity-5">{labelText}</label>
+	<!-- [data-scope="combobox"][data-part="control"] -->
+	<div {...api.getControlProps()} class="relative w-full">
+		<div
+			class="pointer-events-none absolute start-2 top-1/2 -translate-y-1/2 text-muted-foreground"
+		>
+			<PhListPlus />
+		</div>
+		<div
+			class="inline-flex h-10 w-full truncate rounded-sm border border-surface-2 bg-surface-document px-8 text-base ring-primary transition-colors placeholder:text-muted-foreground focus-within:border-primary focus-within:ring hover:border-surface-3 sm:text-sm"
+		>
+			<input type="number" {...api.getInputProps()} class="w-full focus:outline-none" />
+		</div>
+		<button
+			{...api.getTriggerProps()}
+			class="absolute end-2 top-1/2 flex -translate-y-1/2 items-center text-muted-foreground"
+		>
+			{#if readonly}
+				<PhPencilSimpleSlash />
+			{:else}
+				<PhCaretDown class={cn('transition-transform', api.open && 'rotate-180')} />
+			{/if}
+		</button>
 	</div>
 </div>
 <div {...api.getPositionerProps()}>
 	{#if options.length > 0}
-		<ul {...api.getContentProps()}>
+		<ul
+			{...api.getContentProps()}
+			class={cn(
+				'isolate z-50 m-0 max-h-56 list-none overflow-auto overscroll-contain border border-surface-2 bg-surface-document p-1',
+				'rounded-sm border border-muted bg-popover shadow-popover outline-hidden select-none'
+			)}
+		>
 			{#each options as item}
 				{@const state = api.getItemState({ item })}
-				<li {...api.getItemProps({ item })}>
+				<li
+					{...api.getItemProps({ item })}
+					class="flex cursor-pointer items-center gap-2 px-2 py-1 select-none data-disabled:cursor-auto data-disabled:opacity-5 data-highlighted:bg-surface-1 data-highlighted:hover:bg-surface-1"
+				>
 					<span>{item.label}</span>
 					{#if state.selected}
 						<span class="ml-auto pl-2">✓</span>
@@ -99,12 +121,12 @@
 </div>
 
 <style>
-	[data-scope='combobox'][data-part='root'] {
+	/* [data-scope='combobox'][data-part='root'] {
 		display: inline-flex;
 		flex-direction: column;
-	}
+	} */
 
-	[data-scope='combobox'][data-part='content'] {
+	/* 	[data-scope='combobox'][data-part='content'] {
 		background-color: var(--color-surface-document);
 		list-style-type: none;
 		margin: 0;
@@ -114,9 +136,9 @@
 		overflow: auto;
 		padding: 2px;
 		z-index: 50;
-	}
+	} */
 
-	[data-scope='combobox'][data-part='item'] {
+	/* 	[data-scope='combobox'][data-part='item'] {
 		display: flex;
 		align-items: center;
 		gap: 8px;
@@ -134,33 +156,33 @@
 			opacity: 0.5;
 			cursor: not-allowed;
 		}
-	}
+	} */
 
-	[data-scope='combobox'][data-part='label'] {
+	/* 	[data-scope='combobox'][data-part='label'] {
 		display: block;
 		margin-top: 12px;
 		margin-bottom: 4px;
-	}
+	} */
 
-	[data-scope='combobox'][data-part='control'] {
+	/* 	[data-scope='combobox'][data-part='control'] {
 		display: inline-flex;
 		width: 300px;
-	}
+	} */
 
-	[data-scope='combobox'][data-part='input'] {
+	/* 	[data-scope='combobox'][data-part='input'] {
 		flex: 1;
-	}
+	} */
 
-	[data-scope='combobox'][data-part='clear-trigger'] {
+	/* [data-scope='combobox'][data-part='clear-trigger'] {
 		display: inline-flex;
 		font-size: 1.2em;
-		/* 		& svg { */
-		/* 			width: 1em; */
-		/* 			height: 1em; */
-		/* } */
-	}
+		& svg {
+			width: 1em;
+			height: 1em;
+		}
+	} */
 
-	[data-scope='combobox'][data-part='item-group-label'] {
+	/* 	[data-scope='combobox'][data-part='item-group-label'] {
 		user-select: none;
 		margin-top: 8px;
 		display: flex;
@@ -168,5 +190,5 @@
 		padding: 0 8px 8px;
 		font-size: 12px;
 		font-weight: 600;
-	}
+	} */
 </style>

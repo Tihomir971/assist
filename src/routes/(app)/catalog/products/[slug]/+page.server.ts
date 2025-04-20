@@ -12,11 +12,9 @@ import {
 	crudReplenishSchema,
 	mStorageonhandInsertSchemaАrray,
 	productPackingDeleteSchema,
-	productPackingInsertSchema,
-	mProductPoFormSchema // Add the new form schema import
+	productPackingInsertSchema
 } from './schema';
-// Remove the direct import of the base schema if no longer needed elsewhere in this file
-// import { mProductPoInsertSchema } from '$lib/types/supabase/supabase-zod-schemas';
+import { mProductPoInsertSchema } from '$lib/types/supabase/supabase-zod-schemas';
 
 export const load: PageServerLoad = async ({ depends, params, locals: { supabase } }) => {
 	depends('catalog:products');
@@ -44,7 +42,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		const { data } = await supabase
 			.from('m_replenish')
 			.select(
-				'id,m_warehouse_id,m_product_id,level_max,level_min,m_warehousesource_id,qtybatchsize'
+				'id, m_warehouse_id, m_product_id, level_max, level_min, m_warehousesource_id, qtybatchsize'
 			)
 			.eq('m_product_id', productId)
 			.order('m_warehouse_id');
@@ -129,11 +127,14 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 	]);
 
 	const formProduct = await superValidate(product, zod(crudMProductSchema));
-	//const formProductPacking = await superValidate({ productPacking }, zod(crudMProductGtinSchema));
 	const formProductPacking = await superValidate(zod(productPackingInsertSchema));
 	formProductPacking.data.m_product_id = productId;
 	const formReplenish = await superValidate({ replenishes }, zod(crudReplenishSchema));
-	const formProductPo = await superValidate(zod(mProductPoFormSchema)); // Use the new form schema
+	const formProductPo = await superValidate(
+		zod(
+			mProductPoInsertSchema // Add the new form schema import
+		)
+	); // Use the new form schema
 	formProductPo.data.m_product_id = productId;
 
 	const formStorageOnHand = await superValidate(
@@ -290,7 +291,12 @@ export const actions = {
 		// console.log(pair[0], pair[1], typeof pair[1]);
 		// }
 
-		const form = await superValidate(request, zod(mProductPoFormSchema)); // Use the explicit FormData object
+		const form = await superValidate(
+			request,
+			zod(
+				mProductPoInsertSchema // Add the new form schema import
+			)
+		); // Use the explicit FormData object
 		console.log('form.', JSON.stringify(form, null, 4));
 
 		if (!form.valid) return fail(400, { form });

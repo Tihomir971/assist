@@ -8,7 +8,6 @@
 	interface Props {
 		form: SuperValidated<MStorageonhandInsertSchemaАrray>;
 		productId: number;
-		//replenishes: CrudReplenishSchema[];
 		warehouses: Array<{ value: number; label: string }>;
 	}
 

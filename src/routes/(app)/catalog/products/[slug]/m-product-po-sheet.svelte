@@ -1,7 +1,5 @@
 <script lang="ts">
 	import {
-		ComboboxBits,
-		ComboboxMelt,
 		ComboboxZag,
 		MyNumberInput,
 		MyTextInput,
@@ -9,15 +7,15 @@
 	} from '$lib/components/my/input/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import type { MProductPoFormSchema } from './schema.js'; // Add MProductPoFormSchema
+	import type { MProductPoInsertSchema } from './schema.js'; // Add MProductPoFormSchema
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { Button } from '$lib/components/ui/button/index.js';
 
 	type Item = { value: number; label: string };
 	type Props = {
 		isSheetOpen: boolean;
-		data: MProductPoFormSchema | undefined; // Use MProductPoFormSchema
-		form: SuperValidated<MProductPoFormSchema>; // Use MProductPoFormSchema
+		data: MProductPoInsertSchema | undefined; // Use MProductPoFormSchema
+		form: SuperValidated<MProductPoInsertSchema>; // Use MProductPoFormSchema
 		partners: Item[];
 	};
 	let { isSheetOpen = $bindable(), data, form, partners }: Props = $props();
@@ -51,13 +49,14 @@
 	<Sheet.Content class="overflow-y-auto">
 		<form method="post" action="?/mProductPoUpsert" use:enhance>
 			<Sheet.Header>
-				<Sheet.Title>Are you sure absolutely sure?</Sheet.Title>
+				<Sheet.Title
+					>{`${$formData.id ? 'Update' : 'Create'} Product Purchase for Vendor`}</Sheet.Title
+				>
 				<Sheet.Description>
 					This action cannot be undone. This will permanently delete your account and remove your
 					data from our servers.
 				</Sheet.Description>
 			</Sheet.Header>
-			<!-- <MyNumberInput value={$formData.id} labelText="ID" /> -->
 			<input type="hidden" name="id" value={$formData.id?.toString() || ''} />
 			<input type="hidden" name="m_product_id" value={$formData.m_product_id?.toString() || ''} />
 			<MyTextInput
@@ -75,7 +74,7 @@
 			<ComboboxZag
 				name="c_bpartner_id"
 				bind:value={$formData.c_bpartner_id}
-				labelText="c_bpartner_id"
+				labelText="Vendor"
 				items={partners}
 				placeholder="Select a partner"
 				required={$constraints?.c_bpartner_id?.required}

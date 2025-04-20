@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { formatDateTime, formatNumber } from '$lib/style/locale';
 	import { type SuperValidated } from 'sveltekit-superforms';
-	import type { MProductPoFormSchema } from './schema';
+	import type { MProductPoInsertSchema } from './schema';
 
 	import { toast } from 'svelte-sonner';
 	// UI Elements
@@ -16,9 +16,9 @@
 	let isProductPoSheetOpen = $state(false);
 
 	type Props = {
-		form: SuperValidated<MProductPoFormSchema>;
+		form: SuperValidated<MProductPoInsertSchema>;
 		productId: number;
-		data: MProductPoFormSchema[];
+		data: MProductPoInsertSchema[];
 		partners: {
 			value: number;
 			label: string;
@@ -93,7 +93,6 @@
 						<Table.Cell class="text-right"
 							>{formatDateTime(purchases.updated_at as string)}</Table.Cell
 						>
-						<!-- onclick={() => handleEllipsisClick($form.purchases[i])} -->
 						<Table.Cell>
 							<Button
 								variant="ghost"
