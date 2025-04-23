@@ -1218,7 +1218,7 @@ export type Database = {
           net_qty_uom_id: number | null
           net_quantity: number
           producttype: string
-          shelf_life: number | null
+          shelf_life: number
           sku: string | null
           unitsperpack: number
           updated_at: string
@@ -1244,7 +1244,7 @@ export type Database = {
           net_qty_uom_id?: number | null
           net_quantity?: number
           producttype?: string
-          shelf_life?: number | null
+          shelf_life?: number
           sku?: string | null
           unitsperpack?: number
           updated_at?: string
@@ -1270,7 +1270,7 @@ export type Database = {
           net_qty_uom_id?: number | null
           net_quantity?: number
           producttype?: string
-          shelf_life?: number | null
+          shelf_life?: number
           sku?: string | null
           unitsperpack?: number
           updated_at?: string
@@ -1514,10 +1514,7 @@ export type Database = {
           iscurrentvendor: boolean
           m_product_id: number
           manufacturer: string | null
-          pricelastinv: number | null
-          pricelastpo: number | null
           pricelist: number
-          pricepo: number | null
           updated_at: string
           url: string | null
           valid_from: string | null
@@ -1537,10 +1534,7 @@ export type Database = {
           iscurrentvendor?: boolean
           m_product_id: number
           manufacturer?: string | null
-          pricelastinv?: number | null
-          pricelastpo?: number | null
           pricelist?: number
-          pricepo?: number | null
           updated_at?: string
           url?: string | null
           valid_from?: string | null
@@ -1560,10 +1554,7 @@ export type Database = {
           iscurrentvendor?: boolean
           m_product_id?: number
           manufacturer?: string | null
-          pricelastinv?: number | null
-          pricelastpo?: number | null
           pricelist?: number
-          pricepo?: number | null
           updated_at?: string
           url?: string | null
           valid_from?: string | null

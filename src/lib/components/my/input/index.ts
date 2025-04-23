@@ -2,7 +2,7 @@
 import CurrencyInput from './input-currency.svelte';
 import DateInput from './input-date.svelte';
 import FileInput from './input-file.svelte';
-import NumberInput from './input-number.svelte';
+import NumberInputZag from './input-number-zag.svelte';
 import TextInput from './input-text.svelte';
 import UrlInput from './input-url.svelte';
 // Old Zag-based combobox (kept for reference)
@@ -16,11 +16,11 @@ export {
 	CurrencyInput as MyCurrencyInput,
 	DateInput as MyDateInput,
 	FileInput as MyFileInput,
-	NumberInput as MyNumberInput,
 	TextInput as MyTextInput,
 	ComboboxInputBits as ComboboxBits,
 	ComboboxZag as ComboboxZag,
 	ComboboxMelt as ComboboxMelt,
 	ComboboxShad as ComboboxShad,
-	UrlInput as MyUrlInput
+	UrlInput as MyUrlInput,
+	NumberInputZag as NumberInputZag
 };

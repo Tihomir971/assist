@@ -23,9 +23,8 @@
 	import StorageOnHandCard from './m-storageonhand-card.svelte';
 	import { crudMProductSchema } from './schema';
 	import FormCombobox from '$lib/components/my/MyComboboxForm.svelte';
-	import MyNumberInput from '$lib/components/my/input/input-number.svelte';
 	import MyUrlInput from '$lib/components/my/input/input-url.svelte';
-	import { MyTextInput } from '$lib/components/my/input';
+	import { MyTextInput, NumberInputZag } from '$lib/components/my/input';
 
 	let { data } = $props();
 
@@ -229,7 +228,14 @@
 						<h3 class="mb-2 pb-2 text-lg font-semibold">Packaging Information</h3>
 
 						<div class="grid grid-cols-2 gap-4">
-							<Form.Field form={productForm} name="net_quantity">
+							<NumberInputZag
+								name="net_quantity"
+								bind:value={$formProduct.net_quantity}
+								min={0}
+								fractionDigits={4}
+								labelText="Net Quantity"
+							/>
+							<!-- 	<Form.Field form={productForm} name="net_quantity">
 								<Form.Control>
 									{#snippet children({ props })}
 										<Form.Label>Net Quantity</Form.Label>
@@ -241,7 +247,7 @@
 									{/snippet}
 								</Form.Control>
 								<Form.FieldErrors />
-							</Form.Field>
+							</Form.Field> -->
 							<Form.Field form={productForm} name="net_qty_uom_id" class="w-full">
 								<Form.Control>
 									{#snippet children({ props })}
@@ -274,8 +280,12 @@
 							<Form.Field form={productForm} name="shelf_life">
 								<Form.Control>
 									{#snippet children({ props })}
-										<Form.Label>Shelf Life (days)</Form.Label>
-										<MyNumberInput bind:value={$formProduct.shelf_life} {...props} />
+										<NumberInputZag
+											bind:value={$formProduct.shelf_life}
+											fractionDigits={0}
+											{...props}
+											labelText="Shelf Life (days)"
+										/>
 									{/snippet}
 								</Form.Control>
 								<Form.FieldErrors />

@@ -9,6 +9,7 @@
 		error?: string;
 		labelText?: string; // New param for label
 		inline?: boolean; // New param for positioning
+		Label?: Snippet;
 		Icon?: Snippet;
 		Content?: Snippet;
 		Action?: Snippet;
@@ -21,6 +22,7 @@
 		error,
 		labelText, // New parameter
 		inline = false, // New parameter with default value
+		Label,
 		Icon,
 		Content,
 		Action,
@@ -34,14 +36,16 @@
 
 <!-- Container div that handles the inline layout -->
 <div
-	class={cn('mb-2 w-full', inline ? 'flex items-center gap-3' : 'flex flex-col gap-0.5', className)}
+	class={cn('mb-2 w-full', inline ? 'flex items-center gap-3' : 'flex flex-col gap-1', className)}
 >
-	{#if labelText}
+	<!-- 	{#if labelText}
 		<label for={inputId} class={cn('', inline ? 'min-w-[120px] shrink-0' : 'mb-1')}>
 			{labelText}{#if restProps.required}<span class="ml-1 text-warning">*</span>{/if}
 		</label>
+	{/if} -->
+	{#if Label}
+		{@render Label?.()}
 	{/if}
-
 	<!-- Input container -->
 	<div bind:this={rootElement} class={cn('relative w-full')}>
 		<div

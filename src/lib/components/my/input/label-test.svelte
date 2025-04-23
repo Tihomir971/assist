@@ -1,6 +1,5 @@
 <script lang="ts">
 	import TextInput from './input-text.svelte';
-	import NumberInput from './input-number.svelte';
 	import DateInput from './input-date.svelte';
 	import UrlInput from './input-url.svelte';
 	import FileInput from './input-file.svelte';
@@ -23,8 +22,6 @@
 
 		<TextInput labelText="Username" bind:value={textValue} placeholder="Enter username" />
 
-		<NumberInput labelText="Quantity" bind:value={numberValue} min={0} max={100} />
-
 		<DateInput labelText="Birth Date" bind:value={dateValue} />
 
 		<UrlInput labelText="Website URL" bind:value={urlValue} placeholder="Enter website URL" />
@@ -39,8 +36,6 @@
 		<h2 class="mb-2 text-xl font-semibold">Inline Labels (beside inputs)</h2>
 
 		<TextInput labelText="Username" inline bind:value={textValue} placeholder="Enter username" />
-
-		<NumberInput labelText="Quantity" inline bind:value={numberValue} min={0} max={100} />
 
 		<DateInput labelText="Birth Date" inline bind:value={dateValue} />
 
@@ -61,12 +56,5 @@
 		<h2 class="mb-2 text-xl font-semibold">With Error Messages</h2>
 
 		<TextInput labelText="Username" bind:value={textValue} error="Username is required" />
-
-		<NumberInput
-			labelText="Quantity"
-			inline
-			bind:value={numberValue}
-			error="Quantity must be between 1 and 100"
-		/>
 	</div>
 </div>

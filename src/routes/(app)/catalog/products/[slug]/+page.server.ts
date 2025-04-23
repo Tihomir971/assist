@@ -1,4 +1,4 @@
-import { fail, error, redirect } from '@sveltejs/kit';
+import { fail, error } from '@sveltejs/kit';
 import type { Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { ProductService } from '$lib/services/supabase/';
@@ -209,25 +209,17 @@ export const actions = {
 		return message(form, 'Product packaging deleted successfully!');
 	},
 	product: async ({ request, locals: { supabase } }) => {
-		const formData = await request.formData();
-		const form = await superValidate(formData, zod(crudMProductSchema));
+		const form = await superValidate(request, zod(crudMProductSchema));
+		console.log('form', form);
+
 		if (!form.valid) return fail(400, { form });
 
 		if (form.data.id) {
-			if (formData.has('delete')) {
-				const { error: delError } = await supabase
-					.from('m_product')
-					.delete()
-					.eq('id', form.data.id);
-				if (delError) throw error(404, delError.message);
-				throw redirect(303, '/catalog');
-			} else {
-				const { error: updError } = await supabase
-					.from('m_product')
-					.update(form.data)
-					.eq('id', form.data.id);
-				if (updError) throw error(404, updError.message);
-			}
+			const { error: updError } = await supabase
+				.from('m_product')
+				.update(form.data)
+				.eq('id', form.data.id);
+			if (updError) throw error(404, updError.message);
 		} else {
 			const { error: insError } = await supabase.from('m_product').insert(form.data);
 			if (insError) throw error(500, insError.message);

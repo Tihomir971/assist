@@ -1,9 +1,9 @@
 <script lang="ts">
 	import {
 		ComboboxZag,
-		MyNumberInput,
 		MyTextInput,
-		MyUrlInput
+		MyUrlInput,
+		NumberInputZag
 	} from '$lib/components/my/input/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
@@ -27,21 +27,17 @@
 	} = superForm(form, {
 		onResult({ result }) {
 			if (result.type === 'success') {
-				// Handle success, e.g., show a success message or redirect
 				console.log('Form submitted successfully:', result.data);
 			} else {
-				// Handle error, e.g., show an error message
 				console.error('Form submission failed:', result.status);
 			}
 		},
 		onError({ result }) {
-			// Handle error, e.g., show an error message
 			console.error('Form submission failed:', result.error);
 		}
 	});
 	if (data) {
 		$formData = { ...data };
-		console.log('$fromData', $formData);
 	}
 </script>
 
@@ -65,12 +61,6 @@
 				labelText="Vendor PN"
 				required={$constraints?.vendorproductno?.required}
 			/>
-			<!-- <MyTextInput
-				name="manufacturer"
-				bind:value={$formData.manufacturer}
-				labelText="manufacturer"
-			/> -->
-			<!-- <ComboboxMelt value={$formData.c_bpartner_id.toString()} options={partners} /> -->
 			<ComboboxZag
 				name="c_bpartner_id"
 				bind:value={$formData.c_bpartner_id}
@@ -79,18 +69,15 @@
 				placeholder="Select a partner"
 				required={$constraints?.c_bpartner_id?.required}
 			/>
-			<!-- <MyComboboxMelt /> -->
-			<MyNumberInput
+			<NumberInputZag name="pricelist" bind:value={$formData.pricelist} min={0} />
+			<!-- <NumberInputZag name="pricelist" min={0} bind:value={$formData.pricelist} /> -->
+			<!-- 	<MyNumberInput
 				name="pricelist"
 				bind:value={$formData.pricelist}
 				step={0.01}
 				labelText="pricelist"
-			/>
-			<!-- <MyTextInput value={$formData.created_at} labelText="created_at" /> -->
-			<!-- <MyTextInput value={$formData.updated_at} labelText="updated_at" /> -->
+			/> -->
 			<MyUrlInput name="url" bind:value={$formData.url} labelText="url" />
-			<!-- <MyTextInput name="valid_from" bind:value={$formData.valid_from} labelText="valid_from" /> -->
-			<!-- <MyTextInput name="valid_to" bind:value={$formData.valid_to} labelText="valid_to" /> -->
 			<Sheet.Footer class="flex gap-2 sm:flex-col">
 				<Button type="submit" variant="default" class="w-full">Submit</Button>
 				<SuperDebug data={formData} status />

@@ -5,6 +5,7 @@
 	import PhPencilSimpleSlash from '~icons/ph/pencil-simple-slash';
 	import PhCaretDown from '~icons/ph/caret-down';
 	import { cn } from '$lib/utils';
+
 	// Reference to the BaseInput's root element for anchoring
 	let baseInputRootElement: HTMLDivElement | null = $state(null);
 
@@ -18,6 +19,7 @@
 		placeholder?: string; // Placeholder text for the input field
 		required?: boolean | undefined; // Placeholder text for the input field
 		readonly?: boolean; // If true, the input is read-only
+		inline?: boolean;
 	};
 
 	let {
@@ -27,7 +29,8 @@
 		labelText,
 		placeholder = '',
 		required,
-		readonly = false
+		readonly = false,
+		inline = false
 	}: Props = $props();
 
 	let options = $state.raw(items);
@@ -60,33 +63,30 @@
 			options = newOptions;
 		},
 		onValueChange({ value: selectedValue }) {
+			/* if (haveSameElements(api.value, selectedValue)) {
+				api.clearValue();
+			} */
 			value = parseInt(selectedValue[0]);
 		}
 	});
 	const api = $derived(combobox.connect(service, normalizeProps));
 </script>
 
-<input type="hidden" {name} value={value?.toString() || ''} />
+<input type="hidden" {name} value={api.value[0]} />
 
-<div {...api.getRootProps()} class="flex flex-col gap-1">
+<div {...api.getRootProps()} class="input-root">
+	<!-- class="input-root flex-row items-center" -->
 	<!-- <BaseInput bind:rootElement={baseInputRootElement} {Icon} {Action} {labelText} /> -->
-	<label {...api.getLabelProps()} class="text-sm data-disabled:opacity-5">{labelText}</label>
+	<label {...api.getLabelProps()} class="input-label">{labelText}</label>
 	<!-- [data-scope="combobox"][data-part="control"] -->
-	<div {...api.getControlProps()} class="relative w-full">
-		<div
-			class="pointer-events-none absolute start-2 top-1/2 -translate-y-1/2 text-muted-foreground"
-		>
+	<div {...api.getControlProps()} class="input-control">
+		<div class="input-icon">
 			<PhListPlus />
 		</div>
-		<div
-			class="inline-flex h-10 w-full truncate rounded-sm border border-surface-2 bg-surface-document px-8 text-base ring-primary transition-colors placeholder:text-muted-foreground focus-within:border-primary focus-within:ring hover:border-surface-3 sm:text-sm"
-		>
+		<div class="input-input">
 			<input type="number" {...api.getInputProps()} class="w-full focus:outline-none" />
 		</div>
-		<button
-			{...api.getTriggerProps()}
-			class="absolute end-2 top-1/2 flex -translate-y-1/2 items-center text-muted-foreground"
-		>
+		<button {...api.getTriggerProps()} class="input-trigger">
 			{#if readonly}
 				<PhPencilSimpleSlash />
 			{:else}
@@ -100,8 +100,8 @@
 		<ul
 			{...api.getContentProps()}
 			class={cn(
-				'isolate z-50 m-0 max-h-56 list-none overflow-auto overscroll-contain border border-surface-2 bg-surface-document p-1',
-				'rounded-sm border border-muted bg-popover shadow-popover outline-hidden select-none'
+				'isolate z-50 m-0 max-h-56 list-none overflow-auto overscroll-contain border border-surface-2 p-1',
+				'rounded-sm border border-muted bg-well-1 shadow-popover outline-hidden select-none'
 			)}
 		>
 			{#each options as item}

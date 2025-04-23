@@ -8,7 +8,7 @@
 	import * as Select from '$lib/components/ui/select';
 	import * as Form from '$lib/components/ui/form';
 	import type { CrudReplenishSchema } from './schema';
-	import { MyNumberInput } from '$lib/components/my/input';
+	import { NumberInputZag } from '$lib/components/my/input';
 
 	interface Props {
 		form: SuperValidated<CrudReplenishSchema>;
@@ -101,24 +101,24 @@
 						</Select.Root>
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
-						<MyNumberInput
-							min={0}
+						<NumberInputZag
 							bind:value={$form.replenishes[i].level_min}
-							placeholder="Min level..."
+							min={0}
+							fractionDigits={0}
 						/>
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
-						<MyNumberInput
-							min={0}
+						<NumberInputZag
 							bind:value={$form.replenishes[i].level_max}
-							placeholder="Max level..."
+							min={0}
+							fractionDigits={0}
 						/>
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
-						<MyNumberInput
-							min={0}
+						<NumberInputZag
 							bind:value={$form.replenishes[i].qtybatchsize}
-							placeholder="Batch size..."
+							min={0}
+							fractionDigits={0}
 						/>
 					</Table.Cell>
 					<Table.Cell class="w-1/5">

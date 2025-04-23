@@ -1,22 +1,17 @@
 <script lang="ts">
-	import { onMount, type Snippet } from 'svelte';
+	import { onMount } from 'svelte';
 	import {
 		ComboboxBits,
-		ComboboxMelt,
 		ComboboxShad,
 		ComboboxZag,
 		MyCurrencyInput,
 		MyDateInput,
 		MyFileInput,
-		MyNumberInput,
 		MyTextInput,
-		MyUrlInput
+		MyUrlInput,
+		NumberInputZag
 	} from '$lib/components/my/input';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import * as Tabs from '$lib/components/ui/tabs/index.js';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
 	import { MySelectMelt } from '$lib/components/my';
 	// Note: The tab IDs here ('tab1', 'tab2') must match the snippet names below
 	// Sample data for testing
@@ -235,13 +230,13 @@
 
 		<!-- Number Input -->
 		<div>
-			<MyNumberInput
+			<NumberInputZag
 				bind:value={numberValue}
 				min={0}
 				max={10000}
 				step={0.5}
 				error={numberError}
-				labelText="Number Input"
+				labelText="Number Input (Zag)"
 			/>
 			<div class="mt-2 text-sm text-muted-foreground">
 				Note: Step value of 0.5 automatically sets precision to 1 decimal place and

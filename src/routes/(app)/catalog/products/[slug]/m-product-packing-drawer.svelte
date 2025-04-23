@@ -14,7 +14,7 @@
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import MySelectForm from '$lib/components/my/MySelectForm.svelte';
 	import MyCheckboxForm from '$lib/components/my/MyCheckboxForm.svelte';
-	import { MyNumberInput } from '$lib/components/my/input';
+	import { NumberInputZag } from '$lib/components/my/input';
 
 	type Props = {
 		isProductPackingDrawerOpen: boolean;
@@ -132,15 +132,15 @@
 
 				<div class="grid grid-cols-2 gap-4">
 					<div class="space-y-2">
-						<label for="m_product_id" class="text-sm font-medium">Product ID</label>
-						<MyNumberInput
+						<NumberInputZag
 							id="m_product_id"
 							type="number"
 							value={$formData.m_product_id}
+							labelText="Product ID"
+							fractionDigits={0}
 							required
-							readonly
+							readOnly
 						/>
-						{m_product_id}
 					</div>
 					<div class="space-y-2">
 						<label for="packing_type" class="text-sm font-medium">Packing Type</label>
@@ -156,12 +156,10 @@
 					</div>
 
 					<div class="space-y-2">
-						<label for="unitsperpack" class="text-sm font-medium">Units Per Pack</label>
-						<MyNumberInput
+						<NumberInputZag
 							name="unitsperpack"
-							id="unitsperpack"
 							bind:value={$formData.unitsperpack}
-							placeholder="Units Per Pack"
+							labelText="Units Per Pack"
 						/>
 					</div>
 
