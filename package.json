@@ -75,6 +75,7 @@
     "html5-qrcode": "^2.3.8",
     "ky": "^1.8.1",
     "luxon": "^3.6.1",
+    "match-sorter": "^8.0.0",
     "melt": "^0.29.3",
     "tailwindcss": "4.1.4",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
