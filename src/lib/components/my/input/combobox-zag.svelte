@@ -35,7 +35,7 @@
 
 	const collection = $derived(
 		combobox.collection({
-			items: items,
+			items: options,
 			itemToValue: (item) => item.value.toString(),
 			itemToString: (item) => item.label
 		})
@@ -54,9 +54,7 @@
 		},
 		onInputValueChange({ inputValue }) {
 			const filtered = matchSorter(items, inputValue, {
-				keys: ['label'],
-				sorter: (rankedItems) =>
-					rankedItems.sort((a, b) => a.item.label.localeCompare(b.item.label))
+				keys: ['label']
 			});
 			/* const filtered = items.filter((item) =>
 				item.label.toLowerCase().includes(inputValue.toLowerCase())
@@ -76,7 +74,7 @@
 <input type="hidden" {name} value={api.value[0]} />
 
 <div {...api.getRootProps()} class="input-root">
-	<label {...api.getLabelProps()} class="input-label">{labelText}{options.length}</label>
+	<label {...api.getLabelProps()} class="input-label">{labelText}</label>
 	<div {...api.getControlProps()} class="input-control">
 		<div class="input-icon">
 			<PhListPlus />
@@ -99,7 +97,7 @@
 			{...api.getContentProps()}
 			class={cn(
 				'isolate z-50 m-0 max-h-56 list-none overflow-auto overscroll-contain border border-surface-2 p-1',
-				'rounded-sm border border-muted bg-well-1 shadow-popover outline-hidden select-none'
+				'rounded-sm border border-muted bg-popover shadow-popover outline-hidden select-none'
 			)}
 		>
 			{#each options as item (item.value)}
