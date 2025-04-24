@@ -7,61 +7,78 @@
 	import PhPlus from '~icons/ph/plus';
 	import PhMinus from '~icons/ph/minus';
 
-	import type { HTMLInputAttributes } from 'svelte/elements';
 	import { untrack } from 'svelte';
 
-	type Props = Omit<HTMLInputAttributes, 'value'> & {
+	type Props = {
 		ref?: HTMLInputElement | null;
+		name?: string;
 		value?: number | null;
-		name?: string | undefined; // Name of the input field
-		fractionDigits?: number;
-		min?: number;
-		max?: number;
-		locale?: string;
-		class?: string;
+		disabled?: boolean;
+		readonly?: boolean;
+		required?: boolean;
+		fractions?: number;
 		error?: string;
 		labelText?: string; // New param for label
 		inline?: boolean; // New param for positioning
-		readOnly?: boolean; // New param for readOnly
+		machine?: Pick<
+			numberInput.Props,
+			| 'locale'
+			| 'readOnly'
+			| 'min'
+			| 'max'
+			| 'disabled'
+			| 'required'
+			| 'defaultValue'
+			| 'id'
+			| 'onValueChange'
+			| 'formatOptions'
+			| 'disabled'
+		>;
 	};
+
+	const id = $props.id();
 	let {
 		ref = $bindable(null),
 		value = $bindable(),
-		fractionDigits = 2,
-		min,
-		max,
-		locale = 'sr-RS',
-		readonly = false,
-		class: className,
+		disabled,
+		readonly,
+		required,
+		fractions = 2,
 		error,
 		labelText,
 		inline,
-		readOnly = false,
+		machine = {
+			id: id,
+			locale: 'sr-RS',
+			min: 0,
+			disabled,
+			onValueChange({ valueAsNumber }) {
+				if (value !== valueAsNumber && valueAsNumber) {
+					value = valueAsNumber;
+				}
+			}
+		},
 		...restProps
 	}: Props = $props();
 
-	const id = $props.id();
+	machine.defaultValue = value?.toLocaleString('sr-RS') ?? undefined;
+	machine.disabled = disabled;
+	machine.readOnly = readonly;
+	machine.required = required;
+	machine.formatOptions = {
+		minimumFractionDigits: fractions,
+		maximumFractionDigits: fractions
+	};
+
 	const service = useMachine(numberInput.machine, {
-		id,
-		readOnly: readOnly,
-		// name: restProps.name,
-		// defaultValue: value?.toString(),
-		defaultValue: value?.toLocaleString('sr-RS') ?? undefined,
-		min: min,
-		max: max,
-		allowMouseWheel: true,
-		locale: locale,
-		formatOptions: {
-			minimumFractionDigits: fractionDigits,
-			maximumFractionDigits: fractionDigits
-		},
-		onValueChange({ valueAsNumber, value: valueAsString }) {
-			console.log('value, valueAsNumber, valueAsString entry', value, valueAsNumber, valueAsString);
-			if (value !== valueAsNumber && valueAsNumber) {
-				value = valueAsNumber;
-			}
-			console.log('value, valueAsNumber, valueAsString after', value, valueAsNumber);
-		}
+		id: machine.id,
+		readOnly: machine.readOnly,
+		defaultValue: machine.defaultValue,
+		min: machine.min,
+		max: machine.max,
+		locale: machine.locale,
+		formatOptions: machine.formatOptions,
+		onValueChange: machine.onValueChange
 	});
 	const api = $derived(numberInput.connect(service, normalizeProps));
 
@@ -87,7 +104,7 @@
 {/snippet}
 
 {#snippet Trigger()}
-	{#if !restProps.disabled}
+	{#if !machine.disabled}
 		<div class="flex h-full gap-1">
 			<button
 				{...api.getDecrementTriggerProps()}
@@ -110,5 +127,13 @@
 <input type="hidden" name={restProps.name} value={api.valueAsNumber} />
 
 <div {...api.getRootProps()} class="input-root">
-	<BaseInput bind:ref {inline} {Label} {Icon} {Content} Action={Trigger} readonly={readOnly} />
+	<BaseInput
+		bind:ref
+		{inline}
+		{Label}
+		{Icon}
+		{Content}
+		Action={Trigger}
+		readonly={machine.readOnly}
+	/>
 </div>

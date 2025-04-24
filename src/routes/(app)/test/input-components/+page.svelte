@@ -228,34 +228,6 @@
 			<div>Current value: {textValue}</div>
 		</div>
 
-		<!-- Number Input -->
-		<div>
-			<NumberInputZag
-				bind:value={numberValue}
-				min={0}
-				max={10000}
-				step={0.5}
-				error={numberError}
-				labelText="Number Input (Zag)"
-			/>
-			<div class="mt-2 text-sm text-muted-foreground">
-				Note: Step value of 0.5 automatically sets precision to 1 decimal place and
-				increments/decrements by 0.5
-			</div>
-			<div class="flex gap-2">
-				<Button
-					variant="default"
-					onclick={() => {
-						numberValue = 50;
-					}}
-				>
-					Reset
-				</Button>
-				<Button variant="destructive" onclick={toggleNumberError}>Toggle Error</Button>
-			</div>
-			<div>Current value: {numberValue}</div>
-		</div>
-
 		<!-- Date Input -->
 		<div class="card rounded-md border p-4">
 			<MyDateInput

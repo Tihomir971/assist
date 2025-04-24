@@ -133,13 +133,11 @@
 				<div class="grid grid-cols-2 gap-4">
 					<div class="space-y-2">
 						<NumberInputZag
-							id="m_product_id"
-							type="number"
 							value={$formData.m_product_id}
 							labelText="Product ID"
-							fractionDigits={0}
+							fractions={0}
 							required
-							readOnly
+							readonly
 						/>
 					</div>
 					<div class="space-y-2">

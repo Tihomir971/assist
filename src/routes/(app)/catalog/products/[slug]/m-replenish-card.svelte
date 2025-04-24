@@ -101,25 +101,13 @@
 						</Select.Root>
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
-						<NumberInputZag
-							bind:value={$form.replenishes[i].level_min}
-							min={0}
-							fractionDigits={0}
-						/>
+						<NumberInputZag bind:value={$form.replenishes[i].level_min} fractions={0} />
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
-						<NumberInputZag
-							bind:value={$form.replenishes[i].level_max}
-							min={0}
-							fractionDigits={0}
-						/>
+						<NumberInputZag bind:value={$form.replenishes[i].level_max} fractions={0} />
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
-						<NumberInputZag
-							bind:value={$form.replenishes[i].qtybatchsize}
-							min={0}
-							fractionDigits={0}
-						/>
+						<NumberInputZag bind:value={$form.replenishes[i].qtybatchsize} fractions={0} />
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
 						<Select.Root

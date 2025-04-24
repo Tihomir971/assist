@@ -16,11 +16,10 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import ComboboxField from '$lib/components/my/MyComboboxForm.svelte';
-	import DrawerCategoryMap from './drawer-category-map.svelte';
 
 	// Icons
 	import PhPackage from '~icons/ph/package';
+	import { ComboboxZag } from '$lib/components/my/input';
 
 	let { data } = $props();
 
@@ -45,10 +44,6 @@
 		}
 	});
 	const { form: formData, enhance, message, isTainted, tainted } = form;
-	// let triggerName = $derived(
-	// data.categories.find((category) => category.value === $formData.parent_id?.toString())?.label
-	// );
-	let isCategoryMapDrawerOpen = $state(false);
 </script>
 
 <form method="POST" use:enhance>
@@ -107,6 +102,13 @@
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
+					<ComboboxZag
+						name="parent_id"
+						bind:value={$formData.parent_id}
+						labelText="Parent Category"
+						items={data.categories}
+						placeholder="Select parent category"
+					/>
 				</div>
 				<Form.Field {form} name="description">
 					<Form.Control>
@@ -118,14 +120,6 @@
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<ComboboxField
-					{form}
-					name="parent_id"
-					label="Parent Category"
-					options={data.categories}
-					placeholder="Select parent category"
-					width="w-full"
-				/>
 				<div class="flex flex-row-reverse items-center gap-2">
 					<Form.Button variant="default" disabled={!isTainted($tainted)}>Save</Form.Button>
 					<Form.Button
@@ -166,7 +160,6 @@
 				</div>
 			</Card.Content>
 		</Card.Root>
-		<Button onclick={() => (isCategoryMapDrawerOpen = !isCategoryMapDrawerOpen)}>Drawer</Button>
 	</div>
 	{#if browser}
 		<Card.Root>
@@ -178,9 +171,3 @@
 		</Card.Root>
 	{/if}
 </form>
-<DrawerCategoryMap
-	bind:isCategoryMapDrawerOpen
-	categories={data.categories}
-	channels={data.channels}
-	validatedForm={data.formCategoryMap}
-/>

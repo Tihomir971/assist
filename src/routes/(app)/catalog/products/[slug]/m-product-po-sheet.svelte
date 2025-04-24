@@ -69,7 +69,7 @@
 				placeholder="Select a partner"
 				required={$constraints?.c_bpartner_id?.required}
 			/>
-			<NumberInputZag name="pricelist" bind:value={$formData.pricelist} min={0} />
+			<NumberInputZag name="pricelist" bind:value={$formData.pricelist} />
 			<!-- <NumberInputZag name="pricelist" min={0} bind:value={$formData.pricelist} /> -->
 			<!-- 	<MyNumberInput
 				name="pricelist"

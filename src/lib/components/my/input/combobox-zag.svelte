@@ -27,7 +27,7 @@
 		value = $bindable(undefined),
 		items,
 		labelText,
-		placeholder = '',
+		placeholder = 'Select an item',
 		required,
 		readonly = false,
 		inline = false
@@ -37,6 +37,7 @@
 
 	const collection = combobox.collection({
 		items: items,
+
 		itemToValue(item) {
 			return item.value.toString();
 		},
@@ -49,6 +50,7 @@
 		id: id,
 		collection,
 		defaultValue: value ? [value.toString()] : undefined,
+		placeholder: placeholder,
 		onOpenChange() {
 			options = items;
 		},

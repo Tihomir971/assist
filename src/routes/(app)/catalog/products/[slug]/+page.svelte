@@ -22,9 +22,8 @@
 	import ReplenishCard from './m-replenish-card.svelte';
 	import StorageOnHandCard from './m-storageonhand-card.svelte';
 	import { crudMProductSchema } from './schema';
-	import FormCombobox from '$lib/components/my/MyComboboxForm.svelte';
 	import MyUrlInput from '$lib/components/my/input/input-url.svelte';
-	import { MyTextInput, NumberInputZag } from '$lib/components/my/input';
+	import { ComboboxZag, MyTextInput, NumberInputZag } from '$lib/components/my/input';
 
 	let { data } = $props();
 
@@ -209,19 +208,17 @@
 
 						<div class="grid grid-cols-2 gap-4"></div>
 
-						<FormCombobox
-							form={productForm}
+						<ComboboxZag
 							name="attributeset_id"
-							label="Attribute Set"
-							options={data.attributeSets}
-							width="w-full"
+							bind:value={$formProduct.attributeset_id}
+							labelText="Attribute Set"
+							items={data.attributeSets}
 						/>
-						<FormCombobox
-							form={productForm}
+						<ComboboxZag
 							name="m_product_category_id"
-							label="Category"
-							options={data.categories}
-							width="w-full"
+							bind:value={$formProduct.m_product_category_id}
+							labelText="Category"
+							items={data.categories}
 						/>
 					</div>
 					<div>
@@ -231,8 +228,7 @@
 							<NumberInputZag
 								name="net_quantity"
 								bind:value={$formProduct.net_quantity}
-								min={0}
-								fractionDigits={4}
+								fractions={4}
 								labelText="Net Quantity"
 							/>
 							<!-- 	<Form.Field form={productForm} name="net_quantity">
@@ -282,7 +278,7 @@
 									{#snippet children({ props })}
 										<NumberInputZag
 											bind:value={$formProduct.shelf_life}
-											fractionDigits={0}
+											fractions={0}
 											{...props}
 											labelText="Shelf Life (days)"
 										/>
