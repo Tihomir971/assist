@@ -13,10 +13,10 @@
 
 	// Import utility functions
 	import { handleFileUpload, loadSheetData } from './utils/xlsx-handlers';
-	import { processExcelData, modifyPrice } from './utils/data-processors';
+	import { processExcelData } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
-	import Combobox from '$lib/components/my/MyCombobox.svelte';
 	import MySelect from '$lib/components/my/MySelect.svelte';
+	import { ComboboxZag } from '$lib/components/my/input';
 
 	let { data } = $props();
 	let { supabase } = $derived(data);
@@ -217,7 +217,7 @@
 		sheetNames = [];
 		selectedSheet = '';
 		showModal = false;
-		selectedSupplier = '';
+		selectedSupplier = undefined;
 		mappings = {
 			name: '',
 			vendorproductno: '',
@@ -262,10 +262,7 @@
 		resetAll();
 	});
 
-	let selectedSupplier: string = $state('');
-	// const triggerSelectedSupplier = $derived(
-	// 	data.c_bpartner.find((f) => f.value === selectedSupplier)?.label ?? 'Select Supplier'
-	// );
+	let selectedSupplier: number | undefined = $state();
 </script>
 
 <div class="mx-auto grid h-full max-w-7xl grid-rows-[auto_1fr_auto] gap-4 p-2">
@@ -273,11 +270,10 @@
 	<div class="flex flex-col gap-4">
 		<div class="grid grid-cols-4 items-start gap-2">
 			<div class="grid w-full gap-1.5">
-				<Label for="excel-file">Supplier</Label>
-
-				<Combobox
+				<ComboboxZag
 					bind:value={selectedSupplier}
-					options={data.c_bpartner}
+					items={data.c_bpartner}
+					labelText="Supplier"
 					placeholder="Select supplier..."
 				/>
 			</div>

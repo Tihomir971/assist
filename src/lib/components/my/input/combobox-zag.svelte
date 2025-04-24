@@ -37,7 +37,6 @@
 
 	const collection = combobox.collection({
 		items: items,
-
 		itemToValue(item) {
 			return item.value.toString();
 		},
@@ -58,16 +57,12 @@
 			const filtered = items.filter((item) =>
 				item.label.toLowerCase().includes(inputValue.toLowerCase())
 			);
-
 			const newOptions = filtered.length > 0 ? filtered : items;
 
 			collection.setItems(newOptions);
 			options = newOptions;
 		},
 		onValueChange({ value: selectedValue }) {
-			/* if (haveSameElements(api.value, selectedValue)) {
-				api.clearValue();
-			} */
 			value = parseInt(selectedValue[0]);
 		}
 	});
@@ -77,10 +72,7 @@
 <input type="hidden" {name} value={api.value[0]} />
 
 <div {...api.getRootProps()} class="input-root">
-	<!-- class="input-root flex-row items-center" -->
-	<!-- <BaseInput bind:rootElement={baseInputRootElement} {Icon} {Action} {labelText} /> -->
 	<label {...api.getLabelProps()} class="input-label">{labelText}</label>
-	<!-- [data-scope="combobox"][data-part="control"] -->
 	<div {...api.getControlProps()} class="input-control">
 		<div class="input-icon">
 			<PhListPlus />
@@ -121,76 +113,3 @@
 		</ul>
 	{/if}
 </div>
-
-<style>
-	/* [data-scope='combobox'][data-part='root'] {
-		display: inline-flex;
-		flex-direction: column;
-	} */
-
-	/* 	[data-scope='combobox'][data-part='content'] {
-		background-color: var(--color-surface-document);
-		list-style-type: none;
-		margin: 0;
-		border: 1px solid var(--color-surface-2);
-		overscroll-behavior: contain;
-		max-height: 240px;
-		overflow: auto;
-		padding: 2px;
-		z-index: 50;
-	} */
-
-	/* 	[data-scope='combobox'][data-part='item'] {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		padding: 4px 8px;
-		user-select: none;
-		user-select: none;
-		content-visibility: auto;
-
-		&[data-highlighted] {
-			background-color: var(--color-surface-1);
-			color: white;
-		}
-
-		&[data-disabled] {
-			opacity: 0.5;
-			cursor: not-allowed;
-		}
-	} */
-
-	/* 	[data-scope='combobox'][data-part='label'] {
-		display: block;
-		margin-top: 12px;
-		margin-bottom: 4px;
-	} */
-
-	/* 	[data-scope='combobox'][data-part='control'] {
-		display: inline-flex;
-		width: 300px;
-	} */
-
-	/* 	[data-scope='combobox'][data-part='input'] {
-		flex: 1;
-	} */
-
-	/* [data-scope='combobox'][data-part='clear-trigger'] {
-		display: inline-flex;
-		font-size: 1.2em;
-		& svg {
-			width: 1em;
-			height: 1em;
-		}
-	} */
-
-	/* 	[data-scope='combobox'][data-part='item-group-label'] {
-		user-select: none;
-		margin-top: 8px;
-		display: flex;
-		align-items: center;
-		padding: 0 8px 8px;
-		font-size: 12px;
-		font-weight: 600;
-	} */
-</style>

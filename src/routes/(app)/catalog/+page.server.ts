@@ -804,7 +804,7 @@ export const actions = {
 
 					try {
 						const response = await scrapper
-							.post('scraper/search/barcode', { json: { ...barcodeSearchRequest } })
+							.post('search', { json: { ...barcodeSearchRequest } })
 							.json<BarcodeSearchResponse>();
 
 						if (response.error) {
