@@ -10,13 +10,13 @@
 	type Item = { value: number; label: string };
 
 	type Props = {
-		name?: string | undefined; // Name of the input field
-		value?: number | null; // ID of the selected item
-		items: Item[]; // List of items to display in the combobox
-		labelText?: string; // Label for the input field
-		placeholder?: string; // Placeholder text for the input field
-		required?: boolean | undefined; // Placeholder text for the input field
-		readonly?: boolean; // If true, the input is read-only
+		name?: string | undefined;
+		value?: number | null;
+		items: Item[];
+		labelText?: string;
+		placeholder?: string;
+		required?: boolean | undefined;
+		readonly?: boolean;
 		inline?: boolean;
 	};
 
