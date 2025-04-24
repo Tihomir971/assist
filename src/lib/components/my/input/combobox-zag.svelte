@@ -5,9 +5,7 @@
 	import PhPencilSimpleSlash from '~icons/ph/pencil-simple-slash';
 	import PhCaretDown from '~icons/ph/caret-down';
 	import { cn } from '$lib/utils';
-
-	// Reference to the BaseInput's root element for anchoring
-	let baseInputRootElement: HTMLDivElement | null = $state(null);
+	import { matchSorter } from 'match-sorter';
 
 	type Item = { value: number; label: string };
 
@@ -35,28 +33,34 @@
 
 	let options = $state.raw(items);
 
-	const collection = combobox.collection({
-		items: items,
-		itemToValue(item) {
-			return item.value.toString();
-		},
-		itemToString(item) {
-			return item.label;
-		}
-	});
+	const collection = $derived(
+		combobox.collection({
+			items: items,
+			itemToValue: (item) => item.value.toString(),
+			itemToString: (item) => item.label
+		})
+	);
+
 	const id = $props.id();
 	const service = useMachine(combobox.machine, {
-		id: id,
-		collection,
+		id,
+		get collection() {
+			return collection;
+		},
 		defaultValue: value ? [value.toString()] : undefined,
 		placeholder: placeholder,
 		onOpenChange() {
 			options = items;
 		},
 		onInputValueChange({ inputValue }) {
-			const filtered = items.filter((item) =>
+			const filtered = matchSorter(items, inputValue, {
+				keys: ['label'],
+				sorter: (rankedItems) =>
+					rankedItems.sort((a, b) => a.item.label.localeCompare(b.item.label))
+			});
+			/* const filtered = items.filter((item) =>
 				item.label.toLowerCase().includes(inputValue.toLowerCase())
-			);
+			); */
 			const newOptions = filtered.length > 0 ? filtered : items;
 
 			collection.setItems(newOptions);
@@ -72,7 +76,7 @@
 <input type="hidden" {name} value={api.value[0]} />
 
 <div {...api.getRootProps()} class="input-root">
-	<label {...api.getLabelProps()} class="input-label">{labelText}</label>
+	<label {...api.getLabelProps()} class="input-label">{labelText}{options.length}</label>
 	<div {...api.getControlProps()} class="input-control">
 		<div class="input-icon">
 			<PhListPlus />
@@ -100,10 +104,7 @@
 		>
 			{#each options as item (item.value)}
 				{@const state = api.getItemState({ item })}
-				<li
-					{...api.getItemProps({ item })}
-					class="flex cursor-pointer items-center gap-2 px-2 py-1 select-none data-disabled:cursor-auto data-disabled:opacity-5 data-highlighted:bg-surface-1 data-highlighted:hover:bg-surface-2"
-				>
+				<li {...api.getItemProps({ item })}>
 					<span>{item.label}</span>
 					{#if state.selected}
 						<span class="ml-auto pl-2">✓</span>
@@ -113,3 +114,77 @@
 		</ul>
 	{/if}
 </div>
+
+<style>
+	/* 	[data-scope='combobox'][data-part='root'] {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	[data-scope='combobox'][data-part='label'] {
+		font-size: 1.125rem;
+	}
+
+	[data-scope='combobox'][data-part='label'][data-disabled] {
+		opacity: 0.6;
+	}
+
+	[data-scope='combobox'][data-part='control'] {
+		display: inline-flex;
+		width: 300px;
+		background: var(--colors-bg-subtle);
+		border-width: 1px;
+		padding-block: 0.25rem;
+		padding-inline: 0.75rem;
+	}
+
+	[data-scope='combobox'][data-part='control'][data-disabled] {
+		opacity: 0.6;
+	} */
+
+	/* 	[data-scope='combobox'][data-part='input'] {
+		background: var(--colors-bg-subtle);
+		flex: 1;
+		padding: 0.25rem;
+	} */
+
+	/* 	[data-scope='combobox'][data-part='input']:focus {
+		outline: 0;
+	} */
+
+	/* 	[data-scope='combobox'][data-part='content'] {
+		list-style-type: none;
+		margin: 0px;
+		max-height: 14rem;
+		overflow: auto;
+		box-shadow:
+			0 1px 3px 0 rgba(0, 0, 0, 0.1),
+			0 1px 2px 0 rgba(0, 0, 0, 0.06);
+		isolation: isolate;
+		padding: 0.5rem;
+		background: var(--colors-bg-subtle);
+	} */
+
+	[data-scope='combobox'][data-part='item'] {
+		padding-inline: 0.5rem;
+		padding-block: 0.25rem;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+	}
+
+	[data-scope='combobox'][data-part='item'][data-highlighted] {
+		background: var(--color-sky-500);
+		color: #ffffff;
+	}
+
+	[data-scope='combobox'][data-part='item'][data-highlighted]:hover {
+		background: var(--color-sky-300);
+	}
+
+	[data-scope='combobox'][data-part='item'][data-disabled] {
+		opacity: 0.5;
+		cursor: unset;
+	}
+</style>

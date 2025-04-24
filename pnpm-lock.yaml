@@ -44,6 +44,9 @@ importers:
       luxon:
         specifier: ^3.6.1
         version: 3.6.1
+      match-sorter:
+        specifier: ^8.0.0
+        version: 8.0.0
       melt:
         specifier: ^0.29.3
         version: 0.29.3(@floating-ui/dom@1.6.13)(svelte@5.28.2)
@@ -1937,6 +1940,9 @@ packages:
   magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
 
+  match-sorter@8.0.0:
+    resolution: {integrity: sha512-bGJ6Zb+OhzXe+ptP5d80OLVx7AkqfRbtGEh30vNSfjNwllu+hHI+tcbMIT/fbkx/FKN1PmKuDb65+Oofg+XUxw==}
+
   melt@0.29.3:
     resolution: {integrity: sha512-cgorPvV3hSTugEnMpjLarugz8YRhUckM48i2gAgNzmqYx2w4hwvEsxA6GRy9DWst5rj+DKSmiDCcFRrHRpg/lA==}
     peerDependencies:
@@ -2300,6 +2306,9 @@ packages:
   regexparam@3.0.0:
     resolution: {integrity: sha512-RSYAtP31mvYLkAHrOlh25pCNQ5hWnT106VukGaaFfuJrZFkGRX5GhUAdPqpSDXxOhA2c4akmRuplv1mRqnBn6Q==}
     engines: {node: '>=8'}
+
+  remove-accents@0.5.0:
+    resolution: {integrity: sha512-8g3/Otx1eJaVD12e31UbJj1YzdtVvzH85HV7t+9MJYk/u3XmkOUJ5Ys9wQrf9PCPK8+xn4ymzqYCiZl6QWKn+A==}
 
   resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
@@ -2908,7 +2917,6 @@ snapshots:
   '@babel/runtime@7.26.7':
     dependencies:
       regenerator-runtime: 0.14.1
-    optional: true
 
   '@cloudflare/kv-asset-handler@0.4.0':
     dependencies:
@@ -4601,6 +4609,11 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
 
+  match-sorter@8.0.0:
+    dependencies:
+      '@babel/runtime': 7.26.7
+      remove-accents: 0.5.0
+
   melt@0.29.3(@floating-ui/dom@1.6.13)(svelte@5.28.2):
     dependencies:
       '@floating-ui/dom': 1.6.13
@@ -4868,10 +4881,11 @@ snapshots:
 
   readdirp@4.1.1: {}
 
-  regenerator-runtime@0.14.1:
-    optional: true
+  regenerator-runtime@0.14.1: {}
 
   regexparam@3.0.0: {}
+
+  remove-accents@0.5.0: {}
 
   resolve-from@4.0.0: {}
 
