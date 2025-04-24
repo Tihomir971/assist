@@ -24,6 +24,10 @@
 	const id = $props.id(); // Generate a unique ID for input-label association if none provided
 </script>
 
+{#snippet Label()}
+	<label for={id} class="input-label">{labelText}</label>
+{/snippet}
+
 {#snippet textIcon()}
 	<PhTextAa />
 {/snippet}
@@ -48,6 +52,7 @@
 	{error}
 	{labelText}
 	{inline}
+	{Label}
 	Icon={textIcon}
 	Content={textContent}
 	Action={emptyActions}

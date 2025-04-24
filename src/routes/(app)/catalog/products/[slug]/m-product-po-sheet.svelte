@@ -69,14 +69,7 @@
 				placeholder="Select a partner"
 				required={$constraints?.c_bpartner_id?.required}
 			/>
-			<NumberInputZag name="pricelist" bind:value={$formData.pricelist} />
-			<!-- <NumberInputZag name="pricelist" min={0} bind:value={$formData.pricelist} /> -->
-			<!-- 	<MyNumberInput
-				name="pricelist"
-				bind:value={$formData.pricelist}
-				step={0.01}
-				labelText="pricelist"
-			/> -->
+			<NumberInputZag name="pricelist" bind:value={$formData.pricelist} labelText="Pricelist" />
 			<MyUrlInput name="url" bind:value={$formData.url} labelText="url" />
 			<Sheet.Footer class="flex gap-2 sm:flex-col">
 				<Button type="submit" variant="default" class="w-full">Submit</Button>

@@ -78,7 +78,7 @@
 			<PhListPlus />
 		</div>
 		<div class="input-input">
-			<input type="number" {...api.getInputProps()} class="w-full focus:outline-none" />
+			<input {...api.getInputProps()} class="w-full focus:outline-none" />
 		</div>
 		<button {...api.getTriggerProps()} class="input-trigger">
 			{#if readonly}
@@ -98,11 +98,11 @@
 				'rounded-sm border border-muted bg-well-1 shadow-popover outline-hidden select-none'
 			)}
 		>
-			{#each options as item}
+			{#each options as item (item.value)}
 				{@const state = api.getItemState({ item })}
 				<li
 					{...api.getItemProps({ item })}
-					class="flex cursor-pointer items-center gap-2 px-2 py-1 select-none data-disabled:cursor-auto data-disabled:opacity-5 data-highlighted:bg-surface-1 data-highlighted:hover:bg-surface-1"
+					class="flex cursor-pointer items-center gap-2 px-2 py-1 select-none data-disabled:cursor-auto data-disabled:opacity-5 data-highlighted:bg-surface-1 data-highlighted:hover:bg-surface-2"
 				>
 					<span>{item.label}</span>
 					{#if state.selected}

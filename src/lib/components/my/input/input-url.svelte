@@ -23,7 +23,7 @@
 	}: Props = $props();
 
 	// Generate a unique ID for input-label association if none provided
-	const inputId = $props.id();
+	const id = $props.id();
 
 	// URL validation function
 	function isValidUrl(url: string): boolean {
@@ -63,6 +63,9 @@
 	let formattedUrl = $derived(getFormattedUrl(value));
 </script>
 
+{#snippet Label()}
+	<label for={id} class="input-label">{labelText}</label>
+{/snippet}
 {#snippet urlIcon()}
 	<PhArrowSquareUpLeft class="text-muted-foreground" />
 {/snippet}
@@ -72,7 +75,7 @@
 		bind:this={ref}
 		bind:value
 		type="url"
-		id={inputId}
+		{id}
 		class="peer w-full border-none bg-transparent outline-none"
 		{...restProps}
 	/>
@@ -101,6 +104,7 @@
 	{error}
 	{labelText}
 	{inline}
+	{Label}
 	Icon={urlIcon}
 	Content={urlContent}
 	Action={urlActions}
