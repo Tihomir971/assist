@@ -202,11 +202,9 @@
 		if (width > 0 && height > 0) {
 			if (!chartInstance && chartContainer) {
 				// Initialize chart only when container has dimensions and chart is not already initialized
-				console.log(`Container dimensions available: ${width}x${height}, initializing chart...`);
 				initializeChart();
 			} else if (chartInstance) {
 				// Resize existing chart instance
-				console.log(`Chart container resized: ${width}x${height}, resizing chart...`);
 				chartInstance.resize();
 			}
 		} else if (chartInstance) {
