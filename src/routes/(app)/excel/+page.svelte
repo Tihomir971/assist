@@ -16,7 +16,7 @@
 	import { processExcelData } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
 	import MySelect from '$lib/components/my/MySelect.svelte';
-	import { ComboboxZag } from '$lib/components/my/input';
+	import { ComboboxZag } from '$lib/components/zag/combobox/index.js';
 
 	let { data } = $props();
 	let { supabase } = $derived(data);

@@ -70,6 +70,7 @@
     "@tanstack/table-core": "^8.21.3",
     "@zag-js/combobox": "^1.11.0",
     "@zag-js/number-input": "^1.11.0",
+    "@zag-js/select": "^1.11.0",
     "@zag-js/svelte": "^1.11.0",
     "echarts": "^5.6.0",
     "html5-qrcode": "^2.3.8",

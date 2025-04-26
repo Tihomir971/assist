@@ -10,20 +10,20 @@
 	import { formatDateTime } from '$lib/style/locale';
 	import { toast } from 'svelte-sonner';
 	// Components
-	import * as Card from '$lib/components/ui/card';
-	import * as Form from '$lib/components/ui/form';
+
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
 
 	// Icons
 	import PhPackage from '~icons/ph/package';
-	import { ComboboxZag } from '$lib/components/my/input';
+	import { ComboboxZagField } from '$lib/components/zag/combobox/index.js';
 
 	let { data } = $props();
 
-	const form = superForm(data.formCategory, {
+	const superform = superForm(data.formCategory, {
 		resetForm: false,
 		validators: zodClient(crudMProductCategorySchema),
 		onUpdated(event) {
@@ -43,16 +43,16 @@
 			}
 		}
 	});
-	const { form: formData, enhance, message, isTainted, tainted } = form;
+	const { form: formData, enhance, message, isTainted, tainted } = superform;
 </script>
 
-<form method="POST" use:enhance>
+<form method="POST" use:enhance action="?/categoryUpsert">
 	<div class="grid grid-cols-[2fr_1fr] gap-2 overflow-hidden">
 		<Card.Root>
 			<Card.Header>
 				<Card.Title class="flex items-center gap-2">
 					<PhPackage class="mb-2 size-8" />
-					<Form.Field {form} name="name">
+					<Form.Field form={superform} name="name">
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>Name</Form.Label>
@@ -65,7 +65,8 @@
 				{#if $message}
 					<Card.Description>
 						<h3 class:invalid={page.status >= 400}>{$message}</h3>
-					</Card.Description>{/if}
+					</Card.Description>
+				{/if}
 			</Card.Header>
 			<Card.Content class="space-y-2">
 				{#if $message}
@@ -73,8 +74,8 @@
 				{/if}
 				<div class="flex w-full items-center space-x-3">
 					<Form.Field
-						{form}
-						name="isactive"
+						form={superform}
+						name="is_active"
 						class="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4"
 					>
 						<Form.Control>
@@ -88,8 +89,8 @@
 						<Form.FieldErrors />
 					</Form.Field>
 					<Form.Field
-						{form}
-						name="isactive"
+						form={superform}
+						name="is_self_service"
 						class="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4"
 					>
 						<Form.Control>
@@ -102,15 +103,15 @@
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
-					<ComboboxZag
+					<!-- <ComboboxZag
 						name="parent_id"
 						bind:value={$formData.parent_id}
 						labelText="Parent Category"
 						items={data.categories}
 						placeholder="Select parent category"
-					/>
+					/> -->
 				</div>
-				<Form.Field {form} name="description">
+				<Form.Field form={superform} name="description">
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>Description</Form.Label>
@@ -128,6 +129,8 @@
 						onclick={(e) => !confirm('Are you sure?') && e.preventDefault()}>Delete</Form.Button
 					>
 				</div>
+
+				<ComboboxZagField {superform} field="parent_id" items={data.categories} />
 			</Card.Content>
 			<Card.Footer class="flex justify-between"></Card.Footer>
 		</Card.Root>
@@ -154,7 +157,7 @@
 					<Input
 						id="updated"
 						type="text"
-						value={formatDateTime($formData.updated as string)}
+						value={formatDateTime($formData.updated_at as string)}
 						readonly
 					/>
 				</div>

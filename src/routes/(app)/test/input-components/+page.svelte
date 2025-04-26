@@ -3,14 +3,14 @@
 	import {
 		ComboboxBits,
 		ComboboxShad,
-		ComboboxZag,
 		MyCurrencyInput,
 		MyDateInput,
 		MyFileInput,
 		MyTextInput,
-		MyUrlInput,
-		NumberInputZag
+		MyUrlInput
 	} from '$lib/components/my/input';
+	import { ComboboxZag } from '$lib/components/zag/combobox/index.js';
+
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { MySelectMelt } from '$lib/components/my';
 	// Note: The tab IDs here ('tab1', 'tab2') must match the snippet names below

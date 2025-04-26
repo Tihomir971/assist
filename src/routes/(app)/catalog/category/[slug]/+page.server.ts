@@ -2,7 +2,7 @@ import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { crudCChannelMapCategorySchema, crudMProductCategorySchema } from './schema';
+import { mProductCategoryInsertSchema } from '$lib/types/supabase/supabase-zod-schemas';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
 	const categoryId = params.slug as unknown as number;
@@ -11,35 +11,24 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 		.select('*')
 		.eq('id', categoryId)
 		.maybeSingle();
-	const { data: categoryMap } = await supabase
-		.from('c_channel_map_category')
-		.select('*')
-		.eq('m_product_category_id', categoryId)
-		.maybeSingle();
-	//	if (params.slug && !category) throw error(404, 'User not found.');
 
 	const categories =
 		(await supabase.from('m_product_category').select('value:id,label:name').order('name')).data ||
 		[];
-	const channels =
-		(await supabase.from('c_channel').select('value:id::text,label:name').order('name')).data || [];
 
-	const formCategory = await superValidate(category, zod(crudMProductCategorySchema));
-	const formCategoryMap = await superValidate(categoryMap, zod(crudCChannelMapCategorySchema));
+	const formCategory = await superValidate(category, zod(mProductCategoryInsertSchema));
 
 	return {
 		formCategory,
-		formCategoryMap,
-		categories,
-		channels
+		categories
 	};
 };
 
 export const actions = {
-	default: async ({ request, locals: { supabase } }) => {
+	categoryUpsert: async ({ request, locals: { supabase } }) => {
 		const formData = await request.formData();
 
-		const form = await superValidate(formData, zod(crudMProductCategorySchema));
+		const form = await superValidate(formData, zod(mProductCategoryInsertSchema));
 		if (!form.valid) return fail(400, { form });
 		if (!form.data.id) {
 			console.log('Create Category');

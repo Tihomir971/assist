@@ -23,7 +23,9 @@
 	import StorageOnHandCard from './m-storageonhand-card.svelte';
 	import { crudMProductSchema } from './schema';
 	import MyUrlInput from '$lib/components/my/input/input-url.svelte';
-	import { ComboboxZag, MyTextInput, NumberInputZag } from '$lib/components/my/input';
+	import { MyTextInput, NumberInputZag } from '$lib/components/my/input';
+	import { ComboboxZag } from '$lib/components/zag/combobox/index.js';
+	import { SelectZag } from '$lib/components/zag/select';
 
 	let { data } = $props();
 
@@ -173,6 +175,7 @@
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
+					<SelectZag />
 
 					<Form.Field form={productForm} name="c_taxcategory_id">
 						<Form.Control>

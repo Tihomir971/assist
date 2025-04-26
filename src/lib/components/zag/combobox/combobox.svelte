@@ -6,6 +6,7 @@
 	import PhCaretDown from '~icons/ph/caret-down';
 	import { cn } from '$lib/utils';
 	import { matchSorter } from 'match-sorter';
+	import PhX from '~icons/ph/x';
 
 	type Item = { value: number; label: string };
 
@@ -47,15 +48,15 @@
 		get collection() {
 			return collection;
 		},
-		defaultValue: value ? [value.toString()] : undefined,
-		/* get defaultValue() {
+		/* defaultValue: value ? [value.toString()] : undefined, */
+		get value() {
 			return value ? [value.toString()] : undefined;
-		}, */
+		},
 		placeholder: placeholder,
 		multiple: false,
-		onOpenChange() {
+		/* onOpenChange() {
 			options = items;
-		},
+		}, */
 		onInputValueChange({ inputValue }) {
 			const filtered = matchSorter(items, inputValue, {
 				keys: ['label']
@@ -86,23 +87,20 @@
 		//}
 	});
 	const api = $derived(combobox.connect(service, normalizeProps));
-	// $inspect('Api:', api.value);
-	// $inspect('Value:', value);
+	//$inspect('Api:', api.value);
+	//$inspect('Value:', value);
 </script>
 
 <input type="hidden" {name} value={api.value[0]} />
 
-<button
-	type="button"
-	onclick={() => {
-		console.log('Cleared');
-
-		api.clearValue();
-		console.log(value, api.value[0]);
-	}}>Clear</button
->
 <div {...api.getRootProps()} class="input-root">
-	<label {...api.getLabelProps()} class="input-label">{labelText}</label>
+	<div class="flex items-center justify-between">
+		{#if required}
+			<span class="text-red-500">*</span>
+		{/if}
+		<label {...api.getLabelProps()} class="input-label">{labelText}</label>
+		<button {...api.getClearTriggerProps()} class="text-xs"><PhX /></button>
+	</div>
 	<div {...api.getControlProps()} class="input-control">
 		<div class="input-icon">
 			<PhListPlus />
@@ -195,13 +193,13 @@
 		background: var(--colors-bg-subtle);
 	} */
 
-	[data-scope='combobox'][data-part='item'] {
-		/* padding-inline: 0.5rem; */
-		/* padding-block: 0.25rem; */
-		/* display: flex; */
-		/* align-items: center; */
-		/* cursor: pointer; */
-	}
+	/* [data-scope='combobox'][data-part='item'] { */
+	/* padding-inline: 0.5rem; */
+	/* padding-block: 0.25rem; */
+	/* display: flex; */
+	/* align-items: center; */
+	/* cursor: pointer; */
+	/* } */
 
 	[data-scope='combobox'][data-part='item'][data-highlighted] {
 		background: var(--color-accent);

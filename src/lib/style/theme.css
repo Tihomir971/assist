@@ -26,5 +26,5 @@
 	--error: oklch(from var(--primary) l c var(--oklch-red));
 	--ok: oklch(from var(--primary) l c var(--oklch-blue));
 	--good: oklch(from var(--primary) l c var(--oklch-green));
-	--warning: oklch(from var(--primary) l 0.5 var(--oklch-yellow));
+	--warning: oklch(from var(--color-max) l c var(--oklch-yellow));
 }

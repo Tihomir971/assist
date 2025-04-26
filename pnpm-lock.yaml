@@ -29,6 +29,9 @@ importers:
       '@zag-js/number-input':
         specifier: ^1.11.0
         version: 1.11.0
+      '@zag-js/select':
+        specifier: ^1.11.0
+        version: 1.11.0
       '@zag-js/svelte':
         specifier: ^1.11.0
         version: 1.11.0(svelte@5.28.2)
@@ -1238,6 +1241,9 @@ packages:
 
   '@zag-js/popper@1.11.0':
     resolution: {integrity: sha512-rC38NTIfRh3J1UlXg0BRO57g8QbCSuhvn5Lw3Irl3uLvxawNTDyNT1ag0ZCIZJ32Qe8Ob1MvZCbjqldTkb82PQ==}
+
+  '@zag-js/select@1.11.0':
+    resolution: {integrity: sha512-I/rl4sqfSIP0ViTxnASVMZ7sgGET4z7VcnR3nL9aVnozBLvKzsPkk8b7XNETKtLI7Gx8vlnq19jRK+O/TnV90w==}
 
   '@zag-js/svelte@1.11.0':
     resolution: {integrity: sha512-VbTRoNmZvq5TqzPU21odDgF+sebRLJ0hnAfTbjE1+BDWRHcJMNjJiKki+NvfNM1SvVOiAt4PGVoP9bBTmmxClQ==}
@@ -3930,6 +3936,17 @@ snapshots:
     dependencies:
       '@floating-ui/dom': 1.6.13
       '@zag-js/dom-query': 1.11.0
+      '@zag-js/utils': 1.11.0
+
+  '@zag-js/select@1.11.0':
+    dependencies:
+      '@zag-js/anatomy': 1.11.0
+      '@zag-js/collection': 1.11.0
+      '@zag-js/core': 1.11.0
+      '@zag-js/dismissable': 1.11.0
+      '@zag-js/dom-query': 1.11.0
+      '@zag-js/popper': 1.11.0
+      '@zag-js/types': 1.11.0
       '@zag-js/utils': 1.11.0
 
   '@zag-js/svelte@1.11.0(svelte@5.28.2)':
