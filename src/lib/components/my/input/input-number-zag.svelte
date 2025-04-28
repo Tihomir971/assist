@@ -35,13 +35,13 @@
 		labelText,
 		inline,
 		machine = {
-			id,
-			readOnly: readonly,
 			disabled: disabled,
+			readOnly: readonly,
 			required: required,
-
+			pattern: '^[0-9]{1,3}(\\.[0-9]{3})*(,[0-9]+)?$|^[0-9]+(,[0-9]+)?$',
 			defaultValue: value != null ? value.toLocaleString('sr-RS') : undefined,
 			min: 0,
+			allowMouseWheel: true,
 			formatOptions: {
 				minimumFractionDigits: fractions,
 				maximumFractionDigits: fractions
@@ -50,7 +50,7 @@
 				value = valueAsNumber;
 			},
 			locale: 'sr-RS',
-			pattern: '^[0-9]{1,3}(\\.[0-9]{3})*(,[0-9]+)?$|^[0-9]+(,[0-9]+)?$'
+			id: id
 		}
 	}: Props = $props();
 	const service = useMachine(numberInput.machine, {

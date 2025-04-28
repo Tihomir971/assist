@@ -30,6 +30,12 @@
 
 	let { superform, field, items, readonly, placeholder = 'Select an item' }: Props = $props();
 
+	//const formProxy = $derived.by(() => {
+	//	if (superform && field) {
+	//		return formFieldProxy(superform, field) satisfies FormFieldProxy<number | null>;
+	//	}
+	//	return undefined;
+	//});
 	const { value, errors, constraints } = formFieldProxy(superform, field) satisfies FormFieldProxy<
 		number | null
 	>;
