@@ -1,47 +1,24 @@
 import type { Actions, PageServerLoad } from './$types';
 import type { Enums, Tables, Update } from '$lib/types/supabase/database.helper.js';
 import type { BSProduct } from '../data/types.js';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { FlattenedProduct, ProductWithDetails } from './columns.svelte.js';
+import type { Database } from '$lib/types/supabase/database.types';
+import type { ProductsResultSearch } from './types-search-vendor-products';
+import type { ApiResponse } from '$lib/types/types-api';
+import type { ProductRequest } from './types-api-market';
+
 import { getChannelMap } from '$lib/services/channel-map';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { VendorProduct } from '$lib/types/product-scrapper';
 import { isValidGTIN } from '$lib/scripts/gtin';
 import { connector, scrapper } from '$lib/ky';
-import type { SupabaseClient } from '@supabase/supabase-js';
 import { DateTime } from 'luxon';
-import type { FlattenedProduct, ProductWithDetails } from './columns.svelte.js';
 import { productSelectSchema } from './schema';
 import { findChildren } from '$lib/scripts/tree';
 import { sourceId } from './types';
 import { catalogSearchParamsSchema } from './search-params.schema';
-import type {
-	BarcodeSearchRequest,
-	BarcodeSearchResponse,
-	BarcodeSearchVendorResult
-} from './marketApiTypes';
-import type { Database } from '$lib/types/supabase/database.types';
-
-interface ProductRequest {
-	productId: number;
-	href?: string | null;
-	barcodes?: string[];
-}
-enum ProductStatus {
-	OK = 'OK',
-	NOT_FOUND_BY_HREF = 'Not found by href',
-	NOT_FOUND_BY_BARCODE = 'Not found by barcode',
-	ERROR = 'error'
-}
-interface ProductResult {
-	product: VendorProduct | null;
-	status: ProductStatus;
-	productId: number;
-}
-
-interface ApiResponseData<T> {
-	data?: T;
-	error?: string;
-}
+import { ProductStatus, type ProductResultGet } from './types-get-market-info';
 
 export const load: PageServerLoad = async ({ depends, parent, url, locals: { supabase } }) => {
 	depends('catalog');
@@ -545,7 +522,7 @@ export const actions = {
 		const form = await superValidate(request, zod(productSelectSchema));
 		if (!form.valid) return fail(400, { form });
 
-		const { ids, source } = form.data;
+		const { ids, type } = form.data;
 
 		function stringToNumberArray(s: string): number[] {
 			const numbers = s.match(/\d+/g);
@@ -553,13 +530,11 @@ export const actions = {
 		}
 
 		const productIds = stringToNumberArray(ids);
-		//const sourceIds = stringToNumberArray(source);
-		// const path = sourcePath[source as keyof typeof sourcePath];
 
 		const { data: products, error: fetchError } = await supabase
 			.from('m_product')
 			.select(
-				'id, m_product_packing(gtin), m_product_po(c_bpartner_id, url), c_taxcategory(c_tax(rate)),c_taxcategory_id'
+				'id, mpn, m_product_packing(gtin), m_product_po(c_bpartner_id, url), c_taxcategory(c_tax(rate)), c_taxcategory_id'
 			)
 			//.eq('m_product_po.c_bpartner_id', source)
 			.not('m_product_po.url', 'is', null)
@@ -591,15 +566,16 @@ export const actions = {
 					href: po.url,
 					barcodes: product.m_product_packing
 						.map((item: { gtin: string | null }) => item.gtin)
-						.filter((gtin): gtin is string => gtin !== null)
+						.filter((gtin): gtin is string => gtin !== null),
+					mpn: product.mpn
 				}))
 				.filter((req) => req.href)
 		);
 
 		try {
 			const { data, error } = await scrapper
-				.post('products', { json: { products: productRequests } })
-				.json<ApiResponseData<ProductResult[]>>();
+				.post('api/products', { json: { products: productRequests, type: type } })
+				.json<ApiResponse<ProductResultGet[]>>();
 
 			if (!data) {
 				console.error('Invalid data received from API', error);
@@ -663,7 +639,7 @@ export const actions = {
 
 				let priceWithoutTax: number | undefined = undefined;
 				// Skip price update for Idea
-				if (source !== 4) {
+				if (product.vendorId !== 'idea') {
 					priceWithoutTax =
 						product.price || product.price === 0 ? product.price / (1 + taxRate) : undefined;
 				}
@@ -755,7 +731,7 @@ export const actions = {
 			};
 		}
 	},
-	searchByBarcode: async ({ request, locals: { supabase } }) => {
+	searchVendorProducts: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(productSelectSchema));
 		if (!form.valid) return fail(400, { form });
 
@@ -770,7 +746,7 @@ export const actions = {
 
 		const { data: products, error: fetchError } = await supabase
 			.from('m_product')
-			.select('id, m_product_packing(gtin), c_taxcategory_id')
+			.select('id, mpn, m_product_packing(gtin), c_taxcategory_id')
 			.not('m_product_packing.gtin', 'is', null)
 			.in('id', productIds);
 
@@ -789,7 +765,7 @@ export const actions = {
 		}
 
 		try {
-			const allResults: BarcodeSearchVendorResult[] = [];
+			const allResults: ProductsResultSearch[] = [];
 
 			for (const product of products) {
 				const gtins = product.m_product_packing
@@ -797,15 +773,16 @@ export const actions = {
 					.filter((gtin): gtin is string => gtin !== null);
 
 				for (const gtin of gtins) {
-					const barcodeSearchRequest: BarcodeSearchRequest = {
+					const barcodeSearchRequest: ProductRequest = {
 						productId: product.id,
+						mpn: product.mpn,
 						barcodes: [gtin]
 					};
 
 					try {
 						const response = await scrapper
-							.post('search', { json: { ...barcodeSearchRequest } })
-							.json<BarcodeSearchResponse>();
+							.post('api/search', { json: { ...barcodeSearchRequest, type: 'search' } })
+							.json<ApiResponse<ProductsResultSearch[]>>();
 
 						if (response.error) {
 							console.error(`Invalid data received from API for GTIN ${gtin}:`, response.error);

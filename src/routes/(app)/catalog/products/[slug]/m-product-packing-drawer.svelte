@@ -133,7 +133,7 @@
 				<div class="grid grid-cols-2 gap-4">
 					<div class="space-y-2">
 						<NumberInputZag
-							value={$formData.m_product_id}
+							bind:value={$formData.m_product_id}
 							labelText="Product ID"
 							fractions={0}
 							required

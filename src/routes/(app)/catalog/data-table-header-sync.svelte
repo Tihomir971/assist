@@ -16,6 +16,7 @@
 	let formElMarket: HTMLFormElement;
 	let formElBarcodes: HTMLFormElement;
 	let sourceInput: HTMLInputElement;
+	let typeInput: HTMLInputElement;
 
 	const submitMarketInfo = (source: number) => {
 		if (sourceInput && formElMarket) {
@@ -125,11 +126,12 @@
 >
 	<input type="hidden" name="ids" value={strRowSelectionState} />
 	<input type="hidden" name="source" bind:this={sourceInput} value={2} />
+	<input type="hidden" name="type" bind:this={typeInput} value="get" />
 </form>
 <form
 	bind:this={formElBarcodes}
 	method="post"
-	action="/catalog?/searchByBarcode"
+	action="/catalog?/searchVendorProducts"
 	class="hidden"
 	use:enhance={() => {
 		return async ({ result }) => {
@@ -163,4 +165,5 @@
 >
 	<input type="hidden" name="ids" value={strRowSelectionState} />
 	<input type="hidden" name="source" bind:this={sourceInput} value={2} />
+	<input type="hidden" name="type" bind:this={typeInput} value={'search'} />
 </form>

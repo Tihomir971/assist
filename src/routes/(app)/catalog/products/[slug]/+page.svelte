@@ -25,7 +25,6 @@
 	import MyUrlInput from '$lib/components/my/input/input-url.svelte';
 	import { MyTextInput, NumberInputZag } from '$lib/components/my/input';
 	import { ComboboxZag } from '$lib/components/zag/combobox/index.js';
-	import { SelectZag } from '$lib/components/zag/select';
 
 	let { data } = $props();
 
@@ -175,7 +174,6 @@
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
-					<SelectZag />
 
 					<Form.Field form={productForm} name="c_taxcategory_id">
 						<Form.Control>
@@ -234,19 +232,7 @@
 								fractions={4}
 								labelText="Net Quantity"
 							/>
-							<!-- 	<Form.Field form={productForm} name="net_quantity">
-								<Form.Control>
-									{#snippet children({ props })}
-										<Form.Label>Net Quantity</Form.Label>
-										<MyNumberInput
-											step={0.0001}
-											bind:value={$formProduct.net_quantity}
-											{...props}
-										/>
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field> -->
+
 							<Form.Field form={productForm} name="net_qty_uom_id" class="w-full">
 								<Form.Control>
 									{#snippet children({ props })}
