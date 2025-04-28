@@ -7,8 +7,6 @@
 	import PhPlus from '~icons/ph/plus';
 	import PhMinus from '~icons/ph/minus';
 
-	import { untrack } from 'svelte';
-
 	type Props = {
 		ref?: HTMLInputElement | null;
 		name?: string;
@@ -42,7 +40,7 @@
 			disabled: disabled,
 			required: required,
 
-			defaultValue: value?.toLocaleString('sr-RS'),
+			defaultValue: value != null ? value.toLocaleString('sr-RS') : undefined,
 			min: 0,
 			formatOptions: {
 				minimumFractionDigits: fractions,
@@ -58,7 +56,7 @@
 	console.log('machine', machine);
 	const service = useMachine(numberInput.machine, {
 		get value() {
-			return value?.toLocaleString('sr-RS');
+			return value != null ? value.toLocaleString('sr-RS') : undefined;
 		},
 		...machine
 	});
