@@ -46,7 +46,9 @@
 				minimumFractionDigits: fractions,
 				maximumFractionDigits: fractions
 			},
-			onValueChange: ({ valueAsNumber }) => {
+			onValueChange: ({ value: newValue, valueAsNumber }) => {
+				console.log('value,valueAsNumber', newValue, valueAsNumber);
+
 				value = valueAsNumber;
 			},
 			locale: 'sr-RS',
@@ -97,7 +99,11 @@
 	{/if}
 {/snippet}
 
-<input type="hidden" {name} value={api.valueAsNumber} />
+<input
+	type="hidden"
+	{name}
+	value={Number.isNaN(api.valueAsNumber) ? undefined : api.valueAsNumber}
+/>
 
 <div {...api.getRootProps()} class="input-root">
 	<BaseInput

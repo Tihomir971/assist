@@ -41,7 +41,8 @@
 		isTainted,
 		delayed,
 		formId,
-		reset
+		reset,
+		errors
 	} = superForm(validatedForm, {
 		dataType: 'json',
 		//validators: zodClient(crudGtinSchema),
@@ -210,7 +211,7 @@
 					{/if}
 				</div>
 			</form>
-			<SuperDebug data={$formData} />
+			<SuperDebug data={{ $formData, $errors }} />
 		</div>
 
 		<Drawer.Footer>

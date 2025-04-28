@@ -210,7 +210,6 @@ export const actions = {
 	},
 	product: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(crudMProductSchema));
-		console.log('form', form);
 
 		if (!form.valid) return fail(400, { form });
 
@@ -276,12 +275,6 @@ export const actions = {
 
 	mProductPoUpsert: async ({ request, locals: { supabase } }) => {
 		console.log('Hello Vendors');
-		// const data = await request.formData();
-
-		// Display the key/value pairs
-		// for (const pair of data.entries()) {
-		// console.log(pair[0], pair[1], typeof pair[1]);
-		// }
 
 		const form = await superValidate(
 			request,

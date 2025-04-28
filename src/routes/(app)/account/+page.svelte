@@ -17,7 +17,7 @@
 		validators: zodClient(crudSchema)
 	});
 
-	const { form: formData, enhance } = form;
+	const { form: formData, enhance, errors } = form;
 	let valueCreated = $state<DateTimeMaybeValid>();
 
 	$effect(() => {
@@ -83,7 +83,7 @@
 			<Avatar supabase={data.supabase} bind:url={$formData.avatar_url} size={10} />
 		</Card.Content>
 		<Card.Footer class="Footer">
-			<SuperDebug data={formData} />
+			<SuperDebug data={{ $formData, $errors }} />
 		</Card.Footer>
 	</Card.Root>
 </div>

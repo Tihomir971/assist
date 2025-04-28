@@ -43,7 +43,7 @@
 			}
 		}
 	});
-	const { form: formData, enhance, message, isTainted, tainted } = superform;
+	const { form: formData, enhance, message, isTainted, tainted, errors } = superform;
 </script>
 
 <form method="POST" use:enhance action="?/categoryUpsert">
@@ -168,7 +168,7 @@
 		<Card.Root>
 			<Card.Content>
 				{#if browser}
-					<SuperDebug data={$formData} />
+					<SuperDebug data={{ $formData, $errors }} />
 				{/if}
 			</Card.Content>
 		</Card.Root>

@@ -261,7 +261,7 @@
 					<Button type="submit">Save Changes</Button>
 				</div>
 			</form>
-			<SuperDebug data={form} />
+			<SuperDebug data={{ $form, $errors }} />
 		</Card.Content>
 	</Card.Root>
 </div>

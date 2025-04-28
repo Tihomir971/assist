@@ -20,7 +20,8 @@
 	const {
 		form: formData,
 		enhance,
-		constraints
+		constraints,
+		errors
 	} = superForm(form, {
 		onUpdated({ form }) {
 			if (form.valid) {
@@ -74,7 +75,7 @@
 
 			<Sheet.Footer class="flex gap-2 sm:flex-col">
 				<Button type="submit" variant="default" class="w-full">Submit</Button>
-				<SuperDebug data={formData} status />
+				<SuperDebug data={{ $formData, $errors }} />
 			</Sheet.Footer>
 		</form>
 	</Sheet.Content>

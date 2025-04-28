@@ -53,7 +53,7 @@
 			}
 		}
 	});
-	const { form: formData, formId, enhance, reset, delayed, message } = form;
+	const { form: formData, formId, enhance, reset, delayed, errors } = form;
 	let editingId: number | null = $state(null);
 </script>
 
@@ -200,5 +200,5 @@
 			{/if}
 		</div>
 	</form>
-	<SuperDebug data={$formData} />
+	<SuperDebug data={{ $formData, $errors }} />
 </div>
