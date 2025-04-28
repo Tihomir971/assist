@@ -1,11 +1,15 @@
-<script lang="ts">
+<script lang="ts" generics="T">
+	import type { Table as TanstackTable } from '@tanstack/table-core';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import PhArrowUp from '~icons/ph/arrow-up';
 	import PhArrowDown from '~icons/ph/arrow-down';
 	import PhArrowsDownUp from '~icons/ph/arrows-down-up';
 	import FlexRender from './flex-render.svelte';
 
-	let { table } = $props();
+	type Props = {
+		table: TanstackTable<T>;
+	};
+	let { table }: Props = $props();
 </script>
 
 <Table.Root class="table-auto">

@@ -346,6 +346,7 @@ export const actions = {
 		const data = { sku: sku };
 
 		const erpProduct = await connector.post('api/product', { json: data }).json<BSProduct[]>();
+		console.log('erpProduct', erpProduct);
 
 		const { data: mapChannel, error: mapChannelError } = await getChannelMap(supabase, 1);
 
