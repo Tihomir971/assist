@@ -6,6 +6,8 @@
 	import type { MProductPoInsertSchema } from './schema.js'; // Add MProductPoFormSchema
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { toast } from 'svelte-sonner';
+	import { invalidate } from '$app/navigation';
 
 	type Item = { value: number; label: string };
 	type Props = {
@@ -14,18 +16,20 @@
 		form: SuperValidated<MProductPoInsertSchema>; // Use MProductPoFormSchema
 		partners: Item[];
 	};
-	let { isSheetOpen = $bindable(), data, form, partners }: Props = $props();
+	let { isSheetOpen = $bindable(), data = $bindable(), form, partners }: Props = $props();
 	const {
 		form: formData,
 		enhance,
-		errors,
 		constraints
 	} = superForm(form, {
-		onResult({ result }) {
-			if (result.type === 'success') {
-				console.log('Form submitted successfully:', result.data);
+		onUpdated({ form }) {
+			if (form.valid) {
+				toast.success(form.message || 'Vendor PO operation successful');
+				isSheetOpen = false; // Close the sheet after successful submission
+				// invalidate('catalog:products');
 			} else {
-				console.error('Form submission failed:', result.status);
+				console.error('Form is not valid', form.errors, form.message);
+				toast.error(form.message || 'Vendor PO operation failed');
 			}
 		},
 		onError({ result }) {

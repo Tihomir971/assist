@@ -87,8 +87,6 @@
 		//}
 	});
 	const api = $derived(combobox.connect(service, normalizeProps));
-	$inspect('Api:', api.value);
-	//$inspect('Value:', value);
 </script>
 
 <input type="hidden" {name} value={api.value[0]} />

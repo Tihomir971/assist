@@ -116,7 +116,7 @@
 {#if isProductPoSheetOpen}
 	<ProductPoSheet
 		bind:isSheetOpen={isProductPoSheetOpen}
-		data={selectedVendor}
+		bind:data={selectedVendor}
 		form={data.form}
 		partners={data.partners}
 	/>

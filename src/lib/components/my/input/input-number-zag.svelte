@@ -53,7 +53,6 @@
 			pattern: '^[0-9]{1,3}(\\.[0-9]{3})*(,[0-9]+)?$|^[0-9]+(,[0-9]+)?$'
 		}
 	}: Props = $props();
-	console.log('machine', machine);
 	const service = useMachine(numberInput.machine, {
 		get value() {
 			return value != null ? value.toLocaleString('sr-RS') : undefined;
@@ -61,13 +60,6 @@
 		...machine
 	});
 	const api = $derived(numberInput.connect(service, normalizeProps));
-
-	/* 	$effect(() => {
-		if (value !== untrack(() => api.valueAsNumber)) {
-			api.setValue(value ?? 0);
-		}
-	}); */
-	$inspect('machine', machine);
 </script>
 
 {#snippet Label()}

@@ -45,8 +45,6 @@
 		itemClass = '',
 		...restProps
 	}: Props = $props();
-	$inspect('value', value);
-	$inspect('restProps.required', restProps.required);
 	// Internal state
 	let searchValue = $state('');
 	let open = $state(false);
