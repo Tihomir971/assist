@@ -48,15 +48,15 @@
 		get collection() {
 			return collection;
 		},
-		/* defaultValue: value ? [value.toString()] : undefined, */
+		defaultValue: value ? [value.toString()] : undefined,
 		get value() {
 			return value ? [value.toString()] : undefined;
 		},
 		placeholder: placeholder,
 		multiple: false,
-		/* onOpenChange() {
+		onOpenChange() {
 			options = items;
-		}, */
+		},
 		onInputValueChange({ inputValue }) {
 			const filtered = matchSorter(items, inputValue, {
 				keys: ['label']
@@ -87,7 +87,7 @@
 		//}
 	});
 	const api = $derived(combobox.connect(service, normalizeProps));
-	//$inspect('Api:', api.value);
+	$inspect('Api:', api.value);
 	//$inspect('Value:', value);
 </script>
 
@@ -95,10 +95,12 @@
 
 <div {...api.getRootProps()} class="input-root">
 	<div class="flex items-center justify-between">
-		{#if required}
-			<span class="text-red-500">*</span>
-		{/if}
-		<label {...api.getLabelProps()} class="input-label">{labelText}</label>
+		<label {...api.getLabelProps()} class="input-label">
+			{labelText}
+			{#if required}
+				<span class="text-warning">*</span>
+			{/if}
+		</label>
 		<button {...api.getClearTriggerProps()} class="text-xs"><PhX /></button>
 	</div>
 	<div {...api.getControlProps()} class="input-control">

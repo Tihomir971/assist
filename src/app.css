@@ -49,7 +49,7 @@
 	--color-primary: var(--primary);
 	--color-primary-foreground: var(--color-ink);
 	/* Secondary colors for <Button /> */
-	--color-secondary: var(--color-warning);
+	--color-secondary: var(--secondary);
 	--color-secondary-foreground: var(--color-ink);
 	/* Used for accents such as hover effects on <DropdownMenuItem>, <SelectItem>...etc */
 	--color-accent: var(--color-surface-3);

@@ -14,79 +14,62 @@
 		name?: string;
 		value?: number | null;
 		disabled?: boolean;
-		readonly?: boolean;
-		required?: boolean;
-		fractions?: number;
 		error?: string;
+		formatOptions?: Intl.NumberFormatOptions | undefined;
+		fractions?: number;
 		labelText?: string; // New param for label
 		inline?: boolean; // New param for positioning
-		machine?: Pick<
-			numberInput.Props,
-			| 'locale'
-			| 'readOnly'
-			| 'min'
-			| 'max'
-			| 'disabled'
-			| 'required'
-			| 'defaultValue'
-			| 'id'
-			| 'onValueChange'
-			| 'formatOptions'
-			| 'disabled'
-		>;
+		locale?: string | undefined;
+		readonly?: boolean;
+		required?: boolean;
+		machine?: numberInput.Props;
 	};
 
 	const id = $props.id();
 	let {
 		ref = $bindable(null),
 		value = $bindable(),
+		name,
 		disabled,
 		readonly,
 		required,
 		fractions = 2,
-		error,
 		labelText,
 		inline,
 		machine = {
-			id: id,
-			locale: 'sr-RS',
+			id,
+			readOnly: readonly,
+			disabled: disabled,
+			required: required,
+
+			defaultValue: value?.toLocaleString('sr-RS'),
 			min: 0,
-			disabled,
-			onValueChange({ valueAsNumber }) {
-				if (value !== valueAsNumber && valueAsNumber) {
-					value = valueAsNumber;
-				}
-			}
-		},
-		...restProps
+			formatOptions: {
+				minimumFractionDigits: fractions,
+				maximumFractionDigits: fractions
+			},
+			onValueChange: ({ valueAsNumber }) => {
+				value = valueAsNumber;
+			},
+			locale: 'sr-RS',
+			pattern: '^[0-9]{1,3}(\\.[0-9]{3})*(,[0-9]+)?$|^[0-9]+(,[0-9]+)?$'
+		}
 	}: Props = $props();
-
-	machine.defaultValue = value?.toLocaleString('sr-RS') ?? undefined;
-	machine.disabled = disabled;
-	machine.readOnly = readonly;
-	machine.required = required;
-	machine.formatOptions = {
-		minimumFractionDigits: fractions,
-		maximumFractionDigits: fractions
-	};
-
+	console.log('machine', machine);
 	const service = useMachine(numberInput.machine, {
-		id: machine.id,
-		readOnly: machine.readOnly,
-		defaultValue: machine.defaultValue,
-		min: machine.min,
-		max: machine.max,
-		locale: machine.locale,
-		formatOptions: machine.formatOptions,
-		onValueChange: machine.onValueChange
+		get value() {
+			return value?.toLocaleString('sr-RS');
+		},
+		...machine
 	});
 	const api = $derived(numberInput.connect(service, normalizeProps));
 
-	$effect(() => {
+	/* 	$effect(() => {
 		if (value !== untrack(() => api.valueAsNumber)) {
 			api.setValue(value ?? 0);
 		}
-	});
+	}); */
+	$inspect('machine', machine);
 </script>
 
 {#snippet Label()}
@@ -104,7 +87,7 @@
 {/snippet}
 
 {#snippet Trigger()}
-	{#if !machine.disabled}
+	{#if !disabled}
 		<div class="flex h-full gap-1">
 			<button
 				{...api.getDecrementTriggerProps()}
@@ -124,7 +107,7 @@
 	{/if}
 {/snippet}
 
-<input type="hidden" name={restProps.name} value={api.valueAsNumber} />
+<input type="hidden" {name} value={api.valueAsNumber} />
 
 <div {...api.getRootProps()} class="input-root">
 	<BaseInput

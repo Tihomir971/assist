@@ -17,11 +17,12 @@
 	/* --primary: oklch(70% 100% var(--palette-hue)); */
 	/* --primary: oklch(from var(--color-max) l c var(--oklch-red)); */
 	/* Primary */
-	--primary: oklch(50% 40% var(--palette-hue));
+	--primary: oklch(50% 50% var(--palette-hue));
 	--primary-light: oklch(from var(--primary) calc(l * 1.25) c h);
 	--primary-dark: oklch(from var(--primary) calc(l * 0.75) c h);
 	--primary-contrast: var(--gray-1);
 
+	--secondary: oklch(from var(--primary) l c calc(h + 180));
 	/* Highlight colors */
 	--error: oklch(from var(--primary) l c var(--oklch-red));
 	--ok: oklch(from var(--primary) l c var(--oklch-blue));
