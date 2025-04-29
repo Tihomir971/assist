@@ -20,6 +20,9 @@ import { sourceId } from './types';
 import { catalogSearchParamsSchema } from './search-params.schema';
 import { ProductStatus, type ProductResultGet } from './types-get-market-info';
 
+// Add this export near the top or where types are defined
+export type ErrorDetails = { productId?: number; step: string; message: string };
+
 export const load: PageServerLoad = async ({ depends, parent, url, locals: { supabase } }) => {
 	depends('catalog');
 	const params = catalogSearchParamsSchema.parse(Object.fromEntries(url.searchParams));
@@ -367,7 +370,7 @@ export const actions = {
 			.select('c_taxcategory_id,resource_id')
 			.eq('c_channel_id', 1);
 
-		const errors: { productId?: number; step: string; message: string }[] = [];
+		const errors: ErrorDetails[] = []; // Use the exported type
 
 		for (const product of erpProduct) {
 			// Find product ID using SKU
@@ -438,6 +441,8 @@ export const actions = {
 							// For other errors, log and add to the errors array
 							console.error(`Error adding product GTIN ${element}:`, updateBarcodesError);
 							errors.push({
+								// Ensure this uses the ErrorDetails type
+								// Ensure this uses the ErrorDetails type
 								productId: selectProductId.id,
 								step: 'insert_barcode',
 								message: `GTIN ${element}: ${updateBarcodesError.message}`
