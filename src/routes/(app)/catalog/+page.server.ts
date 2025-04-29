@@ -430,13 +430,19 @@ export const actions = {
 						packing_type: 'Individual' as Enums<'PackingType'>
 					});
 					if (updateBarcodesError) {
-						// Ignore duplicate errors? Check error code if needed.
-						console.error(`Error adding product GTIN ${element}:`, updateBarcodesError);
-						errors.push({
-							productId: selectProductId.id,
-							step: 'insert_barcode',
-							message: `GTIN ${element}: ${updateBarcodesError.message}`
-						});
+						// Check if the error is a unique constraint violation (code 23505)
+						if (updateBarcodesError.code === '23505') {
+							// Log a warning for duplicate GTIN but don't treat as a blocking error
+							console.warn(`Skipping duplicate GTIN ${element} for product ${selectProductId.id}.`);
+						} else {
+							// For other errors, log and add to the errors array
+							console.error(`Error adding product GTIN ${element}:`, updateBarcodesError);
+							errors.push({
+								productId: selectProductId.id,
+								step: 'insert_barcode',
+								message: `GTIN ${element}: ${updateBarcodesError.message}`
+							});
+						}
 					}
 				}
 			}
