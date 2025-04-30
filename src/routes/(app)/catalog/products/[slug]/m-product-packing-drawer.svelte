@@ -100,19 +100,6 @@
 									>
 										Edit
 									</Button>
-									<form method="POST" use:enhanceGtin class="inline">
-										<Button
-											type="submit"
-											formaction="?/productPackingDelete"
-											name="id"
-											value={packing.id}
-											variant="destructive"
-											disabled={$delayed}
-											onclick={() => ($formId = packing.id.toString())}
-										>
-											Delete
-										</Button>
-									</form>
 								</Table.Cell>
 							</Table.Row>
 						{/each}
