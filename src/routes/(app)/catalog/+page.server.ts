@@ -668,28 +668,60 @@ export const actions = {
 
 		// --- Execute Batch Operations ---
 
-		// 1. Product Updates (Concurrent individual updates)
-		const productUpdatePromises = productUpdates.map(({ id, data }) =>
-			supabase.from('m_product').update(data).eq('id', id)
-		);
-		const productUpdateResults = await Promise.allSettled(productUpdatePromises);
-		productUpdateResults.forEach((result, index) => {
-			if (result.status === 'rejected') {
-				console.error(`Error updating product ${productUpdates[index].id}:`, result.reason);
-				errors.push({
-					productId: productUpdates[index].id,
-					step: 'update_product_batch',
-					message: result.reason?.message ?? 'Unknown update error'
-				});
-			} else if (result.value.error) {
-				console.error(`Error updating product ${productUpdates[index].id}:`, result.value.error);
-				errors.push({
-					productId: productUpdates[index].id,
-					step: 'update_product_batch',
-					message: result.value.error.message
-				});
+		// Helper function for batch processing
+		async function processInBatches<T, R>(
+			items: T[],
+			batchSize: number,
+			processFn: (batch: T[]) => Promise<PromiseSettledResult<R>[]>
+		): Promise<PromiseSettledResult<R>[]> {
+			let allResults: PromiseSettledResult<R>[] = [];
+			for (let i = 0; i < items.length; i += batchSize) {
+				const batch = items.slice(i, i + batchSize);
+				console.log(
+					`Processing batch ${i / batchSize + 1} of ${Math.ceil(items.length / batchSize)}...`
+				); // Optional logging
+				const batchResults = await processFn(batch);
+				allResults = allResults.concat(batchResults);
 			}
-		});
+			return allResults;
+		}
+
+		const BATCH_SIZE = 20; // Adjust batch size as needed
+
+		// 1. Product Updates (Batched)
+		if (productUpdates.length > 0) {
+			const productUpdateResults = await processInBatches(
+				productUpdates,
+				BATCH_SIZE,
+				async (batch) => {
+					const promises = batch.map(({ id, data }) =>
+						supabase.from('m_product').update(data).eq('id', id)
+					);
+					return Promise.allSettled(promises);
+				}
+			);
+
+			// Process results (associate errors with original items if needed, simplified here)
+			productUpdateResults.forEach((result) => {
+				// Removed unused globalIndex
+				// Note: A more robust error mapping might be needed if precise item association is critical
+				if (result.status === 'rejected') {
+					console.error(`Error in product update batch:`, result.reason);
+					errors.push({
+						productId: undefined, // Difficult to map precisely back without more logic
+						step: 'update_product_batch',
+						message: result.reason?.message ?? 'Unknown update error in batch'
+					});
+				} else if (result.value.error) {
+					console.error(`Error in product update batch result:`, result.value.error);
+					errors.push({
+						productId: undefined, // Difficult to map precisely back
+						step: 'update_product_batch',
+						message: result.value.error.message
+					});
+				}
+			});
+		}
 
 		// 2. Barcode Inserts (Handle specific duplicate GTIN error)
 		// Filter potential duplicates within the batch itself first
@@ -736,31 +768,33 @@ export const actions = {
 			}
 		}
 
-		// 4. Product PO Updates
+		// 4. Product PO Updates (Batched)
 		if (productPoUpdates.length > 0) {
-			const poUpdatePromises = productPoUpdates.map(({ where, data }) =>
-				supabase.from('m_product_po').update(data).match(where)
-			);
-			const poUpdateResults = await Promise.allSettled(poUpdatePromises);
-			poUpdateResults.forEach((result, index) => {
-				const whereInfo = productPoUpdates[index].where;
-				if (result.status === 'rejected') {
-					console.error(
-						`Error updating product PO (${whereInfo.m_product_id}, ${whereInfo.c_bpartner_id}):`,
-						result.reason
+			const poUpdateResults = await processInBatches(
+				productPoUpdates,
+				BATCH_SIZE,
+				async (batch) => {
+					const promises = batch.map(({ where, data }) =>
+						supabase.from('m_product_po').update(data).match(where)
 					);
+					return Promise.allSettled(promises);
+				}
+			);
+
+			poUpdateResults.forEach((result) => {
+				if (result.status === 'rejected') {
+					console.error(`Error in product PO update batch:`, result.reason);
 					errors.push({
-						productId: whereInfo.m_product_id,
+						productId: undefined,
 						step: 'update_product_po_batch',
-						message: result.reason?.message ?? 'Unknown update error'
+						message: result.reason?.message ?? 'Unknown update error in batch'
 					});
 				} else if (result.value.error) {
-					console.error(
-						`Error updating product PO (${whereInfo.m_product_id}, ${whereInfo.c_bpartner_id}):`,
-						result.value.error
-					);
+					console.error(`Error in product PO update batch result:`, result.value.error);
+					// Attempt to get product ID from error details if possible, otherwise undefined
+					const productId = result.value.error?.details?.match(/m_product_id = (\d+)/)?.[1];
 					errors.push({
-						productId: whereInfo.m_product_id,
+						productId: productId ? parseInt(productId) : undefined,
 						step: 'update_product_po_batch',
 						message: result.value.error.message
 					});
@@ -782,31 +816,28 @@ export const actions = {
 			}
 		}
 
-		// 6. Stock Updates
+		// 6. Stock Updates (Batched)
 		if (stockUpdates.length > 0) {
-			const stockUpdatePromises = stockUpdates.map(({ where, data }) =>
-				supabase.from('m_storageonhand').update(data).match(where)
-			);
-			const stockUpdateResults = await Promise.allSettled(stockUpdatePromises);
-			stockUpdateResults.forEach((result, index) => {
-				const whereInfo = stockUpdates[index].where;
+			const stockUpdateResults = await processInBatches(stockUpdates, BATCH_SIZE, async (batch) => {
+				const promises = batch.map(({ where, data }) =>
+					supabase.from('m_storageonhand').update(data).match(where)
+				);
+				return Promise.allSettled(promises);
+			});
+
+			stockUpdateResults.forEach((result) => {
 				if (result.status === 'rejected') {
-					console.error(
-						`Error updating stock (${whereInfo.m_product_id}, ${whereInfo.warehouse_id}):`,
-						result.reason
-					);
+					console.error(`Error in stock update batch:`, result.reason);
 					errors.push({
-						productId: whereInfo.m_product_id,
+						productId: undefined,
 						step: 'update_stock_batch',
-						message: result.reason?.message ?? 'Unknown update error'
+						message: result.reason?.message ?? 'Unknown update error in batch'
 					});
 				} else if (result.value.error) {
-					console.error(
-						`Error updating stock (${whereInfo.m_product_id}, ${whereInfo.warehouse_id}):`,
-						result.value.error
-					);
+					console.error(`Error in stock update batch result:`, result.value.error);
+					const productId = result.value.error?.details?.match(/m_product_id = (\d+)/)?.[1];
 					errors.push({
-						productId: whereInfo.m_product_id,
+						productId: productId ? parseInt(productId) : undefined,
 						step: 'update_stock_batch',
 						message: result.value.error.message
 					});
@@ -828,31 +859,28 @@ export const actions = {
 			}
 		}
 
-		// 8. Price Updates
+		// 8. Price Updates (Batched)
 		if (priceUpdates.length > 0) {
-			const priceUpdatePromises = priceUpdates.map(({ where, data }) =>
-				supabase.from('m_productprice').update(data).match(where)
-			);
-			const priceUpdateResults = await Promise.allSettled(priceUpdatePromises);
-			priceUpdateResults.forEach((result, index) => {
-				const whereInfo = priceUpdates[index].where;
+			const priceUpdateResults = await processInBatches(priceUpdates, BATCH_SIZE, async (batch) => {
+				const promises = batch.map(({ where, data }) =>
+					supabase.from('m_productprice').update(data).match(where)
+				);
+				return Promise.allSettled(promises);
+			});
+
+			priceUpdateResults.forEach((result) => {
 				if (result.status === 'rejected') {
-					console.error(
-						`Error updating price (${whereInfo.m_product_id}, ${whereInfo.m_pricelist_version_id}):`,
-						result.reason
-					);
+					console.error(`Error in price update batch:`, result.reason);
 					errors.push({
-						productId: whereInfo.m_product_id,
+						productId: undefined,
 						step: 'update_price_batch',
-						message: result.reason?.message ?? 'Unknown update error'
+						message: result.reason?.message ?? 'Unknown update error in batch'
 					});
 				} else if (result.value.error) {
-					console.error(
-						`Error updating price (${whereInfo.m_product_id}, ${whereInfo.m_pricelist_version_id}):`,
-						result.value.error
-					);
+					console.error(`Error in price update batch result:`, result.value.error);
+					const productId = result.value.error?.details?.match(/m_product_id = (\d+)/)?.[1];
 					errors.push({
-						productId: whereInfo.m_product_id,
+						productId: productId ? parseInt(productId) : undefined,
 						step: 'update_price_batch',
 						message: result.value.error.message
 					});
