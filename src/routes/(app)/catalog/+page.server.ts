@@ -349,7 +349,7 @@ export const actions = {
 		// const data = { sku: sku }; // Removed unused variable
 
 		// --- Batch requests to ERP API ---
-		const ERP_BATCH_SIZE = 50; // Adjust as needed based on ERP API limits
+		const ERP_BATCH_SIZE = 5; // Adjust as needed based on ERP API limits bilo 50
 		const allErpProducts: BSProduct[] = [];
 		const erpApiErrors: { step: string; message: string; batch?: number[] }[] = [];
 
