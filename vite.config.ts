@@ -11,16 +11,7 @@ export default defineConfig({
 			compiler: 'svelte'
 		})
 	],
-	build: {
-		terserOptions: {
-			compress: {
-				drop_console: false // Keep console logs
-			},
-			mangle: true // Keep mangling enabled
-		}
-		// Optional: If you only want logs in preview, not final deployment
-		// minify: 'terser', // Ensure terser is used
-	},
+
 	define: {
 		'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
 		'import.meta.env.PACKAGE_VERSION': JSON.stringify(process.env.npm_package_version)

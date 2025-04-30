@@ -346,11 +346,60 @@ export const actions = {
 			return; // Or return fail(404, { message: 'No products found for selected IDs' });
 		}
 		const sku = skus.map(({ sku }) => parseInt(sku || '0', 10)) || [];
-		const data = { sku: sku };
+		// const data = { sku: sku }; // Removed unused variable
 
-		const erpProduct = await connector.post('api/product', { json: data }).json<BSProduct[]>();
-		// TODO: Add logging here in production to see the erpProduct response or any errors from the connector call.
-		console.log('erpProduct', erpProduct);
+		// --- Batch requests to ERP API ---
+		const ERP_BATCH_SIZE = 50; // Adjust as needed based on ERP API limits
+		const allErpProducts: BSProduct[] = [];
+		const erpApiErrors: { step: string; message: string; batch?: number[] }[] = [];
+
+		console.log(`Processing ${sku.length} SKUs in batches of ${ERP_BATCH_SIZE}...`);
+
+		for (let i = 0; i < sku.length; i += ERP_BATCH_SIZE) {
+			const skuBatch = sku.slice(i, i + ERP_BATCH_SIZE);
+			const batchData = { sku: skuBatch };
+			console.log(`Fetching ERP data for batch ${i / ERP_BATCH_SIZE + 1}...`);
+			try {
+				const batchResult = await connector
+					.post('api/product', { json: batchData })
+					.json<BSProduct[]>();
+				if (batchResult) {
+					allErpProducts.push(...batchResult);
+				}
+			} catch (error: unknown) {
+				// Use unknown instead of any
+				console.error(`Error fetching ERP data for batch ${i / ERP_BATCH_SIZE + 1}:`, error);
+				const errorMessage =
+					error instanceof Error ? error.message : 'Unknown error fetching ERP batch';
+				erpApiErrors.push({
+					step: 'fetch_erp_batch',
+					message: errorMessage,
+					batch: skuBatch
+				});
+				// Decide if you want to stop on the first error or collect all errors
+				// break; // Uncomment to stop on first error
+			}
+		}
+
+		// --- Handle ERP API Errors ---
+		if (erpApiErrors.length > 0) {
+			console.error('Errors occurred during ERP API calls:', erpApiErrors);
+			return fail(502, {
+				// Use 502 Bad Gateway or similar for upstream API errors
+				success: false,
+				message: `Failed to fetch data from ERP for ${erpApiErrors.length} batch(es).`,
+				errors: erpApiErrors // Provide details about which batches failed
+			});
+		}
+
+		if (allErpProducts.length === 0 && sku.length > 0) {
+			console.warn('No products returned from ERP API, although SKUs were provided.');
+			// Decide how to handle this - maybe it's okay, maybe it's an error
+			// return fail(404, { success: false, message: 'No product data found in ERP for the selected SKUs.' });
+		} else {
+			console.log(`Successfully fetched data for ${allErpProducts.length} products from ERP.`);
+		}
+		// Use allErpProducts instead of erpProduct from now on
 
 		const { data: mapChannel, error: mapChannelError } = await getChannelMap(supabase, 1);
 
@@ -394,7 +443,7 @@ export const actions = {
 		}[] = [];
 
 		// --- Pre-fetch Product IDs ---
-		const erpSkus = erpProduct.map((p) => p.sifra.toString());
+		const erpSkus = allErpProducts.map((p) => p.sifra.toString()); // Use allErpProducts
 		const { data: existingProducts, error: productFetchError } = await supabase
 			.from('m_product')
 			.select('id, sku')
@@ -412,7 +461,9 @@ export const actions = {
 
 		// --- Pre-fetch BPartner Mappings ---
 		const externalBPartnerIds = [
-			...new Set(erpProduct.flatMap((p) => p.m_product_po?.map((po) => po.kupac.toString()) ?? []))
+			...new Set(
+				allErpProducts.flatMap((p) => p.m_product_po?.map((po) => po.kupac.toString()) ?? [])
+			) // Use allErpProducts
 		];
 		const { data: bpartnerMappings, error: bpartnerMapError } = await supabase
 			.from('c_channel_map_bpartner')
@@ -460,7 +511,8 @@ export const actions = {
 		);
 
 		// --- Collect data for batch operations ---
-		for (const product of erpProduct) {
+		for (const product of allErpProducts) {
+			// Use allErpProducts
 			const productId = productSkuToIdMap.get(product.sifra.toString());
 
 			if (!productId) {
