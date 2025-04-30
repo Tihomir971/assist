@@ -68,6 +68,7 @@
     "@supabase/supabase-js": "^2.49.4",
     "@tailwindcss/vite": "4.1.4",
     "@tanstack/table-core": "^8.21.3",
+    "@zag-js/checkbox": "^1.11.0",
     "@zag-js/combobox": "^1.11.0",
     "@zag-js/number-input": "^1.11.0",
     "@zag-js/select": "^1.11.0",

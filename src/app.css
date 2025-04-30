@@ -91,7 +91,7 @@
 	}
 
 	.input-root {
-		@apply flex w-full flex-col gap-1;
+		@apply mb-2 flex w-full flex-col gap-1;
 	}
 	.input-label {
 		@apply text-sm data-disabled:opacity-5;

@@ -5,12 +5,18 @@ import type { Actions, PageServerLoad } from './$types';
 import { mProductCategoryInsertSchema } from '$lib/types/supabase/supabase-zod-schemas';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
-	const categoryId = params.slug as unknown as number;
-	const { data: category } = await supabase
-		.from('m_product_category')
-		.select('*')
-		.eq('id', categoryId)
-		.maybeSingle();
+	const categoryId = params.id ? parseInt(params.id) : null;
+
+	let category = null;
+	if (categoryId !== null) {
+		const { data } = await supabase
+			.from('m_product_category')
+			.select('*')
+			.eq('id', categoryId)
+			.maybeSingle();
+
+		category = data;
+	}
 
 	const categories =
 		(await supabase.from('m_product_category').select('value:id,label:name').order('name')).data ||

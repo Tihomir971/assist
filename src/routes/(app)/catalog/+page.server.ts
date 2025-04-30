@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from './$types';
-import type { Enums, Tables, Update } from '$lib/types/supabase/database.helper.js';
+import type { Enums, Tables, Update, Insert } from '$lib/types/supabase/database.helper.js'; // Added Insert
 import type { BSProduct } from '../data/types.js';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { FlattenedProduct, ProductWithDetails } from './columns.svelte.js';
@@ -343,7 +343,7 @@ export const actions = {
 			.select('sku')
 			.in('id', form.data.ids.split(',').map(Number));
 		if (!skus) {
-			return;
+			return; // Or return fail(404, { message: 'No products found for selected IDs' });
 		}
 		const sku = skus.map(({ sku }) => parseInt(sku || '0', 10)) || [];
 		const data = { sku: sku };
@@ -355,7 +355,8 @@ export const actions = {
 		const { data: mapChannel, error: mapChannelError } = await getChannelMap(supabase, 1);
 
 		if (mapChannelError) {
-			console.log('No chanell maping', mapChannel);
+			console.log('No channel mapping found', mapChannelError);
+			// Potentially return fail() here if mapping is critical
 		}
 		const { data: mapCategory } = await supabase
 			.from('c_channel_map_category')
@@ -370,290 +371,509 @@ export const actions = {
 			.select('c_taxcategory_id,resource_id')
 			.eq('c_channel_id', 1);
 
-		const errors: ErrorDetails[] = []; // Use the exported type
+		const errors: ErrorDetails[] = [];
+		const productUpdates: { id: number; data: Partial<Tables<'m_product'>> }[] = [];
+		const barcodeInserts: Insert<'m_product_packing'>[] = []; // Use Insert<>
+		// Arrays for Product PO
+		const productPoInserts: Insert<'m_product_po'>[] = []; // Use Insert<>
+		const productPoUpdates: {
+			where: { m_product_id: number; c_bpartner_id: number };
+			data: Partial<Tables<'m_product_po'>>;
+		}[] = [];
+		// Arrays for Stock
+		const stockInserts: Insert<'m_storageonhand'>[] = []; // Use Insert<>
+		const stockUpdates: {
+			where: { m_product_id: number; warehouse_id: number };
+			data: Partial<Tables<'m_storageonhand'>>;
+		}[] = [];
+		// Arrays for Price
+		const priceInserts: Insert<'m_productprice'>[] = []; // Use Insert<>
+		const priceUpdates: {
+			where: { m_product_id: number; m_pricelist_version_id: number };
+			data: Partial<Tables<'m_productprice'>>;
+		}[] = [];
 
+		// --- Pre-fetch Product IDs ---
+		const erpSkus = erpProduct.map((p) => p.sifra.toString());
+		const { data: existingProducts, error: productFetchError } = await supabase
+			.from('m_product')
+			.select('id, sku')
+			.in('sku', erpSkus);
+
+		if (productFetchError) {
+			console.error('Error fetching existing products by SKU:', productFetchError);
+			return fail(500, {
+				success: false,
+				message: 'Failed to fetch existing products.',
+				errors: [{ step: 'prefetch_products', message: productFetchError.message }]
+			});
+		}
+		const productSkuToIdMap = new Map(existingProducts?.map((p) => [p.sku, p.id]));
+
+		// --- Pre-fetch BPartner Mappings ---
+		const externalBPartnerIds = [
+			...new Set(erpProduct.flatMap((p) => p.m_product_po?.map((po) => po.kupac.toString()) ?? []))
+		];
+		const { data: bpartnerMappings, error: bpartnerMapError } = await supabase
+			.from('c_channel_map_bpartner')
+			.select('c_bpartner_id, resource_id')
+			.eq('c_channel_id', 1)
+			.in('resource_id', externalBPartnerIds);
+
+		if (bpartnerMapError) {
+			console.error('Error fetching BPartner mappings:', bpartnerMapError);
+			return fail(500, {
+				success: false,
+				message: 'Failed to fetch BPartner mappings.',
+				errors: [{ step: 'prefetch_bpartners', message: bpartnerMapError.message }]
+			});
+		}
+		const bpartnerExternalToInternalMap = new Map(
+			bpartnerMappings?.map((m) => [m.resource_id, m.c_bpartner_id])
+		);
+
+		// --- Pre-fetch existing related data for updates ---
+		const productIds = Array.from(productSkuToIdMap.values());
+		const [existingPoData, existingStockData, existingPriceData] = await Promise.all([
+			supabase
+				.from('m_product_po')
+				.select('m_product_id, c_bpartner_id')
+				.in('m_product_id', productIds),
+			supabase
+				.from('m_storageonhand')
+				.select('m_product_id, warehouse_id')
+				.in('m_product_id', productIds),
+			supabase
+				.from('m_productprice')
+				.select('m_product_id, m_pricelist_version_id')
+				.in('m_product_id', productIds)
+		]);
+
+		const existingPoSet = new Set(
+			existingPoData.data?.map((p) => `${p.m_product_id}-${p.c_bpartner_id}`) ?? []
+		);
+		const existingStockSet = new Set(
+			existingStockData.data?.map((s) => `${s.m_product_id}-${s.warehouse_id}`) ?? []
+		);
+		const existingPriceSet = new Set(
+			existingPriceData.data?.map((p) => `${p.m_product_id}-${p.m_pricelist_version_id}`) ?? []
+		);
+
+		// --- Collect data for batch operations ---
 		for (const product of erpProduct) {
-			// Find product ID using SKU
-			const { data: selectProductId, error: selectProductIdError } = await supabase
-				.from('m_product') // TODO: Check RLS policies for m_product in production
-				.select('id')
-				.eq('sku', product.sifra.toString())
-				.maybeSingle();
-			if (selectProductIdError) {
-				return { success: false, error: { selectProductIdError } };
-			}
-			if (!selectProductId) {
+			const productId = productSkuToIdMap.get(product.sifra.toString());
+
+			if (!productId) {
 				errors.push({
-					productId: undefined, // ID not found yet
+					productId: undefined,
 					step: 'find_product_by_sku',
 					message: `Product not found for SKU ${product.sifra}`
 				});
-				continue; // Skip to the next product
+				continue; // Skip to the next product if internal ID not found
 			}
 
+			// --- Collect Product Update ---
 			const uomID = Number(
 				mapChannel?.find(
 					(item) => item.channel_code === product.jedmere && item.entity_type === 'Uom'
 				)?.internal_code
 			);
 			const taxID = mapTax?.find((item) => item.resource_id === product.porez)?.c_taxcategory_id;
-			const { error: updateProductError } = await supabase
-				.from('m_product') // TODO: Check RLS policies for m_product update in production
-				.update(
-					{
-						name: product.naziv,
-						mpn: product.katbr ?? null,
-						m_product_category_id: mapCategory?.find(
-							(item) => Number(item.resource_id) === product.grupa
-						)?.m_product_category_id,
-						c_uom_id: uomID,
-						c_taxcategory_id: taxID,
-						unitsperpack: product.tpkolicina ?? 1
-					},
-					{ count: 'estimated' }
-				)
-				.eq('id', selectProductId.id);
+			const categoryID = mapCategory?.find(
+				(item) => Number(item.resource_id) === product.grupa
+			)?.m_product_category_id;
 
-			if (updateProductError) {
-				errors.push({
-					productId: selectProductId.id,
-					step: 'update_product',
-					message: updateProductError.message
-				});
-				// Decide if you want to continue with other updates for this product or skip
-				// continue;
-			}
+			productUpdates.push({
+				id: productId,
+				data: {
+					name: product.naziv,
+					mpn: product.katbr ?? null,
+					m_product_category_id: categoryID,
+					c_uom_id: uomID,
+					c_taxcategory_id: taxID,
+					unitsperpack: product.tpkolicina ?? 1
+				}
+			});
 
-			// Handle Barcodes
+			// --- Collect Barcode Inserts ---
 			if (product.barcodes) {
 				for (const element of product.barcodes) {
-					const { error: updateBarcodesError } = await supabase.from('m_product_packing').insert({
-						m_product_id: selectProductId.id,
+					// Add missing required fields based on TS errors
+					barcodeInserts.push({
+						m_product_id: productId,
 						gtin: element,
-						packing_type: 'Individual' as Enums<'PackingType'>
+						packing_type: 'Individual' as Enums<'PackingType'>,
+						// id: 0, // REMOVED - Let DB handle auto-increment
+						// created_at: new Date().toISOString(), // REMOVED - Let DB handle default
+						// updated_at: new Date().toISOString(), // Keep updated_at if needed
+						unitsperpack: 1, // Assuming default
+						is_display: false // Added default
+						// is_active is likely not required here based on user edit and lack of TS error for it
 					});
-					if (updateBarcodesError) {
-						// Check if the error is a unique constraint violation (code 23505)
-						if (updateBarcodesError.code === '23505') {
-							// Log a warning for duplicate GTIN but don't treat as a blocking error
-							console.warn(`Skipping duplicate GTIN ${element} for product ${selectProductId.id}.`);
-						} else {
-							// For other errors, log and add to the errors array
-							console.error(`Error adding product GTIN ${element}:`, updateBarcodesError);
-							errors.push({
-								// Ensure this uses the ErrorDetails type
-								// Ensure this uses the ErrorDetails type
-								productId: selectProductId.id,
-								step: 'insert_barcode',
-								message: `GTIN ${element}: ${updateBarcodesError.message}`
-							});
-						}
-					}
 				}
 			}
 
-			// Handle Product PO
+			// --- Collect Product PO Inserts/Updates ---
 			if (product.m_product_po) {
 				for (const po of product.m_product_po) {
-					// Added inner loop here
-					const { data: erpMapBpartner, error: findBpartnerError } = await supabase
-						.from('c_channel_map_bpartner')
-						.select('c_bpartner_id')
-						.eq('c_channel_id', 1)
-						.eq('resource_id', po.kupac.toString())
-						.maybeSingle();
+					const internalBPartnerId = bpartnerExternalToInternalMap.get(po.kupac.toString());
+					if (internalBPartnerId) {
+						const poData = {
+							m_product_id: productId,
+							c_bpartner_id: internalBPartnerId,
+							vendorproductno: po.kupsif,
+							// updated_at: new Date().toISOString(),
+							is_active: true, // Required
+							// Potentially update other fields if needed from 'po'
+							// pricelist: po.pricelist ?? 0, // Example if price comes from ERP PO
+							// url: po.url ?? null, // Example
+							discontinued: false, // Default or from ERP?
+							iscurrentvendor: true // Default or from ERP?
+						};
+						const poKey = `${productId}-${internalBPartnerId}`;
 
-					if (findBpartnerError) {
-						errors.push({
-							productId: selectProductId.id,
-							step: 'find_bpartner_map',
-							message: `BPartner Map for ${po.kupac}: ${findBpartnerError.message}`
-						});
-						continue; // Skip this PO if mapping lookup fails
-					}
-
-					if (erpMapBpartner) {
-						const { data: updateProductPo, error: updateProductPoError } = await supabase
-							.from('m_product_po')
-							.update({
-								vendorproductno: po.kupsif
-							})
-							.eq('m_product_id', selectProductId.id)
-							.eq('c_bpartner_id', erpMapBpartner.c_bpartner_id)
-							.select('m_product_id') // Select only a minimal field to check existence
-							.maybeSingle();
-
-						if (updateProductPoError) {
-							errors.push({
-								productId: selectProductId.id,
-								step: 'update_product_po',
-								message: `BPartner ${erpMapBpartner.c_bpartner_id}: ${updateProductPoError.message}`
+						if (existingPoSet.has(poKey)) {
+							// Prepare for update
+							productPoUpdates.push({
+								where: { m_product_id: productId, c_bpartner_id: internalBPartnerId },
+								data: {
+									vendorproductno: po.kupsif,
+									// updated_at: new Date().toISOString(),
+									is_active: true
+									// Add other fields to update here
+								}
 							});
-							// continue; // Optional: Skip insert if update fails
-						}
-
-						if (!updateProductPo) {
-							// If update didn't find a row, insert it
-							const { error: insertProductPoError } = await supabase.from('m_product_po').insert({
-								c_bpartner_id: erpMapBpartner.c_bpartner_id,
-								m_product_id: selectProductId.id,
-								vendorproductno: po.kupsif
+						} else {
+							// Prepare for insert - Add required fields not in update
+							productPoInserts.push({
+								...poData,
+								// id: 0, // REMOVED - Let DB handle auto-increment
+								// created_at: new Date().toISOString(),
+								// Fill other required fields with null or defaults for insert
+								barcode: null,
+								c_currency_id: null,
+								c_uom_id: null,
+								manufacturer: null,
+								pricelist: 0, // Default for insert
+								url: null, // Default for insert
+								valid_from: null,
+								valid_to: null,
+								vendorcategory: null
 							});
-							if (insertProductPoError) {
-								errors.push({
-									productId: selectProductId.id,
-									step: 'insert_product_po',
-									message: `BPartner ${erpMapBpartner.c_bpartner_id}: ${insertProductPoError.message}`
-								});
-							}
+							// Add to set to prevent duplicate inserts in this batch
+							existingPoSet.add(poKey);
 						}
 					} else {
 						errors.push({
-							productId: selectProductId.id,
+							productId: productId,
 							step: 'find_bpartner_map',
 							message: `BPartner mapping not found for external ID ${po.kupac}`
 						});
 					}
-				} // End inner loop for product.m_product_po
+				}
 			}
 
-			// Handle Stock (trstanje)
+			// --- Collect Stock and Price Inserts/Updates ---
 			if (product.trstanje) {
 				for (const trstanje of product.trstanje) {
-					// Added inner loop here
 					const warehouseID = mapWarehouse?.find(
 						(item) => item.resource_id === trstanje.sifobj.toString()
 					)?.m_warehouse_id;
 
 					if (!warehouseID) {
 						errors.push({
-							productId: selectProductId.id,
+							productId: productId,
 							step: 'find_warehouse_map',
 							message: `Warehouse mapping not found for external ID ${trstanje.sifobj}`
 						});
-						continue; // Skip this stock record if warehouse mapping fails
+						continue; // Skip this record
 					}
 
-					const { error: updateStockError, count: updateStorageCount } = await supabase
-						.from('m_storageonhand')
-						.update(
-							{ qtyonhand: (trstanje.stanje ?? 0) - (trstanje.neprokkasa ?? 0) },
-							{ count: 'exact' } // Use 'exact' count for reliable check
-						)
-						.eq('warehouse_id', warehouseID)
-						.eq('m_product_id', selectProductId.id);
-					// Removed .select() as count is sufficient
+					// --- Collect Stock Insert/Update ---
+					const stockKey = `${productId}-${warehouseID}`;
+					const stockData = {
+						m_product_id: productId,
+						warehouse_id: warehouseID,
+						qtyonhand: (trstanje.stanje ?? 0) - (trstanje.neprokkasa ?? 0),
+						// updated_at: new Date().toISOString(),
+						is_active: true // Default or from ERP?
+					};
 
-					if (updateStockError) {
-						console.error(`Error updating stock for warehouse ${warehouseID}:`, updateStockError);
-						errors.push({
-							productId: selectProductId.id,
-							step: 'update_stock',
-							message: `Warehouse ${warehouseID}: ${updateStockError.message}`
+					if (existingStockSet.has(stockKey)) {
+						stockUpdates.push({
+							where: { m_product_id: productId, warehouse_id: warehouseID },
+							data: {
+								qtyonhand: stockData.qtyonhand,
+								// updated_at: stockData.updated_at,
+								is_active: stockData.is_active
+							}
 						});
+					} else {
+						stockInserts.push({
+							...stockData,
+							// id: 0, // REMOVED - Let DB handle auto-increment
+							// created_at: new Date().toISOString(), // REMOVED - Let DB handle default
+							m_locator_id: null // Assuming nullable or default locator for insert
+						});
+						existingStockSet.add(stockKey); // Add to set to prevent duplicate inserts
 					}
 
-					// Check count explicitly
-					if (updateStorageCount === 0) {
-						// If update affected 0 rows, insert
-						const { error: insertStockError } = await supabase.from('m_storageonhand').insert({
-							qtyonhand: (trstanje.stanje ?? 0) - (trstanje.neprokkasa ?? 0),
-							warehouse_id: warehouseID,
-							m_product_id: selectProductId.id
-						});
-						if (insertStockError) {
-							console.error('insertStockError', insertStockError); // Log full error
-							errors.push({
-								productId: selectProductId.id,
-								step: 'insert_stock',
-								message: `Warehouse ${warehouseID}: ${insertStockError?.message}`
-							});
-						}
-					} else if (updateStorageCount === null) {
-						// This might happen if RLS prevents the update or count
-						console.warn(
-							`Update stock count returned null for product ${selectProductId.id}, warehouse ${warehouseID}. Check RLS.`
-						);
-						errors.push({
-							productId: selectProductId.id,
-							step: 'update_stock_count',
-							message: `Warehouse ${warehouseID}: Update count was null (potential RLS issue).`
-						});
-					}
+					// --- Collect Price Insert/Update (based on warehouse) ---
+					let pricelistId: number | null = null;
+					let price: number | null = null;
 
-					// Handle Prices within Stock loop
-					let pricelist = 0;
-					let price = 0;
 					if (trstanje.sifobj === 1) {
-						// Assuming 1 maps to pricelist 5
-						pricelist = 5;
+						// Assuming 1 maps to pricelist 5 (Purchase)
+						pricelistId = 5;
 						price = trstanje.nabcena;
 					} else if (trstanje.sifobj === 11) {
-						// Assuming 11 maps to pricelist 13
-						pricelist = 13;
+						// Assuming 11 maps to pricelist 13 (Retail)
+						pricelistId = 13;
 						price = trstanje.mpcena;
-					} else {
-						continue; // Skip price update if warehouse is not 1 or 11
 					}
 
-					const { error: updatePriceError, count: countProductPriceUpd } = await supabase
-						.from('m_productprice')
-						.update({ pricestd: price }, { count: 'exact' }) // Use 'exact' count
-						.eq('m_pricelist_version_id', pricelist)
-						.eq('m_product_id', selectProductId.id);
-
-					if (updatePriceError) {
-						console.error(`Error updating price for pricelist ${pricelist}:`, updatePriceError);
-						errors.push({
-							productId: selectProductId.id,
-							step: 'update_price',
-							message: `Pricelist ${pricelist}: ${updatePriceError.message}`
-						});
-					}
-
-					if (countProductPriceUpd === 0) {
-						// If update affected 0 rows, insert
-						const { error: insertPriceError } = await supabase.from('m_productprice').insert({
+					if (pricelistId !== null && price !== null) {
+						const priceKey = `${productId}-${pricelistId}`;
+						const priceData = {
+							m_product_id: productId,
+							m_pricelist_version_id: pricelistId,
 							pricestd: price,
-							m_pricelist_version_id: pricelist,
-							m_product_id: selectProductId.id
-						});
-						if (insertPriceError) {
-							console.error('insertPriceError', insertPriceError); // Log full error
-							errors.push({
-								productId: selectProductId.id,
-								step: 'insert_price',
-								message: `Pricelist ${pricelist}: ${insertPriceError.message}`
-							});
-						}
-					} else if (countProductPriceUpd === null) {
-						console.warn(
-							`Update price count returned null for product ${selectProductId.id}, pricelist ${pricelist}. Check RLS.`
-						);
-						errors.push({
-							productId: selectProductId.id,
-							step: 'update_price_count',
-							message: `Pricelist ${pricelist}: Update count was null (potential RLS issue).`
-						});
-					}
-				} // End inner loop for product.trstanje
-			}
-		} // End of for...of loop for erpProduct
+							// updated_at: new Date().toISOString(),
+							is_active: true // Required, default or from ERP?
+						};
 
+						if (existingPriceSet.has(priceKey)) {
+							priceUpdates.push({
+								where: { m_product_id: productId, m_pricelist_version_id: pricelistId },
+								data: {
+									pricestd: priceData.pricestd,
+									// updated_at: priceData.updated_at,
+									is_active: priceData.is_active
+								}
+							});
+						} else {
+							priceInserts.push({
+								...priceData,
+								// id: 0, // REMOVED - Let DB handle auto-increment
+								// created_at: new Date().toISOString(), // REMOVED - Let DB handle default
+								pricelimit: null, // Assuming nullable for insert
+								pricelist: null // Assuming nullable for insert
+							});
+							existingPriceSet.add(priceKey); // Add to set
+						}
+					}
+				}
+			}
+		} // --- End of loop collecting data ---
+
+		// --- Execute Batch Operations ---
+
+		// 1. Product Updates (Concurrent individual updates)
+		const productUpdatePromises = productUpdates.map(({ id, data }) =>
+			supabase.from('m_product').update(data).eq('id', id)
+		);
+		const productUpdateResults = await Promise.allSettled(productUpdatePromises);
+		productUpdateResults.forEach((result, index) => {
+			if (result.status === 'rejected') {
+				console.error(`Error updating product ${productUpdates[index].id}:`, result.reason);
+				errors.push({
+					productId: productUpdates[index].id,
+					step: 'update_product_batch',
+					message: result.reason?.message ?? 'Unknown update error'
+				});
+			} else if (result.value.error) {
+				console.error(`Error updating product ${productUpdates[index].id}:`, result.value.error);
+				errors.push({
+					productId: productUpdates[index].id,
+					step: 'update_product_batch',
+					message: result.value.error.message
+				});
+			}
+		});
+
+		// 2. Barcode Inserts (Handle specific duplicate GTIN error)
+		// Filter potential duplicates within the batch itself first
+		const uniqueBarcodeInserts = Array.from(
+			new Map(barcodeInserts.map((item) => [`${item.m_product_id}-${item.gtin}`, item])).values()
+		);
+		if (uniqueBarcodeInserts.length > 0) {
+			const { error: barcodeInsertError } = await supabase
+				.from('m_product_packing')
+				.insert(uniqueBarcodeInserts);
+
+			if (barcodeInsertError) {
+				// Check if it's the specific duplicate GTIN error (code 23505 for unique_violation)
+				// and the constraint name matches.
+				if (
+					barcodeInsertError.code === '23505' &&
+					barcodeInsertError.message.includes('m_product_packing_gtin_key')
+				) {
+					// Log the expected duplicate error but don't treat it as a failure for the user
+					console.warn(
+						'Ignoring duplicate GTIN error during barcode insert:',
+						barcodeInsertError.message
+					);
+				} else {
+					// Log and report other unexpected errors during barcode insertion
+					console.error('Error batch inserting barcodes:', barcodeInsertError);
+					errors.push({
+						step: 'insert_barcode_batch',
+						message: `Batch insert failed: ${barcodeInsertError.message}`
+					});
+				}
+			}
+		}
+
+		// 3. Product PO Inserts
+		if (productPoInserts.length > 0) {
+			const { error: poInsertError } = await supabase.from('m_product_po').insert(productPoInserts);
+			if (poInsertError) {
+				console.error('Error batch inserting product POs:', poInsertError);
+				errors.push({
+					step: 'insert_product_po_batch',
+					message: `Batch insert failed: ${poInsertError.message}`
+				});
+			}
+		}
+
+		// 4. Product PO Updates
+		if (productPoUpdates.length > 0) {
+			const poUpdatePromises = productPoUpdates.map(({ where, data }) =>
+				supabase.from('m_product_po').update(data).match(where)
+			);
+			const poUpdateResults = await Promise.allSettled(poUpdatePromises);
+			poUpdateResults.forEach((result, index) => {
+				const whereInfo = productPoUpdates[index].where;
+				if (result.status === 'rejected') {
+					console.error(
+						`Error updating product PO (${whereInfo.m_product_id}, ${whereInfo.c_bpartner_id}):`,
+						result.reason
+					);
+					errors.push({
+						productId: whereInfo.m_product_id,
+						step: 'update_product_po_batch',
+						message: result.reason?.message ?? 'Unknown update error'
+					});
+				} else if (result.value.error) {
+					console.error(
+						`Error updating product PO (${whereInfo.m_product_id}, ${whereInfo.c_bpartner_id}):`,
+						result.value.error
+					);
+					errors.push({
+						productId: whereInfo.m_product_id,
+						step: 'update_product_po_batch',
+						message: result.value.error.message
+					});
+				}
+			});
+		}
+
+		// 5. Stock Inserts
+		if (stockInserts.length > 0) {
+			const { error: stockInsertError } = await supabase
+				.from('m_storageonhand')
+				.insert(stockInserts);
+			if (stockInsertError) {
+				console.error('Error batch inserting stock:', stockInsertError);
+				errors.push({
+					step: 'insert_stock_batch',
+					message: `Batch insert failed: ${stockInsertError.message}`
+				});
+			}
+		}
+
+		// 6. Stock Updates
+		if (stockUpdates.length > 0) {
+			const stockUpdatePromises = stockUpdates.map(({ where, data }) =>
+				supabase.from('m_storageonhand').update(data).match(where)
+			);
+			const stockUpdateResults = await Promise.allSettled(stockUpdatePromises);
+			stockUpdateResults.forEach((result, index) => {
+				const whereInfo = stockUpdates[index].where;
+				if (result.status === 'rejected') {
+					console.error(
+						`Error updating stock (${whereInfo.m_product_id}, ${whereInfo.warehouse_id}):`,
+						result.reason
+					);
+					errors.push({
+						productId: whereInfo.m_product_id,
+						step: 'update_stock_batch',
+						message: result.reason?.message ?? 'Unknown update error'
+					});
+				} else if (result.value.error) {
+					console.error(
+						`Error updating stock (${whereInfo.m_product_id}, ${whereInfo.warehouse_id}):`,
+						result.value.error
+					);
+					errors.push({
+						productId: whereInfo.m_product_id,
+						step: 'update_stock_batch',
+						message: result.value.error.message
+					});
+				}
+			});
+		}
+
+		// 7. Price Inserts
+		if (priceInserts.length > 0) {
+			const { error: priceInsertError } = await supabase
+				.from('m_productprice')
+				.insert(priceInserts);
+			if (priceInsertError) {
+				console.error('Error batch inserting prices:', priceInsertError);
+				errors.push({
+					step: 'insert_price_batch',
+					message: `Batch insert failed: ${priceInsertError.message}`
+				});
+			}
+		}
+
+		// 8. Price Updates
+		if (priceUpdates.length > 0) {
+			const priceUpdatePromises = priceUpdates.map(({ where, data }) =>
+				supabase.from('m_productprice').update(data).match(where)
+			);
+			const priceUpdateResults = await Promise.allSettled(priceUpdatePromises);
+			priceUpdateResults.forEach((result, index) => {
+				const whereInfo = priceUpdates[index].where;
+				if (result.status === 'rejected') {
+					console.error(
+						`Error updating price (${whereInfo.m_product_id}, ${whereInfo.m_pricelist_version_id}):`,
+						result.reason
+					);
+					errors.push({
+						productId: whereInfo.m_product_id,
+						step: 'update_price_batch',
+						message: result.reason?.message ?? 'Unknown update error'
+					});
+				} else if (result.value.error) {
+					console.error(
+						`Error updating price (${whereInfo.m_product_id}, ${whereInfo.m_pricelist_version_id}):`,
+						result.value.error
+					);
+					errors.push({
+						productId: whereInfo.m_product_id,
+						step: 'update_price_batch',
+						message: result.value.error.message
+					});
+				}
+			});
+		}
+
+		// --- Final Error Handling ---
 		if (errors.length > 0) {
 			console.error('Errors during ERP sync:', errors);
-			// Return a failure response with aggregated errors
-			// Use status 422 if it's mostly data/validation issues, 500 for server/DB errors
 			return fail(422, {
+				// Use 422 or 500 depending on error types
 				success: false,
-				message: `Completed with ${errors.length} errors.`,
+				message: `Completed with ${errors.length} errors during sync.`,
 				errors: errors
 			});
 		}
 
-		// If no errors occurred
 		return {
-			success: true
+			success: true,
+			message: 'ERP data synchronized successfully.'
 		};
 	},
 	getMarketInfo: async ({ request, locals: { supabase } }) => {

@@ -197,7 +197,7 @@
 					{#if $formData.id}
 						<Button
 							type="submit"
-							name="delete"
+							formaction="?/productPackingDelete"
 							variant="destructive"
 							disabled={$delayed}
 							onclick={(e) => !confirm('Are you sure?') && e.preventDefault()}

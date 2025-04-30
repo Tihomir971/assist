@@ -5,7 +5,6 @@
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	// Superforms
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { crudMProductCategorySchema } from './schema';
 
 	import { formatDateTime } from '$lib/style/locale';
 	import { toast } from 'svelte-sonner';
@@ -20,12 +19,14 @@
 	// Icons
 	import PhPackage from '~icons/ph/package';
 	import { ComboboxZagField } from '$lib/components/zag/combobox/index.js';
+	import { mProductCategoryInsertSchema } from '$lib/types/supabase/supabase-zod-schemas';
+	import { CheckboxZag } from '$lib/components/zag/checkbox/index.js';
 
 	let { data } = $props();
 
 	const superform = superForm(data.formCategory, {
 		resetForm: false,
-		validators: zodClient(crudMProductCategorySchema),
+		validators: zodClient(mProductCategoryInsertSchema),
 		onUpdated(event) {
 			const { form } = event;
 			if (form.valid) {
@@ -73,7 +74,7 @@
 					<h3 class:invalid={page.status >= 400}>{$message}</h3>
 				{/if}
 				<div class="flex w-full items-center space-x-3">
-					<Form.Field
+					<!-- 	<Form.Field
 						form={superform}
 						name="is_active"
 						class="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4"
@@ -87,8 +88,9 @@
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
-					</Form.Field>
-					<Form.Field
+					</Form.Field> -->
+					<CheckboxZag />
+					<!-- <Form.Field
 						form={superform}
 						name="is_self_service"
 						class="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4"
@@ -102,14 +104,7 @@
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
-					</Form.Field>
-					<!-- <ComboboxZag
-						name="parent_id"
-						bind:value={$formData.parent_id}
-						labelText="Parent Category"
-						items={data.categories}
-						placeholder="Select parent category"
-					/> -->
+					</Form.Field> -->
 				</div>
 				<Form.Field form={superform} name="description">
 					<Form.Control>

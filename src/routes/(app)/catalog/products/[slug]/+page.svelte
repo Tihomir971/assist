@@ -51,9 +51,9 @@
 	});
 	const {
 		form: formProduct,
-		enhance: enhanceProduct,
-		tainted: productTainted,
-		isTainted: isProductTainted
+		enhance: enhanceProductUpsert,
+		tainted: taintedProduct,
+		isTainted: isTaintedProduct
 	} = productForm;
 
 	let isProductPackingDrawerOpen: boolean = $state(false);
@@ -72,7 +72,7 @@
 
 <div class="mx-auto w-full max-w-[var(--breakpoint-xl)]">
 	<Card.Root class="mb-4">
-		<form method="post" action="?/product" use:enhanceProduct id="product-form">
+		<form method="post" action="?/productUpsert" use:enhanceProductUpsert id="product-form">
 			<Card.Header class="border-b border-surface-2 pb-6">
 				<Card.Title class="mb-2 flex items-center justify-between">
 					<div>Product details</div>
@@ -89,13 +89,13 @@
 						required
 					/>
 					<div>
-						<div class={!isProductTainted($productTainted) ? 'hidden' : ''}>
+						<div class={!isTaintedProduct($taintedProduct) ? 'hidden' : ''}>
 							<Button type="submit">Save</Button>
 							<Button type="button" variant="outline" onclick={() => productForm.reset()}>
 								Reset
 							</Button>
 						</div>
-						<div class={isProductTainted($productTainted) ? 'hidden' : ''}>
+						<div class={isTaintedProduct($taintedProduct) ? 'hidden' : ''}>
 							<Form.Button name="delete" variant="destructive">Delete</Form.Button>
 						</div>
 					</div>

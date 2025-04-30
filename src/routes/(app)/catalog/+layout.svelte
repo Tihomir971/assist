@@ -71,7 +71,13 @@
 					<Tooltip.Provider>
 						<Tooltip.Root>
 							<Tooltip.Trigger id="create_tooltip">
-								<Button variant="ghost" size="icon">
+								<Button
+									variant="ghost"
+									size="icon"
+									onclick={() => {
+										goto('/catalog/category');
+									}}
+								>
 									<FolderPlus strokeWidth={1.5} class="!size-6" />
 									<span class="sr-only">Create Category</span>
 								</Button>

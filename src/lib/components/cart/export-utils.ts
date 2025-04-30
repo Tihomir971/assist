@@ -343,7 +343,6 @@ export async function processExport(
 
 		const workbook = utils.book_new();
 		utils.book_append_sheet(workbook, worksheet, 'Cart Items');
-		console.log('selectReportValue', selectReportValue);
 
 		writeFile(
 			workbook,
