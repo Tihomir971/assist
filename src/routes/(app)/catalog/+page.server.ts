@@ -738,7 +738,7 @@ export const actions = {
 			return allResults;
 		}
 
-		const BATCH_SIZE = 20; // Adjust batch size as needed
+		const BATCH_SIZE = 2; // Adjust batch size as needed - Reduced further for Cloudflare subrequest limits
 
 		// 1. Product Updates (Batched)
 		if (productUpdates.length > 0) {
