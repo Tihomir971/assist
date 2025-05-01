@@ -2,7 +2,7 @@ import { z } from 'zod';
 import {
 	mAttributesetInsertSchema,
 	mAttributesetUpdateSchema
-} from '$lib/types/supabase/supabase-zod-schemas';
+} from '$lib/types/supabase.zod.schemas';
 
 // Schema for attribute set list filtering and sorting
 export const attributeSetsSearchParamsSchema = z.object({

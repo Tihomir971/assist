@@ -4,7 +4,7 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import type { Database } from '$lib/types/supabase/database.types';
+	import type { Database } from '$lib/types/supabase.types';
 	import { getCartContext } from '../../ctx.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 

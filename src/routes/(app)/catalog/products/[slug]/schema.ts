@@ -5,7 +5,7 @@ import {
 	mProductRowSchema,
 	mReplenishRowSchema,
 	mStorageonhandInsertSchema
-} from '$lib/types/supabase/supabase-zod-schemas';
+} from '$lib/types/supabase.zod.schemas';
 import { z } from 'zod';
 
 // Product

@@ -8,8 +8,8 @@
 	import { superForm } from 'sveltekit-superforms/client';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import type { Enums } from '$lib/types/supabase/database.helper.js';
 	import { generateCodeFromName } from '$lib/scripts/code-name-generation.js';
+	import type { Enums } from '$lib/types/supabase.types.js';
 
 	let { data } = $props();
 

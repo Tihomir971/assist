@@ -1,4 +1,4 @@
-import { mAttributeGroupInsertSchema } from '$lib/types/supabase/supabase-zod-schemas';
+import { mAttributeGroupInsertSchema } from '$lib/types/supabase.zod.schemas';
 import { z } from 'zod';
 
 // Schema for attribute group list filtering and sorting

@@ -1,11 +1,16 @@
 import type { Actions, PageServerLoad } from './$types';
-import type { Enums, Tables, Update, Insert } from '$lib/types/supabase/database.helper.js'; // Added Insert
 import type { BSProduct } from '../data/types.js';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { FlattenedProduct, ProductWithDetails } from './columns.svelte.js';
-import type { Database } from '$lib/types/supabase/database.types';
+import type {
+	Database,
+	Enums,
+	Tables,
+	TablesInsert,
+	TablesUpdate
+} from '$lib/types/supabase.types';
 import type { ProductsResultSearch } from './types-search-vendor-products';
-import type { ApiResponse } from '$lib/types/types-api';
+import type { ApiResponse } from '$lib/types/api.types';
 import type { ProductRequest } from './types-api-market';
 
 import { fail, superValidate } from 'sveltekit-superforms';
@@ -235,7 +240,7 @@ function flattenProduct(
 	product: ProductWithDetails,
 	activeWarehouse: number,
 	checkedVat: boolean,
-	activePricelists: Update<'m_pricelist_version'>[]
+	activePricelists: TablesUpdate<'m_pricelist_version'>[]
 ): FlattenedProduct {
 	const smallestPricestd = Math.min(
 		...product.m_productprice
@@ -381,21 +386,21 @@ export const actions = {
 
 		const errors: ErrorDetails[] = [];
 		const productUpdates: { id: number; data: Partial<Tables<'m_product'>> }[] = [];
-		const barcodeInserts: Insert<'m_product_packing'>[] = []; // Use Insert<>
+		const barcodeInserts: TablesInsert<'m_product_packing'>[] = []; // Use Insert<>
 		// Arrays for Product PO
-		const productPoInserts: Insert<'m_product_po'>[] = []; // Use Insert<>
+		const productPoInserts: TablesInsert<'m_product_po'>[] = []; // Use Insert<>
 		const productPoUpdates: {
 			where: { m_product_id: number; c_bpartner_id: number };
 			data: Partial<Tables<'m_product_po'>>;
 		}[] = [];
 		// Arrays for Stock
-		const stockInserts: Insert<'m_storageonhand'>[] = []; // Use Insert<>
+		const stockInserts: TablesInsert<'m_storageonhand'>[] = []; // Use Insert<>
 		const stockUpdates: {
 			where: { m_product_id: number; warehouse_id: number };
 			data: Partial<Tables<'m_storageonhand'>>;
 		}[] = [];
 		// Arrays for Price
-		const priceInserts: Insert<'m_productprice'>[] = []; // Use Insert<>
+		const priceInserts: TablesInsert<'m_productprice'>[] = []; // Use Insert<>
 		const priceUpdates: {
 			where: { m_product_id: number; m_pricelist_version_id: number };
 			data: Partial<Tables<'m_productprice'>>;

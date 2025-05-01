@@ -7,7 +7,7 @@
 	import SearchDialog from './search-dialog.svelte';
 	//Icons
 	import PhMagnifyingGlass from '~icons/ph/magnifying-glass';
-	import type { Database } from '$lib/types/supabase/database.types';
+	import type { Database } from '$lib/types/supabase.types';
 	import ky from 'ky';
 
 	interface Props {

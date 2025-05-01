@@ -2,7 +2,7 @@ import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { mProductCategoryInsertSchema } from '$lib/types/supabase/supabase-zod-schemas';
+import { mProductCategoryInsertSchema } from '$lib/types/supabase.zod.schemas';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
 	const categoryId = params.id ? parseInt(params.id) : null;

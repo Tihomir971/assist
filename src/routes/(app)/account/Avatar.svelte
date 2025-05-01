@@ -1,6 +1,6 @@
 <!-- src/routes/account/Avatar.svelte -->
 <script lang="ts">
-	import type { Database } from '$lib/types/supabase/database.types';
+	import type { Database } from '$lib/types/supabase.types';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 
 	interface Props {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Database } from '$lib/types/supabase/database.types.js';
+	import type { Database } from '$lib/types/supabase.types.js';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	// Icons
 	import PhShoppingCart from '~icons/ph/shopping-cart';

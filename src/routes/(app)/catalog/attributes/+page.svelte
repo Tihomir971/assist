@@ -8,8 +8,6 @@
 	import { superForm } from 'sveltekit-superforms/client';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import { attributeTypeSchema } from '$lib/types/supabase/supabase-zod-schemas';
-	import type { Enums } from '$lib/types/supabase/database.helper.js';
 
 	let { data } = $props();
 

@@ -2,15 +2,14 @@
 	// Libs
 	import { DateTime } from 'luxon';
 	// Types
-	import type { Tables } from '$lib/types/supabase/database.helper.js';
 	import type { SupabaseClient } from '@supabase/supabase-js';
+	import type { Database, Tables } from '$lib/types/supabase.types.js';
 	// Components
 	import * as TableShow from '$lib/components/ui/table/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import type { Database } from '$lib/types/supabase/database.types.js';
 	import { formatDate } from '$lib/style/locale.js';
 
 	let { data } = $props();

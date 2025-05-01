@@ -1,5 +1,5 @@
+import type { Tables } from '$lib/types/supabase.types';
 import type { PageServerLoad } from './$types';
-import type { Tables } from '$lib/types/supabase/database.helper';
 
 type PLVerison = Tables<'m_pricelist_version'>;
 export const load = (async ({ url, locals: { supabase } }) => {

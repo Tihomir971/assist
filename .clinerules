@@ -1,5 +1,5 @@
 Use node, typescript, sveltekit, svelte 5, shadcn-svelte, sveltekit-superforms, tailwind, zod and "ky" fetch library.
 Use supabase types defined in supabase.ts under lib/types. you can also use database.types.ts
-Supabase Zod types are in src/lib/types/supabase-zod-schemas.ts. It's used only for supabase tables
+Supabase Zod types are in src/lib/types/supabase.zod.schemas.ts. It's used only for supabase tables
 
 Svelte 5 uses the `onclick` attribute for event handling, not `on:click`. However, there may be typing issues with the Shadcn-Svelte `Button` component that prevent it from correctly handling the `onclick` event.

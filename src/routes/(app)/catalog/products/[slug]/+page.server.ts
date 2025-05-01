@@ -14,7 +14,7 @@ import {
 	productPackingDeleteSchema,
 	productPackingInsertSchema
 } from './schema.js';
-import { mProductPoInsertSchema } from '$lib/types/supabase/supabase-zod-schemas';
+import { mProductPoInsertSchema } from '$lib/types/supabase.zod.schemas';
 
 export const load: PageServerLoad = async ({ depends, params, locals: { supabase } }) => {
 	depends('catalog:products');

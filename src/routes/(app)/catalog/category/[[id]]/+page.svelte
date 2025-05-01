@@ -14,12 +14,11 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
-	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 
 	// Icons
 	import PhPackage from '~icons/ph/package';
 	import { ComboboxZagField } from '$lib/components/zag/combobox/index.js';
-	import { mProductCategoryInsertSchema } from '$lib/types/supabase/supabase-zod-schemas';
+	import { mProductCategoryInsertSchema } from '$lib/types/supabase.zod.schemas.js';
 	import { CheckboxZag } from '$lib/components/zag/checkbox/index.js';
 
 	let { data } = $props();

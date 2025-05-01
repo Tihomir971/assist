@@ -4,8 +4,8 @@ import { createColumnHelper, renderComponent, renderSnippet } from '$lib/compone
 import TableCheckbox from '$lib/components/walker-tx/table-checkbox.svelte';
 import DataTableTitleCell from './data-table-title-cell.svelte';
 import DataTableActionsVendor from './data-table-actions-vendor.svelte';
-import type { Update } from '$lib/types/supabase/database.helper.js';
 import { createRawSnippet } from 'svelte';
+import type { TablesUpdate } from '$lib/types/supabase.types';
 
 export interface Warehouse {
 	value: string;
@@ -20,15 +20,15 @@ export interface ProductWithDetails {
 	is_active: boolean;
 	imageurl: string | null;
 	discontinued: boolean;
-	m_storageonhand: Update<'m_storageonhand'>[];
-	m_product_packing: Update<'m_product_packing'>[];
-	m_replenish: Update<'m_replenish'>[];
+	m_storageonhand: TablesUpdate<'m_storageonhand'>[];
+	m_product_packing: TablesUpdate<'m_product_packing'>[];
+	m_replenish: TablesUpdate<'m_replenish'>[];
 	c_taxcategory?: { c_tax: { rate: number }[] } | null;
-	m_productprice: Update<'m_productprice'>[];
+	m_productprice: TablesUpdate<'m_productprice'>[];
 	m_product_po: {
 		c_bpartner_id: number;
 		pricelist: number | null;
-		c_bpartner: Update<'c_bpartner'>;
+		c_bpartner: TablesUpdate<'c_bpartner'>;
 	}[];
 }
 export interface FlattenedProduct {

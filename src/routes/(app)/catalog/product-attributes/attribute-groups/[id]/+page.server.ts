@@ -1,6 +1,6 @@
 import { error, fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
-import { mAttributeGroupUpdateSchema } from '$lib/types/supabase/supabase-zod-schemas';
+import { mAttributeGroupUpdateSchema } from '$lib/types/supabase.zod.schemas';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export const load = async ({ params, locals }: { params: { id: string }; locals: App.Locals }) => {

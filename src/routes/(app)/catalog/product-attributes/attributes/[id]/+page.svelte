@@ -8,8 +8,7 @@
 	import { superForm } from 'sveltekit-superforms/client';
 	import { Separator } from '$lib/components/ui/separator';
 	import { Checkbox } from '$lib/components/ui/checkbox';
-	import { attributeTypeSchema } from '$lib/types/supabase/supabase-zod-schemas';
-	import type { Enums } from '$lib/types/supabase/database.helper.js';
+	import type { Enums } from '$lib/types/supabase.types.js';
 
 	const { data } = $props();
 

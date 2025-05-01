@@ -9,12 +9,12 @@
 	import { toast } from 'svelte-sonner';
 	import { isValidGTIN } from '$lib/scripts/gtin';
 	import { invalidate } from '$app/navigation';
-	import type { Tables } from '$lib/types/supabase/database.helper';
 	import type { ProductPackingInsertSchema } from './schema';
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import MySelectForm from '$lib/components/my/MySelectForm.svelte';
 	import MyCheckboxForm from '$lib/components/my/MyCheckboxForm.svelte';
 	import { NumberInputZag } from '$lib/components/my/input';
+	import type { Tables } from '$lib/types/supabase.types';
 
 	type Props = {
 		isProductPackingDrawerOpen: boolean;
