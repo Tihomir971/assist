@@ -1905,6 +1905,30 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      bulk_update_product_po: {
+        Args: {
+          updates: Json
+        }
+        Returns: undefined
+      }
+      bulk_update_productprice: {
+        Args: {
+          updates: Json
+        }
+        Returns: undefined
+      }
+      bulk_update_products: {
+        Args: {
+          updates: Json
+        }
+        Returns: undefined
+      }
+      bulk_update_storageonhand: {
+        Args: {
+          updates: Json
+        }
+        Returns: undefined
+      }
       delete_avatar: {
         Args: {
           avatar_url: string

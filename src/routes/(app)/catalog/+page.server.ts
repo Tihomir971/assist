@@ -379,10 +379,6 @@ export const actions = {
 			.from('c_channel_map_category')
 			.select('m_product_category_id,resource_id')
 			.eq('c_channel_id', 1);
-		/* 	const { data: mapWarehouse } = await supabase
-			.from('c_channel_map_warehouse')
-			.select('m_warehouse_id,resource_id')
-			.eq('c_channel_id', 1); */
 
 		const errors: ErrorDetails[] = [];
 		const productUpdates: { id: number; data: Partial<Tables<'m_product'>> }[] = [];
@@ -654,58 +650,70 @@ export const actions = {
 		}
 
 		// Helper function for batch processing
-		async function processInBatches<T, R>(
-			items: T[],
-			batchSize: number,
-			processFn: (batch: T[]) => Promise<PromiseSettledResult<R>[]>
-		): Promise<PromiseSettledResult<R>[]> {
-			let allResults: PromiseSettledResult<R>[] = [];
-			for (let i = 0; i < items.length; i += batchSize) {
-				const batch = items.slice(i, i + batchSize);
-				console.log(
-					`Processing batch ${i / batchSize + 1} of ${Math.ceil(items.length / batchSize)}...`
-				); // Optional logging
-				const batchResults = await processFn(batch);
-				allResults = allResults.concat(batchResults);
-			}
-			return allResults;
-		}
-
-		const BATCH_SIZE = 2; // Adjust batch size as needed - Reduced further for Cloudflare subrequest limits
+		//async function processInBatches<T, R>(
+		//	items: T[],
+		//	batchSize: number,
+		//	processFn: (batch: T[]) => Promise<PromiseSettledResult<R>[]>
+		//): Promise<PromiseSettledResult<R>[]> {
+		//	let allResults: PromiseSettledResult<R>[] = [];
+		//	for (let i = 0; i < items.length; i += batchSize) {
+		//		const batch = items.slice(i, i + batchSize);
+		//		console.log(
+		//			`Processing batch ${i / batchSize + 1} of ${Math.ceil(items.length / batchSize)}...`
+		//		); // Optional logging
+		//		const batchResults = await processFn(batch);
+		//		allResults = allResults.concat(batchResults);
+		//	}
+		//	return allResults;
+		//}
+		//
+		//const BATCH_SIZE = 2; // Adjust batch size as needed - Reduced further for Cloudflare subrequest limits
 
 		// 1. Product Updates (Batched)
+		//if (productUpdates.length > 0) {
+		//	const productUpdateResults = await processInBatches(
+		//		productUpdates,
+		//		BATCH_SIZE,
+		//		async (batch) => {
+		//			const promises = batch.map(({ id, data }) =>
+		//				supabase.from('m_product').update(data).eq('id', id)
+		//			);
+		//			return Promise.allSettled(promises);
+		//		}
+		//	);
+		//
+		//	// Process results (associate errors with original items if needed, simplified here)
+		//	productUpdateResults.forEach((result) => {
+		//		// Removed unused globalIndex
+		//		// Note: A more robust error mapping might be needed if precise item association is critical
+		//		if (result.status === 'rejected') {
+		//			console.error(`Error in product update batch:`, result.reason);
+		//			errors.push({
+		//				productId: undefined, // Difficult to map precisely back without more logic
+		//				step: 'update_product_batch',
+		//				message: result.reason?.message ?? 'Unknown update error in batch'
+		//			});
+		//		} else if (result.value.error) {
+		//			console.error(`Error in product update batch result:`, result.value.error);
+		//			errors.push({
+		//				productId: undefined, // Difficult to map precisely back
+		//				step: 'update_product_batch',
+		//				message: result.value.error.message
+		//			});
+		//		}
+		//	});
+		//}
 		if (productUpdates.length > 0) {
-			const productUpdateResults = await processInBatches(
-				productUpdates,
-				BATCH_SIZE,
-				async (batch) => {
-					const promises = batch.map(({ id, data }) =>
-						supabase.from('m_product').update(data).eq('id', id)
-					);
-					return Promise.allSettled(promises);
-				}
-			);
-
-			// Process results (associate errors with original items if needed, simplified here)
-			productUpdateResults.forEach((result) => {
-				// Removed unused globalIndex
-				// Note: A more robust error mapping might be needed if precise item association is critical
-				if (result.status === 'rejected') {
-					console.error(`Error in product update batch:`, result.reason);
-					errors.push({
-						productId: undefined, // Difficult to map precisely back without more logic
-						step: 'update_product_batch',
-						message: result.reason?.message ?? 'Unknown update error in batch'
-					});
-				} else if (result.value.error) {
-					console.error(`Error in product update batch result:`, result.value.error);
-					errors.push({
-						productId: undefined, // Difficult to map precisely back
-						step: 'update_product_batch',
-						message: result.value.error.message
-					});
-				}
+			const { error: productUpdateError } = await supabase.rpc('bulk_update_products', {
+				updates: productUpdates // Pass the array directly
 			});
+			if (productUpdateError) {
+				console.error('Error calling bulk_update_products RPC:', productUpdateError);
+				errors.push({
+					step: 'update_product_rpc',
+					message: `RPC failed: ${productUpdateError.message}`
+				});
+			}
 		}
 
 		// 2. Barcode Inserts (Handle specific duplicate GTIN error)
@@ -754,37 +762,49 @@ export const actions = {
 		}
 
 		// 4. Product PO Updates (Batched)
+		//if (productPoUpdates.length > 0) {
+		//	const poUpdateResults = await processInBatches(
+		//		productPoUpdates,
+		//		BATCH_SIZE,
+		//		async (batch) => {
+		//			const promises = batch.map(({ where, data }) =>
+		//				supabase.from('m_product_po').update(data).match(where)
+		//			);
+		//			return Promise.allSettled(promises);
+		//		}
+		//	);
+		//
+		//	poUpdateResults.forEach((result) => {
+		//		if (result.status === 'rejected') {
+		//			console.error(`Error in product PO update batch:`, result.reason);
+		//			errors.push({
+		//				productId: undefined,
+		//				step: 'update_product_po_batch',
+		//				message: result.reason?.message ?? 'Unknown update error in batch'
+		//			});
+		//		} else if (result.value.error) {
+		//			console.error(`Error in product PO update batch result:`, result.value.error);
+		//			// Attempt to get product ID from error details if possible, otherwise undefined
+		//			const productId = result.value.error?.details?.match(/m_product_id = (\d+)/)?.[1];
+		//			errors.push({
+		//				productId: productId ? parseInt(productId) : undefined,
+		//				step: 'update_product_po_batch',
+		//				message: result.value.error.message
+		//			});
+		//		}
+		//	});
+		//}
 		if (productPoUpdates.length > 0) {
-			const poUpdateResults = await processInBatches(
-				productPoUpdates,
-				BATCH_SIZE,
-				async (batch) => {
-					const promises = batch.map(({ where, data }) =>
-						supabase.from('m_product_po').update(data).match(where)
-					);
-					return Promise.allSettled(promises);
-				}
-			);
-
-			poUpdateResults.forEach((result) => {
-				if (result.status === 'rejected') {
-					console.error(`Error in product PO update batch:`, result.reason);
-					errors.push({
-						productId: undefined,
-						step: 'update_product_po_batch',
-						message: result.reason?.message ?? 'Unknown update error in batch'
-					});
-				} else if (result.value.error) {
-					console.error(`Error in product PO update batch result:`, result.value.error);
-					// Attempt to get product ID from error details if possible, otherwise undefined
-					const productId = result.value.error?.details?.match(/m_product_id = (\d+)/)?.[1];
-					errors.push({
-						productId: productId ? parseInt(productId) : undefined,
-						step: 'update_product_po_batch',
-						message: result.value.error.message
-					});
-				}
+			const { error: poUpdateError } = await supabase.rpc('bulk_update_product_po', {
+				updates: productPoUpdates
 			});
+			if (poUpdateError) {
+				console.error('Error calling bulk_update_product_pos RPC:', poUpdateError);
+				errors.push({
+					step: 'update_product_po_rpc',
+					message: `RPC failed: ${poUpdateError.message}`
+				});
+			}
 		}
 
 		// 5. Stock Inserts
@@ -802,32 +822,44 @@ export const actions = {
 		}
 
 		// 6. Stock Updates (Batched)
+		//if (stockUpdates.length > 0) {
+		//	const stockUpdateResults = await processInBatches(stockUpdates, BATCH_SIZE, async (batch) => {
+		//		const promises = batch.map(({ where, data }) =>
+		//			supabase.from('m_storageonhand').update(data).match(where)
+		//		);
+		//		return Promise.allSettled(promises);
+		//	});
+		//
+		//	stockUpdateResults.forEach((result) => {
+		//		if (result.status === 'rejected') {
+		//			console.error(`Error in stock update batch:`, result.reason);
+		//			errors.push({
+		//				productId: undefined,
+		//				step: 'update_stock_batch',
+		//				message: result.reason?.message ?? 'Unknown update error in batch'
+		//			});
+		//		} else if (result.value.error) {
+		//			console.error(`Error in stock update batch result:`, result.value.error);
+		//			const productId = result.value.error?.details?.match(/m_product_id = (\d+)/)?.[1];
+		//			errors.push({
+		//				productId: productId ? parseInt(productId) : undefined,
+		//				step: 'update_stock_batch',
+		//				message: result.value.error.message
+		//			});
+		//		}
+		//	});
+		//}
 		if (stockUpdates.length > 0) {
-			const stockUpdateResults = await processInBatches(stockUpdates, BATCH_SIZE, async (batch) => {
-				const promises = batch.map(({ where, data }) =>
-					supabase.from('m_storageonhand').update(data).match(where)
-				);
-				return Promise.allSettled(promises);
+			const { error: stockUpdateError } = await supabase.rpc('bulk_update_storageonhand', {
+				updates: stockUpdates
 			});
-
-			stockUpdateResults.forEach((result) => {
-				if (result.status === 'rejected') {
-					console.error(`Error in stock update batch:`, result.reason);
-					errors.push({
-						productId: undefined,
-						step: 'update_stock_batch',
-						message: result.reason?.message ?? 'Unknown update error in batch'
-					});
-				} else if (result.value.error) {
-					console.error(`Error in stock update batch result:`, result.value.error);
-					const productId = result.value.error?.details?.match(/m_product_id = (\d+)/)?.[1];
-					errors.push({
-						productId: productId ? parseInt(productId) : undefined,
-						step: 'update_stock_batch',
-						message: result.value.error.message
-					});
-				}
-			});
+			if (stockUpdateError) {
+				console.error('Error calling bulk_update_stock RPC:', stockUpdateError);
+				errors.push({
+					step: 'update_stock_rpc',
+					message: `RPC failed: ${stockUpdateError.message}`
+				});
+			}
 		}
 
 		// 7. Price Inserts
@@ -845,49 +877,61 @@ export const actions = {
 		}
 
 		// 8. Price Updates (Batched)
+		//if (priceUpdates.length > 0) {
+		//	const priceUpdateResults = await processInBatches(priceUpdates, BATCH_SIZE, async (batch) => {
+		//		const promises = batch.map(({ where, data }) =>
+		//			supabase.from('m_productprice').update(data).match(where)
+		//		);
+		//		return Promise.allSettled(promises);
+		//	});
+		//
+		//	priceUpdateResults.forEach((result) => {
+		//		if (result.status === 'rejected') {
+		//			console.error(`Error in price update batch:`, result.reason);
+		//			errors.push({
+		//				productId: undefined,
+		//				step: 'update_price_batch',
+		//				message: result.reason?.message ?? 'Unknown update error in batch'
+		//			});
+		//		} else if (result.value.error) {
+		//			console.error(`Error in price update batch result:`, result.value.error);
+		//			const productId = result.value.error?.details?.match(/m_product_id = (\d+)/)?.[1];
+		//			errors.push({
+		//				productId: productId ? parseInt(productId) : undefined,
+		//				step: 'update_price_batch',
+		//				message: result.value.error.message
+		//			});
+		//		}
+		//	});
+		//}
+		//
+		//// --- Final Error Handling ---
+		//if (errors.length > 0) {
+		//	console.error('Errors during ERP sync:', errors);
+		//	return fail(422, {
+		//		// Use 422 or 500 depending on error types
+		//		success: false,
+		//		message: `Completed with ${errors.length} errors during sync.`,
+		//		errors: errors
+		//	});
+		//}
+		//
+		//return {
+		//	success: true,
+		//	message: 'ERP data synchronized successfully.'
+		//};
 		if (priceUpdates.length > 0) {
-			const priceUpdateResults = await processInBatches(priceUpdates, BATCH_SIZE, async (batch) => {
-				const promises = batch.map(({ where, data }) =>
-					supabase.from('m_productprice').update(data).match(where)
-				);
-				return Promise.allSettled(promises);
+			const { error: priceUpdateError } = await supabase.rpc('bulk_update_productprice', {
+				updates: priceUpdates
 			});
-
-			priceUpdateResults.forEach((result) => {
-				if (result.status === 'rejected') {
-					console.error(`Error in price update batch:`, result.reason);
-					errors.push({
-						productId: undefined,
-						step: 'update_price_batch',
-						message: result.reason?.message ?? 'Unknown update error in batch'
-					});
-				} else if (result.value.error) {
-					console.error(`Error in price update batch result:`, result.value.error);
-					const productId = result.value.error?.details?.match(/m_product_id = (\d+)/)?.[1];
-					errors.push({
-						productId: productId ? parseInt(productId) : undefined,
-						step: 'update_price_batch',
-						message: result.value.error.message
-					});
-				}
-			});
+			if (priceUpdateError) {
+				console.error('Error calling bulk_update_prices RPC:', priceUpdateError);
+				errors.push({
+					step: 'update_price_rpc',
+					message: `RPC failed: ${priceUpdateError.message}`
+				});
+			}
 		}
-
-		// --- Final Error Handling ---
-		if (errors.length > 0) {
-			console.error('Errors during ERP sync:', errors);
-			return fail(422, {
-				// Use 422 or 500 depending on error types
-				success: false,
-				message: `Completed with ${errors.length} errors during sync.`,
-				errors: errors
-			});
-		}
-
-		return {
-			success: true,
-			message: 'ERP data synchronized successfully.'
-		};
 	},
 	getMarketInfo: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(productSelectSchema));
