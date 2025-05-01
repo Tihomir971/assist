@@ -67,7 +67,7 @@ export const addProductPurchasing = async (
 	return { error: productPurchasingError };
 };
 
-export const getUom = async (supabase: SupabaseClient<Database>) => {
-	const { data } = await supabase.from('c_uom').select('value:id::text, label:name').order('name');
+export const getUoms = async (supabase: SupabaseClient<Database>) => {
+	const { data } = await supabase.from('c_uom').select('value:id, label:name').order('name');
 	return data || [];
 };

@@ -26,9 +26,17 @@
 		items: Item[];
 		readonly?: boolean;
 		placeholder?: string;
+		labelText?: string;
 	};
 
-	let { superform, field, items, readonly, placeholder = 'Select an item' }: Props = $props();
+	let {
+		superform,
+		field,
+		items,
+		readonly,
+		placeholder = 'Select an item',
+		labelText
+	}: Props = $props();
 
 	//const formProxy = $derived.by(() => {
 	//	if (superform && field) {
@@ -82,14 +90,21 @@
 <input type="hidden" name={field} value={$value} />
 
 <div {...api.getRootProps()} class="input-root">
-	<div class="flex items-center justify-between">
+	<div class="flex h-6 items-center justify-between">
 		<div>
-			<label {...api.getLabelProps()} class="input-label">Select country</label>
+			<label {...api.getLabelProps()} class="input-label">{labelText}</label>
 			{#if $constraints?.required}
 				<span class="text-warning">*</span>
 			{/if}
 		</div>
-		<button {...api.getClearTriggerProps()} class="text-xs hover:text-base"><PhX /></button>
+		{#if !$constraints?.required}
+			<button
+				{...api.getClearTriggerProps()}
+				class="flex aspect-square h-full items-center justify-center text-xs hover:text-base"
+			>
+				<PhX />
+			</button>
+		{/if}
 	</div>
 	<div {...api.getControlProps()} class="input-control data-disabled:opacity-50">
 		{#if $errors}

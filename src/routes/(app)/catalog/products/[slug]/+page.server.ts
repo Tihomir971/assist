@@ -67,7 +67,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 	const getTaxes = async () => {
 		const { data } = await supabase
 			.from('c_taxcategory')
-			.select('value:id::text, label:name')
+			.select('value:id, label:name')
 			.order('name');
 		return data || [];
 	};
@@ -113,7 +113,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		storageonhand,
 		attributeSets
 	] = await Promise.all([
-		ProductService.getUom(supabase),
+		ProductService.getUoms(supabase),
 		getCategories(),
 		getBPartner(),
 		getReplenishes(),

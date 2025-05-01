@@ -24,7 +24,8 @@
 	import { crudMProductSchema } from './schema';
 	import MyUrlInput from '$lib/components/my/input/input-url.svelte';
 	import { MyTextInput, NumberInputZag } from '$lib/components/my/input';
-	import { ComboboxZag } from '$lib/components/zag/combobox/index.js';
+	import { ComboboxZagField } from '$lib/components/zag/combobox/index.js';
+	import Combobox from '$lib/components/zag/combobox/combobox.svelte';
 
 	let { data } = $props();
 
@@ -57,17 +58,6 @@
 	} = productForm;
 
 	let isProductPackingDrawerOpen: boolean = $state(false);
-
-	let selectedUomLabel = $derived(
-		data.uom.find((v) => v.value === $formProduct.c_uom_id?.toString())?.label
-	);
-	let selectedTaxLabel = $derived(
-		data.tax?.find((v) => v.value === $formProduct.c_taxcategory_id?.toString())?.label
-	);
-
-	let selectedNetQtyUom = $derived(
-		data.uom?.find((v) => v.value === $formProduct.net_qty_uom_id?.toString())?.label
-	);
 </script>
 
 <div class="mx-auto w-full max-w-[var(--breakpoint-xl)]">
@@ -147,7 +137,14 @@
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
-					<Form.Field form={productForm} name="c_uom_id">
+					<ComboboxZagField
+						superform={productForm}
+						field="c_uom_id"
+						labelText="UoM"
+						items={data.uom}
+						readonly={false}
+					/>
+					<!-- <Form.Field form={productForm} name="c_uom_id">
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>UoM</Form.Label>
@@ -173,9 +170,14 @@
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
-					</Form.Field>
-
-					<Form.Field form={productForm} name="c_taxcategory_id">
+					</Form.Field> -->
+					<ComboboxZagField
+						superform={productForm}
+						field="c_taxcategory_id"
+						labelText="Tax"
+						items={data.tax}
+					/>
+					<!-- <Form.Field form={productForm} name="c_taxcategory_id">
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>Tax</Form.Label>
@@ -201,7 +203,7 @@
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
-					</Form.Field>
+					</Form.Field> -->
 				</div>
 				<div class="grid grid-cols-1 divide-x *:px-3 md:grid-cols-[2fr_2fr_1fr]">
 					<div>
@@ -209,15 +211,15 @@
 
 						<div class="grid grid-cols-2 gap-4"></div>
 
-						<ComboboxZag
-							name="attributeset_id"
-							bind:value={$formProduct.attributeset_id}
+						<ComboboxZagField
+							superform={productForm}
+							field="attributeset_id"
 							labelText="Attribute Set"
 							items={data.attributeSets}
 						/>
-						<ComboboxZag
-							name="m_product_category_id"
-							bind:value={$formProduct.m_product_category_id}
+						<ComboboxZagField
+							superform={productForm}
+							field="m_product_category_id"
 							labelText="Category"
 							items={data.categories}
 						/>
@@ -232,8 +234,14 @@
 								fractions={4}
 								labelText="Net Quantity"
 							/>
+							<ComboboxZagField
+								superform={productForm}
+								field="net_qty_uom_id"
+								labelText="Net Quantity UoM"
+								items={data.uom}
+							/>
 
-							<Form.Field form={productForm} name="net_qty_uom_id" class="w-full">
+							<!-- <Form.Field form={productForm} name="net_qty_uom_id" class="w-full">
 								<Form.Control>
 									{#snippet children({ props })}
 										<Form.Label>Net Quantity UoM</Form.Label>
@@ -259,7 +267,7 @@
 									{/snippet}
 								</Form.Control>
 								<Form.FieldErrors />
-							</Form.Field>
+							</Form.Field> -->
 						</div>
 						<div class="grid grid-cols-2 gap-4">
 							<Form.Field form={productForm} name="shelf_life">

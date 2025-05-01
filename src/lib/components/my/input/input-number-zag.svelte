@@ -2,7 +2,7 @@
 	import * as numberInput from '@zag-js/number-input';
 	import { normalizeProps, useMachine } from '@zag-js/svelte';
 	import BaseInput from './input-base.svelte';
-
+	import PhX from '~icons/ph/x';
 	import PhNumpad from '~icons/ph/numpad';
 	import PhPlus from '~icons/ph/plus';
 	import PhMinus from '~icons/ph/minus';
@@ -105,7 +105,7 @@
 	value={Number.isNaN(api.valueAsNumber) ? undefined : api.valueAsNumber}
 />
 
-<div {...api.getRootProps()} class="input-root">
+<!-- <div {...api.getRootProps()} class="input-root">
 	<BaseInput
 		bind:ref
 		{inline}
@@ -115,4 +115,41 @@
 		Action={Trigger}
 		readonly={machine.readOnly}
 	/>
+</div> -->
+
+<div {...api.getRootProps()} class="input-root">
+	<div class="flex items-center justify-between">
+		<div>
+			<label {...api.getLabelProps()} class="input-label">{labelText}:</label>
+			<!-- {#if $constraints?.required}
+				<span class="text-warning">*</span>
+			{/if} -->
+		</div>
+	</div>
+	<div {...api.getControlProps()} class="input-control data-disabled:opacity-50">
+		<div class="input-icon">
+			<PhNumpad />
+		</div>
+		<div class="input-input">
+			<input {...api.getInputProps()} class="w-full focus:outline-none" />
+		</div>
+		{#if !disabled}
+			<div class="input-trigger">
+				<button
+					{...api.getDecrementTriggerProps()}
+					class="flex h-full items-center justify-center rounded-sm hover:text-primary-foreground"
+					aria-label="Decrement"
+				>
+					<PhMinus />
+				</button>
+				<button
+					{...api.getIncrementTriggerProps()}
+					class="flex h-full items-center justify-center rounded-sm hover:text-primary-foreground"
+					aria-label="Increment"
+				>
+					<PhPlus />
+				</button>
+			</div>
+		{/if}
+	</div>
 </div>
