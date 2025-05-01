@@ -303,8 +303,8 @@ export type Database = {
           created_at: string
           entity_type: Database["public"]["Enums"]["Entity"]
           id: number
-          internal_code: string
           is_active: boolean
+          reference_id: number
           updated_at: string
         }
         Insert: {
@@ -313,8 +313,8 @@ export type Database = {
           created_at?: string
           entity_type?: Database["public"]["Enums"]["Entity"]
           id?: number
-          internal_code: string
           is_active?: boolean
+          reference_id: number
           updated_at?: string
         }
         Update: {
@@ -323,8 +323,8 @@ export type Database = {
           created_at?: string
           entity_type?: Database["public"]["Enums"]["Entity"]
           id?: number
-          internal_code?: string
           is_active?: boolean
+          reference_id?: number
           updated_at?: string
         }
         Relationships: [
@@ -421,49 +421,6 @@ export type Database = {
             foreignKeyName: "c_channel_map_category_m_product_category_id_fkey"
             columns: ["m_product_category_id"]
             referencedRelation: "m_product_category"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      c_channel_map_tax: {
-        Row: {
-          c_channel_id: number
-          c_taxcategory_id: number
-          created_at: string
-          id: number
-          is_active: boolean
-          resource_id: string
-          updated_at: string
-        }
-        Insert: {
-          c_channel_id: number
-          c_taxcategory_id: number
-          created_at?: string
-          id?: number
-          is_active?: boolean
-          resource_id: string
-          updated_at?: string
-        }
-        Update: {
-          c_channel_id?: number
-          c_taxcategory_id?: number
-          created_at?: string
-          id?: number
-          is_active?: boolean
-          resource_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "c_channel_map_tax_c_channel_id_fkey"
-            columns: ["c_channel_id"]
-            referencedRelation: "c_channel"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "c_channel_map_tax_c_taxcategory_id_fkey"
-            columns: ["c_taxcategory_id"]
-            referencedRelation: "c_taxcategory"
             referencedColumns: ["id"]
           },
         ]
@@ -1996,7 +1953,7 @@ export type Database = {
         | "Oceania"
         | "North America"
         | "South America"
-      Entity: "Category" | "Source" | "Uom" | "Tax"
+      Entity: "Category" | "Warehouse" | "UoM" | "TaxCategory"
       PackingType: "Individual" | "Pack" | "Pallet"
       region_type: "city" | "district" | "autonomous province"
     }

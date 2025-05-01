@@ -263,9 +263,9 @@ export const cChannelRelationshipsSchema = z.tuple([]);
 
 export const entitySchema = z.union([
 	z.literal('Category'),
-	z.literal('Source'),
-	z.literal('Uom'),
-	z.literal('Tax')
+	z.literal('Warehouse'),
+	z.literal('UoM'),
+	z.literal('TaxCategory')
 ]);
 
 export const cChannelMapInsertSchema = z.object({
@@ -274,8 +274,8 @@ export const cChannelMapInsertSchema = z.object({
 	created_at: z.string().optional(),
 	entity_type: entitySchema.optional(),
 	id: z.number().optional(),
-	internal_code: z.string(),
 	is_active: z.boolean().optional(),
+	reference_id: z.number(),
 	updated_at: z.string().optional()
 });
 
@@ -285,8 +285,8 @@ export const cChannelMapUpdateSchema = z.object({
 	created_at: z.string().optional(),
 	entity_type: entitySchema.optional(),
 	id: z.number().optional(),
-	internal_code: z.string().optional(),
 	is_active: z.boolean().optional(),
+	reference_id: z.number().optional(),
 	updated_at: z.string().optional()
 });
 
@@ -388,51 +388,6 @@ export const cChannelMapCategoryRelationshipsSchema = z.tuple([
 		foreignKeyName: z.literal('c_channel_map_category_m_product_category_id_fkey'),
 		columns: z.tuple([z.literal('m_product_category_id')]),
 		referencedRelation: z.literal('m_product_category'),
-		referencedColumns: z.tuple([z.literal('id')])
-	})
-]);
-
-export const cChannelMapTaxRowSchema = z.object({
-	c_channel_id: z.number(),
-	c_taxcategory_id: z.number(),
-	created_at: z.string(),
-	id: z.number(),
-	is_active: z.boolean(),
-	resource_id: z.string(),
-	updated_at: z.string()
-});
-
-export const cChannelMapTaxInsertSchema = z.object({
-	c_channel_id: z.number(),
-	c_taxcategory_id: z.number(),
-	created_at: z.string().optional(),
-	id: z.number().optional(),
-	is_active: z.boolean().optional(),
-	resource_id: z.string(),
-	updated_at: z.string().optional()
-});
-
-export const cChannelMapTaxUpdateSchema = z.object({
-	c_channel_id: z.number().optional(),
-	c_taxcategory_id: z.number().optional(),
-	created_at: z.string().optional(),
-	id: z.number().optional(),
-	is_active: z.boolean().optional(),
-	resource_id: z.string().optional(),
-	updated_at: z.string().optional()
-});
-
-export const cChannelMapTaxRelationshipsSchema = z.tuple([
-	z.object({
-		foreignKeyName: z.literal('c_channel_map_tax_c_channel_id_fkey'),
-		columns: z.tuple([z.literal('c_channel_id')]),
-		referencedRelation: z.literal('c_channel'),
-		referencedColumns: z.tuple([z.literal('id')])
-	}),
-	z.object({
-		foreignKeyName: z.literal('c_channel_map_tax_c_taxcategory_id_fkey'),
-		columns: z.tuple([z.literal('c_taxcategory_id')]),
-		referencedRelation: z.literal('c_taxcategory'),
 		referencedColumns: z.tuple([z.literal('id')])
 	})
 ]);
@@ -1983,8 +1938,8 @@ export const cChannelMapRowSchema = z.object({
 	created_at: z.string(),
 	entity_type: entitySchema,
 	id: z.number(),
-	internal_code: z.string(),
 	is_active: z.boolean(),
+	reference_id: z.number(),
 	updated_at: z.string()
 });
 

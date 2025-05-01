@@ -8,7 +8,6 @@ import type { ProductsResultSearch } from './types-search-vendor-products';
 import type { ApiResponse } from '$lib/types/types-api';
 import type { ProductRequest } from './types-api-market';
 
-import { getChannelMap } from '$lib/services/channel-map';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { isValidGTIN } from '$lib/scripts/gtin';
@@ -338,75 +337,39 @@ export const actions = {
 	getErpInfo: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(productSelectSchema));
 		if (!form.valid) return fail(400, { form });
+
 		const { data: skus } = await supabase
 			.from('m_product')
 			.select('sku')
 			.in('id', form.data.ids.split(',').map(Number));
+
 		if (!skus) {
-			return; // Or return fail(404, { message: 'No products found for selected IDs' });
+			return fail(404, { message: 'No products found for selected IDs' });
 		}
-		const sku = skus.map(({ sku }) => parseInt(sku || '0', 10)) || [];
-		// const data = { sku: sku }; // Removed unused variable
 
-		// --- Batch requests to ERP API ---
-		const ERP_BATCH_SIZE = 5; // Adjust as needed based on ERP API limits bilo 50
-		const allErpProducts: BSProduct[] = [];
-		const erpApiErrors: { step: string; message: string; batch?: number[] }[] = [];
+		const skuList = skus.map(({ sku }) => parseInt(sku || '0', 10));
 
-		console.log(`Processing ${sku.length} SKUs in batches of ${ERP_BATCH_SIZE}...`);
+		let erpResponse: BSProduct[];
+		try {
+			erpResponse = await connector
+				.post('api/product', { json: { sku: skuList } })
+				.json<BSProduct[]>();
 
-		for (let i = 0; i < sku.length; i += ERP_BATCH_SIZE) {
-			const skuBatch = sku.slice(i, i + ERP_BATCH_SIZE);
-			const batchData = { sku: skuBatch };
-			console.log(`Fetching ERP data for batch ${i / ERP_BATCH_SIZE + 1}...`);
-			try {
-				const batchResult = await connector
-					.post('api/product', { json: batchData })
-					.json<BSProduct[]>();
-				if (batchResult) {
-					allErpProducts.push(...batchResult);
-				}
-			} catch (error: unknown) {
-				// Use unknown instead of any
-				console.error(`Error fetching ERP data for batch ${i / ERP_BATCH_SIZE + 1}:`, error);
-				const errorMessage =
-					error instanceof Error ? error.message : 'Unknown error fetching ERP batch';
-				erpApiErrors.push({
-					step: 'fetch_erp_batch',
-					message: errorMessage,
-					batch: skuBatch
-				});
-				// Decide if you want to stop on the first error or collect all errors
-				// break; // Uncomment to stop on first error
+			if (!erpResponse || erpResponse.length === 0) {
+				return fail(404, { message: 'No product data found in ERP for the selected SKUs.' });
 			}
+
+			console.log(`Successfully fetched data for ${erpResponse.length} products from ERP.`);
+		} catch (error) {
+			console.error('Error fetching data from ERP API:', error);
+			return fail(502, { message: 'Failed to fetch data from ERP API.' });
 		}
 
-		// --- Handle ERP API Errors ---
-		if (erpApiErrors.length > 0) {
-			console.error('Errors occurred during ERP API calls:', erpApiErrors);
-			return fail(502, {
-				// Use 502 Bad Gateway or similar for upstream API errors
-				success: false,
-				message: `Failed to fetch data from ERP for ${erpApiErrors.length} batch(es).`,
-				errors: erpApiErrors // Provide details about which batches failed
-			});
-		}
+		const { data: mapChannel } = await supabase
+			.from('c_channel_map')
+			.select('entity_type, channel_code, reference_id')
+			.eq('c_channel_id', 1);
 
-		if (allErpProducts.length === 0 && sku.length > 0) {
-			console.warn('No products returned from ERP API, although SKUs were provided.');
-			// Decide how to handle this - maybe it's okay, maybe it's an error
-			// return fail(404, { success: false, message: 'No product data found in ERP for the selected SKUs.' });
-		} else {
-			console.log(`Successfully fetched data for ${allErpProducts.length} products from ERP.`);
-		}
-		// Use allErpProducts instead of erpProduct from now on
-
-		const { data: mapChannel, error: mapChannelError } = await getChannelMap(supabase, 1);
-
-		if (mapChannelError) {
-			console.log('No channel mapping found', mapChannelError);
-			// Potentially return fail() here if mapping is critical
-		}
 		const { data: mapCategory } = await supabase
 			.from('c_channel_map_category')
 			.select('m_product_category_id,resource_id')
@@ -414,10 +377,6 @@ export const actions = {
 		const { data: mapWarehouse } = await supabase
 			.from('c_channel_map_warehouse')
 			.select('m_warehouse_id,resource_id')
-			.eq('c_channel_id', 1);
-		const { data: mapTax } = await supabase
-			.from('c_channel_map_tax')
-			.select('c_taxcategory_id,resource_id')
 			.eq('c_channel_id', 1);
 
 		const errors: ErrorDetails[] = [];
@@ -443,7 +402,7 @@ export const actions = {
 		}[] = [];
 
 		// --- Pre-fetch Product IDs ---
-		const erpSkus = allErpProducts.map((p) => p.sifra.toString()); // Use allErpProducts
+		const erpSkus = erpResponse.map((p) => p.sifra.toString()); // Use allErpProducts
 		const { data: existingProducts, error: productFetchError } = await supabase
 			.from('m_product')
 			.select('id, sku')
@@ -461,9 +420,7 @@ export const actions = {
 
 		// --- Pre-fetch BPartner Mappings ---
 		const externalBPartnerIds = [
-			...new Set(
-				allErpProducts.flatMap((p) => p.m_product_po?.map((po) => po.kupac.toString()) ?? [])
-			) // Use allErpProducts
+			...new Set(erpResponse.flatMap((p) => p.m_product_po?.map((po) => po.kupac.toString()) ?? []))
 		];
 		const { data: bpartnerMappings, error: bpartnerMapError } = await supabase
 			.from('c_channel_map_bpartner')
@@ -511,8 +468,7 @@ export const actions = {
 		);
 
 		// --- Collect data for batch operations ---
-		for (const product of allErpProducts) {
-			// Use allErpProducts
+		for (const product of erpResponse) {
 			const productId = productSkuToIdMap.get(product.sifra.toString());
 
 			if (!productId) {
@@ -525,12 +481,13 @@ export const actions = {
 			}
 
 			// --- Collect Product Update ---
-			const uomID = Number(
-				mapChannel?.find(
-					(item) => item.channel_code === product.jedmere && item.entity_type === 'Uom'
-				)?.internal_code
-			);
-			const taxID = mapTax?.find((item) => item.resource_id === product.porez)?.c_taxcategory_id;
+			const uomID = mapChannel?.find(
+				(item) => item.channel_code === product.jedmere && item.entity_type === 'UoM'
+			)?.reference_id;
+			const taxID = mapChannel?.find(
+				(item) => item.channel_code === product.porez && item.entity_type === 'TaxCategory'
+			)?.reference_id;
+
 			const categoryID = mapCategory?.find(
 				(item) => Number(item.resource_id) === product.grupa
 			)?.m_product_category_id;
@@ -550,17 +507,12 @@ export const actions = {
 			// --- Collect Barcode Inserts ---
 			if (product.barcodes) {
 				for (const element of product.barcodes) {
-					// Add missing required fields based on TS errors
 					barcodeInserts.push({
 						m_product_id: productId,
 						gtin: element,
 						packing_type: 'Individual' as Enums<'PackingType'>,
-						// id: 0, // REMOVED - Let DB handle auto-increment
-						// created_at: new Date().toISOString(), // REMOVED - Let DB handle default
-						// updated_at: new Date().toISOString(), // Keep updated_at if needed
 						unitsperpack: 1, // Assuming default
 						is_display: false // Added default
-						// is_active is likely not required here based on user edit and lack of TS error for it
 					});
 				}
 			}
@@ -573,44 +525,21 @@ export const actions = {
 						const poData = {
 							m_product_id: productId,
 							c_bpartner_id: internalBPartnerId,
-							vendorproductno: po.kupsif,
-							// updated_at: new Date().toISOString(),
-							is_active: true, // Required
-							// Potentially update other fields if needed from 'po'
-							// pricelist: po.pricelist ?? 0, // Example if price comes from ERP PO
-							// url: po.url ?? null, // Example
-							discontinued: false, // Default or from ERP?
-							iscurrentvendor: true // Default or from ERP?
+							vendorproductno: po.kupsif
 						};
 						const poKey = `${productId}-${internalBPartnerId}`;
 
 						if (existingPoSet.has(poKey)) {
-							// Prepare for update
 							productPoUpdates.push({
 								where: { m_product_id: productId, c_bpartner_id: internalBPartnerId },
 								data: {
 									vendorproductno: po.kupsif,
-									// updated_at: new Date().toISOString(),
 									is_active: true
-									// Add other fields to update here
 								}
 							});
 						} else {
-							// Prepare for insert - Add required fields not in update
 							productPoInserts.push({
-								...poData,
-								// id: 0, // REMOVED - Let DB handle auto-increment
-								// created_at: new Date().toISOString(),
-								// Fill other required fields with null or defaults for insert
-								barcode: null,
-								c_currency_id: null,
-								c_uom_id: null,
-								manufacturer: null,
-								pricelist: 0, // Default for insert
-								url: null, // Default for insert
-								valid_from: null,
-								valid_to: null,
-								vendorcategory: null
+								...poData
 							});
 							// Add to set to prevent duplicate inserts in this batch
 							existingPoSet.add(poKey);
@@ -716,9 +645,7 @@ export const actions = {
 					}
 				}
 			}
-		} // --- End of loop collecting data ---
-
-		// --- Execute Batch Operations ---
+		}
 
 		// Helper function for batch processing
 		async function processInBatches<T, R>(
