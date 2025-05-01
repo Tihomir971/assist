@@ -374,10 +374,10 @@ export const actions = {
 			.from('c_channel_map_category')
 			.select('m_product_category_id,resource_id')
 			.eq('c_channel_id', 1);
-		const { data: mapWarehouse } = await supabase
+		/* 	const { data: mapWarehouse } = await supabase
 			.from('c_channel_map_warehouse')
 			.select('m_warehouse_id,resource_id')
-			.eq('c_channel_id', 1);
+			.eq('c_channel_id', 1); */
 
 		const errors: ErrorDetails[] = [];
 		const productUpdates: { id: number; data: Partial<Tables<'m_product'>> }[] = [];
@@ -557,9 +557,10 @@ export const actions = {
 			// --- Collect Stock and Price Inserts/Updates ---
 			if (product.trstanje) {
 				for (const trstanje of product.trstanje) {
-					const warehouseID = mapWarehouse?.find(
-						(item) => item.resource_id === trstanje.sifobj.toString()
-					)?.m_warehouse_id;
+					const warehouseID = mapChannel?.find(
+						(item) =>
+							item.channel_code === trstanje.sifobj.toString() && item.entity_type === 'Warehouse'
+					)?.reference_id;
 
 					if (!warehouseID) {
 						errors.push({
