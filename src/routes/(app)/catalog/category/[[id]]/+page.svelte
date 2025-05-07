@@ -27,14 +27,13 @@
 	const superform = superForm(data.formCategory, {
 		resetForm: false,
 		validators: zodClient(mProductCategoryInsertSchema),
-		onUpdated(event) {
-			const { form } = event;
+		onUpdated({ form }) {
 			if (form.valid) {
 				toast.success('Category updated successfully', {
 					description: form.message || 'Your changes have been saved.'
 				});
 
-				invalidate('catalog:category');
+				// invalidate('catalog:category');
 			} else {
 				console.log('form.message', form);
 
@@ -63,16 +62,8 @@
 						<Form.FieldErrors />
 					</Form.Field>
 				</Card.Title>
-				{#if $message}
-					<Card.Description>
-						<h3 class:invalid={page.status >= 400}>{$message}</h3>
-					</Card.Description>
-				{/if}
 			</Card.Header>
 			<Card.Content class="space-y-2">
-				{#if $message}
-					<h3 class:invalid={page.status >= 400}>{$message}</h3>
-				{/if}
 				<div class="flex w-full items-center space-x-3">
 					<!-- 	<Form.Field
 						form={superform}

@@ -72,7 +72,7 @@ export const actions = {
 				if (updateProductCategoryError) {
 					throw error(404, updateProductCategoryError.message);
 				}
-				return message(form, 'User updated!');
+				return message(form, 'Category updated!');
 			}
 		}
 	}

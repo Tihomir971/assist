@@ -97,7 +97,7 @@
 				<span class="text-warning">*</span>
 			{/if}
 		</div>
-		{#if !required && !readOnly && api.value.length > 0}
+		{#if !required && !readOnly && value}
 			<button
 				{...api.getClearTriggerProps()}
 				class="mr-2 flex aspect-square h-full items-center justify-center text-xs hover:text-base"
