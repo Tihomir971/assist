@@ -46,24 +46,24 @@
 	const { form: formData, enhance, message, isTainted, tainted, errors } = superform;
 </script>
 
-<div class="mb-8 grid grid-cols-[3fr_2fr] gap-2 overflow-hidden">
+<div class="mb-8 grid grid-cols-[2fr_1fr] gap-2 overflow-hidden">
 	<Card.Root>
 		<form method="POST" use:enhance action="?/categoryUpsert">
 			<Card.Header>
 				<Card.Title class="flex items-center gap-2">
 					<PhPackage class="mb-2 size-8" />
-					<Form.Field form={superform} name="name">
+					<Form.Field form={superform} name="name" class="w-full">
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>Name</Form.Label>
-								<Input {...props} bind:value={$formData.name} class="w-full text-2xl" />
+								<Input {...props} bind:value={$formData.name} class="text-2xl" />
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
 				</Card.Title>
 			</Card.Header>
-			<Card.Content class="space-y-2">
+			<Card.Content class="w-full space-y-2">
 				<div class="flex w-full items-center space-x-3">
 					<SwitchZagForm {superform} field="is_active" label="Is Active?" />
 					<SwitchZagForm {superform} field="is_self_service" label="Is Self Service?" />
