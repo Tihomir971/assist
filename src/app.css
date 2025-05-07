@@ -107,6 +107,6 @@
 		@apply inline-flex h-10 w-full truncate rounded-sm border border-surface-2 bg-surface-document px-8 text-base ring-primary transition-colors placeholder:text-muted-foreground focus-within:border-primary focus-within:ring hover:border-surface-3 sm:text-sm;
 	}
 	.input-trigger {
-		@apply absolute end-2 top-1/2 flex -translate-y-1/2 items-center text-muted-foreground;
+		@apply absolute end-3 top-1/2 flex -translate-y-1/2 items-center text-muted-foreground;
 	}
 }

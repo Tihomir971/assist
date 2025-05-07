@@ -63,6 +63,6 @@ export const productPackingInsertSchema = mProductPackingInsertSchema
 	});
 export type ProductPackingInsertSchema = z.infer<typeof productPackingInsertSchema>;
 
-export const productPackingDeleteSchema = z.object({
+export const deleteByIdSchema = z.object({
 	id: z.number()
 });

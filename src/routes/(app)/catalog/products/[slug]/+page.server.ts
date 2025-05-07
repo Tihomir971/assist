@@ -11,7 +11,7 @@ import {
 	crudMProductSchema,
 	crudReplenishSchema,
 	mStorageonhandInsertSchemaАrray,
-	productPackingDeleteSchema,
+	deleteByIdSchema,
 	productPackingInsertSchema
 } from './schema.js';
 import { mProductPoInsertSchema } from '$lib/types/supabase.zod.schemas';
@@ -200,7 +200,7 @@ export const actions = {
 		return message(form, 'Barcode updated!');
 	},
 	productPackingDelete: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(productPackingDeleteSchema));
+		const form = await superValidate(request, zod(deleteByIdSchema));
 		console.log('form', form);
 		if (!form.valid) return fail(400, { form });
 
@@ -309,6 +309,20 @@ export const actions = {
 					message: error.message
 				});
 			}
+		}
+
+		return { form };
+	},
+	mProductPoDelete: async ({ request, locals: { supabase } }) => {
+		const form = await superValidate(request, zod(deleteByIdSchema));
+		if (!form.valid) return fail(400, { form });
+
+		if (form.data.id) {
+			const { error: delError } = await supabase
+				.from('m_product_po')
+				.delete()
+				.eq('id', form.data.id);
+			if (delError) throw error(404, delError.message);
 		}
 
 		return { form };

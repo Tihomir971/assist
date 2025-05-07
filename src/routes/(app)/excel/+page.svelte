@@ -273,7 +273,7 @@
 				<ComboboxZag
 					bind:value={selectedSupplier}
 					items={data.c_bpartner}
-					labelText="Supplier"
+					label="Supplier"
 					placeholder="Select supplier..."
 				/>
 			</div>

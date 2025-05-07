@@ -1,8 +1,6 @@
 <script lang="ts">
 	import * as numberInput from '@zag-js/number-input';
 	import { normalizeProps, useMachine } from '@zag-js/svelte';
-	import BaseInput from './input-base.svelte';
-	import PhX from '~icons/ph/x';
 	import PhNumpad from '~icons/ph/numpad';
 	import PhPlus from '~icons/ph/plus';
 	import PhMinus from '~icons/ph/minus';
@@ -66,7 +64,7 @@
 
 {#snippet Label()}
 	{#if labelText}
-		<label {...api.getLabelProps()} class="input-label">{labelText}:</label>
+		<label {...api.getLabelProps()} class="input-label">{labelText}</label>
 	{/if}
 {/snippet}
 
@@ -118,14 +116,16 @@
 </div> -->
 
 <div {...api.getRootProps()} class="input-root">
-	<div class="flex items-center justify-between">
-		<div>
-			<label {...api.getLabelProps()} class="input-label">{labelText}:</label>
-			<!-- {#if $constraints?.required}
+	{#if labelText}
+		<div class="flex items-center justify-between">
+			<div>
+				<label {...api.getLabelProps()} class="input-label">{labelText}:</label>
+				<!-- {#if $constraints?.required}
 				<span class="text-warning">*</span>
 			{/if} -->
+			</div>
 		</div>
-	</div>
+	{/if}
 	<div {...api.getControlProps()} class="input-control data-disabled:opacity-50">
 		<div class="input-icon">
 			<PhNumpad />

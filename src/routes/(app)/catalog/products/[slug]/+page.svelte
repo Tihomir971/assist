@@ -11,7 +11,6 @@
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import * as Select from '$lib/components/ui/select/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { superForm } from 'sveltekit-superforms';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -24,8 +23,7 @@
 	import { crudMProductSchema } from './schema';
 	import MyUrlInput from '$lib/components/my/input/input-url.svelte';
 	import { MyTextInput, NumberInputZag } from '$lib/components/my/input';
-	import { ComboboxZagField } from '$lib/components/zag/combobox/index.js';
-	import Combobox from '$lib/components/zag/combobox/combobox.svelte';
+	import { ComboboxZagForm } from '$lib/components/zag/combobox/index.js';
 
 	let { data } = $props();
 
@@ -137,10 +135,10 @@
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
-					<ComboboxZagField
+					<ComboboxZagForm
 						superform={productForm}
 						field="c_uom_id"
-						labelText="UoM"
+						label="UoM"
 						items={data.uom}
 						readonly={false}
 					/>
@@ -171,10 +169,10 @@
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field> -->
-					<ComboboxZagField
+					<ComboboxZagForm
 						superform={productForm}
 						field="c_taxcategory_id"
-						labelText="Tax"
+						label="Tax"
 						items={data.tax}
 					/>
 					<!-- <Form.Field form={productForm} name="c_taxcategory_id">
@@ -211,16 +209,16 @@
 
 						<div class="grid grid-cols-2 gap-4"></div>
 
-						<ComboboxZagField
+						<ComboboxZagForm
 							superform={productForm}
 							field="attributeset_id"
-							labelText="Attribute Set"
+							label="Attribute Set"
 							items={data.attributeSets}
 						/>
-						<ComboboxZagField
+						<ComboboxZagForm
 							superform={productForm}
 							field="m_product_category_id"
-							labelText="Category"
+							label="Category"
 							items={data.categories}
 						/>
 					</div>
@@ -234,10 +232,10 @@
 								fractions={4}
 								labelText="Net Quantity"
 							/>
-							<ComboboxZagField
+							<ComboboxZagForm
 								superform={productForm}
 								field="net_qty_uom_id"
-								labelText="Net Quantity UoM"
+								label="Net Quantity UoM"
 								items={data.uom}
 							/>
 

@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { MyTextInput, MyUrlInput, NumberInputZag } from '$lib/components/my/input/index.js';
-	import { ComboboxZag } from '$lib/components/zag/combobox/index.js';
+	import { ComboboxZagForm } from '$lib/components/zag/combobox/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { MProductPoInsertSchema } from './schema.js'; // Add MProductPoFormSchema
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { toast } from 'svelte-sonner';
-	import { invalidate } from '$app/navigation';
 
 	type Item = { value: number; label: string };
 	type Props = {
@@ -17,12 +16,7 @@
 		partners: Item[];
 	};
 	let { isSheetOpen = $bindable(), data = $bindable(), form, partners }: Props = $props();
-	const {
-		form: formData,
-		enhance,
-		constraints,
-		errors
-	} = superForm(form, {
+	const superform = superForm(form, {
 		onUpdated({ form }) {
 			if (form.valid) {
 				toast.success(form.message || 'Vendor PO operation successful');
@@ -37,6 +31,7 @@
 			console.error('Form submission failed:', result.error);
 		}
 	});
+	const { form: formData, enhance, message, isTainted, tainted, errors, constraints } = superform;
 	if (data) {
 		$formData = { ...data };
 	}
@@ -62,19 +57,26 @@
 				labelText="Vendor PN"
 				required={$constraints?.vendorproductno?.required}
 			/>
-			<ComboboxZag
-				name="c_bpartner_id"
-				bind:value={$formData.c_bpartner_id}
-				labelText="Vendor"
+			<!-- bind:value={$formData.c_bpartner_id}  -->
+			<ComboboxZagForm
+				{superform}
+				field="c_bpartner_id"
+				label="Vendor"
 				items={partners}
 				placeholder="Select a partner"
-				required={$constraints?.c_bpartner_id?.required}
 			/>
 			<NumberInputZag name="pricelist" bind:value={$formData.pricelist} labelText="Pricelist" />
 			<MyUrlInput name="url" bind:value={$formData.url} labelText="url" />
 
 			<Sheet.Footer class="flex gap-2 sm:flex-col">
-				<Button type="submit" variant="default" class="w-full">Submit</Button>
+				<Button type="submit" variant="default" class="w-full">Save</Button>
+				<Button
+					type="submit"
+					formaction="?/mProductPoDelete"
+					variant="destructive"
+					disabled={!$formData.id}
+					class="w-full">Delete</Button
+				>
 				<SuperDebug data={{ $formData, $errors }} />
 			</Sheet.Footer>
 		</form>

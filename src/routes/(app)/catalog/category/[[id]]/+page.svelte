@@ -1,25 +1,26 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { invalidate } from '$app/navigation';
-	import { browser } from '$app/environment';
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import { dev, browser } from '$app/environment';
+
 	// Superforms
+	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { mProductCategoryInsertSchema } from '$lib/types/supabase.zod.schemas.js';
 
 	import { formatDateTime } from '$lib/style/locale';
 	import { toast } from 'svelte-sonner';
-	// Components
 
+	// Components
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
+	import { ComboboxZagForm } from '$lib/components/zag/combobox/index.js';
+	import { CheckboxZag } from '$lib/components/zag/checkbox/index.js';
 
 	// Icons
 	import PhPackage from '~icons/ph/package';
-	import { ComboboxZagField } from '$lib/components/zag/combobox/index.js';
-	import { mProductCategoryInsertSchema } from '$lib/types/supabase.zod.schemas.js';
-	import { CheckboxZag } from '$lib/components/zag/checkbox/index.js';
 
 	let { data } = $props();
 
@@ -114,6 +115,12 @@
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
+				<ComboboxZagForm
+					{superform}
+					field="parent_id"
+					items={data.categories}
+					label="Parent Category"
+				/>
 
 				<div class="flex flex-row-reverse items-center gap-2">
 					<Form.Button variant="default" disabled={!isTainted($tainted)}>Save</Form.Button>
@@ -123,8 +130,6 @@
 						onclick={(e) => !confirm('Are you sure?') && e.preventDefault()}>Delete</Form.Button
 					>
 				</div>
-
-				<ComboboxZagField {superform} field="parent_id" items={data.categories} />
 			</Card.Content>
 			<Card.Footer class="flex justify-between"></Card.Footer>
 		</Card.Root>
@@ -161,9 +166,7 @@
 	{#if browser}
 		<Card.Root>
 			<Card.Content>
-				{#if browser}
-					<SuperDebug data={{ $formData, $errors }} />
-				{/if}
+				<SuperDebug data={{ $formData, $errors }} display={dev} />
 			</Card.Content>
 		</Card.Root>
 	{/if}

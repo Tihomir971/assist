@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import {
-		ComboboxBits,
-		ComboboxShad,
 		MyCurrencyInput,
 		MyDateInput,
 		MyFileInput,
@@ -110,44 +108,6 @@
 	<div
 		class="grid grid-cols-3 gap-6 *:grid *:gap-2 *:rounded-md *:border *:border-surface-2 *:bg-surface-1 *:p-4 *:shadow-3"
 	>
-		<div>
-			<div>Melt Combobox</div>
-			<!-- <ComboboxMelt /> -->
-		</div>
-		<!-- Bits-UI Combobox Input -->
-		<div>
-			<ComboboxBits
-				value={selectedFruitId?.toString()}
-				items={fruitsStr}
-				placeholder="Select a fruit..."
-				labelText="Bits-UI Combobox"
-				inline
-			/>
-			<div class="flex gap-2">
-				<Button
-					variant="default"
-					onclick={() => {
-						selectedFruitId = fruitsStr[0].value;
-					}}
-				>
-					Select Apple
-				</Button>
-				<Button
-					variant="destructive"
-					onclick={() => {
-						selectedFruitId = null;
-					}}
-				>
-					Clear
-				</Button>
-			</div>
-			<div>
-				Current value: {selectedFruitId !== null
-					? fruitsStr.find((f) => f.value === selectedFruitId)?.label || 'None'
-					: 'None'}
-			</div>
-		</div>
-
 		<!-- Zag Combobox Input (Legacy) -->
 		<div class="card rounded-md border p-4">
 			<ComboboxZag bind:value={selectedFruitIdZag} items={fruitsNum} />
@@ -175,9 +135,7 @@
 					: 'None'}
 			</div>
 		</div>
-		<!-- ShadCN Combobox Input (Legacy) -->
 		<div class="card rounded-md border p-4">
-			<ComboboxShad bind:value={selectedFruitIdShad} items={fruitsStr} />
 			{selectedFruitIdShad}
 			<div class="flex gap-2">
 				<Button
