@@ -1,50 +1,52 @@
 <script lang="ts">
-	import type { HTMLInputAttributes } from 'svelte/elements';
 	import type { Snippet } from 'svelte';
 	import { cn } from '$lib/utils.js';
 	import PhPencilSimpleSlash from '~icons/ph/pencil-simple-slash';
-	type Props = HTMLInputAttributes & {
+	import type { InputProps } from './types';
+	type Props = InputProps & {
 		ref?: HTMLInputElement | null;
 		class?: string;
 		error?: string;
-		labelText?: string; // New param for label
+		label?: string; // New param for label
 		inline?: boolean; // New param for positioning
 		Label?: Snippet;
 		Icon?: Snippet;
 		Content?: Snippet;
 		Action?: Snippet;
-		rootElement?: HTMLDivElement | null; // Add prop to bind the root element
+		rootElement?: HTMLDivElement | null;
 	};
 
 	let {
 		ref = $bindable(null),
+		required,
 		class: className = '',
 		error,
-		labelText, // New parameter
-		inline = false, // New parameter with default value
+		label,
+		inline = false,
 		Label,
 		Icon,
 		Content,
 		Action,
-		rootElement = $bindable(null), // Bind the root element
+		rootElement = $bindable(null),
 		...restProps
 	}: Props = $props();
-
-	// Generate a unique ID for input-label association if none provided
-	const inputId = restProps.id || `input-${Math.random().toString(36).slice(2, 11)}`;
 </script>
 
-<!-- Container div that handles the inline layout -->
 <div
 	class={cn('mb-2 w-full', inline ? 'flex items-center gap-3' : 'flex flex-col gap-1', className)}
 >
-	<!-- 	{#if labelText}
+	<!-- 	{#if label}
 		<label for={inputId} class={cn('', inline ? 'min-w-[120px] shrink-0' : 'mb-1')}>
-			{labelText}{#if restProps.required}<span class="ml-1 text-warning">*</span>{/if}
+			{label}{#if restProps.required}<span class="ml-1 text-warning">*</span>{/if}
 		</label>
 	{/if} -->
 	{#if Label}
-		{@render Label?.()}
+		<div>
+			{@render Label?.()}
+			{#if required}
+				<span class="text-warning">*</span>
+			{/if}
+		</div>
 	{/if}
 	<!-- Input container -->
 	<div bind:this={rootElement} class={cn('relative w-full')}>

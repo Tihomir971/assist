@@ -8,7 +8,7 @@
 		ref?: HTMLInputElement | null;
 		class?: string;
 		error?: string;
-		labelText?: string; // New param for label
+		label?: string; // New param for label
 		inline?: boolean; // New param for positioning
 	};
 
@@ -17,7 +17,7 @@
 		value = $bindable(''),
 		class: className = '',
 		error,
-		labelText,
+		label,
 		inline,
 		...restProps
 	}: Props = $props();
@@ -64,7 +64,7 @@
 </script>
 
 {#snippet Label()}
-	<label for={id} class="input-label">{labelText}</label>
+	<label for={id} class="input-label">{label}</label>
 {/snippet}
 {#snippet urlIcon()}
 	<PhArrowSquareUpLeft class="text-muted-foreground" />
@@ -102,7 +102,7 @@
 	bind:ref
 	class={className}
 	{error}
-	{labelText}
+	{label}
 	{inline}
 	{Label}
 	Icon={urlIcon}

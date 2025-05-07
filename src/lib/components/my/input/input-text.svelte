@@ -1,14 +1,14 @@
 <script lang="ts">
 	import type { HTMLInputAttributes } from 'svelte/elements';
-	import { cn } from '$lib/utils.js';
 	import PhTextAa from '~icons/ph/text-aa';
 	import BaseInput from './input-base.svelte';
+	import type { InputProps } from './types';
 
 	type Props = HTMLInputAttributes & {
 		ref?: HTMLInputElement | null;
 		class?: string;
 		error?: string;
-		labelText?: string; // New param for label
+		label?: string; // New param for label
 		inline?: boolean; // New param for positioning
 	};
 
@@ -17,7 +17,7 @@
 		value = $bindable(),
 		class: className = '',
 		error,
-		labelText, // New param
+		label, // New param
 		inline, // New param
 		...restProps
 	}: Props = $props();
@@ -25,7 +25,9 @@
 </script>
 
 {#snippet Label()}
-	<label for={id} class="input-label">{labelText}</label>
+	<label for={id} class="input-label">
+		{label}
+	</label>
 {/snippet}
 
 {#snippet textIcon()}
@@ -50,7 +52,7 @@
 	bind:ref
 	class={className}
 	{error}
-	{labelText}
+	{label}
 	{inline}
 	{Label}
 	Icon={textIcon}

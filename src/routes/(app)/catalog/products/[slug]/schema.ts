@@ -2,19 +2,10 @@ import { isValidGTIN } from '$lib/scripts/gtin';
 import {
 	mProductPackingInsertSchema,
 	mProductPoInsertSchema,
-	mProductRowSchema,
 	mReplenishRowSchema,
 	mStorageonhandInsertSchema
 } from '$lib/types/supabase.zod.schemas';
 import { z } from 'zod';
-
-// Product
-export const crudMProductSchema = mProductRowSchema
-	.extend({
-		id: mProductRowSchema.shape.id.optional()
-	})
-	.omit({ created_at: true, updated_at: true })
-	.passthrough();
 
 // Replenish
 export const replenishSchema = mReplenishRowSchema

@@ -158,7 +158,7 @@
 			<MyCheckboxForm
 				name="is_display"
 				bind:checked={$formData.is_display}
-				labelText="Is display box?"
+				label="Is display box?"
 			/>
 		</div>
 

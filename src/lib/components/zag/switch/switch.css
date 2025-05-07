@@ -24,7 +24,7 @@
 		background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
 	transition-duration: 150ms;
 
-	--switch-bg: #cbd5e0;
+	--switch-bg: var(--color-surface-3);
 	background: var(--switch-bg);
 }
 
@@ -43,7 +43,7 @@
 }
 
 [data-scope='switch'][data-part='thumb'] {
-	background: white;
+	background: var(--color-ink);
 	transition-property: transform;
 	transition-duration: 200ms;
 	border-radius: inherit;

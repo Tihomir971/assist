@@ -14,7 +14,7 @@
 		readonly?: boolean;
 		class?: string;
 		error?: string;
-		labelText?: string; // New param for label
+		label?: string; // New param for label
 		inline?: boolean; // New param for positioning
 		currency?: string; // Currency code (e.g., 'RSD', 'EUR', 'USD')
 		currencyDisplay?: 'symbol' | 'code' | 'name'; // How to display the currency
@@ -31,7 +31,7 @@
 		readonly = false,
 		class: className,
 		error,
-		labelText,
+		label,
 		inline,
 		currency = 'RSD', // Default currency for Serbian locale
 		currencyDisplay = 'symbol',
@@ -378,7 +378,7 @@
 	bind:ref
 	class={className}
 	{error}
-	{labelText}
+	{label}
 	{inline}
 	Icon={currencyIcon}
 	Content={currencyContent}

@@ -9,6 +9,7 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { generateCodeFromName } from '$lib/scripts/code-name-generation.js';
+	import InputTextForm from '$lib/components/my/input/input-text-form.svelte';
 
 	let { data } = $props();
 
@@ -19,10 +20,10 @@
 	let showingTo = $derived(Math.min(showingFrom + data.perPage - 1, data.count));
 
 	// Create form
-	const createFormObj = superForm(data.createForm, {
+	const superformCreate = superForm(data.createForm, {
 		resetForm: true
 	});
-	const { form: createForm, enhance: createEnhance, errors: createErrors } = createFormObj;
+	const { form: createForm, enhance: createEnhance, errors: createErrors } = superformCreate;
 
 	// Delete form
 	const deleteFormObj = superForm(data.deleteForm, {
@@ -225,20 +226,18 @@
 
 		<form method="POST" action="?/create" use:createEnhance>
 			<div class="grid gap-4 py-4">
-				<div class="grid gap-2">
-					<Label for="name">Name</Label>
-					<Input id="name" name="name" bind:value={$createForm.name} required />
-					{#if $createErrors.name}
-						<p class="text-sm text-red-500">{$createErrors.name}</p>
-					{/if}
-				</div>
-				<div class="grid gap-2">
-					<Label for="code">Code</Label>
-					<Input id="code" name="code" bind:value={$createForm.code} required />
-					{#if $createErrors.code}
-						<p class="text-sm text-red-500">{$createErrors.code}</p>
-					{/if}
-				</div>
+				<InputTextForm
+					superform={superformCreate}
+					field="name"
+					label="Name"
+					placeholder="Attribute Group Name"
+				/>
+				<InputTextForm
+					superform={superformCreate}
+					field="code"
+					label="Code"
+					placeholder="Attribute Group Code"
+				/>
 			</div>
 
 			<Dialog.Footer>

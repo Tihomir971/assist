@@ -1,4 +1,5 @@
 <script lang="ts">
+	import InputTextForm from '$lib/components/my/input/input-text-form.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input';
@@ -9,13 +10,14 @@
 	let { data } = $props();
 
 	// Edit form
-	const { form, enhance, errors, message } = superForm(data.form, {
+	const superform = superForm(data.form, {
 		onUpdated: ({ form }) => {
 			if (form.valid) {
 				// Display success message or toast
 			}
 		}
 	});
+	const { form, enhance, errors, message } = superform;
 </script>
 
 <div class="container mx-auto py-6">
@@ -39,13 +41,7 @@
 				<input type="hidden" name="id" value={$form.id} />
 
 				<div class="grid gap-6">
-					<div class="grid gap-2">
-						<Label for="name">Name</Label>
-						<Input id="name" name="name" bind:value={$form.name} required />
-						{#if $errors.name}
-							<p class="text-sm text-red-500">{$errors.name}</p>
-						{/if}
-					</div>
+					<InputTextForm {superform} field="name" label="Name" placeholder="Attribute Group Name" />
 
 					<div class="flex items-center gap-2">
 						<Switch

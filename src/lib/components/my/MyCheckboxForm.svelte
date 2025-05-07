@@ -9,12 +9,12 @@
 		checked = $bindable(false),
 		indeterminate = $bindable(false),
 		ref = $bindable(null),
-		labelText = undefined,
+		label = undefined,
 		labelRef = $bindable(null),
 		class: className,
 		...restProps
 	}: WithoutChildrenOrChild<Checkbox.RootProps> & {
-		labelText?: string | undefined;
+		label?: string | undefined;
 		labelRef?: HTMLLabelElement | null;
 	} = $props();
 </script>
@@ -43,7 +43,7 @@
 			bind:ref={labelRef}
 			class="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 		>
-			{labelText}
+			{label}
 		</Label.Root>
 	</div>
 </div>

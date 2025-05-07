@@ -8,13 +8,12 @@ import { zod } from 'sveltekit-superforms/adapters';
 import type { ChartData } from './chart-types';
 import { connector } from '$lib/ky';
 import {
-	crudMProductSchema,
 	crudReplenishSchema,
 	mStorageonhandInsertSchemaАrray,
 	deleteByIdSchema,
 	productPackingInsertSchema
 } from './schema.js';
-import { mProductPoInsertSchema } from '$lib/types/supabase.zod.schemas';
+import { mProductInsertSchema, mProductPoInsertSchema } from '$lib/types/supabase.zod.schemas';
 
 export const load: PageServerLoad = async ({ depends, params, locals: { supabase } }) => {
 	depends('catalog:products');
@@ -126,7 +125,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		getAttributeSets()
 	]);
 
-	const formProduct = await superValidate(product, zod(crudMProductSchema));
+	const formProduct = await superValidate(product, zod(mProductInsertSchema));
 	const formProductPacking = await superValidate(zod(productPackingInsertSchema));
 	formProductPacking.data.m_product_id = productId;
 	const formReplenish = await superValidate({ replenishes }, zod(crudReplenishSchema));
@@ -210,7 +209,7 @@ export const actions = {
 		return message(form, 'Product packaging deleted successfully!');
 	},
 	productUpsert: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(crudMProductSchema));
+		const form = await superValidate(request, zod(mProductInsertSchema));
 
 		if (!form.valid) return fail(400, { form });
 

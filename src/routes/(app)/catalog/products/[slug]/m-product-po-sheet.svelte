@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MyTextInput, MyUrlInput, NumberInputZag } from '$lib/components/my/input/index.js';
+	import { InputTextForm, MyUrlInput, NumberInputZag } from '$lib/components/my/input/index.js';
 	import { ComboboxZagForm } from '$lib/components/zag/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
@@ -51,13 +51,7 @@
 			</Sheet.Header>
 			<input type="hidden" name="id" value={$formData.id?.toString() || ''} />
 			<input type="hidden" name="m_product_id" value={$formData.m_product_id?.toString() || ''} />
-			<MyTextInput
-				name="vendorproductno"
-				bind:value={$formData.vendorproductno}
-				labelText="Vendor PN"
-				required={$constraints?.vendorproductno?.required}
-			/>
-			<!-- bind:value={$formData.c_bpartner_id}  -->
+			<InputTextForm {superform} field="vendorproductno" label="Vendor PN" />
 			<ComboboxZagForm
 				{superform}
 				field="c_bpartner_id"
@@ -65,8 +59,8 @@
 				items={partners}
 				placeholder="Select a partner"
 			/>
-			<NumberInputZag name="pricelist" bind:value={$formData.pricelist} labelText="Pricelist" />
-			<MyUrlInput name="url" bind:value={$formData.url} labelText="url" />
+			<NumberInputZag name="pricelist" bind:value={$formData.pricelist} label="Pricelist" />
+			<MyUrlInput name="url" bind:value={$formData.url} label="url" />
 
 			<Sheet.Footer class="flex gap-2 sm:flex-col">
 				<Button type="submit" variant="default" class="w-full">Save</Button>

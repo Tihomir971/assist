@@ -12,7 +12,7 @@
 		format?: string; // Date format string
 		class?: string;
 		error?: string;
-		labelText?: string; // New param for label
+		label?: string; // New param for label
 		inline?: boolean; // New param for positioning
 	};
 
@@ -23,7 +23,7 @@
 		format = 'dd.MM.yyyy', // Default format for Serbian locale
 		class: className = '',
 		error,
-		labelText,
+		label,
 		inline,
 		...restProps
 	}: Props = $props();
@@ -140,7 +140,7 @@
 	bind:ref
 	class={className}
 	{error}
-	{labelText}
+	{label}
 	{inline}
 	Icon={dateIcon}
 	Content={dateContent}

@@ -122,7 +122,7 @@
 					<div class="space-y-2">
 						<NumberInputZag
 							bind:value={$formData.m_product_id}
-							labelText="Product ID"
+							label="Product ID"
 							fractions={0}
 							required
 							readonly
@@ -145,7 +145,7 @@
 						<NumberInputZag
 							name="unitsperpack"
 							bind:value={$formData.unitsperpack}
-							labelText="Units Per Pack"
+							label="Units Per Pack"
 						/>
 					</div>
 
@@ -156,7 +156,7 @@
 					<MyCheckboxForm
 						name="is_display"
 						bind:checked={$formData.is_display}
-						labelText="Is display box?"
+						label="Is display box?"
 					/>
 				</div>
 

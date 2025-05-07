@@ -16,11 +16,9 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
-	import { ComboboxZagForm, SwitchZag, SwitchZagForm } from '$lib/components/zag/index.js';
-	import { CheckboxZag } from '$lib/components/zag/checkbox/index.js';
+	import { ComboboxZagForm, SwitchZagForm } from '$lib/components/zag/index.js';
 
-	// Icons
-	import PhPackage from '~icons/ph/package';
+	import InputTextForm from '$lib/components/my/input/input-text-form.svelte';
 
 	let { data } = $props();
 
@@ -50,20 +48,12 @@
 	<Card.Root>
 		<form method="POST" use:enhance action="?/categoryUpsert">
 			<Card.Header>
-				<Card.Title class="flex items-center gap-2">
-					<PhPackage class="mb-2 size-8" />
-					<Form.Field form={superform} name="name" class="w-full">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>Name</Form.Label>
-								<Input {...props} bind:value={$formData.name} class="text-2xl" />
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-				</Card.Title>
+				<Card.Title>Product Detail</Card.Title>
 			</Card.Header>
 			<Card.Content class="w-full space-y-2">
+				<div class="flex items-end space-x-2">
+					<InputTextForm {superform} field="name" label="Name" placeholder="Category Name" />
+				</div>
 				<div class="flex w-full items-center space-x-3">
 					<SwitchZagForm {superform} field="is_active" label="Is Active?" />
 					<SwitchZagForm {superform} field="is_self_service" label="Is Self Service?" />

@@ -11,7 +11,6 @@
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { superForm } from 'sveltekit-superforms';
 	import { Button } from '$lib/components/ui/button/index.js';
 
@@ -20,15 +19,15 @@
 	import ProductPOCard from './m-product-po-card.svelte';
 	import ReplenishCard from './m-replenish-card.svelte';
 	import StorageOnHandCard from './m-storageonhand-card.svelte';
-	import { crudMProductSchema } from './schema';
 	import MyUrlInput from '$lib/components/my/input/input-url.svelte';
-	import { MyTextInput, NumberInputZag } from '$lib/components/my/input';
-	import { ComboboxZagForm } from '$lib/components/zag/index.js';
+	import { NumberInputZag, InputTextForm } from '$lib/components/my/input';
+	import { ComboboxZagForm, SwitchZagForm } from '$lib/components/zag/index.js';
+	import { mProductInsertSchema } from '$lib/types/supabase.zod.schemas';
 
 	let { data } = $props();
 
 	const productForm = superForm(data.formProduct, {
-		validators: zodClient(crudMProductSchema),
+		validators: zodClient(mProductInsertSchema),
 		onUpdated(event) {
 			const { form } = event;
 			if (form.valid) {
@@ -62,79 +61,57 @@
 	<Card.Root class="mb-4">
 		<form method="post" action="?/productUpsert" use:enhanceProductUpsert id="product-form">
 			<Card.Header class="border-b border-surface-2 pb-6">
-				<Card.Title class="mb-2 flex items-center justify-between">
-					<div>Product details</div>
-					<p class="text-sm text-muted-foreground">
-						ID: {$formProduct.id}
-					</p>
-				</Card.Title>
-				<div class="grid w-full grid-cols-[1fr_auto] items-center gap-2">
-					<MyTextInput
-						placeholder="Enter Product name..."
-						labelText="Product Name"
-						bind:value={$formProduct.name}
-						inline
-						required
-					/>
+				<Card.Title class="flex w-full items-center justify-between">
 					<div>
-						<div class={!isTaintedProduct($taintedProduct) ? 'hidden' : ''}>
-							<Button type="submit">Save</Button>
-							<Button type="button" variant="outline" onclick={() => productForm.reset()}>
-								Reset
-							</Button>
-						</div>
-						<div class={isTaintedProduct($taintedProduct) ? 'hidden' : ''}>
-							<Form.Button name="delete" variant="destructive">Delete</Form.Button>
+						<span>Product details</span>
+						<span class="text-sm text-muted-foreground">
+							ID: {$formProduct.id}
+						</span>
+					</div>
+					<div class="flex items-center gap-2">
+						<div>
+							<div class={!isTaintedProduct($taintedProduct) ? 'hidden' : ''}>
+								<Button type="submit">Save</Button>
+								<Button type="button" variant="outline" onclick={() => productForm.reset()}>
+									Reset
+								</Button>
+							</div>
+							<div class={isTaintedProduct($taintedProduct) ? 'hidden' : ''}>
+								<Form.Button name="delete" variant="destructive">Delete</Form.Button>
+							</div>
 						</div>
 					</div>
-				</div>
+				</Card.Title>
 			</Card.Header>
 			<Card.Content>
-				<div class="mb-4 flex flex-wrap gap-4">
-					<Badge
-						variant={$formProduct.is_active ? 'default' : 'outline'}
-						onclick={() => {
-							$formProduct.is_active = !$formProduct.is_active;
-						}}
-					>
-						{$formProduct.is_active ? 'Active' : 'Inactive'}
-					</Badge>
-					<Badge
-						variant={$formProduct.is_self_service ? 'default' : 'outline'}
-						onclick={() => {
-							$formProduct.is_self_service = !$formProduct.is_self_service;
-						}}
-					>
-						{$formProduct.is_self_service ? 'Self Service' : 'Not Self Service'}
-					</Badge>
-					<Badge
-						variant={$formProduct.discontinued ? 'default' : 'outline'}
-						onclick={() => {
-							$formProduct.discontinued = !$formProduct.discontinued;
-						}}
-					>
-						{$formProduct.discontinued ? 'Discontinued' : 'Not Discontinued'}
-					</Badge>
+				<div class="mb-4 grid w-max grid-cols-3 gap-4">
+					<SwitchZagForm superform={productForm} field="is_active" label="Is Active?" />
+					<SwitchZagForm superform={productForm} field="is_self_service" label="Is Self Service?" />
+					<SwitchZagForm superform={productForm} field="discontinued" label="Discontinued?" />
 				</div>
+				<InputTextForm
+					superform={productForm}
+					field="name"
+					label="Product Name"
+					placeholder="Enter Product name..."
+				/>
+
 				<div class="grid grid-cols-4 gap-4">
-					<Form.Field form={productForm} name="sku">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>SKU</Form.Label>
-								<MyTextInput {...props} bind:value={$formProduct.sku} readonly />
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-					<Form.Field form={productForm} name="mpn">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>MPN</Form.Label>
-								<MyTextInput {...props} autocomplete="off" bind:value={$formProduct.mpn} />
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
+					<InputTextForm
+						superform={productForm}
+						field="sku"
+						label="SKU"
+						placeholder="Enter Product SKU..."
+						readonly
+					/>
+					<InputTextForm
+						superform={productForm}
+						field="mpn"
+						label="MPN"
+						placeholder="Enter Product MPN..."
+						autocomplete="off"
+					/>
+
 					<ComboboxZagForm
 						superform={productForm}
 						field="c_uom_id"
@@ -142,66 +119,13 @@
 						items={data.uom}
 						readonly={false}
 					/>
-					<!-- <Form.Field form={productForm} name="c_uom_id">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>UoM</Form.Label>
-								<Select.Root
-									type="single"
-									value={$formProduct.c_uom_id?.toString()}
-									name={props.name}
-									onValueChange={(v) => {
-										$formProduct.c_uom_id = Number.parseInt(v);
-									}}
-								>
-									<Select.Trigger {...props}>
-										{selectedUomLabel}
-									</Select.Trigger>
-									<Select.Content>
-										{#if data.uom}
-											{#each data.uom as v}
-												<Select.Item value={v.value} label={v.label} />
-											{/each}
-										{/if}
-									</Select.Content>
-								</Select.Root>
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field> -->
+
 					<ComboboxZagForm
 						superform={productForm}
 						field="c_taxcategory_id"
 						label="Tax"
 						items={data.tax}
 					/>
-					<!-- <Form.Field form={productForm} name="c_taxcategory_id">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>Tax</Form.Label>
-								<Select.Root
-									type="single"
-									value={$formProduct.c_taxcategory_id?.toString()}
-									name={props.name}
-									onValueChange={(v) => {
-										$formProduct.c_taxcategory_id = Number.parseInt(v);
-									}}
-								>
-									<Select.Trigger {...props}>
-										{selectedTaxLabel}
-									</Select.Trigger>
-									<Select.Content>
-										{#if data.tax}
-											{#each data.tax as v}
-												<Select.Item value={v.value} label={v.label} />
-											{/each}
-										{/if}
-									</Select.Content>
-								</Select.Root>
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field> -->
 				</div>
 				<div class="grid grid-cols-1 divide-x *:px-3 md:grid-cols-[2fr_2fr_1fr]">
 					<div>
@@ -230,7 +154,7 @@
 								name="net_quantity"
 								bind:value={$formProduct.net_quantity}
 								fractions={4}
-								labelText="Net Quantity"
+								label="Net Quantity"
 							/>
 							<ComboboxZagForm
 								superform={productForm}
@@ -275,7 +199,7 @@
 											bind:value={$formProduct.shelf_life}
 											fractions={0}
 											{...props}
-											labelText="Shelf Life (days)"
+											label="Shelf Life (days)"
 										/>
 									{/snippet}
 								</Form.Control>

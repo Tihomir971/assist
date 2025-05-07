@@ -13,7 +13,7 @@
 		error?: string;
 		formatOptions?: Intl.NumberFormatOptions | undefined;
 		fractions?: number;
-		labelText?: string; // New param for label
+		label?: string; // New param for label
 		inline?: boolean; // New param for positioning
 		locale?: string | undefined;
 		readonly?: boolean;
@@ -30,7 +30,7 @@
 		readonly,
 		required,
 		fractions = 2,
-		labelText,
+		label,
 		inline,
 		machine = {
 			disabled: disabled,
@@ -63,8 +63,8 @@
 </script>
 
 {#snippet Label()}
-	{#if labelText}
-		<label {...api.getLabelProps()} class="input-label">{labelText}</label>
+	{#if label}
+		<label {...api.getLabelProps()} class="input-label">{label}</label>
 	{/if}
 {/snippet}
 
@@ -116,10 +116,10 @@
 </div> -->
 
 <div {...api.getRootProps()} class="input-root">
-	{#if labelText}
+	{#if label}
 		<div class="flex items-center justify-between">
 			<div>
-				<label {...api.getLabelProps()} class="input-label">{labelText}:</label>
+				<label {...api.getLabelProps()} class="input-label">{label}:</label>
 				<!-- {#if $constraints?.required}
 				<span class="text-warning">*</span>
 			{/if} -->

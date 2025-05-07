@@ -8,7 +8,7 @@
 		ref?: HTMLInputElement | null;
 		class?: string;
 		error?: string;
-		labelText?: string; // New param for label
+		label?: string; // New param for label
 		inline?: boolean; // New param for positioning
 	};
 
@@ -16,7 +16,7 @@
 		ref = $bindable(null),
 		class: className = '',
 		error,
-		labelText,
+		label,
 		inline,
 		...restProps
 	}: Props = $props();
@@ -64,7 +64,7 @@
 	bind:ref
 	class={className}
 	{error}
-	{labelText}
+	{label}
 	{inline}
 	Icon={fileIcon}
 	Content={fileContent}

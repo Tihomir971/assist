@@ -4,9 +4,11 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '$lib/components/ui/card';
+	import { InputTextForm } from '$lib/components/my/input/index.js';
 
 	let { data } = $props();
-	let { errors, enhance, message, form } = superForm(data.form);
+	const superform = superForm(data.form);
+	const { errors, enhance, message, form } = superform;
 </script>
 
 <Card class="mx-auto mt-8 w-full max-w-md">
@@ -16,11 +18,8 @@
 	<CardContent>
 		<form method="post" use:enhance>
 			<div class="space-y-4">
-				<div>
-					<Label for="email">Email</Label>
-					<Input type="email" id="email" name="email" bind:value={$form.email} />
-					{#if $errors.email}<span class="text-sm text-red-500">{$errors.email}</span>{/if}
-				</div>
+				<InputTextForm {superform} field="email" label="Email" placeholder="Email" />
+
 				<div>
 					<Label for="full_name">Full Name</Label>
 					<Input type="text" id="full_name" name="full_name" bind:value={$form.full_name} />
