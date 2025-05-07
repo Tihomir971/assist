@@ -16,7 +16,7 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
-	import { ComboboxZagForm } from '$lib/components/zag/combobox/index.js';
+	import { ComboboxZagForm, SwitchZag, SwitchZagForm } from '$lib/components/zag/index.js';
 	import { CheckboxZag } from '$lib/components/zag/checkbox/index.js';
 
 	// Icons
@@ -46,9 +46,9 @@
 	const { form: formData, enhance, message, isTainted, tainted, errors } = superform;
 </script>
 
-<form method="POST" use:enhance action="?/categoryUpsert">
-	<div class="grid grid-cols-[2fr_1fr] gap-2 overflow-hidden">
-		<Card.Root>
+<div class="mb-8 grid grid-cols-[3fr_2fr] gap-2 overflow-hidden">
+	<Card.Root>
+		<form method="POST" use:enhance action="?/categoryUpsert">
 			<Card.Header>
 				<Card.Title class="flex items-center gap-2">
 					<PhPackage class="mb-2 size-8" />
@@ -56,7 +56,7 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>Name</Form.Label>
-								<Input {...props} bind:value={$formData.name} class="min-w-4xl text-2xl" />
+								<Input {...props} bind:value={$formData.name} class="w-full text-2xl" />
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
@@ -65,37 +65,8 @@
 			</Card.Header>
 			<Card.Content class="space-y-2">
 				<div class="flex w-full items-center space-x-3">
-					<!-- 	<Form.Field
-						form={superform}
-						name="is_active"
-						class="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4"
-					>
-						<Form.Control>
-							{#snippet children({ props })}
-								<Checkbox {...props} bind:checked={$formData.is_active} />
-								<div class="space-y-1 leading-none">
-									<Form.Label>Is Active?</Form.Label>
-								</div>
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field> -->
-					<CheckboxZag />
-					<!-- <Form.Field
-						form={superform}
-						name="is_self_service"
-						class="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4"
-					>
-						<Form.Control>
-							{#snippet children({ props })}
-								<Checkbox {...props} bind:checked={$formData.is_self_service} />
-								<div class="space-y-1 leading-none">
-									<Form.Label>Is Self Service?</Form.Label>
-								</div>
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field> -->
+					<SwitchZagForm {superform} field="is_active" label="Is Active?" />
+					<SwitchZagForm {superform} field="is_self_service" label="Is Self Service?" />
 				</div>
 				<Form.Field form={superform} name="description">
 					<Form.Control>
@@ -123,42 +94,37 @@
 				</div>
 			</Card.Content>
 			<Card.Footer class="flex justify-between"></Card.Footer>
-		</Card.Root>
-		<Card.Root>
-			<Card.Header>
-				<Card.Title>Info</Card.Title>
-			</Card.Header>
-			<Card.Content class="space-y-2">
-				<div class="grid grid-cols-[1fr_2fr] items-center">
-					<label for="id">ID</label>
-					<Input name="id" id="id" value={$formData.id} readonly />
-				</div>
-				<div class="grid grid-cols-[1fr_2fr] items-center">
-					<label for="created">Created</label>
-					<Input
-						id="created"
-						type="text"
-						value={formatDateTime($formData.created_at as string)}
-						readonly
-					/>
-				</div>
-				<div class="grid grid-cols-[1fr_2fr] items-center">
-					<label for="updated">Updated</label>
-					<Input
-						id="updated"
-						type="text"
-						value={formatDateTime($formData.updated_at as string)}
-						readonly
-					/>
-				</div>
-			</Card.Content>
-		</Card.Root>
-	</div>
-	{#if browser}
-		<Card.Root>
-			<Card.Content>
-				<SuperDebug data={{ $formData, $errors }} display={dev} />
-			</Card.Content>
-		</Card.Root>
-	{/if}
-</form>
+		</form>
+	</Card.Root>
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>Info</Card.Title>
+		</Card.Header>
+		<Card.Content class="space-y-2">
+			<div class="grid grid-cols-[1fr_2fr] items-center">
+				<label for="id">ID</label>
+				<Input name="id" id="id" value={$formData.id} readonly />
+			</div>
+			<div class="grid grid-cols-[1fr_2fr] items-center">
+				<label for="created">Created</label>
+				<Input
+					id="created"
+					type="text"
+					value={formatDateTime($formData.created_at as string)}
+					readonly
+				/>
+			</div>
+			<div class="grid grid-cols-[1fr_2fr] items-center">
+				<label for="updated">Updated</label>
+				<Input id="updated" type="text" value={formatDateTime($formData.updated_at)} readonly />
+			</div>
+		</Card.Content>
+	</Card.Root>
+</div>
+{#if browser}
+	<Card.Root>
+		<Card.Content>
+			<SuperDebug data={{ $formData, $errors }} display={dev} />
+		</Card.Content>
+	</Card.Root>
+{/if}

@@ -12,19 +12,6 @@
 
 	import { cn } from '$lib/utils';
 
-	// type Props = {
-	// 	items: ComboboxItem[];
-	// 	value?: number | null;
-	// 	name?: string | undefined;
-	// 	required?: boolean | undefined;
-	// 	disabled?: boolean;
-	// 	readonly?: boolean;
-	// 	invalid?: boolean;
-	// 	placeholder?: string;
-	// 	label?: string;
-	// 	inline?: boolean;
-	// };
-
 	let {
 		name,
 		items = [],
@@ -76,9 +63,7 @@
 			options = newOptions;
 		},
 		onValueChange({ value: selectedValue }) {
-			console.log('selectedValue', selectedValue);
 			value = selectedValue.length > 0 ? parseInt(selectedValue[0]) : null;
-			console.log('value', value);
 		}
 	});
 

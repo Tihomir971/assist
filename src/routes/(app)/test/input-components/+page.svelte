@@ -7,7 +7,7 @@
 		MyTextInput,
 		MyUrlInput
 	} from '$lib/components/my/input';
-	import { ComboboxZag } from '$lib/components/zag/combobox/index.js';
+	import { ComboboxZag } from '$lib/components/zag/index.js';
 
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { MySelectMelt } from '$lib/components/my';

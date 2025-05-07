@@ -23,7 +23,7 @@
 	import { crudMProductSchema } from './schema';
 	import MyUrlInput from '$lib/components/my/input/input-url.svelte';
 	import { MyTextInput, NumberInputZag } from '$lib/components/my/input';
-	import { ComboboxZagForm } from '$lib/components/zag/combobox/index.js';
+	import { ComboboxZagForm } from '$lib/components/zag/index.js';
 
 	let { data } = $props();
 

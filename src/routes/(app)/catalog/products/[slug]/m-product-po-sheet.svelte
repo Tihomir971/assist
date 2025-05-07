@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { MyTextInput, MyUrlInput, NumberInputZag } from '$lib/components/my/input/index.js';
-	import { ComboboxZagForm } from '$lib/components/zag/combobox/index.js';
+	import { ComboboxZagForm } from '$lib/components/zag/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { MProductPoInsertSchema } from './schema.js'; // Add MProductPoFormSchema
