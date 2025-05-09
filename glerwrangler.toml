@@ -11,8 +11,8 @@ CONNECTOR_API_URL = "http://connector.kalisi.rs"
 PUBLIC_SUPABASE_URL = "https://sb.kalisi.rs"
 SCRAPPER_API_URL = "http://scrapper.kalisi.rs"
 
-[env.production]
-compatibility_date = "2025-03-21"
+# [env.production]
+# compatibility_date = "2025-03-21"
 
 [env.production.vars]
 NODE_VERSION = "22.13"
