@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts" generics="T extends Record<string, unknown>">
-	import type { ComboboxItem } from './types.js';
+	import type { ComboboxItem, ComboboxProps } from './types.js';
 	import {
 		formFieldProxy,
 		type SuperForm,
@@ -12,15 +12,15 @@
 	} from 'sveltekit-superforms';
 	import Combobox from './combobox.svelte'; // Import the base component
 
-	type Props = {
+	interface Props extends ComboboxProps<ComboboxItem> {
 		superform: SuperForm<T>;
 		field: FormPathLeaves<T, number>;
-		items: ComboboxItem[];
+		// items: ComboboxItem[];
 		readonly?: boolean;
 		placeholder?: string;
 		label?: string;
 		inline?: boolean;
-	};
+	}
 
 	let {
 		superform,

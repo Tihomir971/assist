@@ -16,13 +16,10 @@
 		name,
 		items = [],
 		value = $bindable(),
-		required = false,
-		disabled = false,
-		readOnly = false,
-		invalid = false,
 		placeholder = 'Select an item',
 		label,
-		inline
+		inline,
+		...restProps
 	}: ComboboxProps<T> = $props();
 
 	let options = $state.raw(items);
@@ -39,17 +36,11 @@
 		get collection() {
 			return collection;
 		},
-		get defaultValue() {
-			return value ? [value.toString()] : undefined;
-		},
+		defaultValue: value ? [value.toString()] : undefined,
 		get value() {
 			return value ? [value.toString()] : undefined;
 		},
-		required,
-		disabled: disabled,
-		readOnly,
-		placeholder: placeholder,
-		invalid: invalid,
+		placeholder,
 		multiple: false,
 		onOpenChange() {
 			options = items;
@@ -64,7 +55,10 @@
 		},
 		onValueChange({ value: selectedValue }) {
 			value = selectedValue.length > 0 ? parseInt(selectedValue[0]) : null;
-		}
+			api.setValue(value ? [value.toString()] : []);
+		},
+		positioning: { strategy: 'fixed' },
+		...restProps
 	});
 
 	const api = $derived(combobox.connect(service, normalizeProps));
@@ -73,53 +67,40 @@
 <input type="hidden" {name} {value} />
 
 <div {...api.getRootProps()} class="input-root">
-	<div class="flex h-6 items-center justify-between">
-		<div>
-			{#if label}
-				<label {...api.getLabelProps()} class="input-label">{label}</label>
-			{/if}
-			{#if required}
+	{#if label}
+		<label {...api.getLabelProps()} class="input-label">
+			{label}
+			{#if restProps.required}
 				<span class="text-warning">*</span>
 			{/if}
-		</div>
-		{#if !required && !readOnly && value}
-			<button
-				{...api.getClearTriggerProps()}
-				class="mr-2 flex aspect-square h-full items-center justify-center text-xs hover:text-base"
-			>
-				<PhX />
-			</button>
-		{/if}
-	</div>
+		</label>
+	{/if}
 	<div {...api.getControlProps()} class="input-control">
-		{#if invalid}
-			<!-- Placeholder for potential error message display -->
-		{/if}
 		<div class="input-icon">
 			<PhListPlus />
 		</div>
 		<div class="input-input">
 			<input {...api.getInputProps()} class="w-full focus:outline-none" />
 		</div>
-
-		<button {...api.getTriggerProps()} class="input-trigger">
-			{#if readOnly}
+		<div class="input-trigger">
+			{#if restProps.readOnly}
 				<PhPencilSimpleSlash />
 			{:else}
-				<PhCaretDown class={cn('transition-transform', api.open && 'rotate-180')} />
+				{#if !restProps.required && !restProps.readOnly && value}
+					<button {...api.getClearTriggerProps()}>
+						<PhX font-size="12px" />
+					</button>
+				{/if}
+				<button {...api.getTriggerProps()}>
+					<PhCaretDown class={cn('transition-transform', api.open && 'rotate-180')} />
+				</button>
 			{/if}
-		</button>
+		</div>
 	</div>
 </div>
 <div {...api.getPositionerProps()}>
 	{#if options.length > 0}
-		<ul
-			{...api.getContentProps()}
-			class={cn(
-				'isolate z-50 m-0 max-h-56 list-none overflow-auto overscroll-contain border border-border p-1',
-				'rounded-sm border border-muted bg-popover shadow-popover outline-hidden select-none'
-			)}
-		>
+		<ul {...api.getContentProps()} class="content-props">
 			{#each options as item (item.value)}
 				{@const state = api.getItemState({ item })}
 				<li

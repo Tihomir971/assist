@@ -13,8 +13,8 @@
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import MySelectForm from '$lib/components/my/MySelectForm.svelte';
 	import MyCheckboxForm from '$lib/components/my/MyCheckboxForm.svelte';
-	import { NumberInputZag } from '$lib/components/my/input';
 	import type { Tables } from '$lib/types/supabase.types';
+	import { NumberInputZagForm } from '$lib/components/zag';
 
 	type Props = {
 		isProductPackingDrawerOpen: boolean;
@@ -34,16 +34,7 @@
 	let newBarcode = $state('');
 	let isValidBarcode = $derived(newBarcode === '' || isValidGTIN(newBarcode));
 
-	const {
-		form: formData,
-		enhance: enhanceGtin,
-		tainted,
-		isTainted,
-		delayed,
-		formId,
-		reset,
-		errors
-	} = superForm(validatedForm, {
+	const superform = superForm(validatedForm, {
 		dataType: 'json',
 		//validators: zodClient(crudGtinSchema),
 		onUpdated({ form }) {
@@ -58,6 +49,16 @@
 			}
 		}
 	});
+	const {
+		form: formData,
+		enhance: enhanceGtin,
+		tainted,
+		isTainted,
+		delayed,
+		formId,
+		reset,
+		errors
+	} = superform;
 	// let isDuplicatedBarcode = $derived($formData.productPacking.some((b) => b.gtin === newBarcode));
 	let editingId: number | null = $state(null);
 </script>
@@ -118,16 +119,14 @@
 					<input type="hidden" name="id" bind:value={$formData.id} />
 				{/if}
 
-				<div class="grid grid-cols-2 gap-4">
-					<div class="space-y-2">
-						<NumberInputZag
-							bind:value={$formData.m_product_id}
-							label="Product ID"
-							fractions={0}
-							required
-							readonly
-						/>
-					</div>
+				<div class="grid grid-cols-2 gap-x-4">
+					<NumberInputZagForm
+						{superform}
+						field="m_product_id"
+						label="Product ID"
+						fraction={0}
+						readOnly
+					/>
 					<div class="space-y-2">
 						<label for="packing_type" class="text-sm font-medium">Packing Type</label>
 						<MySelectForm
@@ -142,11 +141,7 @@
 					</div>
 
 					<div class="space-y-2">
-						<NumberInputZag
-							name="unitsperpack"
-							bind:value={$formData.unitsperpack}
-							label="Units Per Pack"
-						/>
+						<NumberInputZagForm {superform} field="unitsperpack" label="Units Per Pack" />
 					</div>
 
 					<div class="space-y-2">

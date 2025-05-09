@@ -10,6 +10,7 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { generateCodeFromName } from '$lib/scripts/code-name-generation.js';
 	import type { Enums } from '$lib/types/supabase.types.js';
+	import { SelectSimpleZag, SelectZag } from '$lib/components/zag';
 
 	let { data } = $props();
 
@@ -98,16 +99,20 @@
 	let nameFilter = $state(page.url.searchParams.get('name') || '');
 	let codeFilter = $state(page.url.searchParams.get('code') || '');
 	let attributeTypeFilter = $state(page.url.searchParams.get('attributeType') || '');
-	let attributeGroupIdFilter = $state(page.url.searchParams.get('attributeGroupId') || '');
+	let attributeGroupIdFilterTemp = $state(page.url.searchParams.get('attributeType'));
+	let attributeGroupIdFilter = $state(
+		attributeGroupIdFilterTemp ? parseInt(attributeGroupIdFilterTemp) : null
+	);
 	let isActiveFilter = $state(page.url.searchParams.get('isActive') || '');
-
+	$inspect('isActiveFilter', isActiveFilter);
+	$inspect('attributeGroupIdFilter', attributeGroupIdFilter);
 	// Handle filter changes
 	function applyFilters() {
 		const params = new URLSearchParams();
 		if (nameFilter) params.set('name', nameFilter);
 		if (codeFilter) params.set('code', codeFilter);
 		if (attributeTypeFilter) params.set('attributeType', attributeTypeFilter);
-		if (attributeGroupIdFilter) params.set('attributeGroupId', attributeGroupIdFilter);
+		if (attributeGroupIdFilter) params.set('attributeGroupId', attributeGroupIdFilter.toString());
 		if (isActiveFilter) params.set('isActive', isActiveFilter);
 		params.set('page', '1'); // Reset to first page when filtering
 		window.location.href = `?${params.toString()}`;
@@ -163,7 +168,7 @@
 			<Card.Description>Filter attributes by name, code, type, or group</Card.Description>
 		</Card.Header>
 		<Card.Content>
-			<div class="flex flex-wrap gap-4">
+			<div class="grid grid-cols-5 gap-4">
 				<div class="min-w-[200px] flex-1">
 					<Label for="nameFilter">Name</Label>
 					<Input id="nameFilter" bind:value={nameFilter} placeholder="Filter by name" />
@@ -172,7 +177,7 @@
 					<Label for="codeFilter">Code</Label>
 					<Input id="codeFilter" bind:value={codeFilter} placeholder="Filter by code" />
 				</div>
-				<div class="w-[200px]">
+				<div>
 					<Label for="attributeTypeFilter">Type</Label>
 					<Select.Root
 						type="single"
@@ -194,7 +199,7 @@
 						</Select.Content>
 					</Select.Root>
 				</div>
-				<div class="w-[200px]">
+				<!-- <div>
 					<Label for="attributeGroupFilter">Group</Label>
 					<Select.Root
 						type="single"
@@ -218,32 +223,22 @@
 							{/each}
 						</Select.Content>
 					</Select.Root>
-				</div>
-				<div class="w-[200px]">
-					<Label for="isActiveFilter">Status</Label>
-					<Select.Root
-						type="single"
-						value={isActiveFilter}
-						onValueChange={(value: string) => {
-							isActiveFilter = value || '';
-						}}
-					>
-						<Select.Trigger id="isActiveFilter">
-							<span>
-								{isActiveFilter === ''
-									? 'All statuses'
-									: isActiveFilter === 'true'
-										? 'Active'
-										: 'Inactive'}
-							</span>
-						</Select.Trigger>
-						<Select.Content>
-							<Select.Item value="">All</Select.Item>
-							<Select.Item value="true">Active</Select.Item>
-							<Select.Item value="false">Inactive</Select.Item>
-						</Select.Content>
-					</Select.Root>
-				</div>
+				</div> -->
+				<SelectSimpleZag
+					bind:value={attributeGroupIdFilter}
+					items={data.attributeGroups}
+					label="Status Zag"
+				/>
+				<SelectSimpleZag
+					bind:value={isActiveFilter}
+					items={[
+						{ value: '', label: 'All statuses' },
+						{ value: 'true', label: 'Active' },
+						{ value: 'false', label: 'Inactive' }
+					]}
+					label="Status Zag"
+				/>
+
 				<div class="flex items-end">
 					<Button onclick={applyFilters}>Apply Filters</Button>
 				</div>
@@ -449,7 +444,7 @@
 			</div>
 
 			<!-- Hidden fields for required attributes -->
-			<input type="hidden" name="attribute_group_id" value={data.attributeGroups[0]?.id || 1} />
+			<input type="hidden" name="attribute_group_id" value={data.attributeGroups[0]?.value || 1} />
 
 			<Dialog.Footer>
 				<Button type="button" variant="outline" onclick={() => (createDialogOpen = false)}>

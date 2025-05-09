@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/state';
-	import { invalidate } from '$app/navigation';
 	import { dev, browser } from '$app/environment';
 
 	// Superforms
@@ -16,7 +14,12 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
-	import { ComboboxZagForm, SwitchZagForm } from '$lib/components/zag/index.js';
+	import {
+		ComboboxZagForm,
+		NumberInputZagForm,
+		SelectZag,
+		SwitchZagForm
+	} from '$lib/components/zag/index.js';
 
 	import InputTextForm from '$lib/components/my/input/input-text-form.svelte';
 
@@ -48,7 +51,7 @@
 	<Card.Root>
 		<form method="POST" use:enhance action="?/categoryUpsert">
 			<Card.Header>
-				<Card.Title>Product Detail</Card.Title>
+				<Card.Title>Category Detail</Card.Title>
 			</Card.Header>
 			<Card.Content class="w-full space-y-2">
 				<div class="flex items-end space-x-2">
@@ -67,6 +70,7 @@
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
+
 				<ComboboxZagForm
 					{superform}
 					field="parent_id"

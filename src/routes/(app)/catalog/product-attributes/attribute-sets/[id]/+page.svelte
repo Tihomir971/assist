@@ -8,17 +8,20 @@
 	import { superForm } from 'sveltekit-superforms/client';
 	import { Separator } from '$lib/components/ui/separator';
 	import { Checkbox } from '$lib/components/ui/checkbox';
+	import { InputTextForm } from '$lib/components/my/input/index.js';
+	import { SwitchZagForm } from '$lib/components/zag';
 
 	const { data } = $props();
 
 	// Edit form
-	const { form, errors, enhance } = superForm(data.form, {
+	const superform = superForm(data.form, {
 		onResult: ({ result }) => {
 			if (result.type === 'redirect') {
 				// Redirect will be handled by SvelteKit
 			}
 		}
 	});
+	const { form, errors, enhance } = superform;
 
 	// Attributes state
 	let attributes = $state($form.attributes || []);
@@ -110,21 +113,20 @@
 				<!-- Basic Information -->
 				<div class="grid gap-6">
 					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-						<div class="grid gap-2">
-							<Label for="name">Name</Label>
-							<Input id="name" name="name" bind:value={$form.name} required />
-							{#if $errors.name}
-								<p class="text-sm text-red-500">{$errors.name}</p>
-							{/if}
-						</div>
-
-						<div class="grid gap-2">
-							<Label for="code">Code</Label>
-							<Input id="code" name="code" bind:value={$form.code} required />
-							{#if $errors.code}
-								<p class="text-sm text-red-500">{$errors.code}</p>
-							{/if}
-						</div>
+						<InputTextForm
+							{superform}
+							field="name"
+							label="Name"
+							placeholder="Attribute Set Name"
+							required
+						/>
+						<InputTextForm
+							{superform}
+							field="code"
+							label="Code"
+							placeholder="Attribute Set Code"
+							required
+						/>
 					</div>
 
 					<div class="grid gap-2">
@@ -134,11 +136,7 @@
 							<p class="text-sm text-red-500">{$errors.description}</p>
 						{/if}
 					</div>
-
-					<div class="flex items-center space-x-2">
-						<Checkbox id="is_active" name="is_active" bind:checked={$form.is_active} />
-						<Label for="is_active">Active</Label>
-					</div>
+					<SwitchZagForm {superform} field="is_active" label="Is Active?" />
 				</div>
 
 				<!-- Attributes -->

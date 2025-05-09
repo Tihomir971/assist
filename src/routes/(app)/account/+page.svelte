@@ -14,11 +14,11 @@
 	import { InputTextForm } from '$lib/components/my/input';
 
 	let { data } = $props();
-	const form = superForm(data.form, {
+	const superform = superForm(data.form, {
 		validators: zodClient(crudSchema)
 	});
 
-	const { form: formData, enhance, errors } = form;
+	const { form: formData, enhance, errors } = superform;
 	let valueCreated = $state<DateTimeMaybeValid>();
 
 	$effect(() => {
@@ -34,28 +34,10 @@
 		<Card.Content>
 			<form method="POST" use:enhance>
 				<div class="space-y-2">
-					<InputTextForm superform={form} field="username" label="Username" />
-					<!-- <Form.Field {form} name="username">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>Username</Form.Label>
-								<Input {...props} bind:value={$formData.username} />
-							{/snippet}
-						</Form.Control>
-						<Form.Description />
-						<Form.FieldErrors />
-					</Form.Field> -->
-					<Form.Field {form} name="full_name">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>Ful name</Form.Label>
-								<Input {...props} bind:value={$formData.full_name} />
-							{/snippet}
-						</Form.Control>
-						<Form.Description />
-						<Form.FieldErrors />
-					</Form.Field>
-					<Form.Field {form} name="email">
+					<InputTextForm {superform} field="username" label="Username" />
+					<InputTextForm {superform} field="full_name" label="Full name" />
+
+					<Form.Field form={superform} name="email">
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>Email</Form.Label>
@@ -65,7 +47,7 @@
 						<Form.Description />
 						<Form.FieldErrors />
 					</Form.Field>
-					<Form.Field {form} name="email">
+					<Form.Field form={superform} name="email">
 						<Form.Control>
 							{#snippet children({ props })}
 								<Label>Created</Label>

@@ -8,7 +8,8 @@
 	import * as Select from '$lib/components/ui/select';
 	import * as Form from '$lib/components/ui/form';
 	import type { CrudReplenishSchema } from './schema';
-	import { NumberInputZag } from '$lib/components/my/input';
+	import { ComboboxZagForm, NumberInputZagForm } from '$lib/components/zag/index.js';
+	import Combobox from '$lib/components/zag/combobox/combobox.svelte';
 
 	interface Props {
 		form: SuperValidated<CrudReplenishSchema>;
@@ -20,7 +21,7 @@
 	let data: Props = $props();
 	//let replenishes = $state(data.replenishes);
 
-	const { form, enhance, tainted, isTainted, allErrors } = superForm(data.form, {
+	const superform = superForm(data.form, {
 		dataType: 'json',
 		onUpdated({ form }) {
 			if (form.valid) {
@@ -31,7 +32,7 @@
 			}
 		}
 	});
-
+	const { form, enhance, tainted, isTainted, allErrors } = superform;
 	let warehousesWithStringValues = $derived(
 		data.warehouses.map((warehouse) => ({
 			value: warehouse.value.toString(),
@@ -81,9 +82,16 @@
 		</Table.Header>
 		<Table.Body>
 			{#each $form.replenishes as _, i}
-				<Table.Row>
+				<Table.Row class="*:py-2">
 					<Table.Cell class="w-1/5">
-						<Select.Root
+						<ComboboxZagForm
+							{superform}
+							name="replenishes"
+							field="replenishes[{i}].m_warehouse_id"
+							items={data.warehouses}
+							placeholder="Select a warehouse"
+						/>
+						<!-- <Select.Root
 							type="single"
 							value={$form.replenishes[i].m_warehouse_id.toString()}
 							onValueChange={(v) => {
@@ -98,19 +106,44 @@
 									<Select.Item value={warehouse.value}>{warehouse.label}</Select.Item>
 								{/each}
 							</Select.Content>
-						</Select.Root>
+						</Select.Root> -->
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
-						<NumberInputZag bind:value={$form.replenishes[i].level_min} fractions={0} />
+						<NumberInputZagForm
+							{superform}
+							name="replenishes"
+							field="replenishes[{i}].level_min"
+							fraction={0}
+						/>
+						<!-- <NumberInputZag bind:value={$form.replenishes[i].level_min} fractions={0} /> -->
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
-						<NumberInputZag bind:value={$form.replenishes[i].level_max} fractions={0} />
+						<NumberInputZagForm
+							{superform}
+							name="replenishes"
+							field="replenishes[{i}].level_max"
+							fraction={0}
+						/>
+						<!-- <NumberInputZag bind:value={$form.replenishes[i].level_max} fractions={0} /> -->
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
-						<NumberInputZag bind:value={$form.replenishes[i].qtybatchsize} fractions={0} />
+						<NumberInputZagForm
+							{superform}
+							name="replenishes"
+							field="replenishes[{i}].qtybatchsize"
+							fraction={0}
+						/>
+						<!-- <NumberInputZag bind:value={$form.replenishes[i].qtybatchsize} fractions={0} /> -->
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
-						<Select.Root
+						<ComboboxZagForm
+							{superform}
+							name="replenishes"
+							field="replenishes[{i}].m_warehousesource_id"
+							items={data.warehouses}
+							placeholder="Select a warehouse"
+						/>
+						<!-- <Select.Root
 							type="single"
 							value={$form.replenishes[i].m_warehousesource_id?.toString()}
 							onValueChange={(v) => {
@@ -125,7 +158,7 @@
 									<Select.Item value={warehouse.value}>{warehouse.label}</Select.Item>
 								{/each}
 							</Select.Content>
-						</Select.Root>
+						</Select.Root> -->
 					</Table.Cell>
 					<Table.Cell class="w-1/5">
 						<Button variant="outline" size="icon">

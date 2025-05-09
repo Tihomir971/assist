@@ -107,6 +107,19 @@
 		@apply inline-flex h-10 w-full truncate rounded-sm border border-surface-2 bg-surface-document px-8 text-base ring-primary transition-colors placeholder:text-muted-foreground focus-within:border-primary focus-within:ring hover:border-surface-3 sm:text-sm;
 	}
 	.input-trigger {
-		@apply absolute end-3 top-1/2 flex -translate-y-1/2 items-center text-muted-foreground;
+		@apply absolute end-3 top-1/2 flex -translate-y-1/2 items-center gap-0.5 text-muted-foreground *:hover:text-primary-foreground;
+	}
+
+	.root-props {
+		@apply mb-2 flex w-full flex-col gap-1 text-sm;
+	}
+	.content-props {
+		@apply z-50 -ml-10 max-h-60 list-none overflow-auto overscroll-contain border border-muted bg-popover p-2 text-sm;
+	}
+	.control-props {
+		@apply grid grid-cols-[auto_1fr] items-center bg-popover;
+	}
+	.item-props {
+		@apply flex cursor-pointer items-center justify-between px-2 py-1 data-highlighted:rounded-sm data-highlighted:bg-accent;
 	}
 }

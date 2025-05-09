@@ -3,42 +3,43 @@
 </script>
 
 <script lang="ts" generics="T extends Record<string, unknown>">
-	import type { InputProps } from './types';
+	import type { NumberInputProps } from './types.js';
 	import {
 		formFieldProxy,
 		type SuperForm,
 		type FormPathLeaves,
 		type FormFieldProxy
 	} from 'sveltekit-superforms';
-	import InputText from './input-text.svelte';
+	import NumberInput from './number-input.svelte'; // Import the base component
 
-	type Props = InputProps & {
+	interface Props extends NumberInputProps {
 		superform: SuperForm<T>;
-		field: FormPathLeaves<T, string>;
-	};
+		field: FormPathLeaves<T, number>;
+		placeholder?: string;
+		label?: string;
+		inline?: boolean;
+		fraction?: number;
+	}
 
-	let {
-		superform,
-		field,
-		placeholder = 'Select an item',
-		label,
-		inline = false,
-		...restProps
-	}: Props = $props();
+	let { superform, field, label, inline = false, fraction, ...restProps }: Props = $props();
 
 	const { value, errors, constraints, tainted } = formFieldProxy(
 		superform,
 		field
-	) satisfies FormFieldProxy<string>;
+	) satisfies FormFieldProxy<number>;
 </script>
 
-<InputText
+<NumberInput
 	name={field}
-	{inline}
-	{label}
-	{placeholder}
-	required={$constraints?.required}
 	bind:value={$value}
+	{inline}
+	invalid={$errors ? true : false}
+	{label}
+	required={$constraints?.required}
+	formatOptions={{
+		minimumFractionDigits: fraction ?? 2,
+		maximumFractionDigits: fraction ?? 2
+	}}
 	{...restProps}
 />
 

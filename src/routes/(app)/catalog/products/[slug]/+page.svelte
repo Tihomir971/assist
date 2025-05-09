@@ -20,13 +20,13 @@
 	import ReplenishCard from './m-replenish-card.svelte';
 	import StorageOnHandCard from './m-storageonhand-card.svelte';
 	import MyUrlInput from '$lib/components/my/input/input-url.svelte';
-	import { NumberInputZag, InputTextForm } from '$lib/components/my/input';
-	import { ComboboxZagForm, SwitchZagForm } from '$lib/components/zag/index.js';
+	import { InputTextForm } from '$lib/components/my/input';
+	import { ComboboxZagForm, NumberInputZagForm, SwitchZagForm } from '$lib/components/zag/index.js';
 	import { mProductInsertSchema } from '$lib/types/supabase.zod.schemas';
 
 	let { data } = $props();
 
-	const productForm = superForm(data.formProduct, {
+	const superform = superForm(data.formProduct, {
 		validators: zodClient(mProductInsertSchema),
 		onUpdated(event) {
 			const { form } = event;
@@ -52,7 +52,7 @@
 		enhance: enhanceProductUpsert,
 		tainted: taintedProduct,
 		isTainted: isTaintedProduct
-	} = productForm;
+	} = superform;
 
 	let isProductPackingDrawerOpen: boolean = $state(false);
 </script>
@@ -72,7 +72,7 @@
 						<div>
 							<div class={!isTaintedProduct($taintedProduct) ? 'hidden' : ''}>
 								<Button type="submit">Save</Button>
-								<Button type="button" variant="outline" onclick={() => productForm.reset()}>
+								<Button type="button" variant="outline" onclick={() => superform.reset()}>
 									Reset
 								</Button>
 							</div>
@@ -85,12 +85,12 @@
 			</Card.Header>
 			<Card.Content>
 				<div class="mb-4 grid w-max grid-cols-3 gap-4">
-					<SwitchZagForm superform={productForm} field="is_active" label="Is Active?" />
-					<SwitchZagForm superform={productForm} field="is_self_service" label="Is Self Service?" />
-					<SwitchZagForm superform={productForm} field="discontinued" label="Discontinued?" />
+					<SwitchZagForm {superform} field="is_active" label="Is Active?" />
+					<SwitchZagForm {superform} field="is_self_service" label="Is Self Service?" />
+					<SwitchZagForm {superform} field="discontinued" label="Discontinued?" />
 				</div>
 				<InputTextForm
-					superform={productForm}
+					{superform}
 					field="name"
 					label="Product Name"
 					placeholder="Enter Product name..."
@@ -98,14 +98,14 @@
 
 				<div class="grid grid-cols-4 gap-4">
 					<InputTextForm
-						superform={productForm}
+						{superform}
 						field="sku"
 						label="SKU"
 						placeholder="Enter Product SKU..."
 						readonly
 					/>
 					<InputTextForm
-						superform={productForm}
+						{superform}
 						field="mpn"
 						label="MPN"
 						placeholder="Enter Product MPN..."
@@ -113,19 +113,14 @@
 					/>
 
 					<ComboboxZagForm
-						superform={productForm}
+						{superform}
 						field="c_uom_id"
 						label="UoM"
 						items={data.uom}
 						readonly={false}
 					/>
 
-					<ComboboxZagForm
-						superform={productForm}
-						field="c_taxcategory_id"
-						label="Tax"
-						items={data.tax}
-					/>
+					<ComboboxZagForm {superform} field="c_taxcategory_id" label="Tax" items={data.tax} />
 				</div>
 				<div class="grid grid-cols-1 divide-x *:px-3 md:grid-cols-[2fr_2fr_1fr]">
 					<div>
@@ -134,13 +129,13 @@
 						<div class="grid grid-cols-2 gap-4"></div>
 
 						<ComboboxZagForm
-							superform={productForm}
+							{superform}
 							field="attributeset_id"
 							label="Attribute Set"
 							items={data.attributeSets}
 						/>
 						<ComboboxZagForm
-							superform={productForm}
+							{superform}
 							field="m_product_category_id"
 							label="Category"
 							items={data.categories}
@@ -150,14 +145,14 @@
 						<h3 class="mb-2 pb-2 text-lg font-semibold">Packaging Information</h3>
 
 						<div class="grid grid-cols-2 gap-4">
-							<NumberInputZag
-								name="net_quantity"
-								bind:value={$formProduct.net_quantity}
-								fractions={4}
+							<NumberInputZagForm
+								{superform}
+								field="net_quantity"
+								fraction={4}
 								label="Net Quantity"
 							/>
 							<ComboboxZagForm
-								superform={productForm}
+								{superform}
 								field="net_qty_uom_id"
 								label="Net Quantity UoM"
 								items={data.uom}
@@ -192,20 +187,14 @@
 							</Form.Field> -->
 						</div>
 						<div class="grid grid-cols-2 gap-4">
-							<Form.Field form={productForm} name="shelf_life">
-								<Form.Control>
-									{#snippet children({ props })}
-										<NumberInputZag
-											bind:value={$formProduct.shelf_life}
-											fractions={0}
-											{...props}
-											label="Shelf Life (days)"
-										/>
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-							<Form.Field form={productForm} name="descriptionurl">
+							<NumberInputZagForm
+								{superform}
+								field="shelf_life"
+								fraction={0}
+								label="Shelf Life (days)"
+							/>
+
+							<Form.Field form={superform} name="descriptionurl">
 								<Form.Control>
 									{#snippet children({ props })}
 										<Form.Label>Manufacturer URL</Form.Label>

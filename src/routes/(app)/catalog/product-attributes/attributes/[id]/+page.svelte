@@ -9,17 +9,19 @@
 	import { Separator } from '$lib/components/ui/separator';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import type { Enums } from '$lib/types/supabase.types.js';
+	import { InputTextForm } from '$lib/components/my/input';
 
 	const { data } = $props();
 
 	// Edit form
-	const { form, errors, enhance } = superForm(data.form, {
+	const superform = superForm(data.form, {
 		onResult: ({ result }) => {
 			if (result.type === 'redirect') {
 				// Redirect will be handled by SvelteKit
 			}
 		}
 	});
+	const { form, errors, enhance } = superform;
 
 	// Options state
 	let options = $state($form.options || []);
@@ -92,21 +94,20 @@
 				<!-- Basic Information -->
 				<div class="grid gap-6">
 					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-						<div class="grid gap-2">
-							<Label for="name">Name</Label>
-							<Input id="name" name="name" bind:value={$form.name} required />
-							{#if $errors.name}
-								<p class="text-sm text-red-500">{$errors.name}</p>
-							{/if}
-						</div>
-
-						<div class="grid gap-2">
-							<Label for="code">Code</Label>
-							<Input id="code" name="code" bind:value={$form.code} required />
-							{#if $errors.code}
-								<p class="text-sm text-red-500">{$errors.code}</p>
-							{/if}
-						</div>
+						<InputTextForm
+							{superform}
+							field="name"
+							label="Name"
+							placeholder="Attribute Name"
+							required
+						/>
+						<InputTextForm
+							{superform}
+							field="code"
+							label="Code"
+							placeholder="Attribute Code"
+							required
+						/>
 					</div>
 
 					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">

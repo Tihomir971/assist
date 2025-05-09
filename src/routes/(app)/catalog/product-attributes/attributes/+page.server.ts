@@ -73,7 +73,7 @@ export const load = async ({ locals, url }: { locals: App.Locals; url: URL }) =>
 	// Fetch attribute groups for the dropdown
 	const { data: attributeGroups, error: groupsError } = await locals.supabase
 		.from('m_attribute_group')
-		.select('id, name')
+		.select('value:id, label:name')
 		.order('name');
 
 	if (groupsError) {

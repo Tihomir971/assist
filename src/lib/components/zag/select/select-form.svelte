@@ -3,23 +3,27 @@
 </script>
 
 <script lang="ts" generics="T extends Record<string, unknown>">
-	import type { InputProps } from './types';
+	import type { SelectItem, SelectProps } from './types.js';
 	import {
 		formFieldProxy,
 		type SuperForm,
 		type FormPathLeaves,
 		type FormFieldProxy
 	} from 'sveltekit-superforms';
-	import InputText from './input-text.svelte';
+	import Select from './select.svelte'; // Import the base component
 
-	type Props = InputProps & {
+	interface Props extends SelectProps<SelectItem> {
 		superform: SuperForm<T>;
-		field: FormPathLeaves<T, string>;
-	};
+		field: FormPathLeaves<T, number>;
+		placeholder?: string;
+		label?: string;
+		inline?: boolean;
+	}
 
 	let {
 		superform,
 		field,
+		items = [],
 		placeholder = 'Select an item',
 		label,
 		inline = false,
@@ -29,14 +33,15 @@
 	const { value, errors, constraints, tainted } = formFieldProxy(
 		superform,
 		field
-	) satisfies FormFieldProxy<string>;
+	) satisfies FormFieldProxy<number>;
 </script>
 
-<InputText
+<Select
 	name={field}
 	{inline}
+	{items}
+	invalid={$errors ? true : false}
 	{label}
-	{placeholder}
 	required={$constraints?.required}
 	bind:value={$value}
 	{...restProps}

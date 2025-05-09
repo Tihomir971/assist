@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { InputTextForm, MyUrlInput, NumberInputZag } from '$lib/components/my/input/index.js';
-	import { ComboboxZagForm } from '$lib/components/zag/index.js';
+	import { InputTextForm, MyUrlInput } from '$lib/components/my/input/index.js';
+	import { ComboboxZagForm, NumberInputZagForm } from '$lib/components/zag/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { MProductPoInsertSchema } from './schema.js'; // Add MProductPoFormSchema
@@ -59,7 +59,7 @@
 				items={partners}
 				placeholder="Select a partner"
 			/>
-			<NumberInputZag name="pricelist" bind:value={$formData.pricelist} label="Pricelist" />
+			<NumberInputZagForm {superform} field="pricelist" label="Pricelist" />
 			<MyUrlInput name="url" bind:value={$formData.url} label="url" />
 
 			<Sheet.Footer class="flex gap-2 sm:flex-col">
