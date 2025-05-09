@@ -23,6 +23,7 @@
 	},
 	"env": {
 		"dev": {
+			"compatibility_flags": ["nodejs_compat"],
 			"vars": {
 				"BIZNISOFT_API": "https://biznisoft-api.kalisi.rs",
 				"CONNECTOR_API_URL": "http://connector.kalisi.rs",
