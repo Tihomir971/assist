@@ -1958,6 +1958,7 @@ export type Database = {
           mpn: string
           sku: string
           m_product_category_id: number
+          is_active: boolean
         }[]
       }
     }

@@ -6,14 +6,10 @@
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { goto } from '$app/navigation';
-	import type { Database } from '$lib/types/supabase.types';
+	import type { Database, TablesUpdate } from '$lib/types/supabase.types';
 	type Props = {
 		supabase: SupabaseClient<Database>;
-		profile: {
-			username: string | null;
-			full_name: string | null;
-			avatar_url: string | null;
-		} | null;
+		profile: TablesUpdate<'ad_user'> | null;
 	};
 	let { supabase, profile }: Props = $props();
 

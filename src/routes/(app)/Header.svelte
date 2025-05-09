@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { SupabaseClient } from '@supabase/supabase-js';
+	type SearchProductsResult = Database['public']['Functions']['search_products']['Returns'];
 	//Components
 	import { Input } from '$lib/components/ui/input';
 	import ShoppingCart from './shopping-cart.svelte';
@@ -7,32 +8,24 @@
 	import SearchDialog from './search-dialog.svelte';
 	//Icons
 	import PhMagnifyingGlass from '~icons/ph/magnifying-glass';
-	import type { Database } from '$lib/types/supabase.types';
+	import type { Database, TablesUpdate } from '$lib/types/supabase.types';
 	import ky from 'ky';
 
 	interface Props {
 		supabase: SupabaseClient<Database>;
-		profile: {
-			username: string | null;
-			full_name: string | null;
-			avatar_url: string | null;
-		} | null;
+		profile: TablesUpdate<'ad_user'> | null;
+		// {
+		// 	username: string | null;
+		// 	full_name: string | null;
+		// 	avatar_url: string | null;
+		// } | null;
 	}
 
 	let { supabase, profile }: Props = $props();
 
 	// Search functionality
 	let searchTerm = $state('');
-	let searchResults = $state<
-		Array<{
-			id: number;
-			name: string;
-			mpn: string | null;
-			gtin: string | null;
-			sku: string | null;
-			m_product_category_id: number | null;
-		}>
-	>([]);
+	let searchResults = $state<SearchProductsResult>([]);
 	let dialogOpen = $state(false);
 
 	const handleSearch = async () => {

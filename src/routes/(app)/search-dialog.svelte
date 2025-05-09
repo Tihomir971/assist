@@ -1,16 +1,15 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { goto } from '$app/navigation';
+	import type { Database } from '$lib/types/supabase.types';
+	type SearchProductsResult = Database['public']['Functions']['search_products']['Returns'];
 
-	export let open = false;
-	export let results: Array<{
-		id: number;
-		name: string;
-		mpn: string | null;
-		gtin: string | null;
-		sku: string | null;
-		m_product_category_id: number | null;
-	}> = [];
+	interface Props {
+		open?: boolean;
+		results?: SearchProductsResult;
+	}
+
+	let { open = $bindable(false), results = $bindable([]) }: Props = $props();
 
 	function selectProduct(product: (typeof results)[0]) {
 		// Navigate to catalog route with cat parameter AND search parameter
@@ -27,7 +26,7 @@
 
 <Dialog.Root bind:open>
 	<Dialog.Portal>
-		<Dialog.Content class="max-h-[80vh] max-w-3xl overflow-y-auto">
+		<Dialog.Content class="max-h-[80vh] max-w-4xl overflow-y-auto">
 			<Dialog.Header>
 				<Dialog.Title>Search Results</Dialog.Title>
 			</Dialog.Header>
@@ -60,8 +59,10 @@
 						<tbody>
 							{#each results as product}
 								<tr
-									class="cursor-pointer border-b transition-colors hover:bg-muted/50"
-									onclick={() => selectProduct(product)}
+									class="border-b transition-colors hover:bg-muted/50 {product.is_active
+										? 'cursor-pointer'
+										: 'text-muted-foreground'}"
+									{...product.is_active ? { onclick: () => selectProduct(product) } : {}}
 								>
 									<td class="p-2">{product.sku || '-'}</td>
 									<td class="p-2">{product.mpn || '-'}</td>
