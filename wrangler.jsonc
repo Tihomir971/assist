@@ -15,7 +15,6 @@
 		"enabled": true
 	},
 	"vars": {
-		/* "NODE_VERSION": "22.13", */
 		"BIZNISOFT_API": "https://biznisoft-api.kalisi.rs",
 		"CONNECTOR_API_URL": "http://connector.kalisi.rs",
 		"PUBLIC_SUPABASE_URL": "https://sb.kalisi.rs",
@@ -24,7 +23,6 @@
 	"env": {
 		"dev": {
 			"vars": {
-				/* "NODE_VERSION": "22.13", */
 				"BIZNISOFT_API": "https://biznisoft-api.kalisi.rs",
 				"CONNECTOR_API_URL": "http://connector.kalisi.rs",
 				"PUBLIC_SUPABASE_URL": "https://sb.kalisi.rs",
