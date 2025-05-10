@@ -7,6 +7,7 @@
 	"name": "assist",
 	"main": ".svelte-kit/cloudflare/_worker.js",
 	"compatibility_date": "2025-05-09",
+	"compatibility_flags": ["nodejs_compat"],
 	"assets": {
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
@@ -14,17 +15,17 @@
 	"observability": {
 		"enabled": true
 	},
-	"compatibility_flags": ["nodejs_compat"],
 	"vars": {
+		"ENVIRONMENT": "dev",
 		"BIZNISOFT_API": "https://biznisoft-api.kalisi.rs",
 		"CONNECTOR_API_URL": "http://connector.kalisi.rs",
 		"PUBLIC_SUPABASE_URL": "https://sb.kalisi.rs",
 		"SCRAPPER_API_URL": "http://scrapper.kalisi.rs"
 	},
 	"env": {
-		"dev": {
-			"compatibility_flags": ["nodejs_compat"],
+		"production": {
 			"vars": {
+				"ENVIRONMENT": "production",
 				"BIZNISOFT_API": "https://biznisoft-api.kalisi.rs",
 				"CONNECTOR_API_URL": "http://connector.kalisi.rs",
 				"PUBLIC_SUPABASE_URL": "https://sb.kalisi.rs",
