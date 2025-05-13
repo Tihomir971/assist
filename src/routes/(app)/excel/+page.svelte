@@ -313,7 +313,7 @@
 						min="-100"
 						step="0.5"
 					/>
-					<p class="text-sm text-muted-foreground">
+					<p class="text-muted-foreground">
 						Enter a percentage to modify prices. Positive values increase prices, negative values
 						decrease prices.
 					</p>

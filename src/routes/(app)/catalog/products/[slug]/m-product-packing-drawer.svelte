@@ -128,7 +128,7 @@
 						readOnly
 					/>
 					<div class="space-y-2">
-						<label for="packing_type" class="text-sm font-medium">Packing Type</label>
+						<label for="packing_type" class="font-medium">Packing Type</label>
 						<MySelectForm
 							name="packing_type"
 							bind:value={$formData.packing_type}
@@ -145,7 +145,7 @@
 					</div>
 
 					<div class="space-y-2">
-						<label for="gtin" class="text-sm font-medium">GTIN</label>
+						<label for="gtin" class="font-medium">GTIN</label>
 						<Input id="gtin" type="text" bind:value={$formData.gtin} placeholder="GTIN" />
 					</div>
 					<MyCheckboxForm

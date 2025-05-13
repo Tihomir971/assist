@@ -236,14 +236,14 @@
 					<Label for="name">Name</Label>
 					<Input id="name" name="name" bind:value={$createForm.name} required />
 					{#if $createErrors.name}
-						<p class="text-sm text-red-500">{$createErrors.name}</p>
+						<p class="text-red-500">{$createErrors.name}</p>
 					{/if}
 				</div>
 				<div class="grid gap-2">
 					<Label for="code">Code</Label>
 					<Input id="code" name="code" bind:value={$createForm.code} required />
 					{#if $createErrors.code}
-						<p class="text-sm text-red-500">{$createErrors.code}</p>
+						<p class="text-red-500">{$createErrors.code}</p>
 					{/if}
 				</div>
 				<div class="grid gap-2">
@@ -255,7 +255,7 @@
 						rows={3}
 					/>
 					{#if $createErrors.description}
-						<p class="text-sm text-red-500">{$createErrors.description}</p>
+						<p class="text-red-500">{$createErrors.description}</p>
 					{/if}
 				</div>
 			</div>

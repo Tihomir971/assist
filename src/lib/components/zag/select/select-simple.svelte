@@ -30,7 +30,7 @@
 	const api = $derived(select.connect(service, normalizeProps));
 </script>
 
-<div {...api.getRootProps()} class="root-props text-sm">
+<div {...api.getRootProps()} class="root-props">
 	{#if label}
 		<div class="flex justify-between">
 			<label {...api.getLabelProps()}>{label}</label>

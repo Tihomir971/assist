@@ -52,7 +52,7 @@
 		</div>
 
 		<div
-			class="inline-flex h-10 w-full truncate rounded-sm border border-surface-2 bg-surface-document px-8 text-base ring-primary transition-colors placeholder:text-muted-foreground focus-within:border-primary focus-within:ring hover:border-surface-3 sm:text-sm"
+			class="inline-flex h-10 w-full truncate rounded-sm border border-surface-2 bg-surface-document px-8 text-base ring-primary transition-colors placeholder:text-muted-foreground focus-within:border-primary focus-within:ring hover:border-surface-3"
 		>
 			{@render Content?.()}
 		</div>
@@ -67,7 +67,7 @@
 		{/if}
 
 		{#if error}
-			<div class="mt-1 text-sm text-destructive">{error}</div>
+			<div class="mt-1 text-destructive">{error}</div>
 		{/if}
 	</div>
 </div>

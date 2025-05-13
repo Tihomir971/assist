@@ -50,7 +50,7 @@
 				{#if item.selected}
 					<div class="absolute inset-0 rounded-md bg-muted"></div>
 				{/if}
-				<div class="relative z-10 flex items-center gap-1 px-3 py-2 text-sm">
+				<div class="relative z-10 flex items-center gap-1 px-3 py-2">
 					<div class="size-4">{@render treeItemIcon(item)}</div>
 					<span class="truncate">
 						{item.item.title}

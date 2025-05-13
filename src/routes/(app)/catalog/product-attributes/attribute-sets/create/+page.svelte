@@ -141,7 +141,7 @@
 						<Label for="description">Description</Label>
 						<Textarea id="description" name="description" bind:value={$form.description} rows={3} />
 						{#if $errors.description}
-							<p class="text-sm text-red-500">{$errors.description}</p>
+							<p class="text-red-500">{$errors.description}</p>
 						{/if}
 					</div>
 				</div>

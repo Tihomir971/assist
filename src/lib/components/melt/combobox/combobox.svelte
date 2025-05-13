@@ -48,7 +48,7 @@
 	</div>
 	<span
 		class={[
-			'text-sm opacity-75',
+			'opacity-75',
 			!(combobox.multiple && combobox.valueAsString) && 'pointer-events-none invisible'
 		]}
 	>

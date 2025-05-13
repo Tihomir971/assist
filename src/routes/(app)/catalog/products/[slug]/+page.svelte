@@ -58,265 +58,227 @@
 	let isProductPackingDrawerOpen: boolean = $state(false);
 </script>
 
-<div class="mx-auto w-full max-w-[var(--breakpoint-xl)]">
+<div class="mx-auto w-full max-w-[var(--breakpoint-xl)] overflow-hidden">
 	<div class="mb-6 flex items-center justify-between">
 		<div>
 			<h1 class="text-3xl font-bold">Edit product</h1>
 			<p class="text-muted-foreground">Update attribute group details</p>
 		</div>
-		<Button variant="outline" href={`/catalog?${page.url.searchParams}`}>Back to List</Button>
+		<div class="flex items-center gap-2">
+			<div class={!isTaintedProduct($taintedProduct) ? 'hidden' : ''}>
+				<Button type="submit">Save</Button>
+				<Button type="button" variant="outline" onclick={() => superform.reset()}>Reset</Button>
+			</div>
+			<Form.Button name="delete" variant="destructive">Delete</Form.Button>
+			<Button variant="outline" href={`/catalog?${page.url.searchParams}`}>Back to List</Button>
+		</div>
 	</div>
-	<Card.Root class="mb-4">
+	<div class="overflow-auto">
 		<form method="post" action="?/productUpsert" use:enhanceProductUpsert id="product-form">
-			<Card.Header class="border-b border-surface-2 pb-6">
-				<Card.Title class="flex w-full items-center justify-between">
-					<div>
-						<span>Product details</span>
-						<span class="text-sm text-muted-foreground">
-							ID: {$formProduct.id}
-						</span>
-					</div>
-					<div class="flex items-center gap-2">
-						<div>
-							<div class={!isTaintedProduct($taintedProduct) ? 'hidden' : ''}>
-								<Button type="submit">Save</Button>
-								<Button type="button" variant="outline" onclick={() => superform.reset()}>
-									Reset
-								</Button>
-							</div>
-							<div class={isTaintedProduct($taintedProduct) ? 'hidden' : ''}>
-								<Form.Button name="delete" variant="destructive">Delete</Form.Button>
-							</div>
+			<div class="overflow-auto">
+				<Card.Root class="mb-4">
+					<Card.Header class="border-b border-surface-2 pb-4">
+						<InputTextForm
+							{superform}
+							field="name"
+							label="Product Name"
+							placeholder="Enter Product name..."
+						/>
+					</Card.Header>
+					<Card.Content>
+						<div class="mb-4 grid w-max grid-cols-3 gap-4">
+							<SwitchZagForm {superform} field="is_active" label="Is Active?" />
+							<SwitchZagForm {superform} field="is_self_service" label="Is Self Service?" />
+							<SwitchZagForm {superform} field="discontinued" label="Discontinued?" />
 						</div>
-					</div>
-				</Card.Title>
-			</Card.Header>
-			<Card.Content>
-				<div class="mb-4 grid w-max grid-cols-3 gap-4">
-					<SwitchZagForm {superform} field="is_active" label="Is Active?" />
-					<SwitchZagForm {superform} field="is_self_service" label="Is Self Service?" />
-					<SwitchZagForm {superform} field="discontinued" label="Discontinued?" />
-				</div>
-				<InputTextForm
-					{superform}
-					field="name"
-					label="Product Name"
-					placeholder="Enter Product name..."
-				/>
 
-				<div class="grid grid-cols-4 gap-4">
-					<InputTextForm
-						{superform}
-						field="sku"
-						label="SKU"
-						placeholder="Enter Product SKU..."
-						readonly
-					/>
-					<InputTextForm
-						{superform}
-						field="mpn"
-						label="MPN"
-						placeholder="Enter Product MPN..."
-						autocomplete="off"
-					/>
-
-					<ComboboxZagForm
-						{superform}
-						field="c_uom_id"
-						label="UoM"
-						items={data.uom}
-						readonly={false}
-					/>
-
-					<ComboboxZagForm {superform} field="c_taxcategory_id" label="Tax" items={data.tax} />
-				</div>
-				<div class="grid grid-cols-1 divide-x *:px-3 md:grid-cols-[2fr_2fr_1fr]">
-					<div>
-						<h3 class="mb-2 pb-2 text-lg font-semibold">Basic Information</h3>
-
-						<div class="grid grid-cols-2 gap-4"></div>
-
-						<ComboboxZagForm
-							{superform}
-							field="attributeset_id"
-							label="Attribute Set"
-							items={data.attributeSets}
-						/>
-						<ComboboxZagForm
-							{superform}
-							field="m_product_category_id"
-							label="Category"
-							items={data.categories}
-						/>
-					</div>
-					<div>
-						<h3 class="mb-2 pb-2 text-lg font-semibold">Packaging Information</h3>
-
-						<div class="grid grid-cols-2 gap-4">
-							<NumberInputZagForm
+						<div class="grid grid-cols-4 gap-4">
+							<InputTextForm
 								{superform}
-								field="net_quantity"
-								fraction={4}
-								label="Net Quantity"
+								field="sku"
+								label="SKU"
+								placeholder="Enter Product SKU..."
+								readonly
 							/>
+							<InputTextForm
+								{superform}
+								field="mpn"
+								label="MPN"
+								placeholder="Enter Product MPN..."
+								autocomplete="off"
+							/>
+
 							<ComboboxZagForm
 								{superform}
-								field="net_qty_uom_id"
-								label="Net Quantity UoM"
+								field="c_uom_id"
+								label="UoM"
 								items={data.uom}
+								readonly={false}
 							/>
 
-							<!-- <Form.Field form={productForm} name="net_qty_uom_id" class="w-full">
-								<Form.Control>
-									{#snippet children({ props })}
-										<Form.Label>Net Quantity UoM</Form.Label>
-										<Select.Root
-											type="single"
-											value={$formProduct.net_qty_uom_id?.toString()}
-											name={props.name}
-											onValueChange={(v) => {
-												$formProduct.net_qty_uom_id = Number.parseInt(v);
-											}}
-										>
-											<Select.Trigger {...props}>
-												{selectedNetQtyUom}
-											</Select.Trigger>
-											<Select.Content>
-												{#if data.uom}
-													{#each data.uom as v}
-														<Select.Item value={v.value} label={v.label} />
-													{/each}
-												{/if}
-											</Select.Content>
-										</Select.Root>
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field> -->
+							<ComboboxZagForm {superform} field="c_taxcategory_id" label="Tax" items={data.tax} />
 						</div>
-						<div class="grid grid-cols-2 gap-4">
-							<NumberInputZagForm
-								{superform}
-								field="shelf_life"
-								fraction={0}
-								label="Shelf Life (days)"
-							/>
+						<div class="grid grid-cols-1 divide-x *:px-3 md:grid-cols-[2fr_2fr_1fr]">
+							<div>
+								<h3 class="mb-2 pb-2 text-lg font-semibold">Basic Information</h3>
 
-							<Form.Field form={superform} name="descriptionurl">
-								<Form.Control>
-									{#snippet children({ props })}
-										<Form.Label>Manufacturer URL</Form.Label>
-										<MyUrlInput bind:value={$formProduct.descriptionurl} {...props} />
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
+								<div class="grid grid-cols-2 gap-4"></div>
+
+								<ComboboxZagForm
+									{superform}
+									field="attributeset_id"
+									label="Attribute Set"
+									items={data.attributeSets}
+								/>
+								<ComboboxZagForm
+									{superform}
+									field="m_product_category_id"
+									label="Category"
+									items={data.categories}
+								/>
+							</div>
+							<div>
+								<h3 class="mb-2 pb-2 text-lg font-semibold">Packaging Information</h3>
+
+								<div class="grid grid-cols-2 gap-4">
+									<NumberInputZagForm
+										{superform}
+										field="net_quantity"
+										fraction={4}
+										label="Net Quantity"
+									/>
+									<ComboboxZagForm
+										{superform}
+										field="net_qty_uom_id"
+										label="Net Quantity UoM"
+										items={data.uom}
+									/>
+								</div>
+								<div class="grid grid-cols-2 gap-4">
+									<NumberInputZagForm
+										{superform}
+										field="shelf_life"
+										fraction={0}
+										label="Shelf Life (days)"
+									/>
+
+									<Form.Field form={superform} name="descriptionurl">
+										<Form.Control>
+											{#snippet children({ props })}
+												<Form.Label>Manufacturer URL</Form.Label>
+												<MyUrlInput bind:value={$formProduct.descriptionurl} {...props} />
+											{/snippet}
+										</Form.Control>
+										<Form.FieldErrors />
+									</Form.Field>
+								</div>
+							</div>
+							<div>
+								<div class="flex items-center justify-between">
+									<h3 class="mb-2 flex items-center gap-2 text-lg font-semibold">
+										<PhPackage /> Barcodes
+									</h3>
+									<Button
+										variant="ghost"
+										size="icon"
+										onclick={() => (isProductPackingDrawerOpen = true)}
+									>
+										<PhDotsThree />
+									</Button>
+								</div>
+								<Table.Root class="w-full">
+									<Table.Header>
+										<Table.Row class="border-surface-2">
+											<Table.Head>Package</Table.Head>
+											<Table.Head>Qty.</Table.Head>
+											<Table.Head>Barcode</Table.Head>
+											<Table.Head></Table.Head>
+										</Table.Row>
+									</Table.Header>
+									<Table.Body>
+										{#each data.productPacking as barcode}
+											<Table.Row>
+												<Table.Cell>{barcode.packing_type}</Table.Cell>
+												<Table.Cell>{barcode.unitsperpack}</Table.Cell>
+												<Table.Cell>{barcode.gtin}</Table.Cell>
+											</Table.Row>
+										{/each}
+									</Table.Body>
+								</Table.Root>
+							</div>
 						</div>
-					</div>
-					<div>
-						<div class="flex items-center justify-between">
-							<h3 class="mb-2 flex items-center gap-2 text-lg font-semibold">
-								<PhPackage /> Barcodes
-							</h3>
-							<Button
-								variant="ghost"
-								size="icon"
-								onclick={() => (isProductPackingDrawerOpen = true)}
-							>
-								<PhDotsThree />
-							</Button>
-						</div>
-						<Table.Root class="w-full">
-							<Table.Header>
-								<Table.Row class="border-surface-2">
-									<Table.Head>Package</Table.Head>
-									<Table.Head>Qty.</Table.Head>
-									<Table.Head>Barcode</Table.Head>
-									<Table.Head></Table.Head>
-								</Table.Row>
-							</Table.Header>
-							<Table.Body>
-								{#each data.productPacking as barcode}
-									<Table.Row>
-										<Table.Cell>{barcode.packing_type}</Table.Cell>
-										<Table.Cell>{barcode.unitsperpack}</Table.Cell>
-										<Table.Cell>{barcode.gtin}</Table.Cell>
-									</Table.Row>
-								{/each}
-							</Table.Body>
-						</Table.Root>
-					</div>
-				</div>
-			</Card.Content>
+					</Card.Content>
+				</Card.Root>
+			</div>
 		</form>
-	</Card.Root>
-	<!-- Vendors -->
-	{#if $formProduct.id}
-		<Tabs.Root value="vendors" class="w-full">
-			<Tabs.List class="grid w-full grid-cols-4">
-				<Tabs.Trigger value="vendors">Vendors</Tabs.Trigger>
-				<Tabs.Trigger value="stock">Stock</Tabs.Trigger>
-				<Tabs.Trigger value="replenish">Replenish</Tabs.Trigger>
-				<Tabs.Trigger value="sales-chart">Sales Chart</Tabs.Trigger>
-			</Tabs.List>
-			<Tabs.Content value="vendors">
-				<ProductPOCard
-					form={data.formProductPo}
-					partners={data.partners}
-					productId={data.productId}
-					data={data.purchases}
-				/>
-			</Tabs.Content>
-			<Tabs.Content value="stock">
-				<Card.Root>
-					<Card.Header>
-						<Card.Title>Stock</Card.Title>
-					</Card.Header>
-					<Card.Content>
-						<StorageOnHandCard
-							form={data.formStorageOnHand}
-							productId={data.productId}
-							warehouses={data.warehouses}
-						/>
-					</Card.Content>
-				</Card.Root>
-			</Tabs.Content>
-			<Tabs.Content value="replenish">
-				<Card.Root>
-					<Card.Header>
-						<Card.Title>Replenish</Card.Title>
-						<Card.Description>Manage warehouse replenishment rules</Card.Description>
-					</Card.Header>
-					<Card.Content>
-						{#if $formProduct.id}
-							<ReplenishCard
-								form={data.formReplenish}
+		<!-- Vendors -->
+		{#if $formProduct.id}
+			<Tabs.Root value="vendors" class="w-full">
+				<Tabs.List class="grid w-full grid-cols-4">
+					<Tabs.Trigger value="vendors">Vendors</Tabs.Trigger>
+					<Tabs.Trigger value="stock">Stock</Tabs.Trigger>
+					<Tabs.Trigger value="replenish">Replenish</Tabs.Trigger>
+					<Tabs.Trigger value="sales-chart">Sales Chart</Tabs.Trigger>
+				</Tabs.List>
+				<Tabs.Content value="vendors">
+					<ProductPOCard
+						form={data.formProductPo}
+						partners={data.partners}
+						productId={data.productId}
+						data={data.purchases}
+					/>
+				</Tabs.Content>
+				<Tabs.Content value="stock">
+					<Card.Root>
+						<Card.Header>
+							<Card.Title>Stock</Card.Title>
+						</Card.Header>
+						<Card.Content>
+							<StorageOnHandCard
+								form={data.formStorageOnHand}
+								productId={data.productId}
 								warehouses={data.warehouses}
-								productId={$formProduct.id}
 							/>
-						{/if}
-					</Card.Content>
-				</Card.Root>
-			</Tabs.Content>
-			<Tabs.Content value="sales-chart">
-				<Card.Root>
-					<Card.Header>
-						<Card.Title>Sales Chart</Card.Title>
-						<Card.Description>Monthly Sales Comparison</Card.Description>
-					</Card.Header>
-					<Card.Content>
-						<ChartVisualization data={data.salesByWeeks} />
-					</Card.Content>
-				</Card.Root>
-			</Tabs.Content>
-		</Tabs.Root>
+						</Card.Content>
+					</Card.Root>
+				</Tabs.Content>
+				<Tabs.Content value="replenish">
+					<Card.Root>
+						<Card.Header>
+							<Card.Title>Replenish</Card.Title>
+							<Card.Description>Manage warehouse replenishment rules</Card.Description>
+						</Card.Header>
+						<Card.Content>
+							{#if $formProduct.id}
+								<ReplenishCard
+									form={data.formReplenish}
+									warehouses={data.warehouses}
+									productId={$formProduct.id}
+								/>
+							{/if}
+						</Card.Content>
+					</Card.Root>
+				</Tabs.Content>
+				<Tabs.Content value="sales-chart">
+					<Card.Root>
+						<Card.Header>
+							<Card.Title>Sales Chart</Card.Title>
+							<Card.Description>Monthly Sales Comparison</Card.Description>
+						</Card.Header>
+						<Card.Content>
+							<ChartVisualization data={data.salesByWeeks} />
+						</Card.Content>
+					</Card.Root>
+				</Tabs.Content>
+			</Tabs.Root>
 
-		<ProductPackingDrawer
-			bind:isProductPackingDrawerOpen
-			productPacking={data.productPacking}
-			validatedForm={data.formProductPacking}
-			m_product_id={data.productId}
-			formProductPackingId={undefined}
-		/>
-	{/if}
+			<ProductPackingDrawer
+				bind:isProductPackingDrawerOpen
+				productPacking={data.productPacking}
+				validatedForm={data.formProductPacking}
+				m_product_id={data.productId}
+				formProductPackingId={undefined}
+			/>
+		{/if}
+	</div>
 </div>

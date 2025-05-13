@@ -135,7 +135,7 @@
 								</Select.Content>
 							</Select.Root>
 							{#if $errors.attribute_type}
-								<p class="text-sm text-red-500">{$errors.attribute_type}</p>
+								<p class="text-red-500">{$errors.attribute_type}</p>
 							{/if}
 						</div>
 
@@ -163,7 +163,7 @@
 								</Select.Content>
 							</Select.Root>
 							{#if $errors.attribute_group_id}
-								<p class="text-sm text-red-500">{$errors.attribute_group_id}</p>
+								<p class="text-red-500">{$errors.attribute_group_id}</p>
 							{/if}
 						</div>
 					</div>
@@ -172,7 +172,7 @@
 						<Label for="description">Description</Label>
 						<Textarea id="description" name="description" bind:value={$form.description} rows={3} />
 						{#if $errors.description}
-							<p class="text-sm text-red-500">{$errors.description}</p>
+							<p class="text-red-500">{$errors.description}</p>
 						{/if}
 					</div>
 

@@ -41,7 +41,7 @@
 		<Label.Root
 			for={id}
 			bind:ref={labelRef}
-			class="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+			class="leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 		>
 			{label}
 		</Label.Root>

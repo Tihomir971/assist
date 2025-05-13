@@ -52,20 +52,20 @@
 			<div>
 				<button
 					onclick={() => window.close()}
-					class="rounded-sm bg-gray-500 px-3 py-1 text-sm text-white transition-colors hover:bg-gray-600 print:hidden"
+					class="rounded-sm bg-gray-500 px-3 py-1 text-white transition-colors hover:bg-gray-600 print:hidden"
 				>
 					Close
 				</button>
 				<button
 					onclick={printReport}
-					class="rounded bg-gray-500 px-3 py-1 text-sm text-white transition-colors hover:bg-gray-600 print:hidden"
+					class="rounded bg-gray-500 px-3 py-1 text-white transition-colors hover:bg-gray-600 print:hidden"
 				>
 					Print Report
 				</button>
 			</div>
 		</div>
 
-		<div class="mb-4 flex justify-between text-sm text-black/80">
+		<div class="mb-4 flex justify-between text-black/80">
 			<div>
 				<p><strong>Category:</strong> {data.parentCategory?.name}</p>
 				<p><strong>Warehouse:</strong> {warehouseName}</p>

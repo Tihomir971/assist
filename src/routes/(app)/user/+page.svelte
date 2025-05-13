@@ -23,17 +23,17 @@
 				<div>
 					<Label for="full_name">Full Name</Label>
 					<Input type="text" id="full_name" name="full_name" bind:value={$form.full_name} />
-					{#if $errors.full_name}<span class="text-sm text-red-500">{$errors.full_name}</span>{/if}
+					{#if $errors.full_name}<span class="text-red-500">{$errors.full_name}</span>{/if}
 				</div>
 				<div>
 					<Label for="username">Username</Label>
 					<Input type="text" id="username" name="username" bind:value={$form.username} />
-					{#if $errors.username}<span class="text-sm text-red-500">{$errors.username}</span>{/if}
+					{#if $errors.username}<span class="text-red-500">{$errors.username}</span>{/if}
 				</div>
 				<div>
 					<Label for="password">New Password (optional)</Label>
 					<Input type="password" id="password" name="password" bind:value={$form.password} />
-					{#if $errors.password}<span class="text-sm text-red-500">{$errors.password}</span>{/if}
+					{#if $errors.password}<span class="text-red-500">{$errors.password}</span>{/if}
 				</div>
 				<div>
 					<Label for="confirm_password">Confirm New Password</Label>
@@ -43,8 +43,7 @@
 						name="confirm_password"
 						bind:value={$form.confirm_password}
 					/>
-					{#if $errors.confirm_password}<span class="text-sm text-red-500"
-							>{$errors.confirm_password}</span
+					{#if $errors.confirm_password}<span class="text-red-500">{$errors.confirm_password}</span
 						>{/if}
 				</div>
 			</div>

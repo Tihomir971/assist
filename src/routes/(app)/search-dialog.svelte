@@ -53,8 +53,8 @@
 							We couldn't find any products matching your search criteria.
 						</p>
 						<div class="mt-2">
-							<p class="text-sm text-muted-foreground">Try:</p>
-							<ul class="mt-2 list-disc pl-6 text-sm text-muted-foreground">
+							<p class="text-muted-foreground">Try:</p>
+							<ul class="mt-2 list-disc pl-6 text-muted-foreground">
 								<li>Checking for spelling errors</li>
 								<li>Using fewer or different keywords</li>
 								<li>Using a product code (SKU, MPN, or GTIN) if available</li>

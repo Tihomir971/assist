@@ -45,7 +45,7 @@
 				<Form.Button>Login</Form.Button>
 			</div>
 		</form>
-		<div class="mt-4 text-center text-sm">
+		<div class="mt-4 text-center">
 			Don't have an account?
 			<a href="##" class="underline"> Sign up </a>
 		</div>

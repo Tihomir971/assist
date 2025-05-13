@@ -51,7 +51,7 @@
 />
 
 {#if $errors}
-	<span class="pt-1 text-sm text-red-500">{$errors.join(', ')}</span>
+	<span class="pt-1 text-red-500">{$errors.join(', ')}</span>
 {/if}
 
 <!-- Hidden input for form submission -->

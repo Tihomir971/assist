@@ -502,7 +502,7 @@ function handleBlur() {
 </div>
 
 {#if error}
-  <div class="mt-1 text-sm text-destructive">{error}</div>
+  <div class="mt-1 text-destructive">{error}</div>
 {/if}
 ```
 

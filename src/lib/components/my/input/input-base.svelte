@@ -35,11 +35,6 @@
 <div
 	class={cn('mb-2 w-full', inline ? 'flex items-center gap-3' : 'flex flex-col gap-1', className)}
 >
-	<!-- 	{#if label}
-		<label for={inputId} class={cn('', inline ? 'min-w-[120px] shrink-0' : 'mb-1')}>
-			{label}{#if restProps.required}<span class="ml-1 text-warning">*</span>{/if}
-		</label>
-	{/if} -->
 	{#if Label}
 		<div>
 			{@render Label?.()}

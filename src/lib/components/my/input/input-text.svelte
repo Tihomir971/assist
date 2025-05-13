@@ -30,11 +30,11 @@
 	</label>
 {/snippet}
 
-{#snippet textIcon()}
+{#snippet Icon()}
 	<PhTextAa />
 {/snippet}
 
-{#snippet textContent()}
+{#snippet Content()}
 	<input
 		{id}
 		bind:value
@@ -44,7 +44,7 @@
 	/>
 {/snippet}
 
-{#snippet emptyActions()}
+{#snippet Action()}
 	<!-- No actions for text input -->
 {/snippet}
 
@@ -55,9 +55,8 @@
 	{label}
 	{inline}
 	{Label}
-	Icon={textIcon}
-	Content={textContent}
-	Action={emptyActions}
+	{Icon}
+	{Content}
+	{Action}
 	id={restProps.id}
-	{...restProps}
 />

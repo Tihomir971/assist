@@ -79,7 +79,7 @@
 										>
 											<PhMinus />
 										</button>
-										<span class="w-8 text-center text-sm font-medium">{cartItem.quantity}</span>
+										<span class="w-8 text-center font-medium">{cartItem.quantity}</span>
 										<button
 											class="size-icon variant-ghost"
 											onclick={() => incrementQuantity(cartItem)}

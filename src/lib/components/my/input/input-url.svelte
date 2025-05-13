@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import type { HTMLInputAttributes } from 'svelte/elements';
 	import PhArrowSquareUpLeft from '~icons/ph/arrow-square-up-left';
 	import PhCursorClick from '~icons/ph/cursor-click';
@@ -66,11 +67,11 @@
 {#snippet Label()}
 	<label for={id} class="input-label">{label}</label>
 {/snippet}
-{#snippet urlIcon()}
+{#snippet Icon()}
 	<PhArrowSquareUpLeft class="text-muted-foreground" />
 {/snippet}
 
-{#snippet urlContent()}
+{#snippet Content()}
 	<input
 		bind:this={ref}
 		bind:value
@@ -81,7 +82,7 @@
 	/>
 {/snippet}
 
-{#snippet urlActions()}
+{#snippet Action()}
 	{#if value && isValid}
 		<div
 			class="ml-auto flex h-full items-center text-muted-foreground hover:text-primary-foreground"
@@ -105,7 +106,7 @@
 	{label}
 	{inline}
 	{Label}
-	Icon={urlIcon}
-	Content={urlContent}
-	Action={urlActions}
+	Icon={Icon as Snippet}
+	Content={Content as Snippet}
+	Action={Action as Snippet}
 />

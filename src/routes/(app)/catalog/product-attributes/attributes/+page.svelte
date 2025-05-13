@@ -391,7 +391,7 @@
 							required
 						/>
 						{#if $createErrors.name}
-							<p class="text-sm text-red-500">{$createErrors.name}</p>
+							<p class="text-red-500">{$createErrors.name}</p>
 						{/if}
 					</div>
 
@@ -408,7 +408,7 @@
 							Auto-generated from name, but can be manually changed
 						</p>
 						{#if $createErrors.code}
-							<p class="text-sm text-red-500">{$createErrors.code}</p>
+							<p class="text-red-500">{$createErrors.code}</p>
 						{/if}
 					</div>
 
@@ -437,7 +437,7 @@
 							</Select.Content>
 						</Select.Root>
 						{#if $createErrors.attribute_type}
-							<p class="text-sm text-red-500">{$createErrors.attribute_type}</p>
+							<p class="text-red-500">{$createErrors.attribute_type}</p>
 						{/if}
 					</div>
 				</div>

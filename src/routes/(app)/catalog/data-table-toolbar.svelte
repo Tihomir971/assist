@@ -88,7 +88,7 @@
 		/>
 		<Label
 			for="subcategories"
-			class="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+			class="leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 		>
 			Subcategories
 		</Label>
@@ -106,7 +106,7 @@
 		/>
 		<Label
 			for="show-vat"
-			class="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+			class="leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 		>
 			Show VAT
 		</Label>

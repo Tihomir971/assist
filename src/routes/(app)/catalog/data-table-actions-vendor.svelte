@@ -42,11 +42,11 @@
 			<div class="min-w-[320px]">
 				{#each priceSorted as item}
 					<div class="grid grid-cols-[1fr_auto_auto] gap-2 py-1">
-						<div class="text-sm">{item.name}</div>
-						<div class="w-[80px] text-right text-sm">
+						<div>{item.name}</div>
+						<div class="w-[80px] text-right">
 							{formatNumber(item.pricelist) ?? '-'}
 						</div>
-						<div class="w-[80px] text-right text-sm">
+						<div class="w-[80px] text-right">
 							{formatNumber(calculatePriceWithTax(item.pricelist, item.tax)) ?? '-'}
 						</div>
 					</div>
