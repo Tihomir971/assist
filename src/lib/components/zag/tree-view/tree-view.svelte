@@ -143,7 +143,7 @@
 		<Button variant="outline" onclick={() => api.collapse()}>Collapse All</Button>
 		<Button variant="outline" onclick={() => api.expand()}>Expand All</Button>
 	</div>
-	<div class="flex-1 overflow-y-auto">
+	<div class="flex-1 overflow-x-hidden overflow-y-auto">
 		<div {...api.getTreeProps()}>
 			{#each items as item, index}
 				{@render treeNode({ node: item as TreeViewItem, indexPath: [index], api })}
