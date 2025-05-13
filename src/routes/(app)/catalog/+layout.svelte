@@ -1,11 +1,12 @@
 <script lang="ts">
 	import type { LayoutData } from './$types';
-	import { arrayToTreeString } from '$lib/scripts/tree';
+	import { arrayToTree } from '$lib/scripts/tree';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
-	import { browser } from '$app/environment';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import * as ContextMenu from '$lib/components/zag/context-menu/index';
+
 	import { Button } from '$lib/components/ui/button';
 	import DialogSelectReport from './DialogSelectReport.svelte';
 	import type { Snippet } from 'svelte';
@@ -14,8 +15,8 @@
 	import ChevronsDownUp from '@lucide/svelte/icons/chevrons-down-up';
 	import FolderPen from '@lucide/svelte/icons/folder-pen';
 	import FolderPlus from '@lucide/svelte/icons/folder-plus';
-	import { Tree } from '$lib/components/melt/tree';
-
+	import { TreeViewZag } from '$lib/components/zag';
+	let contextNode: string | null = $state(null);
 	interface Props {
 		data: LayoutData;
 		children?: Snippet;
@@ -23,108 +24,69 @@
 
 	let { data, children }: Props = $props();
 
-	let treeData = $derived(arrayToTreeString(data.categories));
-
-	let selectedId: string | undefined = $state(page.url.searchParams.get('cat') || undefined);
-	const selected = page.url.searchParams.get('cat') ?? undefined;
-
 	let showReportDialog = $state(false);
+	let treeDataNew = $derived(arrayToTree(data.categories));
 
-	let prevSelectedId: string | undefined = $state(undefined);
-	$effect(() => {
-		if (browser && selectedId && prevSelectedId !== selectedId) {
-			prevSelectedId = selectedId;
-			const newUrl = new URL(page.url);
-			newUrl.searchParams.set('cat', selectedId);
-			newUrl.searchParams.delete('search');
-
-			goto(newUrl, { invalidate: ['catalog'] });
-		}
-	});
+	const initCategory = page.url.searchParams.get('cat');
+	let selectedCategory = $state(initCategory ? parseInt(initCategory) : undefined);
 </script>
 
 <main class="flex w-full flex-1 gap-2 overflow-hidden px-2 py-2">
-	<Card.Root class="flex w-64 flex-col border-surface-2 bg-transparent">
-		<Card.Header class="border-b bg-surface-1 p-3">
-			<Card.Title>
-				<div class="flex items-center gap-2">
-					<Tooltip.Provider>
-						<Tooltip.Root>
-							<Tooltip.Trigger id="edit_tooltip">
-								<Button
-									variant="ghost"
-									size="icon"
-									onclick={() => {
-										if (selectedId) {
-											goto('/catalog/category/' + selectedId);
-										}
-									}}
-									disabled={!selectedId}
-								>
-									<FolderPen strokeWidth={1.5} class="!size-6" />
-									<span class="sr-only">Edit</span>
-								</Button>
-							</Tooltip.Trigger>
-							<Tooltip.Content side="bottom">Edit</Tooltip.Content>
-						</Tooltip.Root>
-					</Tooltip.Provider>
-					<Tooltip.Provider>
-						<Tooltip.Root>
-							<Tooltip.Trigger id="create_tooltip">
-								<Button
-									variant="ghost"
-									size="icon"
-									onclick={() => {
-										goto('/catalog/category');
-									}}
-								>
-									<FolderPlus strokeWidth={1.5} class="!size-6" />
-									<span class="sr-only">Create Category</span>
-								</Button>
-							</Tooltip.Trigger>
-							<Tooltip.Content side="bottom">Create Category</Tooltip.Content>
-						</Tooltip.Root>
-					</Tooltip.Provider>
-
-					<Tooltip.Provider>
-						<Tooltip.Root>
-							<Tooltip.Trigger id="collaps_tooltip">
-								<Button variant="ghost" size="icon">
-									<ChevronsDownUp strokeWidth={1.5} class="!size-6" />
-									<span class="sr-only">Collaps Tree</span>
-								</Button>
-							</Tooltip.Trigger>
-							<Tooltip.Content side="bottom">Collaps Tree</Tooltip.Content>
-						</Tooltip.Root>
-					</Tooltip.Provider>
-					<Tooltip.Provider>
-						<Tooltip.Root>
-							<Tooltip.Trigger id="report_tooltip">
-								<Button
-									variant="ghost"
-									size="icon"
-									onclick={() => (showReportDialog = !showReportDialog)}
-								>
-									<span class="sr-only">Generate Report</span>
-									<PhPrinter class="!size-6" />
-									<!-- <PhPrinter size="24" /> -->
-								</Button>
-							</Tooltip.Trigger>
-							<Tooltip.Content side="bottom">Generate Report</Tooltip.Content>
-						</Tooltip.Root>
-					</Tooltip.Provider>
-				</div>
-			</Card.Title>
-		</Card.Header>
-		<Card.Content class="flex-1 overflow-auto p-1">
-			<!-- <TreeView {treeItems} expanded={data.expanded} bind:selected /> -->
-			<Tree
-				items={treeData}
-				{selected}
-				onSelectedChange={(v) => {
-					selectedId = v;
+	<Card.Root class="flex h-full w-64 flex-col border-surface-2 bg-transparent">
+		<Card.Content class="h-full min-h-0 flex-1 p-0">
+			<ContextMenu.Root
+				onSelect={({ value }) => {
+					switch (value) {
+						case 'edit':
+							if (!contextNode) return;
+							console.log('Edit action called for node ID:', contextNode);
+							goto(`/catalog/category/${contextNode}?${page.url.searchParams}`);
+							break;
+						case 'add':
+							goto('/catalog/category');
+							break;
+						case 'delete':
+							// handleDelete(contextmenu);
+							break;
+						case 'report':
+							showReportDialog = !showReportDialog;
+							break;
+						default:
+							console.warn('Unknown context menu action:', value);
+					}
+					contextNode = null; // Reset after action
 				}}
-			/>
+			>
+				<ContextMenu.Trigger class="h-full">
+					<TreeViewZag
+						items={treeDataNew}
+						bind:contextNode
+						defaultSelectedValue={selectedCategory ? [selectedCategory.toString()] : undefined}
+						onSelectionChange={({ focusedValue }) => {
+							if (!focusedValue) return;
+							selectedCategory = parseInt(focusedValue);
+							const newUrl = new URL(page.url);
+							newUrl.searchParams.set('cat', focusedValue);
+							newUrl.searchParams.delete('search');
+							goto(newUrl, { invalidate: ['catalog'] });
+						}}
+					/>
+				</ContextMenu.Trigger>
+				<ContextMenu.Content>
+					<ContextMenu.Item value="add">Add new category</ContextMenu.Item>
+					<ContextMenu.Separator />
+					<ContextMenu.Item value="edit">Edit</ContextMenu.Item>
+					<ContextMenu.Item value="delete" disabled>Delete (Disabled)</ContextMenu.Item>
+					<ContextMenu.Item value="report">Generate Report...</ContextMenu.Item>
+				</ContextMenu.Content>
+			</ContextMenu.Root>
+
+			<!-- <Tree -->
+			<!-- items={treeData} -->
+			<!-- {selected} -->
+			<!-- onSelectedChange={(v) => { -->
+			<!-- selectedId = v;  }} -->
+			<!-- /> -->
 		</Card.Content>
 	</Card.Root>
 
@@ -134,5 +96,5 @@
 <DialogSelectReport
 	bind:showReportDialog
 	warehouses={data.warehouses}
-	activeCategory={selectedId}
+	activeCategory={selectedCategory?.toString()}
 />

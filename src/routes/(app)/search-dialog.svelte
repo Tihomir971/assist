@@ -2,6 +2,7 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { goto } from '$app/navigation';
 	import type { Database } from '$lib/types/supabase.types';
+	import { page } from '$app/state';
 	type SearchProductsResult = Database['public']['Functions']['search_products']['Returns'];
 
 	interface Props {
@@ -12,14 +13,27 @@
 	let { open = $bindable(false), results = $bindable([]) }: Props = $props();
 
 	function selectProduct(product: (typeof results)[0]) {
-		// Navigate to catalog route with cat parameter AND search parameter
+		console.log('product', product);
+
+		const path = page.url.searchParams;
 		if (product.m_product_category_id) {
-			goto(`/catalog?cat=${product.m_product_category_id}&search=${product.id.toString()}`, {
-				replaceState: false
-			});
+			path.set('cat', product.m_product_category_id.toString());
 		} else {
-			goto(`/catalog?search=${product.id.toString()}`, { replaceState: false });
+			path.delete('cat');
 		}
+		path.set('search', product.id.toString());
+		goto(`/catalog?${path.toString()}`, {
+			invalidate: ['catalog:categories'],
+			replaceState: false
+		});
+		// Navigate to catalog route with cat parameter AND search parameter
+		// if (product.m_product_category_id) {
+		// 	goto(`/catalog?cat=${product.m_product_category_id}&search=${product.id.toString()}`, {
+		// 		replaceState: false
+		// 	});
+		// } else {
+		// 	goto(`/catalog?search=${product.id.toString()}`, { replaceState: false });
+		// }
 		open = false;
 	}
 </script>

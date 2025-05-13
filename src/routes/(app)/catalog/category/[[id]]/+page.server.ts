@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 	}
 
 	const categories =
-		(await supabase.from('m_product_category').select('value:id,label:name').order('name')).data ||
+		(await supabase.from('m_product_category').select('value:id, label:name').order('name')).data ||
 		[];
 
 	const formCategory = await superValidate(category, zod(mProductCategoryInsertSchema));

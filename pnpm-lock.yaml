@@ -29,6 +29,9 @@ importers:
       '@zag-js/combobox':
         specifier: ^1.12.0
         version: 1.12.0
+      '@zag-js/menu':
+        specifier: ^1.12.0
+        version: 1.12.0
       '@zag-js/number-input':
         specifier: ^1.12.0
         version: 1.12.0
@@ -39,6 +42,9 @@ importers:
         specifier: ^1.12.0
         version: 1.12.0(svelte@5.28.2)
       '@zag-js/switch':
+        specifier: ^1.12.0
+        version: 1.12.0
+      '@zag-js/tree-view':
         specifier: ^1.12.0
         version: 1.12.0
       echarts:
@@ -1258,11 +1264,17 @@ packages:
   '@zag-js/interact-outside@1.12.0':
     resolution: {integrity: sha512-lcYo84syK3eF0MYESpMBQsfxT4+uzbaA8izZ0HvIC3kSCXLAaDZNagxPcRoB2yaTvWrn3FUw3YmJHKBOW7Vs9w==}
 
+  '@zag-js/menu@1.12.0':
+    resolution: {integrity: sha512-ciKCeQ1heLGt4RcyhB5f9GQB7CE1rP9Zfwp5oHX9FC5rq4nyneI0qhXEYYklE0P9z7+Z6EAH8FyvLORj5j/SpA==}
+
   '@zag-js/number-input@1.12.0':
     resolution: {integrity: sha512-8CEdDRPU3v0z2mAO5kVlp4B3IwgLzdBv+1JwrA3nM1NFp5cSzcsPK1gULkwUh0rbMrA3s/dFolPBZHSfldbKEA==}
 
   '@zag-js/popper@1.12.0':
     resolution: {integrity: sha512-YVdQHdYT32OtIeYmOBpdhhDoZa1aFQA5PrhSMAX9gtEnDIWg3m4bwdwC0Fs7G++zguHjgJ6ve1/QxTs6lHnC7Q==}
+
+  '@zag-js/rect-utils@1.12.0':
+    resolution: {integrity: sha512-rREWLVbXV2Sy7Kh+TBuLST3QLUNKi+lYZcyuulIV5X3aEEMfNKvB4svdZonfkPYA5uz1MGRYZoM/K3LY77EEVw==}
 
   '@zag-js/select@1.12.0':
     resolution: {integrity: sha512-GRfQnlG3YdwkD1fAUH/DvfhXIxymB90ZRYcHtuSxF36v2sJIcRhUVZIQvZzGDKX4CvlGVxhobq0w6nHihJh5rA==}
@@ -1274,6 +1286,9 @@ packages:
 
   '@zag-js/switch@1.12.0':
     resolution: {integrity: sha512-ihn+6f4pMJjL1BDheDP5MpWVyIUpyZNo3lDIKrCSunqJflBomHuB3uVR//tkcgG0QsWIQ0b2IoHL1mtbyYn74w==}
+
+  '@zag-js/tree-view@1.12.0':
+    resolution: {integrity: sha512-p/tKMPqHxx9Xal7zmaNFC/35VZBPtNMXqbpIlT5GVPPge+9NwtWd7a2Nt5RLdvztqfcyZUkfANWkMUnWgXgucA==}
 
   '@zag-js/types@1.12.0':
     resolution: {integrity: sha512-qewKPnURQ9v4BKL0zFrqPIkC77areamYBkO2+DRet2U2WYofrOf4q7T6qIOcF4lLPYvCOv9LnYuw4pAlHyqcgA==}
@@ -4246,6 +4261,17 @@ snapshots:
       '@zag-js/dom-query': 1.12.0
       '@zag-js/utils': 1.12.0
 
+  '@zag-js/menu@1.12.0':
+    dependencies:
+      '@zag-js/anatomy': 1.12.0
+      '@zag-js/core': 1.12.0
+      '@zag-js/dismissable': 1.12.0
+      '@zag-js/dom-query': 1.12.0
+      '@zag-js/popper': 1.12.0
+      '@zag-js/rect-utils': 1.12.0
+      '@zag-js/types': 1.12.0
+      '@zag-js/utils': 1.12.0
+
   '@zag-js/number-input@1.12.0':
     dependencies:
       '@internationalized/number': 3.6.1
@@ -4260,6 +4286,8 @@ snapshots:
       '@floating-ui/dom': 1.6.13
       '@zag-js/dom-query': 1.12.0
       '@zag-js/utils': 1.12.0
+
+  '@zag-js/rect-utils@1.12.0': {}
 
   '@zag-js/select@1.12.0':
     dependencies:
@@ -4285,6 +4313,15 @@ snapshots:
       '@zag-js/core': 1.12.0
       '@zag-js/dom-query': 1.12.0
       '@zag-js/focus-visible': 1.12.0
+      '@zag-js/types': 1.12.0
+      '@zag-js/utils': 1.12.0
+
+  '@zag-js/tree-view@1.12.0':
+    dependencies:
+      '@zag-js/anatomy': 1.12.0
+      '@zag-js/collection': 1.12.0
+      '@zag-js/core': 1.12.0
+      '@zag-js/dom-query': 1.12.0
       '@zag-js/types': 1.12.0
       '@zag-js/utils': 1.12.0
 

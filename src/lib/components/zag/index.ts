@@ -7,3 +7,4 @@ export { default as SelectZag } from './select/select.svelte';
 export { default as SelectSimpleZag } from './select/select-simple.svelte';
 export { default as SwitchZag } from './switch/switch.svelte';
 export { default as SwitchZagForm } from './switch/switch-form.svelte';
+export { default as TreeViewZag } from './tree-view/tree-view.svelte';

@@ -27,7 +27,7 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 
 	const { data: categories } = await supabase
 		.from('m_product_category')
-		.select('id,parent_id, title:name')
+		.select('value:id, label:name, parent_id')
 		.order('name');
 
 	async function findProductsGroupedByCategory(

@@ -1,0 +1,64 @@
+[data-scope='tree-view'][data-part='tree'] {
+	margin-top: 12px;
+	width: 240px;
+}
+
+[data-scope='tree-view'][data-part='item'],
+[data-scope='tree-view'][data-part='branch-control'] {
+	user-select: none;
+	--padding-inline: 8px;
+	padding-inline-start: calc(var(--depth) * var(--padding-inline));
+	padding-inline-end: var(--padding-inline);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	border-radius: var(--radius);
+	min-height: 32px;
+
+	& svg {
+		width: 16px;
+		height: 16px;
+		opacity: 0.5;
+	}
+
+	&:hover {
+		background: var(--color-surface-1);
+	}
+
+	&[data-selected] {
+		background: var(--color-surface-2);
+	}
+
+	&:focus {
+		outline: 1px solid var(--color-surface-3);
+		outline-offset: -1px;
+	}
+}
+
+[data-scope='tree-view'][data-part='item-text'],
+[data-scope='tree-view'][data-part='branch-text'] {
+	flex: 1;
+}
+
+[data-scope='tree-view'][data-part='branch-content'] {
+	position: relative;
+	isolation: isolate;
+}
+
+[data-scope='tree-view'][data-part='branch-indent-guide'] {
+	position: absolute;
+	content: '';
+	border-left: 1px solid var(--color-surface-3);
+	height: 100%;
+	translate: calc(var(--depth) * 1.25rem);
+	/* translate: calc(var(--depth) * 0.5rem); */
+	z-index: 0;
+}
+
+[data-scope='tree-view'][data-part='branch-indicator'] {
+	display: flex;
+	align-items: center;
+	&[data-state='open'] svg {
+		transform: rotate(90deg);
+	}
+}

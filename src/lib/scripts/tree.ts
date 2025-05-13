@@ -1,64 +1,63 @@
 import type { MaybeGetter } from 'melt';
 import type { TreeItem } from 'melt/builders';
 
-interface TableTreeItem {
-	id: number;
-	title: string;
-	parent_id: number | null;
-}
 type CustomTreeItem = TreeItem & {
 	title: string;
 	children?: CustomTreeItem[];
 };
 
-export function arrayToTreeString(items: Array<TableTreeItem> | null | undefined) {
+interface TableTreeItem {
+	value: number;
+	label: string;
+	parent_id: number | null;
+}
+interface Output {
+	value: number;
+	label: string;
+	children?: Output[];
+}
+
+export function arrayToTree(items: TableTreeItem[] | null | undefined): Output[] {
 	if (!items) return [];
-	const itemMap = new Map();
+	const itemMap = new Map<number, Output>();
 
-	// Convert numbers to strings and initialize the map
-	const stringItems = items.map((item) => ({
-		...item,
-		id: item.id.toString(),
-		parent_id: item.parent_id ? item.parent_id.toString() : null
-	}));
-
-	stringItems.forEach((item) => {
-		itemMap.set(item.id, { ...item });
+	// Initialize the map with items, preparing the basic structure
+	items.forEach((item) => {
+		// Create Output object, ensuring children array is initialized
+		itemMap.set(item.value, { value: item.value, label: item.label, children: [] });
 	});
 
-	// Create the tree structure
-	const result: Array<CustomTreeItem> = [];
-	stringItems.forEach((item) => {
+	const result: Output[] = [];
+	items.forEach((item) => {
+		const currentItem = itemMap.get(item.value)!; // Non-null assertion is safe due to initialization loop
 		if (item.parent_id === null) {
-			const newItem = itemMap.get(item.id);
-			if (itemMap.get(item.id).children) {
-				newItem.children = itemMap.get(item.id).children;
-			}
-			result.push(newItem);
+			// Root item
+			result.push(currentItem);
 		} else {
 			const parent = itemMap.get(item.parent_id);
 			if (parent) {
-				parent.children = parent.children || [];
-				parent.children.push(itemMap.get(item.id));
+				// Parent found, add current item to parent's children
+				// Children array is guaranteed to exist from initialization
+				parent.children!.push(currentItem);
 			}
 		}
 	});
 
-	// Remove parent_id from all items
-	stringItems.forEach((item) => {
-		const mappedItem = itemMap.get(item.id);
-		if ('parent_id' in mappedItem) {
-			delete mappedItem.parent_id;
+	// Clean up: remove empty children arrays
+	itemMap.forEach((item) => {
+		if (item.children && item.children.length === 0) {
+			delete item.children;
 		}
+		// No need to delete parent_id as it was never added to the Output type
 	});
 
 	return result;
 }
 
 type Category = {
-	id: number;
+	value: number;
+	label: string;
 	parent_id: number | null;
-	title: string;
 };
 export function findChildren(categories: Category[], id: number): number[] {
 	const result: number[] = [];
@@ -67,13 +66,13 @@ export function findChildren(categories: Category[], id: number): number[] {
 
 	while (queue.length > 0) {
 		const categoryId = queue.shift()!;
-		const category = categories.find((c) => c.id === categoryId);
+		const category = categories.find((c) => c.value === categoryId);
 		if (!category) continue;
 
-		result.push(category.id);
+		result.push(category.value);
 
-		const childCategories = categories.filter((c) => c.parent_id === category.id);
-		childCategories.forEach((child) => queue.push(child.id));
+		const childCategories = categories.filter((c) => c.parent_id === category.value);
+		childCategories.forEach((child) => queue.push(child.value));
 	}
 
 	return result;

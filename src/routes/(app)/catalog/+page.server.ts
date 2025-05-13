@@ -61,9 +61,9 @@ async function fetchProducts(
 	categoryId: string | null,
 	showSubcategories: boolean,
 	categories: {
-		id: number;
+		value: number;
+		label: string;
 		parent_id: number | null;
-		title: string;
 	}[]
 ) {
 	let categoryIds: number[] = [];

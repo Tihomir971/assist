@@ -23,6 +23,7 @@
 	import { InputTextForm } from '$lib/components/my/input';
 	import { ComboboxZagForm, NumberInputZagForm, SwitchZagForm } from '$lib/components/zag/index.js';
 	import { mProductInsertSchema } from '$lib/types/supabase.zod.schemas';
+	import { page } from '$app/state';
 
 	let { data } = $props();
 
@@ -58,6 +59,13 @@
 </script>
 
 <div class="mx-auto w-full max-w-[var(--breakpoint-xl)]">
+	<div class="mb-6 flex items-center justify-between">
+		<div>
+			<h1 class="text-3xl font-bold">Edit product</h1>
+			<p class="text-muted-foreground">Update attribute group details</p>
+		</div>
+		<Button variant="outline" href={`/catalog?${page.url.searchParams}`}>Back to List</Button>
+	</div>
 	<Card.Root class="mb-4">
 		<form method="post" action="?/productUpsert" use:enhanceProductUpsert id="product-form">
 			<Card.Header class="border-b border-surface-2 pb-6">

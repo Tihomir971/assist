@@ -4,7 +4,10 @@ export async function load({ parent, url, locals: { supabase } }) {
 	const { categories } = await parent();
 	const category = url.searchParams.get('treeCategory');
 	const warehouse = url.searchParams.get('warehouse');
-	if (!category || !warehouse) {
+	if (!category) {
+		throw new Error('Category and warehouse parameters are required');
+	}
+	if (!warehouse) {
 		throw new Error('Category and warehouse parameters are required');
 	}
 	/* const subcategories = await findSubcategories(supabase, parseInt(category)); */

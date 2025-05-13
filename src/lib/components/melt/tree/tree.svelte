@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 	import { Tree, type TreeItem } from 'melt/builders';
-	import { findParent } from '$lib/scripts/tree';
 	// Icons
 	import PhCaretRight from '~icons/ph/caret-right';
 	import PhCaretDown from '~icons/ph/caret-down';
 	import PhDotOutline from '~icons/ph/dot-outline';
 	import type { SvelteSet } from 'svelte/reactivity';
 	import type { MaybeGetter } from 'melt';
+	import { findParent } from '$lib/scripts/tree';
 
 	type CustomTreeItem = TreeItem & {
 		title: string;
