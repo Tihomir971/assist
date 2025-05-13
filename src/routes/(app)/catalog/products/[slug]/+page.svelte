@@ -58,7 +58,7 @@
 	let isProductPackingDrawerOpen: boolean = $state(false);
 </script>
 
-<div class="mx-auto w-full max-w-[var(--breakpoint-xl)] overflow-hidden">
+<div class="mx-auto w-full max-w-[var(--breakpoint-xl)]">
 	<div class="mb-6 flex items-center justify-between">
 		<div>
 			<h1 class="text-3xl font-bold">Edit product</h1>
