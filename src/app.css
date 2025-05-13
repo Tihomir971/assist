@@ -71,7 +71,7 @@
 		@apply scheme-light-dark;
 	}
 	body {
-		@apply bg-background text-ink;
+		@apply bg-background text-sm text-ink;
 	}
 	input,
 	textarea,
