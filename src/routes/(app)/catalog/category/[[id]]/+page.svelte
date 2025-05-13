@@ -16,12 +16,7 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 
-	import {
-		ComboboxZagForm,
-		NumberInputZagForm,
-		SelectZag,
-		SwitchZagForm
-	} from '$lib/components/zag/index.js';
+	import { ComboboxZagForm, SwitchZagForm } from '$lib/components/zag/index.js';
 
 	import InputTextForm from '$lib/components/my/input/input-text-form.svelte';
 	import { page } from '$app/state';

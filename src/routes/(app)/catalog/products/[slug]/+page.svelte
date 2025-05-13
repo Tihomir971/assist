@@ -59,22 +59,22 @@
 </script>
 
 <div class="mx-auto w-full max-w-[var(--breakpoint-xl)]">
-	<div class="mb-6 flex items-center justify-between">
-		<div>
-			<h1 class="text-3xl font-bold">Edit product</h1>
-			<p class="text-muted-foreground">Update attribute group details</p>
-		</div>
-		<div class="flex items-center gap-2">
-			<div class={!isTaintedProduct($taintedProduct) ? 'hidden' : ''}>
-				<Button type="submit">Save</Button>
-				<Button type="button" variant="outline" onclick={() => superform.reset()}>Reset</Button>
+	<form method="post" action="?/productUpsert" use:enhanceProductUpsert id="product-form">
+		<div class="mb-6 flex items-center justify-between">
+			<div>
+				<h1 class="text-3xl font-bold">Edit product</h1>
+				<p class="text-muted-foreground">Update attribute group details</p>
 			</div>
-			<Form.Button name="delete" variant="destructive">Delete</Form.Button>
-			<Button variant="outline" href={`/catalog?${page.url.searchParams}`}>Back to List</Button>
+			<div class="flex items-center gap-2">
+				<div class={!isTaintedProduct($taintedProduct) ? 'hidden' : ''}>
+					<Button type="submit">Save</Button>
+					<Button type="button" variant="outline" onclick={() => superform.reset()}>Reset</Button>
+				</div>
+				<Form.Button name="delete" variant="destructive">Delete</Form.Button>
+				<Button variant="outline" href={`/catalog?${page.url.searchParams}`}>Back to List</Button>
+			</div>
 		</div>
-	</div>
-	<div class="overflow-auto">
-		<form method="post" action="?/productUpsert" use:enhanceProductUpsert id="product-form">
+		<div class="overflow-auto">
 			<div class="overflow-auto">
 				<Card.Root class="mb-4">
 					<Card.Header class="border-b border-surface-2 pb-4">
@@ -121,9 +121,6 @@
 						<div class="grid grid-cols-1 divide-x *:px-3 md:grid-cols-[2fr_2fr_1fr]">
 							<div>
 								<h3 class="mb-2 pb-2 text-lg font-semibold">Basic Information</h3>
-
-								<div class="grid grid-cols-2 gap-4"></div>
-
 								<ComboboxZagForm
 									{superform}
 									field="attributeset_id"
@@ -139,7 +136,6 @@
 							</div>
 							<div>
 								<h3 class="mb-2 pb-2 text-lg font-semibold">Packaging Information</h3>
-
 								<div class="grid grid-cols-2 gap-4">
 									<NumberInputZagForm
 										{superform}
@@ -210,75 +206,75 @@
 					</Card.Content>
 				</Card.Root>
 			</div>
-		</form>
-		<!-- Vendors -->
-		{#if $formProduct.id}
-			<Tabs.Root value="vendors" class="w-full">
-				<Tabs.List class="grid w-full grid-cols-4">
-					<Tabs.Trigger value="vendors">Vendors</Tabs.Trigger>
-					<Tabs.Trigger value="stock">Stock</Tabs.Trigger>
-					<Tabs.Trigger value="replenish">Replenish</Tabs.Trigger>
-					<Tabs.Trigger value="sales-chart">Sales Chart</Tabs.Trigger>
-				</Tabs.List>
-				<Tabs.Content value="vendors">
-					<ProductPOCard
-						form={data.formProductPo}
-						partners={data.partners}
-						productId={data.productId}
-						data={data.purchases}
-					/>
-				</Tabs.Content>
-				<Tabs.Content value="stock">
-					<Card.Root>
-						<Card.Header>
-							<Card.Title>Stock</Card.Title>
-						</Card.Header>
-						<Card.Content>
-							<StorageOnHandCard
-								form={data.formStorageOnHand}
-								productId={data.productId}
-								warehouses={data.warehouses}
-							/>
-						</Card.Content>
-					</Card.Root>
-				</Tabs.Content>
-				<Tabs.Content value="replenish">
-					<Card.Root>
-						<Card.Header>
-							<Card.Title>Replenish</Card.Title>
-							<Card.Description>Manage warehouse replenishment rules</Card.Description>
-						</Card.Header>
-						<Card.Content>
-							{#if $formProduct.id}
-								<ReplenishCard
-									form={data.formReplenish}
+			<!-- Vendors -->
+			{#if $formProduct.id}
+				<Tabs.Root value="vendors" class="w-full">
+					<Tabs.List class="grid w-full grid-cols-4">
+						<Tabs.Trigger value="vendors">Vendors</Tabs.Trigger>
+						<Tabs.Trigger value="stock">Stock</Tabs.Trigger>
+						<Tabs.Trigger value="replenish">Replenish</Tabs.Trigger>
+						<Tabs.Trigger value="sales-chart">Sales Chart</Tabs.Trigger>
+					</Tabs.List>
+					<Tabs.Content value="vendors">
+						<ProductPOCard
+							form={data.formProductPo}
+							partners={data.partners}
+							productId={data.productId}
+							data={data.purchases}
+						/>
+					</Tabs.Content>
+					<Tabs.Content value="stock">
+						<Card.Root>
+							<Card.Header>
+								<Card.Title>Stock</Card.Title>
+							</Card.Header>
+							<Card.Content>
+								<StorageOnHandCard
+									form={data.formStorageOnHand}
+									productId={data.productId}
 									warehouses={data.warehouses}
-									productId={$formProduct.id}
 								/>
-							{/if}
-						</Card.Content>
-					</Card.Root>
-				</Tabs.Content>
-				<Tabs.Content value="sales-chart">
-					<Card.Root>
-						<Card.Header>
-							<Card.Title>Sales Chart</Card.Title>
-							<Card.Description>Monthly Sales Comparison</Card.Description>
-						</Card.Header>
-						<Card.Content>
-							<ChartVisualization data={data.salesByWeeks} />
-						</Card.Content>
-					</Card.Root>
-				</Tabs.Content>
-			</Tabs.Root>
-
-			<ProductPackingDrawer
-				bind:isProductPackingDrawerOpen
-				productPacking={data.productPacking}
-				validatedForm={data.formProductPacking}
-				m_product_id={data.productId}
-				formProductPackingId={undefined}
-			/>
-		{/if}
-	</div>
+							</Card.Content>
+						</Card.Root>
+					</Tabs.Content>
+					<Tabs.Content value="replenish">
+						<Card.Root>
+							<Card.Header>
+								<Card.Title>Replenish</Card.Title>
+								<Card.Description>Manage warehouse replenishment rules</Card.Description>
+							</Card.Header>
+							<Card.Content>
+								{#if $formProduct.id}
+									<ReplenishCard
+										form={data.formReplenish}
+										warehouses={data.warehouses}
+										productId={$formProduct.id}
+									/>
+								{/if}
+							</Card.Content>
+						</Card.Root>
+					</Tabs.Content>
+					<Tabs.Content value="sales-chart">
+						<Card.Root>
+							<Card.Header>
+								<Card.Title>Sales Chart</Card.Title>
+								<Card.Description>Monthly Sales Comparison</Card.Description>
+							</Card.Header>
+							<Card.Content>
+								<ChartVisualization data={data.salesByWeeks} />
+							</Card.Content>
+						</Card.Root>
+					</Tabs.Content>
+				</Tabs.Root>
+			{/if}
+		</div>
+	</form>
 </div>
+
+<ProductPackingDrawer
+	bind:isProductPackingDrawerOpen
+	productPacking={data.productPacking}
+	validatedForm={data.formProductPacking}
+	m_product_id={data.productId}
+	formProductPackingId={undefined}
+/>

@@ -59,7 +59,7 @@
 				items={partners}
 				placeholder="Select a partner"
 			/>
-			<NumberInputZagForm {superform} field="pricelist" label="Pricelist" />
+			<NumberInputZagForm {superform} field="pricelist" label="Pricelist" fraction={2} />
 			<MyUrlInput name="url" bind:value={$formData.url} label="url" />
 
 			<Sheet.Footer class="flex gap-2 sm:flex-col">

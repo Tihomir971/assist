@@ -13,6 +13,8 @@
 		required,
 		locale = 'sr-RS',
 		allowMouseWheel = true,
+		min = 0,
+		name,
 		...restProps
 	}: NumberInputProps = $props();
 
@@ -21,6 +23,7 @@
 		id,
 		locale,
 		allowMouseWheel,
+		min,
 		defaultValue: value?.toLocaleString(locale),
 		get value() {
 			return value?.toLocaleString(locale);
@@ -33,6 +36,8 @@
 
 	const api = $derived(numberInput.connect(service, normalizeProps));
 </script>
+
+<input type="hidden" {name} value={api.valueAsNumber} />
 
 <div {...api.getRootProps()} class="input-root">
 	<!-- <div data-testid="scrubber" {...api.getScrubberProps()}></div> -->
