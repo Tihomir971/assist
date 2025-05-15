@@ -24,9 +24,9 @@
 		locale,
 		allowMouseWheel,
 		min,
-		defaultValue: value?.toLocaleString(locale),
+		defaultValue: value != null ? value.toLocaleString(locale) : undefined,
 		get value() {
-			return value?.toLocaleString(locale);
+			return value != null ? value.toLocaleString(locale) : undefined;
 		},
 		onValueChange({ valueAsNumber }) {
 			value = valueAsNumber;
@@ -37,7 +37,11 @@
 	const api = $derived(numberInput.connect(service, normalizeProps));
 </script>
 
-<input type="hidden" {name} value={api.valueAsNumber} />
+<input
+	type="hidden"
+	{name}
+	value={Number.isNaN(api.valueAsNumber) ? undefined : api.valueAsNumber}
+/>
 
 <div {...api.getRootProps()} class="input-root">
 	<!-- <div data-testid="scrubber" {...api.getScrubberProps()}></div> -->
