@@ -223,7 +223,7 @@ export const actions = {
 		return { form };
 	},
 
-	mRplenishUpsert: async ({ request, locals: { supabase } }) => {
+	mReplenishUpsert: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(mReplenishInsertSchema));
 		if (!form.valid) return fail(400, { form });
 
