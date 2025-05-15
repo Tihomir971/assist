@@ -46,6 +46,3 @@
 {#if $errors}
 	<span class="pt-1 text-red-500">{$errors.join(', ')}</span>
 {/if}
-
-<!-- Hidden input for form submission -->
-<!-- <input type="hidden" name={field} value={$value ?? ''} /> -->

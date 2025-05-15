@@ -1471,6 +1471,7 @@ export type Database = {
           iscurrentvendor: boolean
           m_product_id: number
           manufacturer: string | null
+          order_min: number
           pricelist: number
           updated_at: string
           url: string | null
@@ -1491,6 +1492,7 @@ export type Database = {
           iscurrentvendor?: boolean
           m_product_id: number
           manufacturer?: string | null
+          order_min?: number
           pricelist?: number
           updated_at?: string
           url?: string | null
@@ -1511,6 +1513,7 @@ export type Database = {
           iscurrentvendor?: boolean
           m_product_id?: number
           manufacturer?: string | null
+          order_min?: number
           pricelist?: number
           updated_at?: string
           url?: string | null

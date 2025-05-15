@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Product, Mapping, Supplier } from './types';
+	import type { Product, Mapping } from './types';
 	import { browser } from '$app/environment';
 	import { onDestroy, onMount } from 'svelte';
 	import * as XLSX from 'xlsx';
@@ -16,7 +16,7 @@
 	import { processExcelData } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
 	import MySelect from '$lib/components/my/MySelect.svelte';
-	import { ComboboxZag, SelectZag } from '$lib/components/zag/index.js';
+	import { ComboboxZag } from '$lib/components/zag/index.js';
 
 	let { data } = $props();
 	let { supabase } = $derived(data);
@@ -201,7 +201,6 @@
 		try {
 			await addProduct(supabase, product, Number(selectedSupplier), priceModificationPercentage);
 			alert('Product added successfully!');
-			// productsNotUpdated = productsNotUpdated.filter((p) => p.barcode !== product.barcode);
 		} catch (error) {
 			console.error('Error adding product:', error);
 			alert(error instanceof Error ? error.message : 'An error occurred while adding the product.');

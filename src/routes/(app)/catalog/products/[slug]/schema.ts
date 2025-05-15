@@ -1,7 +1,6 @@
 import { isValidGTIN } from '$lib/scripts/gtin';
 import {
 	mProductPackingInsertSchema,
-	mProductPoInsertSchema,
 	mReplenishRowSchema,
 	mStorageonhandInsertSchema
 } from '$lib/types/supabase.zod.schemas';
@@ -20,25 +19,6 @@ export const replenishSchema = mReplenishRowSchema
 	.extend({
 		id: mReplenishRowSchema.shape.id.optional()
 	});
-
-export const crudReplenishSchema = z.object({
-	replenishes: z.array(replenishSchema).refine(
-		(replenishes) => {
-			const uniqueKeys = new Set(
-				replenishes.map((item) => JSON.stringify([item.m_product_id, item.m_warehouse_id]))
-			);
-			return uniqueKeys.size === replenishes.length;
-		},
-		{
-			message: 'Warehouse must be a unique for product'
-		}
-	)
-});
-
-export type CrudReplenishSchema = z.infer<typeof crudReplenishSchema>;
-
-// Product PO
-export type MProductPoInsertSchema = z.infer<typeof mProductPoInsertSchema>; // Keep original type export
 
 export const mStorageonhandInsertSchemaАrray = z.object({
 	storageonhand: z.array(mStorageonhandInsertSchema)

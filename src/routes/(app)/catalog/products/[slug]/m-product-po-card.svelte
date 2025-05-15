@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { formatDateTime, formatNumber } from '$lib/style/locale';
 	import { type SuperValidated } from 'sveltekit-superforms';
-	import type { MProductPoInsertSchema } from './schema';
 
 	import { toast } from 'svelte-sonner';
 	// UI Elements
@@ -13,17 +12,19 @@
 	import PhArrowSquareOut from '~icons/ph/arrow-square-out';
 	// Components
 	import ProductPoSheet from './m-product-po-sheet.svelte';
-	let isProductPoSheetOpen = $state(false);
-
+	import type { z } from 'zod';
+	import type { mProductPoInsertSchema } from '$lib/types/supabase.zod.schemas';
+	type Schema = z.infer<typeof mProductPoInsertSchema>;
 	type Props = {
-		form: SuperValidated<MProductPoInsertSchema>;
+		form: SuperValidated<Schema>;
 		productId: number;
-		data: MProductPoInsertSchema[];
+		data: Schema[];
 		partners: {
 			value: number;
 			label: string;
 		}[];
 	};
+
 	let data: Props = $props();
 
 	function selectedPartnerLabel(value: number | null | undefined): string {
@@ -39,11 +40,13 @@
 			return;
 		}
 		selectedPurchaseId = undefined;
-		isProductPoSheetOpen = true;
+		isSheetOpen = true;
 	}
 	let selectedVendor = $derived.by(() => {
 		return data.data.find((v) => v.id === selectedPurchaseId);
 	});
+
+	let isSheetOpen = $state(false);
 </script>
 
 <Card.Root class="mb-4">
@@ -59,6 +62,7 @@
 				<Table.Row>
 					<Table.Head>Partner</Table.Head>
 					<Table.Head>vendorproductno</Table.Head>
+					<Table.Head class="text-right">order_min</Table.Head>
 					<Table.Head class="text-right">pricelist</Table.Head>
 					<Table.Head class="text-right">From</Table.Head>
 					<Table.Head class="text-right">To</Table.Head>
@@ -74,10 +78,10 @@
 						<Table.Cell>
 							{selectedPartnerLabel(purchases.c_bpartner_id)}
 						</Table.Cell>
-						<!-- <Table.Cell>
-							{selectedPartnerLabel($form.purchases[i].c_bpartner_id)}
-						</Table.Cell> -->
 						<Table.Cell>{purchases.vendorproductno}</Table.Cell>
+						<Table.Cell class="text-right"
+							>{formatNumber(purchases.order_min, { fractionDigits: 0 })}</Table.Cell
+						>
 						<Table.Cell class="text-right">{formatNumber(purchases.pricelist)}</Table.Cell>
 						<Table.Cell class="text-right">{formatDateTime(purchases.valid_from)}</Table.Cell>
 						<Table.Cell class="text-right">{formatDateTime(purchases.valid_to)}</Table.Cell>
@@ -99,7 +103,7 @@
 								size="icon"
 								onclick={() => {
 									selectedPurchaseId = purchases.id;
-									isProductPoSheetOpen = !isProductPoSheetOpen;
+									isSheetOpen = !isSheetOpen;
 								}}
 								class="-my-3"
 							>
@@ -113,9 +117,9 @@
 	</Card.Content>
 </Card.Root>
 
-{#if isProductPoSheetOpen}
+{#if isSheetOpen}
 	<ProductPoSheet
-		bind:isSheetOpen={isProductPoSheetOpen}
+		bind:isSheetOpen
 		bind:data={selectedVendor}
 		form={data.form}
 		partners={data.partners}

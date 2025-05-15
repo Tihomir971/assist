@@ -32,9 +32,7 @@
 	}: Props = $props();
 </script>
 
-<div
-	class={cn('mb-2 w-full', inline ? 'flex items-center gap-3' : 'flex flex-col gap-1', className)}
->
+<div class={cn('w-full', inline ? 'flex items-center gap-3' : 'flex flex-col gap-1', className)}>
 	{#if Label}
 		<div>
 			{@render Label?.()}

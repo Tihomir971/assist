@@ -8,6 +8,11 @@
 	setCartContext();
 </script>
 
+<svelte:head>
+	<title>KALISI Assist</title>
+	<meta name="description" content="This is where the description goes for SEO" />
+</svelte:head>
+
 <div class="flex h-screen flex-col">
 	<Header supabase={data.supabase} profile={data.profile}></Header>
 	<div class="flex flex-1 overflow-hidden">

@@ -1,176 +1,92 @@
 <script lang="ts">
-	import { invalidate } from '$app/navigation';
-	import { toast } from 'svelte-sonner';
-	import { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
+	import { type SuperValidated } from 'sveltekit-superforms';
+	// UI Elements
+	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button';
-	import PhX from '~icons/ph/x';
+	import Sheet from './m-replenish-sheet.svelte';
 	import * as Table from '$lib/components/ui/table';
-	import * as Select from '$lib/components/ui/select';
-	import * as Form from '$lib/components/ui/form';
-	import type { CrudReplenishSchema } from './schema';
 	import { ComboboxZagForm, NumberInputZagForm } from '$lib/components/zag/index.js';
-	import Combobox from '$lib/components/zag/combobox/combobox.svelte';
+	import PhDotsThreeBold from '~icons/ph/dots-three-bold';
+	import { z } from 'zod';
+	import type { mReplenishInsertSchema } from '$lib/types/supabase.zod.schemas';
+	import { labelByValue } from '$lib/scripts/custom';
 
+	type Schema = z.infer<typeof mReplenishInsertSchema>;
 	interface Props {
-		form: SuperValidated<CrudReplenishSchema>;
+		validatedForm: SuperValidated<Schema>;
 		productId: number;
-		//replenishes: CrudReplenishSchema[];
+		data: Schema[];
 		warehouses: Array<{ value: number; label: string }>;
 	}
 
-	let data: Props = $props();
-	//let replenishes = $state(data.replenishes);
+	let { validatedForm, productId, data, warehouses }: Props = $props();
 
-	const superform = superForm(data.form, {
-		dataType: 'json',
-		onUpdated({ form }) {
-			if (form.valid) {
-				toast.success('Replenish data updated successfully', {
-					description: form.message
-				});
-				invalidate('catalog:products');
-			}
-		}
+	let isSheetOpen = $state(false);
+	let selectedId: number | undefined = $state();
+	let selected = $derived.by(() => {
+		return data.find((v) => v.id === selectedId);
 	});
-	const { form, enhance, tainted, isTainted, allErrors } = superform;
-	let warehousesWithStringValues = $derived(
-		data.warehouses.map((warehouse) => ({
-			value: warehouse.value.toString(),
-			label: warehouse.label
-		}))
-	);
-
-	function selectedWarehouseLabel(value: number | null | undefined): string {
-		if (value === null || value === undefined) return '';
-		return data.warehouses?.find((v) => v.value === value)?.label ?? '';
-	}
-	function addRow() {
-		$form.replenishes.push({
-			m_product_id: data.productId,
-			m_warehouse_id: data.warehouses.reduce((min, warehouse) => {
-				return warehouse.value < min ? warehouse.value : min;
-			}, Number.MAX_SAFE_INTEGER),
-			level_min: 1,
-			level_max: 1,
-			qtybatchsize: 1,
-			m_warehousesource_id: null
-		});
-		$form.replenishes = $form.replenishes;
-	}
 </script>
 
-{#if $allErrors.length}
-	<ul>
-		{#each $allErrors as error}
-			<li class="text-red-500">
-				! {error.messages.join('. ')}
-			</li>
-		{/each}
-	</ul>
-{/if}
-<form method="post" use:enhance action="?/replenishUPD">
-	<Table.Root>
-		<Table.Header>
-			<Table.Row>
-				<Table.Head class="w-1/5">Warehouse</Table.Head>
-				<Table.Head class="w-1/5">Min Level</Table.Head>
-				<Table.Head class="w-1/5">Max Level</Table.Head>
-				<Table.Head class="w-1/5">Batch Size</Table.Head>
-				<Table.Head class="w-1/5">Source Warehouse</Table.Head>
-				<Table.Head></Table.Head>
-			</Table.Row>
-		</Table.Header>
-		<Table.Body>
-			{#each $form.replenishes as _, i}
-				<Table.Row class="*:py-2">
-					<Table.Cell class="w-1/5">
-						<ComboboxZagForm
-							{superform}
-							name="replenishes"
-							field="replenishes[{i}].m_warehouse_id"
-							items={data.warehouses}
-							placeholder="Select a warehouse"
-						/>
-						<!-- <Select.Root
-							type="single"
-							value={$form.replenishes[i].m_warehouse_id.toString()}
-							onValueChange={(v) => {
-								$form.replenishes[i].m_warehouse_id = Number.parseInt(v);
-							}}
-						>
-							<Select.Trigger>
-								{selectedWarehouseLabel($form.replenishes[i].m_warehouse_id)}
-							</Select.Trigger>
-							<Select.Content>
-								{#each warehousesWithStringValues as warehouse}
-									<Select.Item value={warehouse.value}>{warehouse.label}</Select.Item>
-								{/each}
-							</Select.Content>
-						</Select.Root> -->
-					</Table.Cell>
-					<Table.Cell class="w-1/5">
-						<NumberInputZagForm
-							{superform}
-							name="replenishes"
-							field="replenishes[{i}].level_min"
-							fraction={0}
-						/>
-						<!-- <NumberInputZag bind:value={$form.replenishes[i].level_min} fractions={0} /> -->
-					</Table.Cell>
-					<Table.Cell class="w-1/5">
-						<NumberInputZagForm
-							{superform}
-							name="replenishes"
-							field="replenishes[{i}].level_max"
-							fraction={0}
-						/>
-						<!-- <NumberInputZag bind:value={$form.replenishes[i].level_max} fractions={0} /> -->
-					</Table.Cell>
-					<Table.Cell class="w-1/5">
-						<NumberInputZagForm
-							{superform}
-							name="replenishes"
-							field="replenishes[{i}].qtybatchsize"
-							fraction={0}
-						/>
-						<!-- <NumberInputZag bind:value={$form.replenishes[i].qtybatchsize} fractions={0} /> -->
-					</Table.Cell>
-					<Table.Cell class="w-1/5">
-						<ComboboxZagForm
-							{superform}
-							name="replenishes"
-							field="replenishes[{i}].m_warehousesource_id"
-							items={data.warehouses}
-							placeholder="Select a warehouse"
-						/>
-						<!-- <Select.Root
-							type="single"
-							value={$form.replenishes[i].m_warehousesource_id?.toString()}
-							onValueChange={(v) => {
-								$form.replenishes[i].m_warehousesource_id = Number.parseInt(v);
-							}}
-						>
-							<Select.Trigger>
-								{selectedWarehouseLabel($form.replenishes[i].m_warehousesource_id)}
-							</Select.Trigger>
-							<Select.Content>
-								{#each warehousesWithStringValues as warehouse}
-									<Select.Item value={warehouse.value}>{warehouse.label}</Select.Item>
-								{/each}
-							</Select.Content>
-						</Select.Root> -->
-					</Table.Cell>
-					<Table.Cell class="w-1/5">
-						<Button variant="outline" size="icon">
-							<PhX />
-						</Button>
-					</Table.Cell>
+<Card.Root class="mb-4">
+	<Card.Header>
+		<div class="flex items-center justify-between">
+			<Card.Title>Replenish</Card.Title>
+			<Button
+				variant="outline"
+				onclick={() => {
+					selectedId = undefined;
+					isSheetOpen = true;
+				}}
+				>Add
+			</Button>
+		</div>
+		<Card.Description>Manage warehouse replenishment rules</Card.Description>
+	</Card.Header>
+	<Card.Content>
+		<Table.Root>
+			<Table.Header>
+				<Table.Row>
+					<Table.Head class="w-1/5">Warehouse</Table.Head>
+					<Table.Head class="w-1/5">Source Warehouse</Table.Head>
+					<Table.Head class="w-1/5 text-right">Min Level</Table.Head>
+					<Table.Head class="w-1/5 text-right">Max Level</Table.Head>
+					<Table.Head class="w-1/5 text-right">Batch Size</Table.Head>
+					<Table.Head></Table.Head>
 				</Table.Row>
-			{/each}
-		</Table.Body>
-	</Table.Root>
-	<div class=" flex flex-row-reverse gap-4 pt-4 pr-4">
-		<Button variant="outline" onclick={addRow}>Add Row</Button>
-		<Form.Button disabled={!isTainted($tainted)}>Save</Form.Button>
-	</div>
-</form>
+			</Table.Header>
+			<Table.Body>
+				{#each data as row}
+					<Table.Row>
+						<Table.Cell>
+							{labelByValue(row.m_warehouse_id, warehouses)}
+						</Table.Cell>
+						<Table.Cell>
+							{labelByValue(row.m_warehousesource_id, warehouses)}
+						</Table.Cell>
+						<Table.Cell class="text-right">{row.level_min}</Table.Cell>
+						<Table.Cell class="text-right">{row.level_max}</Table.Cell>
+						<Table.Cell class="text-right">{row.qtybatchsize}</Table.Cell>
+						<Table.Cell>
+							<Button
+								variant="ghost"
+								size="icon"
+								onclick={() => {
+									selectedId = row.id;
+									isSheetOpen = !isSheetOpen;
+								}}
+								class="-my-3"
+							>
+								<PhDotsThreeBold />
+							</Button>
+						</Table.Cell>
+					</Table.Row>
+				{/each}
+			</Table.Body>
+		</Table.Root>
+	</Card.Content>
+</Card.Root>
+
+{#if isSheetOpen}
+	<Sheet bind:isSheetOpen bind:data={selected} {validatedForm} {warehouses} />
+{/if}

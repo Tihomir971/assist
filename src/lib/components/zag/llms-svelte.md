@@ -7,7 +7,7 @@ title, content snippet, or thumbnail representing a section of content.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/accordion)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/accordion)
 [Logic Visualizer](https://zag-visualizer.vercel.app/accordion)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/accordion)
 
@@ -99,7 +99,7 @@ recommended by the
 design pattern to ensure the accordion has the appropriate hierarchy on the
 page.
 
-## Opening multiple accordions at once
+### Opening multiple accordions at once
 
 To allow multiple items to be expanded at once, set `multiple` to `true`. This
 mode implicitly sets `collapsible` to `true` and ensures that each accordion can
@@ -111,10 +111,10 @@ const service = useMachine(accordion.machine, {
 })
 ```
 
-## Opening specific accordions
+### Opening accordions by default
 
 To set the value of the accordion(s) that should be opened initially, pass the
-`value` property to the machine function.
+`defaultValue` property to the machine function.
 
 ```jsx {3,4,9}
 // for multiple accordions
@@ -129,7 +129,28 @@ const service = useMachine(accordion.machine, {
 })
 ```
 
-## Toggle each accordion item
+### Controlled accordions
+
+To control the accordion's value, pass the `value` and `onValueChange`
+properties to the machine function.
+
+```svelte
+<script lang="ts">
+  let value = $state(["home"])
+
+  const service = useMachine(accordion.machine, {
+    get value() {
+      return value
+    },
+    onValueChange(details) {
+      value = details.value
+    },
+  })
+</script>
+```
+
+
+### Toggle each accordion item
 
 To collapse an already expanded accordion item by clicking on it, set the
 context's `collapsible` property to `true`.
@@ -142,7 +163,7 @@ const service = useMachine(accordion.machine, {
 })
 ```
 
-## Listening for changes
+#### Listening for changes
 
 When the accordion value changes, the `onValueChange` callback is invoked.
 
@@ -155,7 +176,7 @@ const service = useMachine(accordion.machine, {
 })
 ```
 
-## Disabling an accordion item
+### Disabling an accordion item
 
 To disable a specific accordion item, pass the `disabled: true` property to the
 `getItemProps`, `getItemTriggerProps` and `getItemContentProps`.
@@ -405,7 +426,7 @@ control rotations or orientations, offering accessibility features.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/angle-slider)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/angle-slider)
 [Logic Visualizer](https://zag-visualizer.vercel.app/angle-slider)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/angle-slider)
 
@@ -486,7 +507,9 @@ angle slider machine in your project 🔥
 ```
 
 
-## Setting the initial value
+### Setting the initial value
+
+Use the `defaultValue` property to set the initial value of the angle slider.
 
 ```jsx {2}
 const service = useMachine(angleSlider.machine, {
@@ -494,7 +517,29 @@ const service = useMachine(angleSlider.machine, {
 })
 ```
 
-## Setting the value's granularity
+### Controlled angle slider
+
+To control the angle slider's value, pass the `value` and `onValueChange`
+properties to the machine function.
+
+```svelte
+<script lang="ts">
+  let value = $state(45)
+
+  const service = useMachine(angleSlider.machine, {
+    get value() {
+      return value
+    },
+    onValueChange(details) {
+      value = details.value
+    },
+  })
+
+</script>
+```
+
+
+### Setting the value's granularity
 
 By default, the granularity, is `1`, meaning that the value is always an
 integer. You can change the step attribute to control the granularity.
@@ -508,7 +553,7 @@ const service = useMachine(angleSlider.machine, {
 })
 ```
 
-## Listening for changes
+### Listening for changes
 
 When the angle slider value changes, the `onValueChange` and `onValueChangeEnd`
 callbacks are invoked. You can use this to setup custom behaviors in your app.
@@ -524,7 +569,7 @@ const service = useMachine(angleSlider.machine, {
 })
 ```
 
-## Usage within forms
+### Usage within forms
 
 To use angle slider within forms, use the exposed `hiddenInputProps` from the
 `connect` function and ensure you pass `name` value to the machine's context. It
@@ -537,7 +582,7 @@ const service = useMachine(angleSlider.machine, {
 })
 ```
 
-## Using angle slider marks
+### Using angle slider marks
 
 To show marks or ticks along the angle slider track, use the exposed
 `api.getMarkerProps()` method to position the angle slider marks at desired
@@ -795,7 +840,7 @@ load, or when the image is not provided.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/avatar)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/avatar)
 [Logic Visualizer](https://zag-visualizer.vercel.app/avatar)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/avatar)
 
@@ -859,7 +904,7 @@ avatar machine in your project 🔥
 ```
 
 
-## Listening for loading status changes
+### Listening for loading status changes
 
 When the image has loaded or failed to load, the `onStatusChange` callback is
 invoked.
@@ -976,7 +1021,7 @@ smooth, performant scrolling between slides.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/carousel)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/carousel)
 [Logic Visualizer](https://zag-visualizer.vercel.app/carousel)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/carousel)
 
@@ -1075,7 +1120,7 @@ carousel machine in your project 🔥
 ```
 
 
-## Vertical carousel
+### Vertical carousel
 
 To create a vertical carousel, set the `orientation` property in the machine's
 context to `vertical`.
@@ -1086,13 +1131,14 @@ const service = useMachine(carousel.machine, {
 })
 ```
 
-## Setting the initial slide
+### Setting the initial slide
 
-To set the initial slide of the carousel, pass the `page` property to the
+To set the initial slide of the carousel, pass the `defaultPage` property to the
 machine's context.
 
-The `page` corresponds to the scroll snap position index based on the layout. It
-does not necessarily correspond to the index of the slide in the carousel.
+> The `defaultPage` corresponds to the scroll snap position index based on the
+> layout. It does not necessarily correspond to the index of the slide in the
+> carousel.
 
 ```jsx {2}
 const service = useMachine(carousel.machine, {
@@ -1100,7 +1146,7 @@ const service = useMachine(carousel.machine, {
 })
 ```
 
-## Setting the number of slides to show at a time
+### Setting the number of slides to show at a time
 
 To customize number of slides to show at a time, set the `slidesPerPage`
 property in the machine's context. The value must be an integer.
@@ -1111,7 +1157,7 @@ const service = useMachine(carousel.machine, {
 })
 ```
 
-## Setting the number of slides to move at a time
+### Setting the number of slides to move at a time
 
 To customize number of slides to move at a time, set the `slidesPerMove`
 property in the machine's context. The value must be an integer or `auto`.
@@ -1128,7 +1174,7 @@ const service = useMachine(carousel.machine, {
 > Ensure the `slidesPerMove` is less than or equal to the `slidesPerPage` to
 > avoid skipping slides.
 
-## Setting the carousel should loop around
+### Setting the carousel should loop around
 
 To allow looping of slides, set the `loop` property in the machine's context to
 `true`.
@@ -1139,7 +1185,7 @@ const service = useMachine(carousel.machine, {
 })
 ```
 
-## Setting the gap between slides
+### Setting the gap between slides
 
 To customize spacing between slides, set the `spacing` property in the machine's
 context to a valid CSS unit.
@@ -1150,7 +1196,7 @@ const service = useMachine(carousel.machine, {
 })
 ```
 
-## Listening for page changes
+### Listening for page changes
 
 When the carousel page changes, the `onPageChange` callback is invoked.
 
@@ -1163,7 +1209,7 @@ const service = useMachine(carousel.machine, {
 })
 ```
 
-## Dragging the carousel
+### Dragging the carousel
 
 To allow dragging the carousel with the mouse, set the `allowMouseDrag` property
 in the machine's context to `true`.
@@ -1174,7 +1220,7 @@ const service = useMachine(carousel.machine, {
 })
 ```
 
-## Autoplaying the carousel
+### Autoplaying the carousel
 
 To allow the carousel to autoplay, set the `autoplay` property in the machine's
 context to `true`.
@@ -1484,7 +1530,7 @@ two possible mutually exclusive options.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/checkbox)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/checkbox)
 [Logic Visualizer](https://zag-visualizer.vercel.app/checkbox)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/checkbox)
 
@@ -1555,18 +1601,50 @@ checkbox machine in your project 🔥
 ```
 
 
-## Indeterminate checkboxes
+### Setting the initial checked state
 
-To make a checkbox indeterminate, set the context's `indeterminate` property to
-true
+To make a checkbox checked by default, set the context's `defaultChecked`
+property to `true`
 
 ```jsx {2}
 const service = useMachine(checkbox.machine, {
-  indeterminate: true,
+  defaultChecked: true,
 })
 ```
 
-## Disabling the checkbox
+### Indeterminate checkboxes
+
+To make a checkbox indeterminate, set the `defaultChecked` or `checked` property
+to `"indeterminate"`
+
+```jsx {2}
+const service = useMachine(checkbox.machine, {
+  defaultChecked: "indeterminate",
+})
+```
+
+### Controlled checkbox
+
+To control the checked state programmatically, pass the `checked` and
+`onCheckedChange` properties to the machine function.
+
+```svelte
+<script lang="ts">
+  let checked = $state(false)
+
+  const service = useMachine(checkbox.machine, {
+    get checked() {
+      return checked
+    },
+    onCheckedChange(details) {
+      checked = details.checked
+    },
+  })
+</script>
+```
+
+
+### Disabling the checkbox
 
 To make a checkbox disabled, set the context's `disabled` property to true
 
@@ -1576,18 +1654,7 @@ const service = useMachine(checkbox.machine, {
 })
 ```
 
-## Making it checked by default
-
-To make a checkbox checked by default, set the context's `checked` property to
-`true`
-
-```jsx {2}
-const service = useMachine(checkbox.machine, {
-  defaultChecked: true,
-})
-```
-
-## Listening for changes
+### Listening for changes
 
 When the checkbox value changes, the `onCheckChange` callback is invoked.
 
@@ -1600,17 +1667,23 @@ const service = useMachine(checkbox.machine, {
 })
 ```
 
-## Usage within forms
+### Usage within forms
 
-To use checkbox within forms, use the exposed `hiddenInputProps` from the
-`connect` function and ensure you pass `name` value to the machine's context. It
-will render a hidden input and ensure the value changes get propagated to the
-form correctly.
+To use checkbox within forms, use the exposed `api.getHiddenInputProps()` from
+the `connect` function and ensure you pass `name` value to the machine's
+context.
 
 ```jsx {2}
 const service = useMachine(checkbox.machine, {
   name: "fruits",
 })
+```
+
+Next, render the hidden input and ensure the value changes get propagated to the
+form correctly.
+
+```jsx
+<input {...api.getHiddenInputProps()} />
 ```
 
 ## Styling guide
@@ -1852,7 +1925,7 @@ The clipboard machine allows users to quickly copy content to clipboard.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/clipboard)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/clipboard)
 [Logic Visualizer](https://zag-visualizer.vercel.app/clipboard)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/clipboard)
 
@@ -1929,7 +2002,7 @@ clipboard machine in your project 🔥
 ```
 
 
-## Setting the value to copy
+### Setting the clipboard value
 
 You can set the value to copy by passing a `value` prop to the `machine`
 context.
@@ -1940,7 +2013,7 @@ const service = useMachine(clipboard.machine, {
 })
 ```
 
-## Listening to copy events
+### Listening to copy events
 
 When the value is copied to the clipboard, the `onStatusChange` event is fired.
 You can listen to this event and perform any action you want.
@@ -1953,7 +2026,7 @@ const service = useMachine(clipboard.machine, {
 })
 ```
 
-## Checking if the value is copied
+### Checking if the value is copied
 
 Use the `api.copied` property to check if the value is copied to the clipboard.
 
@@ -1965,7 +2038,7 @@ if (api.copied) {
 }
 ```
 
-## Changing the timeout
+### Changing the timeout
 
 By default, the clipboard machine will automatically reset the state to `idle`
 after `3000ms`. You can change this timeout by passing a `timeout` option to the
@@ -2089,7 +2162,7 @@ A collapsible is a component which expands and collapses a panel.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/collapsible)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/collapsible)
 [Logic Visualizer](https://zag-visualizer.vercel.app/collapsible)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/collapsible)
 
@@ -2149,7 +2222,39 @@ collapsible machine in your project 🔥
 ```
 
 
-## Listening for changes
+### Setting the initial state
+
+Pass the `defaultOpen` machine context property to the machine function to set
+the initial state.
+
+```jsx
+const service = useMachine(collapsible.machine, {
+  defaultOpen: true,
+})
+```
+
+### Controlled collapsible
+
+To control the open state programmatically, pass the `open` and `onOpenChange`
+properties to the machine function.
+
+```svelte
+<script lang="ts">
+  let open = $state(false)
+
+  const service = useMachine(collapsible.machine, {
+    get open() {
+      return open
+    },
+    onOpenChange(details) {
+      open = details.open
+    },
+  })
+</script>
+```
+
+
+### Listening for changes
 
 When the collapsible state changes, the `onOpenChange` callback is invoked.
 
@@ -2162,7 +2267,7 @@ const service = useMachine(collapsible.machine, {
 })
 ```
 
-## Disabling the collapsible
+### Disabling the collapsible
 
 Set the `disabled` machine context property to `true` to disable the
 collapsible.
@@ -2173,7 +2278,7 @@ const service = useMachine(collapsible.machine, {
 })
 ```
 
-## Animating the collapsible
+### Animating the collapsible
 
 Use CSS animations to animate the collapsible when it expands and collapses. The
 `--height` and `--width` custom properties are attached to the content part.
@@ -2380,7 +2485,7 @@ provides a more customizable and consistent user experience.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/color-picker)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/color-picker)
 [Logic Visualizer](https://zag-visualizer.vercel.app/color-picker)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/color-picker)
 
@@ -2481,9 +2586,10 @@ color picker machine in your project 🔥
 ```
 
 
-## Setting the initial value
+### Setting the initial color
 
-To set the initial value of the color picker, use the `value` context property.
+To set the initial color of the color picker, use the `defaultValue` context
+property.
 
 ```jsx
 const [current, send] = useMachine(colorPicker.machine, {
@@ -2491,7 +2597,29 @@ const [current, send] = useMachine(colorPicker.machine, {
 })
 ```
 
-## Listening for change events
+### Controlled color picker
+
+To control the color value programmatically, pass the `value` and
+`onValueChange` properties to the machine function.
+
+```svelte
+<script lang="ts">
+  import * as colorPicker from "@zag-js/color-picker"
+  let value = $state(colorPicker.parse("#ff0000"))
+
+  const service = useMachine(colorPicker.machine, {
+    get value() {
+      return value
+    },
+    onValueChange(details) {
+      value = details.value
+    },
+  })
+</script>
+```
+
+
+### Listening for change events
 
 When the user selects a color using the color picker, the `onValueChange` and
 `onValueChangeEnd` events will be fired.
@@ -2514,7 +2642,7 @@ const [current, send] = useMachine(colorPicker.machine, {
 > When using the `onValueChange` method in React.js, you might need to use the
 > `flushSync` method from `react-dom` to ensure the value is updated in sync
 
-## Using a custom color format
+### Using a custom color format
 
 By default, the color picker's output format is `rgba`. You can change this
 format to either `hsla` or `hsba` by using the `format` context property.
@@ -2531,7 +2659,7 @@ const [current, send] = useMachine(colorPicker.machine, {
 })
 ```
 
-## Showing color presets
+### Showing color presets
 
 Adding color presets in form of swatches can help users pick colors faster. To
 support this, use the `getSwatchTriggerProps(...)` and `getSwatchProps(...)` to
@@ -2572,7 +2700,7 @@ get the props needed to show the swatches buttons.
 ```
 
 
-## Disabling the color picker
+### Disabling the color picker
 
 To disable user interactions with the color picker, set the `disabled` context
 property to `true`.
@@ -2583,7 +2711,7 @@ const [current, send] = useMachine(colorPicker.machine, {
 })
 ```
 
-## Controlling the open and closed state
+### Controlling the open and closed state
 
 To control the open and closed state of the color picker, use the `open` and
 `onOpenChange` context properties.
@@ -2600,7 +2728,7 @@ const [current, send] = useMachine(colorPicker.machine, {
 You can also leverage the `api.setOpen(...)` method to control the open and
 closed state of the color picker.
 
-## Controlling individual color channel
+### Controlling individual color channel
 
 In some cases, you may want to allow users to control the values of each color
 channel individually. You can do this using an input element or a slider
@@ -2657,7 +2785,7 @@ To support this, use the `getChannelInputProps(...)` to show the channel inputs.
 ```
 
 
-## Showing a color preview
+### Showing a color preview
 
 To display the value of a color, use the `getSwatchProps(...)` and pass the
 color value. To show the current color value, use the `api.value`
@@ -2688,7 +2816,7 @@ color value. To show the current color value, use the `api.value`
 > You can pass `respectAlpha: false` to show the color value without the alpha
 > channel
 
-## Adding an eyedropper
+### Adding an eyedropper
 
 The eye dropper tool is a native browser feature that allows a user pick a color
 from a current page's canvas. To support this, use the
@@ -2722,7 +2850,7 @@ from a current page's canvas. To support this, use the
 ```
 
 
-## Usage within forms
+### Usage within forms
 
 To use the color picker within a form, add the `name` context property to the
 machine and render the visually hidden input using the `hiddenInputProps`.
@@ -3151,7 +3279,7 @@ select a value from a collection of possible values.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/combobox)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/combobox)
 [Logic Visualizer](https://zag-visualizer.vercel.app/combobox)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/combobox)
 
@@ -3264,13 +3392,10 @@ combobox machine in your project 🔥
 ```
 
 
-## Setting the initial value
+### Setting the initial value
 
-To set the initial value of the combobox, pass the `value` property to the
-machine's context.
-
-> The `value` property must be an array of strings. If selecting a single value,
-> pass an array with a single string.
+To set the initial value of the combobox, pass the `defaultValue` property to
+the machine's context.
 
 ```jsx {13}
 const collection = combobox.collection({
@@ -3289,7 +3414,28 @@ const service = useMachine(combobox.machine, {
 })
 ```
 
-## Selecting multiple values
+### Controlled combobox
+
+To control the value programmatically, pass the `value` and `onValueChange`
+properties to the machine function.
+
+```svelte
+<script lang="ts">
+  let value = $state(["ng"])
+
+  const service = useMachine(combobox.machine, {
+    get value() {
+      return value
+    },
+    onValueChange(details) {
+      value = details.value
+    },
+  })
+</script>
+```
+
+
+### Selecting multiple values
 
 To allow selecting multiple values, set the `multiple` property in the machine's
 context to `true`.
@@ -3302,7 +3448,7 @@ const service = useMachine(combobox.machine, {
 })
 ```
 
-## Using a custom object format
+### Using a custom object format
 
 By default, the combobox collection expects an array of items with `label` and
 `value` properties. To use a custom object format, pass the `itemToString` and
@@ -3343,7 +3489,7 @@ const service = useMachine(combobox.machine, {
 })
 ```
 
-## Rendering the selected values outside the combobox
+### Rendering the selected values outside the combobox
 
 By default, the selected values of a combobox are displayed in the input
 element, when selecting multiple items, it is a better UX to render the selected
@@ -3365,7 +3511,7 @@ const service = useMachine(combobox.machine, {
 })
 ```
 
-## Disabling the combobox
+### Disabling the combobox
 
 To make a combobox disabled, set the context's `disabled` property to `true`
 
@@ -3375,7 +3521,7 @@ const service = useMachine(combobox.machine, {
 })
 ```
 
-## Disabling an option
+### Disabling an option
 
 To make a combobox option disabled, pass the `isItemDisabled` property to the
 collection function.
@@ -3392,7 +3538,7 @@ const service = useMachine(combobox.machine, {
 })
 ```
 
-## Close on select
+### Close on select
 
 This behaviour ensures that the menu is closed when an option is selected and is
 `true` by default. It's only concerned with when an option is selected with
@@ -3405,7 +3551,7 @@ const service = useMachine(combobox.machine, {
 })
 ```
 
-## Making the combobox readonly
+### Making the combobox readonly
 
 To make a combobox readonly, set the context's `readOnly` property to `true`
 
@@ -3415,7 +3561,7 @@ const service = useMachine(combobox.machine, {
 })
 ```
 
-## Listening for highlight changes
+### Listening for highlight changes
 
 When an option is highlighted with the pointer or keyboard, use the
 `onHighlightChange` property to listen for this change and do something with it.
@@ -3430,7 +3576,7 @@ const service = useMachine(combobox.machine, {
 })
 ```
 
-## Listening for value changes
+### Listening for value changes
 
 When an item is selected, use `onValueChange` property to listen for this change
 and do something with it.
@@ -3444,7 +3590,7 @@ const service = useMachine(combobox.machine, {
 })
 ```
 
-## Usage within forms
+### Usage within forms
 
 The combobox works when placed within a form and the form is submitted. We
 achieve this by:
@@ -3461,7 +3607,7 @@ const service = useMachine(combobox.machine, {
 })
 ```
 
-## Allowing custom values
+### Allowing custom values
 
 By default, the combobox only allows selecting values from the collection. To
 allow custom values, set the `allowCustomValue` property in the machine's
@@ -4011,7 +4157,7 @@ choosing a date from the calendar.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/date-picker)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/date-picker)
 [Logic Visualizer](https://zag-visualizer.vercel.app/date-picker)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/date-picker)
 
@@ -4173,7 +4319,7 @@ date-picker machine in your project 🔥
 ```
 
 
-## Setting the initial date
+### Setting the initial date
 
 To set the initial value that is rendered by the date picker, set the `value`
 property in the machine context.
@@ -4184,7 +4330,7 @@ const service = useMachine(datepicker.machine, {
 })
 ```
 
-## Controlling the selected date
+### Controlling the selected date
 
 Use the `api.setValue` method to control the selected date in the DatePicker
 component.
@@ -4200,7 +4346,7 @@ api.setValue(nextValue)
 > Alternatively, you can also use the `value` and `onValueChange` callbacks to
 > programmatically control the selected date.
 
-## Controlling the open state
+### Controlling the open state
 
 To manage the open state of the datepicker's dialog, we recommended using
 `api.setOpen` method.
@@ -4216,7 +4362,7 @@ api.setOpen(false)
 > Alternatively, you can also use the `open` and `onOpenChange` callbacks to
 > programmatically control the open state.
 
-## Setting the min and max dates
+### Setting the min and max dates
 
 To constrain the date range that can be selected by the user, set the `min` and
 `max` properties in the machine context.
@@ -4231,7 +4377,7 @@ const service = useMachine(datepicker.machine, {
 When the min or max date value is reached, the next and prev triggers will be
 disabled.
 
-## Changing the start of the week
+### Changing the start of the week
 
 Set the `startOfWeek` property in the machine context to change the start of the
 week. The property accepts a number from `0` to `6`, where `0` is Sunday and `6`
@@ -4243,7 +4389,7 @@ const service = useMachine(datepicker.machine, {
 })
 ```
 
-## Disabling the date picker
+### Disabling the date picker
 
 To disable the date picker, set the `disabled` property in the machine context
 to `true`.
@@ -4254,7 +4400,7 @@ const service = useMachine(datepicker.machine, {
 })
 ```
 
-## Rendering month and year pickers
+### Rendering month and year pickers
 
 To render the month and year pickers, use the `api.getMonthSelectProps` and
 `api.getYearSelectProps` prop getters.
@@ -4279,7 +4425,7 @@ To render the month and year pickers, use the `api.getMonthSelectProps` and
 </div>
 ```
 
-## Marking unavailable dates
+### Marking unavailable dates
 
 To mark specific dates as unavailable, set the `isDateUnavailable` function in
 the machine context. This function should return `true` for dates that are
@@ -4309,7 +4455,7 @@ const service = useMachine(datepicker.machine, {
 })
 ```
 
-## Setting the calendar starting view
+### Setting the calendar starting view
 
 The calendar view is set to `day` by default. To change the starting view of the
 calendar, set the `view` property in the machine context to either `day`,
@@ -4321,7 +4467,7 @@ const service = useMachine(datepicker.machine, {
 })
 ```
 
-## Setting the read-only mode
+### Setting the read-only mode
 
 Set the `readOnly` property in the machine context to `true` to make the date
 picker read-only. This means that users can't change the selected date.
@@ -4332,7 +4478,7 @@ const service = useMachine(datepicker.machine, {
 })
 ```
 
-## Setting the focused date
+### Setting the focused date
 
 The datepicker's focused date is set to either the first selected date or
 today's date by default.
@@ -4346,7 +4492,7 @@ const service = useMachine(datepicker.machine, {
 })
 ```
 
-## Rendering the calendar inline
+### Rendering the calendar inline
 
 To render the calendar inline, we recommended setting the `open` property to
 `true` and `closeOnSelect` to `false`.
@@ -4358,7 +4504,7 @@ const service = useMachine(datepicker.machine, {
 })
 ```
 
-## Usage within a form
+### Usage within a form
 
 To use the date picker within a form, set the `name` property in the machine
 context. This property is used to identify the date picker in the form data.
@@ -4369,7 +4515,7 @@ const service = useMachine(datepicker.machine, {
 })
 ```
 
-## Rendering fixed number of weeks
+### Rendering fixed number of weeks
 
 The datepicker's calendar will render the weeks needed to display all of the
 days in the month. Sometimes this can result in a jump in the UI when navigating
@@ -4384,7 +4530,7 @@ const service = useMachine(datepicker.machine, {
 })
 ```
 
-## Listening to date changes
+### Listening to date changes
 
 To listen to date changes, use the `onValueChange` callback in the machine
 context.
@@ -4398,7 +4544,7 @@ const service = useMachine(datepicker.machine, {
 })
 ```
 
-## Listening to view changes
+### Listening to view changes
 
 When the calendar view changes by click on the view controls, the `onViewChange`
 callback is invoked.
@@ -4410,6 +4556,51 @@ const service = useMachine(datepicker.machine, {
     console.log("view changed to:", details.view)
   },
 })
+```
+
+### Rendering multiple months
+
+To display multiple months in the calendar
+
+- set the `numOfMonths` prop to the desired number of months
+- generate the weeks for the offset months using `api.getOffset({ months: 1 })`
+
+```tsx
+const service = useMachine(datepicker.machine, {
+  // ...
+  numOfMonths: 2,
+})
+
+const offset = api.getOffset({ months: 1 })
+```
+
+Next, render the calendar for the offset months.
+
+```tsx
+<tbody {...api.getTableBodyProps({ view: "day" })}>
+  {offset.weeks.map((week, i) => (
+    <tr key={i} {...api.getTableRowProps({ view: "day" })}>
+      {week.map((value, i) => (
+        <td
+          key={i}
+          {...api.getDayTableCellProps({
+            value,
+            visibleRange: offset.visibleRange,
+          })}
+        >
+          <div
+            {...api.getDayTableCellTriggerProps({
+              value,
+              visibleRange: offset.visibleRange,
+            })}
+          >
+            {value.day}
+          </div>
+        </td>
+      ))}
+    </tr>
+  ))}
+</tbody>
 ```
 
 ## Styling guide
@@ -4514,6 +4705,10 @@ Description: Whether the calendar is disabled.
 **`readOnly`**
 Type: `boolean`
 Description: Whether the calendar is read-only.
+
+**`outsideDaySelectable`**
+Type: `boolean`
+Description: Whether day outside the visible range can be selected.
 
 **`min`**
 Type: `DateValue`
@@ -4811,7 +5006,7 @@ interact with it.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/dialog)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/dialog)
 [Logic Visualizer](https://zag-visualizer.vercel.app/dialog)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/dialog)
 
@@ -4894,7 +5089,7 @@ dialog machine in your project 🔥
 ```
 
 
-## Managing focus within the dialog
+### Managing focus within the dialog
 
 When the dialog opens, it automatically sets focus on the first focusable
 elements and traps focus within it, so that tabbing is constrained to it.
@@ -4925,7 +5120,7 @@ element)
 To set the element that receives focus when the dialog closes, pass the
 `finalFocusEl` in the similar fashion as shown above.
 
-## Closing the dialog on interaction outside
+### Closing the dialog on interaction outside
 
 By default, the dialog closes when you click its overlay. You can set
 `closeOnInteractOutside` to `false` if you want the modal to stay visible.
@@ -4950,7 +5145,7 @@ const service = useMachine(dialog.machine, {
 })
 ```
 
-## Listening for open state changes
+### Listening for open state changes
 
 When the dialog is opened or closed, the `onOpenChange` callback is invoked.
 
@@ -4963,7 +5158,28 @@ const service = useMachine(dialog.machine, {
 })
 ```
 
-## Controlling the scroll behavior
+### Controlled dialog
+
+To control the dialog's open state, pass the `open` and `onOpenChange`
+properties.
+
+```svelte
+<script lang="ts">
+  let open = $state(false)
+
+  const service = useMachine(dialog.machine, {
+    get open() {
+      return open
+    },
+    onOpenChange(details) {
+      open = details.open
+    },
+  })
+</script>
+```
+
+
+### Controlling the scroll behavior
 
 When the dialog is open, it prevents scrolling on the `body` element. To disable
 this behavior, set the `preventScroll` context to `false`.
@@ -4974,7 +5190,7 @@ const service = useMachine(dialog.machine, {
 })
 ```
 
-## Creating an alert dialog
+### Creating an alert dialog
 
 The dialog has support for dialog and alert dialog roles. It's set to `dialog`
 by default. To change it's role, pass the `role: alertdialog` property to the
@@ -5200,7 +5416,7 @@ triggered (click, focus, or double-click).
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/editable)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/editable)
 [Logic Visualizer](https://zag-visualizer.vercel.app/editable)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/editable)
 
@@ -5274,10 +5490,10 @@ editable machine in your project 🔥
 ```
 
 
-## Setting the initial value
+### Setting the initial value
 
-To set the initial value of the editable, pass the `value` property to the
-machine's context.
+To set the initial value of the editable, pass the `defaultValue` property to
+the machine's context.
 
 ```jsx {2}
 const service = useMachine(editable.machine, {
@@ -5285,7 +5501,7 @@ const service = useMachine(editable.machine, {
 })
 ```
 
-## Listening for value changes
+### Listening for value changes
 
 The editable machine supports two ways of listening for value changes:
 
@@ -5303,7 +5519,7 @@ const service = useMachine(editable.machine, {
 })
 ```
 
-## Using custom controls
+### Using custom controls
 
 In some cases, you might need to use custom controls to toggle the edit and read
 mode. We use the render prop pattern to provide access to the internal state of
@@ -5339,7 +5555,7 @@ the component.
 ```
 
 
-## Auto-resizing the editable
+### Auto-resizing
 
 To auto-grow the editable as the content changes, pass the `autoResize: true`
 property to the machine's context.
@@ -5370,7 +5586,7 @@ const service = useMachine(editable.machine, {
 When the editable reaches the specified max-width, it'll clip the preview text
 with an ellipsis.
 
-## Editing with double click
+### Editing with double click
 
 The editable supports two modes of activating the "edit" state:
 
@@ -5386,7 +5602,7 @@ const service = useMachine(editable.machine, {
 })
 ```
 
-## Usage with Textarea
+### Usage with Textarea
 
 The editable machine supports using a `textarea` instead of an `input` field.
 When a textarea is used, the editable will commit the value on `Cmd + Enter` or
@@ -5670,7 +5886,7 @@ drag-n-drop version.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/file-upload)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/file-upload)
 [Logic Visualizer](https://zag-visualizer.vercel.app/file-upload)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/file-upload)
 
@@ -5752,7 +5968,7 @@ file upload machine in your project 🔥
 ```
 
 
-## Setting the accepted file types
+### Setting the accepted file types
 
 Use the `accept` attribute to set the accepted file types.
 
@@ -5774,7 +5990,7 @@ const service = useMachine(fileUpload.machine, {
 })
 ```
 
-## Setting the maximum number of files
+### Setting the maximum number of files
 
 Use the `maxFiles` attribute to set the maximum number of files that can be
 uploaded. This will set the `multiple` attribute on the underlying input
@@ -5786,7 +6002,7 @@ const service = useMachine(fileUpload.machine, {
 })
 ```
 
-## Setting the maximum size per file
+### Setting the maximum size per file
 
 Use the `maxFileSize` attribute to set the maximum size per file that can be
 uploaded.
@@ -5797,7 +6013,7 @@ const service = useMachine(fileUpload.machine, {
 })
 ```
 
-## Listening to file changes
+### Listening to file changes
 
 When files are uploaded, the `onFileChange` callback is invoked with the details
 of the accepted and rejected files.
@@ -5812,7 +6028,7 @@ const service = useMachine(fileUpload.machine, {
 })
 ```
 
-## Usage within a form
+### Usage within a form
 
 To use the file upload within a form, set the `name` attribute in the machine's
 context, and ensure you render the input element `api.getHiddenInputProps()`
@@ -5823,7 +6039,7 @@ const service = useMachine(fileUpload.machine, {
 })
 ```
 
-## Displaying image preview
+### Displaying image preview
 
 To display a preview of the uploaded image, use the built-in FileReader API to
 read the file and set the `src` attribute of an image element.
@@ -5841,7 +6057,7 @@ const service = useMachine(fileUpload.machine, {
 })
 ```
 
-## Applying custom validation
+### Applying custom validation
 
 To apply custom validation, set the `validate` attribute to a function that
 returns an **array of error strings**.
@@ -5895,7 +6111,7 @@ const service = useMachine(fileUpload.machine, {
 })
 ```
 
-## Disabling drag and drop
+### Disabling drag and drop
 
 To disable the drag and drop functionality, set the `allowDrop` context property
 to `false`.
@@ -5906,7 +6122,7 @@ const service = useMachine(fileUpload.machine, {
 })
 ```
 
-## Allowing directory selection
+### Allowing directory selection
 
 Set the `directory` property to `true` to enable selecting directories instead
 of files.
@@ -5922,7 +6138,7 @@ const service = useMachine(fileUpload.machine, {
 })
 ```
 
-## Supporting media capture on mobile devices
+### Supporting media capture on mobile devices
 
 Set the `capture` property to specify the media capture mechanism to capture
 media on the spot. The value can be:
@@ -5939,7 +6155,7 @@ const service = useMachine(fileUpload.machine, {
 })
 ```
 
-## Pasting files from clipboard
+### Pasting files from clipboard
 
 After a user copies an image, to allow pasting the files from the clipboard, you
 can listen for the paste event and use the `api.setFiles` method to set the
@@ -6379,9 +6595,9 @@ floating panel machine in your project 🔥
 ```
 
 
-## Resizing
+### Resizing
 
-### Setting the initial size
+#### Setting the initial size
 
 To set the initial size of the floating panel, you can pass the `defaultSize`
 prop to the machine.
@@ -6392,7 +6608,7 @@ const service = useMachine(floatingPanel.machine, {
 })
 ```
 
-### Controlling the size
+#### Controlling the size
 
 To control the size of the floating panel programmatically, you can pass the
 `size` `onResize` prop to the machine.
@@ -6407,7 +6623,7 @@ const service = useMachine(floatingPanel.machine, {
 })
 ```
 
-### Disable resizing
+#### Disable resizing
 
 By default, the panel can be resized by dragging its edges (resize handles). To
 disable this behavior, set the `resizable` prop to `false`.
@@ -6418,7 +6634,7 @@ const service = useMachine(floatingPanel.machine, {
 })
 ```
 
-### Setting size constraints
+#### Setting size constraints
 
 You can also control the minimum allowed dimensions of the panel by using the
 `minSize` and `maxSize` props.
@@ -6442,9 +6658,9 @@ const service = useMachine(floatingPanel.machine, {
 })
 ```
 
-## Positioning
+### Positioning
 
-### Setting the initial position
+#### Setting the initial position
 
 To specify the initial position of the floating panel, use the `defaultPosition`
 prop. If `defaultPosition` is not provided, the floating panel will be initially
@@ -6456,7 +6672,7 @@ const service = useMachine(floatingPanel.machine, {
 })
 ```
 
-### Anchor position
+#### Anchor position
 
 An alternative to setting the initial position is to provide a function that
 returns the anchor position. This function is called when the panel is opened
@@ -6473,7 +6689,7 @@ const service = useMachine(floatingPanel.machine, {
 })
 ```
 
-### Controlling the position
+#### Controlling the position
 
 To control the position of the floating panel programmatically, you can pass the
 `position` and `onPositionChange` prop to the machine.
@@ -6488,16 +6704,16 @@ const service = useMachine(floatingPanel.machine, {
 })
 ```
 
-### Disable dragging
+#### Disable dragging
 
 The floating panel enables you to set its position and move it by dragging. To
 disable this behavior, set the `draggable` prop to `false`.
 
-## Events
+### Events
 
 The floating panel generates a variety of events that you can handle.
 
-### Open State
+#### Open State
 
 When the floating panel is `opened` or `closed`, the `onOpenChange` callback is
 invoked.
@@ -6511,7 +6727,7 @@ const service = useMachine(floatingPanel.machine, {
 })
 ```
 
-### Position Change
+#### Position Change
 
 When the position of the floating panel changes, these callbacks are invoked:
 
@@ -6531,7 +6747,7 @@ const service = useMachine(floatingPanel.machine, {
 })
 ```
 
-### Resize
+#### Resize
 
 When the size of the floating panel changes, these callbacks are invoked:
 
@@ -6551,7 +6767,7 @@ const service = useMachine(floatingPanel.machine, {
 })
 ```
 
-## Minimizing and Maximizing
+#### Minimizing and Maximizing
 
 The floating panel can be minimized, default, and maximized by clicking the
 respective buttons in the header. We refer to this as the panel's `stage`.
@@ -6892,7 +7108,7 @@ An hover card allows sighted users to preview content available behind a link
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/hover-card)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/hover-card)
 [Logic Visualizer](https://zag-visualizer.vercel.app/hover-card)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/hover-card)
 
@@ -6971,9 +7187,9 @@ hover-card machine in your project 🔥
 ```
 
 
-## Making it opened initially
+### Setting the initial state
 
-To make an hover card open by default, set the context's `open` property to true
+To make an hover card open by default, set the `defaultOpen` property to `true`
 
 ```jsx {2}
 const service = useMachine(hoverCard.machine, {
@@ -6981,7 +7197,7 @@ const service = useMachine(hoverCard.machine, {
 })
 ```
 
-## Listening for open state changes
+### Listening for open state changes
 
 When the hover card is `opened` or `closed`, the `onOpenChange` callback is
 invoked.
@@ -7151,7 +7367,7 @@ single and multiple selection modes.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/listbox)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/listbox)
 [Logic Visualizer](https://zag-visualizer.vercel.app/listbox)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/listbox)
 
@@ -7245,7 +7461,7 @@ listbox machine in your project 🔥
 ```
 
 
-## Setting the initial selection
+### Setting the initial selection
 
 To set the initial selection, you can use the `defaultValue` property.
 
@@ -7256,7 +7472,7 @@ const service = useMachine(listbox.machine, {
 })
 ```
 
-## Controlling the selection
+### Controlling the selection
 
 To control the selection programmatically, you can use the `value` and
 `onValueChange` properties.
@@ -7270,7 +7486,7 @@ const service = useMachine(listbox.machine, {
 })
 ```
 
-## Filtering
+### Filtering
 
 The listbox component supports filtering of items via `api.getInputProps`.
 Here's an example of how to support searching through a list of items.
@@ -7332,7 +7548,7 @@ Here's an example of how to support searching through a list of items.
 ```
 
 
-## Selecting multiple items
+### Selecting multiple items
 
 To enable multiple selection, set the `selectionMode` property to `multiple` or
 `extended`.
@@ -7344,7 +7560,7 @@ const service = useMachine(listbox.machine, {
 })
 ```
 
-## Selection Modes
+### Selection Modes
 
 By default, a user can select a single item in a listbox. You can set the
 `selectionMode` property to a SelectionMode enumeration value to enable
@@ -7365,7 +7581,7 @@ const service = useMachine(listbox.machine, {
 })
 ```
 
-## Disabling items
+### Disabling items
 
 To disable an item, you can use the `disabled` property.
 
@@ -7384,7 +7600,7 @@ const service = useMachine(listbox.machine, {
 })
 ```
 
-## Grid layout
+### Grid layout
 
 To enable a grid layout, provide a grid collection to the `collection` property.
 
@@ -7752,7 +7968,7 @@ actions or options that a user can choose.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/menu)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/menu)
 [Logic Visualizer](https://zag-visualizer.vercel.app/menu)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/menu)
 
@@ -7832,7 +8048,7 @@ menu machine in your project 🔥
 ```
 
 
-## Listening for item selection
+### Listening for item selection
 
 When a menu item is clicked, the `onSelect` callback is invoked.
 
@@ -7845,7 +8061,7 @@ const service = useMachine(menu.machine, {
 })
 ```
 
-## Listening for open state changes
+### Listening for open state changes
 
 When a menu is opened or closed, the `onOpenChange` callback is invoked.
 
@@ -7858,7 +8074,7 @@ const service = useMachine(menu.machine, {
 })
 ```
 
-## Grouping menu items
+### Grouping menu items
 
 When the number of menu items gets much, it might be useful to group related
 menu items. To achieve this:
@@ -7882,7 +8098,7 @@ menu items. To achieve this:
 //...
 ```
 
-## Checkbox and Radio option items
+### Checkbox and Radio option items
 
 To use checkbox or radio option items, you'll need to:
 
@@ -8283,7 +8499,7 @@ right-clicked or long pressed.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/menu)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/menu)
 [Logic Visualizer](https://zag-visualizer.vercel.app/menu)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/menu)
 
@@ -8479,7 +8695,7 @@ actions or options that a user can choose.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/menu)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/menu)
 [Logic Visualizer](https://zag-visualizer.vercel.app/menu)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/menu)
 
@@ -8707,7 +8923,7 @@ numeric values using the keyboard or pointer.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/number-input)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/number-input)
 [Logic Visualizer](https://zag-visualizer.vercel.app/number-input)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/number-input)
 
@@ -8787,12 +9003,10 @@ number input machine in your project 🔥
 ```
 
 
-## Setting the initial value
+### Setting the initial value
 
-To set the initial value of the number input, you can set the `value` context
-property.
-
-> **Note:** The value must be a string
+Use the `defaultValue` context property to set the initial value of the number
+input. The value must be a `string` not a `number`.
 
 ```jsx {2}
 const service = useMachine(numberInput.machine, {
@@ -8800,7 +9014,31 @@ const service = useMachine(numberInput.machine, {
 })
 ```
 
-## Setting a minimum and maximum value
+### Controlled value
+
+Use the `value` and `onValueChange` context properties to control the value of
+the number input.
+
+> **Note:** Due the fact that value can be formatted, it's important to preserve
+> the value as a string.
+
+```svelte
+<script lang="ts">
+  let value = $state("")
+
+  const service = useMachine(numberInput.machine, {
+    get value() {
+      return value
+    },
+    onValueChange(details) {
+      value = details.value
+    },
+  })
+</script>
+```
+
+
+### Setting a minimum and maximum value
 
 Pass the `min` prop or `max` prop to set an upper and lower limit for the input.
 By default, the input will restrict the value to stay within the specified
@@ -8816,7 +9054,7 @@ const service = useMachine(numberInput.machine, {
 > To allow the value overflow the specified min or max, set the
 > `allowOverflow: true` in the context.
 
-## Scrubbing the input value
+### Scrubbing the input value
 
 The number input machine supports the scrubber interaction pattern. The use this
 pattern, spread the `scrubberProps` from the `api` on to the scrubbing element.
@@ -8845,7 +9083,7 @@ virtual cursor which mimics the real cursor's pointer.
 ```
 
 
-## Using the mousewheel to change value
+### Using the mousewheel to change value
 
 The number input machine exposes a way to increment/decrement the value using
 the mouse wheel event. To activate this, pass the `allowMouseWheel` property to
@@ -8857,7 +9095,7 @@ const service = useMachine(numberInput.machine, {
 })
 ```
 
-## Clamp value when user blurs the input
+### Clamp value when user blurs the input
 
 In most cases, users can type custom values in the input field. If the typed
 value is greater than the max, the value is reset to max when the user blur out
@@ -8871,7 +9109,7 @@ const service = useMachine(numberInput.machine, {
 })
 ```
 
-## Listening for value changes
+### Listening for value changes
 
 When the value changes, the `onValueChange` callback is invoked.
 
@@ -8884,7 +9122,7 @@ const service = useMachine(numberInput.machine, {
 })
 ```
 
-## Usage within forms
+### Usage within forms
 
 To use the number input within forms, set the `name` property in the machine's
 context.
@@ -8895,7 +9133,7 @@ const service = useMachine(numberInput.machine, {
 })
 ```
 
-## Adjusting the precision of the value
+### Adjusting the precision of the value
 
 To format the input value to be rounded to specific decimal points, set the
 `formatOptions` and provide `Intl.NumberFormatOptions` such as
@@ -8910,7 +9148,7 @@ const service = useMachine(numberInput.machine, {
 })
 ```
 
-## Disabling long press spin
+### Disabling long press spin
 
 To disable the long press spin, set the `spinOnPress` to `false`.
 
@@ -8920,7 +9158,7 @@ const service = useMachine(numberInput.machine, {
 })
 ```
 
-## Format and parse value
+### Format and parse value
 
 To apply custom formatting to the input's value, set the `formatOptions` and
 provide `Intl.NumberFormatOptions` such as `style` and `currency`
@@ -9281,7 +9519,7 @@ split information, instead of being shown on a single page.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/pagination)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/pagination)
 [Logic Visualizer](https://zag-visualizer.vercel.app/pagination)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/pagination)
 
@@ -9617,7 +9855,7 @@ focus transfers to the next input in the sequence, until every input is filled.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/pin-input)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/pin-input)
 [Logic Visualizer](https://zag-visualizer.vercel.app/pin-input)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/pin-input)
 
@@ -9694,10 +9932,10 @@ input machine in your project 🔥
 ```
 
 
-## Setting a default value
+### Setting a default value
 
-To set the initial value of the pin input, pass the `value` property to the
-machine's context.
+Use the `defaultValue` context property to set the initial value of the pin
+input. The value must be an array of strings.
 
 ```jsx {2}
 const service = useMachine(pinInput.machine, {
@@ -9705,7 +9943,28 @@ const service = useMachine(pinInput.machine, {
 })
 ```
 
-## Changing the placeholder
+### Controlled value
+
+Use the `value` and `onValueChange` properties to programmatically control the
+value of the pin input.
+
+```svelte
+<script lang="ts">
+  let value = $state(["", "", "", ""])
+
+  const service = useMachine(pinInput.machine, {
+    get value() {
+      return value
+    },
+    onValueChange(details) {
+      value = details.value
+    },
+  })
+</script>
+```
+
+
+### Changing the placeholder
 
 To customize the default pin input placeholder (○) for each input, pass the
 `placeholder` prop and set it to your desired value.
@@ -9716,7 +9975,7 @@ const service = useMachine(pinInput.machine, {
 })
 ```
 
-## Blur on complete
+### Blur on complete
 
 By default, the last input maintains focus when filled and we invoke the
 `onComplete` callback. To blur the last input when the user completes the input,
@@ -9728,7 +9987,7 @@ const service = useMachine(pinInput.machine, {
 })
 ```
 
-## Allowing alphanumeric values
+### Allowing alphanumeric values
 
 By default, the pin input accepts only number values but you can choose between
 `numeric`, `alphanumeric` and `alphabetic` values. To change the input mode,
@@ -9740,7 +9999,7 @@ const service = useMachine(pinInput.machine, {
 })
 ```
 
-## Using OTP mode
+### Using OTP mode
 
 To trigger smartphone OTP auto-suggestion, it is recommended to set the
 `autocomplete` attribute to "one-time-code". The pin-input machine provides
@@ -9753,7 +10012,7 @@ const service = useMachine(pinInput.machine, {
 })
 ```
 
-## Securing the text input
+### Securing the text input
 
 When collecting private or sensitive information using the pin input, you might
 need to mask the value entered, similar to `<input type="password"/>`. Pass the
@@ -9765,7 +10024,7 @@ const service = useMachine(pinInput.machine, {
 })
 ```
 
-## Listening for changes
+### Listening for changes
 
 The pin input machine invokes several callback functions when the user enters:
 
@@ -9792,7 +10051,7 @@ const service = useMachine(pinInput.machine, {
 })
 ```
 
-## RTL support
+### RTL support
 
 The pin input machine supports RTL writing directions. To set the `dir` property
 in the machine's context.
@@ -10059,7 +10318,7 @@ clickable trigger element.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/popover)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/popover)
 [Logic Visualizer](https://zag-visualizer.vercel.app/popover)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/popover)
 
@@ -10136,7 +10395,7 @@ popover machine in your project 🔥
 ```
 
 
-## Rendering the popover in a portal
+### Rendering the popover in a portal
 
 By default, the popover is rendered in the same DOM hierarchy as the trigger. To
 render the popover within a portal, pass `portalled: true` property to the
@@ -10168,7 +10427,7 @@ machine's context.
 ```
 
 
-## Managing focus within popover
+### Managing focus within popover
 
 When the popover open, focus is automatically set to the first focusable element
 within the popover. To customize the element that should get focus, set the
@@ -10192,7 +10451,7 @@ within the popover. To customize the element that should get focus, set the
 ```
 
 
-## Changing the modality
+### Changing the modality
 
 In some cases, you might want the popover to be **modal**. This means that
 it'll:
@@ -10213,7 +10472,7 @@ const service = useMachine(popover.machine, {
 })
 ```
 
-## Close behavior
+### Close behavior
 
 The popover is designed to close on blur and when the `esc` key is pressed.
 
@@ -10235,7 +10494,7 @@ const service = useMachine(popover.machine, {
 })
 ```
 
-## Adding an arrow
+### Adding an arrow
 
 To render an arrow within the popover, use the `api.getArrowProps()` and
 `api.getArrowTipProps()`.
@@ -10257,7 +10516,7 @@ return (
 //...
 ```
 
-## Changing the placement
+### Changing the placement
 
 To change the placement of the popover, set the `positioning.placement` property
 in the machine's context.
@@ -10270,7 +10529,7 @@ const service = useMachine(popover.machine, {
 })
 ```
 
-## Listening for open state changes
+### Listening for open state changes
 
 When the popover is opened or closed, the `onOpenChange` callback is invoked.
 
@@ -10283,7 +10542,7 @@ const service = useMachine(popover.machine, {
 })
 ```
 
-## Usage within dialog
+### Usage within dialog
 
 When using the popover within a dialog, avoid rendering the popover in a
 `Portal` or `Teleport`. This is because the dialog will trap focus within it,
@@ -10523,7 +10782,7 @@ animation before removing or hiding it.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/presence)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/presence)
 [Logic Visualizer](https://zag-visualizer.vercel.app/presence)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/presence)
 
@@ -10653,7 +10912,7 @@ of a task such as downloading a file, uploading an image, etc.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/progress)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/progress)
 [Logic Visualizer](https://zag-visualizer.vercel.app/progress)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/progress)
 
@@ -10724,9 +10983,10 @@ progress machine in your project 🔥
 ```
 
 
-## Setting the value
+### Setting the value
 
-Use the `api.setValue` method to set the value of the progress bar.
+Pass the `defaultValue` or `value` property to the machine function to set the
+initial value of the progress bar.
 
 ```jsx {2}
 const service = useMachine(progress.machine, {
@@ -10734,7 +10994,14 @@ const service = useMachine(progress.machine, {
 })
 ```
 
-## Setting the minimum and maximum values
+Subsequently, you can use the `api.setValue` method to set the value of the
+progress bar.
+
+```jsx
+api.setValue(50)
+```
+
+### Setting the minimum and maximum values
 
 By default, the progress bar has a minimum value of `0` and a maximum value of
 `100`. You can change these values by passing the `min` and `max` options to the
@@ -10747,7 +11014,7 @@ const service = useMachine(progress.machine, {
 })
 ```
 
-## Using the indeterminate state
+### Using the indeterminate state
 
 The progress component is determinate by default, with the value and max set to
 `50` and `100` respectively.
@@ -10761,7 +11028,7 @@ const service = useMachine(progress.machine, {
 })
 ```
 
-## Showing a value text
+### Showing a value text
 
 Progress bars can only be interpreted by sighted users. To include a text
 description to support assistive technologies like screen readers, use the
@@ -10848,7 +11115,7 @@ progress of a task such as downloading a file, uploading an image, etc.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/progress)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/progress)
 [Logic Visualizer](https://zag-visualizer.vercel.app/progress)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/progress)
 
@@ -10922,9 +11189,10 @@ progress machine in your project 🔥
 ```
 
 
-## Setting the value
+### Setting the value
 
-Use the `api.setValue` method to set the value of the progress bar.
+Pass the `defaultValue` or `value` property to the machine function to set the
+initial value of the progress bar.
 
 ```jsx {2}
 const service = useMachine(progress.machine, {
@@ -10932,7 +11200,14 @@ const service = useMachine(progress.machine, {
 })
 ```
 
-## Setting the minimum and maximum values
+Subsequently, you can use the `api.setValue` method to set the value of the
+progress bar.
+
+```jsx
+api.setValue(50)
+```
+
+### Setting the minimum and maximum values
 
 By default, the progress bar has a minimum value of `0` and a maximum value of
 `100`. You can change these values by passing the `min` and `max` options to the
@@ -10945,7 +11220,7 @@ const service = useMachine(progress.machine, {
 })
 ```
 
-## Using the indeterminate state
+### Using the indeterminate state
 
 The progress component is determinate by default, with the value and max set to
 `50` and `100` respectively.
@@ -10959,7 +11234,7 @@ const service = useMachine(progress.machine, {
 })
 ```
 
-## Showing a value text
+### Showing a value text
 
 Progress bars can only be interpreted by sighted users. To include a text
 description to support assistive technologies like screen readers, use the
@@ -10974,7 +11249,7 @@ const service = useMachine(progress.machine, {
 })
 ```
 
-## Setting the size of the progress bar
+### Setting the size of the progress bar
 
 Use the `--size` CSS variable to set the size of the progress bar.
 
@@ -10984,7 +11259,7 @@ Use the `--size` CSS variable to set the size of the progress bar.
 }
 ```
 
-## Setting the thickness of the progress bar
+### Setting the thickness of the progress bar
 
 Use the `--thickness` CSS variable to set the size of the progress bar.
 
@@ -11069,7 +11344,7 @@ accessed by scanning the code with an app or a smartphone.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/qr-code)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/qr-code)
 [Logic Visualizer](https://zag-visualizer.vercel.app/qr-code)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/qr-code)
 
@@ -11158,7 +11433,7 @@ const service = useMachine(qrCode.machine, {
 })
 ```
 
-## Setting the correction level
+### Setting the correction level
 
 Error correction allows for the QR code to be blocked or resized while still
 recognizable. In some cases where the link is too long or the logo overlay
@@ -11184,7 +11459,7 @@ const service = useMachine(qrCode.machine, {
 > The alternative is to enlarge the QRCode by increasing the size of the `svg`
 > element.
 
-## Adding an overlay logo
+### Adding an overlay logo
 
 To add a logo overlay to the QR code, render the image part. The logo will be
 automatically centered within the QR code.
@@ -11198,7 +11473,7 @@ automatically centered within the QR code.
 </div>
 ```
 
-## Changing the color
+### Changing the color
 
 To change the color of the QR code, set the `fill` attribute on the `path` part.
 
@@ -11216,7 +11491,7 @@ To change the background color of the QR code, set the `background-color`
 }
 ```
 
-## Exporting the QR code
+### Exporting the QR code
 
 To export the QR code as an image, you can use the `api.getDataURL` method.
 
@@ -11318,7 +11593,7 @@ option
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/radio-group)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/radio-group)
 [Logic Visualizer](https://zag-visualizer.vercel.app/radio-group)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/radio-group)
 
@@ -11405,7 +11680,7 @@ radio machine in your project 🔥
 ```
 
 
-## Disabling the radio group
+### Disabling the radio group
 
 To make a radio group disabled, set the context's `disabled` property to true
 
@@ -11415,10 +11690,9 @@ const service = useMachine(radio.machine, {
 })
 ```
 
-## Setting the initial value
+### Setting the initial value
 
-To set the radio group's initial value, set the context's `value` property to
-the value of the radio item to be selected by default
+Use the `defaultValue` property to set the radio group's initial value.
 
 ```jsx {2}
 const service = useMachine(radio.machine, {
@@ -11426,7 +11700,7 @@ const service = useMachine(radio.machine, {
 })
 ```
 
-## Listening for changes
+### Listening for changes
 
 When the radio group value changes, the `onValueChange` callback is invoked.
 
@@ -11439,7 +11713,7 @@ const service = useMachine(radio.machine, {
 })
 ```
 
-## Usage within forms
+### Usage within forms
 
 To use radio group within forms, use the exposed `inputProps` from the `connect`
 function and ensure you pass `name` value to the machine's context. It will
@@ -11647,7 +11921,7 @@ numbers.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/slider)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/slider)
 [Logic Visualizer](https://zag-visualizer.vercel.app/slider)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/slider)
 
@@ -11991,7 +12265,7 @@ Rating group allows a user to assign rating to an item within a product.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/rating-group)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/rating-group)
 [Logic Visualizer](https://zag-visualizer.vercel.app/rating-group)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/rating-group)
 
@@ -12075,7 +12349,7 @@ rating machine in your project 🔥
 ```
 
 
-## Disabling the rating group
+### Disabling the rating group
 
 To make rating disabled, set the context's `disabled` property to true
 
@@ -12085,7 +12359,7 @@ const service = useMachine(rating.machine, {
 })
 ```
 
-## Making the rating readonly
+### Making the rating readonly
 
 To make rating readonly, set the context's `readOnly` property to true
 
@@ -12095,9 +12369,9 @@ const service = useMachine(rating.machine, {
 })
 ```
 
-## Setting the initial value
+### Setting the initial value
 
-To set the rating's initial value, set the context's `value` property.
+Use the `defaultValue` property to set the rating's initial value.
 
 ```jsx {2}
 const service = useMachine(rating.machine, {
@@ -12105,7 +12379,7 @@ const service = useMachine(rating.machine, {
 })
 ```
 
-## Listening for changes
+### Listening for changes
 
 When the rating value changes, the `onValueChange` callback is invoked.
 
@@ -12118,7 +12392,7 @@ const service = useMachine(rating.machine, {
 })
 ```
 
-## Usage within forms
+### Usage within forms
 
 To use rating within forms, use the exposed `inputProps` from the `connect`
 function and ensure you pass `name` value to the machine's context. It will
@@ -12358,7 +12632,7 @@ interacting with radio inputs.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/radio-group)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/radio-group)
 [Logic Visualizer](https://zag-visualizer.vercel.app/segmented-control)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/segmented-control)
 
@@ -12446,7 +12720,7 @@ radio machine in your project 🔥
 ```
 
 
-## Disabling the segmented control
+### Disabling the segmented control
 
 To make a segmented control disabled, set the context's `disabled` property to
 true
@@ -12457,7 +12731,7 @@ const service = useMachine(radio.machine, {
 })
 ```
 
-## Making the segmented control readonly
+### Making the segmented control readonly
 
 To make a segmented control readonly, set the context's `readOnly` property to
 true
@@ -12468,18 +12742,17 @@ const service = useMachine(radio.machine, {
 })
 ```
 
-## Setting the initial value
+### Setting the initial value
 
-To set the segmented control's initial value, set the context's `value` property
-to the value of the radio item to be selected by default
+Use the `defaultValue` property to set the segmented control's initial value.
 
 ```jsx {2}
 const service = useMachine(radio.machine, {
-  value: "apple",
+  defaultValue: "apple",
 })
 ```
 
-## Listening for changes
+### Listening for changes
 
 When the segmented control value changes, the `onValueChange` callback is
 invoked.
@@ -12493,7 +12766,7 @@ const service = useMachine(radio.machine, {
 })
 ```
 
-## Usage within forms
+### Usage within forms
 
 To use segmented control within forms, use the exposed `inputProps` from the
 `connect` function and ensure you pass `name` value to the machine's context. It
@@ -12593,7 +12866,7 @@ A Select component allows users pick a value from predefined options.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/select)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/select)
 [Logic Visualizer](https://zag-visualizer.vercel.app/select)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/select)
 
@@ -12704,10 +12977,9 @@ select machine in your project 🔥
 ```
 
 
-## Setting the initial value
+### Setting the initial value
 
-To set the initial value of the select, pass the `value` property to the select
-machine's context.
+Use the `defaultValue` property to set the initial value of the select.
 
 > The `value` property must be an array of strings. If selecting a single value,
 > pass an array with a single string.
@@ -12729,10 +13001,9 @@ const service = useMachine(select.machine, {
 })
 ```
 
-## Selecting multiple values
+### Selecting multiple values
 
-To allow selecting multiple values, set the `multiple` property in the machine's
-context to `true`.
+To allow selecting multiple values, set the `multiple` property to `true`.
 
 ```jsx {5}
 const service = useMachine(select.machine, {
@@ -12742,7 +13013,7 @@ const service = useMachine(select.machine, {
 })
 ```
 
-## Using a custom object format
+### Using a custom object format
 
 By default, the select collection expects an array of items with `label` and
 `value` properties. To use a custom object format, pass the `itemToString` and
@@ -12783,7 +13054,7 @@ const service = useMachine(select.machine, {
 })
 ```
 
-## Usage within a form
+### Usage within a form
 
 To use select within a form, you'll need to:
 
@@ -12848,7 +13119,7 @@ To use select within a form, you'll need to:
 ```
 
 
-## Disabling the select
+### Disabling the select
 
 To disable the select, set the `disabled` property in the machine's context to
 `true`.
@@ -12861,7 +13132,7 @@ const service = useMachine(select.machine, {
 })
 ```
 
-## Disabling an item
+### Disabling an item
 
 To make a combobox option disabled, pass the `isItemDisabled` property to the
 collection function.
@@ -12880,12 +13151,14 @@ const service = useMachine(select.machine, {
 })
 ```
 
-## Close on select
+### Close on select
 
 This behaviour ensures that the menu is closed when an item is selected and is
 `true` by default. It's only concerned with when an item is selected with
-pointer, space key or enter key. To disable the behaviour, set the
-`closeOnSelect` property in the machine's context to `false`.
+pointer, space key or enter key.
+
+To disable the behaviour, set the `closeOnSelect` property in the machine's
+context to `false`.
 
 ```jsx {4}
 const service = useMachine(select.machine, {
@@ -12895,7 +13168,7 @@ const service = useMachine(select.machine, {
 })
 ```
 
-## Looping the keyboard navigation
+### Looping the keyboard navigation
 
 When navigating with the select using the arrow down and up keys, the select
 stops at the first and last options. If you need want the navigation to loop
@@ -12909,7 +13182,7 @@ const service = useMachine(select.machine, {
 })
 ```
 
-## Listening for highlight changes
+### Listening for highlight changes
 
 When an item is highlighted with the pointer or keyboard, use the
 `onHighlightChange` to listen for the change and do something with it.
@@ -12924,7 +13197,7 @@ const service = useMachine(select.machine, {
 })
 ```
 
-## Listening for selection changes
+### Listening for selection changes
 
 When an item is selected, use the `onValueChange` property to listen for the
 change and do something with it.
@@ -12940,7 +13213,7 @@ const service = useMachine(select.machine, {
 })
 ```
 
-## Listening for open and close events
+### Listening for open and close events
 
 When the select is opened or closed, the `onOpenChange` callback is called. You
 can listen for these events and do something with it.
@@ -12956,7 +13229,7 @@ const service = useMachine(select.machine, {
 })
 ```
 
-## Usage with large data
+### Usage with large data
 
 Combine the select machine with the virtualization library like `react-window`
 or `@tanstack/react-virtual` to handle large data.
@@ -13033,7 +13306,7 @@ function Demo() {
 }
 ```
 
-## Usage within dialog
+### Usage within dialog
 
 When using the select within a dialog, avoid rendering the select in a `Portal`
 or `Teleport`. This is because the dialog will trap focus within it, and the
@@ -13478,7 +13751,7 @@ touch or pointer devices. The signature can be saved as an image or cleared.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/signature-pad)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/signature-pad)
 [Logic Visualizer](https://zag-visualizer.vercel.app/signature-pad)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/signature-pad)
 
@@ -13559,7 +13832,7 @@ signature pad machine in your project 🔥
 ```
 
 
-## Listening to drawing events
+### Listening to drawing events
 
 The signature pad component emits the following events:
 
@@ -13579,7 +13852,7 @@ const service = useMachine(signature.machine, {
 })
 ```
 
-## Clearing the signature
+### Clearing the signature
 
 To clear the signature, use the `api.clear()`, or render the clear trigger
 button.
@@ -13588,7 +13861,7 @@ button.
 <button onClick={() => api.clear()}>Clear</button>
 ```
 
-## Rendering an image preview
+### Rendering an image preview
 
 Use the `api.getDataUrl()` method to get the signature as a data URL and render
 it as an image.
@@ -13612,7 +13885,7 @@ Next, render the image preview using the URL.
 <img src={imageURL} alt="Signature" />
 ```
 
-## Changing the stroke color
+### Changing the stroke color
 
 To change the stroke color, set the `drawing.fill` option to a valid CSS color.
 
@@ -13626,7 +13899,7 @@ const service = useMachine(signature.machine, {
 })
 ```
 
-## Changing the stroke width
+### Changing the stroke width
 
 To change the stroke width, set the `drawing.size` option to a number.
 
@@ -13638,7 +13911,7 @@ const service = useMachine(signature.machine, {
 })
 ```
 
-## Simulating pressure sensitivity
+### Simulating pressure sensitivity
 
 Pressure sensitivity is disabled by default. To enable it, set the
 `drawing.simulatePressure` option to `true`.
@@ -13651,7 +13924,7 @@ const service = useMachine(signature.machine, {
 })
 ```
 
-## Usage in forms
+### Usage in forms
 
 To use the signature pad in a form, set the `name` context property.
 
@@ -13667,7 +13940,7 @@ Then, render the hidden input element using `api.getHiddenInputProps()`.
 <input {...api.getHiddenInputProps({ value: imageURL })} />
 ```
 
-## Disabling the signature pad
+### Disabling the signature pad
 
 Set the `disabled` context property to `true` to disable the signature pad.
 
@@ -13677,7 +13950,7 @@ const service = useMachine(signature.machine, {
 })
 ```
 
-## Making the signature pad read-only
+### Making the signature pad read-only
 
 Set the `readOnly` context property to `true` to make the signature pad
 read-only.
@@ -13809,7 +14082,7 @@ accessibility.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/slider)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/slider)
 [Logic Visualizer](https://zag-visualizer.vercel.app/slider)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/slider)
 
@@ -13899,7 +14172,7 @@ slider machine in your project 🔥
 ```
 
 
-## Changing the orientation
+### Changing the orientation
 
 By default, the slider is assumed to be horizontal. To change the orientation to
 vertical, set the `orientation` property in the machine's context to `vertical`.
@@ -13916,7 +14189,7 @@ const service = useMachine(slider.machine, {
 })
 ```
 
-## Setting the initial value
+### Setting the initial value
 
 Pass the `defaultValue` property to the machine's context to set the initial
 value.
@@ -13927,7 +14200,28 @@ const service = useMachine(slider.machine, {
 })
 ```
 
-## Specifying the minimum and maximum
+### Controlled slider
+
+To control the slider's value programmatically, pass the `value` and
+`onValueChange` properties.
+
+```svelte
+<script lang="ts">
+  let value = $state([30])
+
+  const service = useMachine(slider.machine, {
+    get value() {
+      return value
+    },
+    onValueChange(details) {
+      value = details.value
+    },
+  })
+</script>
+```
+
+
+### Specifying the minimum and maximum
 
 By default, the minimum is `0` and the maximum is `100`. If that's not what you
 want, you can easily specify different bounds by changing the values of the min
@@ -13942,7 +14236,7 @@ const service = useMachine(slider.machine, {
 })
 ```
 
-## Setting the value's granularity
+### Setting the value's granularity
 
 By default, the granularity, is `1`, meaning that the value is always an
 integer. You can change the step attribute to control the granularity.
@@ -13958,7 +14252,7 @@ const service = useMachine(slider.machine, {
 })
 ```
 
-## Listening for changes
+### Listening for changes
 
 When the slider value changes, the `onValueChange` and `onValueChangeEnd`
 callbacks are invoked. You can use this to setup custom behaviors in your app.
@@ -13974,7 +14268,7 @@ const service = useMachine(slider.machine, {
 })
 ```
 
-## Changing the start position
+### Changing the start position
 
 By default, the slider's origin is at the `start` position (left in LTR and
 right in RTL). Change it by setting the `origin` property to these values:
@@ -13999,7 +14293,7 @@ In scenarios where the slider value is used as a threshold to include values
 above it, it might make more sense to set the `origin` to `end` to have the
 track filled from the thumb to the end.
 
-## Changing the thumb alignment
+### Changing the thumb alignment
 
 By default, the thumb is aligned to the start of the track. Set the
 `thumbAlignment` context property to `contain` or `center`.
@@ -14023,7 +14317,7 @@ const service = useMachine(slider.machine, {
 })
 ```
 
-## Usage within forms
+### Usage within forms
 
 To use slider within forms, use the exposed `inputProps` from the `connect`
 function and ensure you pass `name` value to the machine's context. It will
@@ -14036,7 +14330,7 @@ const service = useMachine(slider.machine, {
 })
 ```
 
-## RTL Support
+### RTL Support
 
 The slider has built-in support for RTL alignment and interaction. In the RTL
 mode, operations are performed from right to left, meaning, the left arrow key
@@ -14053,7 +14347,7 @@ const service = useMachine(slider.machine, {
 > While we take care of the interactions in RTL mode, you'll have to ensure you
 > apply the correct CSS styles to flip the layout.
 
-## Using slider marks
+### Using slider marks
 
 To show marks or ticks along the slider track, use the exposed
 `api.getMarkerProps()` method to position the slider marks relative to the
@@ -14520,7 +14814,7 @@ resize or expand/collapse them.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/splitter)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/splitter)
 [Logic Visualizer](https://zag-visualizer.vercel.app/splitter)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/splitter)
 
@@ -14608,7 +14902,7 @@ splitter machine in your project 🔥
 ```
 
 
-## Setting the initial size
+### Setting the initial size
 
 To set the initial size of the splitter panels, use the `defaultSize` property.
 Ensure the `defaultSize` totals to `100`.
@@ -14622,7 +14916,7 @@ const service = useMachine(splitter.machine, {
 })
 ```
 
-## Listening for resize events
+### Listening for resize events
 
 When the resize trigger is dragged, the `onResize`, `onResizeStart` and
 `onResizeEnd` callback is invoked.
@@ -14642,7 +14936,7 @@ const service = useMachine(splitter.machine, {
 })
 ```
 
-## Changing the orientation
+### Changing the orientation
 
 By default, the splitter is assumed to be horizontal. To change the orientation
 to vertical, set the `orientation` property in the machine's context to
@@ -14670,7 +14964,7 @@ const service = useMachine(splitter.machine, {
 })
 ```
 
-## Setting the collapsed size
+### Setting the collapsed size
 
 Set the `collapsedSize` and `collapsible` of a panel to specify the collapsed
 size of the panel.
@@ -14690,7 +14984,7 @@ const service = useMachine(splitter.machine, {
 This allows the user to drag the splitter to collapse the panel to the
 `collapsedSize`.
 
-## Listening for collapse events
+### Listening for collapse events
 
 When the splitter panel is collapsed, the `onCollapse` callback is invoked.
 Alternatively, the `onExpand` callback is invoked when the panel is expanded.
@@ -14860,6 +15154,10 @@ Description: Resize a panel.
 Type: `() => string`
 Description: Get the layout of the splitter.
 
+**`resetSizes`**
+Type: `() => void`
+Description: Reset the splitter to its initial state.
+
 ### Data Attributes
 
 **`Root`**
@@ -14895,7 +15193,7 @@ great way to break down a complex process into smaller, more manageable steps.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/steps)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/steps)
 [Logic Visualizer](https://zag-visualizer.vercel.app/steps)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/steps)
 
@@ -15246,7 +15544,7 @@ A switch allows users to turn an individual option on or off.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/switch)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/switch)
 [Logic Visualizer](https://zag-visualizer.vercel.app/switch)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/switch)
 
@@ -15319,9 +15617,9 @@ switch machine in your project 🔥
 ```
 
 
-## Disabling the switch
+### Disabling the switch
 
-To make a switch disabled, set the context's `disabled` property to true
+To make a switch disabled, set the `disabled` property to `true`.
 
 ```jsx {3}
 const service = useMachine(zagSwitch.machine, {
@@ -15329,10 +15627,9 @@ const service = useMachine(zagSwitch.machine, {
 })
 ```
 
-## Making it checked by default
+### Making it checked by default
 
-To make a switch checked by default, set the context's `checked` property to
-`true`
+Use the `defaultChecked` property to make a switch checked by default.
 
 ```jsx {3}
 const service = useMachine(zagSwitch.machine, {
@@ -15340,7 +15637,7 @@ const service = useMachine(zagSwitch.machine, {
 })
 ```
 
-## Listening for changes
+### Listening for changes
 
 When the switch value changes, the `onCheckedChange` callback is invoked.
 
@@ -15353,7 +15650,7 @@ const service = useMachine(zagSwitch.machine, {
 })
 ```
 
-## Usage within forms
+### Usage within forms
 
 To use switch within forms, use the exposed `inputProps` from the `connect`
 function and ensure you pass `name` value to the machine's context. It will
@@ -15587,7 +15884,7 @@ being displayed.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/tabs)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/tabs)
 [Logic Visualizer](https://zag-visualizer.vercel.app/tabs)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/tabs)
 
@@ -15679,10 +15976,10 @@ tabs machine in your project 🔥
 ```
 
 
-## Setting the selected tab
+### Setting the initially selected tab
 
-To set the initially selected tab, pass the `value` property to the machine's
-context.
+To set the initially selected tab, pass the `defaultValue` property to the
+machine's context.
 
 ```jsx {2}
 const service = useMachine(tabs.machine, {
@@ -15690,9 +15987,35 @@ const service = useMachine(tabs.machine, {
 })
 ```
 
-Subsequently, you can use the `api.setValue` function to set the selected tab.
+Subsequently, you can use the `api.setValue` function to programatically set the
+selected tab.
 
-## Changing the orientation
+```jsx
+api.setValue("tab-2")
+```
+
+### Controlled tabs
+
+To control the selected tab programmatically, pass the `value` and
+`onValueChange` properties to the machine function.
+
+```svelte
+<script lang="ts">
+  let value = $state("tab-1")
+
+  const service = useMachine(tabs.machine, {
+    get value() {
+      return value
+    },
+    onValueChange(details) {
+      value = details.value
+    },
+  })
+</script>
+```
+
+
+### Changing the orientation
 
 The default orientation of the tabs is horizontal. To change the orientation,
 set the `orientation` property in the machine's context to `"vertical"`.
@@ -15703,7 +16026,7 @@ const service = useMachine(tabs.machine, {
 })
 ```
 
-## Showing an indicator
+### Showing an indicator
 
 To show an active indicator when a tab is selected, you add the
 `tabIndicatorProps` object provided by the `connect` function.
@@ -15730,7 +16053,7 @@ To show an active indicator when a tab is selected, you add the
 ```
 
 
-## Disabling a tab
+### Disabling a tab
 
 To disable a tab, set the `disabled` property in the `getTriggerProps` to
 `true`.
@@ -15744,7 +16067,7 @@ clickable.
 //...
 ```
 
-## Listening for events
+### Listening for events
 
 - `onValueChange` — Callback invoked when the selected tab changes.
 - `onFocusChange` — Callback invoked when the focused tab changes.
@@ -15762,7 +16085,7 @@ const service = useMachine(tabs.machine, {
 })
 ```
 
-## Manual tab activation
+### Manual tab activation
 
 By default, the tab can be selected when the receive focus from either the
 keyboard or pointer interaction. This is called "automatic tab activation".
@@ -15776,7 +16099,7 @@ const service = useMachine(tabs.machine, {
 })
 ```
 
-## RTL Support
+### RTL Support
 
 The tabs machine provides support right to left writing directions. In this
 mode, the layout and keyboard interaction is flipped.
@@ -16080,7 +16403,7 @@ input element.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/tags-input)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/tags-input)
 [Logic Visualizer](https://zag-visualizer.vercel.app/tags-input)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/tags-input)
 
@@ -16166,7 +16489,7 @@ tags input machine in your project 🔥
 ```
 
 
-## Navigating and Editing tags
+### Navigating and Editing tags
 
 When the input has an empty value or the caret is at the start position, the
 tags can be selected by using the arrow left and arrow right keys. When "visual"
@@ -16176,9 +16499,9 @@ focus in on any tag:
   allowing the user change its value and press `Enter` to commit the changes.
 - Pressing `Delete` or `Backspace` will delete the tag that has "visual" focus.
 
-## Setting the initial tags
+### Setting the initial tags
 
-To set the initial tag values, pass the `value` property in the machine's
+To set the initial tag values, pass the `defaultValue` property in the machine's
 context.
 
 ```jsx {2}
@@ -16187,7 +16510,28 @@ const service = useMachine(tagsInput.machine, {
 })
 ```
 
-## Removing all tags
+### Controlled tags input
+
+To control the tags input programmatically, pass the `value` and `onValueChange`
+properties to the machine function.
+
+```svelte
+<script lang="ts">
+  let value = $state(["React", "Vue"])
+
+  const service = useMachine(tagsInput.machine, {
+    get value() {
+      return value
+    },
+    onValueChange(details) {
+      value = details.value
+    },
+  })
+</script>
+```
+
+
+### Removing all tags
 
 The tags input will remove all tags when the clear button is clicked. To remove
 all tags, use the provided `clearButtonProps` function from the `api`.
@@ -16204,7 +16548,7 @@ all tags, use the provided `clearButtonProps` function from the `api`.
 To programmatically remove all tags, use the `api.clearAll()` method that's
 available in the `connect`.
 
-## Usage within forms
+### Usage within forms
 
 The tags input works when placed within a form and the form is submitted. We
 achieve this by:
@@ -16223,7 +16567,7 @@ const service = useMachine(tagsInput.machine, {
 })
 ```
 
-## Limiting the number of tags
+### Limiting the number of tags
 
 To limit the number of tags within the component, you can set the `max` property
 to the limit you want. The default value is `Infinity`.
@@ -16238,7 +16582,7 @@ const service = useMachine(tagsInput.machine, {
 })
 ```
 
-## Validating Tags
+### Validating Tags
 
 Before a tag is added, the machine provides a `validate` function you can use to
 determine whether to accept or reject a tag.
@@ -16254,7 +16598,7 @@ const service = useMachine(tagsInput.machine, {
 })
 ```
 
-## Blur behavior
+### Blur behavior
 
 When the tags input is blurred, you can configure the action the machine should
 take by passing the `blurBehavior` option to the context.
@@ -16268,7 +16612,7 @@ const service = useMachine(tagsInput.machine, {
 })
 ```
 
-## Paste behavior
+### Paste behavior
 
 To add a tag when a arbitrary value is pasted in the input element, pass the
 `addOnPaste` option.
@@ -16284,7 +16628,7 @@ const service = useMachine(tagsInput.machine, {
 })
 ```
 
-## Disable tag editing
+### Disable tag editing
 
 by default the tags can be edited by double clicking on the tag or focusing on
 them and pressing `Enter`. To disable this behavior, pass the
@@ -16296,7 +16640,7 @@ const service = useMachine(tagsInput.machine, {
 })
 ```
 
-## Listening for events
+### Listening for events
 
 During the lifetime of the tags input interaction, here's a list of events we
 emit:
@@ -16726,7 +17070,7 @@ specified target time.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/timer)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/timer)
 [Logic Visualizer](https://zag-visualizer.vercel.app/timer)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/timer)
 
@@ -16827,7 +17171,7 @@ Time Picker machine in your project 🔥
 ```
 
 
-## Setting the start value
+### Setting the start value
 
 Set the `startMs` property to the timer machine's context to set the start time
 in milliseconds.
@@ -16848,7 +17192,7 @@ const service = useMachine(timer.machine, {
 })
 ```
 
-## Auto starting the timer
+### Auto starting the timer
 
 Set the `autoStart` property to `true` in the timer machine's context to start
 the timer automatically when the component mounts.
@@ -16859,7 +17203,7 @@ const service = useMachine(timer.machine, {
 })
 ```
 
-## Usage as countdown timer
+### Usage as countdown timer
 
 To use the timer as a countdown timer, set the `countdown` property to `true` in
 the timer machine's context.
@@ -16870,7 +17214,7 @@ const service = useMachine(timer.machine, {
 })
 ```
 
-## Setting the target value
+### Setting the target value
 
 To set the target value of the countdown timer, pass the `targetMs` property in
 the timer machine's context. The timer stops automatically when the `targetMs`
@@ -16895,7 +17239,7 @@ const service = useMachine(timer.machine, {
 })
 ```
 
-## Setting the tick interval
+### Setting the tick interval
 
 Set the `interval` property to the timer machine's context to set the tick
 interval in milliseconds.
@@ -16906,7 +17250,7 @@ const service = useMachine(timer.machine, {
 })
 ```
 
-## Listening to tick events
+### Listening to tick events
 
 When the timer ticks, the `onTick` callback is invoke. You can listen to this
 event and update your UI accordingly.
@@ -16920,7 +17264,7 @@ const service = useMachine(timer.machine, {
 })
 ```
 
-## Listening for completion events
+### Listening for completion events
 
 When the timer reaches the target time, the `onComplete` callback is invoked.
 
@@ -16934,7 +17278,7 @@ const service = useMachine(timer.machine, {
 })
 ```
 
-## Starting and Stopping the timer
+### Starting and Stopping the timer
 
 To start the timer, send the `api.start()` callback
 
@@ -16948,7 +17292,7 @@ To stop the timer, send the `api.stop()` callback
 api.stop()
 ```
 
-## Pausing and Resuming the timer
+### Pausing and Resuming the timer
 
 To pause the timer, send the `api.pause()` callback
 
@@ -17062,7 +17406,7 @@ place.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/toast)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/toast)
 [Logic Visualizer](https://zag-visualizer.vercel.app/toast)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/toast)
 
@@ -17597,7 +17941,7 @@ A toggle group is used to toggle either one option or multiple options.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/toggle-group)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/toggle-group)
 [Logic Visualizer](https://zag-visualizer.vercel.app/toggle-group)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/toggle-group)
 
@@ -17669,7 +18013,7 @@ toggle group machine in your project 🔥
 ```
 
 
-## Changing the orientation
+### Changing the orientation
 
 By default, the toggle group is assumed to be horizontal. To change the
 orientation to vertical, set the `orientation` property in the machine's context
@@ -17681,7 +18025,7 @@ const service = useMachine(toggle.machine, {
 })
 ```
 
-## Listening for value changes
+### Listening for value changes
 
 When the pressed toggle in the group changes, `onValueChange` callback is
 invoked.
@@ -17695,7 +18039,7 @@ const service = useMachine(toggle.machine, {
 })
 ```
 
-## Allowing multiple selection
+### Allowing multiple selection
 
 Set the `multiple` property in the machine's context to `true` to allow multiple
 options to be toggled.
@@ -17706,7 +18050,7 @@ const service = useMachine(toggle.machine, {
 })
 ```
 
-## Disabling the toggle group
+### Disabling the toggle group
 
 Set the `disabled` property in the machine's context to `true` to disable the
 toggle group.
@@ -17717,7 +18061,7 @@ const service = useMachine(toggle.machine, {
 })
 ```
 
-## Disabling a toggle
+### Disabling a toggle
 
 Set the `disabled` property in the `getToggleProps` function to `true` to
 disable a toggle.
@@ -17730,7 +18074,7 @@ disable a toggle.
 //...
 ```
 
-## Disabling focus loop
+### Disabling focus loop
 
 The toggle group loops keyboard navigation by default. To disable this, set the
 `loop` property in the machine's context to `false`.
@@ -17741,7 +18085,7 @@ const service = useMachine(toggle.machine, {
 })
 ```
 
-## Disabling roving focus management
+### Disabling roving focus management
 
 The toggle group uses roving focus management by default. To disable this, set
 the `rovingFocus` property in the machine's context to `false`.
@@ -17841,6 +18185,11 @@ Description: The orientation of the toggle group.
 Type: `boolean`
 Description: Whether to allow multiple toggles to be selected.
 
+**`deselectable`**
+Type: `boolean`
+Description: Whether the toggle group allows empty selection.
+**Note:** This is ignored if `multiple` is `true`.
+
 **`dir`**
 Type: `"ltr" | "rtl"`
 Description: The document's text/writing direction.
@@ -17934,7 +18283,7 @@ hovered.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/tooltip)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/tooltip)
 [Logic Visualizer](https://zag-visualizer.vercel.app/tooltip)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/tooltip)
 
@@ -18015,7 +18364,7 @@ tooltip machine in your project 🔥
 ```
 
 
-## Customizing the timings
+### Customizing the timings
 
 By default, the tooltip is designed to open after `1000ms` and close after
 `500ms`. You can customize this by passing the `openDelay` and `closeDelay`
@@ -18028,7 +18377,7 @@ const service = useMachine(tooltip.machine, {
 })
 ```
 
-## Changing the placement
+### Changing the placement
 
 The tooltip uses [floating-ui](https://floating-ui.com/) for dynamic
 positioning. You can change the placement of the tooltip by passing the
@@ -18082,7 +18431,7 @@ export type PositioningOptions = {
 }
 ```
 
-## Adding an arrow
+### Adding an arrow
 
 To render an arrow within the tooltip, use the `api.getArrowProps()` and
 `api.getArrowTipProps()`.
@@ -18102,7 +18451,7 @@ return (
 //...
 ```
 
-## Pointerdown behavior
+### Pointerdown behavior
 
 By default, the tooltip will close when the pointer is down on its trigger. To
 prevent this behavior, pass the `closeOnPointerDown` context property and set it
@@ -18114,7 +18463,7 @@ const service = useMachine(tooltip.machine, {
 })
 ```
 
-## Closing on Esc
+### Closing on Esc
 
 The tooltip is designed to close when the escape key is pressed. To prevent
 this, pass the `closeOnEscape` context property and set it to `false`.
@@ -18125,7 +18474,7 @@ const service = useMachine(tooltip.machine, {
 })
 ```
 
-## Making the tooltip interactive
+### Making the tooltip interactive
 
 Set the `interactive` context property to `true` to make them interactive.
 
@@ -18138,7 +18487,7 @@ const service = useMachine(tooltip.machine, {
 })
 ```
 
-## Listening for open state changes
+### Listening for open state changes
 
 When the tooltip is opened or closed, the `onOpenChange` callback is invoked.
 
@@ -18320,7 +18669,7 @@ onboard new users by highlighting specific elements on the page.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/tour)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/tour)
 [Logic Visualizer](https://zag-visualizer.vercel.app/tour)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/tour)
 
@@ -18425,7 +18774,7 @@ tour machine in your project 🔥
 ```
 
 
-## Using step types
+### Using step types
 
 The tour machine supports different types of steps, allowing you to create a
 diverse and interactive tour experience. The available step types are defined in
@@ -18487,7 +18836,7 @@ const steps: tour.StepDetails[] = [
 ]
 ```
 
-## Configuring actions
+### Configuring actions
 
 Every step supports a list of actions that are rendered in the step footer.Use
 the `actions` property to define each action.
@@ -18504,7 +18853,7 @@ const steps: tour.StepDetails[] = [
 ]
 ```
 
-## Changing tooltip placement
+### Changing tooltip placement
 
 Use the `placement` property to define the placement of the tooltip.
 
@@ -18519,7 +18868,7 @@ const steps: tour.StepDetails[] = [
 ]
 ```
 
-## Hiding the arrow
+### Hiding the arrow
 
 Set `arrow: false` in the step property to hide the tooltip arrow. This is only
 useful for tooltip steps.
@@ -18534,7 +18883,7 @@ const steps: tour.StepDetails[] = [
 ]
 ```
 
-## Hiding the backdrop
+### Hiding the backdrop
 
 Set `backdrop: false` in the step property to hide the backdrop. This applies to
 all step types except the `wait` step.
@@ -18549,7 +18898,7 @@ const steps: tour.StepDetails[] = [
 ]
 ```
 
-## Step Effects
+### Step Effects
 
 Step effects are functions that are called before a step is opened. They are
 useful for adding custom logic to a step.
@@ -18582,7 +18931,7 @@ const steps: tour.StepDetails[] = [
 ]
 ```
 
-## Wait Steps
+### Wait Steps
 
 Wait steps are useful when you need to wait for a specific condition before
 proceeding to the next step.
@@ -18607,7 +18956,7 @@ const steps: tour.StepDetails[] = [
 ]
 ```
 
-## Showing progress dots
+### Showing progress dots
 
 Use the `api.getProgressPercent()` to show the progress dots.
 
@@ -18619,7 +18968,7 @@ const ProgressBar = () => {
 }
 ```
 
-## Tracking the lifecycle
+### Tracking the lifecycle
 
 As the tour is progressed, events are fired and you can track the lifecycle of
 the tour. Here's are the events you can listen to:
@@ -18930,7 +19279,7 @@ navigation.
 ## Resources
 
 
-[Latest version: v1.11.0](https://www.npmjs.com/package/@zag-js/tree-view)
+[Latest version: v1.12.2](https://www.npmjs.com/package/@zag-js/tree-view)
 [Logic Visualizer](https://zag-visualizer.vercel.app/tree-view)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/tree-view)
 
@@ -19023,7 +19372,7 @@ Pass the tree collection to the machine to create the tree view.
 
 
 
-## Expanding and Collapsing Nodes
+### Expanding and Collapsing Nodes
 
 By default, the tree view will expand or collapse when clicking the branch
 control. To control the expanded state of the tree view, use the `api.expand`
@@ -19037,7 +19386,7 @@ api.collapse(["node_modules/pandacss"]) // collapse a single node
 api.collapse() // collapse all nodes
 ```
 
-## Multiple selection
+### Multiple selection
 
 The tree view supports multiple selection. To enable this, set the
 `selectionMode` to `multiple`.
@@ -19048,7 +19397,7 @@ const service = useMachine(tree.machine, {
 })
 ```
 
-## Setting the default expanded nodes
+### Setting the default expanded nodes
 
 To set the default expanded nodes, use the `expandedValue` context property.
 
@@ -19058,7 +19407,7 @@ const service = useMachine(tree.machine, {
 })
 ```
 
-## Setting the default selected nodes
+### Setting the default selected nodes
 
 To set the default selected nodes, use the `selectedValue` context property.
 
@@ -19068,7 +19417,7 @@ const service = useMachine(tree.machine, {
 })
 ```
 
-## Indentation Guide
+### Indentation Guide
 
 When rendering a branch node in the tree view, you can render the `indentGuide`
 element by using the `api.getBranchIndentGuideProps()` function.
@@ -19096,7 +19445,7 @@ element by using the `api.getBranchIndentGuideProps()` function.
 </div>
 ```
 
-## Listening for selection
+### Listening for selection
 
 When a node is selected, the `onSelectionChange` callback is invoked with the
 selected nodes.
@@ -19109,7 +19458,7 @@ const service = useMachine(tree.machine, {
 })
 ```
 
-## Listening for expanding and collapsing
+### Listening for expanding and collapsing
 
 When a node is expanded or collapsed, the `onExpandedChange` callback is invoked
 with the expanded nodes.

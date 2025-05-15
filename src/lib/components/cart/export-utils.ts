@@ -1,13 +1,9 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/supabase.types';
-import type {
-	Product,
-	FlattenedProduct,
-	ExportData,
-	InternalTransferData,
-	SalesActionData
-} from './types';
+import type { ExportData, SalesActionData } from './types';
 import { utils, writeFile } from 'xlsx';
+
+type FetchedProduct = Awaited<ReturnType<typeof fetchProducts>>[number];
 
 function calculateNewPrice(purchasePrice: number, taxRate: number): number {
 	const lowerBond = 0;
@@ -32,29 +28,29 @@ async function fetchProducts(supabase: SupabaseClient<Database>, productIds: num
 		.from('m_product')
 		.select(
 			`
-            id, sku, name, mpn, unitsperpack, imageurl, discontinued,
+            id, sku, name, mpn, imageurl, discontinued,
             c_taxcategory(c_tax(rate)),
             m_storageonhand(warehouse_id,qtyonhand),
             m_productprice(m_pricelist_version_id,pricestd,pricelist),
             m_replenish(m_warehouse_id,level_min,level_max,qtybatchsize),
-            m_product_po(c_bpartner_id,pricelist,vendorproductno)
+            m_product_po(c_bpartner_id,pricelist,vendorproductno),
+            m_product_packing(gtin,unitsperpack,packing_type)
+
         `
 		)
+		.eq('m_product_packing.packing_type', 'Pack')
 		.in('id', productIds);
 
 	if (error) {
 		console.error('Error fetching products:', error);
 		return [];
 	}
+	console.log('data', data);
 
 	return data;
 }
 
-function flattenProduct(
-	product: Product,
-	vendorIds: number[],
-	vat: boolean = false
-): FlattenedProduct {
+function flattenProduct(product: FetchedProduct, vendorIds: number[], vat: boolean = false) {
 	const tax = product.c_taxcategory?.c_tax?.[0]?.rate ?? 0;
 	const purchase =
 		product.m_productprice.find((item) => item.m_pricelist_version_id === 5)?.pricestd ?? 0;
@@ -114,7 +110,7 @@ function flattenProduct(
 		sku: product.sku,
 		name: product.name,
 		mpn: product.mpn,
-		unitsperpack: product.unitsperpack,
+		unitsperpack: product.m_product_packing[0].unitsperpack ?? 0,
 		imageurl: product.imageurl,
 		discontinued: product.discontinued,
 		taxRate: tax ? tax / 100 : null,
@@ -123,12 +119,12 @@ function flattenProduct(
 		pricePurchase: vat ? purchase * (1 + tax / 100) : purchase,
 		ruc: ruc,
 		priceRetail: vat ? priceRetail : priceRetail / (1 + tax / 100),
-		levelMin: replenishInfoWarehouse5.level_min,
-		levelMax: replenishInfoWarehouse5.level_max,
-		qtyBatchSize: replenishInfoWarehouse5.qtybatchsize,
-		levelMinWarehouse2: replenishInfoWarehouse2.level_min,
-		levelMaxWarehouse2: replenishInfoWarehouse2.level_max,
-		qtyBatchSizeWarehouse2: replenishInfoWarehouse2.qtybatchsize,
+		levelMin: replenishInfoWarehouse5.level_min ?? 0,
+		levelMax: replenishInfoWarehouse5.level_max ?? 0,
+		qtyBatchSize: replenishInfoWarehouse5.qtybatchsize ?? 0,
+		levelMinWarehouse2: replenishInfoWarehouse2.level_min ?? 0,
+		levelMaxWarehouse2: replenishInfoWarehouse2.level_max ?? 0,
+		qtyBatchSizeWarehouse2: replenishInfoWarehouse2.qtybatchsize ?? 0,
 		vendorPrices,
 		vendorProductNos,
 		action
@@ -212,22 +208,45 @@ export async function processExport(
 						'Pack Qty.': Number((kolicina / product.unitsperpack || 0).toFixed(2)),
 						Količina: kolicina,
 						'Cena u obj.2': calculateNewPrice(product.pricePurchase || 0, product.taxRate || 0)
-					} as InternalTransferData;
-				} else {
+					};
+				} else if (selectReportValue === 'vendor_orders') {
 					// Default export
+					const vpMaxVal = product.levelMaxWarehouse2 || 0;
+					const mpMaxVal = product.levelMax || 0;
+					const mpQtyVal = product.qtyRetail || 0;
+					const mpBatchVal = product.qtyBatchSize || 0;
+					const vpQtyVal = product.qtyWholesale || 0;
+					const vpBatchVal = product.qtyBatchSizeWarehouse2 || 0;
+
+					let orderQty: number;
+
+					if (vpMaxVal === 0) {
+						if (mpBatchVal > 0 && mpMaxVal > mpQtyVal) {
+							orderQty = Math.floor((mpMaxVal - mpQtyVal) / mpBatchVal) * mpBatchVal;
+						} else {
+							orderQty = 0;
+						}
+					} else {
+						if (vpBatchVal > 0 && vpMaxVal > vpQtyVal) {
+							orderQty = Math.floor((vpMaxVal - vpQtyVal) / vpBatchVal) * vpBatchVal;
+						} else {
+							orderQty = 0;
+						}
+					}
+
 					const data: ExportData = {
 						SKU: product.sku || '',
 						MPN: product.mpn || '',
 						Name: item.name,
-						'Order Qty.': item.quantity,
+						'Order Qty.': orderQty, // Use the calculated value
 						'Pack Qty.': product.unitsperpack || 0,
 						Tax: product.taxRate || 0,
-						'VP Qty.': product.qtyWholesale || 0,
-						'MP Qty.': product.qtyRetail || 0,
-						'VP Max': product.levelMaxWarehouse2 || 0,
-						'VP Batch': product.qtyBatchSizeWarehouse2 || 0,
-						'MP Max': product.levelMax || 0,
-						'MP Batch': product.qtyBatchSize || 0,
+						'VP Qty.': vpQtyVal,
+						'MP Qty.': mpQtyVal,
+						'VP Max': vpMaxVal,
+						'VP Batch': vpBatchVal,
+						'MP Max': mpMaxVal,
+						'MP Batch': mpBatchVal,
 						pricePurchase: product.pricePurchase || 0,
 						priceRetail: product.priceRetail || 0
 					};

@@ -8,12 +8,15 @@ import { zod } from 'sveltekit-superforms/adapters';
 import type { ChartData } from './chart-types';
 import { connector } from '$lib/ky';
 import {
-	crudReplenishSchema,
 	mStorageonhandInsertSchemaАrray,
 	deleteByIdSchema,
 	productPackingInsertSchema
 } from './schema.js';
-import { mProductInsertSchema, mProductPoInsertSchema } from '$lib/types/supabase.zod.schemas';
+import {
+	mProductInsertSchema,
+	mProductPoInsertSchema,
+	mReplenishInsertSchema
+} from '$lib/types/supabase.zod.schemas';
 
 export const load: PageServerLoad = async ({ depends, params, locals: { supabase } }) => {
 	depends('catalog:products');
@@ -62,7 +65,6 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 			.order('packing_type', { ascending: false });
 		return data || [];
 	};
-
 	const getTaxes = async () => {
 		const { data } = await supabase
 			.from('c_taxcategory')
@@ -70,7 +72,6 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 			.order('name');
 		return data || [];
 	};
-
 	const getSalesData = async (sku: string | null) => {
 		if (!sku) {
 			return { currentYear: new Date().getFullYear(), products: [] };
@@ -128,12 +129,8 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 	const formProduct = await superValidate(product, zod(mProductInsertSchema));
 	const formProductPacking = await superValidate(zod(productPackingInsertSchema));
 	formProductPacking.data.m_product_id = productId;
-	const formReplenish = await superValidate({ replenishes }, zod(crudReplenishSchema));
-	const formProductPo = await superValidate(
-		zod(
-			mProductPoInsertSchema // Add the new form schema import
-		)
-	); // Use the new form schema
+	const formReplenish = await superValidate(zod(mReplenishInsertSchema));
+	const formProductPo = await superValidate(zod(mProductPoInsertSchema));
 	formProductPo.data.m_product_id = productId;
 
 	const formStorageOnHand = await superValidate(
@@ -148,6 +145,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		purchases,
 		formProductPacking,
 		productPacking,
+		replenishes,
 		formReplenish,
 		formStorageOnHand,
 		partners,
@@ -162,8 +160,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 
 export const actions = {
 	productPackingUpsert: async ({ request, locals: { supabase } }) => {
-		const formData = await request.formData();
-		const form = await superValidate(formData, zod(productPackingInsertSchema));
+		const form = await superValidate(request, zod(productPackingInsertSchema));
 		if (!form.valid) return fail(400, { form });
 
 		if (!form.data.id) {
@@ -200,7 +197,6 @@ export const actions = {
 	},
 	productPackingDelete: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(deleteByIdSchema));
-		console.log('form', form);
 		if (!form.valid) return fail(400, { form });
 
 		const { error } = await supabase.from('m_product_packing').delete().eq('id', form.data.id);
@@ -227,62 +223,51 @@ export const actions = {
 		return { form };
 	},
 
-	replenishUPD: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(crudReplenishSchema));
+	mRplenishUpsert: async ({ request, locals: { supabase } }) => {
+		const form = await superValidate(request, zod(mReplenishInsertSchema));
 		if (!form.valid) return fail(400, { form });
 
-		try {
-			// Separate records into updates and inserts
-			const updatesToProcess = form.data.replenishes.filter((r) => r.id !== undefined);
-			const insertsToProcess = form.data.replenishes.filter((r) => r.id === undefined);
+		if (!form.data.id) {
+			// CREATE Barcode
+			const { error } = await supabase.from('m_replenish').insert({ ...form.data });
 
-			// Perform updates
-			if (updatesToProcess.length > 0) {
-				// Use Promise.all to update multiple records concurrently
-				const updatePromises = updatesToProcess.map((r) =>
-					supabase.from('m_replenish').update(r).eq('id', r.id!)
-				);
-
-				const updateResults = await Promise.all(updatePromises);
-
-				// Check for any errors in the updates
-				const updateErrors = updateResults.filter((result) => result.error);
-				if (updateErrors.length > 0) {
-					throw updateErrors[0].error;
-				}
+			if (error) {
+				return fail(500, {
+					form,
+					message: error.message
+				});
 			}
 
-			// Perform inserts
-			if (insertsToProcess.length > 0) {
-				const { error: insertError } = await supabase.from('m_replenish').insert(
-					insertsToProcess.map((r) => ({
-						...r
-					}))
-				);
+			return message(form, 'Replenish created!');
+		} else {
+			// UPDATE Barcode
+			const { error } = await supabase
+				.from('m_replenish')
+				.update({ ...form.data })
+				.eq('id', form.data.id);
 
-				if (insertError) throw insertError;
+			if (error) {
+				return fail(500, {
+					form,
+					message: error.message
+				});
 			}
-		} catch (error) {
-			console.error('Replenish update error:', error);
-			return fail(500, {
-				form,
-				error: error instanceof Error ? error.message : 'Unknown error occurred'
-			});
 		}
 
-		return { form };
+		return message(form, 'Barcode updated!');
+	},
+	mReplenishDelete: async ({ request, locals: { supabase } }) => {
+		const form = await superValidate(request, zod(deleteByIdSchema));
+		if (!form.valid) return fail(400, { form });
+
+		const { error } = await supabase.from('m_replenish').delete().eq('id', form.data.id);
+		if (error) return fail(500, { form, message: error.message });
+
+		return message(form, 'Product packaging deleted successfully!');
 	},
 
 	mProductPoUpsert: async ({ request, locals: { supabase } }) => {
-		console.log('Hello Vendors');
-
-		const form = await superValidate(
-			request,
-			zod(
-				mProductPoInsertSchema // Add the new form schema import
-			)
-		); // Use the explicit FormData object
-		console.log('form.', JSON.stringify(form, null, 4));
+		const form = await superValidate(request, zod(mProductPoInsertSchema));
 
 		if (!form.valid) return fail(400, { form });
 

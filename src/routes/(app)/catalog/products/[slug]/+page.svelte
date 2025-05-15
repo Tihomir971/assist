@@ -238,21 +238,12 @@
 						</Card.Root>
 					</Tabs.Content>
 					<Tabs.Content value="replenish">
-						<Card.Root>
-							<Card.Header>
-								<Card.Title>Replenish</Card.Title>
-								<Card.Description>Manage warehouse replenishment rules</Card.Description>
-							</Card.Header>
-							<Card.Content>
-								{#if $formProduct.id}
-									<ReplenishCard
-										form={data.formReplenish}
-										warehouses={data.warehouses}
-										productId={$formProduct.id}
-									/>
-								{/if}
-							</Card.Content>
-						</Card.Root>
+						<ReplenishCard
+							validatedForm={data.formReplenish}
+							data={data.replenishes}
+							warehouses={data.warehouses}
+							productId={$formProduct.id}
+						/>
 					</Tabs.Content>
 					<Tabs.Content value="sales-chart">
 						<Card.Root>
