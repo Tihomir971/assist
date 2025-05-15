@@ -78,7 +78,7 @@
 		const { data, error } = await supabase
 			.from('m_product_packing')
 			.select(
-				'm_product!inner(id,name,description,sku,m_product_packing(gtin),m_storageonhand(qtyonhand,m_warehouse(name)))'
+				'm_product!inner(id,name,description,sku,m_product_packing(gtin,packing_type,unitsperpack),m_storageonhand(qtyonhand,m_warehouse(name)))'
 			)
 			.eq('gtin', barcode)
 			.single();
