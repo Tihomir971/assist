@@ -35,7 +35,6 @@ async function fetchProducts(supabase: SupabaseClient<Database>, productIds: num
             m_replenish(m_warehouse_id,level_min,level_max,qtybatchsize),
             m_product_po(c_bpartner_id,pricelist,vendorproductno),
             m_product_packing(gtin,unitsperpack,packing_type)
-
         `
 		)
 		.eq('m_product_packing.packing_type', 'Pack')
@@ -45,7 +44,6 @@ async function fetchProducts(supabase: SupabaseClient<Database>, productIds: num
 		console.error('Error fetching products:', error);
 		return [];
 	}
-	console.log('data', data);
 
 	return data;
 }
@@ -110,7 +108,7 @@ function flattenProduct(product: FetchedProduct, vendorIds: number[], vat: boole
 		sku: product.sku,
 		name: product.name,
 		mpn: product.mpn,
-		unitsperpack: product.m_product_packing[0].unitsperpack ?? 0,
+		unitsperpack: product.m_product_packing?.[0]?.unitsperpack ?? 0,
 		imageurl: product.imageurl,
 		discontinued: product.discontinued,
 		taxRate: tax ? tax / 100 : null,
@@ -142,6 +140,7 @@ export async function processExport(
 		const productIds = cartItems.map((item) => item.id);
 
 		const products = await fetchProducts(supabase, productIds);
+
 		const flattenedProducts = products.map((product) => flattenProduct(product, selectedVendorIds));
 
 		// Create data structure based on report type

@@ -155,7 +155,7 @@
 
 	<div class="fixed right-0 bottom-0 left-0 border-t border-gray-200 p-1.5">
 		<div class="grid w-full grid-cols-[2fr_1fr_1fr] gap-1.5">
-			<form method="POST" action="?/default" use:enhance>
+			<form method="POST" use:enhance>
 				<Input
 					type="search"
 					bind:value={skuSearch}
