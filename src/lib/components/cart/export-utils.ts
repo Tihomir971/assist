@@ -108,7 +108,7 @@ function flattenProduct(product: FetchedProduct, vendorIds: number[], vat: boole
 		sku: product.sku,
 		name: product.name,
 		mpn: product.mpn,
-		unitsperpack: product.m_product_packing?.[0]?.unitsperpack ?? 0,
+		unitsperpack: product.m_product_packing?.[0]?.unitsperpack ?? 1,
 		imageurl: product.imageurl,
 		discontinued: product.discontinued,
 		taxRate: tax ? tax / 100 : null,
