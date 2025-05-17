@@ -3,18 +3,12 @@
 	import { arrayToTree } from '$lib/scripts/tree';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
-	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as ContextMenu from '$lib/components/zag/context-menu/index';
 
-	import { Button } from '$lib/components/ui/button';
 	import DialogSelectReport from './DialogSelectReport.svelte';
 	import type { Snippet } from 'svelte';
 	// Icons
-	import PhPrinter from '~icons/ph/printer';
-	import ChevronsDownUp from '@lucide/svelte/icons/chevrons-down-up';
-	import FolderPen from '@lucide/svelte/icons/folder-pen';
-	import FolderPlus from '@lucide/svelte/icons/folder-plus';
 	import { TreeViewZag } from '$lib/components/zag';
 	let contextNode: string | null = $state(null);
 	interface Props {
@@ -25,7 +19,7 @@
 	let { data, children }: Props = $props();
 
 	let showReportDialog = $state(false);
-	let treeDataNew = $derived(arrayToTree(data.categories));
+	let treeData = $derived(arrayToTree(data.categories));
 
 	const initCategory = page.url.searchParams.get('cat');
 	let selectedCategory = $state(initCategory ? parseInt(initCategory) : undefined);
@@ -54,12 +48,12 @@
 						default:
 							console.warn('Unknown context menu action:', value);
 					}
-					contextNode = null; // Reset after action
+					contextNode = null;
 				}}
 			>
 				<ContextMenu.Trigger class="h-full">
 					<TreeViewZag
-						items={treeDataNew}
+						items={treeData}
 						bind:contextNode
 						defaultSelectedValue={selectedCategory ? [selectedCategory.toString()] : undefined}
 						onSelectionChange={({ focusedValue }) => {
@@ -68,7 +62,7 @@
 							const newUrl = new URL(page.url);
 							newUrl.searchParams.set('cat', focusedValue);
 							newUrl.searchParams.delete('search');
-							goto(newUrl, { invalidate: ['catalog'] });
+							goto(newUrl, { invalidate: ['catalog:products'] });
 						}}
 					/>
 				</ContextMenu.Trigger>
@@ -80,13 +74,6 @@
 					<ContextMenu.Item value="report">Generate Report...</ContextMenu.Item>
 				</ContextMenu.Content>
 			</ContextMenu.Root>
-
-			<!-- <Tree -->
-			<!-- items={treeData} -->
-			<!-- {selected} -->
-			<!-- onSelectedChange={(v) => { -->
-			<!-- selectedId = v;  }} -->
-			<!-- /> -->
 		</Card.Content>
 	</Card.Root>
 

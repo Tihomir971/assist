@@ -13,8 +13,6 @@
 	let { open = $bindable(false), results = $bindable([]) }: Props = $props();
 
 	function selectProduct(product: (typeof results)[0]) {
-		console.log('product', product);
-
 		const path = page.url.searchParams;
 		if (product.m_product_category_id) {
 			path.set('cat', product.m_product_category_id.toString());
@@ -23,17 +21,9 @@
 		}
 		path.set('search', product.id.toString());
 		goto(`/catalog?${path.toString()}`, {
-			invalidate: ['catalog:categories'],
-			replaceState: false
+			invalidate: ['catalog:categories']
 		});
-		// Navigate to catalog route with cat parameter AND search parameter
-		// if (product.m_product_category_id) {
-		// 	goto(`/catalog?cat=${product.m_product_category_id}&search=${product.id.toString()}`, {
-		// 		replaceState: false
-		// 	});
-		// } else {
-		// 	goto(`/catalog?search=${product.id.toString()}`, { replaceState: false });
-		// }
+
 		open = false;
 	}
 </script>

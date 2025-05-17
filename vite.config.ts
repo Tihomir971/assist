@@ -5,15 +5,15 @@ import Icons from 'unplugin-icons/vite';
 
 export default defineConfig({
 	plugins: [
-		sveltekit(),
 		tailwindcss(),
+		sveltekit(),
 		Icons({
 			compiler: 'svelte'
 		})
 	],
 
 	define: {
-		'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-		'import.meta.env.PACKAGE_VERSION': JSON.stringify(process.env.npm_package_version)
+		// 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+		// 'import.meta.env.PACKAGE_VERSION': JSON.stringify(process.env.npm_package_version)
 	}
 });

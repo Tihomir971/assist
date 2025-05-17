@@ -14,8 +14,8 @@
 	},
 	"observability": {
 		"enabled": true
-	},
-	"vars": {
+	}
+	/* 	"vars": {
 		"ENVIRONMENT": "dev",
 		"BIZNISOFT_API": "https://biznisoft-api.kalisi.rs",
 		"CONNECTOR_API_URL": "http://connector.kalisi.rs",
@@ -32,7 +32,7 @@
 				"SCRAPPER_API_URL": "http://scrapper.kalisi.rs"
 			}
 		}
-	}
+	} */
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

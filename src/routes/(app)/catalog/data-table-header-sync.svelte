@@ -77,7 +77,7 @@
 				});
 
 				rowSelectionState = {};
-				invalidate('catalog');
+				invalidate('catalog:products');
 			} else if (result.type === 'error') {
 				toast.error('Replenish ERP Sync', {
 					description: `Something is wrong ${result.error}`
@@ -115,7 +115,7 @@
 				}
 
 				rowSelectionState = {};
-				invalidate('catalog');
+				invalidate('catalog:products');
 			} else if (result.type === 'error') {
 				toast.error('Replenish ERP Sync', {
 					description: `Something is wrong ${result.error}`
@@ -154,7 +154,7 @@
 				}
 
 				rowSelectionState = {};
-				invalidate('catalog');
+				invalidate('catalog:products');
 			} else if (result.type === 'error') {
 				toast.error('Replenish ERP Sync', {
 					description: `Something is wrong ${result.error}`

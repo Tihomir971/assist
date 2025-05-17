@@ -8,6 +8,7 @@
 	import { toast } from 'svelte-sonner';
 	import type { mReplenishInsertSchema } from '$lib/types/supabase.zod.schemas.js';
 	import { z } from 'zod';
+	import { dev } from '$app/environment';
 
 	type Item = { value: number; label: string };
 	type Schema = z.infer<typeof mReplenishInsertSchema>;
@@ -58,41 +59,45 @@
 
 			<input type="hidden" name="id" value={$formData.id?.toString() || ''} />
 			<input type="hidden" name="m_product_id" value={$formData.m_product_id?.toString() || ''} />
-			<ComboboxZagForm
-				{superform}
-				field="m_warehouse_id"
-				label="Warehouse"
-				items={warehouses}
-				placeholder="Select a Warehouse"
-			/>
-			<ComboboxZagForm
-				{superform}
-				field="m_warehousesource_id"
-				label="Source Warehouse"
-				items={warehouses}
-				placeholder="Select a Warehouse"
-			/>
-			<NumberInputZagForm {superform} field="level_min" label="Min. Level" fraction={0} min={1} />
-			<NumberInputZagForm {superform} field="level_max" label="Max. Level" fraction={0} />
-			<NumberInputZagForm
-				{superform}
-				field="qtybatchsize"
-				label="Batch size"
-				fraction={0}
-				min={1}
-			/>
+			<div class="flex flex-col space-y-4 py-4">
+				<ComboboxZagForm
+					{superform}
+					field="m_warehouse_id"
+					label="Warehouse"
+					items={warehouses}
+					placeholder="Select a Warehouse"
+				/>
+				<ComboboxZagForm
+					{superform}
+					field="m_warehousesource_id"
+					label="Source Warehouse"
+					items={warehouses}
+					placeholder="Select a Warehouse"
+				/>
+				<NumberInputZagForm {superform} field="level_min" label="Min. Level" fraction={0} min={1} />
+				<NumberInputZagForm {superform} field="level_max" label="Max. Level" fraction={0} />
+				<NumberInputZagForm
+					{superform}
+					field="qtybatchsize"
+					label="Batch size"
+					fraction={0}
+					min={1}
+				/>
 
-			<Sheet.Footer class="mt-4 flex gap-2">
-				<Button type="submit" variant="default" class="w-full">Save</Button>
-				<Button
-					type="submit"
-					formaction="?/mReplenishDelete"
-					variant="destructive"
-					disabled={!$formData.id}
-					class="w-full">Delete</Button
-				>
-			</Sheet.Footer>
-			<SuperDebug data={{ $formData, $errors }} />
+				<Sheet.Footer class="flex gap-2">
+					<Button type="submit" variant="default" class="w-full">Save</Button>
+					<Button
+						type="submit"
+						formaction="?/mReplenishDelete"
+						variant="destructive"
+						disabled={!$formData.id}
+						class="w-full">Delete</Button
+					>
+				</Sheet.Footer>
+				{#if dev}
+					<SuperDebug data={{ $formData, $errors }} />
+				{/if}
+			</div>
 		</form>
 	</Sheet.Content>
 </Sheet.Root>

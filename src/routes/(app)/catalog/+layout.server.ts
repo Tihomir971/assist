@@ -5,6 +5,7 @@ import type { Warehouse } from './columns.svelte';
 let warehousesCache: Warehouse[] | [] = [];
 export const load: LayoutServerLoad = async ({ url, depends, locals: { supabase } }) => {
 	depends('catalog:categories');
+
 	const whParam = url.searchParams.get('wh');
 	if (!whParam) {
 		const newUrl = new URL(url);

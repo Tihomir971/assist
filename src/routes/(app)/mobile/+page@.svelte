@@ -91,17 +91,6 @@
 			}
 		}
 	}
-
-	function getPackingInfo(product: any) {
-		if (product && product.m_product_packing) {
-			return product.m_product_packing
-				.map((packing: any) => {
-					return `${packing.gtin} (${packing.packing_type}, ${packing.unitsperpack})`;
-				})
-				.join(', ');
-		}
-		return 'No packing information available';
-	}
 </script>
 
 <svelte:head>

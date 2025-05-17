@@ -28,7 +28,7 @@ import { ProductStatus, type ProductResultGet } from './types-get-market-info';
 export type ErrorDetails = { productId?: number; step: string; message: string };
 
 export const load: PageServerLoad = async ({ depends, parent, url, locals: { supabase } }) => {
-	depends('catalog');
+	depends('catalog:products');
 	const params = catalogSearchParamsSchema.parse(Object.fromEntries(url.searchParams));
 	const {
 		report: selectedReport,

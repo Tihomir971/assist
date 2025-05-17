@@ -81,8 +81,8 @@
 							formaction="?/mProductPoDelete"
 							variant="destructive"
 							disabled={!$formData.id}
-							class="w-full">Delete</Button
-						>
+							>Delete
+						</Button>
 					</Sheet.Footer>
 					{#if dev}
 						<SuperDebug data={{ $formData, $errors }} />

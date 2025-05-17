@@ -5,8 +5,6 @@
 
 	import * as tree from '@zag-js/tree-view';
 	import { normalizeProps, useMachine } from '@zag-js/svelte';
-	import PhFile from '~icons/ph/file';
-	import PhFolder from '~icons/ph/folder';
 	import PhCaretRight from '~icons/ph/caret-right';
 
 	interface TreeNodeProps {
@@ -17,29 +15,37 @@
 	let {
 		value = $bindable(),
 		items = [],
-		defaultSelectedValue,
+		defaultSelectedValue = $bindable(),
 		onSelectionChange,
 		label,
 		contextNode = $bindable(),
 		...restProps
 	}: TreeViewProps<T> = $props();
 
-	const collection = tree.collection<TreeViewItem>({
-		nodeToValue: (node) => node.value.toString(),
-		nodeToString: (node) => node.label,
-		rootNode: {
-			// Use rootNode as per documentation
-			value: 0,
-			label: '',
-			children: items
-		}
-	});
+	const collection = $derived(
+		tree.collection<TreeViewItem>({
+			nodeToValue: (node) => node.value.toString(),
+			nodeToString: (node) => node.label,
+			rootNode: {
+				// Use rootNode as per documentation
+				value: 0,
+				label: '',
+				children: items
+			}
+		})
+	);
 	const id = $props.id();
 	const service = useMachine(tree.machine, {
 		id,
-		collection,
-		defaultExpandedValue: getParentValues(defaultSelectedValue),
-		defaultSelectedValue: defaultSelectedValue,
+		get collection() {
+			return collection;
+		},
+		get defaultExpandedValue() {
+			return getParentValues(defaultSelectedValue);
+		},
+		get defaultSelectedValue() {
+			return defaultSelectedValue;
+		},
 		onSelectionChange: onSelectionChange
 	});
 
