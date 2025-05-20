@@ -217,7 +217,7 @@
 					</Tabs.List>
 					<Tabs.Content value="vendors">
 						<ProductPOCard
-							form={data.formProductPo}
+							validatedForm={data.formProductPo}
 							partners={data.partners}
 							productId={data.productId}
 							data={data.purchases}

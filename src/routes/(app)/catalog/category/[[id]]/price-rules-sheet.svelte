@@ -7,24 +7,32 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { toast } from 'svelte-sonner';
 	import { z } from 'zod';
-	import type { mProductPoInsertSchema } from '$lib/types/supabase.zod.schemas.js';
+	import type {
+		mProductPoInsertSchema,
+		priceRulesInsertSchema
+	} from '$lib/types/supabase.zod.schemas.js';
 	import { dev } from '$app/environment';
 
 	type Item = { value: number; label: string };
-	type Schema = z.infer<typeof mProductPoInsertSchema>;
+	type Schema = z.infer<typeof priceRulesInsertSchema>;
 	type Props = {
 		isSheetOpen: boolean;
 		data: Schema | undefined;
 		validatedForm: SuperValidated<Schema>;
-		partners: Item[];
+		priceFormulas: Item[];
 	};
 
-	let { isSheetOpen = $bindable(), data = $bindable(), validatedForm, partners }: Props = $props();
+	let {
+		isSheetOpen = $bindable(),
+		data = $bindable(),
+		validatedForm,
+		priceFormulas
+	}: Props = $props();
 	const superform = superForm(validatedForm, {
 		onUpdated({ form }) {
 			if (form.valid) {
 				toast.success(form.message || 'Vendor PO operation successful');
-				isSheetOpen = false; // Close the sheet after successful submission
+				isSheetOpen = false;
 				// invalidate('catalog:products');
 			} else {
 				console.error('Form is not valid', form.errors, form.message);
@@ -42,53 +50,46 @@
 </script>
 
 <Sheet.Root bind:open={isSheetOpen}>
-	<Sheet.Content class="my-4 sm:max-w-xl">
-		<form method="post" action="?/mProductPoUpsert" use:enhance>
+	<Sheet.Content class="sm:max-w-xl">
+		<form method="post" action="?/priceRulesUpsert" use:enhance>
 			<Sheet.Header>
 				<Sheet.Title>
-					{`${$form.id ? 'Update' : 'Create'} Product Purchase for Vendor`}
+					{`${$form.id ? 'Update' : 'Create'} Price rule for Category`}
 				</Sheet.Title>
 				<Sheet.Description>
 					This action cannot be undone. This will permanently delete your account and remove your
 					data from our servers.
 				</Sheet.Description>
 			</Sheet.Header>
-			<div class="overflow-auto">
+			<div class="overflow-auto px-4">
 				<input type="hidden" name="id" value={$form.id?.toString() || ''} />
 				<input type="hidden" name="m_product_id" value={$form.m_product_id?.toString() || ''} />
 				<div class="flex flex-col space-y-4 py-4">
-					<InputTextForm {superform} field="vendorproductno" label="Vendor PN" />
+					<InputTextForm {superform} field="name" label="Name" />
 					<ComboboxZagForm
 						{superform}
-						field="c_bpartner_id"
-						label="Vendor"
-						items={partners}
-						placeholder="Select a partner"
+						field="price_formula_id"
+						label="Formula script"
+						items={priceFormulas}
+						placeholder="Select a Formula"
 					/>
-					<NumberInputZagForm {superform} field="pricelist" label="Pricelist" fraction={2} />
-					<NumberInputZagForm
-						{superform}
-						field="order_min"
-						label="Min. order"
-						fraction={0}
-						min={1}
-					/>
-					<MyUrlInput name="url" bind:value={$form.url} label="url" />
-					<Sheet.Footer class="flex gap-2">
-						<Button type="submit" variant="default" class="w-full">Save</Button>
-						<Button
-							type="submit"
-							formaction="?/mProductPoDelete"
-							variant="destructive"
-							disabled={!$form.id}
-							>Delete
-						</Button>
-					</Sheet.Footer>
-					{#if dev}
-						<SuperDebug data={{ $form, $errors }} />
-					{/if}
+					<NumberInputZagForm {superform} field="priority" label="Priority" min={0} max={100} />
 				</div>
 			</div>
+			<Sheet.Footer>
+				<Button type="submit" variant="default">Save</Button>
+				<Button
+					type="submit"
+					formaction="?/priceRulesDelete"
+					variant="destructive"
+					disabled={!$form.id}
+				>
+					Delete
+				</Button>
+			</Sheet.Footer>
+			{#if dev}
+				<SuperDebug data={{ $form, $errors }} />
+			{/if}
 		</form>
 	</Sheet.Content>
 </Sheet.Root>

@@ -47,6 +47,7 @@
 <Sheet.Root bind:open={isSheetOpen}>
 	<Sheet.Content class="overflow-y-auto">
 		<form method="post" action="?/mReplenishUpsert" use:enhance>
+			{JSON.stringify($formData)}
 			<Sheet.Header>
 				<Sheet.Title
 					>{`${$formData.id ? 'Update' : 'Create'} Product Purchase for Vendor`}</Sheet.Title

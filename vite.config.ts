@@ -13,7 +13,7 @@ export default defineConfig({
 	],
 
 	define: {
-		// 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-		// 'import.meta.env.PACKAGE_VERSION': JSON.stringify(process.env.npm_package_version)
+		'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+		'import.meta.env.PACKAGE_VERSION': JSON.stringify(process.env.npm_package_version)
 	}
 });

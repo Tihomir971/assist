@@ -130,6 +130,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 	const formProductPacking = await superValidate(zod(productPackingInsertSchema));
 	formProductPacking.data.m_product_id = productId;
 	const formReplenish = await superValidate(zod(mReplenishInsertSchema));
+	formReplenish.data.m_product_id = productId;
 	const formProductPo = await superValidate(zod(mProductPoInsertSchema));
 	formProductPo.data.m_product_id = productId;
 
@@ -268,6 +269,8 @@ export const actions = {
 
 	mProductPoUpsert: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(mProductPoInsertSchema));
+		console.log('form', form);
+
 		if (!form.valid) return fail(400, { form });
 
 		if (form.data.id) {

@@ -1,12 +1,13 @@
 <script lang="ts">
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import * as Avatar from '$lib/components/ui/avatar/index.js';
-
+	import { goto } from '$app/navigation';
 	import { enhance } from '$app/forms';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import { goto } from '$app/navigation';
 	import type { Database, TablesUpdate } from '$lib/types/supabase.types';
+
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import * as Avatar from '$lib/components/ui/avatar/index.js';
+
 	type Props = {
 		supabase: SupabaseClient<Database>;
 		profile: TablesUpdate<'ad_user'> | null;
@@ -49,7 +50,7 @@
 	};
 </script>
 
-<DropdownMenu.Root>
+<!-- <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		<Avatar.Root>
 			<Avatar.Image src={avatarUrl} alt="@shadcn" />
@@ -72,4 +73,4 @@
 			</DropdownMenu.Item>
 		</form>
 	</DropdownMenu.Content>
-</DropdownMenu.Root>
+</DropdownMenu.Root> -->

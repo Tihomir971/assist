@@ -1,27 +1,19 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '$lib/types/supabase.types';
+import type { Database, Json } from '$lib/types/supabase.types';
 import type { ExportData, SalesActionData } from './types';
 import { utils, writeFile } from 'xlsx';
+// import FormulaJSWrapper from '$lib/scripts/excel_formula_evaluator';
+import { PriceCalculator } from '$lib/price-calculator';
+// const evaluator = new FormulaJSWrapper();
+
+interface PriceCalculationParams {
+	lowerBound: number;
+	upperBound: number;
+	lowerPercent: number;
+	upperPercent: number;
+}
 
 type FetchedProduct = Awaited<ReturnType<typeof fetchProducts>>[number];
-
-function calculateNewPrice(purchasePrice: number, taxRate: number): number {
-	const lowerBond = 0;
-	const upperBond = 100;
-	const lowerPercentage = 1.25;
-	const upperPercentage = 1.75;
-	const basePrice =
-		purchasePrice <= lowerBond
-			? purchasePrice * upperPercentage
-			: purchasePrice >= upperBond
-				? purchasePrice * lowerPercentage
-				: purchasePrice *
-					(lowerPercentage +
-						((purchasePrice - upperBond) / (lowerBond - upperBond)) *
-							(upperPercentage - lowerPercentage));
-
-	return Math.ceil(basePrice * (1 + taxRate)) - 0.01;
-}
 
 async function fetchProducts(supabase: SupabaseClient<Database>, productIds: number[]) {
 	const { data, error } = await supabase
@@ -50,6 +42,7 @@ async function fetchProducts(supabase: SupabaseClient<Database>, productIds: num
 
 function flattenProduct(product: FetchedProduct, vendorIds: number[], vat: boolean = false) {
 	const tax = product.c_taxcategory?.c_tax?.[0]?.rate ?? 0;
+
 	const purchase =
 		product.m_productprice.find((item) => item.m_pricelist_version_id === 5)?.pricestd ?? 0;
 	const retail =
@@ -111,7 +104,7 @@ function flattenProduct(product: FetchedProduct, vendorIds: number[], vat: boole
 		unitsperpack: product.m_product_packing?.[0]?.unitsperpack ?? 1,
 		imageurl: product.imageurl,
 		discontinued: product.discontinued,
-		taxRate: tax ? tax / 100 : null,
+		taxPercent: tax ? tax / 100 : 0,
 		qtyWholesale: storageLookup.get(2) ?? 0,
 		qtyRetail: storageLookup.get(5) ?? 0,
 		pricePurchase: vat ? purchase * (1 + tax / 100) : purchase,
@@ -141,12 +134,83 @@ export async function processExport(
 
 		const products = await fetchProducts(supabase, productIds);
 
-		const flattenedProducts = products.map((product) => flattenProduct(product, selectedVendorIds));
+		// Fetch price formula variables for all products
+		const productVariablesMap = new Map<number, PriceCalculationParams | null>();
+		if (products.length > 0) {
+			const rpcCalls = products.map(async (p) => {
+				const { data, error } = await supabase.rpc('get_price_formula_variables', {
+					p_m_product_id: p.id
+				});
+				return { productId: p.id, variables: data as Json | null, error };
+			});
+			const resolvedVariablesResults = await Promise.all(rpcCalls);
+			console.log('resolvedVariablesResults', resolvedVariablesResults);
+
+			resolvedVariablesResults.forEach((res) => {
+				if (res.error) {
+					console.error(
+						`Error fetching price formula variables for product ${res.productId}:`,
+						res.error
+					);
+					productVariablesMap.set(res.productId, null);
+				} else {
+					const vars = res.variables;
+					// Basic validation for the structure of variables
+					if (vars && typeof vars === 'object' && vars !== null && !Array.isArray(vars)) {
+						// At this point, vars is a non-null, non-array object.
+						// We can cast to Record<string, unknown> to safely access potential properties.
+						const potentialParams = vars as Record<string, unknown>;
+						if (
+							typeof potentialParams.lowerBound === 'number' &&
+							typeof potentialParams.upperBound === 'number' &&
+							typeof potentialParams.lowerPercent === 'number' &&
+							typeof potentialParams.upperPercent === 'number'
+						) {
+							productVariablesMap.set(res.productId, {
+								lowerBound: potentialParams.lowerBound,
+								upperBound: potentialParams.upperBound,
+								lowerPercent: potentialParams.lowerPercent,
+								upperPercent: potentialParams.upperPercent
+							} as PriceCalculationParams);
+						} else {
+							// Object structure doesn't match PriceCalculationParams
+							console.warn(
+								`Price formula variables for product ${res.productId} have missing or mistyped properties:`,
+								vars
+							);
+							productVariablesMap.set(res.productId, null);
+						}
+					} else {
+						// vars is null, not an object, or is an array
+						if (vars !== null) {
+							// Log if data is present but not a suitable object structure
+							console.warn(
+								`Price formula variables for product ${res.productId} have unexpected type (expected object, got ${typeof vars}):`,
+								vars
+							);
+						}
+						productVariablesMap.set(res.productId, null);
+					}
+				}
+			});
+		}
+
+		const flattenedProducts = products.map((product) => {
+			const flatProduct = flattenProduct(product, selectedVendorIds);
+			return {
+				...flatProduct,
+				priceFormulaVariables: productVariablesMap.get(product.id) || null
+			};
+		});
 
 		// Create data structure based on report type
 		const cartData = cartItems
 			.map((item) => {
-				const product = flattenedProducts.find((p) => p.id === item.id);
+				const product = flattenedProducts.find((p) => p.id === item.id) as
+					| (ReturnType<typeof flattenProduct> & {
+							priceFormulaVariables: PriceCalculationParams | null;
+					  })
+					| undefined;
 				if (!product) return null;
 
 				if (selectReportValue === 'sales_action') {
@@ -161,7 +225,7 @@ export async function processExport(
 
 					// Calculate max price and final prices
 					const maxPrice = Math.max(product.pricePurchase || 0, ...vendorPrices);
-					const cenaSaPdv = Math.ceil(maxPrice * (1 + (product.taxRate || 0))) - 0.01;
+					const cenaSaPdv = Math.ceil(maxPrice * (1 + (product.taxPercent || 0))) - 0.01;
 
 					// Create base data without final prices
 					const salesActionData: SalesActionData = {
@@ -194,6 +258,27 @@ export async function processExport(
 						const numberOfBatches = Math.floor((levelMax - qtyRetail) / qtyBatchSize);
 						kolicina = Math.min(numberOfBatches * qtyBatchSize, qtyWholesale);
 					}
+					const calculator = new PriceCalculator();
+
+					const defaultCalcParams: PriceCalculationParams = {
+						lowerBound: 0,
+						upperBound: 100,
+						lowerPercent: 0.2,
+						upperPercent: 0.3
+					};
+
+					const formulaVars = product.priceFormulaVariables;
+					// More robust check for a valid parameters object
+					const calcParams =
+						formulaVars &&
+						typeof formulaVars === 'object' &&
+						Object.keys(formulaVars).length > 0 && // Ensure it's not an empty object
+						typeof formulaVars.lowerBound === 'number' &&
+						typeof formulaVars.upperBound === 'number' &&
+						typeof formulaVars.lowerPercent === 'number' &&
+						typeof formulaVars.upperPercent === 'number'
+							? formulaVars
+							: defaultCalcParams;
 
 					return {
 						Šifra: product.sku || '',
@@ -206,7 +291,18 @@ export async function processExport(
 						qtyBatchSize: product.qtyBatchSize || 0,
 						'Pack Qty.': Number((kolicina / product.unitsperpack || 0).toFixed(2)),
 						Količina: kolicina,
-						'Cena u obj.2': calculateNewPrice(product.pricePurchase || 0, product.taxRate || 0)
+						'Cena u obj.2': calculator.customCalculate(
+							product.pricePurchase,
+							product.taxPercent,
+							calcParams
+						)
+						// 'Cena u obj.2': calculateNewPrice(product.pricePurchase || 0, product.taxRate || 0)
+						/* 'Cena u obj.2': calculator.calculate(
+							'input_price <= 0? input_price * 1.3 : input_price >= 100 ? input_price * 1.2 : input_price * (1.2 + (input_price - 100) / (0 - 100) * 0.1)',
+							product.taxPercent,
+							product.pricePurchase
+						)*/
+						// 'Cena u  obj.2': calculateNewPrice(product.pricePurchase || 0, product.taxRate || 0)
 					};
 				} else if (selectReportValue === 'vendor_orders') {
 					// Default export
@@ -239,7 +335,7 @@ export async function processExport(
 						Name: item.name,
 						'Order Qty.': orderQty, // Use the calculated value
 						'Pack Qty.': product.unitsperpack || 0,
-						Tax: product.taxRate || 0,
+						Tax: product.taxPercent || 0,
 						'VP Qty.': vpQtyVal,
 						'MP Qty.': mpQtyVal,
 						'VP Max': vpMaxVal,

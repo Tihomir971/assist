@@ -16,7 +16,7 @@
 	import type { mProductPoInsertSchema } from '$lib/types/supabase.zod.schemas';
 	type Schema = z.infer<typeof mProductPoInsertSchema>;
 	type Props = {
-		form: SuperValidated<Schema>;
+		validatedForm: SuperValidated<Schema>;
 		productId: number;
 		data: Schema[];
 		partners: {
@@ -121,7 +121,7 @@
 	<ProductPoSheet
 		bind:isSheetOpen
 		bind:data={selectedVendor}
-		form={data.form}
+		validatedForm={data.validatedForm}
 		partners={data.partners}
 	/>
 {/if}

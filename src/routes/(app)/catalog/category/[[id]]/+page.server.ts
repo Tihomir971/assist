@@ -2,31 +2,46 @@ import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { mProductCategoryInsertSchema } from '$lib/types/supabase.zod.schemas';
+import {
+	mProductCategoryInsertSchema,
+	priceRulesInsertSchema
+} from '$lib/types/supabase.zod.schemas';
+import { deleteByIdSchema } from '../../products/[slug]/schema';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
-	const categoryId = params.id ? parseInt(params.id) : null;
-
-	let category = null;
-	if (categoryId !== null) {
-		const { data } = await supabase
-			.from('m_product_category')
-			.select('*')
-			.eq('id', categoryId)
-			.maybeSingle();
-
-		category = data;
+	if (!params.id) {
+		throw error(400, 'Category ID is required');
 	}
 
-	const categories =
-		(await supabase.from('m_product_category').select('value:id, label:name').order('name')).data ||
-		[];
+	const categoryId = parseInt(params.id);
+
+	const { data: category } = await supabase
+		.from('m_product_category')
+		.select('*')
+		.eq('id', categoryId)
+		.maybeSingle();
+	const { data: categories } = await supabase
+		.from('m_product_category')
+		.select('value:id, label:name')
+		.order('name');
+	const { data: priceFormulas } = await supabase
+		.from('price_formulas')
+		.select('value:id, label:name')
+		.order('name');
+	const { data: priceRules } = await supabase
+		.from('price_rules')
+		.select('*')
+		.eq('m_product_category_id', categoryId);
 
 	const formCategory = await superValidate(category, zod(mProductCategoryInsertSchema));
+	const formPriceRules = await superValidate(zod(priceRulesInsertSchema));
 
 	return {
 		formCategory,
-		categories
+		categories: categories || [],
+		priceRules: priceRules || [],
+		formPriceRules,
+		priceFormulas: priceFormulas || []
 	};
 };
 
@@ -74,5 +89,42 @@ export const actions = {
 				return message(form, 'Category updated!');
 			}
 		}
+	},
+	priceRulesUpsert: async ({ request, locals: { supabase } }) => {
+		const form = await superValidate(request, zod(priceRulesInsertSchema));
+		if (!form.valid) return fail(400, { form });
+
+		if (!form.data.id) {
+			console.log('Create Category');
+			const { error: insertError } = await supabase.from('price_rules').insert(form.data);
+			if (insertError) {
+				throw error(400, insertError.message);
+			}
+			return message(form, 'Category created!');
+		} else {
+			console.log('Update Category');
+			// UPDATE Category
+			const { error: updateError } = await supabase
+				.from('price_rules')
+				.update(form.data)
+				.eq('id', form.data.id);
+
+			if (updateError) {
+				throw error(404, updateError.message);
+			}
+			return message(form, 'Category updated!');
+		}
+	},
+	priceRulesDelete: async ({ request, locals: { supabase } }) => {
+		const form = await superValidate(request, zod(deleteByIdSchema));
+		if (!form.valid) return fail(400, { form });
+		const { error: deleteError } = await supabase
+			.from('price_rules')
+			.delete()
+			.eq('id', form.data.id);
+		if (deleteError) {
+			throw error(400, deleteError.message);
+		}
+		return message(form, 'Price rule deleted!');
 	}
 } satisfies Actions;

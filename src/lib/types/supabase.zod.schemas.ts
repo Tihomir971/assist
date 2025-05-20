@@ -1814,6 +1814,137 @@ export const mWarehouseUpdateSchema = z.object({
 
 export const mWarehouseRelationshipsSchema = z.tuple([]);
 
+export const priceFormulasRowSchema = z.object({
+	created_at: z.string(),
+	description: z.string().nullable(),
+	id: z.number(),
+	name: z.string(),
+	script: z.string().nullable(),
+	updated_at: z.string(),
+	variables: jsonSchema
+});
+
+export const priceFormulasInsertSchema = z.object({
+	created_at: z.string().optional(),
+	description: z.string().optional().nullable(),
+	id: z.number().optional(),
+	name: z.string(),
+	script: z.string().optional().nullable(),
+	updated_at: z.string().optional(),
+	variables: jsonSchema.optional()
+});
+
+export const priceFormulasUpdateSchema = z.object({
+	created_at: z.string().optional(),
+	description: z.string().optional().nullable(),
+	id: z.number().optional(),
+	name: z.string().optional(),
+	script: z.string().optional().nullable(),
+	updated_at: z.string().optional(),
+	variables: jsonSchema.optional()
+});
+
+export const priceFormulasRelationshipsSchema = z.tuple([]);
+
+export const priceRuleAttributeOptionsRowSchema = z.object({
+	created_at: z.string(),
+	m_attribute_option_id: z.number(),
+	price_rule_id: z.number()
+});
+
+export const priceRuleAttributeOptionsInsertSchema = z.object({
+	created_at: z.string().optional(),
+	m_attribute_option_id: z.number(),
+	price_rule_id: z.number()
+});
+
+export const priceRuleAttributeOptionsUpdateSchema = z.object({
+	created_at: z.string().optional(),
+	m_attribute_option_id: z.number().optional(),
+	price_rule_id: z.number().optional()
+});
+
+export const priceRuleAttributeOptionsRelationshipsSchema = z.tuple([
+	z.object({
+		foreignKeyName: z.literal('price_rule_attribute_options_m_attribute_option_id_fkey'),
+		columns: z.tuple([z.literal('m_attribute_option_id')]),
+		referencedRelation: z.literal('m_attribute_option'),
+		referencedColumns: z.tuple([z.literal('id')])
+	}),
+	z.object({
+		foreignKeyName: z.literal('price_rule_attribute_options_price_rule_id_fkey'),
+		columns: z.tuple([z.literal('price_rule_id')]),
+		referencedRelation: z.literal('price_rules'),
+		referencedColumns: z.tuple([z.literal('id')])
+	})
+]);
+
+export const priceRulesRowSchema = z.object({
+	created_at: z.string(),
+	id: z.number(),
+	is_active: z.boolean(),
+	m_attribute_id: z.number().nullable(),
+	m_product_category_id: z.number().nullable(),
+	m_product_id: z.number().nullable(),
+	name: z.string().nullable(),
+	price_formula_id: z.number(),
+	priority: z.number(),
+	updated_at: z.string()
+});
+
+export const priceRulesInsertSchema = z.object({
+	created_at: z.string().optional(),
+	id: z.number().optional(),
+	is_active: z.boolean().optional(),
+	m_attribute_id: z.number().optional().nullable(),
+	m_product_category_id: z.number().optional().nullable(),
+	m_product_id: z.number().optional().nullable(),
+	name: z.string().optional().nullable(),
+	price_formula_id: z.number(),
+	priority: z.number().optional(),
+	updated_at: z.string().optional()
+});
+
+export const priceRulesUpdateSchema = z.object({
+	created_at: z.string().optional(),
+	id: z.number().optional(),
+	is_active: z.boolean().optional(),
+	m_attribute_id: z.number().optional().nullable(),
+	m_product_category_id: z.number().optional().nullable(),
+	m_product_id: z.number().optional().nullable(),
+	name: z.string().optional().nullable(),
+	price_formula_id: z.number().optional(),
+	priority: z.number().optional(),
+	updated_at: z.string().optional()
+});
+
+export const priceRulesRelationshipsSchema = z.tuple([
+	z.object({
+		foreignKeyName: z.literal('price_rules_m_attribute_id_fkey'),
+		columns: z.tuple([z.literal('m_attribute_id')]),
+		referencedRelation: z.literal('m_attribute'),
+		referencedColumns: z.tuple([z.literal('id')])
+	}),
+	z.object({
+		foreignKeyName: z.literal('price_rules_m_product_category_id_fkey'),
+		columns: z.tuple([z.literal('m_product_category_id')]),
+		referencedRelation: z.literal('m_product_category'),
+		referencedColumns: z.tuple([z.literal('id')])
+	}),
+	z.object({
+		foreignKeyName: z.literal('price_rules_m_product_id_fkey'),
+		columns: z.tuple([z.literal('m_product_id')]),
+		referencedRelation: z.literal('m_product'),
+		referencedColumns: z.tuple([z.literal('id')])
+	}),
+	z.object({
+		foreignKeyName: z.literal('price_rules_price_formula_id_fkey'),
+		columns: z.tuple([z.literal('price_formula_id')]),
+		referencedRelation: z.literal('price_formulas'),
+		referencedColumns: z.tuple([z.literal('id')])
+	})
+]);
+
 export const wBasketRowSchema = z.object({
 	ad_user_id: z.number(),
 	c_bpartner_id: z.number().nullable(),
@@ -1928,6 +2059,8 @@ export const wBasketlineRelationshipsSchema = z.tuple([
 export const deleteAvatarReturnsSchema = z.record(z.unknown());
 
 export const deleteStorageObjectReturnsSchema = z.record(z.unknown());
+
+export const getPriceFormulaVariablesReturnsSchema = jsonSchema;
 
 export const regionTypeSchema = z.union([
 	z.literal('city'),

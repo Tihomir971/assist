@@ -1,25 +1,28 @@
 <script lang="ts">
 	import { dev, browser } from '$app/environment';
+	import { page } from '$app/state';
 
 	// Superforms
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { mProductCategoryInsertSchema } from '$lib/types/supabase.zod.schemas.js';
-	import * as ContextMenu from '$lib/components/zag/context-menu/index.js';
-	import { formatDateTime } from '$lib/style/locale';
+	import { formatDate, formatDateTime } from '$lib/style/locale';
 	import { toast } from 'svelte-sonner';
 
 	// Components
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
+	import Sheet from './price-rules-sheet.svelte';
+
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-
 	import { ComboboxZagForm, SwitchZagForm } from '$lib/components/zag/index.js';
-
 	import InputTextForm from '$lib/components/my/input/input-text-form.svelte';
-	import { page } from '$app/state';
+
+	import PhDotsThreeBold from '~icons/ph/dots-three-bold';
+	import { labelByValue } from '$lib/scripts/custom';
 
 	let { data } = $props();
 
@@ -43,6 +46,11 @@
 		}
 	});
 	const { form: formData, enhance, message, isTainted, tainted, errors } = superform;
+	let isSheetOpen = $state(false);
+	let selectedId: number | undefined = $state();
+	let selected = $derived.by(() => {
+		return data.priceRules.find((v) => v.id === selectedId);
+	});
 </script>
 
 <div class="container mx-auto py-6">
@@ -121,19 +129,72 @@
 			</Card.Content>
 		</Card.Root>
 	</div>
-	<ContextMenu.Root onSelect={(e) => console.log('Selected', e)}>
-		<ContextMenu.Trigger class="rounded border p-2 hover:bg-surface-1">
-			Right-click here
-		</ContextMenu.Trigger>
-		<ContextMenu.Content>
-			<ContextMenu.Item value="edit">Edit</ContextMenu.Item>
-			<ContextMenu.Item value="duplicate">Duplicate</ContextMenu.Item>
-			<ContextMenu.Separator />
-			<ContextMenu.Item value="delete" disabled>Delete (Disabled)</ContextMenu.Item>
-			<ContextMenu.Item value="export">Export...</ContextMenu.Item>
-		</ContextMenu.Content>
-	</ContextMenu.Root>
+	<Card.Root>
+		<Card.Header>
+			<div class="flex items-center justify-between">
+				<Card.Title>Price Rules</Card.Title>
+				<Button
+					variant="outline"
+					onclick={() => {
+						selectedId = undefined;
+						isSheetOpen = !isSheetOpen;
+					}}
+				>
+					Add rule ...
+				</Button>
+			</div>
+		</Card.Header>
+		<Card.Content>
+			<Table.Root>
+				<Table.Header>
+					<Table.Row>
+						<Table.Head class="w-[100px]name">Name</Table.Head>
+						<Table.Head>Is Active?</Table.Head>
+						<Table.Head>Attribute ID</Table.Head>
+						<Table.Head>Price Formula</Table.Head>
+						<Table.Head>Created at</Table.Head>
+						<Table.Head>Updated at</Table.Head>
+						<Table.Head class="w-8"></Table.Head>
+					</Table.Row>
+				</Table.Header>
+				<Table.Body>
+					{#each data.priceRules as row}
+						<Table.Row>
+							<Table.Cell class="font-medium">{row.name}</Table.Cell>
+							<Table.Cell>{row.is_active}</Table.Cell>
+							<Table.Cell>{row.m_attribute_id}</Table.Cell>
+							<Table.Cell>{labelByValue(row.price_formula_id, data.priceFormulas)}</Table.Cell>
+							<Table.Cell>{formatDate(row.created_at)}</Table.Cell>
+							<Table.Cell>{formatDate(row.updated_at)}</Table.Cell>
+							<Table.Cell>
+								<Button
+									variant="ghost"
+									size="icon"
+									onclick={() => {
+										selectedId = row.id;
+										isSheetOpen = !isSheetOpen;
+									}}
+								>
+									<PhDotsThreeBold />
+								</Button>
+							</Table.Cell>
+						</Table.Row>
+					{/each}
+				</Table.Body>
+			</Table.Root>
+		</Card.Content>
+	</Card.Root>
 </div>
+
+{#if isSheetOpen}
+	<Sheet
+		bind:isSheetOpen
+		bind:data={selected}
+		validatedForm={data.formPriceRules}
+		priceFormulas={data.priceFormulas}
+	/>
+{/if}
+
 {#if browser}
 	<Card.Root>
 		<Card.Content>

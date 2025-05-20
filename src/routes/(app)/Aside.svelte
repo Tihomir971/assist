@@ -42,9 +42,9 @@
 					href="/dashboard"
 					variant="ghost"
 					size="icon"
-					class={`[&_svg]:size-6 ${activePath === '/dashboard' ? '' : 'text-muted-foreground'}`}
+					class={`${activePath === '/dashboard' ? '' : 'text-muted-foreground'}`}
 				>
-					<PhLayout />
+					<PhLayout class="size-6" />
 					<span class="sr-only">Dashboard</span>
 				</Button>
 			</Tooltip.Trigger>
@@ -59,9 +59,9 @@
 					href={catalogHref}
 					variant="ghost"
 					size="icon"
-					class={`[&_svg]:size-6 ${activePath === '/catalog' ? '' : 'text-muted-foreground'}`}
+					class={`${activePath === '/catalog' ? '' : 'text-muted-foreground'}`}
 				>
-					<PhTag />
+					<PhTag class="size-6" />
 					<span class="sr-only">Catalog</span>
 				</Button>
 			</Tooltip.Trigger>
@@ -77,16 +77,16 @@
 						<Button
 							variant="ghost"
 							size="icon"
-							class={`[&_svg]:size-6 ${isProductAttributesActive ? '' : 'text-muted-foreground'}`}
+							class={`${isProductAttributesActive ? '' : 'text-muted-foreground'}`}
 						>
-							<PhSquaresFour />
+							<PhSquaresFour class="size-6" />
 							<span class="sr-only">Product Attributes</span>
 						</Button>
 					</DropdownMenu.DropdownMenuTrigger>
 					<DropdownMenu.DropdownMenuContent side="right">
 						<DropdownMenu.DropdownMenuItem>
 							<a href="/catalog/product-attributes/attributes" class="flex w-full items-center">
-								<PhTag class="mr-2 h-4 w-4" />
+								<PhTag class="mr-2 size-4" />
 								<span>Attributes</span>
 							</a>
 						</DropdownMenu.DropdownMenuItem>
@@ -95,13 +95,13 @@
 								href="/catalog/product-attributes/attribute-groups"
 								class="flex w-full items-center"
 							>
-								<PhList class="mr-2 h-4 w-4" />
+								<PhList class="mr-2 size-4" />
 								<span>Attribute Groups</span>
 							</a>
 						</DropdownMenu.DropdownMenuItem>
 						<DropdownMenu.DropdownMenuItem>
 							<a href="/catalog/product-attributes/attribute-sets" class="flex w-full items-center">
-								<PhFolders class="mr-2 h-4 w-4" />
+								<PhFolders class="mr-2 size-4" />
 								<span>Attribute Sets</span>
 							</a>
 						</DropdownMenu.DropdownMenuItem>
@@ -119,9 +119,9 @@
 					href="/excel"
 					variant="ghost"
 					size="icon"
-					class={`[&_svg]:size-6 ${activePath === '/excel' ? '' : 'text-muted-foreground'}`}
+					class={`${activePath === '/excel' ? '' : 'text-muted-foreground'}`}
 				>
-					<PhMicrosoftExcelLogo />
+					<PhMicrosoftExcelLogo class="size-6" />
 					<span class="sr-only">Import Excel</span>
 				</Button>
 			</Tooltip.Trigger>
@@ -135,9 +135,9 @@
 					href="/excel"
 					variant="ghost"
 					size="icon"
-					class={`[&_svg]:size-6 ${activePath === '/excel' ? '' : 'text-muted-foreground'}`}
+					class={`${activePath === '/excel' ? '' : 'text-muted-foreground'}`}
 				>
-					<PhMegaphone />
+					<PhMegaphone class="size-6" />
 					<span class="sr-only">Import Excel</span>
 				</Button>
 			</Tooltip.Trigger>
