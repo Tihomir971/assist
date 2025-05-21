@@ -26,7 +26,7 @@
 </script>
 
 <main class="flex w-full flex-1 gap-2 overflow-hidden px-2 py-2">
-	<Card.Root class="flex h-full w-64 flex-col border-surface-2 bg-transparent">
+	<Card.Root class="flex h-full w-64 flex-col gap-0 border-surface-2  bg-transparent p-0">
 		<Card.Content class="h-full min-h-0 flex-1 p-0">
 			<ContextMenu.Root
 				onSelect={({ value }) => {
