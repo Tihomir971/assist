@@ -6,6 +6,8 @@
 	import * as tree from '@zag-js/tree-view';
 	import { normalizeProps, useMachine } from '@zag-js/svelte';
 	import PhCaretRight from '~icons/ph/caret-right';
+	import { page } from '$app/state';
+	import { goto, invalidate } from '$app/navigation';
 
 	interface TreeNodeProps {
 		node: TreeViewItem; // Changed Node to TreeViewItem
@@ -145,9 +147,20 @@
 	{#if label}
 		<h3 {...api.getLabelProps()}>{label}</h3>
 	{/if}
-	<div class="grid grid-cols-2 gap-2 bg-surface-1 p-3">
-		<Button variant="outline" onclick={() => api.collapse()}>Collapse All</Button>
-		<Button variant="outline" onclick={() => api.expand()}>Expand All</Button>
+	<div class="flex flex-row-reverse gap-2 bg-surface-1 p-3">
+		<Button
+			variant="outline"
+			onclick={() => {
+				api.collapse();
+				const path = page.url.searchParams;
+				path.delete('cat');
+				goto(`/catalog?${path.toString()}`);
+				invalidate('catalog:products');
+			}}
+		>
+			Collapse All
+		</Button>
+		<!-- <Button variant="outline" onclick={() => api.expand()}>Expand All</Button> -->
 	</div>
 	<div class="flex-1 overflow-x-hidden overflow-y-auto">
 		<div {...api.getTreeProps()}>

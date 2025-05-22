@@ -15,10 +15,7 @@ export const load: PageServerLoad = async ({ locals: { supabase, session } }) =>
 		.eq('auth_user_id', session.user.id)
 		.single();
 
-	const form = await superValidate(profile, zod(crudSchema));
-	console.log('form.data', form.data.created_at, ' ', form.data.updated_at);
-
-	return { session, form };
+	return { session, form: await superValidate(profile, zod(crudSchema)) };
 };
 
 export const actions = {

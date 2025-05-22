@@ -10,7 +10,7 @@
 		type FormPathLeaves,
 		type FormFieldProxy
 	} from 'sveltekit-superforms';
-	import Combobox from './combobox.svelte'; // Import the base component
+	import Combobox from './combobox.svelte';
 
 	interface Props extends ComboboxProps<ComboboxItem> {
 		superform: SuperForm<T>;

@@ -6,9 +6,7 @@ import { loginSchema } from './schema';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export const load: PageServerLoad = async () => {
-	const form = await superValidate(zod(loginSchema));
-
-	return { form };
+	return { form: await superValidate(zod(loginSchema)) };
 };
 
 export const actions = {

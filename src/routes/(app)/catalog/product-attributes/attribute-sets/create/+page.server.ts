@@ -15,11 +15,8 @@ export const load = async ({ locals }: { locals: App.Locals }) => {
 		throw error(500, 'Error fetching attributes');
 	}
 
-	// Prepare the form
-	const form = await superValidate(zod(createAttributeSetWithAttributesSchema));
-
 	return {
-		form,
+		form: await superValidate(zod(createAttributeSetWithAttributesSchema)),
 		attributes
 	};
 };

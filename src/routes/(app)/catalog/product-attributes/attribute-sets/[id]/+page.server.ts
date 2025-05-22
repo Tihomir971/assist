@@ -67,10 +67,9 @@ export const load = async ({ params, locals }: { params: { id: string }; locals:
 		description: attributeSet.description ?? undefined, // Convert null to undefined to match schema
 		attributes
 	};
-	const form = await superValidate(formData, zod(updateAttributeSetWithAttributesSchema));
 
 	return {
-		form,
+		form: await superValidate(formData, zod(updateAttributeSetWithAttributesSchema)),
 		allAttributes,
 		attributeSetAttributes
 	};

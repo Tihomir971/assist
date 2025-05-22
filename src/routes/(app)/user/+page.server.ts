@@ -51,10 +51,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		throw error(500, 'Error fetching user data');
 	}
 
-	// Use the zod adapter to ensure proper type inference with superValidate
-	const form = await superValidate(userData, zod(userSchema));
-
-	return { form };
+	return { form: await superValidate(userData, zod(userSchema)) };
 };
 
 export const actions = {

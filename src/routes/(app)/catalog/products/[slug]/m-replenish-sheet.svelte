@@ -9,6 +9,7 @@
 	import type { mReplenishInsertSchema } from '$lib/types/supabase.zod.schemas.js';
 	import { z } from 'zod';
 	import { dev } from '$app/environment';
+	import { Control, Field, FieldErrors, Label } from 'formsnap';
 
 	type Item = { value: number; label: string };
 	type Schema = z.infer<typeof mReplenishInsertSchema>;
@@ -45,22 +46,20 @@
 </script>
 
 <Sheet.Root bind:open={isSheetOpen}>
-	<Sheet.Content class="overflow-y-auto">
+	<Sheet.Content>
 		<form method="post" action="?/mReplenishUpsert" use:enhance>
-			{JSON.stringify($formData)}
 			<Sheet.Header>
-				<Sheet.Title
-					>{`${$formData.id ? 'Update' : 'Create'} Product Purchase for Vendor`}</Sheet.Title
-				>
+				<Sheet.Title>
+					{`${$formData.id ? 'Update' : 'Create'} Product Purchase for Vendor`}
+				</Sheet.Title>
 				<Sheet.Description>
 					This action cannot be undone. This will permanently delete your account and remove your
 					data from our servers.
 				</Sheet.Description>
 			</Sheet.Header>
-
-			<input type="hidden" name="id" value={$formData.id?.toString() || ''} />
-			<input type="hidden" name="m_product_id" value={$formData.m_product_id?.toString() || ''} />
-			<div class="flex flex-col space-y-4 py-4">
+			<div class="grid gap-3 overflow-y-auto p-4">
+				<input type="hidden" name="id" value={$formData.id?.toString() || ''} />
+				<input type="hidden" name="m_product_id" value={$formData.m_product_id?.toString() || ''} />
 				<ComboboxZagForm
 					{superform}
 					field="m_warehouse_id"
@@ -84,21 +83,20 @@
 					fraction={0}
 					min={1}
 				/>
-
-				<Sheet.Footer class="flex gap-2">
-					<Button type="submit" variant="default" class="w-full">Save</Button>
-					<Button
-						type="submit"
-						formaction="?/mReplenishDelete"
-						variant="destructive"
-						disabled={!$formData.id}
-						class="w-full">Delete</Button
-					>
-				</Sheet.Footer>
+			</div>
+			<Sheet.Footer class="flex gap-2">
+				<Button type="submit" variant="default" class="w-full">Save</Button>
+				<Button
+					type="submit"
+					formaction="?/mReplenishDelete"
+					variant="destructive"
+					disabled={!$formData.id}
+					class="w-full">Delete</Button
+				>
 				{#if dev}
 					<SuperDebug data={{ $formData, $errors }} />
 				{/if}
-			</div>
+			</Sheet.Footer>
 		</form>
 	</Sheet.Content>
 </Sheet.Root>

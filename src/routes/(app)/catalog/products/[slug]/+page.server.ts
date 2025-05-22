@@ -126,7 +126,6 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		getAttributeSets()
 	]);
 
-	const formProduct = await superValidate(product, zod(mProductInsertSchema));
 	const formProductPacking = await superValidate(zod(productPackingInsertSchema));
 	formProductPacking.data.m_product_id = productId;
 	const formReplenish = await superValidate(zod(mReplenishInsertSchema));
@@ -141,7 +140,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 
 	return {
 		productId,
-		formProduct,
+		formProduct: await superValidate(product, zod(mProductInsertSchema)),
 		formProductPo,
 		purchases,
 		formProductPacking,

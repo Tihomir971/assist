@@ -33,14 +33,11 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 		.select('*')
 		.eq('m_product_category_id', categoryId);
 
-	const formCategory = await superValidate(category, zod(mProductCategoryInsertSchema));
-	const formPriceRules = await superValidate(zod(priceRulesInsertSchema));
-
 	return {
-		formCategory,
+		formCategory: await superValidate(category, zod(mProductCategoryInsertSchema)),
 		categories: categories || [],
 		priceRules: priceRules || [],
-		formPriceRules,
+		formPriceRules: await superValidate(zod(priceRulesInsertSchema)),
 		priceFormulas: priceFormulas || []
 	};
 };

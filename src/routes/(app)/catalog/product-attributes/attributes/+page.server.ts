@@ -81,20 +81,15 @@ export const load = async ({ locals, url }: { locals: App.Locals; url: URL }) =>
 		throw error(500, 'Error fetching attribute groups');
 	}
 
-	// Prepare forms
-	const createForm = await superValidate(zod(createAttributeSchema));
-	const createOptionsForm = await superValidate(zod(createAttributeOptionsSchema));
-	const deleteForm = await superValidate(zod(deleteAttributeSchema));
-
 	return {
 		attributes,
 		attributeGroups,
 		count: count || 0,
 		page,
 		perPage,
-		createForm,
-		createOptionsForm,
-		deleteForm
+		createForm: await superValidate(zod(createAttributeSchema)),
+		createOptionsForm: await superValidate(zod(createAttributeOptionsSchema)),
+		deleteForm: await superValidate(zod(deleteAttributeSchema))
 	};
 };
 

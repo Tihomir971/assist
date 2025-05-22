@@ -4,11 +4,13 @@
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import { toast } from 'svelte-sonner';
 	import { z } from 'zod';
 	import type { mProductPoInsertSchema } from '$lib/types/supabase.zod.schemas.js';
 	import { dev } from '$app/environment';
+	import SuperForm from '$lib/components/zag/combobox/super-form.svelte';
+	import ComboboxNew from '$lib/components/zag/combobox/combobox-new.svelte';
 
 	type Item = { value: number; label: string };
 	type Schema = z.infer<typeof mProductPoInsertSchema>;
@@ -42,53 +44,47 @@
 </script>
 
 <Sheet.Root bind:open={isSheetOpen}>
-	<Sheet.Content class="my-4 sm:max-w-xl">
+	<Sheet.Content>
 		<form method="post" action="?/mProductPoUpsert" use:enhance>
 			<Sheet.Header>
 				<Sheet.Title>
 					{`${$form.id ? 'Update' : 'Create'} Product Purchase for Vendor`}
 				</Sheet.Title>
-				<Sheet.Description>
-					This action cannot be undone. This will permanently delete your account and remove your
-					data from our servers.
-				</Sheet.Description>
+				<Sheet.Description>This will create or update Purchase for Vendor.</Sheet.Description>
 			</Sheet.Header>
-			<div class="overflow-auto">
+			<div class="grid flex-1 auto-rows-min gap-3 px-4">
 				<input type="hidden" name="id" value={$form.id?.toString() || ''} />
 				<input type="hidden" name="m_product_id" value={$form.m_product_id?.toString() || ''} />
-				<div class="flex flex-col space-y-4 py-4">
-					<InputTextForm {superform} field="vendorproductno" label="Vendor PN" />
-					<ComboboxZagForm
-						{superform}
-						field="c_bpartner_id"
-						label="Vendor"
-						items={partners}
-						placeholder="Select a partner"
-					/>
-					<NumberInputZagForm {superform} field="pricelist" label="Pricelist" fraction={2} />
-					<NumberInputZagForm
-						{superform}
-						field="order_min"
-						label="Min. order"
-						fraction={0}
-						min={1}
-					/>
-					<MyUrlInput name="url" bind:value={$form.url} label="url" />
-					<Sheet.Footer class="flex gap-2">
-						<Button type="submit" variant="default" class="w-full">Save</Button>
-						<Button
-							type="submit"
-							formaction="?/mProductPoDelete"
-							variant="destructive"
-							disabled={!$form.id}
-							>Delete
-						</Button>
-					</Sheet.Footer>
-					{#if dev}
-						<SuperDebug data={{ $form, $errors }} />
-					{/if}
-				</div>
+				<InputTextForm {superform} field="vendorproductno" label="Vendor PN" />
+				<ComboboxZagForm
+					{superform}
+					field="c_bpartner_id"
+					label="Vendor"
+					items={partners}
+					placeholder="Select a partner"
+				/>
+				<NumberInputZagForm {superform} field="pricelist" label="Pricelist" fraction={2} />
+				<NumberInputZagForm {superform} field="order_min" label="MOQ" fraction={0} min={1} />
+				<MyUrlInput name="url" bind:value={$form.url} label="URL" />
+				<SuperForm {superform} field="c_bpartner_id">
+					{#snippet children(props)}
+						<ComboboxNew {...props} items={partners} label="Vendor" />
+					{/snippet}
+				</SuperForm>
 			</div>
+			<Sheet.Footer>
+				<Button type="submit" variant="default" class="w-full">Save</Button>
+				<Button
+					type="submit"
+					formaction="?/mProductPoDelete"
+					variant="destructive"
+					disabled={!$form.id}
+					>Delete
+				</Button>
+				{#if dev}
+					<SuperDebug data={{ $form, $errors }} />
+				{/if}
+			</Sheet.Footer>
 		</form>
 	</Sheet.Content>
 </Sheet.Root>

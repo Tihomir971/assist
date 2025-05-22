@@ -8,6 +8,13 @@ export interface ComboboxProps<T extends ComboboxItem>
 	inline?: boolean;
 	value?: number | null;
 }
+export interface ComboboxProps2<T extends ComboboxItem>
+	extends Pick<combobox.Props, 'placeholder' | 'readOnly' | 'disabled'> {
+	/** Provide the list of label and value data */
+	items?: T[];
+	label?: string;
+	inline?: boolean;
+}
 
 export interface ComboboxItem {
 	value: number;

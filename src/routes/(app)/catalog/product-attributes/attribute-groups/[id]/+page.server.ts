@@ -21,12 +21,9 @@ export const load = async ({ params, locals }: { params: { id: string }; locals:
 		throw error(404, 'Attribute group not found');
 	}
 
-	// Initialize the form with existing data using the Supabase Zod schema
-	const form = await superValidate(attributeGroup, zod(mAttributeGroupUpdateSchema));
-
 	return {
 		attributeGroup,
-		form
+		form: await superValidate(attributeGroup, zod(mAttributeGroupUpdateSchema))
 	};
 };
 

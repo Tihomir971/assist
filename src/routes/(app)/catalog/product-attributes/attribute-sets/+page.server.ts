@@ -55,17 +55,13 @@ export const load = async ({ locals, url }: { locals: App.Locals; url: URL }) =>
 		throw error(500, 'Error fetching attribute sets');
 	}
 
-	// Prepare form for creating a new attribute set
-	const createForm = await superValidate(zod(createAttributeSetSchema));
-	const deleteForm = await superValidate(zod(deleteAttributeSetSchema));
-
 	return {
 		attributeSets,
 		count: count || 0,
 		page,
 		perPage,
-		createForm,
-		deleteForm
+		createForm: await superValidate(zod(createAttributeSetSchema)),
+		deleteForm: await superValidate(zod(deleteAttributeSetSchema))
 	};
 };
 
