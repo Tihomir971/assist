@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { InputTextForm, MyUrlInput } from '$lib/components/my/input/index.js';
-	import { ComboboxZagForm, NumberInputZagForm } from '$lib/components/zag/index.js';
+	import {
+		ComboboxNewZag,
+		ComboboxZagForm,
+		NumberInputZagForm,
+		SuperForm
+	} from '$lib/components/zag/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
@@ -9,8 +14,6 @@
 	import { z } from 'zod';
 	import type { mProductPoInsertSchema } from '$lib/types/supabase.zod.schemas.js';
 	import { dev } from '$app/environment';
-	import SuperForm from '$lib/components/zag/combobox/super-form.svelte';
-	import ComboboxNew from '$lib/components/zag/combobox/combobox-new.svelte';
 
 	type Item = { value: number; label: string };
 	type Schema = z.infer<typeof mProductPoInsertSchema>;
@@ -68,7 +71,7 @@
 				<MyUrlInput name="url" bind:value={$form.url} label="URL" />
 				<SuperForm {superform} field="c_bpartner_id">
 					{#snippet children(props)}
-						<ComboboxNew {...props} items={partners} label="Vendor" />
+						<ComboboxNewZag {...props} items={partners} label="Vendor" />
 					{/snippet}
 				</SuperForm>
 			</div>
