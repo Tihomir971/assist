@@ -1,5 +1,5 @@
 import * as combobox from '@zag-js/combobox';
-import type { ControlProps } from 'formsnap';
+import type { ControlAttrs } from 'formsnap';
 
 // Generic ComboboxItem with number default for backward compatibility
 export interface ComboboxItem<T = number> {
@@ -9,10 +9,9 @@ export interface ComboboxItem<T = number> {
 }
 
 export interface ComboboxProps<T extends ComboboxItem>
-	extends Omit<combobox.Props, 'id' | 'collection' | 'value' | 'readOnly'>,
-		ControlProps {
-	value?: number | null;
-	options?: T[];
+	extends Pick<combobox.Props, 'readOnly' | 'disabled' | 'required' | 'placeholder'>,
+		Omit<ControlAttrs, 'data-fs-control' | 'data-fs-error'> {
+	value?: number | null | undefined;
+	items?: T[];
 	label?: string;
-	readonly?: boolean;
 }

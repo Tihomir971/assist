@@ -1,7 +1,6 @@
 @import './lib/style/theme.css';
 @import 'tailwindcss';
 @import './app.shadcn.css';
-@import './lib/components/forms/combobox/styles.css';
 
 @theme inline {
 	--font-family-sans:
@@ -88,7 +87,7 @@
 
 @layer components {
 	.select {
-		@apply border-input bg-background ring-offset-background focus-visible:ring-ring aria-[invalid]:border-destructive data-[placeholder]:[&>span]:text-muted-foreground flex h-10 w-full items-center justify-between rounded-md border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1;
+		@apply flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 aria-[invalid]:border-destructive [&>span]:line-clamp-1 data-[placeholder]:[&>span]:text-muted-foreground;
 	}
 
 	.input-root,
@@ -104,25 +103,25 @@
 	}
 
 	.input-icon {
-		@apply text-muted-foreground pointer-events-none absolute start-2 top-1/2 -translate-y-1/2;
+		@apply pointer-events-none absolute start-2 top-1/2 -translate-y-1/2 text-muted-foreground;
 	}
 	.input-input {
-		@apply border-surface-2 bg-surface-document ring-primary placeholder:text-muted-foreground focus-within:border-primary hover:border-surface-3 inline-flex h-10 w-full truncate rounded-sm border px-8 transition-colors focus-within:ring;
+		@apply inline-flex h-10 w-full truncate rounded-sm border border-surface-2 bg-surface-document px-8 ring-primary transition-colors placeholder:text-muted-foreground focus-within:border-primary focus-within:ring hover:border-surface-3;
 	}
 	.input-trigger {
-		@apply text-muted-foreground *:hover:text-primary-foreground absolute end-3 top-1/2 flex -translate-y-1/2 items-center gap-0.5;
+		@apply absolute end-3 top-1/2 flex -translate-y-1/2 items-center gap-0.5 text-muted-foreground *:hover:text-primary-foreground;
 	}
 
 	.root-props {
 		@apply mb-2 flex w-full flex-col gap-1 text-sm;
 	}
 	.content-props {
-		@apply border-muted bg-popover z-50 -ml-10 max-h-60 list-none overflow-auto overscroll-contain border p-2 text-sm;
+		@apply z-50 -ml-10 max-h-60 list-none overflow-auto overscroll-contain border border-muted bg-popover p-2 text-sm;
 	}
 	.control-props {
-		@apply bg-popover grid grid-cols-[auto_1fr] items-center;
+		@apply grid grid-cols-[auto_1fr] items-center bg-popover;
 	}
 	.item-props {
-		@apply data-highlighted:rounded-sm data-highlighted:bg-accent flex cursor-pointer items-center justify-between px-2 py-1;
+		@apply flex cursor-pointer items-center justify-between px-2 py-1 data-highlighted:rounded-sm data-highlighted:bg-accent;
 	}
 }

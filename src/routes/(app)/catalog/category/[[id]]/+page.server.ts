@@ -47,8 +47,7 @@ export const actions = {
 		const formData = await request.formData();
 		const form = await superValidate(formData, zod(mProductCategoryInsertSchema));
 		if (!form.valid) return fail(400, { form });
-		console.log('form', form);
-		// return fail(400, { form });
+		console.log('form categoryUpsert:', form);
 
 		if (!form.data.id) {
 			console.log('Create Category');

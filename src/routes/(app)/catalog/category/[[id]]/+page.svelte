@@ -94,14 +94,14 @@
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
-					<FormField form={superform} name="parent_id">
+					<!-- <FormField form={superform} name="parent_id">
 						<Combobox
 							options={data.categories}
 							label="Parent Category New"
 							placeholder="Select category..."
 							bind:value={$formData.parent_id}
 						/>
-					</FormField>
+					</FormField> -->
 					<!-- <ComboboxZagForm
 						{superform}
 						field="parent_id"
@@ -114,9 +114,9 @@
 								<Form.Label>Category2</Form.Label>
 								<EnhancedCombobox
 									{...props}
-									options={data.categories}
-									placeholder="Select a category"
 									bind:value={$formData.parent_id}
+									items={data.categories}
+									placeholder="Select a category"
 								/>
 							{/snippet}
 						</Form.Control>
@@ -160,7 +160,7 @@
 			</Card.Content>
 		</Card.Root>
 	</div>
-	<Card.Root>
+	<!-- <Card.Root>
 		<Card.Header>
 			<div class="flex items-center justify-between">
 				<Card.Title>Price Rules</Card.Title>
@@ -214,7 +214,7 @@
 				</Table.Body>
 			</Table.Root>
 		</Card.Content>
-	</Card.Root>
+	</Card.Root> -->
 </div>
 
 {#if isSheetOpen}
