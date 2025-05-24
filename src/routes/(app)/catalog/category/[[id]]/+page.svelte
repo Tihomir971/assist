@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { dev, browser } from '$app/environment';
 	import { page } from '$app/state';
-
 	// Superforms
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -23,6 +22,16 @@
 
 	import PhDotsThreeBold from '~icons/ph/dots-three-bold';
 	import { labelByValue } from '$lib/scripts/custom';
+	import {
+		Combobox,
+		EnhancedCombobox,
+		EnhancedFormField,
+		FormControl,
+		FormDescription,
+		FormField,
+		FormFieldErrors,
+		FormLabel
+	} from '$lib/components/forms/index.js';
 
 	let { data } = $props();
 
@@ -67,7 +76,8 @@
 				<Card.Header>
 					<Card.Title>Category Detail</Card.Title>
 				</Card.Header>
-				<Card.Content class="w-full space-y-2">
+				<Card.Content class="w-full space-y-1">
+					<input type="hidden" name="id" value={$formData.id} />
 					<div class="flex items-end space-x-2">
 						<InputTextForm {superform} field="name" label="Name" placeholder="Category Name" />
 					</div>
@@ -84,14 +94,35 @@
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
-
-					<ComboboxZagForm
+					<FormField form={superform} name="parent_id">
+						<Combobox
+							options={data.categories}
+							label="Parent Category New"
+							placeholder="Select category..."
+							bind:value={$formData.parent_id}
+						/>
+					</FormField>
+					<!-- <ComboboxZagForm
 						{superform}
 						field="parent_id"
 						items={data.categories}
 						label="Parent Category"
-					/>
-
+					/> -->
+					<Form.Field form={superform} name="parent_id">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Category2</Form.Label>
+								<EnhancedCombobox
+									{...props}
+									options={data.categories}
+									placeholder="Select a category"
+									bind:value={$formData.parent_id}
+								/>
+							{/snippet}
+						</Form.Control>
+						<Form.Description>Choose the product category</Form.Description>
+						<Form.FieldErrors />
+					</Form.Field>
 					<div class="flex flex-row-reverse items-center gap-2">
 						<Form.Button variant="default" disabled={!isTainted($tainted)}>Save</Form.Button>
 						<Form.Button

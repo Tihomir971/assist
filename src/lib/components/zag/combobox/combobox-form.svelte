@@ -40,7 +40,6 @@
 
 <Combobox
 	name={field}
-	{inline}
 	{items}
 	invalid={$errors ? true : false}
 	{label}

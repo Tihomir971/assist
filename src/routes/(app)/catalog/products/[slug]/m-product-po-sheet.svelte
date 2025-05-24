@@ -3,12 +3,12 @@
 	import {
 		ComboboxNewZag,
 		ComboboxZagForm,
-		NumberInputZagForm,
-		SuperForm
+		NumberInputZagForm
 	} from '$lib/components/zag/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import { Field, Control, Label, FieldErrors } from 'formsnap';
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import { toast } from 'svelte-sonner';
 	import { z } from 'zod';
@@ -69,11 +69,24 @@
 				<NumberInputZagForm {superform} field="pricelist" label="Pricelist" fraction={2} />
 				<NumberInputZagForm {superform} field="order_min" label="MOQ" fraction={0} min={1} />
 				<MyUrlInput name="url" bind:value={$form.url} label="URL" />
-				<SuperForm {superform} field="c_bpartner_id">
-					{#snippet children(props)}
-						<ComboboxNewZag {...props} items={partners} label="Vendor" />
-					{/snippet}
-				</SuperForm>
+
+				<!-- Updated to use formsnap with proper styling -->
+				<Field form={superform} name="c_bpartner_id">
+					<Control>
+						{#snippet children({ props })}
+							<div class="form-control">
+								<Label>Vendor</Label>
+								<ComboboxNewZag
+									{...props}
+									bind:value={$form.c_bpartner_id}
+									items={partners}
+									placeholder="Select a partner"
+								/>
+							</div>
+						{/snippet}
+					</Control>
+					<FieldErrors class="text-sm font-medium text-destructive" />
+				</Field>
 			</div>
 			<Sheet.Footer>
 				<Button type="submit" variant="default" class="w-full">Save</Button>

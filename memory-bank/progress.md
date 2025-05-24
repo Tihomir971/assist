@@ -9,6 +9,7 @@
 *   Advanced SvelteKit features have been documented, including routing, hooks, error handling, link options, service workers, server-only modules, snapshots, shallow routing, and packaging.
 *   SvelteKit best practices have been documented, including authentication, performance optimization, image handling, accessibility, and SEO.
 *   A comprehensive product attributes schema design has been created, supporting multiple attribute types (single-select, multi-select, text, numeric, boolean, date) with attribute sets for organizing attributes by product type.
+*   The `Combobox` component (`src/lib/components/forms/combobox.svelte`) has been updated to prevent layout shifts when error messages are displayed by ensuring the error container reserves space.
 
 **What's Left to Build:**
 

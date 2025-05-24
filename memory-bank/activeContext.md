@@ -2,10 +2,11 @@
 
 **Current Work Focus:**
 
-*   The user is currently working on the product catalog functionality, specifically on product attributes implementation, as indicated by the open tabs for product-related files.
+*   The user is currently working on the product catalog functionality, specifically on product attributes implementation. A UI fix for the `Combobox` component to prevent layout shifts due to error messages was also addressed.
 *   The focus is on designing and implementing a flexible product attributes system that can handle different attribute types (single-select, multi-select, text, numeric, boolean, date).
 
 **Recent Changes:**
+*   Modified `src/lib/components/forms/combobox.svelte` to prevent layout shifts caused by error messages by ensuring the error container reserves space.
 
 *   Added comprehensive Svelte 5 knowledge to the memory bank, including information about runes, reactivity, event handling, snippets, component instantiation, and state management.
 *   Added detailed SvelteKit project structure information to the memory bank.

@@ -1,33 +1,17 @@
-<script lang="ts" module>
-	import { formFieldProxy, type FormFieldProxy, type FormPath } from 'sveltekit-superforms';
-
-	// the form object
-	type T = Record<string, unknown>;
-	// the path/name of the field in the form object
-	type U = unknown;
-</script>
-
-<script lang="ts" generics="T extends Record<string, unknown>, U extends FormPath<T>">
-	import type { FormPathLeaves, SuperForm } from 'sveltekit-superforms';
+<script lang="ts" generics="T extends Record<string, unknown>, U">
+	import { formFieldProxy, type FormFieldProxy } from 'sveltekit-superforms';
+	import type { SuperForm, FormPathLeaves } from 'sveltekit-superforms';
 	import type { Snippet } from 'svelte';
 
 	type Props = {
 		superform: SuperForm<T>;
-		field: FormPathLeaves<T, number>;
-		children?: Snippet<[FormFieldProxy<number | null>]>;
+		field: FormPathLeaves<T, U>;
+		children?: Snippet<[FormFieldProxy<U>]>;
 	};
+
 	let { superform, field, children }: Props = $props();
 
-	const { constraints, errors, tainted, value, path } = formFieldProxy(
-		superform,
-		field
-	) satisfies FormFieldProxy<number>;
+	const proxy = formFieldProxy(superform, field);
 </script>
 
-{@render children?.({
-	path,
-	constraints,
-	errors,
-	tainted,
-	value
-})}
+{@render children?.(proxy as FormFieldProxy<U>)}

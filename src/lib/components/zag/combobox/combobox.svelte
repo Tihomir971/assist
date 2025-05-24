@@ -18,7 +18,6 @@
 		value = $bindable(),
 		placeholder = 'Select an item',
 		label,
-		inline,
 		...restProps
 	}: ComboboxProps<T> = $props();
 

@@ -45,9 +45,10 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 export const actions = {
 	categoryUpsert: async ({ request, locals: { supabase } }) => {
 		const formData = await request.formData();
-
 		const form = await superValidate(formData, zod(mProductCategoryInsertSchema));
 		if (!form.valid) return fail(400, { form });
+		console.log('form', form);
+		// return fail(400, { form });
 
 		if (!form.data.id) {
 			console.log('Create Category');
