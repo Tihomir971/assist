@@ -112,7 +112,6 @@
 		bind:value={inputValueReport}
 		placeholder="Select report"
 		onValueChange={(details) => {
-			console.log(details);
 			const url = new URL(page.url);
 			if (details.value.length === 0) {
 				url?.searchParams?.delete('report');

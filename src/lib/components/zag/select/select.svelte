@@ -49,12 +49,11 @@
 		readOnly,
 		required: required || ariaRequired === 'true',
 		onValueChange(valueChangeDetails) {
-			console.log('valueChangeDetails', valueChangeDetails);
 			if (valueChangeDetails.items.length === 0 || valueChangeDetails.items == null) {
 				value = null;
-				return;
+			} else {
+				value = valueChangeDetails.items[0].value;
 			}
-			value = valueChangeDetails.items[0].value;
 			if (onValueChange) {
 				onValueChange(valueChangeDetails);
 			}
