@@ -7,9 +7,8 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { Separator } from '$lib/components/ui/separator';
-	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { InputTextForm } from '$lib/components/my/input/index.js';
-	import { SwitchZagForm } from '$lib/components/zag';
+	import { CheckboxZag, SelectZag, SwitchZagForm } from '$lib/components/zag/index.js';
 
 	const { data } = $props();
 
@@ -145,6 +144,7 @@
 					<div class="mb-4 flex items-center justify-between">
 						<h3 class="text-lg font-medium">Attributes</h3>
 						<div class="flex items-center gap-2">
+							<!-- <SelectZag bind:value={selectedAttributeId} items={data.allAttributes} placeholder="Select attribute"/> -->
 							<Select.Root
 								type="single"
 								value={selectedAttributeId}
@@ -218,14 +218,14 @@
 									/>
 								</div>
 								<div class="col-span-2 flex items-center">
-									<Checkbox
+									<CheckboxZag
 										id={`attribute-required-${index}`}
 										name={`attributes[${index}].is_required`}
 										bind:checked={attribute.is_required}
 									/>
 								</div>
 								<div class="col-span-1 flex items-center">
-									<Checkbox
+									<CheckboxZag
 										id={`attribute-active-${index}`}
 										name={`attributes[${index}].is_active`}
 										bind:checked={attribute.is_active}

@@ -1,5 +1,5 @@
 <script lang="ts" generics="T extends ComboboxItem">
-	import './styles.css';
+	import './combobox.css';
 	import * as combobox from '@zag-js/combobox';
 	import { normalizeProps, useMachine } from '@zag-js/svelte';
 	import PhX from '~icons/ph/x';
@@ -60,15 +60,18 @@
 			filteredOptions = newOptions;
 		},
 		onValueChange({ value: selectedValues }: { value: string[] }) {
-			const inputValue = selectedValues?.[0];
-			let processedValue: number | null = null;
-			if (inputValue && inputValue.trim() !== '') {
-				const parsedNumber = parseInt(inputValue, 10);
-				if (!isNaN(parsedNumber)) {
-					processedValue = parsedNumber;
-				}
+			if (selectedValues.length === 0 || selectedValues == null) {
+				value = null;
+				return;
 			}
-			value = processedValue;
+			const newValue = selectedValues[0];
+			if (typeof value === 'number') {
+				console.log('It is a number:', newValue);
+				value = parseInt(newValue, 10);
+			} else if (typeof value === 'string') {
+				console.log('It is a string:', newValue);
+				value = newValue;
+			}
 		}
 	});
 

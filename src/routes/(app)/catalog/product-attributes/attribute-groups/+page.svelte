@@ -10,6 +10,7 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { generateCodeFromName } from '$lib/scripts/code-name-generation.js';
 	import InputTextForm from '$lib/components/my/input/input-text-form.svelte';
+	import { SelectZag } from '$lib/components/zag/index.js';
 
 	let { data } = $props();
 
@@ -37,13 +38,18 @@
 
 	// Filter state
 	let nameFilter = $derived(page.url.searchParams.get('name') || '');
-	let isActiveFilter = $derived(page.url.searchParams.get('isActive') || '');
+
+	let currentStatusFilter = $derived(page.url.searchParams.get('isActive') || null);
 
 	// Handle filter changes
 	function applyFilters() {
 		const params = new URLSearchParams();
 		if (nameFilter) params.set('name', nameFilter);
-		if (isActiveFilter) params.set('isActive', isActiveFilter);
+		if (currentStatusFilter) {
+			params.set('isActive', currentStatusFilter);
+		} else {
+			params.delete('isActive');
+		}
 		params.set('page', '1'); // Reset to first page when filtering
 		window.location.href = `?${params.toString()}`;
 	}
@@ -92,29 +98,15 @@
 					<Input id="nameFilter" bind:value={nameFilter} placeholder="Filter by name" />
 				</div>
 				<div class="w-[200px]">
-					<Label for="isActiveFilter">Status</Label>
-					<Select.Root
-						type="single"
-						value={isActiveFilter}
-						onValueChange={(value) => {
-							isActiveFilter = value;
-						}}
-					>
-						<Select.Trigger id="isActiveFilter" class="w-full">
-							<span>
-								{isActiveFilter === ''
-									? 'All statuses'
-									: isActiveFilter === 'true'
-										? 'Active'
-										: 'Inactive'}
-							</span>
-						</Select.Trigger>
-						<Select.Content>
-							<Select.Item value="">All</Select.Item>
-							<Select.Item value="true">Active</Select.Item>
-							<Select.Item value="false">Inactive</Select.Item>
-						</Select.Content>
-					</Select.Root>
+					<SelectZag
+						bind:value={currentStatusFilter}
+						items={[
+							{ value: 'true', label: 'Active' },
+							{ value: 'false', label: 'Inactive' }
+						]}
+						label="Status"
+						placeholder="All"
+					/>
 				</div>
 				<div class="flex items-end">
 					<Button onclick={applyFilters}>Apply Filters</Button>

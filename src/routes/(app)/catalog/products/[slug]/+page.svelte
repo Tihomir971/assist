@@ -21,10 +21,9 @@
 	import StorageOnHandCard from './m-storageonhand-card.svelte';
 	import MyUrlInput from '$lib/components/my/input/input-url.svelte';
 	import { InputTextForm } from '$lib/components/my/input';
-	import { NumberInputZagForm, SwitchZagForm } from '$lib/components/zag/index.js';
+	import { Combobox, NumberInputZagForm, SwitchZagForm } from '$lib/components/zag/index.js';
 	import { mProductInsertSchema } from '$lib/types/supabase.zod.schemas';
 	import { page } from '$app/state';
-	import { EnhancedCombobox } from '$lib/components/forms';
 
 	let { data } = $props();
 
@@ -112,11 +111,7 @@
 								<Form.Control>
 									{#snippet children({ props })}
 										<Form.Label>Formula script New</Form.Label>
-										<EnhancedCombobox
-											{...props}
-											bind:value={$formProduct.c_uom_id}
-											items={data.uom}
-										/>
+										<Combobox {...props} bind:value={$formProduct.c_uom_id} items={data.uom} />
 									{/snippet}
 								</Form.Control>
 							</Form.Field>
@@ -124,7 +119,7 @@
 								<Form.Control>
 									{#snippet children({ props })}
 										<Form.Label>Tax</Form.Label>
-										<EnhancedCombobox
+										<Combobox
 											{...props}
 											bind:value={$formProduct.c_taxcategory_id}
 											items={data.tax}
@@ -140,7 +135,7 @@
 									<Form.Control>
 										{#snippet children({ props })}
 											<Form.Label>Attribute Set</Form.Label>
-											<EnhancedCombobox
+											<Combobox
 												{...props}
 												bind:value={$formProduct.attributeset_id}
 												items={data.attributeSets}
@@ -152,7 +147,7 @@
 									<Form.Control>
 										{#snippet children({ props })}
 											<Form.Label>Category</Form.Label>
-											<EnhancedCombobox
+											<Combobox
 												{...props}
 												bind:value={$formProduct.m_product_category_id}
 												items={data.categories}
@@ -174,7 +169,7 @@
 										<Form.Control>
 											{#snippet children({ props })}
 												<Form.Label>Net Quantity UoM</Form.Label>
-												<EnhancedCombobox
+												<Combobox
 													{...props}
 													bind:value={$formProduct.net_qty_uom_id}
 													items={data.uom}

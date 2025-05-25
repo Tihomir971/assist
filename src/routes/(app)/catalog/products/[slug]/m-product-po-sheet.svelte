@@ -1,18 +1,16 @@
 <script lang="ts">
 	import { InputTextForm, MyUrlInput } from '$lib/components/my/input/index.js';
-	import { ComboboxNewZag, NumberInputZagForm } from '$lib/components/zag/index.js';
+	import { Combobox, NumberInputZagForm } from '$lib/components/zag/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
-	import { Field, Control, Label, FieldErrors } from 'formsnap';
-	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import { toast } from 'svelte-sonner';
 	import { z } from 'zod';
 	import type { mProductPoInsertSchema } from '$lib/types/supabase.zod.schemas.js';
 	import { dev } from '$app/environment';
-	import { EnhancedCombobox } from '$lib/components/forms';
 
 	type Item = { value: number; label: string };
 	type Schema = z.infer<typeof mProductPoInsertSchema>;
@@ -62,7 +60,7 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>Vendor</Form.Label>
-							<EnhancedCombobox
+							<Combobox
 								{...props}
 								bind:value={$form.c_bpartner_id}
 								items={partners}
@@ -85,22 +83,20 @@
 				<MyUrlInput name="url" bind:value={$form.url} label="URL" />
 
 				<!-- Updated to use formsnap with proper styling -->
-				<Field form={superform} name="c_bpartner_id">
-					<Control>
+				<Form.Field form={superform} name="c_bpartner_id">
+					<Form.Control>
 						{#snippet children({ props })}
-							<div class="form-control">
-								<Label>Vendor</Label>
-								<ComboboxNewZag
-									{...props}
-									bind:value={$form.c_bpartner_id}
-									items={partners}
-									placeholder="Select a partner"
-								/>
-							</div>
+							<Form.Label>Choose the product category</Form.Label>
+							<Combobox
+								{...props}
+								bind:value={$form.c_bpartner_id}
+								items={partners}
+								placeholder="Select a partner"
+							/>
 						{/snippet}
-					</Control>
-					<FieldErrors class="text-sm font-medium text-destructive" />
-				</Field>
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
 			</div>
 			<Sheet.Footer>
 				<Button type="submit" variant="default" class="w-full">Save</Button>

@@ -2,10 +2,9 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import * as Select from '$lib/components/ui/select';
 	import { Button } from '$lib/components/ui/button';
-	import { Checkbox } from '$lib/components/ui/checkbox';
-	import { Label } from '$lib/components/ui/label';
 	import type { Warehouse } from './columns.svelte';
 	import { page } from '$app/state';
+	import { CheckboxZag } from '$lib/components/zag';
 
 	type Props = {
 		showReportDialog: boolean;
@@ -56,8 +55,11 @@
 
 			{#if report === 'inventory'}
 				<div class="flex items-center gap-2">
-					<Checkbox id="include-out-of-stock" bind:checked={includeOutOfStock} />
-					<Label for="include-out-of-stock">Include out of stock products</Label>
+					<CheckboxZag
+						id="include-out-of-stock"
+						bind:checked={includeOutOfStock}
+						label="Include out of stock products"
+					/>
 				</div>
 			{/if}
 		</div>

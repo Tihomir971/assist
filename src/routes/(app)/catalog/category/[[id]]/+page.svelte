@@ -17,10 +17,9 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { SwitchZagForm } from '$lib/components/zag/index.js';
+	import { Combobox, SwitchZagForm } from '$lib/components/zag/index.js';
 	import InputTextForm from '$lib/components/my/input/input-text-form.svelte';
 
-	import { EnhancedCombobox } from '$lib/components/forms/index.js';
 	import { getLabelByValue } from '$lib/scripts/custom';
 
 	let { data } = $props();
@@ -97,7 +96,7 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>Category2</Form.Label>
-								<EnhancedCombobox
+								<Combobox
 									{...props}
 									bind:value={$formData.parent_id}
 									items={data.categories}

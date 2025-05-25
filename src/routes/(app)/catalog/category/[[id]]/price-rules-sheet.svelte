@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { InputTextForm, MyUrlInput } from '$lib/components/my/input/index.js';
-	import { NumberInputZagForm } from '$lib/components/zag/index.js';
+	import { Combobox, NumberInputZagForm } from '$lib/components/zag/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
@@ -14,7 +14,6 @@
 		priceRulesInsertSchema
 	} from '$lib/types/supabase.zod.schemas.js';
 	import { dev } from '$app/environment';
-	import { EnhancedCombobox } from '$lib/components/forms';
 
 	type Item = { value: number; label: string };
 	type Schema = z.infer<typeof priceRulesInsertSchema>;
@@ -74,11 +73,7 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>Formula script New</Form.Label>
-								<EnhancedCombobox
-									{...props}
-									bind:value={$form.price_formula_id}
-									items={priceFormulas}
-								/>
+								<Combobox {...props} bind:value={$form.price_formula_id} items={priceFormulas} />
 							{/snippet}
 						</Form.Control>
 					</Form.Field>

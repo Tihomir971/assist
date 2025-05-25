@@ -10,7 +10,7 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { generateCodeFromName } from '$lib/scripts/code-name-generation.js';
 	import type { Enums } from '$lib/types/supabase.types.js';
-	import { SelectSimpleZag, SelectZag } from '$lib/components/zag';
+	import { SelectZag } from '$lib/components/zag/index.js';
 
 	let { data } = $props();
 
@@ -64,7 +64,17 @@
 		'boolean',
 		'date'
 	];
-
+	const attributeTypeOptions = Object.entries({
+		single_select: 'Single Select',
+		multi_select: 'Multi Select',
+		text: 'Text',
+		number: 'Number',
+		boolean: 'Boolean',
+		date: 'Date'
+	} as const satisfies Record<Enums<'attribute_type'>, string>).map(([value, label]) => ({
+		value: value as Enums<'attribute_type'>,
+		label
+	}));
 	// Track selected attribute type
 	let selectedAttributeType = $state($createForm.attribute_type || 'text');
 
@@ -99,21 +109,38 @@
 	let nameFilter = $state(page.url.searchParams.get('name') || '');
 	let codeFilter = $state(page.url.searchParams.get('code') || '');
 	let attributeTypeFilter = $state(page.url.searchParams.get('attributeType') || '');
-	let attributeGroupIdFilterTemp = $state(page.url.searchParams.get('attributeType'));
+
+	const searchParamGroupIdFilter = page.url.searchParams.get('attributeGroupId');
 	let attributeGroupIdFilter = $state(
-		attributeGroupIdFilterTemp ? parseInt(attributeGroupIdFilterTemp) : null
+		searchParamGroupIdFilter ? parseInt(searchParamGroupIdFilter, 10) : null
 	);
-	let isActiveFilter = $state(page.url.searchParams.get('isActive') || '');
-	$inspect('isActiveFilter', isActiveFilter);
-	$inspect('attributeGroupIdFilter', attributeGroupIdFilter);
+
+	const statusFilters = [
+		{ value: 'true', label: 'Active' },
+		{ value: 'false', label: 'Inactive' }
+	];
+	let isActiveFilter = $state(
+		statusFilters.find((f) => f.value === page.url.searchParams.get('isActive'))?.value || null
+	);
+
 	// Handle filter changes
 	function applyFilters() {
 		const params = new URLSearchParams();
 		if (nameFilter) params.set('name', nameFilter);
 		if (codeFilter) params.set('code', codeFilter);
 		if (attributeTypeFilter) params.set('attributeType', attributeTypeFilter);
-		if (attributeGroupIdFilter) params.set('attributeGroupId', attributeGroupIdFilter.toString());
-		if (isActiveFilter) params.set('isActive', isActiveFilter);
+
+		if (attributeGroupIdFilter) {
+			params.set('attributeGroupId', attributeGroupIdFilter.toString());
+		} else {
+			params.delete('attributeGroupId');
+		}
+
+		if (isActiveFilter) {
+			params.set('isActive', isActiveFilter);
+		} else {
+			params.delete('isActive');
+		}
 		params.set('page', '1'); // Reset to first page when filtering
 		window.location.href = `?${params.toString()}`;
 	}
@@ -178,66 +205,20 @@
 					<Input id="codeFilter" bind:value={codeFilter} placeholder="Filter by code" />
 				</div>
 				<div>
-					<Label for="attributeTypeFilter">Type</Label>
-					<Select.Root
-						type="single"
-						value={attributeTypeFilter}
-						onValueChange={(value: string) => {
-							attributeTypeFilter = value || '';
-						}}
-					>
-						<Select.Trigger id="attributeTypeFilter">
-							<span>
-								{attributeTypeFilter ? getAttributeTypeDisplay(attributeTypeFilter) : 'All types'}
-							</span>
-						</Select.Trigger>
-						<Select.Content>
-							<Select.Item value="">All types</Select.Item>
-							{#each ['single_select', 'multi_select', 'text', 'number', 'boolean', 'date'] as type}
-								<Select.Item value={type}>{getAttributeTypeDisplay(type)}</Select.Item>
-							{/each}
-						</Select.Content>
-					</Select.Root>
+					<SelectZag
+						bind:value={attributeTypeFilter}
+						items={attributeTypeOptions}
+						label="Type"
+						placeholder="All types"
+					/>
 				</div>
-				<!-- <div>
-					<Label for="attributeGroupFilter">Group</Label>
-					<Select.Root
-						type="single"
-						value={attributeGroupIdFilter}
-						onValueChange={(value: string) => {
-							attributeGroupIdFilter = value || '';
-						}}
-					>
-						<Select.Trigger id="attributeGroupFilter">
-							<span>
-								{attributeGroupIdFilter
-									? data.attributeGroups.find((g) => g.id.toString() === attributeGroupIdFilter)
-											?.name || 'Unknown group'
-									: 'All groups'}
-							</span>
-						</Select.Trigger>
-						<Select.Content>
-							<Select.Item value="">All groups</Select.Item>
-							{#each data.attributeGroups as group}
-								<Select.Item value={group.id.toString()}>{group.name}</Select.Item>
-							{/each}
-						</Select.Content>
-					</Select.Root>
-				</div> -->
-				<SelectSimpleZag
+
+				<SelectZag
 					bind:value={attributeGroupIdFilter}
 					items={data.attributeGroups}
-					label="Status Zag"
+					label="Group Filter"
 				/>
-				<SelectSimpleZag
-					bind:value={isActiveFilter}
-					items={[
-						{ value: '', label: 'All statuses' },
-						{ value: 'true', label: 'Active' },
-						{ value: 'false', label: 'Inactive' }
-					]}
-					label="Status Zag"
-				/>
+				<SelectZag bind:value={isActiveFilter} items={statusFilters} label="Status Filter" />
 
 				<div class="flex items-end">
 					<Button onclick={applyFilters}>Apply Filters</Button>

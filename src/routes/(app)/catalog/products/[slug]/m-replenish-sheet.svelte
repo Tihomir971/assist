@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { InputTextForm, MyUrlInput } from '$lib/components/my/input/index.js';
-	import { NumberInputZagForm } from '$lib/components/zag/index.js';
+	import { Combobox, NumberInputZagForm } from '$lib/components/zag/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
@@ -9,9 +9,7 @@
 	import type { mReplenishInsertSchema } from '$lib/types/supabase.zod.schemas.js';
 	import { z } from 'zod';
 	import { dev } from '$app/environment';
-	import { Control, Field, FieldErrors, Label } from 'formsnap';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import { EnhancedCombobox } from '$lib/components/forms';
 
 	type Item = { value: number; label: string };
 	type Schema = z.infer<typeof mReplenishInsertSchema>;
@@ -67,7 +65,7 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>Warehouse</Form.Label>
-							<EnhancedCombobox
+							<Combobox
 								{...props}
 								bind:value={$formData.m_warehouse_id}
 								items={warehouses}
@@ -81,7 +79,7 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>Source Warehouse</Form.Label>
-							<EnhancedCombobox
+							<Combobox
 								{...props}
 								bind:value={$formData.m_warehouse_id}
 								items={warehouses}

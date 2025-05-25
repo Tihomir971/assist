@@ -1,11 +1,3 @@
-import type { MaybeGetter } from 'melt';
-import type { TreeItem } from 'melt/builders';
-
-type CustomTreeItem = TreeItem & {
-	title: string;
-	children?: CustomTreeItem[];
-};
-
 interface TableTreeItem {
 	value: number;
 	label: string;
@@ -75,35 +67,5 @@ export function findChildren(categories: Category[], id: number): number[] {
 		childCategories.forEach((child) => queue.push(child.value));
 	}
 
-	return result;
-}
-
-export function findParent(
-	categories: CustomTreeItem[],
-	selected: MaybeGetter<string | undefined>
-): string[] {
-	const result: string[] = [];
-	if (!selected) return result;
-
-	function findParentRecursive(
-		items: CustomTreeItem[],
-		targetId: MaybeGetter<string | undefined>,
-		path: string[]
-	): boolean {
-		for (const item of items) {
-			if (item.id === targetId) {
-				result.unshift(...path, item.id);
-				return true;
-			}
-			if (item.children) {
-				if (findParentRecursive(item.children, targetId, [...path, item.id])) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	findParentRecursive(categories, selected, []);
 	return result;
 }

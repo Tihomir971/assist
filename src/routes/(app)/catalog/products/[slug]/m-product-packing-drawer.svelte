@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
+	import * as Form from '$lib/components/ui/form/index.js';
 
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -12,9 +13,8 @@
 	import type { ProductPackingInsertSchema } from './schema';
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import MySelectForm from '$lib/components/my/MySelectForm.svelte';
-	import MyCheckboxForm from '$lib/components/my/MyCheckboxForm.svelte';
 	import type { Tables } from '$lib/types/supabase.types';
-	import { NumberInputZagForm } from '$lib/components/zag';
+	import { CheckboxZag, NumberInputZagForm } from '$lib/components/zag/index.js';
 
 	type Props = {
 		isProductPackingDrawerOpen: boolean;
@@ -88,7 +88,7 @@
 								<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.unitsperpack}</Table.Cell>
 								<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.gtin}</Table.Cell>
 								<Table.Cell class="px-6 py-4 whitespace-nowrap">
-									<MyCheckboxForm checked={packing.is_display} />
+									<CheckboxZag checked={packing.is_display} />
 								</Table.Cell>
 								<Table.Cell class="space-x-2 px-6 py-4 whitespace-nowrap">
 									<Button
@@ -148,11 +148,13 @@
 						<label for="gtin" class="font-medium">GTIN</label>
 						<Input id="gtin" type="text" bind:value={$formData.gtin} placeholder="GTIN" />
 					</div>
-					<MyCheckboxForm
-						name="is_display"
-						bind:checked={$formData.is_display}
-						label="Is display box?"
-					/>
+					<Form.Field form={superform} name="is_display">
+						<Form.Control>
+							{#snippet children({ props })}
+								<CheckboxZag bind:checked={$formData.is_display} label="Is display box?" />
+							{/snippet}
+						</Form.Control>
+					</Form.Field>
 				</div>
 
 				<div class="flex gap-2">
@@ -192,8 +194,8 @@
 						</Button>
 					{/if}
 				</div>
+				<SuperDebug data={{ $formData, $errors }} />
 			</form>
-			<SuperDebug data={{ $formData, $errors }} />
 		</div>
 
 		<Drawer.Footer>

@@ -15,8 +15,7 @@
 	import { handleFileUpload, loadSheetData } from './utils/xlsx-handlers';
 	import { processExcelData } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
-	import MySelect from '$lib/components/my/MySelect.svelte';
-	import { EnhancedCombobox } from '$lib/components/forms';
+	import { Combobox, SelectZag } from '$lib/components/zag/index.js';
 
 	let { data } = $props();
 	let { supabase } = $derived(data);
@@ -115,6 +114,7 @@
 	}
 
 	async function handleSheetSelect() {
+		console.log('hello inside2', selectedSheet);
 		if (selectedSheet && fileInput?.files?.[0]) {
 			const reader = new FileReader();
 			reader.onload = (e) => {
@@ -269,7 +269,7 @@
 	<div class="flex flex-col gap-4">
 		<div class="grid grid-cols-4 items-start gap-2">
 			<div class="grid w-full gap-1.5">
-				<EnhancedCombobox
+				<Combobox
 					bind:value={selectedSupplier}
 					items={data.c_bpartner}
 					label="Supplier"
@@ -291,13 +291,12 @@
 			</div>
 			<div>
 				{#if sheetNames.length > 1}
-					<MySelect
-						name="excel-sheet"
-						options={sheetNames}
+					<SelectZag
 						bind:value={selectedSheet}
+						items={sheetNames}
 						label="Select a sheet"
 						onValueChange={handleSheetSelect}
-					></MySelect>
+					/>
 				{/if}
 			</div>
 

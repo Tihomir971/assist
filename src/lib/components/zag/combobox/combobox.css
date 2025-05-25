@@ -1,72 +1,207 @@
+/* Base Combobox Styles - Enhanced from existing combobox.css */
+
 [data-scope='combobox'][data-part='root'] {
 	display: flex;
 	flex-direction: column;
 	gap: 0.25rem;
 }
+
 [data-scope='combobox'][data-part='label'] {
-	/* font-size: 1.125rem; */
+	font-size: 0.875rem;
+	font-weight: 400;
+	color: var(--color-ink, #374151);
 }
+
 [data-scope='combobox'][data-part='label'][data-disabled] {
 	opacity: 0.6;
 }
+
 [data-scope='combobox'][data-part='control'] {
 	display: inline-flex;
 	width: 100%;
-	background: var(--color-surface-document);
+	background: var(--color-surface-document, #ffffff);
 	border-width: 1px;
-	/* padding-block: 0.25rem; */
 	height: 40px;
-	/* padding-inline: 0.75rem; */
 	padding-inline: 0.5rem 0.75rem;
-	border: 1px solid var(--color-surface-2);
+	border: 1px solid var(--color-surface-2, #e5e7eb);
 	border-radius: 4px;
+	transition:
+		border-color 0.15s ease-in-out,
+		box-shadow 0.15s ease-in-out;
 }
+
 [data-scope='combobox'][data-part='control']:hover {
-	border-color: var(--color-surface-3);
+	border-color: var(--color-surface-3, #d1d5db);
 }
+
+[data-scope='combobox'][data-part='control']:focus-within {
+	border-color: var(--color-primary, #3b82f6);
+	box-shadow: 0 0 0 1px var(--color-primary, #3b82f6);
+}
+
 [data-scope='combobox'][data-part='control'][data-disabled] {
 	opacity: 0.6;
+	cursor: not-allowed;
+	background: var(--color-surface-disabled, #f9fafb);
 }
+
+[data-scope='combobox'][data-part='control'][data-invalid] {
+	border-color: var(--color-error, #ef4444);
+}
+
+[data-scope='combobox'][data-part='control'][data-invalid]:focus-within {
+	border-color: var(--color-error, #ef4444);
+	box-shadow: 0 0 0 1px var(--color-error, #ef4444);
+}
+
 [data-scope='combobox'][data-part='input'] {
-	background: var(--color-surface-document);
+	background: transparent;
 	flex: 1 1;
 	padding: 0.25rem;
+	border: none;
+	outline: none;
+	font-size: 0.875rem;
+	color: var(--color-ink, #374151);
 }
-[data-scope='combobox'][data-part='input']:focus {
-	outline: 0;
+
+[data-scope='combobox'][data-part='input']::placeholder {
+	color: var(--color-ink-dim, #9ca3af);
 }
+
+[data-scope='combobox'][data-part='trigger'] {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.25rem;
+	cursor: pointer;
+	border-radius: 2px;
+	transition: background-color 0.15s ease-in-out;
+}
+
+[data-scope='combobox'][data-part='trigger'] svg {
+	transition: transform 0.2s ease-in-out;
+}
+
+[data-scope='combobox'][data-part='trigger'][data-state='open'] svg {
+	transform: rotate(180deg);
+}
+
+[data-scope='combobox'][data-part='trigger']:hover {
+	background: var(--color-surface-1, #f3f4f6);
+}
+
+[data-scope='combobox'][data-part='clear-trigger'] {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.25rem;
+	cursor: pointer;
+	border-radius: 2px;
+	transition: background-color 0.15s ease-in-out;
+}
+
+[data-scope='combobox'][data-part='clear-trigger']:hover {
+	background: var(--color-surface-1, #f3f4f6);
+}
+
 [data-scope='combobox'][data-part='content'] {
 	list-style-type: none;
 	margin: 0;
 	max-height: 14rem;
 	overflow: auto;
 	box-shadow:
-		0 1px 3px 0 rgba(0, 0, 0, 0.1),
-		0 1px 2px 0 rgba(0, 0, 0, 0.06);
+		0 4px 6px -1px rgba(0, 0, 0, 0.1),
+		0 2px 4px -1px rgba(0, 0, 0, 0.06);
 	isolation: isolate;
 	padding: 0.5rem;
-	background: var(--color-surface-document);
+	background: var(--color-surface-document, #ffffff);
+	border: 1px solid var(--color-surface-2, #e5e7eb);
+	border-radius: 6px;
 	z-index: 50;
+	min-width: var(--reference-width);
 }
+
 [data-scope='combobox'][data-part='item'] {
 	padding-inline: 0.5rem;
-	/* padding-block: 0.25rem; */
 	padding-block: 0.5rem;
 	display: flex;
 	align-items: center;
 	cursor: pointer;
-	border-radius: 4px; /* moje */
+	border-radius: 4px;
+	font-size: 0.875rem;
+	transition: background-color 0.15s ease-in-out;
 }
-[data-scope='combobox'][data-part='item'][data-highlighted] {
-	background: var(--color-surface-1);
 
-	/* color: #ffffff; */
+[data-scope='combobox'][data-part='item']:hover {
+	background: var(--color-surface-1, #f3f4f6);
+}
+
+[data-scope='combobox'][data-part='item'][data-highlighted] {
+	background: var(--color-surface-1, #f3f4f6);
 }
 
 [data-scope='combobox'][data-part='item'][data-state='checked'] {
-	background: var(--color-surface-2);
+	background: var(--color-surface-2, #e5e7eb);
+	font-weight: 500;
 }
+
 [data-scope='combobox'][data-part='item'][data-disabled] {
 	opacity: 0.5;
-	cursor: unset;
+	cursor: not-allowed;
+}
+
+[data-scope='combobox'][data-part='item-text'] {
+	flex: 1;
+}
+
+[data-scope='combobox'][data-part='item-indicator'] {
+	margin-left: auto;
+	padding-left: 0.5rem;
+}
+
+/* Form Error Styles */
+.form-error {
+	color: var(--color-error, #ef4444);
+	font-size: 0.75rem;
+	margin-top: 0.25rem;
+	line-height: 1.25;
+}
+
+.form-description {
+	color: var(--color-text-muted, #6b7280);
+	font-size: 0.75rem;
+	margin-top: 0.25rem;
+	line-height: 1.25;
+}
+
+/* Required indicator */
+.form-label-required::after {
+	content: ' *';
+	color: var(--color-error, #ef4444);
+}
+
+/* Focus and hover states for better accessibility */
+[data-scope='combobox'][data-part='item']:focus-visible {
+	outline: 2px solid var(--color-primary, #3b82f6);
+	outline-offset: -2px;
+}
+
+/* Loading state */
+[data-scope='combobox'][data-part='control'][data-loading] {
+	cursor: wait;
+}
+
+[data-scope='combobox'][data-part='control'][data-loading]
+	[data-scope='combobox'][data-part='trigger'] {
+	cursor: wait;
+}
+
+/* Empty state */
+[data-scope='combobox'][data-part='content']:empty::before {
+	content: 'No options available';
+	display: block;
+	padding: 0.75rem;
+	text-align: center;
+	color: var(--color-text-muted, #9ca3af);
+	font-size: 0.875rem;
 }

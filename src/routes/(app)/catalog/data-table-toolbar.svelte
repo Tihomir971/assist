@@ -7,13 +7,12 @@
 	import DataTableHeaderSync from './data-table-header-sync.svelte';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
-	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 
 	//Icons
 	import PhCaretDown from '~icons/ph/caret-down';
+	import { CheckboxZag, SelectZag } from '$lib/components/zag/index.js';
 
 	type Props = {
 		rowSelectionState: RowSelectionState;
@@ -77,88 +76,65 @@
 		placeholder="Filter products..."
 	/>
 	<div class="flex w-full items-center space-x-2">
-		<Checkbox
-			id="subcategories"
+		<CheckboxZag
+			id="show-subcategories"
 			checked={checkedSubcategories}
-			onCheckedChange={(checked) => {
+			label="Subcategories"
+			onCheckedChange={(details) => {
+				console.log(details);
 				const newUrl = new URL(page.url);
-				checked ? newUrl?.searchParams?.set('sub', 'true') : newUrl?.searchParams?.delete('sub');
+				details.checked
+					? newUrl?.searchParams?.set('sub', 'true')
+					: newUrl?.searchParams?.delete('sub');
 				goto(newUrl);
 			}}
 		/>
-		<Label
-			for="subcategories"
-			class="leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-		>
-			Subcategories
-		</Label>
 	</div>
 
 	<div class="flex w-full items-center space-x-2">
-		<Checkbox
+		<CheckboxZag
 			id="show-vat"
 			checked={checkedVat}
-			onCheckedChange={(checked) => {
+			label="Show VAT"
+			onCheckedChange={(details) => {
 				const newUrl = new URL(page.url);
-				checked ? newUrl?.searchParams?.set('vat', 'true') : newUrl?.searchParams?.delete('vat');
+				details.checked
+					? newUrl?.searchParams?.set('vat', 'true')
+					: newUrl?.searchParams?.delete('vat');
 				goto(newUrl);
 			}}
 		/>
-		<Label
-			for="show-vat"
-			class="leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-		>
-			Show VAT
-		</Label>
 	</div>
 	<Button variant="outline" onclick={addToCart}>Add to Cart</Button>
 	<Button variant="outline" onclick={handleSalesGraphClick}>Sales Graph</Button>
-	<Select.Root
-		type="single"
-		allowDeselect={true}
-		name="report"
+	<SelectZag
+		items={reports}
 		bind:value={inputValueReport}
-		onValueChange={(v) => {
-			const newUrl = new URL(page.url);
-			!v ? newUrl?.searchParams?.delete('report') : newUrl?.searchParams?.set('report', v);
-			if (v === 'all') {
-				newUrl?.searchParams?.delete('sub');
+		placeholder="Select report"
+		onValueChange={(details) => {
+			console.log(details);
+			const url = new URL(page.url);
+			if (details.value.length === 0) {
+				url?.searchParams?.delete('report');
+				url?.searchParams?.delete('sub');
+			} else {
+				url?.searchParams?.set('report', details.value[0]);
 			}
-			goto(newUrl);
+			goto(url);
 		}}
-	>
-		<Select.Trigger class={buttonVariants({ variant: 'outline', class: 'w-fit text-warning' })}>
-			{triggerReportContent}
-		</Select.Trigger>
-		<Select.Content>
-			<Select.Group>
-				{#each reports as report}
-					<Select.Item value={report.value} label={report.label} />
-				{/each}
-			</Select.Group>
-		</Select.Content>
-	</Select.Root>
-	<Select.Root
-		type="single"
-		name="warehouse"
+	/>
+	<SelectZag
 		value={inputValueWarehouse}
-		onValueChange={(v) => {
+		items={warehouses}
+		onValueChange={(details) => {
+			if (details.value.length === 0) {
+				return;
+			}
 			const newUrl = new URL(page.url);
-			newUrl?.searchParams?.set('wh', v);
+			newUrl?.searchParams?.set('wh', details.value[0]);
 			goto(newUrl);
 		}}
-	>
-		<Select.Trigger class={buttonVariants({ variant: 'outline', class: 'w-fit' })}>
-			{triggerWarehouseLabel}
-		</Select.Trigger>
-		<Select.Content>
-			<Select.Group>
-				{#each warehouses as warehouse}
-					<Select.Item value={warehouse.value} label={warehouse.label} />
-				{/each}
-			</Select.Group>
-		</Select.Content>
-	</Select.Root>
+	/>
 
 	<DataTableHeaderSync bind:rowSelectionState />
 	<DropdownMenu.Root>

@@ -75,7 +75,6 @@
     "luxon": "^3.6.1",
     "match-sorter": "^8.0.2",
     "mathjs": "^14.5.0",
-    "melt": "^0.33.0",
     "mode-watcher": "^1.0.7",
     "svelte-sonner": "^1.0.3",
     "sveltekit-superforms": "^2.25.0",

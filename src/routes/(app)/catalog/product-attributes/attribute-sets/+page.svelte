@@ -10,6 +10,7 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { generateCodeFromName } from '$lib/scripts/code-name-generation.js';
+	import { SelectZag } from '$lib/components/zag/index.js';
 
 	let { data } = $props();
 
@@ -45,7 +46,11 @@
 		const params = new URLSearchParams();
 		if (nameFilter) params.set('name', nameFilter);
 		if (codeFilter) params.set('code', codeFilter);
-		if (isActiveFilter) params.set('isActive', isActiveFilter);
+		if (isActiveFilter == null) {
+			params.delete('isActive');
+		} else {
+			params.set('isActive', isActiveFilter);
+		}
 		params.set('page', '1'); // Reset to first page when filtering
 		window.location.href = `?${params.toString()}`;
 	}
@@ -99,29 +104,15 @@
 					<Input id="codeFilter" bind:value={codeFilter} placeholder="Filter by code" />
 				</div>
 				<div class="w-[200px]">
-					<Label for="isActiveFilter">Status</Label>
-					<Select.Root
-						type="single"
-						value={isActiveFilter}
-						onValueChange={(value) => {
-							isActiveFilter = value;
-						}}
-					>
-						<Select.Trigger id="isActiveFilter" class="w-full">
-							<span>
-								{isActiveFilter === ''
-									? 'All statuses'
-									: isActiveFilter === 'true'
-										? 'Active'
-										: 'Inactive'}
-							</span>
-						</Select.Trigger>
-						<Select.Content>
-							<Select.Item value="">All</Select.Item>
-							<Select.Item value="true">Active</Select.Item>
-							<Select.Item value="false">Inactive</Select.Item>
-						</Select.Content>
-					</Select.Root>
+					<SelectZag
+						bind:value={isActiveFilter}
+						items={[
+							{ value: 'true', label: 'Active' },
+							{ value: 'false', label: 'Inactive' }
+						]}
+						label="Status"
+						placeholder="All"
+					/>
 				</div>
 				<div class="flex items-end">
 					<Button onclick={applyFilters}>Apply Filters</Button>

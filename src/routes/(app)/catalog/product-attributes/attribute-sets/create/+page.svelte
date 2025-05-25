@@ -7,8 +7,8 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { Separator } from '$lib/components/ui/separator';
-	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { InputTextForm } from '$lib/components/my/input';
+	import { CheckboxZag } from '$lib/components/zag/index.js';
 
 	const { data } = $props();
 
@@ -219,14 +219,14 @@
 									/>
 								</div>
 								<div class="col-span-2 flex items-center">
-									<Checkbox
+									<CheckboxZag
 										id={`attribute-required-${index}`}
 										name={`attributes[${index}].is_required`}
 										bind:checked={attribute.is_required}
 									/>
 								</div>
 								<div class="col-span-1 flex items-center">
-									<Checkbox
+									<CheckboxZag
 										id={`attribute-active-${index}`}
 										name={`attributes[${index}].is_active`}
 										bind:checked={attribute.is_active}

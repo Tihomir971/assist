@@ -2,11 +2,11 @@
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import { processExport } from '../../export-utils';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import type { Database } from '$lib/types/supabase.types';
 	import { getCartContext } from '../../ctx.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import { CheckboxZag } from '$lib/components/zag/index.js';
 
 	interface Props {
 		supabase: SupabaseClient<Database>;
@@ -66,10 +66,9 @@
 		</Select.Root>
 		<div class="flex max-h-[40vh] flex-col space-y-4">
 			<div class="flex flex-col space-y-2 overflow-y-auto">
-				{#each vendors as vendor}
+				{#each vendors as vendor (vendor.id)}
 					<label class="flex items-center space-x-2">
-						<Checkbox bind:checked={vendor.selected} />
-						<span>{vendor.name}</span>
+						<CheckboxZag bind:checked={vendor.selected} label={vendor.name} />
 					</label>
 				{/each}
 			</div>

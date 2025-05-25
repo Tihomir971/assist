@@ -7,9 +7,9 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { Separator } from '$lib/components/ui/separator';
-	import { Checkbox } from '$lib/components/ui/checkbox';
 	import type { Enums } from '$lib/types/supabase.types.js';
 	import { InputTextForm } from '$lib/components/my/input';
+	import { CheckboxZag } from '$lib/components/zag/index.js';
 
 	const { data } = $props();
 
@@ -177,8 +177,12 @@
 					</div>
 
 					<div class="flex items-center space-x-2">
-						<Checkbox id="is_active" name="is_active" bind:checked={$form.is_active} />
-						<Label for="is_active">Active</Label>
+						<CheckboxZag
+							id="is_active"
+							name="is_active"
+							bind:checked={$form.is_active}
+							label="Active"
+						/>
 					</div>
 				</div>
 
