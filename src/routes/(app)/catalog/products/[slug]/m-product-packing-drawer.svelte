@@ -1,20 +1,19 @@
 <script lang="ts">
+	import type { SuperValidated } from 'sveltekit-superforms';
+	import type { ProductPackingInsertSchema } from './schema';
+	import type { Tables } from '$lib/types/supabase.types';
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
-
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import type { SuperValidated } from 'sveltekit-superforms';
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { toast } from 'svelte-sonner';
 	import { isValidGTIN } from '$lib/scripts/gtin';
 	import { invalidate } from '$app/navigation';
-	import type { ProductPackingInsertSchema } from './schema';
-	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
-	import type { Tables } from '$lib/types/supabase.types';
 	import { CheckboxZag, Combobox, NumberInputZagForm } from '$lib/components/zag/index.js';
+	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 
 	type Props = {
 		isProductPackingDrawerOpen: boolean;

@@ -15,6 +15,7 @@
 		items = [],
 		placeholder = 'Select an option...',
 		disabled,
+		onValueChange,
 		readOnly,
 		required,
 		'aria-describedby': ariaDescribedBy,
@@ -59,16 +60,14 @@
 			const newOptions = filtered.length > 0 ? filtered : items;
 			filteredOptions = newOptions;
 		},
-		onValueChange({ value: selectedValues }: { value: string[] }) {
-			if (selectedValues.length === 0 || selectedValues == null) {
+		onValueChange(details) {
+			if (details.items.length === 0 || details.items == null) {
 				value = null;
 				return;
 			}
-			const newValue = selectedValues[0];
-			if (typeof value === 'number') {
-				value = parseInt(newValue, 10);
-			} else {
-				value = newValue;
+			value = details.items[0].value;
+			if (onValueChange) {
+				onValueChange(details);
 			}
 		}
 	});
