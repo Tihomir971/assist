@@ -2,7 +2,7 @@ import * as combobox from '@zag-js/combobox';
 import type { ControlAttrs } from 'formsnap';
 
 // Generic ComboboxItem with number default for backward compatibility
-export interface ComboboxItem<T = number> {
+export interface ComboboxItem<T = number | string> {
 	value: T;
 	label: string;
 	disabled?: boolean;

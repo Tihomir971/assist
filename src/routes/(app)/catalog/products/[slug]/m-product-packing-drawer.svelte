@@ -2,6 +2,7 @@
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
 
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -12,9 +13,8 @@
 	import { invalidate } from '$app/navigation';
 	import type { ProductPackingInsertSchema } from './schema';
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
-	import MySelectForm from '$lib/components/my/MySelectForm.svelte';
 	import type { Tables } from '$lib/types/supabase.types';
-	import { CheckboxZag, NumberInputZagForm } from '$lib/components/zag/index.js';
+	import { CheckboxZag, Combobox, NumberInputZagForm } from '$lib/components/zag/index.js';
 
 	type Props = {
 		isProductPackingDrawerOpen: boolean;
@@ -119,7 +119,7 @@
 					<input type="hidden" name="id" bind:value={$formData.id} />
 				{/if}
 
-				<div class="grid grid-cols-2 gap-x-4">
+				<div class="grid grid-cols-2 gap-4">
 					<NumberInputZagForm
 						{superform}
 						field="m_product_id"
@@ -127,20 +127,28 @@
 						fraction={0}
 						readOnly
 					/>
-					<div class="space-y-2">
-						<label for="packing_type" class="font-medium">Packing Type</label>
-						<MySelectForm
-							name="packing_type"
-							bind:value={$formData.packing_type}
-							options={[
-								{ value: 'Individual', label: 'Individual' },
-								{ value: 'Pack', label: 'Pack' },
-								{ value: 'Pallet', label: 'Pallet' }
-							]}
-						/>
+					<div>
+						<Form.Field form={superform} name="packing_type">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Label>Packing Type</Label>
+									<Combobox
+										{...props}
+										bind:value={$formData.packing_type}
+										items={[
+											{ value: 'Individual', label: 'Individual' },
+											{ value: 'Pack', label: 'Pack' },
+											{ value: 'Pallet', label: 'Pallet' }
+										]}
+										label="Packing Type"
+										required
+									/>
+								{/snippet}
+							</Form.Control>
+						</Form.Field>
 					</div>
 
-					<div class="space-y-2">
+					<div>
 						<NumberInputZagForm {superform} field="unitsperpack" label="Units Per Pack" />
 					</div>
 
@@ -151,7 +159,11 @@
 					<Form.Field form={superform} name="is_display">
 						<Form.Control>
 							{#snippet children({ props })}
-								<CheckboxZag bind:checked={$formData.is_display} label="Is display box?" />
+								<CheckboxZag
+									{...props}
+									bind:checked={$formData.is_display}
+									label="Is display box?"
+								/>
 							{/snippet}
 						</Form.Control>
 					</Form.Field>

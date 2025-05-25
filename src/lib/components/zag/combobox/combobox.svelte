@@ -66,10 +66,8 @@
 			}
 			const newValue = selectedValues[0];
 			if (typeof value === 'number') {
-				console.log('It is a number:', newValue);
 				value = parseInt(newValue, 10);
-			} else if (typeof value === 'string') {
-				console.log('It is a string:', newValue);
+			} else {
 				value = newValue;
 			}
 		}
