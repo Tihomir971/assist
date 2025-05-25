@@ -33,7 +33,6 @@
 					switch (value) {
 						case 'edit':
 							if (!contextNode) return;
-							console.log('Edit action called for node ID:', contextNode);
 							goto(`/catalog/category/${contextNode}?${page.url.searchParams}`);
 							break;
 						case 'add':

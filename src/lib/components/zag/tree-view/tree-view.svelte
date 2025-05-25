@@ -139,7 +139,6 @@
 		const targetNode = target.closest('[data-part="item"], [data-part="branch"]');
 		if (targetNode) {
 			const nodeId = targetNode.getAttribute('data-value');
-			console.log('Right-clicked node ID:', nodeId, typeof nodeId);
 			contextNode = nodeId;
 		}
 	}}

@@ -21,9 +21,10 @@
 	import StorageOnHandCard from './m-storageonhand-card.svelte';
 	import MyUrlInput from '$lib/components/my/input/input-url.svelte';
 	import { InputTextForm } from '$lib/components/my/input';
-	import { ComboboxZagForm, NumberInputZagForm, SwitchZagForm } from '$lib/components/zag/index.js';
+	import { NumberInputZagForm, SwitchZagForm } from '$lib/components/zag/index.js';
 	import { mProductInsertSchema } from '$lib/types/supabase.zod.schemas';
 	import { page } from '$app/state';
+	import { EnhancedCombobox } from '$lib/components/forms';
 
 	let { data } = $props();
 
@@ -107,32 +108,58 @@
 								placeholder="Enter Product MPN..."
 								autocomplete="off"
 							/>
-
-							<ComboboxZagForm
-								{superform}
-								field="c_uom_id"
-								label="UoM"
-								items={data.uom}
-								readonly={false}
-							/>
-
-							<ComboboxZagForm {superform} field="c_taxcategory_id" label="Tax" items={data.tax} />
+							<Form.Field form={superform} name="c_uom_id">
+								<Form.Control>
+									{#snippet children({ props })}
+										<Form.Label>Formula script New</Form.Label>
+										<EnhancedCombobox
+											{...props}
+											bind:value={$formProduct.c_uom_id}
+											items={data.uom}
+										/>
+									{/snippet}
+								</Form.Control>
+							</Form.Field>
+							<Form.Field form={superform} name="c_taxcategory_id">
+								<Form.Control>
+									{#snippet children({ props })}
+										<Form.Label>Tax</Form.Label>
+										<EnhancedCombobox
+											{...props}
+											bind:value={$formProduct.c_taxcategory_id}
+											items={data.tax}
+										/>
+									{/snippet}
+								</Form.Control>
+							</Form.Field>
 						</div>
 						<div class="grid grid-cols-1 divide-x *:px-3 md:grid-cols-[2fr_2fr_1fr]">
 							<div>
 								<h3 class="mb-2 pb-2 text-lg font-semibold">Basic Information</h3>
-								<ComboboxZagForm
-									{superform}
-									field="attributeset_id"
-									label="Attribute Set"
-									items={data.attributeSets}
-								/>
-								<ComboboxZagForm
-									{superform}
-									field="m_product_category_id"
-									label="Category"
-									items={data.categories}
-								/>
+								<Form.Field form={superform} name="attributeset_id">
+									<Form.Control>
+										{#snippet children({ props })}
+											<Form.Label>Attribute Set</Form.Label>
+											<EnhancedCombobox
+												{...props}
+												bind:value={$formProduct.attributeset_id}
+												items={data.attributeSets}
+											/>
+										{/snippet}
+									</Form.Control>
+								</Form.Field>
+								<Form.Field form={superform} name="m_product_category_id">
+									<Form.Control>
+										{#snippet children({ props })}
+											<Form.Label>Category</Form.Label>
+											<EnhancedCombobox
+												{...props}
+												bind:value={$formProduct.m_product_category_id}
+												items={data.categories}
+											/>
+										{/snippet}
+									</Form.Control>
+								</Form.Field>
 							</div>
 							<div>
 								<h3 class="mb-2 pb-2 text-lg font-semibold">Packaging Information</h3>
@@ -143,12 +170,18 @@
 										fraction={4}
 										label="Net Quantity"
 									/>
-									<ComboboxZagForm
-										{superform}
-										field="net_qty_uom_id"
-										label="Net Quantity UoM"
-										items={data.uom}
-									/>
+									<Form.Field form={superform} name="net_qty_uom_id">
+										<Form.Control>
+											{#snippet children({ props })}
+												<Form.Label>Net Quantity UoM</Form.Label>
+												<EnhancedCombobox
+													{...props}
+													bind:value={$formProduct.net_qty_uom_id}
+													items={data.uom}
+												/>
+											{/snippet}
+										</Form.Control>
+									</Form.Field>
 								</div>
 								<div class="grid grid-cols-2 gap-4">
 									<NumberInputZagForm

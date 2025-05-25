@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { InputTextForm, MyUrlInput } from '$lib/components/my/input/index.js';
-	import {
-		ComboboxNewZag,
-		ComboboxZagForm,
-		NumberInputZagForm
-	} from '$lib/components/zag/index.js';
+	import { ComboboxNewZag, NumberInputZagForm } from '$lib/components/zag/index.js';
+	import * as Form from '$lib/components/ui/form/index.js';
+
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
@@ -14,6 +12,7 @@
 	import { z } from 'zod';
 	import type { mProductPoInsertSchema } from '$lib/types/supabase.zod.schemas.js';
 	import { dev } from '$app/environment';
+	import { EnhancedCombobox } from '$lib/components/forms';
 
 	type Item = { value: number; label: string };
 	type Schema = z.infer<typeof mProductPoInsertSchema>;
@@ -59,13 +58,28 @@
 				<input type="hidden" name="id" value={$form.id?.toString() || ''} />
 				<input type="hidden" name="m_product_id" value={$form.m_product_id?.toString() || ''} />
 				<InputTextForm {superform} field="vendorproductno" label="Vendor PN" />
-				<ComboboxZagForm
+				<Form.Field form={superform} name="c_bpartner_id">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Vendor</Form.Label>
+							<EnhancedCombobox
+								{...props}
+								bind:value={$form.c_bpartner_id}
+								items={partners}
+								placeholder="Select a partner"
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.Description>Choose the product category</Form.Description>
+					<Form.FieldErrors />
+				</Form.Field>
+				<!-- <ComboboxZagForm
 					{superform}
 					field="c_bpartner_id"
 					label="Vendor"
 					items={partners}
 					placeholder="Select a partner"
-				/>
+				/> -->
 				<NumberInputZagForm {superform} field="pricelist" label="Pricelist" fraction={2} />
 				<NumberInputZagForm {superform} field="order_min" label="MOQ" fraction={0} min={1} />
 				<MyUrlInput name="url" bind:value={$form.url} label="URL" />

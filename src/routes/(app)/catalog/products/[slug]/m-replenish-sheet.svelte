@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { InputTextForm, MyUrlInput } from '$lib/components/my/input/index.js';
-	import { ComboboxZagForm, NumberInputZagForm } from '$lib/components/zag/index.js';
+	import { NumberInputZagForm } from '$lib/components/zag/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
@@ -10,6 +10,8 @@
 	import { z } from 'zod';
 	import { dev } from '$app/environment';
 	import { Control, Field, FieldErrors, Label } from 'formsnap';
+	import * as Form from '$lib/components/ui/form/index.js';
+	import { EnhancedCombobox } from '$lib/components/forms';
 
 	type Item = { value: number; label: string };
 	type Schema = z.infer<typeof mReplenishInsertSchema>;
@@ -60,20 +62,36 @@
 			<div class="grid gap-3 overflow-y-auto p-4">
 				<input type="hidden" name="id" value={$formData.id?.toString() || ''} />
 				<input type="hidden" name="m_product_id" value={$formData.m_product_id?.toString() || ''} />
-				<ComboboxZagForm
-					{superform}
-					field="m_warehouse_id"
-					label="Warehouse"
-					items={warehouses}
-					placeholder="Select a Warehouse"
-				/>
-				<ComboboxZagForm
-					{superform}
-					field="m_warehousesource_id"
-					label="Source Warehouse"
-					items={warehouses}
-					placeholder="Select a Warehouse"
-				/>
+
+				<Form.Field form={superform} name="m_warehouse_id">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Warehouse</Form.Label>
+							<EnhancedCombobox
+								{...props}
+								bind:value={$formData.m_warehouse_id}
+								items={warehouses}
+								placeholder="Select a Warehouse"
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field form={superform} name="m_warehousesource_id">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Source Warehouse</Form.Label>
+							<EnhancedCombobox
+								{...props}
+								bind:value={$formData.m_warehouse_id}
+								items={warehouses}
+								placeholder="Select a Warehouse"
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+
 				<NumberInputZagForm {superform} field="level_min" label="Min. Level" fraction={0} min={1} />
 				<NumberInputZagForm {superform} field="level_max" label="Max. Level" fraction={0} />
 				<NumberInputZagForm

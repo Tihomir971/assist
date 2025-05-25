@@ -1,8 +1,6 @@
 export { default as CheckboxZag } from './checkbox/checkbox.svelte';
-export { default as ComboboxZag } from './combobox/combobox.svelte';
 export { default as ComboboxNewZag } from './combobox/combobox-new.svelte';
 export { default as SuperForm } from './combobox/super-form.svelte';
-export { default as ComboboxZagForm } from './combobox/combobox-form.svelte';
 export { default as NumberInputZag } from './number-input/number-input.svelte';
 export { default as NumberInputZagForm } from './number-input/number-input-form.svelte';
 export { default as SelectZag } from './select/select.svelte';

@@ -1,4 +1,4 @@
-export function labelByValue(
+export function getLabelByValue(
 	value: number | null | undefined,
 	object: { value: number; label: string }[]
 ): string {

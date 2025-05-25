@@ -5,11 +5,10 @@
 	import { Button } from '$lib/components/ui/button';
 	import Sheet from './m-replenish-sheet.svelte';
 	import * as Table from '$lib/components/ui/table';
-	import { ComboboxZagForm, NumberInputZagForm } from '$lib/components/zag/index.js';
 	import PhDotsThreeBold from '~icons/ph/dots-three-bold';
 	import { z } from 'zod';
 	import type { mReplenishInsertSchema } from '$lib/types/supabase.zod.schemas';
-	import { labelByValue } from '$lib/scripts/custom';
+	import { getLabelByValue } from '$lib/scripts/custom';
 
 	type Schema = z.infer<typeof mReplenishInsertSchema>;
 	interface Props {
@@ -59,10 +58,10 @@
 				{#each data as row}
 					<Table.Row>
 						<Table.Cell>
-							{labelByValue(row.m_warehouse_id, warehouses)}
+							{getLabelByValue(row.m_warehouse_id, warehouses)}
 						</Table.Cell>
 						<Table.Cell>
-							{labelByValue(row.m_warehousesource_id, warehouses)}
+							{getLabelByValue(row.m_warehousesource_id, warehouses)}
 						</Table.Cell>
 						<Table.Cell class="text-right">{row.level_min}</Table.Cell>
 						<Table.Cell class="text-right">{row.level_max}</Table.Cell>

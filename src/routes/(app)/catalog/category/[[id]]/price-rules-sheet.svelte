@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { InputTextForm, MyUrlInput } from '$lib/components/my/input/index.js';
-	import { ComboboxZagForm, NumberInputZagForm } from '$lib/components/zag/index.js';
+	import { NumberInputZagForm } from '$lib/components/zag/index.js';
+	import * as Form from '$lib/components/ui/form/index.js';
+
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
@@ -12,6 +14,7 @@
 		priceRulesInsertSchema
 	} from '$lib/types/supabase.zod.schemas.js';
 	import { dev } from '$app/environment';
+	import { EnhancedCombobox } from '$lib/components/forms';
 
 	type Item = { value: number; label: string };
 	type Schema = z.infer<typeof priceRulesInsertSchema>;
@@ -66,13 +69,27 @@
 				<input type="hidden" name="m_product_id" value={$form.m_product_id?.toString() || ''} />
 				<div class="flex flex-col space-y-4 py-4">
 					<InputTextForm {superform} field="name" label="Name" />
-					<ComboboxZagForm
+
+					<Form.Field form={superform} name="price_formula_id">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Formula script New</Form.Label>
+								<EnhancedCombobox
+									{...props}
+									bind:value={$form.price_formula_id}
+									items={priceFormulas}
+								/>
+							{/snippet}
+						</Form.Control>
+					</Form.Field>
+
+					<!-- <ComboboxZagForm
 						{superform}
 						field="price_formula_id"
 						label="Formula script"
 						items={priceFormulas}
 						placeholder="Select a Formula"
-					/>
+					/> -->
 					<NumberInputZagForm {superform} field="priority" label="Priority" min={0} max={100} />
 				</div>
 			</div>

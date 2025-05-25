@@ -16,7 +16,7 @@
 	import { processExcelData } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
 	import MySelect from '$lib/components/my/MySelect.svelte';
-	import { ComboboxZag } from '$lib/components/zag/index.js';
+	import { EnhancedCombobox } from '$lib/components/forms';
 
 	let { data } = $props();
 	let { supabase } = $derived(data);
@@ -269,7 +269,7 @@
 	<div class="flex flex-col gap-4">
 		<div class="grid grid-cols-4 items-start gap-2">
 			<div class="grid w-full gap-1.5">
-				<ComboboxZag
+				<EnhancedCombobox
 					bind:value={selectedSupplier}
 					items={data.c_bpartner}
 					label="Supplier"

@@ -10,7 +10,7 @@ export interface ComboboxItem<T = number> {
 
 export interface ComboboxProps<T extends ComboboxItem>
 	extends Pick<combobox.Props, 'readOnly' | 'disabled' | 'required' | 'placeholder'>,
-		Omit<ControlAttrs, 'data-fs-control' | 'data-fs-error'> {
+		Partial<Omit<ControlAttrs, 'data-fs-control' | 'data-fs-error'>> {
 	value?: number | null | undefined;
 	items?: T[];
 	label?: string;

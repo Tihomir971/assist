@@ -25,7 +25,7 @@
 	let filteredOptions = $state.raw(items);
 	const collection = $derived(
 		combobox.collection({
-			items: items,
+			items: filteredOptions,
 			itemToValue: (item) => item.value.toString(),
 			itemToString: (item) => item.label,
 			isItemDisabled(item) {
@@ -57,7 +57,6 @@
 				keys: ['label']
 			});
 			const newOptions = filtered.length > 0 ? filtered : items;
-			collection.setItems(newOptions);
 			filteredOptions = newOptions;
 		},
 		onValueChange({ value: selectedValues }: { value: string[] }) {

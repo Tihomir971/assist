@@ -7,7 +7,7 @@
 	import { mProductCategoryInsertSchema } from '$lib/types/supabase.zod.schemas.js';
 	import { formatDate, formatDateTime } from '$lib/style/locale';
 	import { toast } from 'svelte-sonner';
-
+	import PhDotsThreeBold from '~icons/ph/dots-three-bold.js';
 	// Components
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
@@ -17,21 +17,11 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { ComboboxZagForm, SwitchZagForm } from '$lib/components/zag/index.js';
+	import { SwitchZagForm } from '$lib/components/zag/index.js';
 	import InputTextForm from '$lib/components/my/input/input-text-form.svelte';
 
-	import PhDotsThreeBold from '~icons/ph/dots-three-bold';
-	import { labelByValue } from '$lib/scripts/custom';
-	import {
-		Combobox,
-		EnhancedCombobox,
-		EnhancedFormField,
-		FormControl,
-		FormDescription,
-		FormField,
-		FormFieldErrors,
-		FormLabel
-	} from '$lib/components/forms/index.js';
+	import { EnhancedCombobox } from '$lib/components/forms/index.js';
+	import { getLabelByValue } from '$lib/scripts/custom';
 
 	let { data } = $props();
 
@@ -102,12 +92,7 @@
 							bind:value={$formData.parent_id}
 						/>
 					</FormField> -->
-					<!-- <ComboboxZagForm
-						{superform}
-						field="parent_id"
-						items={data.categories}
-						label="Parent Category"
-					/> -->
+
 					<Form.Field form={superform} name="parent_id">
 						<Form.Control>
 							{#snippet children({ props })}
@@ -160,7 +145,7 @@
 			</Card.Content>
 		</Card.Root>
 	</div>
-	<!-- <Card.Root>
+	<Card.Root>
 		<Card.Header>
 			<div class="flex items-center justify-between">
 				<Card.Title>Price Rules</Card.Title>
@@ -194,7 +179,7 @@
 							<Table.Cell class="font-medium">{row.name}</Table.Cell>
 							<Table.Cell>{row.is_active}</Table.Cell>
 							<Table.Cell>{row.m_attribute_id}</Table.Cell>
-							<Table.Cell>{labelByValue(row.price_formula_id, data.priceFormulas)}</Table.Cell>
+							<Table.Cell>{getLabelByValue(row.price_formula_id, data.priceFormulas)}</Table.Cell>
 							<Table.Cell>{formatDate(row.created_at)}</Table.Cell>
 							<Table.Cell>{formatDate(row.updated_at)}</Table.Cell>
 							<Table.Cell>
@@ -214,7 +199,7 @@
 				</Table.Body>
 			</Table.Root>
 		</Card.Content>
-	</Card.Root> -->
+	</Card.Root>
 </div>
 
 {#if isSheetOpen}
