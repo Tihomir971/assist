@@ -869,21 +869,53 @@ export const actions = {
 		const productPoInserts: TablesInsert<'m_product_po'>[] = [];
 
 		try {
-			const { data, error } = await scrapper
-				.post('api/products', { json: { products: productRequests, type: type } })
-				.json<ApiResponse<ProductResultGet[]>>();
+			const batchSize = 50;
+			let allApiResults: ProductResultGet[] = [];
 
-			if (error || !data) {
-				console.error('Invalid data received from API', error);
+			for (let i = 0; i < productRequests.length; i += batchSize) {
+				const batch = productRequests.slice(i, i + batchSize);
+				console.log(
+					`Processing batch ${i / batchSize + 1} of ${Math.ceil(productRequests.length / batchSize)}...`
+				);
+				try {
+					const { data: batchData, error: batchError } = await scrapper
+						.post('api/products', { json: { products: batch, type: type } })
+						.json<ApiResponse<ProductResultGet[]>>();
+
+					if (batchError || !batchData) {
+						console.error(`Error in batch ${i / batchSize + 1}:`, batchError || 'No data received');
+						errorMessages.push(
+							`Error processing batch ${i / batchSize + 1}: ${batchError?.message || 'No data received'}`
+						);
+						errorCount += batch.length; // Assume all in batch failed
+						continue; // Move to the next batch
+					}
+					allApiResults = allApiResults.concat(batchData);
+				} catch (batchProcessError) {
+					console.error(
+						`Exception during processing batch ${i / batchSize + 1}:`,
+						batchProcessError
+					);
+					errorMessages.push(
+						`Exception during processing batch ${i / batchSize + 1}: ${
+							(batchProcessError as Error).message
+						}`
+					);
+					errorCount += batch.length; // Assume all in batch failed
+				}
+			}
+
+			if (allApiResults.length === 0 && productRequests.length > 0) {
+				console.error('No results obtained from any API batch.');
 				return {
 					success: false,
 					status: 500,
-					message: 'Invalid data received from API',
-					error // Kept as any to avoid runtime issues without known error structure
+					message: 'Failed to obtain results from API after batching.',
+					details: errorMessages.length > 0 ? errorMessages : undefined
 				};
 			}
 
-			for (const result of data) {
+			for (const result of allApiResults) {
 				const { product, status, productId } = result;
 				const originalProduct = products.find((p: ProductForMarketInfo) => p.id === productId);
 
@@ -1038,7 +1070,7 @@ export const actions = {
 			return {
 				success: true,
 				status: 200,
-				message: `Processed ${data.length} results. Updated/Inserted ${updatedCount - errorCount} product POs. ${errorCount} error(s).`,
+				message: `Processed ${allApiResults.length} results from ${Math.ceil(productRequests.length / batchSize)} batches. Updated/Inserted ${updatedCount - errorCount} product POs. ${errorCount} error(s).`,
 				details: errorMessages.length > 0 ? errorMessages : undefined
 			};
 		} catch (err) {
