@@ -417,7 +417,9 @@ export const actions = {
 				errors: [{ step: 'prefetch_products', message: productFetchError.message }]
 			});
 		}
-		const productSkuToIdMap = new Map(existingProducts?.map((p) => [p.sku, p.id]));
+		const productSkuToIdMap = new Map(
+			existingProducts?.filter((p) => p.sku !== null).map((p) => [p.sku!, p.id])
+		);
 
 		// --- Pre-fetch BPartner Mappings ---
 		const externalBPartnerIds = [
@@ -649,60 +651,6 @@ export const actions = {
 			}
 		}
 
-		// Helper function for batch processing
-		//async function processInBatches<T, R>(
-		//	items: T[],
-		//	batchSize: number,
-		//	processFn: (batch: T[]) => Promise<PromiseSettledResult<R>[]>
-		//): Promise<PromiseSettledResult<R>[]> {
-		//	let allResults: PromiseSettledResult<R>[] = [];
-		//	for (let i = 0; i < items.length; i += batchSize) {
-		//		const batch = items.slice(i, i + batchSize);
-		//		console.log(
-		//			`Processing batch ${i / batchSize + 1} of ${Math.ceil(items.length / batchSize)}...`
-		//		); // Optional logging
-		//		const batchResults = await processFn(batch);
-		//		allResults = allResults.concat(batchResults);
-		//	}
-		//	return allResults;
-		//}
-		//
-		//const BATCH_SIZE = 2; // Adjust batch size as needed - Reduced further for Cloudflare subrequest limits
-
-		// 1. Product Updates (Batched)
-		//if (productUpdates.length > 0) {
-		//	const productUpdateResults = await processInBatches(
-		//		productUpdates,
-		//		BATCH_SIZE,
-		//		async (batch) => {
-		//			const promises = batch.map(({ id, data }) =>
-		//				supabase.from('m_product').update(data).eq('id', id)
-		//			);
-		//			return Promise.allSettled(promises);
-		//		}
-		//	);
-		//
-		//	// Process results (associate errors with original items if needed, simplified here)
-		//	productUpdateResults.forEach((result) => {
-		//		// Removed unused globalIndex
-		//		// Note: A more robust error mapping might be needed if precise item association is critical
-		//		if (result.status === 'rejected') {
-		//			console.error(`Error in product update batch:`, result.reason);
-		//			errors.push({
-		//				productId: undefined, // Difficult to map precisely back without more logic
-		//				step: 'update_product_batch',
-		//				message: result.reason?.message ?? 'Unknown update error in batch'
-		//			});
-		//		} else if (result.value.error) {
-		//			console.error(`Error in product update batch result:`, result.value.error);
-		//			errors.push({
-		//				productId: undefined, // Difficult to map precisely back
-		//				step: 'update_product_batch',
-		//				message: result.value.error.message
-		//			});
-		//		}
-		//	});
-		//}
 		if (productUpdates.length > 0) {
 			const { error: productUpdateError } = await supabase.rpc('bulk_update_products', {
 				updates: productUpdates // Pass the array directly
@@ -761,39 +709,6 @@ export const actions = {
 			}
 		}
 
-		// 4. Product PO Updates (Batched)
-		//if (productPoUpdates.length > 0) {
-		//	const poUpdateResults = await processInBatches(
-		//		productPoUpdates,
-		//		BATCH_SIZE,
-		//		async (batch) => {
-		//			const promises = batch.map(({ where, data }) =>
-		//				supabase.from('m_product_po').update(data).match(where)
-		//			);
-		//			return Promise.allSettled(promises);
-		//		}
-		//	);
-		//
-		//	poUpdateResults.forEach((result) => {
-		//		if (result.status === 'rejected') {
-		//			console.error(`Error in product PO update batch:`, result.reason);
-		//			errors.push({
-		//				productId: undefined,
-		//				step: 'update_product_po_batch',
-		//				message: result.reason?.message ?? 'Unknown update error in batch'
-		//			});
-		//		} else if (result.value.error) {
-		//			console.error(`Error in product PO update batch result:`, result.value.error);
-		//			// Attempt to get product ID from error details if possible, otherwise undefined
-		//			const productId = result.value.error?.details?.match(/m_product_id = (\d+)/)?.[1];
-		//			errors.push({
-		//				productId: productId ? parseInt(productId) : undefined,
-		//				step: 'update_product_po_batch',
-		//				message: result.value.error.message
-		//			});
-		//		}
-		//	});
-		//}
 		if (productPoUpdates.length > 0) {
 			const { error: poUpdateError } = await supabase.rpc('bulk_update_product_po', {
 				updates: productPoUpdates
@@ -821,34 +736,6 @@ export const actions = {
 			}
 		}
 
-		// 6. Stock Updates (Batched)
-		//if (stockUpdates.length > 0) {
-		//	const stockUpdateResults = await processInBatches(stockUpdates, BATCH_SIZE, async (batch) => {
-		//		const promises = batch.map(({ where, data }) =>
-		//			supabase.from('m_storageonhand').update(data).match(where)
-		//		);
-		//		return Promise.allSettled(promises);
-		//	});
-		//
-		//	stockUpdateResults.forEach((result) => {
-		//		if (result.status === 'rejected') {
-		//			console.error(`Error in stock update batch:`, result.reason);
-		//			errors.push({
-		//				productId: undefined,
-		//				step: 'update_stock_batch',
-		//				message: result.reason?.message ?? 'Unknown update error in batch'
-		//			});
-		//		} else if (result.value.error) {
-		//			console.error(`Error in stock update batch result:`, result.value.error);
-		//			const productId = result.value.error?.details?.match(/m_product_id = (\d+)/)?.[1];
-		//			errors.push({
-		//				productId: productId ? parseInt(productId) : undefined,
-		//				step: 'update_stock_batch',
-		//				message: result.value.error.message
-		//			});
-		//		}
-		//	});
-		//}
 		if (stockUpdates.length > 0) {
 			const { error: stockUpdateError } = await supabase.rpc('bulk_update_storageonhand', {
 				updates: stockUpdates
@@ -876,50 +763,6 @@ export const actions = {
 			}
 		}
 
-		// 8. Price Updates (Batched)
-		//if (priceUpdates.length > 0) {
-		//	const priceUpdateResults = await processInBatches(priceUpdates, BATCH_SIZE, async (batch) => {
-		//		const promises = batch.map(({ where, data }) =>
-		//			supabase.from('m_productprice').update(data).match(where)
-		//		);
-		//		return Promise.allSettled(promises);
-		//	});
-		//
-		//	priceUpdateResults.forEach((result) => {
-		//		if (result.status === 'rejected') {
-		//			console.error(`Error in price update batch:`, result.reason);
-		//			errors.push({
-		//				productId: undefined,
-		//				step: 'update_price_batch',
-		//				message: result.reason?.message ?? 'Unknown update error in batch'
-		//			});
-		//		} else if (result.value.error) {
-		//			console.error(`Error in price update batch result:`, result.value.error);
-		//			const productId = result.value.error?.details?.match(/m_product_id = (\d+)/)?.[1];
-		//			errors.push({
-		//				productId: productId ? parseInt(productId) : undefined,
-		//				step: 'update_price_batch',
-		//				message: result.value.error.message
-		//			});
-		//		}
-		//	});
-		//}
-		//
-		//// --- Final Error Handling ---
-		//if (errors.length > 0) {
-		//	console.error('Errors during ERP sync:', errors);
-		//	return fail(422, {
-		//		// Use 422 or 500 depending on error types
-		//		success: false,
-		//		message: `Completed with ${errors.length} errors during sync.`,
-		//		errors: errors
-		//	});
-		//}
-		//
-		//return {
-		//	success: true,
-		//	message: 'ERP data synchronized successfully.'
-		//};
 		if (priceUpdates.length > 0) {
 			const { error: priceUpdateError } = await supabase.rpc('bulk_update_productprice', {
 				updates: priceUpdates
@@ -946,15 +789,25 @@ export const actions = {
 
 		const productIds = stringToNumberArray(ids);
 
+		// Define a more specific type for the product structure returned by the initial query
+		type ProductForMarketInfo = {
+			id: number;
+			mpn: string | null;
+			m_product_packing: { gtin: string | null }[];
+			m_product_po: { c_bpartner_id: number | null; url: string | null }[];
+			c_taxcategory: { c_tax: { rate: number | null }[] | null } | null;
+			c_taxcategory_id: number | null;
+		};
+
 		const { data: products, error: fetchError } = await supabase
 			.from('m_product')
 			.select(
 				'id, mpn, m_product_packing(gtin), m_product_po(c_bpartner_id, url), c_taxcategory(c_tax(rate)), c_taxcategory_id'
 			)
-			//.eq('m_product_po.c_bpartner_id', source)
 			.not('m_product_po.url', 'is', null)
 			.not('m_product_packing.gtin', 'is', null)
 			.in('id', productIds);
+
 		if (fetchError) {
 			console.error('Error fetching products:', fetchError);
 			return {
@@ -987,46 +840,88 @@ export const actions = {
 				.filter((req) => req.href)
 		);
 
+		// --- Pre-fetch existing m_product_po data ---
+		const { data: existingProductPoData, error: existingPoError } = await supabase
+			.from('m_product_po')
+			.select('m_product_id, c_bpartner_id')
+			.in('m_product_id', productIds);
+
+		if (existingPoError) {
+			console.error('Error fetching existing m_product_po:', existingPoError);
+			return {
+				success: false,
+				status: 500,
+				message: 'Error fetching existing product PO data',
+				error: existingPoError.message
+			};
+		}
+		const existingPoSet = new Set(
+			existingProductPoData?.map(
+				(p: { m_product_id: number; c_bpartner_id: number }) =>
+					`${p.m_product_id}-${p.c_bpartner_id}`
+			) ?? []
+		);
+
+		const productPoUpdates: {
+			where: { m_product_id: number; c_bpartner_id: number };
+			data: Partial<Tables<'m_product_po'>>;
+		}[] = [];
+		const productPoInserts: TablesInsert<'m_product_po'>[] = [];
+
 		try {
 			const { data, error } = await scrapper
 				.post('api/products', { json: { products: productRequests, type: type } })
 				.json<ApiResponse<ProductResultGet[]>>();
 
-			if (!data) {
+			if (error || !data) {
 				console.error('Invalid data received from API', error);
 				return {
 					success: false,
 					status: 500,
 					message: 'Invalid data received from API',
-					error: error
+					error // Kept as any to avoid runtime issues without known error structure
 				};
 			}
 
 			for (const result of data) {
 				const { product, status, productId } = result;
-				console.log('status, productId', status, productId);
-				console.log('bool', status !== ProductStatus.OK);
-				const originalProduct = products.find((p) => p.id === productId);
+				const originalProduct = products.find((p: ProductForMarketInfo) => p.id === productId);
 
 				if (!originalProduct) {
 					console.error(`Original product not found for productId: ${productId}`);
 					errorCount++;
+					errorMessages.push(`Original product not found for productId: ${productId}`);
 					continue;
 				}
 
 				if (status !== ProductStatus.OK || !product) {
 					console.log(`Product ${productId} status: ${status}`);
 					errorCount++;
+					errorMessages.push(
+						`Product ${productId} status: ${status}, data: ${JSON.stringify(product)}`
+					);
 					continue;
 				}
 
 				const taxRate = originalProduct.c_taxcategory_id === 2 ? 0.1 : 0.2;
+				const bpartnerId = sourceId.get(product.vendorId);
+
+				if (!bpartnerId) {
+					console.error(
+						`No c_bpartner_id found for vendor: ${product.vendorId} (productId: ${productId})`
+					);
+					errorMessages.push(
+						`No c_bpartner_id found for vendor: ${product.vendorId} (productId: ${productId})`
+					);
+					errorCount++;
+					continue;
+				}
 
 				// Update GTINs
 				if (product.barcodes) {
 					const allGtins = originalProduct.m_product_packing
 						.map((item: { gtin: string | null }) => item.gtin)
-						.filter((gtin): gtin is string => gtin !== null);
+						.filter((gtin: string | null): gtin is string => gtin !== null);
 					const newBarcodes = product.barcodes.filter(
 						(barcode: string) =>
 							typeof barcode === 'string' && !allGtins.includes(barcode) && isValidGTIN(barcode)
@@ -1053,51 +948,35 @@ export const actions = {
 				}
 
 				let priceWithoutTax: number | undefined = undefined;
-				// Skip price update for Idea
 				if (product.vendorId !== 'idea') {
 					priceWithoutTax =
 						product.price || product.price === 0 ? product.price / (1 + taxRate) : undefined;
 				}
-				const { error: updateError, data: updatedProduct } = await supabase
-					.from('m_product_po')
-					.update({
-						vendorproductno: product.sku,
-						barcode: product.barcodes?.join(', '),
-						manufacturer: product.brand,
-						url: product.href,
-						pricelist: priceWithoutTax,
-						valid_from: product.valid_from,
-						valid_to: product.valid_to
-					})
-					.eq('m_product_id', productId)
-					.eq('c_bpartner_id', sourceId.get(product.vendorId) ?? 0)
-					.select();
 
-				if (updateError) {
-					console.error('Error updating product:', updateError);
-					errorMessages.push(`Error updating product ${productId}: ${updateError.message}`);
-					errorCount++;
-					continue;
-				}
+				const poData: Partial<Tables<'m_product_po'>> = {
+					vendorproductno: product.sku ?? '', // Handle potentially null SKU
+					barcode: product.barcodes?.join(', '),
+					manufacturer: product.brand,
+					url: product.href,
+					pricelist: priceWithoutTax,
+					valid_from: product.valid_from,
+					valid_to: product.valid_to,
+					is_active: true // Assuming active
+				};
 
-				if (updatedProduct && updatedProduct.length === 0) {
-					const { error: insertError } = await supabase.from('m_product_po').insert({
-						m_product_id: productId,
-						c_bpartner_id: sourceId.get(product.vendorId) ?? 0,
-						vendorproductno: product.sku,
-						barcode: product.barcodes?.join(', '),
-						manufacturer: product.brand,
-						url: product.href,
-						pricelist: priceWithoutTax,
-						valid_from: product.valid_from,
-						valid_to: product.valid_to
+				const poKey = `${productId}-${bpartnerId}`;
+				if (existingPoSet.has(poKey)) {
+					productPoUpdates.push({
+						where: { m_product_id: productId, c_bpartner_id: bpartnerId },
+						data: poData
 					});
-					if (insertError) {
-						console.error('Error inserting product:', insertError);
-						errorMessages.push(`Error inserting product ${productId}: ${insertError.message}`);
-						errorCount++;
-						continue;
-					}
+				} else {
+					productPoInserts.push({
+						m_product_id: productId,
+						c_bpartner_id: bpartnerId,
+						...poData
+					} as TablesInsert<'m_product_po'>);
+					existingPoSet.add(poKey); // Add to set to prevent duplicate inserts in this batch
 				}
 
 				// Update net quantity
@@ -1108,7 +987,8 @@ export const actions = {
 							net_quantity: product.netQuantity,
 							net_qty_uom_id: allUom
 								? allUom.find(
-										(uom) => uom.uomsymbol?.toLowerCase() === product.netQuantityUnit?.toLowerCase()
+										(uom: { uomsymbol?: string | null; id: number }) =>
+											uom.uomsymbol?.toLowerCase() === product.netQuantityUnit?.toLowerCase()
 									)?.id
 								: undefined
 						})
@@ -1120,14 +1000,45 @@ export const actions = {
 						);
 					}
 				}
+				updatedCount++; // Count successful processing of a result, not db operations yet
+			}
 
-				updatedCount++;
+			// --- Batch Product PO Inserts ---
+			if (productPoInserts.length > 0) {
+				const { error: poInsertError } = await supabase
+					.from('m_product_po')
+					.insert(productPoInserts);
+				if (poInsertError) {
+					console.error('Error batch inserting product POs:', poInsertError);
+					errorMessages.push(`Batch insert m_product_po failed: ${poInsertError.message}`);
+					errorCount += productPoInserts.length; // Assume all failed in batch
+				} else {
+					console.log(
+						`Successfully batch inserted ${productPoInserts.length} m_product_po records.`
+					);
+				}
+			}
+
+			// --- Batch Product PO Updates ---
+			if (productPoUpdates.length > 0) {
+				const { error: poUpdateError } = await supabase.rpc('bulk_update_product_po', {
+					updates: productPoUpdates
+				});
+				if (poUpdateError) {
+					console.error('Error calling bulk_update_product_po RPC:', poUpdateError);
+					errorMessages.push(`RPC bulk_update_product_po failed: ${poUpdateError.message}`);
+					errorCount += productPoUpdates.length; // Assume all failed in batch
+				} else {
+					console.log(
+						`Successfully batch updated ${productPoUpdates.length} m_product_po records via RPC.`
+					);
+				}
 			}
 
 			return {
 				success: true,
 				status: 200,
-				message: `Updated ${updatedCount} product(s) successfully. ${errorCount} product(s) failed to update.`,
+				message: `Processed ${data.length} results. Updated/Inserted ${updatedCount - errorCount} product POs. ${errorCount} error(s).`,
 				details: errorMessages.length > 0 ? errorMessages : undefined
 			};
 		} catch (err) {
