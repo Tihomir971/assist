@@ -280,12 +280,18 @@ export async function processExport(
 							? formulaVars
 							: defaultCalcParams;
 
+					const cenaUobjektu2 = calculator.customCalculate(
+						product.pricePurchase,
+						product.taxPercent,
+						calcParams
+					);
 					// Debug log for calculation inputs
 					console.log('Debug Cena u obj.2', {
 						productId: product.id,
 						pricePurchase: product.pricePurchase,
 						taxPercent: product.taxPercent,
-						calcParams
+						calcParams,
+						cenaUobjektu2
 					});
 
 					return {
@@ -299,11 +305,7 @@ export async function processExport(
 						qtyBatchSize: product.qtyBatchSize || 0,
 						'Pack Qty.': Number((kolicina / product.unitsperpack || 0).toFixed(2)),
 						Količina: kolicina,
-						'Cena u obj.2': calculator.customCalculate(
-							product.pricePurchase,
-							product.taxPercent,
-							calcParams
-						)
+						'Cena u obj.2': cenaUobjektu2
 					};
 				} else if (selectReportValue === 'vendor_orders') {
 					// Default export

@@ -17,12 +17,14 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Combobox, SwitchZagForm } from '$lib/components/zag/index.js';
+	import { CheckboxZag, Combobox, SwitchZagForm } from '$lib/components/zag/index.js';
 	import InputTextForm from '$lib/components/my/input/input-text-form.svelte';
 
 	import { getLabelByValue } from '$lib/scripts/custom';
 
 	let { data } = $props();
+	data.formPriceRules.data.m_product_category_id = data.formCategory.data.id;
+	data.formPriceRules.data.name = data.formCategory.data.name;
 
 	const superform = superForm(data.formCategory, {
 		resetForm: false,
@@ -176,7 +178,8 @@
 					{#each data.priceRules as row}
 						<Table.Row>
 							<Table.Cell class="font-medium">{row.name}</Table.Cell>
-							<Table.Cell>{row.is_active}</Table.Cell>
+							<!-- <Table.Cell>{row.is_active}</Table.Cell> -->
+							<Table.Cell><CheckboxZag checked={row.is_active} disabled /></Table.Cell>
 							<Table.Cell>{row.m_attribute_id}</Table.Cell>
 							<Table.Cell>{getLabelByValue(row.price_formula_id, data.priceFormulas)}</Table.Cell>
 							<Table.Cell>{formatDate(row.created_at)}</Table.Cell>

@@ -66,6 +66,11 @@
 			<div class="overflow-auto px-4">
 				<input type="hidden" name="id" value={$form.id?.toString() || ''} />
 				<input type="hidden" name="m_product_id" value={$form.m_product_id?.toString() || ''} />
+				<input
+					type="hidden"
+					name="m_product_category_id"
+					value={$form.m_product_category_id?.toString() || ''}
+				/>
 				<div class="flex flex-col space-y-4 py-4">
 					<InputTextForm {superform} field="name" label="Name" />
 

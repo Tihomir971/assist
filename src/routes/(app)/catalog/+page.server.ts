@@ -904,7 +904,6 @@ export const actions = {
 					errorCount += batch.length; // Assume all in batch failed
 				}
 			}
-
 			if (allApiResults.length === 0 && productRequests.length > 0) {
 				console.error('No results obtained from any API batch.');
 				return {
@@ -984,7 +983,6 @@ export const actions = {
 					priceWithoutTax =
 						product.price || product.price === 0 ? product.price / (1 + taxRate) : undefined;
 				}
-
 				const poData: Partial<Tables<'m_product_po'>> = {
 					vendorproductno: product.sku ?? '', // Handle potentially null SKU
 					barcode: product.barcodes?.join(', '),
@@ -1050,7 +1048,6 @@ export const actions = {
 					);
 				}
 			}
-
 			// --- Batch Product PO Updates ---
 			if (productPoUpdates.length > 0) {
 				const { error: poUpdateError } = await supabase.rpc('bulk_update_product_po', {
