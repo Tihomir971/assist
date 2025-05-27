@@ -81,7 +81,7 @@
 							<Form.Label>Source Warehouse</Form.Label>
 							<Combobox
 								{...props}
-								bind:value={$formData.m_warehouse_id}
+								bind:value={$formData.m_warehousesource_id}
 								items={warehouses}
 								placeholder="Select a Warehouse"
 							/>

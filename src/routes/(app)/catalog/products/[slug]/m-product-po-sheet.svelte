@@ -71,32 +71,9 @@
 					<Form.Description>Choose the product category</Form.Description>
 					<Form.FieldErrors />
 				</Form.Field>
-				<!-- <ComboboxZagForm
-					{superform}
-					field="c_bpartner_id"
-					label="Vendor"
-					items={partners}
-					placeholder="Select a partner"
-				/> -->
 				<NumberInputZagForm {superform} field="pricelist" label="Pricelist" fraction={2} />
 				<NumberInputZagForm {superform} field="order_min" label="MOQ" fraction={0} min={1} />
 				<MyUrlInput name="url" bind:value={$form.url} label="URL" />
-
-				<!-- Updated to use formsnap with proper styling -->
-				<Form.Field form={superform} name="c_bpartner_id">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label>Choose the product category</Form.Label>
-							<Combobox
-								{...props}
-								bind:value={$form.c_bpartner_id}
-								items={partners}
-								placeholder="Select a partner"
-							/>
-						{/snippet}
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field>
 			</div>
 			<Sheet.Footer>
 				<Button type="submit" variant="default" class="w-full">Save</Button>
