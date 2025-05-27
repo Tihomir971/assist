@@ -64,9 +64,6 @@ export class PriceCalculator {
 			}
 
 			const withTax = basePrice * (1 + taxPercent);
-			console.log('input_price', input_price);
-			console.log('basePrice', basePrice);
-			console.log('withTax', withTax);
 			return this.roundPrice(withTax);
 		} catch (err) {
 			if (err instanceof Error) {

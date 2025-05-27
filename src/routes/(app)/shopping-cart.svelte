@@ -39,7 +39,7 @@
 				from our servers.
 			</Sheet.Description>
 		</Sheet.Header>
-		<div class="flex-1 overflow-hidden">
+		<div class="flex-1 overflow-hidden px-4">
 			<CartItems {supabase} />
 		</div>
 	</Sheet.Content>

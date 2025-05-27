@@ -280,6 +280,14 @@ export async function processExport(
 							? formulaVars
 							: defaultCalcParams;
 
+					// Debug log for calculation inputs
+					console.log('Debug Cena u obj.2', {
+						productId: product.id,
+						pricePurchase: product.pricePurchase,
+						taxPercent: product.taxPercent,
+						calcParams
+					});
+
 					return {
 						Šifra: product.sku || '',
 						name: item.name,
@@ -296,13 +304,6 @@ export async function processExport(
 							product.taxPercent,
 							calcParams
 						)
-						// 'Cena u obj.2': calculateNewPrice(product.pricePurchase || 0, product.taxRate || 0)
-						/* 'Cena u obj.2': calculator.calculate(
-							'input_price <= 0? input_price * 1.3 : input_price >= 100 ? input_price * 1.2 : input_price * (1.2 + (input_price - 100) / (0 - 100) * 0.1)',
-							product.taxPercent,
-							product.pricePurchase
-						)*/
-						// 'Cena u  obj.2': calculateNewPrice(product.pricePurchase || 0, product.taxRate || 0)
 					};
 				} else if (selectReportValue === 'vendor_orders') {
 					// Default export

@@ -869,7 +869,7 @@ export const actions = {
 		const productPoInserts: TablesInsert<'m_product_po'>[] = [];
 
 		try {
-			const batchSize = 50;
+			const batchSize = 30;
 			let allApiResults: ProductResultGet[] = [];
 
 			for (let i = 0; i < productRequests.length; i += batchSize) {
