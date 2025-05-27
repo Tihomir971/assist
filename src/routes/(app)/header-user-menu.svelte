@@ -50,7 +50,7 @@
 	};
 </script>
 
-<!-- <DropdownMenu.Root>
+<DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		<Avatar.Root>
 			<Avatar.Image src={avatarUrl} alt="@shadcn" />
@@ -73,4 +73,4 @@
 			</DropdownMenu.Item>
 		</form>
 	</DropdownMenu.Content>
-</DropdownMenu.Root> -->
+</DropdownMenu.Root>

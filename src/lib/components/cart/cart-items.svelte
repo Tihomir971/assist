@@ -56,14 +56,14 @@
 					Export to Excel
 				</Button>
 			</div>
-			<div class="h-full overflow-y-auto pr-2">
+			<div class="h-full overflow-y-auto">
 				<Table.Root>
 					<Table.Header>
 						<Table.Row>
 							<Table.Head>SKU</Table.Head>
 							<Table.Head>Item</Table.Head>
 							<Table.Head class="text-center">Quantity</Table.Head>
-							<Table.Head class="text-right">Actions</Table.Head>
+							<Table.Head class="text-center">Actions</Table.Head>
 						</Table.Row>
 					</Table.Header>
 					<Table.Body>
@@ -71,8 +71,8 @@
 							<Table.Row>
 								<Table.Cell>{cartItem.sku || '-'}</Table.Cell>
 								<Table.Cell>{cartItem.name}</Table.Cell>
-								<Table.Cell class="text-right">
-									<div class="flex items-center justify-end space-x-2">
+								<Table.Cell class="text-center">
+									<div class="flex items-center justify-center space-x-2">
 										<button
 											class="size-icon variant-ghost"
 											onclick={() => decrementQuantity(cartItem)}
