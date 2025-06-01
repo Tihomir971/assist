@@ -1610,7 +1610,7 @@ export type Database = {
           m_replenish_uu: string | null
           m_warehouse_id: number
           m_warehousesource_id: number | null
-          qtybatchsize: number | null
+          qtybatchsize: number
           replenishtype: string
           updated_at: string
         }
@@ -1625,7 +1625,7 @@ export type Database = {
           m_replenish_uu?: string | null
           m_warehouse_id: number
           m_warehousesource_id?: number | null
-          qtybatchsize?: number | null
+          qtybatchsize?: number
           replenishtype?: string
           updated_at?: string
         }
@@ -1640,7 +1640,7 @@ export type Database = {
           m_replenish_uu?: string | null
           m_warehouse_id?: number
           m_warehousesource_id?: number | null
-          qtybatchsize?: number | null
+          qtybatchsize?: number
           replenishtype?: string
           updated_at?: string
         }

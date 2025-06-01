@@ -7,6 +7,7 @@
 	import PhPackage from '~icons/ph/package';
 
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
 
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -21,7 +22,7 @@
 	import StorageOnHandCard from './m-storageonhand-card.svelte';
 	import MyUrlInput from '$lib/components/my/input/input-url.svelte';
 	import { InputTextForm } from '$lib/components/my/input';
-	import { Combobox, NumberInputZagForm, SwitchZagForm } from '$lib/components/zag/index.js';
+	import { Combobox, NumberInputZag, SwitchZag } from '$lib/components/zag/index.js';
 	import { mProductInsertSchema } from '$lib/types/supabase.zod.schemas';
 	import { page } from '$app/state';
 
@@ -85,11 +86,44 @@
 							placeholder="Enter Product name..."
 						/>
 					</Card.Header>
-					<Card.Content>
-						<div class="mb-4 grid w-max grid-cols-3 gap-4">
-							<SwitchZagForm {superform} field="is_active" label="Is Active?" />
-							<SwitchZagForm {superform} field="is_self_service" label="Is Self Service?" />
-							<SwitchZagForm {superform} field="discontinued" label="Discontinued?" />
+					<Card.Content class="flex flex-col gap-4">
+						<div class="grid w-max grid-cols-3 gap-4">
+							<Form.Field form={superform} name="is_active">
+								<Form.Control>
+									{#snippet children({ props })}
+										<SwitchZag
+											{...props}
+											bind:checked={$formProduct.is_active}
+											label="Is Active?"
+										/>
+									{/snippet}
+								</Form.Control>
+								<Form.FieldErrors />
+							</Form.Field>
+							<Form.Field form={superform} name="is_self_service">
+								<Form.Control>
+									{#snippet children({ props })}
+										<SwitchZag
+											{...props}
+											bind:checked={$formProduct.is_self_service}
+											label="Is Self Service?"
+										/>
+									{/snippet}
+								</Form.Control>
+								<Form.FieldErrors />
+							</Form.Field>
+							<Form.Field form={superform} name="discontinued">
+								<Form.Control>
+									{#snippet children({ props })}
+										<SwitchZag
+											{...props}
+											bind:checked={$formProduct.discontinued}
+											label="Discontinued?"
+										/>
+									{/snippet}
+								</Form.Control>
+								<Form.FieldErrors />
+							</Form.Field>
 						</div>
 
 						<div class="grid grid-cols-4 gap-4">
@@ -107,14 +141,10 @@
 								placeholder="Enter Product MPN..."
 								autocomplete="off"
 							/>
-							<Form.Field form={superform} name="c_uom_id">
-								<Form.Control>
-									{#snippet children({ props })}
-										<Form.Label>Formula script New</Form.Label>
-										<Combobox {...props} bind:value={$formProduct.c_uom_id} items={data.uom} />
-									{/snippet}
-								</Form.Control>
-							</Form.Field>
+							<div class="flex flex-col gap-4">
+								<Label>Formula script New</Label>
+								<input value={data.priceFormula?.name} />
+							</div>
 							<Form.Field form={superform} name="c_taxcategory_id">
 								<Form.Control>
 									{#snippet children({ props })}
@@ -130,61 +160,78 @@
 						</div>
 						<div class="grid grid-cols-1 divide-x *:px-3 md:grid-cols-[2fr_2fr_1fr]">
 							<div>
-								<h3 class="mb-2 pb-2 text-lg font-semibold">Basic Information</h3>
-								<Form.Field form={superform} name="attributeset_id">
-									<Form.Control>
-										{#snippet children({ props })}
-											<Form.Label>Attribute Set</Form.Label>
-											<Combobox
-												{...props}
-												bind:value={$formProduct.attributeset_id}
-												items={data.attributeSets}
-											/>
-										{/snippet}
-									</Form.Control>
-								</Form.Field>
-								<Form.Field form={superform} name="m_product_category_id">
-									<Form.Control>
-										{#snippet children({ props })}
-											<Form.Label>Category</Form.Label>
-											<Combobox
-												{...props}
-												bind:value={$formProduct.m_product_category_id}
-												items={data.categories}
-											/>
-										{/snippet}
-									</Form.Control>
-								</Form.Field>
-							</div>
-							<div>
-								<h3 class="mb-2 pb-2 text-lg font-semibold">Packaging Information</h3>
-								<div class="grid grid-cols-2 gap-4">
-									<NumberInputZagForm
-										{superform}
-										field="net_quantity"
-										fraction={4}
-										label="Net Quantity"
-									/>
-									<Form.Field form={superform} name="net_qty_uom_id">
+								<h3 class="mb-4 text-lg font-semibold">Basic Information</h3>
+								<div class="flex flex-col gap-4">
+									<Form.Field form={superform} name="attributeset_id">
 										<Form.Control>
 											{#snippet children({ props })}
-												<Form.Label>Net Quantity UoM</Form.Label>
 												<Combobox
 													{...props}
-													bind:value={$formProduct.net_qty_uom_id}
-													items={data.uom}
+													bind:value={$formProduct.attributeset_id}
+													items={data.attributeSets}
+													label="Attribute Set"
+												/>
+											{/snippet}
+										</Form.Control>
+									</Form.Field>
+									<Form.Field form={superform} name="m_product_category_id">
+										<Form.Control>
+											{#snippet children({ props })}
+												<Combobox
+													{...props}
+													bind:value={$formProduct.m_product_category_id}
+													items={data.categories}
+													label="Product Category"
 												/>
 											{/snippet}
 										</Form.Control>
 									</Form.Field>
 								</div>
+							</div>
+							<div class="flex flex-col gap-4">
+								<h3 class="text-lg font-semibold">Packaging Information</h3>
+								<div class="flex flex-col gap-4">
+									<div class="grid grid-cols-2 gap-4">
+										<Form.Field form={superform} name="net_quantity">
+											<Form.Control>
+												{#snippet children({ props })}
+													<NumberInputZag
+														{...props}
+														label="Net Quantity New"
+														bind:value={$formProduct.net_quantity}
+														fraction={4}
+													/>
+												{/snippet}
+											</Form.Control>
+										</Form.Field>
+
+										<Form.Field form={superform} name="net_qty_uom_id">
+											<Form.Control>
+												{#snippet children({ props })}
+													<Combobox
+														{...props}
+														bind:value={$formProduct.net_qty_uom_id}
+														items={data.uom}
+														label="Net Quantity UOM"
+													/>
+												{/snippet}
+											</Form.Control>
+										</Form.Field>
+									</div>
+								</div>
 								<div class="grid grid-cols-2 gap-4">
-									<NumberInputZagForm
-										{superform}
-										field="shelf_life"
-										fraction={0}
-										label="Shelf Life (days)"
-									/>
+									<Form.Field form={superform} name="shelf_life">
+										<Form.Control>
+											{#snippet children({ props })}
+												<NumberInputZag
+													{...props}
+													label="Shelf Life (days)"
+													bind:value={$formProduct.shelf_life}
+													fraction={0}
+												/>
+											{/snippet}
+										</Form.Control>
+									</Form.Field>
 
 									<Form.Field form={superform} name="descriptionurl">
 										<Form.Control>

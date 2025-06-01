@@ -8,7 +8,8 @@
 	import { superForm } from 'sveltekit-superforms/client';
 	import { Separator } from '$lib/components/ui/separator';
 	import { InputTextForm } from '$lib/components/my/input/index.js';
-	import { CheckboxZag, SelectZag, SwitchZagForm } from '$lib/components/zag/index.js';
+	import { CheckboxZag, SelectZag, SwitchZag } from '$lib/components/zag/index.js';
+	import * as Form from '$lib/components/ui/form/index.js';
 
 	const { data } = $props();
 
@@ -135,7 +136,14 @@
 							<p class="text-red-500">{$errors.description}</p>
 						{/if}
 					</div>
-					<SwitchZagForm {superform} field="is_active" label="Is Active?" />
+					<Form.Field form={superform} name="is_active">
+						<Form.Control>
+							{#snippet children({ props })}
+								<SwitchZag {...props} bind:checked={$form.is_active} label="Is Active?" />
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
 				</div>
 
 				<!-- Attributes -->

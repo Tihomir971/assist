@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { InputTextForm, MyUrlInput } from '$lib/components/my/input/index.js';
-	import { Combobox, NumberInputZagForm } from '$lib/components/zag/index.js';
+	import { Combobox, NumberInputZag } from '$lib/components/zag/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
@@ -9,10 +9,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { toast } from 'svelte-sonner';
 	import { z } from 'zod';
-	import type {
-		mProductPoInsertSchema,
-		priceRulesInsertSchema
-	} from '$lib/types/supabase.zod.schemas.js';
+	import type { priceRulesInsertSchema } from '$lib/types/supabase.zod.schemas.js';
 	import { dev } from '$app/environment';
 
 	type Item = { value: number; label: string };
@@ -83,14 +80,18 @@
 						</Form.Control>
 					</Form.Field>
 
-					<!-- <ComboboxZagForm
-						{superform}
-						field="price_formula_id"
-						label="Formula script"
-						items={priceFormulas}
-						placeholder="Select a Formula"
-					/> -->
-					<NumberInputZagForm {superform} field="priority" label="Priority" min={0} max={100} />
+					<Form.Field form={superform} name="priority">
+						<Form.Control>
+							{#snippet children({ props })}
+								<NumberInputZag
+									{...props}
+									bind:value={$form.priority}
+									label="Priority"
+									fraction={0}
+								/>
+							{/snippet}
+						</Form.Control>
+					</Form.Field>
 				</div>
 			</div>
 			<Sheet.Footer>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { InputTextForm, MyUrlInput } from '$lib/components/my/input/index.js';
-	import { Combobox, NumberInputZagForm } from '$lib/components/zag/index.js';
+	import { Combobox, NumberInputZag } from '$lib/components/zag/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
@@ -71,8 +71,31 @@
 					<Form.Description>Choose the product category</Form.Description>
 					<Form.FieldErrors />
 				</Form.Field>
-				<NumberInputZagForm {superform} field="pricelist" label="Pricelist" fraction={2} />
-				<NumberInputZagForm {superform} field="order_min" label="MOQ" fraction={0} min={1} />
+				<Form.Field form={superform} name="pricelist">
+					<Form.Control>
+						{#snippet children({ props })}
+							<NumberInputZag
+								{...props}
+								label="Pricelist"
+								bind:value={$form.pricelist}
+								fraction={2}
+							/>
+						{/snippet}
+					</Form.Control>
+				</Form.Field>
+				<Form.Field form={superform} name="order_min">
+					<Form.Control>
+						{#snippet children({ props })}
+							<NumberInputZag
+								{...props}
+								label="MOQ"
+								bind:value={$form.order_min}
+								fraction={0}
+								min={1}
+							/>
+						{/snippet}
+					</Form.Control>
+				</Form.Field>
 				<MyUrlInput name="url" bind:value={$form.url} label="URL" />
 			</div>
 			<Sheet.Footer>

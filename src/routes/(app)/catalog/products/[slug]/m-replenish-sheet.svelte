@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { InputTextForm, MyUrlInput } from '$lib/components/my/input/index.js';
-	import { Combobox, NumberInputZagForm } from '$lib/components/zag/index.js';
+	import { Combobox, NumberInputZag } from '$lib/components/zag/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
@@ -89,16 +88,44 @@
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
-
-				<NumberInputZagForm {superform} field="level_min" label="Min. Level" fraction={0} min={1} />
-				<NumberInputZagForm {superform} field="level_max" label="Max. Level" fraction={0} />
-				<NumberInputZagForm
-					{superform}
-					field="qtybatchsize"
-					label="Batch size"
-					fraction={0}
-					min={1}
-				/>
+				<Form.Field form={superform} name="level_min">
+					<Form.Control>
+						{#snippet children({ props })}
+							<NumberInputZag
+								{...props}
+								label="Min. Level"
+								bind:value={$formData.level_min}
+								fraction={0}
+								min={1}
+							/>
+						{/snippet}
+					</Form.Control>
+				</Form.Field>
+				<Form.Field form={superform} name="level_max">
+					<Form.Control>
+						{#snippet children({ props })}
+							<NumberInputZag
+								{...props}
+								label="Max. Level"
+								bind:value={$formData.level_max}
+								fraction={0}
+							/>
+						{/snippet}
+					</Form.Control>
+				</Form.Field>
+				<Form.Field form={superform} name="qtybatchsize">
+					<Form.Control>
+						{#snippet children({ props })}
+							<NumberInputZag
+								{...props}
+								label="Batch size"
+								bind:value={$formData.qtybatchsize}
+								fraction={0}
+								min={1}
+							/>
+						{/snippet}
+					</Form.Control>
+				</Form.Field>
 			</div>
 			<Sheet.Footer class="flex gap-2">
 				<Button type="submit" variant="default" class="w-full">Save</Button>

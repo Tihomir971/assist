@@ -5,6 +5,7 @@
 	import PhX from '~icons/ph/x';
 	import PhCaretDown from '~icons/ph/caret-down';
 	import PhCheck from '~icons/ph/check';
+	import PhListDashes from '~icons/ph/list-dashes';
 	import type { ComboboxItem, ComboboxProps } from './types.js';
 	import { matchSorter } from 'match-sorter';
 
@@ -13,6 +14,7 @@
 		name,
 		value = $bindable(),
 		items = [],
+		label,
 		placeholder = 'Select an option...',
 		disabled,
 		onValueChange,
@@ -78,6 +80,14 @@
 <input type="hidden" {name} {value} />
 
 <div {...api.getRootProps()}>
+	{#if label}
+		<label {...api.getLabelProps()}>
+			{label}
+			{#if required || ariaRequired === 'true'}
+				<span class="text-warning">*</span>
+			{/if}
+		</label>
+	{/if}
 	<div {...api.getControlProps()}>
 		<input {...api.getInputProps()} aria-describedby={ariaDescribedBy} />
 

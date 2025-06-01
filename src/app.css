@@ -16,9 +16,9 @@
 	--color-ink: light-dark(var(--color-16), var(--color-3));
 	--color-ink-dim: light-dark(var(--color-12), var(--color-5));
 
+	--color-success: var(--success);
 	--color-error: var(--error);
-	--color-warning: var(--warning);
-	--color-warning: var(--warning);
+	--color-info: var(--info);
 	--color-warning: var(--warning);
 
 	--shadow-1: var(--shadow-1);

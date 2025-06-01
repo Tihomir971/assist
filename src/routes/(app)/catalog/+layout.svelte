@@ -4,7 +4,7 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import * as ContextMenu from '$lib/components/zag/context-menu/index';
+	import * as ContextMenu from '$lib/components/zag/index.js';
 
 	import DialogSelectReport from './DialogSelectReport.svelte';
 	import type { Snippet } from 'svelte';

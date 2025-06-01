@@ -1,35 +1,55 @@
 <script lang="ts">
+	import './number-input.css';
 	import * as numberInput from '@zag-js/number-input';
 	import { normalizeProps, useMachine } from '@zag-js/svelte';
 	import type { NumberInputProps } from './types';
-	import PhNumpad from '~icons/ph/numpad';
-	import PhPlus from '~icons/ph/plus';
-	import PhMinus from '~icons/ph/minus';
+	import PhCaretUp from '~icons/ph/caret-up';
+	import PhCaretDown from '~icons/ph/caret-down';
 	import PhPencilSimpleSlash from '~icons/ph/pencil-simple-slash';
-
+	import PhNumpad from '~icons/ph/numpad';
 	let {
+		id,
 		value = $bindable(),
 		label,
 		required,
 		locale = 'sr-RS',
-		allowMouseWheel = true,
 		min = 0,
 		name,
+		fraction = 2,
+		onValueChange,
+		'aria-describedby': ariaDescribedBy,
+		'aria-invalid': ariaInvalid,
+		'aria-required': ariaRequired,
 		...restProps
 	}: NumberInputProps = $props();
 
-	const id = $props.id();
+	const localeId = $props.id();
 	const service = useMachine(numberInput.machine, {
-		id,
+		id: id ?? localeId,
 		locale,
-		allowMouseWheel,
+		allowMouseWheel: true,
 		min,
+		required: required || ariaRequired === 'true',
+		invalid: ariaInvalid === 'true',
+		inputMode: fraction === 0 ? 'numeric' : 'decimal',
 		defaultValue: value != null ? value.toLocaleString(locale) : undefined,
 		get value() {
 			return value != null ? value.toLocaleString(locale) : undefined;
 		},
-		onValueChange({ valueAsNumber }) {
-			value = valueAsNumber;
+		onValueChange(details) {
+			if (isNaN(details.valueAsNumber)) {
+				return;
+			}
+			value = details.valueAsNumber;
+			console.log('value', value);
+
+			if (onValueChange) {
+				onValueChange(details);
+			}
+		},
+		formatOptions: {
+			minimumFractionDigits: fraction,
+			maximumFractionDigits: fraction
 		},
 		...restProps
 	});
@@ -43,31 +63,29 @@
 	value={Number.isNaN(api.valueAsNumber) ? undefined : api.valueAsNumber}
 />
 
-<div {...api.getRootProps()} class="input-root">
-	<!-- <div data-testid="scrubber" {...api.getScrubberProps()}></div> -->
-	<!-- svelte-ignore a11y_label_has_associated_control -->
+<div {...api.getRootProps()}>
 	{#if label}
-		<label data-testid="label" {...api.getLabelProps()} class="input-label">
+		<label {...api.getLabelProps()}>
 			{label}
-			{#if required}
+			{#if required || ariaRequired === 'true'}
 				<span class="text-warning">*</span>
 			{/if}
 		</label>
 	{/if}
-	<div {...api.getControlProps()} class="input-control">
-		<div class="input-icon">
+	<div {...api.getControlProps()}>
+		<div
+			class="absolute top-0 left-0 flex h-full w-8 items-center justify-center border-r text-ink-dim"
+		>
 			<PhNumpad />
 		</div>
-		<div class="input-input">
-			<input data-testid="input" {...api.getInputProps()} class="w-full focus:outline-none" />
-		</div>
-		<div class="input-trigger">
+		<input {...api.getInputProps()} aria-describedby={ariaDescribedBy} />
+		<div class="absolute top-0 right-0 flex h-full w-6 flex-col items-center border-l">
 			{#if !restProps.readOnly}
-				<button data-testid="dec-button" {...api.getDecrementTriggerProps()}>
-					<PhMinus />
+				<button {...api.getIncrementTriggerProps()}>
+					<PhCaretUp />
 				</button>
-				<button data-testid="inc-button" {...api.getIncrementTriggerProps()}>
-					<PhPlus />
+				<button {...api.getDecrementTriggerProps()}>
+					<PhCaretDown />
 				</button>
 			{:else}
 				<PhPencilSimpleSlash />

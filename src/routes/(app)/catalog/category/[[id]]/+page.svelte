@@ -17,7 +17,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { CheckboxZag, Combobox, SwitchZagForm } from '$lib/components/zag/index.js';
+	import { CheckboxZag, Combobox, SwitchZag } from '$lib/components/zag/index.js';
 	import InputTextForm from '$lib/components/my/input/input-text-form.svelte';
 
 	import { getLabelByValue } from '$lib/scripts/custom';
@@ -67,14 +67,30 @@
 				<Card.Header>
 					<Card.Title>Category Detail</Card.Title>
 				</Card.Header>
-				<Card.Content class="w-full space-y-1">
+				<Card.Content class="flex w-full flex-col space-y-4">
 					<input type="hidden" name="id" value={$formData.id} />
-					<div class="flex items-end space-x-2">
-						<InputTextForm {superform} field="name" label="Name" placeholder="Category Name" />
-					</div>
+					<InputTextForm {superform} field="name" label="Name" placeholder="Category Name" />
 					<div class="flex w-full items-center space-x-3">
-						<SwitchZagForm {superform} field="is_active" label="Is Active?" />
-						<SwitchZagForm {superform} field="is_self_service" label="Is Self Service?" />
+						<Form.Field form={superform} name="is_active">
+							<Form.Control>
+								{#snippet children({ props })}
+									<SwitchZag {...props} bind:checked={$formData.is_active} label="Is Active?" />
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+						<Form.Field form={superform} name="is_self_service">
+							<Form.Control>
+								{#snippet children({ props })}
+									<SwitchZag
+										{...props}
+										bind:checked={$formData.is_self_service}
+										label="Is Self Service?"
+									/>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
 					</div>
 					<Form.Field form={superform} name="description">
 						<Form.Control>
@@ -85,24 +101,16 @@
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
-					<!-- <FormField form={superform} name="parent_id">
-						<Combobox
-							options={data.categories}
-							label="Parent Category New"
-							placeholder="Select category..."
-							bind:value={$formData.parent_id}
-						/>
-					</FormField> -->
 
 					<Form.Field form={superform} name="parent_id">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Category2</Form.Label>
 								<Combobox
 									{...props}
 									bind:value={$formData.parent_id}
 									items={data.categories}
 									placeholder="Select a category"
+									label="Category"
 								/>
 							{/snippet}
 						</Form.Control>

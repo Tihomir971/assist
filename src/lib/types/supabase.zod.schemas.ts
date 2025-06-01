@@ -1619,7 +1619,7 @@ export const mReplenishRowSchema = z.object({
 	m_replenish_uu: z.string().nullable(),
 	m_warehouse_id: z.number(),
 	m_warehousesource_id: z.number().nullable(),
-	qtybatchsize: z.number().nullable(),
+	qtybatchsize: z.number(),
 	replenishtype: z.string(),
 	updated_at: z.string()
 });
@@ -1635,7 +1635,7 @@ export const mReplenishInsertSchema = z.object({
 	m_replenish_uu: z.string().optional().nullable(),
 	m_warehouse_id: z.number(),
 	m_warehousesource_id: z.number().optional().nullable(),
-	qtybatchsize: z.number().optional().nullable(),
+	qtybatchsize: z.number().optional(),
 	replenishtype: z.string().optional(),
 	updated_at: z.string().optional()
 });
@@ -1651,7 +1651,7 @@ export const mReplenishUpdateSchema = z.object({
 	m_replenish_uu: z.string().optional().nullable(),
 	m_warehouse_id: z.number().optional(),
 	m_warehousesource_id: z.number().optional().nullable(),
-	qtybatchsize: z.number().optional().nullable(),
+	qtybatchsize: z.number().optional(),
 	replenishtype: z.string().optional(),
 	updated_at: z.string().optional()
 });

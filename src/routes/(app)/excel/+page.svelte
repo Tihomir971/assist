@@ -15,7 +15,8 @@
 	import { handleFileUpload, loadSheetData } from './utils/xlsx-handlers';
 	import { processExcelData } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
-	import { Combobox, SelectZag } from '$lib/components/zag/index.js';
+	import { Combobox, FileUpload, NumberInputZag, SelectZag } from '$lib/components/zag/index.js';
+	import type { FileChangeDetails } from '@zag-js/file-upload';
 
 	let { data } = $props();
 	let { supabase } = $derived(data);
@@ -95,9 +96,9 @@
 			localStorage.setItem('supplierMappings', JSON.stringify(parsedMappings));
 		}
 	}
-
-	async function handleFileSelect(event: Event) {
-		const result = await handleFileUpload(event);
+	async function handleFileSelect(details: FileChangeDetails) {
+		console.log('details', details);
+		const result = await handleFileUpload(details.acceptedFiles);
 		sheetNames = result.sheetNames.map((str) => ({
 			value: str,
 			label: str
@@ -262,6 +263,7 @@
 	});
 
 	let selectedSupplier: number | undefined = $state();
+	$inspect('selectedSupplier', selectedSupplier == null);
 </script>
 
 <div class="mx-auto grid h-full max-w-7xl grid-rows-[auto_1fr_auto] gap-4 p-2">
@@ -277,18 +279,12 @@
 				/>
 			</div>
 
-			<div class="grid w-full gap-1.5">
-				<Label for="excel-file">Excel File</Label>
-				<Input
-					id="excel-file"
-					type="file"
-					accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
-		application/vnd.ms-excel"
-					placeholder="Excel files (.xlsx, .xls)"
-					onchange={handleFileSelect}
-					bind:ref={fileInput}
-				/>
-			</div>
+			<FileUpload
+				accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+				onFileChange={handleFileSelect}
+				label="Upload Excel File"
+				disabled={selectedSupplier == null}
+			/>
 			<div>
 				{#if sheetNames.length > 1}
 					<SelectZag
@@ -302,15 +298,13 @@
 
 			<div>
 				<div class="grid w-full gap-1.5">
-					<Label for="priceModification">Price Modification (%):</Label>
-					<Input
-						type="number"
-						id="priceModification"
-						placeholder="email"
+					<NumberInputZag
 						bind:value={priceModificationPercentage}
-						min="-100"
-						step="0.5"
+						label="Price Modification (%)"
+						min={-100}
+						step={0.5}
 					/>
+
 					<p class="text-muted-foreground">
 						Enter a percentage to modify prices. Positive values increase prices, negative values
 						decrease prices.

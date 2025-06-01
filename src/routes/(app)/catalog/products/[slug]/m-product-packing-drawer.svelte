@@ -11,7 +11,7 @@
 	import { toast } from 'svelte-sonner';
 	import { isValidGTIN } from '$lib/scripts/gtin';
 	import { invalidate } from '$app/navigation';
-	import { CheckboxZag, Combobox, NumberInputZagForm } from '$lib/components/zag/index.js';
+	import { CheckboxZag, Combobox, NumberInputZag } from '$lib/components/zag/index.js';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 
@@ -119,13 +119,20 @@
 				{/if}
 
 				<div class="grid grid-cols-2 gap-4">
-					<NumberInputZagForm
-						{superform}
-						field="m_product_id"
-						label="Product ID"
-						fraction={0}
-						readOnly
-					/>
+					<Form.Field form={superform} name="m_product_id">
+						<Form.Control>
+							{#snippet children({ props })}
+								<NumberInputZag
+									{...props}
+									label="Product ID"
+									bind:value={$formData.m_product_id}
+									fraction={0}
+									readOnly
+								/>
+							{/snippet}
+						</Form.Control>
+					</Form.Field>
+
 					<div>
 						<Form.Field form={superform} name="packing_type">
 							<Form.Control>
@@ -148,7 +155,19 @@
 					</div>
 
 					<div>
-						<NumberInputZagForm {superform} field="unitsperpack" label="Units Per Pack" />
+						<Form.Field form={superform} name="unitsperpack">
+							<Form.Control>
+								{#snippet children({ props })}
+									<NumberInputZag
+										{...props}
+										label="Units Per Pack"
+										bind:value={$formData.unitsperpack}
+										fraction={0}
+										readOnly
+									/>
+								{/snippet}
+							</Form.Control>
+						</Form.Field>
 					</div>
 
 					<div class="space-y-2">

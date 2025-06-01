@@ -22,10 +22,10 @@
 	--primary-dark: oklch(from var(--primary) calc(l * 0.75) c h);
 	--primary-contrast: var(--gray-1);
 
-	--secondary: oklch(from var(--primary) l c calc(h + 180));
+	--secondary: oklch(from var(--primary) l c calc(h + 90));
 	/* Highlight colors */
+	--success: oklch(from var(--primary) l c var(--oklch-green));
 	--error: oklch(from var(--primary) l c var(--oklch-red));
-	--ok: oklch(from var(--primary) l c var(--oklch-blue));
-	--good: oklch(from var(--primary) l c var(--oklch-green));
+	--info: oklch(from var(--primary) l c var(--oklch-blue));
 	--warning: oklch(from var(--color-max) l c var(--oklch-yellow));
 }

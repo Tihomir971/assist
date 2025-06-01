@@ -6,7 +6,7 @@
 	import type { Database, TablesUpdate } from '$lib/types/supabase.types';
 
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import * as Avatar from '$lib/components/ui/avatar/index.js';
+	import { AvatarZag } from '$lib/components/zag/index.js';
 
 	type Props = {
 		supabase: SupabaseClient<Database>;
@@ -52,10 +52,7 @@
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
-		<Avatar.Root>
-			<Avatar.Image src={avatarUrl} alt="@shadcn" />
-			<Avatar.Fallback>CN</Avatar.Fallback>
-		</Avatar.Root>
+		<AvatarZag name="Tihomir Jevtović" src={avatarUrl} />
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content align="end">
 		<DropdownMenu.Label>My Account</DropdownMenu.Label>

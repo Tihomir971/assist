@@ -11,14 +11,16 @@
 		required = false,
 		disabled = false,
 		readOnly = false,
-		invalid = false,
 		label,
-		inline
+		'aria-describedby': ariaDescribedBy,
+		'aria-invalid': ariaInvalid,
+		'aria-required': ariaRequired
 	}: SwitchProps = $props();
 
 	const id = $props.id();
 	const service = useMachine(zagSwitch.machine, {
 		id,
+		invalid: ariaInvalid === 'true',
 		name,
 		disabled,
 		readOnly,
@@ -33,15 +35,13 @@
 	const api = $derived(zagSwitch.connect(service, normalizeProps));
 </script>
 
-<main class="switch">
-	<!-- svelte-ignore a11y_label_has_associated_control -->
-	<label {...api.getRootProps()}>
-		<input {...api.getHiddenInputProps()} data-testid="hidden-input" />
-		<span {...api.getControlProps()}>
-			<span {...api.getThumbProps()}></span>
-		</span>
-		<span {...api.getLabelProps()}>{label}</span>{#if required}
-			<span class="text-warning">*</span>
-		{/if}
-	</label>
-</main>
+<label {...api.getRootProps()}>
+	<input {...api.getHiddenInputProps()} aria-describedby={ariaDescribedBy} />
+	<span {...api.getControlProps()}>
+		<span {...api.getThumbProps()}></span>
+	</span>
+	<span {...api.getLabelProps()}>{label}</span>
+	{#if required || ariaRequired === 'true'}
+		<span class="text-warning">*</span>
+	{/if}
+</label>

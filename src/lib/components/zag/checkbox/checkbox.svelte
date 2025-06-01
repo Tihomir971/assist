@@ -43,6 +43,9 @@
 	<div {...api.getControlProps()}></div>
 	<span {...api.getLabelProps()}>
 		{label}
+		{#if required || ariaRequired === 'true'}
+			<span class="text-warning">*</span>
+		{/if}
 	</span>
-	<input {...api.getHiddenInputProps()} />
+	<input {...api.getHiddenInputProps()} aria-describedby={ariaDescribedBy} />
 </label>

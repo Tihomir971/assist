@@ -1,0 +1,5 @@
+[data-scope='menu'][data-part='separator'] {
+	height: 1px;
+	margin: 0.5rem 0;
+	background-color: var(--color-surface-1);
+}

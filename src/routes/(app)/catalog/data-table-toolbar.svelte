@@ -6,9 +6,8 @@
 	//Components
 	import DataTableHeaderSync from './data-table-header-sync.svelte';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import * as Select from '$lib/components/ui/select/index.js';
 
 	//Icons
 	import PhCaretDown from '~icons/ph/caret-down';
@@ -54,9 +53,6 @@
 		{ value: 'replenish', label: 'Replenish' }
 	];
 	let inputValueReport = $state(page.url.searchParams.get('report') ?? '');
-	const triggerReportContent = $derived(
-		reports.find((f) => f.value === inputValueReport)?.label ?? 'Select a report'
-	);
 
 	function handleSalesGraphClick() {
 		const selectedSkus = Object.keys(rowSelectionState).join(',');
