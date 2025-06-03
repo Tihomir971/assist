@@ -126,7 +126,7 @@
 	}
 </script>
 
-<Card.Root class="flex flex-1 flex-col gap-0 overflow-hidden bg-transparent p-0">
+<Card.Root class="flex flex-1 flex-col gap-0 overflow-hidden py-0">
 	<Card.Header class="bg-surface-1 p-3">
 		<DataTableToolbar
 			{table}
@@ -137,7 +137,7 @@
 		/>
 	</Card.Header>
 	<Separator />
-	<Card.Content class="flex-1 overflow-auto px-0 py-0">
+	<Card.Content class="flex-1 overflow-auto px-2">
 		{#await data.products}
 			<p>Loading...</p>
 		{:then}

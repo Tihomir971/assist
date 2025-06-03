@@ -1,127 +1,73 @@
-@import './lib/style/theme.css';
+/* @import './lib/style/theme.css'; */
+/* @import './lib/style/open-props/css/color/palette.oklch.css';
+@import './lib/style/open-props/css/color/palette.oklch.css';
+@import './lib/style/open-props/css/media-queries.css'; */
 @import 'tailwindcss';
-@import './app.shadcn.css';
+@import 'tw-animate-css';
+@custom-variant dark (&:is(.dark *));
+@import './theme.solar-dusk.css';
+@import './theme.custom.css';
 
 @theme inline {
-	--font-family-sans:
-		'Nunito Sans Variable', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
-		'Segoe UI Emoji';
-	/* Open-props */
-	--color-well-2: light-dark(var(--color-1), var(--color-15));
-	--color-well-1: light-dark(var(--color-2), var(--color-14));
-	--color-surface-document: light-dark(var(--color-3), var(--color-13));
-	--color-surface-1: light-dark(var(--color-4), var(--color-12));
-	--color-surface-2: light-dark(var(--color-5), var(--color-11));
-	--color-surface-3: light-dark(var(--color-6), var(--color-10));
-	--color-ink: light-dark(var(--color-16), var(--color-3));
-	--color-ink-dim: light-dark(var(--color-12), var(--color-5));
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-chart-1: var(--chart-1);
+	--color-chart-2: var(--chart-2);
+	--color-chart-3: var(--chart-3);
+	--color-chart-4: var(--chart-4);
+	--color-chart-5: var(--chart-5);
+	--color-sidebar: var(--sidebar);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-ring: var(--sidebar-ring);
 
-	--color-success: var(--success);
-	--color-error: var(--error);
-	--color-info: var(--info);
-	--color-warning: var(--warning);
+	--font-sans: var(--font-sans);
+	--font-mono: var(--font-mono);
+	--font-serif: var(--font-serif);
 
-	--shadow-1: var(--shadow-1);
-	--shadow-2: var(--shadow-2);
-	--shadow-3: var(--shadow-3);
-	--shadow-4: var(--shadow-4);
-	--shadow-5: var(--shadow-5);
-	--shadow-6: var(--shadow-6);
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
 
-	/* Shadcn */
-	/* Default background color of <body />...etc */
-	/* --color-background: var(--color-surface-document); */
-	/* --color-foreground: var(--color-ink); */
-	/* Muted backgrounds such as <TabsList />, <Skeleton /> and <Switch /> */
-	/* --color-muted: var(--color-surface-2); */
-	/* --color-muted-foreground: var(--color-ink-dim); */
-	/* Background color for popovers such as <DropdownMenu />, <HoverCard />, <Popover /> */
-	/* --color-popover: var(--color-surface-document); */
-	/* --color-popover-foreground: var(--color-ink); */
-	/* Background color for <Card /> */
-	/* --color-card: var(--color-surface-1); */
-	/* --color-card-foreground: var(--color-ink); */
-	/* Default border color */
-	/* --color-border: var(--color-surface-1); */
-	/* Border color for inputs such as <Input />, <Select />, <Textarea /> */
-	/* --color-input: var(--color-surface-2); */
-	/* Primary colors for <Button /> */
-	/* --color-primary: light-dark(var(--color-indigo-300), hsl(var(--indigo-9-hsl))); */
-	/* --color-primary: var(--primary); */
-	/* --color-primary-foreground: var(--color-ink); */
-	/* Secondary colors for <Button /> */
-	/* --color-secondary: var(--secondary); */
-	/* --color-secondary-foreground: var(--color-ink); */
-	/* Used for accents such as hover effects on <DropdownMenuItem>, <SelectItem>...etc */
-	/* --color-accent: var(--color-surface-3); */
-	/* --color-accent-foreground: var(--color-ink); */
-	/* Used for destructive actions such as <Button variant='destructive'> */
-	/* --color-destructive: var(--color-error); */
-	/* Used for focus ring */
-	/* --color-ring: var(--primary); */
-	/* Border radius for card, input and buttons */
-	/* --radius: var(--radius-sm); */
+	--shadow-2xs: var(--shadow-2xs);
+	--shadow-xs: var(--shadow-xs);
+	--shadow-sm: var(--shadow-sm);
+	--shadow: var(--shadow);
+	--shadow-md: var(--shadow-md);
+	--shadow-lg: var(--shadow-lg);
+	--shadow-xl: var(--shadow-xl);
+	--shadow-2xl: var(--shadow-2xl);
+
+	/* --color-warrning: var(--color-warning); */
 }
 
 @layer base {
-	/* 	* {
-		@apply border-border;
-	} */
-	html {
-		@apply scheme-light-dark;
+	* {
+		@apply border-border outline-ring/50;
 	}
 	body {
-		@apply text-sm;
-	}
-	input,
-	textarea,
-	select,
-	button {
-		/* border: 0px solid; */
-		/* border-radius: 0; */
-		/* padding: 0; */
-		/* color: inherit; */
-		/* background-color: transparent; */
-	}
-}
-
-@layer components {
-	.select {
-		@apply flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 aria-[invalid]:border-destructive [&>span]:line-clamp-1 data-[placeholder]:[&>span]:text-muted-foreground;
-	}
-
-	.input-root,
-	.form-control {
-		@apply flex w-full flex-col gap-1;
-	}
-	.input-label,
-	[data-fs-label] {
-		@apply data-disabled:opacity-5;
-	}
-	.input-control {
-		@apply relative w-full;
-	}
-
-	.input-icon {
-		@apply pointer-events-none absolute start-2 top-1/2 -translate-y-1/2 text-muted-foreground;
-	}
-	.input-input {
-		@apply inline-flex h-10 w-full truncate rounded-sm border border-surface-2 bg-surface-document px-8 ring-primary transition-colors placeholder:text-muted-foreground focus-within:border-primary focus-within:ring hover:border-surface-3;
-	}
-	.input-trigger {
-		@apply absolute end-3 top-1/2 flex -translate-y-1/2 items-center gap-0.5 text-muted-foreground *:hover:text-primary-foreground;
-	}
-
-	.root-props {
-		@apply mb-2 flex w-full flex-col gap-1 text-sm;
-	}
-	.content-props {
-		@apply z-50 -ml-10 max-h-60 list-none overflow-auto overscroll-contain border border-muted bg-popover p-2 text-sm;
-	}
-	.control-props {
-		@apply grid grid-cols-[auto_1fr] items-center bg-popover;
-	}
-	.item-props {
-		@apply flex cursor-pointer items-center justify-between px-2 py-1 data-highlighted:rounded-sm data-highlighted:bg-accent;
+		@apply bg-background text-foreground;
 	}
 }

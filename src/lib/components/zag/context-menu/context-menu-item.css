@@ -1,5 +1,5 @@
 [data-scope='menu'][data-part='item'] {
-	all: unset;
+	/* all: unset; */
 	display: flex;
 	align-items: center;
 	gap: 4px;

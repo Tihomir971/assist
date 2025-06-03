@@ -42,7 +42,7 @@
 			<PhList />
 		</div>
 		<button {...api.getTriggerProps()} class="flex w-full items-center justify-between gap-2">
-			<span class={api.valueAsString ? '' : 'text-ink-dim'}>
+			<span class={api.valueAsString ? '' : 'text-muted-foreground'}>
 				{api.valueAsString || 'Select option'}
 			</span>
 			<span {...api.getIndicatorProps()} class="grid size-10 place-content-center">

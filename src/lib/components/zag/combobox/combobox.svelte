@@ -81,30 +81,40 @@
 
 <div {...api.getRootProps()}>
 	{#if label}
-		<label {...api.getLabelProps()}>
+		<label
+			{...api.getLabelProps()}
+			class="leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+		>
 			{label}
 			{#if required || ariaRequired === 'true'}
 				<span class="text-warning">*</span>
 			{/if}
 		</label>
 	{/if}
-	<div {...api.getControlProps()}>
+	<div
+		{...api.getControlProps()}
+		class="inline-flex h-9 shrink-0 items-center justify-between gap-1 rounded-md border bg-background px-3 py-2 text-sm font-medium whitespace-nowrap shadow-xs transition-all outline-none hover:bg-accent hover:text-accent-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 has-[>svg]:px-3 aria-disabled:pointer-events-none aria-disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:border-input dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+	>
 		<input {...api.getInputProps()} aria-describedby={ariaDescribedBy} />
+		<div class="">
+			{#if value !== null && !disabled && !readOnly}
+				<button {...api.getClearTriggerProps()} type="button" aria-label="Clear selection">
+					<PhX />
+				</button>
+			{/if}
 
-		{#if value !== null && !disabled && !readOnly}
-			<button {...api.getClearTriggerProps()} type="button" aria-label="Clear selection">
-				<PhX />
+			<button {...api.getTriggerProps()} type="button" aria-label="Toggle options">
+				<PhCaretDown />
 			</button>
-		{/if}
-
-		<button {...api.getTriggerProps()} type="button" aria-label="Toggle options">
-			<PhCaretDown />
-		</button>
+		</div>
 	</div>
 
 	{#if api.open}
 		<div {...api.getPositionerProps()}>
-			<ul {...api.getContentProps()}>
+			<ul
+				{...api.getContentProps()}
+				class="z-50 flex h-full max-h-56 w-[200px] flex-col overflow-hidden rounded-md border bg-popover p-0 text-popover-foreground shadow-md outline-hidden"
+			>
 				{#each collection.items as item (item.value)}
 					<li {...api.getItemProps({ item })} data-disabled={item.disabled}>
 						<span {...api.getItemTextProps({ item })}>

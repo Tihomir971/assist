@@ -3,6 +3,8 @@
 	type SearchProductsResult = Database['public']['Functions']['search_products']['Returns'];
 	//Components
 	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label/index.js';
+
 	import ShoppingCart from './shopping-cart.svelte';
 	import HeaderUserProfile from './header-user-menu.svelte';
 	import SearchDialog from './search-dialog.svelte';
@@ -52,21 +54,24 @@
 	};
 </script>
 
-<header class="grid w-full grid-cols-3 border-b border-surface-1 bg-well-1 p-3">
+<header class="border-surface-1 bg-well-1 grid w-full grid-cols-3 border-b p-3">
 	<div class="flex items-center gap-x-1.5 text-2xl">KALISI</div>
-	<div class="relative ml-auto flex-1 md:grow-0">
-		<PhMagnifyingGlass class="absolute top-2.5 left-2.5 text-muted-foreground" />
+	<div class="relative">
+		<Label for="searchApp" class="sr-only">Search</Label>
 		<Input
 			id="searchApp"
 			type="search"
 			placeholder="Search..."
-			class="w-full pl-8  md:w-[200px] lg:w-[336px]"
+			class="pl-8"
 			bind:value={searchTerm}
 			onkeydown={(event: KeyboardEvent) => {
 				if (event.key === 'Enter') {
 					handleSearch();
 				}
 			}}
+		/>
+		<PhMagnifyingGlass
+			class="pointer-events-none absolute top-1/2 left-2 size-4 -translate-y-1/2 opacity-50 select-none"
 		/>
 	</div>
 	<div class="flex items-center justify-end gap-x-3">

@@ -59,7 +59,7 @@
 			<h1 class="text-3xl font-bold">Edit Category</h1>
 			<p class="text-muted-foreground">Update attribute group details</p>
 		</div>
-		<Button variant="outline" href={`/catalog?${page.url.searchParams}`}>Back to List</Button>
+		<Button variant="link" href={`/catalog?${page.url.searchParams}`}>Back to List</Button>
 	</div>
 	<div class="mb-8 grid grid-cols-[2fr_1fr] gap-2 overflow-hidden">
 		<Card.Root>

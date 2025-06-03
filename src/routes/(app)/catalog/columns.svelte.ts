@@ -77,7 +77,7 @@ const rightAlignSnippet = createRawSnippet<[RawSnippetParams]>((getValue) => {
 
 		const className = isDanger ? 'text-right text-warning' : 'text-right';
 		const dotClassName = action
-			? 'inline-block w-1.5 h-1.5 bg-pink-700 rounded-full mr-1  align-middle'
+			? 'inline-block w-1.5 h-1.5 bg-warning rounded-full mr-1  align-middle'
 			: '';
 		return `
 			<div class="${className}">

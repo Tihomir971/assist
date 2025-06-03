@@ -17,6 +17,6 @@
 	const api = $derived(getApi());
 </script>
 
-<li {...api.getItemProps({ value, disabled })}>
+<li {...api.getItemProps({ value, disabled })} class="text-sm">
 	{@render children()}
 </li>

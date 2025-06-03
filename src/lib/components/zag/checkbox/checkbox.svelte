@@ -40,7 +40,7 @@
 </script>
 
 <label {...api.getRootProps()}>
-	<div {...api.getControlProps()}></div>
+	<div {...api.getControlProps()} class="bg-background shadow-xs dark:bg-input/30"></div>
 	<span {...api.getLabelProps()}>
 		{label}
 		{#if required || ariaRequired === 'true'}

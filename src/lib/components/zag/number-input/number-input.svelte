@@ -72,9 +72,12 @@
 			{/if}
 		</label>
 	{/if}
-	<div {...api.getControlProps()}>
+	<div
+		{...api.getControlProps()}
+		class="flex h-9 w-full min-w-0 rounded-md border-input bg-background shadow-xs ring-offset-background dark:bg-input/30"
+	>
 		<div
-			class="absolute top-0 left-0 flex h-full w-8 items-center justify-center border-r text-ink-dim"
+			class="absolute top-0 left-0 flex h-full w-8 items-center justify-center border-r text-muted-foreground"
 		>
 			<PhNumpad />
 		</div>

@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { InputTextForm, MyUrlInput } from '$lib/components/my/input/index.js';
+	import { InputTextForm } from '$lib/components/my/input/index.js';
 	import { Combobox, NumberInputZag } from '$lib/components/zag/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
 
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
@@ -69,8 +70,14 @@
 					value={$form.m_product_category_id?.toString() || ''}
 				/>
 				<div class="flex flex-col space-y-4 py-4">
-					<InputTextForm {superform} field="name" label="Name" />
-
+					<Form.Field form={superform} name="name">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Name</Form.Label>
+								<Input {...props} bind:value={$form.name} />
+							{/snippet}
+						</Form.Control>
+					</Form.Field>
 					<Form.Field form={superform} name="price_formula_id">
 						<Form.Control>
 							{#snippet children({ props })}

@@ -90,7 +90,7 @@
 			<a
 				href={formattedUrl}
 				target="_blank"
-				class="flex aspect-square h-full items-center justify-center rounded-sm"
+				class="flex aspect-square h-full items-center justify-center rounded-md"
 				aria-label="Visit URL"
 			>
 				<PhCursorClick />

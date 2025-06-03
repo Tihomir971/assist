@@ -33,7 +33,7 @@
     "@types/file-saver": "^2.0.7",
     "@types/luxon": "^3.6.2",
     "@types/node": "^22.15.29",
-    "bits-ui": "2.1.0",
+    "bits-ui": "2.4.1",
     "clsx": "^2.1.1",
     "eslint": "^9.28.0",
     "eslint-config-prettier": "^10.1.5",
@@ -52,11 +52,16 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.33.0",
     "unplugin-icons": "^22.1.0",
+    "vaul-svelte": "1.0.0-next.7",
     "vite": "^6.3.5",
     "wrangler": "^4.18.0"
   },
   "dependencies": {
+    "@fontsource-variable/fira-code": "^5.2.6",
+    "@fontsource-variable/merriweather": "^5.2.3",
+    "@fontsource-variable/nunito": "^5.2.5",
     "@fontsource-variable/nunito-sans": "^5.2.5",
+    "@fontsource-variable/oxanium": "^5.2.5",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.8",
     "@tailwindcss/vite": "4.1.8",
@@ -83,7 +88,6 @@
     "sveltekit-superforms": "^2.25.0",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "4.1.8",
-    "vaul-svelte": "1.0.0-next.7",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "zod": "^3.25.46"
   },

@@ -15,8 +15,8 @@
 [data-scope='checkbox'][data-part='control'] {
 	height: 20px;
 	width: 20px;
-	background-color: var(--color-surface-document, #d1d5db);
-	border: solid 1px var(--color-surface-2, grey);
+	/* background-color: transparent; */
+	border: solid 1px var(--color-input, grey);
 	border-radius: 4px;
 	display: flex;
 	align-items: center;
@@ -25,7 +25,9 @@
 
 [data-scope='checkbox'][data-part='control'][data-hover] {
 	/* background-color: var(--color-surface-1, #ccc); */
-  border-color: var(--color-surface-3);
+  /* border-color: var(--color-input); */
+  outline: 1px solid var(--color-primary);
+  /* outline-color: var(--color-primary); */
 }
 
 [data-scope='checkbox'][data-part='control'][data-state='checked'] {

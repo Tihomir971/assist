@@ -27,7 +27,7 @@
 </script>
 
 <div class="grid h-full place-content-center">
-	<Card.Root class="rounded-md">
+	<Card.Root>
 		<Card.Header>
 			<Card.Title>Account</Card.Title>
 		</Card.Header>

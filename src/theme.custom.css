@@ -1,0 +1,39 @@
+@import './lib/style/open-props/css/color/palette.oklch.css';
+@import './lib/style/open-props/css/color/hues.oklch.css';
+@import './lib/style/open-props/css/media-queries.css';
+/* @import './open-props/css/shadows.css'; */
+
+:root {
+	color-scheme: light dark;
+	--palette-hue: var(--oklch-indigo);
+	--palette-hue-rotate-by: -5;
+	--palette-chroma: 0.1;
+
+	--color-max: oklch(70% 100% var(--palette-hue));
+	/* --primary: oklch(70% 100% var(--palette-hue)); */
+	/* --primary: oklch(from var(--color-max) l c var(--oklch-red)); */
+	/* Primary */
+	/* --primary: oklch(50% 50% var(--palette-hue)); */
+
+	/* Highlight colors */
+	--clr-success: oklch(from var(--primary) l c var(--oklch-green));
+	--clr-error: oklch(from var(--primary) l c var(--oklch-red));
+	--clr-info: oklch(from var(--primary) l c var(--oklch-blue));
+	--clr-warning: oklch(from var(--color-max) l c var(--oklch-yellow));
+}
+
+@theme inline {
+	--color-success: var(--clr-success);
+	--color-error: var(--clr-error);
+	--color-info: var(--clr-info);
+	--color-warning: var(--clr-warning);
+}
+
+@layer base {
+	label {
+		@apply text-sm leading-none font-medium;
+	}
+	::placeholder {
+		@apply text-muted-foreground;
+	}
+}

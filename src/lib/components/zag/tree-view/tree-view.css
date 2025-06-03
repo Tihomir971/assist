@@ -22,18 +22,19 @@
 	}
 
 	&:hover {
-		background: var(--color-surface-1);
+		background-color: var(--color-accent);
 	}
 
 	&[data-selected] {
-		background: var(--color-surface-1);
+		background: var(--color-accent);
+		background: var(--color-accent);
 	}
 	&[data-focus] {
-		border: 1px solid var(--color-surface-3);
+		border: 1px solid var(--color-input);
 	}
 
 	&:focus {
-		outline: 1px solid var(--color-surface-3);
+		outline: 1px solid var(--color-input);
 		outline-offset: -1px;
 	}
 }

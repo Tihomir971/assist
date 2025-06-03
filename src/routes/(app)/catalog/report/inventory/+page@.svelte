@@ -52,13 +52,13 @@
 			<div>
 				<button
 					onclick={() => window.close()}
-					class="rounded-sm bg-gray-500 px-3 py-1 text-white transition-colors hover:bg-gray-600 print:hidden"
+					class="rounded-md bg-gray-500 px-3 py-1 text-white transition-colors hover:bg-gray-600 print:hidden"
 				>
 					Close
 				</button>
 				<button
 					onclick={printReport}
-					class="rounded bg-gray-500 px-3 py-1 text-white transition-colors hover:bg-gray-600 print:hidden"
+					class="rounded-md bg-gray-500 px-3 py-1 text-white transition-colors hover:bg-gray-600 print:hidden"
 				>
 					Print Report
 				</button>

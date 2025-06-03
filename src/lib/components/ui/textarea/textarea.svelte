@@ -1,8 +1,6 @@
 <script lang="ts">
-	import type { WithoutChildren } from 'bits-ui';
-	import type { WithElementRef } from '$lib/utils.js';
-	import type { HTMLTextareaAttributes } from 'svelte/elements';
-	import { cn } from '$lib/utils.js';
+	import { cn, type WithElementRef, type WithoutChildren } from "$lib/utils.js";
+	import type { HTMLTextareaAttributes } from "svelte/elements";
 
 	let {
 		ref = $bindable(null),
@@ -14,8 +12,9 @@
 
 <textarea
 	bind:this={ref}
+	data-slot="textarea"
 	class={cn(
-		'flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50',
+		"border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 field-sizing-content shadow-xs flex min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base outline-none transition-[color,box-shadow] focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
 		className
 	)}
 	bind:value

@@ -111,7 +111,9 @@
 				<span {...api.getBranchIndicatorProps({ indexPath, node })}>
 					<PhCaretRight />
 				</span>
-				<span {...api.getBranchTextProps({ indexPath, node })} class="truncate">{node.label}</span>
+				<span {...api.getBranchTextProps({ indexPath, node })} class="truncate text-sm"
+					>{node.label}</span
+				>
 			</div>
 			<div {...api.getBranchContentProps({ indexPath, node })}>
 				<!-- <div {...api.getBranchIndentGuideProps({ indexPath, node })}></div> -->
@@ -123,7 +125,7 @@
 	{:else}
 		<div {...api.getItemProps({ indexPath, node })}>
 			<!-- <PhFile /> -->
-			<span class="ml-6 truncate">
+			<span class="ml-6 truncate text-sm">
 				{node.label}
 			</span>
 		</div>
@@ -146,7 +148,7 @@
 	{#if label}
 		<h3 {...api.getLabelProps()}>{label}</h3>
 	{/if}
-	<div class="flex flex-row-reverse gap-2 bg-surface-1 p-3">
+	<div class="bg-surface-1 flex flex-row-reverse gap-2 p-3">
 		<Button
 			variant="outline"
 			onclick={() => {

@@ -14,6 +14,7 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { superForm } from 'sveltekit-superforms';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
 
 	import ProductPackingDrawer from './m-product-packing-drawer.svelte';
 	import ChartVisualization from './ChartVisualization.svelte';
@@ -68,23 +69,26 @@
 			</div>
 			<div class="flex items-center gap-2">
 				<div class={!isTaintedProduct($taintedProduct) ? 'hidden' : ''}>
-					<Button type="submit">Save</Button>
-					<Button type="button" variant="outline" onclick={() => superform.reset()}>Reset</Button>
+					<Form.Button>Save</Form.Button>
+					<Button variant="outline" onclick={() => superform.reset()}>Reset</Button>
 				</div>
 				<Form.Button name="delete" variant="destructive">Delete</Form.Button>
-				<Button variant="outline" href={`/catalog?${page.url.searchParams}`}>Back to List</Button>
+				<Button variant="link" href={`/catalog?${page.url.searchParams}`}>Back to List</Button>
 			</div>
 		</div>
 		<div class="overflow-auto">
 			<div class="overflow-auto">
 				<Card.Root class="mb-4">
-					<Card.Header class="border-b border-surface-2 pb-4">
-						<InputTextForm
-							{superform}
-							field="name"
-							label="Product Name"
-							placeholder="Enter Product name..."
-						/>
+					<Card.Header class="border-surface-2 border-b pb-4">
+						<Form.Field form={superform} name="name">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Label>Product Name</Label>
+									<Input {...props} bind:value={$formProduct.name} placeholder="Product name..." />
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
 					</Card.Header>
 					<Card.Content class="flex flex-col gap-4">
 						<div class="grid w-max grid-cols-3 gap-4">
@@ -127,20 +131,35 @@
 						</div>
 
 						<div class="grid grid-cols-4 gap-4">
-							<InputTextForm
-								{superform}
-								field="sku"
-								label="SKU"
-								placeholder="Enter Product SKU..."
-								readonly
-							/>
-							<InputTextForm
-								{superform}
-								field="mpn"
-								label="MPN"
-								placeholder="Enter Product MPN..."
-								autocomplete="off"
-							/>
+							<Form.Field form={superform} name="sku">
+								<Form.Control>
+									{#snippet children({ props })}
+										<Label>SKU</Label>
+										<Input
+											{...props}
+											bind:value={$formProduct.sku}
+											placeholder="Product SKU..."
+											readonly
+										/>
+									{/snippet}
+								</Form.Control>
+								<Form.FieldErrors />
+							</Form.Field>
+							<Form.Field form={superform} name="mpn">
+								<Form.Control>
+									{#snippet children({ props })}
+										<Label>MPN</Label>
+										<Input
+											{...props}
+											bind:value={$formProduct.mpn}
+											placeholder="Product MPN..."
+											autocomplete="off"
+										/>
+									{/snippet}
+								</Form.Control>
+								<Form.FieldErrors />
+							</Form.Field>
+
 							<div class="flex flex-col gap-4">
 								<Label>Formula script New</Label>
 								<input value={data.priceFormula?.name} />
@@ -237,7 +256,7 @@
 										<Form.Control>
 											{#snippet children({ props })}
 												<Form.Label>Manufacturer URL</Form.Label>
-												<MyUrlInput bind:value={$formProduct.descriptionurl} {...props} />
+												<Input type="url" {...props} bind:value={$formProduct.descriptionurl} />
 											{/snippet}
 										</Form.Control>
 										<Form.FieldErrors />

@@ -37,7 +37,10 @@
 
 <label {...api.getRootProps()}>
 	<input {...api.getHiddenInputProps()} aria-describedby={ariaDescribedBy} />
-	<span {...api.getControlProps()}>
+	<span
+		{...api.getControlProps()}
+		class="border border-input bg-background data-[state=checked]:dark:bg-white data-[state=unchecked]:dark:bg-input/30"
+	>
 		<span {...api.getThumbProps()}></span>
 	</span>
 	<span {...api.getLabelProps()}>{label}</span>
