@@ -49,11 +49,11 @@ export interface FlattenedProduct {
 	levelMin: number | null;
 	levelMax: number | null;
 	qtybatchsize: number | null;
-	priceAgrofina: number | null;
-	priceMercator: number | null;
-	priceMivex: number | null;
-	priceCenoteka: number | null;
-	priceGros: number | null;
+	// priceAgrofina: number | null;
+	// priceMercator: number | null;
+	// priceMivex: number | null;
+	// priceCenoteka: number | null;
+	// priceGros: number | null;
 	priceMarketBest: number;
 	priceVendorBest: number;
 	action: boolean;
@@ -210,52 +210,52 @@ export const columnDefs = [
 			});
 		}
 	}),
-	colHelp.accessor('priceRetail', {
-		header: 'Retail',
-		cell: ({ row }) => {
-			const priceRetail = row.original.priceRetail ?? 0;
-			const priceCenoteka = row.original.priceCenoteka ?? 0;
-			const qtyRetail = row.original.qtyRetail ?? 0;
-			return renderSnippet(rightAlignSnippet, {
-				value: formatNumber(priceRetail),
-				isDanger:
-					priceCenoteka !== 0 &&
-					qtyRetail > 0 &&
-					(priceRetail - priceCenoteka) / priceCenoteka >= 0.05,
-				action: row.original.action
-			});
-		}
-	}),
-	colHelp.accessor('priceAgrofina', {
-		header: 'Agrofina',
-		cell: ({ cell }) => {
-			return renderSnippet(rightAlignSnippet, { value: formatNumber(cell.getValue()) });
-		}
-	}),
-	colHelp.accessor('priceMercator', {
-		header: 'Mercator',
-		cell: ({ cell }) => {
-			return renderSnippet(rightAlignSnippet, { value: formatNumber(cell.getValue()) });
-		}
-	}),
-	colHelp.accessor('priceMivex', {
-		header: 'Mivex',
-		cell: ({ cell }) => {
-			return renderSnippet(rightAlignSnippet, { value: formatNumber(cell.getValue()) });
-		}
-	}),
-	colHelp.accessor('priceGros', {
-		header: 'Gros',
-		cell: ({ cell }) => {
-			return renderSnippet(rightAlignSnippet, { value: formatNumber(cell.getValue()) });
-		}
-	}),
-	colHelp.accessor('priceCenoteka', {
-		header: 'Cenoteka',
-		cell: ({ cell }) => {
-			return renderSnippet(rightAlignSnippet, { value: formatNumber(cell.getValue()) });
-		}
-	}),
+	// colHelp.accessor('priceRetail', {
+	// header: 'Retail',
+	// cell: ({ row }) => {
+	// const priceRetail = row.original.priceRetail ?? 0;
+	// const priceCenoteka = row.original.priceCenoteka ?? 0;
+	// const qtyRetail = row.original.qtyRetail ?? 0;
+	// return renderSnippet(rightAlignSnippet, {
+	// value: formatNumber(priceRetail),
+	// isDanger:
+	// priceCenoteka !== 0 &&
+	// qtyRetail > 0 &&
+	// (priceRetail - priceCenoteka) / priceCenoteka >= 0.05,
+	// action: row.original.action
+	// });
+	// }
+	// }),
+	// colHelp.accessor('priceAgrofina', {
+	// header: 'Agrofina',
+	// cell: ({ cell }) => {
+	// return renderSnippet(rightAlignSnippet, { value: formatNumber(cell.getValue()) });
+	// }
+	// }),
+	// colHelp.accessor('priceMercator', {
+	// header: 'Mercator',
+	// cell: ({ cell }) => {
+	// return renderSnippet(rightAlignSnippet, { value: formatNumber(cell.getValue()) });
+	// }
+	// }),
+	// colHelp.accessor('priceMivex', {
+	// header: 'Mivex',
+	// cell: ({ cell }) => {
+	// return renderSnippet(rightAlignSnippet, { value: formatNumber(cell.getValue()) });
+	// }
+	// }),
+	// colHelp.accessor('priceGros', {
+	// header: 'Gros',
+	// cell: ({ cell }) => {
+	// return renderSnippet(rightAlignSnippet, { value: formatNumber(cell.getValue()) });
+	// }
+	// }),
+	// colHelp.accessor('priceCenoteka', {
+	// header: 'Cenoteka',
+	// cell: ({ cell }) => {
+	// return renderSnippet(rightAlignSnippet, { value: formatNumber(cell.getValue()) });
+	// }
+	// }),
 	colHelp.accessor('priceVendorBest', {
 		header: 'Vendors',
 		cell: ({ row, cell }) => {

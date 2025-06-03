@@ -271,15 +271,15 @@ function flattenProduct(
 		product.m_replenish.map((item) => [item.m_warehouse_id, item.qtybatchsize])
 	);
 
-	const productPoLookup = new Map(
-		product.m_product_po.map((item) => [item.c_bpartner_id, item.pricelist])
-	);
+	// const productPoLookup = new Map(
+		// product.m_product_po.map((item) => [item.c_bpartner_id, item.pricelist])
+	// );
 
-	const cenoteka = productPoLookup.get(2) ?? 0;
-	const agrofina = productPoLookup.get(480) ?? 0;
-	const mercator = productPoLookup.get(4) ?? 0;
-	const mivex = productPoLookup.get(89) ?? 0;
-	const gros = productPoLookup.get(407) ?? 0;
+	// const cenoteka = productPoLookup.get(2) ?? 0;
+	// const agrofina = productPoLookup.get(480) ?? 0;
+	// const mercator = productPoLookup.get(4) ?? 0;
+	// const mivex = productPoLookup.get(89) ?? 0;
+	// const gros = productPoLookup.get(407) ?? 0;
 
 	const marketPrices = product.m_product_po
 		.filter((po) => po.c_bpartner.iscustomer)
@@ -322,11 +322,11 @@ function flattenProduct(
 		levelMin: getLevelMin.get(activeWarehouse) ?? null,
 		levelMax: getLevelMax.get(activeWarehouse) ?? null,
 		qtybatchsize: getQtybatchsize.get(activeWarehouse) ?? null,
-		priceAgrofina: checkedVat ? agrofina * (1 + tax / 100) : agrofina,
-		priceMercator: checkedVat ? mercator * (1 + tax / 100) : mercator,
-		priceMivex: checkedVat ? mivex * (1 + tax / 100) : mivex,
-		priceCenoteka: checkedVat ? cenoteka * (1 + tax / 100) : cenoteka,
-		priceGros: checkedVat ? gros * (1 + tax / 100) : gros,
+		// priceAgrofina: checkedVat ? agrofina * (1 + tax / 100) : agrofina,
+		// priceMercator: checkedVat ? mercator * (1 + tax / 100) : mercator,
+		// priceMivex: checkedVat ? mivex * (1 + tax / 100) : mivex,
+		// priceCenoteka: checkedVat ? cenoteka * (1 + tax / 100) : cenoteka,
+		// priceGros: checkedVat ? gros * (1 + tax / 100) : gros,
 		priceMarketBest: checkedVat ? minMarketPrice * (1 + tax / 100) : minMarketPrice,
 		priceVendorBest: checkedVat ? minVendorPrice * (1 + tax / 100) : minVendorPrice,
 		action,
