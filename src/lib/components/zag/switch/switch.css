@@ -31,7 +31,7 @@
 }
 
 [data-scope='switch'][data-part='control'][data-state='checked'] {
-	/* --switch-bg: var(--primary); */
+	--switch-bg: var(--primary);
 }
 
 [data-scope='switch'][data-part='control'][data-disabled] {

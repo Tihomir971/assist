@@ -25,13 +25,13 @@
 
 [data-scope='checkbox'][data-part='control'][data-hover] {
 	/* background-color: var(--color-surface-1, #ccc); */
-  /* border-color: var(--color-input); */
-  outline: 1px solid var(--color-primary);
-  /* outline-color: var(--color-primary); */
+	/* border-color: var(--color-input); */
+	outline: 1px solid var(--color-primary);
+	/* outline-color: var(--color-primary); */
 }
 
 [data-scope='checkbox'][data-part='control'][data-state='checked'] {
-	background-color: var(--color-primary, #2196f3);#
+	background-color: var(--color-primary, #2196f3);
 	border-color: #2196f3;
 }
 
