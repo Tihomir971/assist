@@ -7,16 +7,13 @@ import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { ChartData } from './chart-types';
 import { connector } from '$lib/ky';
-import {
-	mStorageonhandInsertSchemaАrray,
-	deleteByIdSchema,
-	productPackingInsertSchema
-} from './schema.js';
+import { mStorageonhandInsertSchemaАrray, productPackingInsertSchema } from './schema.js';
 import {
 	mProductInsertSchema,
 	mProductPoInsertSchema,
 	mReplenishInsertSchema
 } from '$lib/types/supabase.zod.schemas';
+import { deleteByIdSchema } from '$lib/types/zod-delete-by-id';
 
 export const load: PageServerLoad = async ({ depends, params, locals: { supabase } }) => {
 	depends('catalog:products');

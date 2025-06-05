@@ -25,7 +25,7 @@
     "@iconify-json/devicon": "^1.2.26",
     "@iconify-json/ph": "^1.2.2",
     "@internationalized/date": "^3.8.1",
-    "@lucide/svelte": "^0.511.0",
+    "@lucide/svelte": "^0.513.0",
     "@sveltejs/adapter-cloudflare": "7.0.3",
     "@sveltejs/kit": "^2.21.2",
     "@sveltejs/vite-plugin-svelte": "5.1.0",
@@ -54,7 +54,7 @@
     "unplugin-icons": "^22.1.0",
     "vaul-svelte": "1.0.0-next.7",
     "vite": "^6.3.5",
-    "wrangler": "^4.18.0"
+    "wrangler": "^4.19.1"
   },
   "dependencies": {
     "@fontsource-variable/fira-code": "^5.2.6",
@@ -85,11 +85,11 @@
     "mathjs": "^14.5.2",
     "mode-watcher": "^1.0.7",
     "svelte-sonner": "^1.0.4",
-    "sveltekit-superforms": "^2.25.0",
+    "sveltekit-superforms": "^2.26.0",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "4.1.8",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
-    "zod": "^3.25.49"
+    "zod": "^3.25.51"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { InputTextForm } from '$lib/components/my/input/index.js';
-	import { Combobox, NumberInputZag } from '$lib/components/zag/index.js';
+	import { ComboboxZag, NumberInputZag } from '$lib/components/zag/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import { SuperDebug, superForm } from 'sveltekit-superforms';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { toast } from 'svelte-sonner';
 	import { z } from 'zod';
@@ -81,8 +81,12 @@
 					<Form.Field form={superform} name="price_formula_id">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Formula script New</Form.Label>
-								<Combobox {...props} bind:value={$form.price_formula_id} items={priceFormulas} />
+								<ComboboxZag
+									{...props}
+									bind:value={$form.price_formula_id}
+									items={priceFormulas}
+									label="Formula script New"
+								/>
 							{/snippet}
 						</Form.Control>
 					</Form.Field>
@@ -112,9 +116,8 @@
 					Delete
 				</Button>
 			</Sheet.Footer>
-			{#if dev}
-				<SuperDebug data={{ $form, $errors }} />
-			{/if}
+
+			<SuperDebug data={{ $form, $errors }} display={dev} />
 		</form>
 	</Sheet.Content>
 </Sheet.Root>

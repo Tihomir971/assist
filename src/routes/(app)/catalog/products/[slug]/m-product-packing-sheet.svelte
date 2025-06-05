@@ -1,38 +1,31 @@
 <script lang="ts">
+	import { InputTextForm, MyUrlInput } from '$lib/components/my/input/index.js';
+	import { CheckboxZag, ComboboxZag, NumberInputZag } from '$lib/components/zag/index.js';
+	import * as Form from '$lib/components/ui/form/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
+	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
+	import { SuperDebug, superForm } from 'sveltekit-superforms';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { toast } from 'svelte-sonner';
+	import { dev } from '$app/environment';
 	import type { ProductPackingInsertSchema } from './schema';
 	import type { Tables } from '$lib/types/supabase.types';
-	import * as Drawer from '$lib/components/ui/drawer/index.js';
-	import * as Table from '$lib/components/ui/table/index.js';
-	import * as Form from '$lib/components/ui/form/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { toast } from 'svelte-sonner';
-	import { isValidGTIN } from '$lib/scripts/gtin';
 	import { invalidate } from '$app/navigation';
-	import { CheckboxZag, ComboboxZag, NumberInputZag } from '$lib/components/zag/index.js';
-	import { SuperDebug, superForm } from 'sveltekit-superforms';
-	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
-	import { dev } from '$app/environment';
+	import { Label } from '$lib/components/ui/label';
 
 	type Props = {
-		isProductPackingDrawerOpen: boolean;
+		isSheetOpen: boolean;
 		validatedForm: SuperValidated<ProductPackingInsertSchema>;
 		m_product_id: number;
 		formProductPackingId: number | undefined;
 		productPacking: Tables<'m_product_packing'>[];
 	};
 
-	let {
-		isProductPackingDrawerOpen = $bindable(),
-		validatedForm,
-		m_product_id,
-		productPacking
-	}: Props = $props();
-	//let data: Props = $props();
+	let { isSheetOpen = $bindable(), validatedForm, m_product_id, productPacking }: Props = $props();
 	let newBarcode = $state('');
-	let isValidBarcode = $derived(newBarcode === '' || isValidGTIN(newBarcode));
-
 	const superform = superForm(validatedForm, {
 		dataType: 'json',
 		//validators: zodClient(crudGtinSchema),
@@ -62,51 +55,48 @@
 	let editingId: number | null = $state(null);
 </script>
 
-<Drawer.Root bind:open={isProductPackingDrawerOpen} dismissible={true} direction="bottom">
-	<Drawer.Content>
-		<Drawer.Header>
-			<Drawer.Title>Barcodes</Drawer.Title>
-			<Drawer.Description>Manage product barcodes</Drawer.Description>
-		</Drawer.Header>
-		<div class="mx-auto flex gap-8">
-			<div class="rounded-md border">
-				<Table.Root class="min-w-full">
-					<Table.Header>
+<Sheet.Root bind:open={isSheetOpen}>
+	<Sheet.Content class="sm:max-w-2xl">
+		<Sheet.Header>
+			<Sheet.Title>Barcodes</Sheet.Title>
+			<Sheet.Description>Manage product barcodes.</Sheet.Description>
+		</Sheet.Header>
+		<div class="flex flex-col gap-4 overflow-y-auto px-4">
+			<Table.Root class="min-w-full">
+				<Table.Header>
+					<Table.Row>
+						<Table.Head>Packing Type</Table.Head>
+						<Table.Head>Units Per Pack</Table.Head>
+						<Table.Head>GTIN</Table.Head>
+						<Table.Head>Display</Table.Head>
+						<Table.Head>Actions</Table.Head>
+					</Table.Row>
+				</Table.Header>
+				<Table.Body>
+					{#each productPacking ?? [] as packing}
 						<Table.Row>
-							<Table.Head>Packing Type</Table.Head>
-							<Table.Head>Units Per Pack</Table.Head>
-							<Table.Head>GTIN</Table.Head>
-							<Table.Head>Display</Table.Head>
-							<Table.Head>Actions</Table.Head>
+							<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.packing_type}</Table.Cell>
+							<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.unitsperpack}</Table.Cell>
+							<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.gtin}</Table.Cell>
+							<Table.Cell class="px-6 py-4 whitespace-nowrap">
+								<CheckboxZag checked={packing.is_display} />
+							</Table.Cell>
+							<Table.Cell class="space-x-2 px-6 py-4 whitespace-nowrap">
+								<Button
+									variant="outline"
+									disabled={$delayed}
+									onclick={() => {
+										editingId = packing.id;
+										$formData = packing;
+									}}
+								>
+									Edit
+								</Button>
+							</Table.Cell>
 						</Table.Row>
-					</Table.Header>
-					<Table.Body>
-						{#each productPacking ?? [] as packing}
-							<Table.Row>
-								<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.packing_type}</Table.Cell>
-								<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.unitsperpack}</Table.Cell>
-								<Table.Cell class="px-6 py-4 whitespace-nowrap">{packing.gtin}</Table.Cell>
-								<Table.Cell class="px-6 py-4 whitespace-nowrap">
-									<CheckboxZag checked={packing.is_display} />
-								</Table.Cell>
-								<Table.Cell class="space-x-2 px-6 py-4 whitespace-nowrap">
-									<Button
-										variant="outline"
-										disabled={$delayed}
-										onclick={() => {
-											editingId = packing.id;
-											$formData = packing;
-										}}
-									>
-										Edit
-									</Button>
-								</Table.Cell>
-							</Table.Row>
-						{/each}
-					</Table.Body>
-				</Table.Root>
-			</div>
-
+					{/each}
+				</Table.Body>
+			</Table.Root>
 			<!-- Edit/Create Form -->
 			<div>
 				<form method="POST" action="?/productPackingUpsert" use:enhanceGtin>
@@ -159,10 +149,14 @@
 							</Form.Control>
 						</Form.Field>
 
-						<div class="space-y-2">
-							<label for="gtin" class="font-medium">GTIN</label>
-							<Input id="gtin" type="text" bind:value={$formData.gtin} placeholder="GTIN" />
-						</div>
+						<Form.Field form={superform} name="gtin">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>GTIN</Form.Label>
+									<Input {...props} type="text" bind:value={$formData.gtin} placeholder="GTIN" />
+								{/snippet}
+							</Form.Control>
+						</Form.Field>
 						<Form.Field form={superform} name="is_display">
 							<Form.Control>
 								{#snippet children({ props })}
@@ -176,7 +170,7 @@
 						</Form.Field>
 					</div>
 
-					<div class="flex gap-2">
+					<div class="mt-4 flex flex-row-reverse gap-2">
 						<Button type="submit" disabled={$delayed}>
 							{#if $delayed}
 								<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
@@ -217,9 +211,5 @@
 			</div>
 			<SuperDebug data={{ $formData, $errors }} display={dev} />
 		</div>
-
-		<Drawer.Footer>
-			<Drawer.Close>Close</Drawer.Close>
-		</Drawer.Footer>
-	</Drawer.Content>
-</Drawer.Root>
+	</Sheet.Content>
+</Sheet.Root>

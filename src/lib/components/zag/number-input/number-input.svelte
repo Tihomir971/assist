@@ -91,7 +91,9 @@
 					<PhCaretDown />
 				</button>
 			{:else}
-				<PhPencilSimpleSlash />
+				<div class="flex h-full items-center">
+					<PhPencilSimpleSlash />
+				</div>
 			{/if}
 		</div>
 	</div>

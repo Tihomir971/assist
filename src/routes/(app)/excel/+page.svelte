@@ -15,7 +15,7 @@
 	import { handleFileUpload, loadSheetData } from './utils/xlsx-handlers';
 	import { processExcelData } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
-	import { Combobox, FileUpload, NumberInputZag, SelectZag } from '$lib/components/zag/index.js';
+	import { ComboboxZag, FileUpload, NumberInputZag, SelectZag } from '$lib/components/zag/index.js';
 	import type { FileChangeDetails } from '@zag-js/file-upload';
 
 	let { data } = $props();
@@ -271,7 +271,7 @@
 	<div class="flex flex-col gap-4">
 		<div class="grid grid-cols-4 items-start gap-2">
 			<div class="grid w-full gap-1.5">
-				<Combobox
+				<ComboboxZag
 					bind:value={selectedSupplier}
 					items={data.c_bpartner}
 					label="Supplier"

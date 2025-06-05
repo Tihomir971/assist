@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { formatNumber } from '$lib/style/locale';
+	import { cn } from '$lib/utils';
 
 	type Props = {
 		value: string;
@@ -11,8 +12,9 @@
 			tax: number | null;
 			iscustomer: boolean;
 		}[];
+		isDanger?: boolean;
 	};
-	let { value, iscustomer, priceMarket }: Props = $props();
+	let { value, iscustomer, priceMarket, isDanger }: Props = $props();
 
 	function calculatePriceWithTax(price: number | null, tax: number | null): number | null {
 		if (price === null || tax === null) return null;
@@ -37,8 +39,13 @@
 
 <Tooltip.Provider>
 	<Tooltip.Root>
-		<Tooltip.Trigger class="w-full text-right">{value}</Tooltip.Trigger>
-		<Tooltip.Content>
+		<Tooltip.Trigger class={cn('w-full text-right', isDanger && 'text-warning')}>
+			{value}
+		</Tooltip.Trigger>
+		<Tooltip.Content
+			class="border border-input bg-background text-popover-foreground"
+			arrowClasses="bg-background border-b border-input"
+		>
 			<div class="min-w-[320px]">
 				{#each priceSorted as item}
 					<div class="grid grid-cols-[1fr_auto_auto] gap-2 py-1">

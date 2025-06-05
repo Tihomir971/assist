@@ -210,22 +210,22 @@ export const columnDefs = [
 			});
 		}
 	}),
-	// colHelp.accessor('priceRetail', {
-	// header: 'Retail',
-	// cell: ({ row }) => {
-	// const priceRetail = row.original.priceRetail ?? 0;
-	// const priceCenoteka = row.original.priceCenoteka ?? 0;
-	// const qtyRetail = row.original.qtyRetail ?? 0;
-	// return renderSnippet(rightAlignSnippet, {
-	// value: formatNumber(priceRetail),
-	// isDanger:
-	// priceCenoteka !== 0 &&
-	// qtyRetail > 0 &&
-	// (priceRetail - priceCenoteka) / priceCenoteka >= 0.05,
-	// action: row.original.action
-	// });
-	// }
-	// }),
+	colHelp.accessor('priceRetail', {
+		header: 'Retail',
+		cell: ({ row }) => {
+			const priceRetail = row.original.priceRetail ?? 0;
+			const priceMarketBest = row.original.priceMarketBest ?? 0;
+			const qtyRetail = row.original.qtyRetail ?? 0;
+			return renderSnippet(rightAlignSnippet, {
+				value: formatNumber(priceRetail),
+				isDanger:
+					priceMarketBest !== 0 &&
+					qtyRetail > 0 &&
+					(priceRetail - priceMarketBest) / priceMarketBest >= 0.05,
+				action: row.original.action
+			});
+		}
+	}),
 	// colHelp.accessor('priceAgrofina', {
 	// header: 'Agrofina',
 	// cell: ({ cell }) => {
@@ -266,19 +266,26 @@ export const columnDefs = [
 			});
 		},
 		enableSorting: false,
-		enableHiding: false
+		enableHiding: true
 	}),
 	colHelp.accessor('priceMarketBest', {
 		header: 'Market',
 		cell: ({ row, cell }) => {
+			const priceVendorBest = row.original.priceVendorBest ?? 0;
+			const priceMarketBest = row.original.priceMarketBest ?? 0;
+			// const qtyRetail = row.original.qtyRetail ?? 0;
 			return renderComponent(DataTableActionsVendor, {
 				value: formatNumber(cell.getValue()) ?? '',
 				iscustomer: true,
-				priceMarket: row.original.priceMarket
+				priceMarket: row.original.priceMarket,
+				isDanger:
+					priceMarketBest !== 0 &&
+					// qtyRetail > 0 &&
+					priceMarketBest < priceVendorBest
 			});
 		},
 		enableSorting: false,
-		enableHiding: false
+		enableHiding: true
 	}),
 	colHelp.accessor('id', {
 		header: '',

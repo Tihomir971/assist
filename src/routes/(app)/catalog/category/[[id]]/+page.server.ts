@@ -6,7 +6,7 @@ import {
 	mProductCategoryInsertSchema,
 	priceRulesInsertSchema
 } from '$lib/types/supabase.zod.schemas';
-import { deleteByIdSchema } from '../../products/[slug]/schema';
+import { deleteByIdSchema } from '$lib/types/zod-delete-by-id';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
 	if (!params.id) {
@@ -86,6 +86,23 @@ export const actions = {
 				return message(form, 'Category updated!');
 			}
 		}
+	},
+	categoryDelete: async ({ request, locals: { supabase } }) => {
+		const formData = await request.formData();
+		const form = await superValidate(formData, zod(deleteByIdSchema));
+		if (!form.valid) return fail(400, { form });
+		console.log('form.data.id', form.data.id, typeof form.data.id);
+
+		const { error: delError } = await supabase
+			.from('m_product_category')
+			.delete()
+			.eq('id', form.data.id);
+		console.log('delError', delError);
+
+		if (delError) {
+			return message(form, { message: delError });
+		}
+		return { form };
 	},
 	priceRulesUpsert: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(priceRulesInsertSchema));

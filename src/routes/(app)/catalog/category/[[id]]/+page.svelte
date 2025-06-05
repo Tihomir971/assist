@@ -2,7 +2,7 @@
 	import { dev, browser } from '$app/environment';
 	import { page } from '$app/state';
 	// Superforms
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import { SuperDebug, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { mProductCategoryInsertSchema } from '$lib/types/supabase.zod.schemas.js';
 	import { formatDate, formatDateTime } from '$lib/style/locale';
@@ -17,7 +17,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { CheckboxZag, Combobox, SwitchZag } from '$lib/components/zag/index.js';
+	import { CheckboxZag, ComboboxZag, SwitchZag } from '$lib/components/zag/index.js';
 	import InputTextForm from '$lib/components/my/input/input-text-form.svelte';
 
 	import { getLabelByValue } from '$lib/scripts/custom';
@@ -28,8 +28,9 @@
 
 	const superform = superForm(data.formCategory, {
 		resetForm: false,
-		validators: zodClient(mProductCategoryInsertSchema),
 		onUpdated({ form }) {
+			console.log('form', form);
+
 			if (form.valid) {
 				toast.success('Category updated successfully', {
 					description: form.message || 'Your changes have been saved.'
@@ -105,7 +106,7 @@
 					<Form.Field form={superform} name="parent_id">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Combobox
+								<ComboboxZag
 									{...props}
 									bind:value={$formData.parent_id}
 									items={data.categories}
@@ -119,10 +120,7 @@
 					</Form.Field>
 					<div class="flex flex-row-reverse items-center gap-2">
 						<Form.Button variant="default" disabled={!isTainted($tainted)}>Save</Form.Button>
-						<Form.Button
-							name="delete"
-							variant="destructive"
-							onclick={(e) => !confirm('Are you sure?') && e.preventDefault()}>Delete</Form.Button
+						<Button type="submit" formaction="?/categoryDelete" variant="destructive">Delete</Button
 						>
 					</div>
 				</Card.Content>
@@ -221,10 +219,4 @@
 	/>
 {/if}
 
-{#if browser}
-	<Card.Root>
-		<Card.Content>
-			<SuperDebug data={{ $formData, $errors }} display={dev} />
-		</Card.Content>
-	</Card.Root>
-{/if}
+<SuperDebug data={{ $formData, $errors }} display={dev} />

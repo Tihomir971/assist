@@ -272,7 +272,7 @@ function flattenProduct(
 	);
 
 	// const productPoLookup = new Map(
-		// product.m_product_po.map((item) => [item.c_bpartner_id, item.pricelist])
+	// product.m_product_po.map((item) => [item.c_bpartner_id, item.pricelist])
 	// );
 
 	// const cenoteka = productPoLookup.get(2) ?? 0;

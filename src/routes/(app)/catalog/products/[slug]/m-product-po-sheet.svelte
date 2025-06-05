@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { InputTextForm, MyUrlInput } from '$lib/components/my/input/index.js';
-	import { Combobox, NumberInputZag } from '$lib/components/zag/index.js';
+	import { ComboboxZag, NumberInputZag } from '$lib/components/zag/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import { SuperDebug, superForm } from 'sveltekit-superforms';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { toast } from 'svelte-sonner';
 	import { z } from 'zod';
@@ -60,7 +60,7 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>Vendor</Form.Label>
-							<Combobox
+							<ComboboxZag
 								{...props}
 								bind:value={$form.c_bpartner_id}
 								items={partners}
@@ -107,9 +107,7 @@
 					disabled={!$form.id}
 					>Delete
 				</Button>
-				{#if dev}
-					<SuperDebug data={{ $form, $errors }} />
-				{/if}
+				<SuperDebug data={{ $form, $errors }} display={dev} />
 			</Sheet.Footer>
 		</form>
 	</Sheet.Content>

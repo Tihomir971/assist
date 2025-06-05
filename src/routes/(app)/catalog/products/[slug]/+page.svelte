@@ -17,13 +17,14 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 
 	import ProductPackingDrawer from './m-product-packing-drawer.svelte';
+	import ProductPackingSheet from './m-product-packing-sheet.svelte';
 	import ChartVisualization from './ChartVisualization.svelte';
 	import ProductPOCard from './m-product-po-card.svelte';
 	import ReplenishCard from './m-replenish-card.svelte';
 	import StorageOnHandCard from './m-storageonhand-card.svelte';
 	import MyUrlInput from '$lib/components/my/input/input-url.svelte';
 	import { InputTextForm } from '$lib/components/my/input';
-	import { Combobox, NumberInputZag, SwitchZag } from '$lib/components/zag/index.js';
+	import { ComboboxZag, NumberInputZag, SwitchZag } from '$lib/components/zag/index.js';
 	import { mProductInsertSchema } from '$lib/types/supabase.zod.schemas';
 	import { page } from '$app/state';
 
@@ -58,6 +59,7 @@
 	} = superform;
 
 	let isProductPackingDrawerOpen: boolean = $state(false);
+	let isSheetOpenProductPacking: boolean = $state(false);
 </script>
 
 <div class="mx-auto w-full max-w-[var(--breakpoint-xl)]">
@@ -168,7 +170,7 @@
 								<Form.Control>
 									{#snippet children({ props })}
 										<Form.Label>Tax</Form.Label>
-										<Combobox
+										<ComboboxZag
 											{...props}
 											bind:value={$formProduct.c_taxcategory_id}
 											items={data.tax}
@@ -184,7 +186,7 @@
 									<Form.Field form={superform} name="attributeset_id">
 										<Form.Control>
 											{#snippet children({ props })}
-												<Combobox
+												<ComboboxZag
 													{...props}
 													bind:value={$formProduct.attributeset_id}
 													items={data.attributeSets}
@@ -196,7 +198,7 @@
 									<Form.Field form={superform} name="m_product_category_id">
 										<Form.Control>
 											{#snippet children({ props })}
-												<Combobox
+												<ComboboxZag
 													{...props}
 													bind:value={$formProduct.m_product_category_id}
 													items={data.categories}
@@ -227,7 +229,7 @@
 										<Form.Field form={superform} name="net_qty_uom_id">
 											<Form.Control>
 												{#snippet children({ props })}
-													<Combobox
+													<ComboboxZag
 														{...props}
 														bind:value={$formProduct.net_qty_uom_id}
 														items={data.uom}
@@ -271,7 +273,7 @@
 									<Button
 										variant="ghost"
 										size="icon"
-										onclick={() => (isProductPackingDrawerOpen = true)}
+										onclick={() => (isSheetOpenProductPacking = true)}
 									>
 										<PhDotsThree />
 									</Button>
@@ -363,3 +365,12 @@
 	m_product_id={data.productId}
 	formProductPackingId={undefined}
 />
+{#if isSheetOpenProductPacking}
+	<ProductPackingSheet
+		bind:isSheetOpen={isSheetOpenProductPacking}
+		productPacking={data.productPacking}
+		validatedForm={data.formProductPacking}
+		m_product_id={data.productId}
+		formProductPackingId={undefined}
+	/>
+{/if}

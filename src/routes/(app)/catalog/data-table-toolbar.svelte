@@ -8,10 +8,14 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 
 	//Icons
+	import PhLetterCircleV from '~icons/ph/letter-circle-v';
+	import PhFolders from '~icons/ph/folders';
 	import PhCaretDown from '~icons/ph/caret-down';
-	import { CheckboxZag, SelectZag } from '$lib/components/zag/index.js';
+	import { SelectZag } from '$lib/components/zag/index.js';
 
 	type Props = {
 		rowSelectionState: RowSelectionState;
@@ -34,10 +38,15 @@
 		}
 	}
 
-	let checkedVat = $derived(page.url.searchParams.get('vat') === 'true');
-	let checkedSubcategories = $derived(page.url.searchParams.get('sub') === 'true');
-	let inputValueWarehouse = $derived(page.url.searchParams.get('wh') ?? '');
-	let inputGlobaSearch = $derived(page.url.searchParams.get('search'));
+	// let checkedVat = $derived(page.url.searchParams.get('vat') === 'true');
+	// let checkedSubcategories = $derived(page.url.searchParams.get('sub') === 'true');
+	const searchParams = page.url.searchParams;
+	let inputValueWarehouse = $derived(searchParams.get('wh') ?? '');
+	let inputGlobaSearch = $derived(searchParams.get('search'));
+	const toggleGroupValue: string[] = [
+		...(searchParams.get('vat') === 'true' ? ['vat'] : []),
+		...(searchParams.get('sub') === 'true' ? ['sub'] : [])
+	];
 	$effect(() => {
 		if (inputGlobaSearch) {
 			table.setGlobalFilter(inputGlobaSearch);
@@ -71,23 +80,63 @@
 		oninput={handleSearch}
 		placeholder="Filter products..."
 	/>
-	<div class="flex w-full items-center space-x-2">
-		<CheckboxZag
+
+	<ToggleGroup.Root
+		value={toggleGroupValue}
+		variant="outline"
+		type="multiple"
+		onValueChange={(newValue) => {
+			const newUrl = new URL(page.url);
+			const flags = ['vat', 'sub'];
+			flags.forEach((key) => {
+				newValue.includes(key)
+					? newUrl.searchParams.set(key, 'true')
+					: newUrl.searchParams.delete(key);
+			});
+			goto(newUrl);
+		}}
+	>
+		<ToggleGroup.Item value="sub">
+			<Tooltip.Provider>
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						<PhFolders />
+					</Tooltip.Trigger>
+					<Tooltip.Content>
+						<p>Show Subcategories</p>
+					</Tooltip.Content>
+				</Tooltip.Root>
+			</Tooltip.Provider>
+		</ToggleGroup.Item>
+		<ToggleGroup.Item value="vat">
+			<Tooltip.Provider>
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						<PhLetterCircleV />
+					</Tooltip.Trigger>
+					<Tooltip.Content>
+						<p>Show VAT</p>
+					</Tooltip.Content>
+				</Tooltip.Root>
+			</Tooltip.Provider>
+		</ToggleGroup.Item>
+	</ToggleGroup.Root>
+	<!-- 	<CheckboxZag
 			id="show-subcategories"
 			checked={checkedSubcategories}
 			label="Subcategories"
 			onCheckedChange={(details) => {
 				console.log(details);
+
 				const newUrl = new URL(page.url);
 				details.checked
 					? newUrl?.searchParams?.set('sub', 'true')
 					: newUrl?.searchParams?.delete('sub');
 				goto(newUrl);
 			}}
-		/>
-	</div>
+		/> -->
 
-	<div class="flex w-full items-center space-x-2">
+	<!-- 	<div class="flex w-full items-center space-x-2">
 		<CheckboxZag
 			id="show-vat"
 			checked={checkedVat}
@@ -100,7 +149,7 @@
 				goto(newUrl);
 			}}
 		/>
-	</div>
+	</div> -->
 	<Button variant="outline" onclick={addToCart}>Add to Cart</Button>
 	<Button variant="outline" onclick={handleSalesGraphClick}>Sales Graph</Button>
 	<SelectZag

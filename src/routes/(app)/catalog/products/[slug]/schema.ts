@@ -33,7 +33,3 @@ export const productPackingInsertSchema = mProductPackingInsertSchema
 		return data.gtin ? isValidGTIN(data.gtin) : true;
 	});
 export type ProductPackingInsertSchema = z.infer<typeof productPackingInsertSchema>;
-
-export const deleteByIdSchema = z.object({
-	id: z.number()
-});

@@ -7,11 +7,12 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Label } from '$lib/components/ui/label';
 
-	import SuperDebug from 'sveltekit-superforms';
+	import { SuperDebug } from 'sveltekit-superforms';
 	import { formatDateTime } from '$lib/style/locale';
 	import { DateTime, type DateTimeMaybeValid } from 'luxon';
 	import Avatar from './Avatar.svelte';
 	import { InputTextForm } from '$lib/components/my/input';
+	import { dev } from '$app/environment';
 
 	let { data } = $props();
 	const superform = superForm(data.form, {
@@ -66,8 +67,7 @@
 			</form>
 			<Avatar supabase={data.supabase} bind:url={$formData.avatar_url} size={10} />
 		</Card.Content>
-		<Card.Footer class="Footer">
-			<SuperDebug data={{ $formData, $errors }} />
-		</Card.Footer>
+
+		<SuperDebug data={{ $formData, $errors }} display={dev} />
 	</Card.Root>
 </div>

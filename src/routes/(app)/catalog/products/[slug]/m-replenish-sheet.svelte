@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Combobox, NumberInputZag } from '$lib/components/zag/index.js';
+	import { ComboboxZag, NumberInputZag } from '$lib/components/zag/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import { SuperDebug, superForm } from 'sveltekit-superforms';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { toast } from 'svelte-sonner';
 	import type { mReplenishInsertSchema } from '$lib/types/supabase.zod.schemas.js';
@@ -64,7 +64,7 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>Warehouse</Form.Label>
-							<Combobox
+							<ComboboxZag
 								{...props}
 								bind:value={$formData.m_warehouse_id}
 								items={warehouses}
@@ -78,7 +78,7 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>Source Warehouse</Form.Label>
-							<Combobox
+							<ComboboxZag
 								{...props}
 								bind:value={$formData.m_warehousesource_id}
 								items={warehouses}
@@ -136,9 +136,7 @@
 					disabled={!$formData.id}
 					class="w-full">Delete</Button
 				>
-				{#if dev}
-					<SuperDebug data={{ $formData, $errors }} />
-				{/if}
+				<SuperDebug data={{ $formData, $errors }} display={dev} />
 			</Sheet.Footer>
 		</form>
 	</Sheet.Content>
