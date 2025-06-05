@@ -33,20 +33,23 @@
 </script>
 
 <nav
-	class="flex h-full flex-col items-center gap-4 border-r border-surface-1 bg-well-1 px-2 sm:py-5"
+	class="border-surface-1 bg-well-1 flex h-full flex-col items-center gap-4 border-r px-2 sm:py-5"
 >
 	<Tooltip.Provider>
 		<Tooltip.Root>
 			<Tooltip.Trigger>
-				<Button
-					href="/dashboard"
-					variant="ghost"
-					size="icon"
-					class={`${activePath === '/dashboard' ? '' : 'text-muted-foreground'}`}
-				>
-					<PhLayout class="size-6" />
-					<span class="sr-only">Dashboard</span>
-				</Button>
+				{#snippet child({ props })}
+					<Button
+						{...props}
+						href="/dashboard"
+						variant="ghost"
+						size="icon"
+						class={`${activePath === '/dashboard' ? '' : 'text-muted-foreground'}`}
+					>
+						<PhLayout class="size-6" />
+						<span class="sr-only">Dashboard</span>
+					</Button>
+				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content side="right">Dashboard</Tooltip.Content>
 		</Tooltip.Root>
@@ -55,15 +58,18 @@
 	<Tooltip.Provider>
 		<Tooltip.Root>
 			<Tooltip.Trigger>
-				<Button
-					href={catalogHref}
-					variant="ghost"
-					size="icon"
-					class={`${activePath === '/catalog' ? '' : 'text-muted-foreground'}`}
-				>
-					<PhTag class="size-6" />
-					<span class="sr-only">Catalog</span>
-				</Button>
+				{#snippet child({ props })}
+					<Button
+						{...props}
+						href={catalogHref}
+						variant="ghost"
+						size="icon"
+						class={`${activePath === '/catalog' ? '' : 'text-muted-foreground'}`}
+					>
+						<PhTag class="size-6" />
+						<span class="sr-only">Catalog</span>
+					</Button>
+				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content side="right">Catalog</Tooltip.Content>
 		</Tooltip.Root>
@@ -98,15 +104,18 @@
 	<Tooltip.Provider>
 		<Tooltip.Root>
 			<Tooltip.Trigger>
-				<Button
-					href="/excel"
-					variant="ghost"
-					size="icon"
-					class={`${activePath === '/excel' ? '' : 'text-muted-foreground'}`}
-				>
-					<PhMicrosoftExcelLogo class="size-6" />
-					<span class="sr-only">Import Excel</span>
-				</Button>
+				{#snippet child({ props })}
+					<Button
+						{...props}
+						href="/excel"
+						variant="ghost"
+						size="icon"
+						class={`${activePath === '/excel' ? '' : 'text-muted-foreground'}`}
+					>
+						<PhMicrosoftExcelLogo class="size-6" />
+						<span class="sr-only">Import Excel</span>
+					</Button>
+				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content side="right">Import Excel</Tooltip.Content>
 		</Tooltip.Root>
@@ -115,15 +124,18 @@
 		<Tooltip.Provider>
 			<Tooltip.Root>
 				<Tooltip.Trigger>
-					<Button
-						href="/lab"
-						variant="ghost"
-						size="icon"
-						class={`${activePath === '/excel' ? '' : 'text-muted-foreground'}`}
-					>
-						<PhFlask class="size-6" />
-						<span class="sr-only">Laboratory</span>
-					</Button>
+					{#snippet child({ props })}
+						<Button
+							{...props}
+							href="/lab"
+							variant="ghost"
+							size="icon"
+							class={`${activePath === '/excel' ? '' : 'text-muted-foreground'}`}
+						>
+							<PhFlask class="size-6" />
+							<span class="sr-only">Laboratory</span>
+						</Button>
+					{/snippet}
 				</Tooltip.Trigger>
 				<Tooltip.Content side="right">Laboratory</Tooltip.Content>
 			</Tooltip.Root>

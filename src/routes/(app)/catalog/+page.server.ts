@@ -372,7 +372,7 @@ export const actions = {
 
 		const { data: mapChannel } = await supabase
 			.from('c_channel_map')
-			.select('entity_type, channel_code, reference_id')
+			.select('*')
 			.eq('c_channel_id', 1);
 
 		const { data: mapCategory } = await supabase
@@ -485,11 +485,11 @@ export const actions = {
 
 			// --- Collect Product Update ---
 			const uomID = mapChannel?.find(
-				(item) => item.channel_code === product.jedmere && item.entity_type === 'UoM'
-			)?.reference_id;
+				(item) => item.channel_code === product.jedmere && item.c_uom_id !== null
+			)?.c_uom_id;
 			const taxID = mapChannel?.find(
-				(item) => item.channel_code === product.porez && item.entity_type === 'TaxCategory'
-			)?.reference_id;
+				(item) => item.channel_code === product.porez && item.c_taxcategory_id !== null
+			)?.c_taxcategory_id;
 
 			const categoryID = mapCategory?.find(
 				(item) => Number(item.resource_id) === product.grupa
@@ -501,8 +501,8 @@ export const actions = {
 					name: product.naziv,
 					mpn: product.katbr ?? null,
 					m_product_category_id: categoryID,
-					c_uom_id: uomID,
-					c_taxcategory_id: taxID,
+					c_uom_id: uomID ?? undefined,
+					c_taxcategory_id: taxID ?? undefined,
 					unitsperpack: product.tpkolicina ?? 1
 				}
 			});
@@ -562,8 +562,8 @@ export const actions = {
 				for (const trstanje of product.trstanje) {
 					const warehouseID = mapChannel?.find(
 						(item) =>
-							item.channel_code === trstanje.sifobj.toString() && item.entity_type === 'Warehouse'
-					)?.reference_id;
+							item.channel_code === trstanje.sifobj.toString() && item.m_warehouse_id !== null
+					)?.m_warehouse_id;
 
 					if (!warehouseID) {
 						errors.push({
@@ -580,8 +580,7 @@ export const actions = {
 						m_product_id: productId,
 						warehouse_id: warehouseID,
 						qtyonhand: (trstanje.stanje ?? 0) - (trstanje.neprokkasa ?? 0),
-						// updated_at: new Date().toISOString(),
-						is_active: true // Default or from ERP?
+						is_active: true
 					};
 
 					if (existingStockSet.has(stockKey)) {

@@ -299,31 +299,43 @@ export type Database = {
       c_channel_map: {
         Row: {
           c_channel_id: number
+          c_taxcategory_id: number | null
+          c_uom_id: number | null
           channel_code: string
           created_at: string
           entity_type: Database["public"]["Enums"]["Entity"]
           id: number
           is_active: boolean
+          m_product_category_id: number | null
+          m_warehouse_id: number | null
           reference_id: number
           updated_at: string
         }
         Insert: {
           c_channel_id: number
+          c_taxcategory_id?: number | null
+          c_uom_id?: number | null
           channel_code: string
           created_at?: string
           entity_type?: Database["public"]["Enums"]["Entity"]
           id?: number
           is_active?: boolean
+          m_product_category_id?: number | null
+          m_warehouse_id?: number | null
           reference_id: number
           updated_at?: string
         }
         Update: {
           c_channel_id?: number
+          c_taxcategory_id?: number | null
+          c_uom_id?: number | null
           channel_code?: string
           created_at?: string
           entity_type?: Database["public"]["Enums"]["Entity"]
           id?: number
           is_active?: boolean
+          m_product_category_id?: number | null
+          m_warehouse_id?: number | null
           reference_id?: number
           updated_at?: string
         }
@@ -332,6 +344,30 @@ export type Database = {
             foreignKeyName: "c_channel_map_c_channel_id_fkey"
             columns: ["c_channel_id"]
             referencedRelation: "c_channel"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_channel_map_c_taxcategory_id_fkey"
+            columns: ["c_taxcategory_id"]
+            referencedRelation: "c_taxcategory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_channel_map_c_uom_id_fkey"
+            columns: ["c_uom_id"]
+            referencedRelation: "c_uom"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_channel_map_m_product_category_id_fkey"
+            columns: ["m_product_category_id"]
+            referencedRelation: "m_product_category"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "c_channel_map_m_warehouse_id_fkey"
+            columns: ["m_warehouse_id"]
+            referencedRelation: "m_warehouse"
             referencedColumns: ["id"]
           },
         ]

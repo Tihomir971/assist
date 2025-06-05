@@ -1,10 +1,8 @@
 <script lang="ts">
-	import { dev, browser } from '$app/environment';
+	import { dev } from '$app/environment';
 	import { page } from '$app/state';
 	// Superforms
-	import { SuperDebug, superForm } from 'sveltekit-superforms';
-	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { mProductCategoryInsertSchema } from '$lib/types/supabase.zod.schemas.js';
+	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { formatDate, formatDateTime } from '$lib/style/locale';
 	import { toast } from 'svelte-sonner';
 	import PhDotsThreeBold from '~icons/ph/dots-three-bold.js';
@@ -29,8 +27,6 @@
 	const superform = superForm(data.formCategory, {
 		resetForm: false,
 		onUpdated({ form }) {
-			console.log('form', form);
-
 			if (form.valid) {
 				toast.success('Category updated successfully', {
 					description: form.message || 'Your changes have been saved.'
@@ -120,7 +116,11 @@
 					</Form.Field>
 					<div class="flex flex-row-reverse items-center gap-2">
 						<Form.Button variant="default" disabled={!isTainted($tainted)}>Save</Form.Button>
-						<Button type="submit" formaction="?/categoryDelete" variant="destructive">Delete</Button
+						<Button
+							type="submit"
+							formaction="?/categoryDelete"
+							variant="destructive"
+							onclick={(e) => !confirm('Are you sure?') && e.preventDefault()}>Delete</Button
 						>
 					</div>
 				</Card.Content>

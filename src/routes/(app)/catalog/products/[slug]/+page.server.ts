@@ -4,7 +4,7 @@ import type { PageServerLoad } from './$types';
 import { ProductService } from '$lib/services/supabase/';
 
 import { message, superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
+import { zod, zod4 } from 'sveltekit-superforms/adapters';
 import type { ChartData } from './chart-types';
 import { connector } from '$lib/ky';
 import { mStorageonhandInsertSchemaАrray, productPackingInsertSchema } from './schema.js';
@@ -204,7 +204,7 @@ export const actions = {
 		return message(form, 'Barcode updated!');
 	},
 	productPackingDelete: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(deleteByIdSchema));
+		const form = await superValidate(request, zod4(deleteByIdSchema));
 		if (!form.valid) return fail(400, { form });
 
 		const { error } = await supabase.from('m_product_packing').delete().eq('id', form.data.id);
@@ -265,7 +265,7 @@ export const actions = {
 		return message(form, 'Barcode updated!');
 	},
 	mReplenishDelete: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(deleteByIdSchema));
+		const form = await superValidate(request, zod4(deleteByIdSchema));
 		if (!form.valid) return fail(400, { form });
 
 		const { error } = await supabase.from('m_replenish').delete().eq('id', form.data.id);
@@ -307,7 +307,7 @@ export const actions = {
 		return { form };
 	},
 	mProductPoDelete: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(deleteByIdSchema));
+		const form = await superValidate(request, zod4(deleteByIdSchema));
 		if (!form.valid) return fail(400, { form });
 
 		if (form.data.id) {

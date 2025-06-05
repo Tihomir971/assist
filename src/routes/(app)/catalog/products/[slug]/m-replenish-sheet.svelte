@@ -2,7 +2,7 @@
 	import { ComboboxZag, NumberInputZag } from '$lib/components/zag/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import { SuperDebug, superForm } from 'sveltekit-superforms';
+	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { toast } from 'svelte-sonner';
 	import type { mReplenishInsertSchema } from '$lib/types/supabase.zod.schemas.js';

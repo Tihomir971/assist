@@ -7,7 +7,7 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Label } from '$lib/components/ui/label';
 
-	import { SuperDebug } from 'sveltekit-superforms';
+	import SuperDebug from 'sveltekit-superforms';
 	import { formatDateTime } from '$lib/style/locale';
 	import { DateTime, type DateTimeMaybeValid } from 'luxon';
 	import Avatar from './Avatar.svelte';

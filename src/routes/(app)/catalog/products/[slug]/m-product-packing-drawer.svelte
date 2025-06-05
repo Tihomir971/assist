@@ -11,7 +11,7 @@
 	import { isValidGTIN } from '$lib/scripts/gtin';
 	import { invalidate } from '$app/navigation';
 	import { CheckboxZag, ComboboxZag, NumberInputZag } from '$lib/components/zag/index.js';
-	import { SuperDebug, superForm } from 'sveltekit-superforms';
+	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import { dev } from '$app/environment';
 

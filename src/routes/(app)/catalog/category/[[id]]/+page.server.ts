@@ -1,5 +1,5 @@
 import { message, superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
+import { zod, zod4 } from 'sveltekit-superforms/adapters';
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import {
@@ -89,7 +89,7 @@ export const actions = {
 	},
 	categoryDelete: async ({ request, locals: { supabase } }) => {
 		const formData = await request.formData();
-		const form = await superValidate(formData, zod(deleteByIdSchema));
+		const form = await superValidate(formData, zod4(deleteByIdSchema));
 		if (!form.valid) return fail(400, { form });
 		console.log('form.data.id', form.data.id, typeof form.data.id);
 
@@ -97,12 +97,11 @@ export const actions = {
 			.from('m_product_category')
 			.delete()
 			.eq('id', form.data.id);
-		console.log('delError', delError);
 
 		if (delError) {
 			return message(form, { message: delError });
 		}
-		return { form };
+		throw redirect(303, '/catalog');
 	},
 	priceRulesUpsert: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(priceRulesInsertSchema));
@@ -130,7 +129,7 @@ export const actions = {
 		}
 	},
 	priceRulesDelete: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(deleteByIdSchema));
+		const form = await superValidate(request, zod4(deleteByIdSchema));
 		if (!form.valid) return fail(400, { form });
 		const { error: deleteError } = await supabase
 			.from('price_rules')

@@ -97,28 +97,32 @@
 		}}
 	>
 		<ToggleGroup.Item value="sub">
-			<Tooltip.Provider>
-				<Tooltip.Root>
-					<Tooltip.Trigger>
-						<PhFolders />
-					</Tooltip.Trigger>
-					<Tooltip.Content>
-						<p>Show Subcategories</p>
-					</Tooltip.Content>
-				</Tooltip.Root>
-			</Tooltip.Provider>
+			{#snippet child({ props })}
+				<Tooltip.Provider {...props}>
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							<PhFolders />
+						</Tooltip.Trigger>
+						<Tooltip.Content>
+							<p>Show Subcategories</p>
+						</Tooltip.Content>
+					</Tooltip.Root>
+				</Tooltip.Provider>
+			{/snippet}
 		</ToggleGroup.Item>
 		<ToggleGroup.Item value="vat">
-			<Tooltip.Provider>
-				<Tooltip.Root>
-					<Tooltip.Trigger>
-						<PhLetterCircleV />
-					</Tooltip.Trigger>
-					<Tooltip.Content>
-						<p>Show VAT</p>
-					</Tooltip.Content>
-				</Tooltip.Root>
-			</Tooltip.Provider>
+			{#snippet child({ props })}
+				<Tooltip.Provider {...props}>
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							<PhLetterCircleV />
+						</Tooltip.Trigger>
+						<Tooltip.Content>
+							<p>Show VAT</p>
+						</Tooltip.Content>
+					</Tooltip.Root>
+				</Tooltip.Provider>
+			{/snippet}
 		</ToggleGroup.Item>
 	</ToggleGroup.Root>
 	<!-- 	<CheckboxZag
