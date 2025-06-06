@@ -1,8 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	// import '@fontsource-variable/nunito-sans';
 	import '@fontsource-variable/nunito';
-	// import '@fontsource-variable/oxanium';
 	import '@fontsource-variable/merriweather';
 	import '@fontsource-variable/fira-code';
 
