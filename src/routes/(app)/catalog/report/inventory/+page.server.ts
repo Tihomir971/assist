@@ -1,18 +1,20 @@
 import { error } from '@sveltejs/kit';
 import { findChildren } from '$lib/scripts/tree';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import type { PageServerLoad } from './$types';
 
 const searchParamsSchema = z.object({
 	warehouse: z.coerce.number().min(1, 'Warehouse is required'),
 	treeCategory: z.coerce.number().min(1, 'Category is required'),
-	includeOutOfStock: z.coerce
-		.boolean()
-		.transform((val) => val === true)
-		.default(false)
+	includeOutOfStock: z.stringbool()
 });
 
 export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
+	console.log(
+		"url.searchParams.get('includeOutOfStock')",
+		url.searchParams.get('includeOutOfStock')
+	);
+
 	const params = searchParamsSchema.safeParse({
 		warehouse: url.searchParams.get('warehouse'),
 		treeCategory: url.searchParams.get('treeCategory'),
@@ -20,10 +22,11 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 	});
 
 	if (!params.success) {
-		throw error(400, params.error.errors.map((e) => e.message).join(', '));
+		throw error(400, params.error.issues.map((e) => e.message).join(', '));
 	}
 
 	const { warehouse, treeCategory, includeOutOfStock } = params.data;
+	console.log('params.data', params.data);
 
 	const { data: categories } = await supabase
 		.from('m_product_category')

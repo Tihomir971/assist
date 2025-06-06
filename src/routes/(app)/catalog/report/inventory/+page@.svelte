@@ -122,11 +122,11 @@
 <style>
 	@media print {
 		@page {
-			margin: 1cm;
+			margin: 1cm 1cm 1.5cm 1cm;
 			size: portrait;
 			@bottom-center {
 				content: 'Page ' counter(page) ' of ' counter(pages);
-				padding-bottom: 1.5cm;
+				padding-bottom: 1cm;
 				font-size: 10pt;
 			}
 		}

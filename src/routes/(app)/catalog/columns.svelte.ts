@@ -147,13 +147,15 @@ export const columnDefs = [
 			return renderSnippet(rightAlignSnippet, {
 				value: formatNumber(cell.getValue(), { style: 'percent', fractionDigits: 0 })
 			});
-		}
+		},
+		enableSorting: false
 	}),
 	colHelp.accessor('unitsperpack', {
 		header: 'Pack',
 		cell: ({ cell }) => {
 			return renderSnippet(rightAlignSnippet, { value: cell.getValue() });
-		}
+		},
+		enableSorting: false
 	}),
 	colHelp.accessor('qtyWholesale', {
 		header: 'WH',
@@ -193,7 +195,8 @@ export const columnDefs = [
 				value: levelMax ?? '',
 				isDanger: levelMax - stock >= batch && batch !== 0 && levelMax > 0
 			});
-		}
+		},
+		enableSorting: false
 	}),
 	/* colHelp.accessor('pricePurchase', { header: 'Purchase' }), */
 	colHelp.accessor('pricePurchase', {

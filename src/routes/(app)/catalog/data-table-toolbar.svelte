@@ -6,7 +6,7 @@
 	//Components
 	import DataTableHeaderSync from './data-table-header-sync.svelte';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
@@ -80,80 +80,49 @@
 		oninput={handleSearch}
 		placeholder="Filter products..."
 	/>
-
-	<ToggleGroup.Root
-		value={toggleGroupValue}
-		variant="outline"
-		type="multiple"
-		onValueChange={(newValue) => {
-			const newUrl = new URL(page.url);
-			const flags = ['vat', 'sub'];
-			flags.forEach((key) => {
-				newValue.includes(key)
-					? newUrl.searchParams.set(key, 'true')
-					: newUrl.searchParams.delete(key);
-			});
-			goto(newUrl);
-		}}
-	>
-		<ToggleGroup.Item value="sub">
-			{#snippet child({ props })}
-				<Tooltip.Provider {...props}>
-					<Tooltip.Root>
-						<Tooltip.Trigger>
+	<Tooltip.Provider>
+		<ToggleGroup.Root
+			value={toggleGroupValue}
+			variant="outline"
+			type="multiple"
+			onValueChange={(newValue) => {
+				const newUrl = new URL(page.url);
+				const flags = ['vat', 'sub'];
+				flags.forEach((key) => {
+					newValue.includes(key)
+						? newUrl.searchParams.set(key, 'true')
+						: newUrl.searchParams.delete(key);
+				});
+				goto(newUrl);
+			}}
+		>
+			<Tooltip.Root>
+				<Tooltip.Trigger>
+					{#snippet child({ props })}
+						<ToggleGroup.Item value="sub" aria-label="Toggle Subcategories" {...props}>
 							<PhFolders />
-						</Tooltip.Trigger>
-						<Tooltip.Content>
-							<p>Show Subcategories</p>
-						</Tooltip.Content>
-					</Tooltip.Root>
-				</Tooltip.Provider>
-			{/snippet}
-		</ToggleGroup.Item>
-		<ToggleGroup.Item value="vat">
-			{#snippet child({ props })}
-				<Tooltip.Provider {...props}>
-					<Tooltip.Root>
-						<Tooltip.Trigger>
+						</ToggleGroup.Item>
+					{/snippet}
+				</Tooltip.Trigger>
+				<Tooltip.Content>
+					<p>Show Subcategories</p>
+				</Tooltip.Content>
+			</Tooltip.Root>
+			<Tooltip.Root>
+				<Tooltip.Trigger>
+					{#snippet child({ props })}
+						<ToggleGroup.Item value="vat" aria-label="Toggle VAT" {...props}>
 							<PhLetterCircleV />
-						</Tooltip.Trigger>
-						<Tooltip.Content>
-							<p>Show VAT</p>
-						</Tooltip.Content>
-					</Tooltip.Root>
-				</Tooltip.Provider>
-			{/snippet}
-		</ToggleGroup.Item>
-	</ToggleGroup.Root>
-	<!-- 	<CheckboxZag
-			id="show-subcategories"
-			checked={checkedSubcategories}
-			label="Subcategories"
-			onCheckedChange={(details) => {
-				console.log(details);
+						</ToggleGroup.Item>
+					{/snippet}
+				</Tooltip.Trigger>
+				<Tooltip.Content>
+					<p>Show VAT</p>
+				</Tooltip.Content>
+			</Tooltip.Root>
+		</ToggleGroup.Root>
+	</Tooltip.Provider>
 
-				const newUrl = new URL(page.url);
-				details.checked
-					? newUrl?.searchParams?.set('sub', 'true')
-					: newUrl?.searchParams?.delete('sub');
-				goto(newUrl);
-			}}
-		/> -->
-
-	<!-- 	<div class="flex w-full items-center space-x-2">
-		<CheckboxZag
-			id="show-vat"
-			checked={checkedVat}
-			label="Show VAT"
-			onCheckedChange={(details) => {
-				const newUrl = new URL(page.url);
-				details.checked
-					? newUrl?.searchParams?.set('vat', 'true')
-					: newUrl?.searchParams?.delete('vat');
-				goto(newUrl);
-			}}
-		/>
-	</div> -->
 	<Button variant="outline" onclick={addToCart}>Add to Cart</Button>
 	<Button variant="outline" onclick={handleSalesGraphClick}>Sales Graph</Button>
 	<SelectZag
