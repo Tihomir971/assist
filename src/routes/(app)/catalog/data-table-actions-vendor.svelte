@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	import { NumberFormatter } from '$lib/scripts/NumberFormatter';
+	import { NumberFormatter } from '$lib/scripts/intl';
 	import { cn } from '$lib/utils';
 
 	type Props = {

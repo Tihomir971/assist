@@ -11,7 +11,7 @@
 	import { DateTime, type DateTimeMaybeValid } from 'luxon';
 	import Avatar from './Avatar.svelte';
 	import { dev } from '$app/environment';
-	import { DateHelper } from '$lib/scripts/DateHelper';
+	import { DateHelper } from '$lib/scripts/intl';
 
 	let { data } = $props();
 	const superform = superForm(data.form, {

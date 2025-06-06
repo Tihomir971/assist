@@ -5,7 +5,7 @@ import DataTableTitleCell from './data-table-title-cell.svelte';
 import DataTableActionsVendor from './data-table-actions-vendor.svelte';
 import { createRawSnippet } from 'svelte';
 import type { TablesUpdate } from '$lib/types/supabase.types';
-import { NumberFormatter } from '$lib/scripts/NumberFormatter';
+import { NumberFormatter } from '$lib/scripts/intl';
 
 export interface Warehouse {
 	value: string;
@@ -199,7 +199,7 @@ export const columnDefs = [
 				isDanger: levelMax - stock >= batch && batch !== 0 && levelMax > 0
 			});
 		},
-		enableSorting: false
+		enableSorting: true
 	}),
 	/* colHelp.accessor('pricePurchase', { header: 'Purchase' }), */
 	colHelp.accessor('pricePurchase', {

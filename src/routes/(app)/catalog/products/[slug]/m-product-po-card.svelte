@@ -13,8 +13,7 @@
 	import ProductPoSheet from './m-product-po-sheet.svelte';
 	import type { z } from 'zod';
 	import type { mProductPoInsertSchema } from '$lib/types/supabase.zod.schemas';
-	import { DateHelper } from '$lib/scripts/DateHelper';
-	import { NumberFormatter } from '$lib/scripts/NumberFormatter';
+	import { DateHelper, NumberFormatter } from '$lib/scripts/intl';
 
 	type Schema = z.infer<typeof mProductPoInsertSchema>;
 	type Props = {

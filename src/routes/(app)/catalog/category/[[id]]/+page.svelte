@@ -18,7 +18,7 @@
 
 	import { getLabelByValue } from '$lib/scripts/custom';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import { DateHelper } from '$lib/scripts/DateHelper';
+	import { DateHelper } from '$lib/scripts/intl';
 
 	const dateHelper = new DateHelper();
 

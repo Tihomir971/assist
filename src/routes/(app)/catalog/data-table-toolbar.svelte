@@ -79,100 +79,103 @@
 		value={globalFilterTableState ?? ''}
 		oninput={handleSearch}
 		placeholder="Filter products..."
+		class="max-w-sm"
 	/>
-	<Tooltip.Provider>
-		<ToggleGroup.Root
-			value={toggleGroupValue}
-			variant="outline"
-			type="multiple"
-			onValueChange={(newValue) => {
+	<div class="flex gap-4">
+		<Tooltip.Provider>
+			<ToggleGroup.Root
+				value={toggleGroupValue}
+				variant="outline"
+				type="multiple"
+				onValueChange={(newValue) => {
+					const newUrl = new URL(page.url);
+					const flags = ['vat', 'sub'];
+					flags.forEach((key) => {
+						newValue.includes(key)
+							? newUrl.searchParams.set(key, 'true')
+							: newUrl.searchParams.delete(key);
+					});
+					goto(newUrl);
+				}}
+			>
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						{#snippet child({ props })}
+							<ToggleGroup.Item value="sub" aria-label="Toggle Subcategories" {...props}>
+								<PhFolders />
+							</ToggleGroup.Item>
+						{/snippet}
+					</Tooltip.Trigger>
+					<Tooltip.Content>
+						<p>Show Subcategories</p>
+					</Tooltip.Content>
+				</Tooltip.Root>
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						{#snippet child({ props })}
+							<ToggleGroup.Item value="vat" aria-label="Toggle VAT" {...props}>
+								<PhLetterCircleV />
+							</ToggleGroup.Item>
+						{/snippet}
+					</Tooltip.Trigger>
+					<Tooltip.Content>
+						<p>Show VAT</p>
+					</Tooltip.Content>
+				</Tooltip.Root>
+			</ToggleGroup.Root>
+		</Tooltip.Provider>
+
+		<Button variant="outline" onclick={addToCart}>Add to Cart</Button>
+		<Button variant="outline" onclick={handleSalesGraphClick}>Sales Graph</Button>
+		<SelectZag
+			items={reports}
+			bind:value={inputValueReport}
+			placeholder="Select report"
+			onValueChange={(details) => {
+				const url = new URL(page.url);
+				if (details.value.length === 0) {
+					url?.searchParams?.delete('report');
+					url?.searchParams?.delete('sub');
+				} else {
+					url?.searchParams?.set('report', details.value[0]);
+				}
+				goto(url);
+			}}
+		/>
+		<SelectZag
+			value={inputValueWarehouse}
+			items={warehouses}
+			onValueChange={(details) => {
+				if (details.value.length === 0) {
+					return;
+				}
 				const newUrl = new URL(page.url);
-				const flags = ['vat', 'sub'];
-				flags.forEach((key) => {
-					newValue.includes(key)
-						? newUrl.searchParams.set(key, 'true')
-						: newUrl.searchParams.delete(key);
-				});
+				newUrl?.searchParams?.set('wh', details.value[0]);
 				goto(newUrl);
 			}}
-		>
-			<Tooltip.Root>
-				<Tooltip.Trigger>
-					{#snippet child({ props })}
-						<ToggleGroup.Item value="sub" aria-label="Toggle Subcategories" {...props}>
-							<PhFolders />
-						</ToggleGroup.Item>
-					{/snippet}
-				</Tooltip.Trigger>
-				<Tooltip.Content>
-					<p>Show Subcategories</p>
-				</Tooltip.Content>
-			</Tooltip.Root>
-			<Tooltip.Root>
-				<Tooltip.Trigger>
-					{#snippet child({ props })}
-						<ToggleGroup.Item value="vat" aria-label="Toggle VAT" {...props}>
-							<PhLetterCircleV />
-						</ToggleGroup.Item>
-					{/snippet}
-				</Tooltip.Trigger>
-				<Tooltip.Content>
-					<p>Show VAT</p>
-				</Tooltip.Content>
-			</Tooltip.Root>
-		</ToggleGroup.Root>
-	</Tooltip.Provider>
+		/>
 
-	<Button variant="outline" onclick={addToCart}>Add to Cart</Button>
-	<Button variant="outline" onclick={handleSalesGraphClick}>Sales Graph</Button>
-	<SelectZag
-		items={reports}
-		bind:value={inputValueReport}
-		placeholder="Select report"
-		onValueChange={(details) => {
-			const url = new URL(page.url);
-			if (details.value.length === 0) {
-				url?.searchParams?.delete('report');
-				url?.searchParams?.delete('sub');
-			} else {
-				url?.searchParams?.set('report', details.value[0]);
-			}
-			goto(url);
-		}}
-	/>
-	<SelectZag
-		value={inputValueWarehouse}
-		items={warehouses}
-		onValueChange={(details) => {
-			if (details.value.length === 0) {
-				return;
-			}
-			const newUrl = new URL(page.url);
-			newUrl?.searchParams?.set('wh', details.value[0]);
-			goto(newUrl);
-		}}
-	/>
-
-	<DataTableHeaderSync bind:rowSelectionState />
-	<DropdownMenu.Root>
-		<DropdownMenu.Trigger>
-			{#snippet child({ props })}
-				<Button {...props} variant="outline">Columns<PhCaretDown class="ml-2" /></Button>
-			{/snippet}
-		</DropdownMenu.Trigger>
-		<DropdownMenu.Content align="end">
-			{#each table.getAllColumns().filter((col) => col.getCanHide()) as column (column.id)}
-				<DropdownMenu.CheckboxItem
-					class="capitalize"
-					closeOnSelect={false}
-					checked={column.getIsVisible()}
-					onCheckedChange={(value) => {
-						column.toggleVisibility(!!value);
-					}}
-				>
-					{column.id}
-				</DropdownMenu.CheckboxItem>
-			{/each}
-		</DropdownMenu.Content>
-	</DropdownMenu.Root>
+		<DataTableHeaderSync bind:rowSelectionState />
+		<DropdownMenu.Root>
+			<DropdownMenu.Trigger>
+				{#snippet child({ props })}
+					<Button {...props} variant="outline">Columns<PhCaretDown class="ml-2" /></Button>
+				{/snippet}
+			</DropdownMenu.Trigger>
+			<DropdownMenu.Content align="end">
+				{#each table.getAllColumns().filter((col) => col.getCanHide()) as column (column.id)}
+					<DropdownMenu.CheckboxItem
+						class="capitalize"
+						closeOnSelect={false}
+						checked={column.getIsVisible()}
+						onCheckedChange={(value) => {
+							column.toggleVisibility(!!value);
+						}}
+					>
+						{column.id}
+					</DropdownMenu.CheckboxItem>
+				{/each}
+			</DropdownMenu.Content>
+		</DropdownMenu.Root>
+	</div>
 </div>

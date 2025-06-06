@@ -10,7 +10,7 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { DateHelper } from '$lib/scripts/DateHelper.js';
+	import { DateHelper } from '$lib/scripts/intl';
 
 	let { data } = $props();
 
