@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { superForm } from 'sveltekit-superforms/client';
 	import { Button } from '$lib/components/ui/button';
-	import * as Card from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import * as Table from '$lib/components/ui/table/index.js';
-	import { superForm } from 'sveltekit-superforms/client';
+	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import * as Select from '$lib/components/ui/select/index.js';
+	import * as Form from '$lib/components/ui/form/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
+
 	import { generateCodeFromName } from '$lib/scripts/code-name-generation.js';
-	import InputTextForm from '$lib/components/my/input/input-text-form.svelte';
 	import { SelectZag } from '$lib/components/zag/index.js';
 
 	let { data } = $props();
@@ -24,7 +24,7 @@
 	const superformCreate = superForm(data.createForm, {
 		resetForm: true
 	});
-	const { form: createForm, enhance: createEnhance, errors: createErrors } = superformCreate;
+	const { form: createFormData, enhance: createEnhance, errors: createErrors } = superformCreate;
 
 	// Delete form
 	const deleteFormObj = superForm(data.deleteForm, {
@@ -71,9 +71,9 @@
 	}
 	$effect(() => {
 		if (createDialogOpen) {
-			const newCode = generateCodeFromName($createForm.name);
-			if (newCode !== $createForm.code) {
-				$createForm.code = newCode;
+			const newCode = generateCodeFromName($createFormData.name);
+			if (newCode !== $createFormData.code) {
+				$createFormData.code = newCode;
 			}
 		}
 	});
@@ -218,18 +218,30 @@
 
 		<form method="POST" action="?/create" use:createEnhance>
 			<div class="grid gap-4 py-4">
-				<InputTextForm
-					superform={superformCreate}
-					field="name"
-					label="Name"
-					placeholder="Attribute Group Name"
-				/>
-				<InputTextForm
-					superform={superformCreate}
-					field="code"
-					label="Code"
-					placeholder="Attribute Group Code"
-				/>
+				<Form.Field form={superformCreate} name="name">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Name</Form.Label>
+							<Input
+								{...props}
+								bind:value={$createFormData.name}
+								placeholder="Attribute Group Name"
+							/>
+						{/snippet}
+					</Form.Control>
+				</Form.Field>
+				<Form.Field form={superformCreate} name="code">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Code</Form.Label>
+							<Input
+								{...props}
+								bind:value={$createFormData.code}
+								placeholder="Attribute Group Code"
+							/>
+						{/snippet}
+					</Form.Control>
+				</Form.Field>
 			</div>
 
 			<Dialog.Footer>

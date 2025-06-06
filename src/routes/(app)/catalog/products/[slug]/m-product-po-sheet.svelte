@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { InputTextForm, MyUrlInput } from '$lib/components/my/input/index.js';
+	import type { SuperValidated } from 'sveltekit-superforms';
 	import { ComboboxZag, NumberInputZag } from '$lib/components/zag/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
-	import type { SuperValidated } from 'sveltekit-superforms';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+
 	import { toast } from 'svelte-sonner';
 	import { z } from 'zod';
 	import type { mProductPoInsertSchema } from '$lib/types/supabase.zod.schemas.js';
@@ -26,8 +26,7 @@
 		onUpdated({ form }) {
 			if (form.valid) {
 				toast.success(form.message || 'Vendor PO operation successful');
-				isSheetOpen = false; // Close the sheet after successful submission
-				// invalidate('catalog:products');
+				isSheetOpen = false;
 			} else {
 				console.error('Form is not valid', form.errors, form.message);
 				toast.error(form.message || 'Vendor PO operation failed');
@@ -55,7 +54,15 @@
 			<div class="grid flex-1 auto-rows-min gap-3 px-4">
 				<input type="hidden" name="id" value={$form.id?.toString() || ''} />
 				<input type="hidden" name="m_product_id" value={$form.m_product_id?.toString() || ''} />
-				<InputTextForm {superform} field="vendorproductno" label="Vendor PN" />
+				<Form.Field form={superform} name="vendorproductno">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Name</Form.Label>
+							<Input {...props} bind:value={$form.vendorproductno} placeholder="Vendor PN" />
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
 				<Form.Field form={superform} name="c_bpartner_id">
 					<Form.Control>
 						{#snippet children({ props })}
@@ -96,7 +103,14 @@
 						{/snippet}
 					</Form.Control>
 				</Form.Field>
-				<MyUrlInput name="url" bind:value={$form.url} label="URL" />
+				<Form.Field form={superform} name="url">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>URL</Form.Label>
+							<Input {...props} type="url" bind:value={$form.url} />
+						{/snippet}
+					</Form.Control>
+				</Form.Field>
 			</div>
 			<Sheet.Footer>
 				<Button type="submit" variant="default" class="w-full">Save</Button>

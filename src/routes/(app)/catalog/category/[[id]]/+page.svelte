@@ -16,7 +16,6 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { CheckboxZag, ComboboxZag, SwitchZag } from '$lib/components/zag/index.js';
-	import InputTextForm from '$lib/components/my/input/input-text-form.svelte';
 
 	import { getLabelByValue } from '$lib/scripts/custom';
 
@@ -66,7 +65,15 @@
 				</Card.Header>
 				<Card.Content class="flex w-full flex-col space-y-4">
 					<input type="hidden" name="id" value={$formData.id} />
-					<InputTextForm {superform} field="name" label="Name" placeholder="Category Name" />
+					<Form.Field form={superform} name="name">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Name</Form.Label>
+								<Input {...props} bind:value={$formData.name} placeholder="Category Name" />
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
 					<div class="flex w-full items-center space-x-3">
 						<Form.Field form={superform} name="is_active">
 							<Form.Control>

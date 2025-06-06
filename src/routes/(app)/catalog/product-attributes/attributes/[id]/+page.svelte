@@ -5,10 +5,11 @@
 	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import * as Select from '$lib/components/ui/select/index.js';
+	import * as Form from '$lib/components/ui/form/index.js';
+
 	import { superForm } from 'sveltekit-superforms/client';
 	import { Separator } from '$lib/components/ui/separator';
 	import type { Enums } from '$lib/types/supabase.types.js';
-	import { InputTextForm } from '$lib/components/my/input';
 	import { CheckboxZag } from '$lib/components/zag/index.js';
 
 	const { data } = $props();
@@ -94,20 +95,24 @@
 				<!-- Basic Information -->
 				<div class="grid gap-6">
 					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-						<InputTextForm
-							{superform}
-							field="name"
-							label="Name"
-							placeholder="Attribute Name"
-							required
-						/>
-						<InputTextForm
-							{superform}
-							field="code"
-							label="Code"
-							placeholder="Attribute Code"
-							required
-						/>
+						<Form.Field form={superform} name="name">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Name</Form.Label>
+									<Input {...props} bind:value={$form.name} placeholder="Attribute Name" />
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+						<Form.Field form={superform} name="code">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Code</Form.Label>
+									<Input {...props} bind:value={$form.code} placeholder="Attribute Code Name" />
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
 					</div>
 
 					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">

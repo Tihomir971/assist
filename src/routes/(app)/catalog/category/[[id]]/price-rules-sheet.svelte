@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { InputTextForm } from '$lib/components/my/input/index.js';
 	import { ComboboxZag, NumberInputZag } from '$lib/components/zag/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';

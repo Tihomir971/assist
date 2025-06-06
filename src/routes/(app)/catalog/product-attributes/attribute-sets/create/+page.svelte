@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import * as Card from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Form from '$lib/components/ui/form/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { Separator } from '$lib/components/ui/separator';
-	import { InputTextForm } from '$lib/components/my/input';
 	import { CheckboxZag } from '$lib/components/zag/index.js';
 
 	const { data } = $props();
@@ -121,25 +120,41 @@
 				<!-- Basic Information -->
 				<div class="grid gap-6">
 					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-						<InputTextForm
-							{superform}
-							field="name"
-							label="Name"
-							placeholder="Attribute Set Name"
-							required
-						/>
-						<InputTextForm
-							{superform}
-							field="code"
-							label="Code"
-							placeholder="Attribute Set Code"
-							required
-						/>
+						<Form.Field form={superform} name="name">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Name</Form.Label>
+									<Input {...props} bind:value={$form.name} placeholder="Attribute Set Name" />
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+						<Form.Field form={superform} name="code">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Code</Form.Label>
+									<Input {...props} bind:value={$form.code} placeholder="Attribute Set Code" />
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
 					</div>
 
 					<div class="grid gap-2">
-						<Label for="description">Description</Label>
-						<Textarea id="description" name="description" bind:value={$form.description} rows={3} />
+						<Form.Field form={superform} name="description">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Description</Form.Label>
+									<Textarea
+										{...props}
+										bind:value={$form.description}
+										rows={3}
+										placeholder="Attribute Set Code"
+									/>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
 						{#if $errors.description}
 							<p class="text-red-500">{$errors.description}</p>
 						{/if}

@@ -22,8 +22,6 @@
 	import ProductPOCard from './m-product-po-card.svelte';
 	import ReplenishCard from './m-replenish-card.svelte';
 	import StorageOnHandCard from './m-storageonhand-card.svelte';
-	import MyUrlInput from '$lib/components/my/input/input-url.svelte';
-	import { InputTextForm } from '$lib/components/my/input';
 	import { ComboboxZag, NumberInputZag, SwitchZag } from '$lib/components/zag/index.js';
 	import { mProductInsertSchema } from '$lib/types/supabase.zod.schemas';
 	import { page } from '$app/state';

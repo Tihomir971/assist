@@ -11,7 +11,6 @@
 	import { formatDateTime } from '$lib/style/locale';
 	import { DateTime, type DateTimeMaybeValid } from 'luxon';
 	import Avatar from './Avatar.svelte';
-	import { InputTextForm } from '$lib/components/my/input';
 	import { dev } from '$app/environment';
 
 	let { data } = $props();
@@ -35,8 +34,26 @@
 		<Card.Content>
 			<form method="POST" use:enhance>
 				<div class="space-y-2">
-					<InputTextForm {superform} field="username" label="Username" />
-					<InputTextForm {superform} field="full_name" label="Full name" />
+					<Form.Field form={superform} name="username">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Username</Form.Label>
+								<Input {...props} bind:value={$formData.username} />
+							{/snippet}
+						</Form.Control>
+						<Form.Description />
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field form={superform} name="full_name">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Full name</Form.Label>
+								<Input {...props} bind:value={$formData.full_name} />
+							{/snippet}
+						</Form.Control>
+						<Form.Description />
+						<Form.FieldErrors />
+					</Form.Field>
 
 					<Form.Field form={superform} name="email">
 						<Form.Control>

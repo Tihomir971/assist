@@ -1,11 +1,11 @@
 <script lang="ts">
-	import InputTextForm from '$lib/components/my/input/input-text-form.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { superForm } from 'sveltekit-superforms/client';
+	import * as Form from '$lib/components/ui/form/index.js';
 
 	let { data } = $props();
 
@@ -41,7 +41,15 @@
 				<input type="hidden" name="id" value={$form.id} />
 
 				<div class="grid gap-6">
-					<InputTextForm {superform} field="name" label="Name" placeholder="Attribute Group Name" />
+					<Form.Field form={superform} name="name">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Name</Form.Label>
+								<Input {...props} bind:value={$form.name} placeholder="Attribute Group Name" />
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
 
 					<div class="flex items-center gap-2">
 						<Switch

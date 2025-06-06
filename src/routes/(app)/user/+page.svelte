@@ -4,7 +4,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '$lib/components/ui/card';
-	import { InputTextForm } from '$lib/components/my/input/index.js';
+	import * as Form from '$lib/components/ui/form/index.js';
 
 	let { data } = $props();
 	const superform = superForm(data.form);
@@ -18,7 +18,14 @@
 	<CardContent>
 		<form method="post" use:enhance>
 			<div class="space-y-4">
-				<InputTextForm {superform} field="email" label="Email" placeholder="Email" />
+				<Form.Field form={superform} name="email">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Email</Form.Label>
+							<Input {...props} type="email" bind:value={$form.email} />
+						{/snippet}
+					</Form.Control>
+				</Form.Field>
 
 				<div>
 					<Label for="full_name">Full Name</Label>
