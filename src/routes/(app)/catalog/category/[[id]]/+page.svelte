@@ -3,7 +3,6 @@
 	import { page } from '$app/state';
 	// Superforms
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
-	import { formatDate, formatDateTime } from '$lib/style/locale';
 	import { toast } from 'svelte-sonner';
 	import PhDotsThreeBold from '~icons/ph/dots-three-bold.js';
 	// Components
@@ -18,6 +17,10 @@
 	import { CheckboxZag, ComboboxZag, SwitchZag } from '$lib/components/zag/index.js';
 
 	import { getLabelByValue } from '$lib/scripts/custom';
+	import { Label } from '$lib/components/ui/label/index.js';
+	import { DateHelper } from '$lib/scripts/DateHelper';
+
+	const dateHelper = new DateHelper();
 
 	let { data } = $props();
 	data.formPriceRules.data.m_product_category_id = data.formCategory.data.id;
@@ -144,17 +147,22 @@
 					<Input name="id" id="id" value={$formData.id} readonly />
 				</div>
 				<div class="grid grid-cols-[1fr_2fr] items-center">
-					<label for="created">Created</label>
+					<Label for="created">Created</Label>
 					<Input
 						id="created"
-						type="text"
-						value={formatDateTime($formData.created_at as string)}
+						type="datetime"
+						value={dateHelper.format($formData.created_at)}
 						readonly
 					/>
 				</div>
 				<div class="grid grid-cols-[1fr_2fr] items-center">
-					<label for="updated">Updated</label>
-					<Input id="updated" type="text" value={formatDateTime($formData.updated_at)} readonly />
+					<Label for="updated">Updated</Label>
+					<Input
+						id="updated"
+						type="datetime"
+						value={dateHelper.format($formData.updated_at)}
+						readonly
+					/>
 				</div>
 			</Card.Content>
 		</Card.Root>
@@ -195,8 +203,8 @@
 							<Table.Cell><CheckboxZag checked={row.is_active} disabled /></Table.Cell>
 							<Table.Cell>{row.m_attribute_id}</Table.Cell>
 							<Table.Cell>{getLabelByValue(row.price_formula_id, data.priceFormulas)}</Table.Cell>
-							<Table.Cell>{formatDate(row.created_at)}</Table.Cell>
-							<Table.Cell>{formatDate(row.updated_at)}</Table.Cell>
+							<Table.Cell>{dateHelper.format(row.created_at)}</Table.Cell>
+							<Table.Cell>{dateHelper.format(row.updated_at)}</Table.Cell>
 							<Table.Cell>
 								<Button
 									variant="ghost"

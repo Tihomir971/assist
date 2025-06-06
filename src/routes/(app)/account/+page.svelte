@@ -8,10 +8,10 @@
 	import { Label } from '$lib/components/ui/label';
 
 	import SuperDebug from 'sveltekit-superforms';
-	import { formatDateTime } from '$lib/style/locale';
 	import { DateTime, type DateTimeMaybeValid } from 'luxon';
 	import Avatar from './Avatar.svelte';
 	import { dev } from '$app/environment';
+	import { DateHelper } from '$lib/scripts/DateHelper';
 
 	let { data } = $props();
 	const superform = superForm(data.form, {
@@ -20,6 +20,7 @@
 
 	const { form: formData, enhance, errors } = superform;
 	let valueCreated = $state<DateTimeMaybeValid>();
+	const dateHelper = new DateHelper();
 
 	$effect(() => {
 		valueCreated = $formData.created_at ? DateTime.fromISO($formData.created_at) : undefined;
@@ -78,7 +79,7 @@
 					</Form.Field>
 					<div>
 						<Label>Updated</Label>
-						<Input value={formatDateTime($formData.updated_at)} readonly />
+						<Input value={dateHelper.format($formData.updated_at)} readonly />
 					</div>
 				</div>
 			</form>

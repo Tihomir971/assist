@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	import { formatNumber } from '$lib/style/locale';
+	import { NumberFormatter } from '$lib/scripts/NumberFormatter';
 	import { cn } from '$lib/utils';
 
 	type Props = {
@@ -16,6 +16,7 @@
 	};
 	let { value, iscustomer, priceMarket, isDanger }: Props = $props();
 
+	const numberFormatter = new NumberFormatter();
 	function calculatePriceWithTax(price: number | null, tax: number | null): number | null {
 		if (price === null || tax === null) return null;
 		return price * (1 + tax);
@@ -51,10 +52,14 @@
 					<div class="grid grid-cols-[1fr_auto_auto] gap-2 py-1">
 						<div>{item.name}</div>
 						<div class="w-[80px] text-right">
-							{formatNumber(item.pricelist) ?? '-'}
+							{numberFormatter.formatNumber(item.pricelist, {
+								fractionDigits: 2
+							}) ?? '-'}
 						</div>
 						<div class="w-[80px] text-right">
-							{formatNumber(calculatePriceWithTax(item.pricelist, item.tax)) ?? '-'}
+							{numberFormatter.formatNumber(calculatePriceWithTax(item.pricelist, item.tax), {
+								fractionDigits: 2
+							}) ?? '-'}
 						</div>
 					</div>
 				{/each}

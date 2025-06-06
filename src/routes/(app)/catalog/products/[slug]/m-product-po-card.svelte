@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { formatDateTime, formatNumber } from '$lib/style/locale';
 	import { type SuperValidated } from 'sveltekit-superforms';
 
 	import { toast } from 'svelte-sonner';
@@ -14,6 +13,9 @@
 	import ProductPoSheet from './m-product-po-sheet.svelte';
 	import type { z } from 'zod';
 	import type { mProductPoInsertSchema } from '$lib/types/supabase.zod.schemas';
+	import { DateHelper } from '$lib/scripts/DateHelper';
+	import { NumberFormatter } from '$lib/scripts/NumberFormatter';
+
 	type Schema = z.infer<typeof mProductPoInsertSchema>;
 	type Props = {
 		validatedForm: SuperValidated<Schema>;
@@ -26,6 +28,9 @@
 	};
 
 	let data: Props = $props();
+
+	const dateHelper = new DateHelper();
+	const numberFormatter = new NumberFormatter();
 
 	function selectedPartnerLabel(value: number | null | undefined): string {
 		if (value === null || value === undefined) return '';
@@ -62,7 +67,7 @@
 				<Table.Row>
 					<Table.Head>Partner</Table.Head>
 					<Table.Head>vendorproductno</Table.Head>
-					<Table.Head class="text-right">order_min</Table.Head>
+					<Table.Head class="text-right">MOQ</Table.Head>
 					<Table.Head class="text-right">pricelist</Table.Head>
 					<Table.Head class="text-right">From</Table.Head>
 					<Table.Head class="text-right">To</Table.Head>
@@ -79,12 +84,14 @@
 							{selectedPartnerLabel(purchases.c_bpartner_id)}
 						</Table.Cell>
 						<Table.Cell>{purchases.vendorproductno}</Table.Cell>
-						<Table.Cell class="text-right"
-							>{formatNumber(purchases.order_min, { fractionDigits: 0 })}</Table.Cell
-						>
-						<Table.Cell class="text-right">{formatNumber(purchases.pricelist)}</Table.Cell>
-						<Table.Cell class="text-right">{formatDateTime(purchases.valid_from)}</Table.Cell>
-						<Table.Cell class="text-right">{formatDateTime(purchases.valid_to)}</Table.Cell>
+						<Table.Cell class="text-right">
+							{numberFormatter.formatNumber(purchases.order_min, { fractionDigits: 0 })}
+						</Table.Cell>
+						<Table.Cell class="text-right">
+							{numberFormatter.formatNumber(purchases.pricelist)}
+						</Table.Cell>
+						<Table.Cell class="text-right">{dateHelper.format(purchases.valid_from)}</Table.Cell>
+						<Table.Cell class="text-right">{dateHelper.format(purchases.valid_to)}</Table.Cell>
 						<Table.Cell>
 							<Button
 								variant="ghost"
@@ -94,9 +101,7 @@
 								disabled={!purchases.url}><PhArrowSquareOut /></Button
 							>
 						</Table.Cell>
-						<Table.Cell class="text-right"
-							>{formatDateTime(purchases.updated_at as string)}</Table.Cell
-						>
+						<Table.Cell class="text-right">{dateHelper.format(purchases.updated_at)}</Table.Cell>
 						<Table.Cell>
 							<Button
 								variant="ghost"

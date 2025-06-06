@@ -10,9 +10,11 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { formatDate } from '$lib/style/locale.js';
+	import { DateHelper } from '$lib/scripts/DateHelper.js';
 
 	let { data } = $props();
+
+	const dateHelper = new DateHelper();
 
 	let pricelistVersions = $state<Tables<'m_pricelist_version'>[]>([]);
 	let productPrices = $state<Tables<'m_productprice'>[]>([]);
@@ -173,8 +175,8 @@
 									<TableShow.Cell>{version.name}</TableShow.Cell>
 									<TableShow.Cell>
 										<input
-											type="text"
-											value={formatDate(version.validfrom)}
+											type="datetime"
+											value={dateHelper.format(version.validfrom)}
 											onchange={(e) =>
 												updateVersionDate(version, 'validfrom', e.currentTarget.value)}
 											placeholder="DD/MM/YYYY"
@@ -182,8 +184,8 @@
 									</TableShow.Cell>
 									<TableShow.Cell>
 										<input
-											type="text"
-											value={formatDate(version.validto)}
+											type="datetime"
+											value={dateHelper.format(version.validto)}
 											onchange={(e) => updateVersionDate(version, 'validto', e.currentTarget.value)}
 											placeholder="DD/MM/YYYY"
 										/>

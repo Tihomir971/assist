@@ -1,4 +1,3 @@
-import { formatNumber } from '$lib/style/locale';
 import DataTableActions from './data-table-actions.svelte';
 import { createColumnHelper, renderComponent, renderSnippet } from '$lib/components/walker-tx';
 import TableCheckbox from '$lib/components/walker-tx/table-checkbox.svelte';
@@ -6,6 +5,7 @@ import DataTableTitleCell from './data-table-title-cell.svelte';
 import DataTableActionsVendor from './data-table-actions-vendor.svelte';
 import { createRawSnippet } from 'svelte';
 import type { TablesUpdate } from '$lib/types/supabase.types';
+import { NumberFormatter } from '$lib/scripts/NumberFormatter';
 
 export interface Warehouse {
 	value: string;
@@ -70,6 +70,7 @@ type RawSnippetParams = {
 	isDanger?: boolean;
 	action?: boolean;
 };
+const numberFormatter = new NumberFormatter();
 
 const rightAlignSnippet = createRawSnippet<[RawSnippetParams]>((getValue) => {
 	function refreshDisplay(): string {
@@ -145,7 +146,9 @@ export const columnDefs = [
 		header: 'Tax',
 		cell: ({ cell }) => {
 			return renderSnippet(rightAlignSnippet, {
-				value: formatNumber(cell.getValue(), { style: 'percent', fractionDigits: 0 })
+				value: numberFormatter.formatPercent(cell.getValue(), {
+					fractionDigits: 0
+				})
 			});
 		},
 		enableSorting: false
@@ -202,14 +205,19 @@ export const columnDefs = [
 	colHelp.accessor('pricePurchase', {
 		header: 'Purchase',
 		cell: ({ cell }) => {
-			return renderSnippet(rightAlignSnippet, { value: formatNumber(cell.getValue()) });
+			return renderSnippet(rightAlignSnippet, {
+				value: numberFormatter.formatNumber(cell.getValue())
+			});
 		}
 	}),
 	colHelp.accessor('ruc', {
 		header: 'RuC',
 		cell: ({ cell }) => {
 			return renderSnippet(rightAlignSnippet, {
-				value: formatNumber(cell.getValue(), { style: 'percent', fractionDigits: 1 })
+				value: numberFormatter.formatPercent(cell.getValue(), {
+					minimumFractionDigits: 1,
+					maximumFractionDigits: 1
+				})
 			});
 		}
 	}),
@@ -220,7 +228,7 @@ export const columnDefs = [
 			const priceMarketBest = row.original.priceMarketBest ?? 0;
 			const qtyRetail = row.original.qtyRetail ?? 0;
 			return renderSnippet(rightAlignSnippet, {
-				value: formatNumber(priceRetail),
+				value: numberFormatter.formatNumber(priceRetail),
 				isDanger:
 					priceMarketBest !== 0 &&
 					qtyRetail > 0 &&
@@ -229,41 +237,14 @@ export const columnDefs = [
 			});
 		}
 	}),
-	// colHelp.accessor('priceAgrofina', {
-	// header: 'Agrofina',
-	// cell: ({ cell }) => {
-	// return renderSnippet(rightAlignSnippet, { value: formatNumber(cell.getValue()) });
-	// }
-	// }),
-	// colHelp.accessor('priceMercator', {
-	// header: 'Mercator',
-	// cell: ({ cell }) => {
-	// return renderSnippet(rightAlignSnippet, { value: formatNumber(cell.getValue()) });
-	// }
-	// }),
-	// colHelp.accessor('priceMivex', {
-	// header: 'Mivex',
-	// cell: ({ cell }) => {
-	// return renderSnippet(rightAlignSnippet, { value: formatNumber(cell.getValue()) });
-	// }
-	// }),
-	// colHelp.accessor('priceGros', {
-	// header: 'Gros',
-	// cell: ({ cell }) => {
-	// return renderSnippet(rightAlignSnippet, { value: formatNumber(cell.getValue()) });
-	// }
-	// }),
-	// colHelp.accessor('priceCenoteka', {
-	// header: 'Cenoteka',
-	// cell: ({ cell }) => {
-	// return renderSnippet(rightAlignSnippet, { value: formatNumber(cell.getValue()) });
-	// }
-	// }),
 	colHelp.accessor('priceVendorBest', {
 		header: 'Vendors',
 		cell: ({ row, cell }) => {
 			return renderComponent(DataTableActionsVendor, {
-				value: formatNumber(cell.getValue()) ?? '',
+				value:
+					numberFormatter.formatNumber(cell.getValue(), {
+						fractionDigits: 2
+					}) ?? '',
 				iscustomer: false,
 				priceMarket: row.original.priceMarket
 			});
@@ -278,7 +259,7 @@ export const columnDefs = [
 			const priceMarketBest = row.original.priceMarketBest ?? 0;
 			// const qtyRetail = row.original.qtyRetail ?? 0;
 			return renderComponent(DataTableActionsVendor, {
-				value: formatNumber(cell.getValue()) ?? '',
+				value: numberFormatter.formatNumber(cell.getValue()) ?? '',
 				iscustomer: true,
 				priceMarket: row.original.priceMarket,
 				isDanger:
