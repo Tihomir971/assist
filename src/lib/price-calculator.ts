@@ -76,10 +76,10 @@ export class PriceCalculator {
 	private roundPrice(price: number): number {
 		if (price < 100) {
 			return Math.ceil(price) - 0.01;
-		} else if (price >= 100 && price < 200) {
+		} else if (price >= 100 && price < 500) {
 			return Math.ceil(price / 5) * 5 - 0.01;
-		} else if (price >= 200 && price < 1000) {
-			return Math.ceil(price / 10) * 10 - 1;
+		} else if (price >= 500 && price < 1000) {
+			return Math.ceil(price / 10) * 10 - 0.01;
 		} else if (price >= 1000 && price < 10000) {
 			return Math.ceil(price / 100) * 100 - 1;
 		} else {

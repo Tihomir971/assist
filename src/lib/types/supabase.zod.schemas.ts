@@ -20,9 +20,10 @@ export const adUserRowSchema = z.object({
 	c_bpartner_id: z.number().nullable(),
 	created_at: z.string(),
 	email: z.string().nullable(),
-	full_name: z.string().nullable(),
+	first_name: z.string().nullable(),
 	id: z.number(),
 	is_active: z.boolean(),
+	last_name: z.string().nullable(),
 	supervisor_id: z.number().nullable(),
 	updated_at: z.string(),
 	username: z.string().nullable()
@@ -34,9 +35,10 @@ export const adUserInsertSchema = z.object({
 	c_bpartner_id: z.number().optional().nullable(),
 	created_at: z.string().optional(),
 	email: z.string().optional().nullable(),
-	full_name: z.string().optional().nullable(),
+	first_name: z.string().optional().nullable(),
 	id: z.number().optional(),
 	is_active: z.boolean().optional(),
+	last_name: z.string().optional().nullable(),
 	supervisor_id: z.number().optional().nullable(),
 	updated_at: z.string().optional(),
 	username: z.string().optional().nullable()
@@ -48,9 +50,10 @@ export const adUserUpdateSchema = z.object({
 	c_bpartner_id: z.number().optional().nullable(),
 	created_at: z.string().optional(),
 	email: z.string().optional().nullable(),
-	full_name: z.string().optional().nullable(),
+	first_name: z.string().optional().nullable(),
 	id: z.number().optional(),
 	is_active: z.boolean().optional(),
+	last_name: z.string().optional().nullable(),
 	supervisor_id: z.number().optional().nullable(),
 	updated_at: z.string().optional(),
 	username: z.string().optional().nullable()
@@ -270,22 +273,30 @@ export const entitySchema = z.union([
 
 export const cChannelMapInsertSchema = z.object({
 	c_channel_id: z.number(),
+	c_taxcategory_id: z.number().optional().nullable(),
+	c_uom_id: z.number().optional().nullable(),
 	channel_code: z.string(),
 	created_at: z.string().optional(),
 	entity_type: entitySchema.optional(),
 	id: z.number().optional(),
 	is_active: z.boolean().optional(),
+	m_product_category_id: z.number().optional().nullable(),
+	m_warehouse_id: z.number().optional().nullable(),
 	reference_id: z.number(),
 	updated_at: z.string().optional()
 });
 
 export const cChannelMapUpdateSchema = z.object({
 	c_channel_id: z.number().optional(),
+	c_taxcategory_id: z.number().optional().nullable(),
+	c_uom_id: z.number().optional().nullable(),
 	channel_code: z.string().optional(),
 	created_at: z.string().optional(),
 	entity_type: entitySchema.optional(),
 	id: z.number().optional(),
 	is_active: z.boolean().optional(),
+	m_product_category_id: z.number().optional().nullable(),
+	m_warehouse_id: z.number().optional().nullable(),
 	reference_id: z.number().optional(),
 	updated_at: z.string().optional()
 });
@@ -295,6 +306,30 @@ export const cChannelMapRelationshipsSchema = z.tuple([
 		foreignKeyName: z.literal('c_channel_map_c_channel_id_fkey'),
 		columns: z.tuple([z.literal('c_channel_id')]),
 		referencedRelation: z.literal('c_channel'),
+		referencedColumns: z.tuple([z.literal('id')])
+	}),
+	z.object({
+		foreignKeyName: z.literal('c_channel_map_c_taxcategory_id_fkey'),
+		columns: z.tuple([z.literal('c_taxcategory_id')]),
+		referencedRelation: z.literal('c_taxcategory'),
+		referencedColumns: z.tuple([z.literal('id')])
+	}),
+	z.object({
+		foreignKeyName: z.literal('c_channel_map_c_uom_id_fkey'),
+		columns: z.tuple([z.literal('c_uom_id')]),
+		referencedRelation: z.literal('c_uom'),
+		referencedColumns: z.tuple([z.literal('id')])
+	}),
+	z.object({
+		foreignKeyName: z.literal('c_channel_map_m_product_category_id_fkey'),
+		columns: z.tuple([z.literal('m_product_category_id')]),
+		referencedRelation: z.literal('m_product_category'),
+		referencedColumns: z.tuple([z.literal('id')])
+	}),
+	z.object({
+		foreignKeyName: z.literal('c_channel_map_m_warehouse_id_fkey'),
+		columns: z.tuple([z.literal('m_warehouse_id')]),
+		referencedRelation: z.literal('m_warehouse'),
 		referencedColumns: z.tuple([z.literal('id')])
 	})
 ]);
@@ -2070,11 +2105,15 @@ export const regionTypeSchema = z.union([
 
 export const cChannelMapRowSchema = z.object({
 	c_channel_id: z.number(),
+	c_taxcategory_id: z.number().nullable(),
+	c_uom_id: z.number().nullable(),
 	channel_code: z.string(),
 	created_at: z.string(),
 	entity_type: entitySchema,
 	id: z.number(),
 	is_active: z.boolean(),
+	m_product_category_id: z.number().nullable(),
+	m_warehouse_id: z.number().nullable(),
 	reference_id: z.number(),
 	updated_at: z.string()
 });

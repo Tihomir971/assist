@@ -6,12 +6,12 @@ export const load: PageServerLoad = async ({ locals: { supabase, session } }) =>
 		redirect(303, '/auth');
 	}
 
-	const { data: profile } = await supabase
+	const { data } = await supabase
 		.from('ad_user')
-		.select('full_name, email')
+		.select('first_name, last_name, email')
 		.eq('auth_user_id', session.user.id)
 		/* .single() */
 		.maybeSingle();
 
-	return { profile: profile ?? [] };
+	return { ad_user: data ?? [] };
 };

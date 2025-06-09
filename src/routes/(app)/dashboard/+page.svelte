@@ -1,8 +1,11 @@
 <script lang="ts">
 	let { data } = $props();
-	let { session, profile } = $derived(data);
+	let { session, ad_user } = $derived(data);
 </script>
 
 {#if session}
-	<pre>{JSON.stringify(profile, null, 2)}</pre>
+	<pre>{JSON.stringify(ad_user, null, 2)}</pre>
 {/if}
+<pre>
+	{JSON.stringify(session.user, null, 2)}
+</pre>

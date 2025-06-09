@@ -11,14 +11,14 @@
 	const { errors, enhance, message, form } = superform;
 </script>
 
-<Card class="mx-auto mt-8 w-full max-w-md">
+<Card class="mx-auto mt-8 max-h-min w-full max-w-3xl">
 	<CardHeader>
 		<CardTitle>User Profile</CardTitle>
 	</CardHeader>
 	<CardContent>
 		<form method="post" use:enhance>
-			<div class="space-y-4">
-				<Form.Field form={superform} name="email">
+			<div class="grid grid-cols-2 gap-4">
+				<Form.Field form={superform} name="email" class="col-span-2">
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>Email</Form.Label>
@@ -28,14 +28,14 @@
 				</Form.Field>
 
 				<div>
-					<Label for="full_name">Full Name</Label>
-					<Input type="text" id="full_name" name="full_name" bind:value={$form.full_name} />
-					{#if $errors.full_name}<span class="text-red-500">{$errors.full_name}</span>{/if}
+					<Label for="first_name">First Name</Label>
+					<Input type="text" id="first_name" name="first_name" bind:value={$form.first_name} />
+					{#if $errors.first_name}<span class="text-red-500">{$errors.first_name}</span>{/if}
 				</div>
 				<div>
-					<Label for="username">Username</Label>
-					<Input type="text" id="username" name="username" bind:value={$form.username} />
-					{#if $errors.username}<span class="text-red-500">{$errors.username}</span>{/if}
+					<Label for="last_name">Last Name</Label>
+					<Input type="text" id="last_name" name="last_name" bind:value={$form.last_name} />
+					{#if $errors.last_name}<span class="text-red-500">{$errors.last_name}</span>{/if}
 				</div>
 				<div>
 					<Label for="password">New Password (optional)</Label>
@@ -60,9 +60,3 @@
 		</form>
 	</CardContent>
 </Card>
-
-{#if $message}
-	<div class="mt-4 rounded-md bg-green-100 p-4 text-green-700">
-		{$message}
-	</div>
-{/if}

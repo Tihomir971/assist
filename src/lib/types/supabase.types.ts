@@ -66,12 +66,15 @@ export type Database = {
           c_bpartner_id: number | null
           created_at: string
           email: string | null
-          full_name: string | null
+          first_name: string | null
           id: number
           is_active: boolean
+          is_admin: boolean
+          last_name: string | null
+          phone: string | null
+          role: string
           supervisor_id: number | null
           updated_at: string
-          username: string | null
         }
         Insert: {
           auth_user_id?: string | null
@@ -79,12 +82,15 @@ export type Database = {
           c_bpartner_id?: number | null
           created_at?: string
           email?: string | null
-          full_name?: string | null
+          first_name?: string | null
           id?: number
           is_active?: boolean
+          is_admin?: boolean
+          last_name?: string | null
+          phone?: string | null
+          role?: string
           supervisor_id?: number | null
           updated_at?: string
-          username?: string | null
         }
         Update: {
           auth_user_id?: string | null
@@ -92,12 +98,15 @@ export type Database = {
           c_bpartner_id?: number | null
           created_at?: string
           email?: string | null
-          full_name?: string | null
+          first_name?: string | null
           id?: number
           is_active?: boolean
+          is_admin?: boolean
+          last_name?: string | null
+          phone?: string | null
+          role?: string
           supervisor_id?: number | null
           updated_at?: string
-          username?: string | null
         }
         Relationships: [
           {

@@ -3,19 +3,35 @@ import { superValidate, message } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 import type { PageServerLoad, Actions } from './$types';
 import { zod } from 'sveltekit-superforms/adapters';
+import { adUserUpdateSchema } from '$lib/types/supabase.zod.schemas';
 
 // Define the session user type
 type SessionUser = {
 	id: string;
 	// Add other properties as needed
 };
-
-const userSchema = z
+const adUserSchema = adUserUpdateSchema
+	.extend({
+		password: z.string().min(6).optional(),
+		confirm_password: z.string().min(6).optional()
+	})
+	.refine(
+		(data) => {
+			if (data.password || data.confirm_password) {
+				return data.password === data.confirm_password;
+			}
+			return true;
+		},
+		{
+			message: "Passwords don't match",
+			path: ['confirm_password']
+		}
+	);
+const authUsersSchema = z
 	.object({
-		id: z.number(),
 		email: z.string().email().nullable(),
-		full_name: z.string().min(1).nullable(),
-		username: z.string().min(3).nullable(),
+		last_name: z.string().min(1).nullable(),
+		first_name: z.string().min(3).nullable(),
 		password: z.string().min(6).optional(),
 		confirm_password: z.string().min(6).optional()
 	})
@@ -32,17 +48,17 @@ const userSchema = z
 		}
 	);
 
-export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.safeGetSession();
+export const load: PageServerLoad = async ({ locals: { safeGetSession, supabase } }) => {
+	const session = await safeGetSession();
 	if (!session || !session.user) {
 		throw redirect(302, '/auth');
 	}
 
-	const user = session.user as SessionUser;
+	const user = session.user;
 
-	const { data: userData, error: fetchError } = await locals.supabase
+	const { data: adUser, error: fetchError } = await supabase
 		.from('ad_user')
-		.select('id, email, full_name, username')
+		.select('id, email, first_name, last_name')
 		.eq('auth_user_id', user.id)
 		.single();
 
@@ -51,7 +67,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		throw error(500, 'Error fetching user data');
 	}
 
-	return { form: await superValidate(userData, zod(userSchema)) };
+	return { form: await superValidate(adUser, zod(adUserSchema)) };
 };
 
 export const actions = {
@@ -63,7 +79,7 @@ export const actions = {
 
 		const user = session.user as SessionUser;
 
-		const form = await superValidate(request, zod(userSchema));
+		const form = await superValidate(request, zod(authUsersSchema));
 
 		if (!form.valid) {
 			return fail(400, { form });

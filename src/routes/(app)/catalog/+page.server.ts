@@ -271,16 +271,6 @@ function flattenProduct(
 		product.m_replenish.map((item) => [item.m_warehouse_id, item.qtybatchsize])
 	);
 
-	// const productPoLookup = new Map(
-	// product.m_product_po.map((item) => [item.c_bpartner_id, item.pricelist])
-	// );
-
-	// const cenoteka = productPoLookup.get(2) ?? 0;
-	// const agrofina = productPoLookup.get(480) ?? 0;
-	// const mercator = productPoLookup.get(4) ?? 0;
-	// const mivex = productPoLookup.get(89) ?? 0;
-	// const gros = productPoLookup.get(407) ?? 0;
-
 	const marketPrices = product.m_product_po
 		.filter((po) => po.c_bpartner.iscustomer)
 		.map((po) => po.pricelist)
