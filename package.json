@@ -76,6 +76,7 @@
     "@zag-js/switch": "^1.15.0",
     "@zag-js/tree-view": "^1.15.0",
     "echarts": "^5.6.0",
+    "fast-xml-parser": "^5.2.5",
     "formsnap": "^2.0.1",
     "html5-qrcode": "^2.3.8",
     "ky": "^1.8.1",

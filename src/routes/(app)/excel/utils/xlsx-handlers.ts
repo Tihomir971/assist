@@ -6,16 +6,14 @@ interface RawExcelRow {
 	[key: string]: string | number;
 }
 
-export function handleFileUpload(files: File[]): Promise<{
+export function handleFileUpload(file: File | null): Promise<{
 	sheetNames: string[];
 	selectedSheet: string;
-	excelData: Product[];
+	excelData: Product[]; // This will remain empty from this function as per current logic
 	headers: string[];
 	rawData?: RawExcelRow[];
 }> {
-	const file = files[0];
 	return new Promise((resolve) => {
-		// const file = (event.target as HTMLInputElement).files?.[0];
 		if (file) {
 			const reader = new FileReader();
 			reader.onload = (e) => {

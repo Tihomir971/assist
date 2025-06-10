@@ -8,7 +8,6 @@
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 
 	// Import utility functions
@@ -17,11 +16,19 @@
 	import { importProducts, addProduct } from './utils/product-handlers';
 	import { ComboboxZag, FileUpload, NumberInputZag, SelectZag } from '$lib/components/zag/index.js';
 	import type { FileChangeDetails } from '@zag-js/file-upload';
+	import { retrieveAndParseXml, type Product as XmlProductType } from '$lib/xml-parser-esm';
 
 	let { data } = $props();
 	let { supabase } = $derived(data);
 
-	let fileInput: HTMLInputElement | null = $state(null);
+	// Constants for Spektar XML Import
+	const SPEKTAR_SUPPLIER_ID = 347;
+	const SPEKTAR_XML_URL =
+		'https://api.v2.spektar.rs/storage//exports/xml/kalisi-doo-TMqQOwAxdOBR8VK6PSHtEecygpm1UASz.xml';
+
+	let selectedDataSource: 'excel' | 'spektar' = $state('excel');
+	let fileInput: HTMLInputElement | null = $state(null); // Keep for direct DOM manipulation if still needed, but prefer state for file object
+	let selectedFile: File | null = $state(null); // New state for the selected file object
 	let excelData: Product[] = $state([]);
 	let headers: string[] = $state([]);
 	let sheetNames: { value: string; label: string }[] = $state([]);
@@ -98,7 +105,12 @@
 	}
 	async function handleFileSelect(details: FileChangeDetails) {
 		console.log('details', details);
-		const result = await handleFileUpload(details.acceptedFiles);
+		selectedFile = details.acceptedFiles.length > 0 ? details.acceptedFiles[0] : null;
+		if (!selectedFile) {
+			resetAll(); // Or handle no file selected case
+			return;
+		}
+		const result = await handleFileUpload(selectedFile);
 		sheetNames = result.sheetNames.map((str) => ({
 			value: str,
 			label: str
@@ -116,7 +128,7 @@
 
 	async function handleSheetSelect() {
 		console.log('hello inside2', selectedSheet);
-		if (selectedSheet && fileInput?.files?.[0]) {
+		if (selectedSheet && selectedFile) {
 			const reader = new FileReader();
 			reader.onload = (e) => {
 				const data = new Uint8Array(e.target?.result as ArrayBuffer);
@@ -125,18 +137,18 @@
 				headers = result.headers;
 				rawData = result.rawData || [];
 				showRawData = true;
-				showModal = true;
+				showModal = true; // Keep this to show mapping modal after sheet selection
 			};
-			reader.readAsArrayBuffer(fileInput.files[0]);
+			reader.readAsArrayBuffer(selectedFile);
 		}
 	}
 
 	async function handleMapping() {
 		showModal = false;
-		if (fileInput?.files?.[0]) {
+		if (selectedFile) {
 			saveMappings();
 			isProcessing = true;
-			const result = await processExcelData(fileInput.files[0], selectedSheet, headers, mappings);
+			const result = await processExcelData(selectedFile, selectedSheet, headers, mappings);
 			totalRows = result.totalRows;
 			processedRows = result.processedRows;
 			excelData = result.excelData;
@@ -208,16 +220,79 @@
 		}
 	}
 
+	async function handleSpektarXmlImport() {
+		if (selectedSupplier !== SPEKTAR_SUPPLIER_ID) {
+			alert(
+				`Spektar XML import is only available for the Spektar supplier (ID: ${SPEKTAR_SUPPLIER_ID}).`
+			);
+			return;
+		}
+
+		isProcessing = true;
+		excelData = []; // Clear previous data
+		productsNotUpdated = [];
+		showNotUpdatedProducts = false;
+		totalRows = 0;
+		processedRows = 0;
+		importedRows = 0;
+
+		try {
+			// console.log('Fetching Spektar XML data...');
+			const xmlResult = await retrieveAndParseXml(SPEKTAR_XML_URL);
+			// console.log('Spektar XML data fetched:', xmlResult);
+
+			if (!xmlResult || !xmlResult.products) {
+				throw new Error('No products found in Spektar XML response.');
+			}
+
+			const transformedProducts: Product[] = xmlResult.products.map((xmlProd: XmlProductType) => ({
+				name: xmlProd.name || '',
+				vendorproductno: xmlProd.code || '',
+				pricelist: typeof xmlProd.price === 'number' ? xmlProd.price : 0,
+				barcode: xmlProd.ean || '',
+				vendorcategory: xmlProd.category || '',
+				manufacturer: xmlProd.manufacturer || '',
+				valid_from: undefined, // Skipped
+				valid_to: undefined // Skipped
+			}));
+
+			excelData = transformedProducts;
+			totalRows = transformedProducts.length;
+			processedRows = transformedProducts.length; // Processing is done by transformation
+			selectedSheet = 'Spektar XML Data'; // For display consistency
+			headers = productProperties; // Use existing productProperties for table headers
+			showModal = false; // Ensure mapping modal is hidden
+
+			// console.log('Transformed Spektar products:', excelData);
+		} catch (error) {
+			console.error('Error during Spektar XML import:', error);
+			alert(
+				`Failed to import Spektar XML data: ${
+					error instanceof Error ? error.message : 'Unknown error'
+				}. Check console for details.`
+			);
+			// Reset relevant states if needed
+			excelData = [];
+			totalRows = 0;
+			processedRows = 0;
+		} finally {
+			isProcessing = false;
+		}
+	}
+
 	function resetAll() {
 		if (fileInput && fileInput.value !== undefined) {
+			// This might still be useful for resetting the visual input element
 			fileInput.value = '';
 		}
+		selectedFile = null; // Reset the selected file state
 		excelData = [];
 		headers = [];
 		sheetNames = [];
 		selectedSheet = '';
 		showModal = false;
 		selectedSupplier = undefined;
+		selectedDataSource = 'excel'; // Reset data source
 		mappings = {
 			name: '',
 			vendorproductno: '',
@@ -267,34 +342,60 @@
 </script>
 
 <div class="mx-auto grid h-full max-w-7xl grid-rows-[auto_1fr_auto] gap-4 p-2">
-	<h1 class="text-2xl font-bold">Product Data Upload</h1>
+	<!-- <h1 class="text-2xl font-bold">Product Data Upload</h1> -->
 	<div class="flex flex-col gap-4">
 		<div class="grid grid-cols-4 items-start gap-2">
-			<div class="grid w-full gap-1.5">
-				<ComboboxZag
-					bind:value={selectedSupplier}
-					items={data.c_bpartner}
-					label="Supplier"
-					placeholder="Select supplier..."
-				/>
-			</div>
-
-			<FileUpload
-				accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-				onFileChange={handleFileSelect}
-				label="Upload Excel File"
-				disabled={selectedSupplier == null}
+			<ComboboxZag
+				bind:value={selectedSupplier}
+				items={data.c_bpartner}
+				label="Supplier"
+				placeholder="Select supplier..."
 			/>
-			<div>
-				{#if sheetNames.length > 1}
-					<SelectZag
-						bind:value={selectedSheet}
-						items={sheetNames}
-						label="Select a sheet"
-						onValueChange={handleSheetSelect}
+			<SelectZag
+				id="dataSourceSelect"
+				bind:value={selectedDataSource}
+				items={[
+					{ value: 'excel', label: 'Excel Upload' },
+					{ value: 'spektar', label: 'Spektar XML Import' }
+				]}
+				placeholder="Select data source..."
+				label="Data Source:"
+			/>
+
+			{#if selectedDataSource === 'excel'}
+				<div class="flex flex-col gap-2">
+					<FileUpload
+						accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+						onFileChange={handleFileSelect}
+						label="Upload Excel File"
+						disabled={selectedSupplier == null}
 					/>
-				{/if}
-			</div>
+					{#if sheetNames.length > 1}
+						<SelectZag
+							bind:value={selectedSheet}
+							items={sheetNames}
+							label="Select a sheet"
+							onValueChange={handleSheetSelect}
+						/>
+					{/if}
+				</div>
+			{:else if selectedDataSource === 'spektar'}
+				<div class="col-span-2 flex flex-col items-start justify-end">
+					<Button
+						onclick={handleSpektarXmlImport}
+						disabled={selectedSupplier !== SPEKTAR_SUPPLIER_ID || isProcessing || isImporting}
+						class="mt-auto"
+					>
+						Fetch Spektar XML Data
+					</Button>
+					{#if selectedSupplier !== undefined && selectedSupplier !== SPEKTAR_SUPPLIER_ID}
+						<p class="text-sm text-destructive">
+							Spektar XML import is only available when "Spektar" (ID: {SPEKTAR_SUPPLIER_ID}) is
+							selected as the supplier.
+						</p>
+					{/if}
+				</div>
+			{/if}
 
 			<div>
 				<div class="grid w-full gap-1.5">
@@ -313,7 +414,7 @@
 			</div>
 		</div>
 
-		{#if showModal}
+		{#if showModal && selectedDataSource === 'excel'}
 			<Card.Root>
 				<Card.Header>
 					<Card.Title>Map Columns to Product Properties</Card.Title>
@@ -360,9 +461,9 @@
 				>
 					<Table.Root>
 						<Table.Header>
-							<Table.Row class="sticky top-0 bg-white">
+							<Table.Row class="sticky top-0">
 								{#each productProperties as prop}
-									<Table.Head>{prop}</Table.Head>
+									<Table.Head>{prop === 'vendorproductno' ? 'SKU' : prop}</Table.Head>
 								{/each}
 							</Table.Row>
 						</Table.Header>
@@ -397,9 +498,9 @@
 				>
 					<Table.Root>
 						<Table.Header>
-							<Table.Row class="sticky top-0 bg-white">
+							<Table.Row class="sticky top-0">
 								{#each productProperties as prop}
-									<Table.Head>{prop}</Table.Head>
+									<Table.Head>{prop === 'vendorproductno' ? 'SKU' : prop}</Table.Head>
 								{/each}
 							</Table.Row>
 						</Table.Header>
