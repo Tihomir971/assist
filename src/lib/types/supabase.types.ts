@@ -158,6 +158,7 @@ export type Database = {
           ad_language: string | null
           bpartner_parent_id: number | null
           created_at: string
+          display_name: string
           duns: string | null
           id: number
           is_active: boolean
@@ -166,7 +167,6 @@ export type Database = {
           issalesrep: boolean
           isvendor: boolean
           m_pricelist_id: number | null
-          name: string
           po_pricelist_id: number | null
           taxid: string | null
           updated_at: string
@@ -176,6 +176,7 @@ export type Database = {
           ad_language?: string | null
           bpartner_parent_id?: number | null
           created_at?: string
+          display_name: string
           duns?: string | null
           id?: number
           is_active?: boolean
@@ -184,7 +185,6 @@ export type Database = {
           issalesrep?: boolean
           isvendor?: boolean
           m_pricelist_id?: number | null
-          name: string
           po_pricelist_id?: number | null
           taxid?: string | null
           updated_at?: string
@@ -194,6 +194,7 @@ export type Database = {
           ad_language?: string | null
           bpartner_parent_id?: number | null
           created_at?: string
+          display_name?: string
           duns?: string | null
           id?: number
           is_active?: boolean
@@ -202,7 +203,6 @@ export type Database = {
           issalesrep?: boolean
           isvendor?: boolean
           m_pricelist_id?: number | null
-          name?: string
           po_pricelist_id?: number | null
           taxid?: string | null
           updated_at?: string
@@ -786,6 +786,78 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      contact_types: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: number
+          name: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: number
+          name: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: number
+          name?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      contacts: {
+        Row: {
+          auth_user_id: string | null
+          contact_types_id: number
+          created_at: string
+          created_by: string | null
+          display_name: string | null
+          id: number
+          identification_number: string | null
+          identification_type: string | null
+          is_active: boolean
+          updated_at: string | null
+          updated_by: string | null
+          vat_number: string | null
+        }
+        Insert: {
+          auth_user_id?: string | null
+          contact_types_id?: number
+          created_at?: string
+          created_by?: string | null
+          display_name?: string | null
+          id?: number
+          identification_number?: string | null
+          identification_type?: string | null
+          is_active?: boolean
+          updated_at?: string | null
+          updated_by?: string | null
+          vat_number?: string | null
+        }
+        Update: {
+          auth_user_id?: string | null
+          contact_types_id?: number
+          created_at?: string
+          created_by?: string | null
+          display_name?: string | null
+          id?: number
+          identification_number?: string | null
+          identification_type?: string | null
+          is_active?: boolean
+          updated_at?: string | null
+          updated_by?: string | null
+          vat_number?: string | null
+        }
+        Relationships: []
       }
       countries: {
         Row: {

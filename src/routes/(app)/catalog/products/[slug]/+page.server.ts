@@ -32,9 +32,9 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 	const getBPartner = async () => {
 		const { data } = await supabase
 			.from('c_bpartner')
-			.select('value:id, label:name')
+			.select('value:id, label:display_name')
 			.eq('isvendor', true)
-			.order('name');
+			.order('display_name');
 		return data || [];
 	};
 	const getReplenishes = async () => {

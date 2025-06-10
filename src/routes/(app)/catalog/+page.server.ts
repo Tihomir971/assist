@@ -111,7 +111,7 @@ async function fetchProducts(
 				c_bpartner_id,
 				pricelist,
 				c_bpartner(
-					name,
+					display_name,
 					iscustomer
 				)
 			)
@@ -288,7 +288,7 @@ function flattenProduct(
 	const action = smallestPricestd < retail;
 
 	const priceMarket = product.m_product_po.map((po) => ({
-		name: po.c_bpartner.name,
+		display_name: po.c_bpartner.display_name,
 		pricelist: po.pricelist,
 		tax: tax ? tax / 100 : null,
 		iscustomer: po.c_bpartner.iscustomer
@@ -322,7 +322,7 @@ function flattenProduct(
 		action,
 		priceMarket: priceMarket.map((pm) => ({
 			...pm,
-			name: pm.name ?? 'N/A',
+			name: pm.display_name ?? 'N/A',
 			iscustomer: pm.iscustomer ?? false
 		}))
 	};

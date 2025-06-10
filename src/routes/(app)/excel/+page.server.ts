@@ -3,9 +3,9 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 	const { data: c_bpartner, error } = await supabase
 		.from('c_bpartner')
-		.select('value:id,label:name')
+		.select('value:id,label:display_name')
 		.eq('isvendor', true)
-		.order('name', { ascending: true });
+		.order('display_name', { ascending: true });
 
 	if (error) return { c_bpartner: [] };
 

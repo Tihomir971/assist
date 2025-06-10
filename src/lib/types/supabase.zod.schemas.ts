@@ -23,10 +23,12 @@ export const adUserRowSchema = z.object({
 	first_name: z.string().nullable(),
 	id: z.number(),
 	is_active: z.boolean(),
+	is_admin: z.boolean(),
 	last_name: z.string().nullable(),
+	phone: z.string().nullable(),
+	role: z.string(),
 	supervisor_id: z.number().nullable(),
-	updated_at: z.string(),
-	username: z.string().nullable()
+	updated_at: z.string()
 });
 
 export const adUserInsertSchema = z.object({
@@ -38,10 +40,12 @@ export const adUserInsertSchema = z.object({
 	first_name: z.string().optional().nullable(),
 	id: z.number().optional(),
 	is_active: z.boolean().optional(),
+	is_admin: z.boolean().optional(),
 	last_name: z.string().optional().nullable(),
+	phone: z.string().optional().nullable(),
+	role: z.string().optional(),
 	supervisor_id: z.number().optional().nullable(),
-	updated_at: z.string().optional(),
-	username: z.string().optional().nullable()
+	updated_at: z.string().optional()
 });
 
 export const adUserUpdateSchema = z.object({
@@ -53,10 +57,12 @@ export const adUserUpdateSchema = z.object({
 	first_name: z.string().optional().nullable(),
 	id: z.number().optional(),
 	is_active: z.boolean().optional(),
+	is_admin: z.boolean().optional(),
 	last_name: z.string().optional().nullable(),
+	phone: z.string().optional().nullable(),
+	role: z.string().optional(),
 	supervisor_id: z.number().optional().nullable(),
-	updated_at: z.string().optional(),
-	username: z.string().optional().nullable()
+	updated_at: z.string().optional()
 });
 
 export const adUserRelationshipsSchema = z.tuple([
@@ -110,6 +116,7 @@ export const cBpartnerRowSchema = z.object({
 	ad_language: z.string().nullable(),
 	bpartner_parent_id: z.number().nullable(),
 	created_at: z.string(),
+	display_name: z.string(),
 	duns: z.string().nullable(),
 	id: z.number(),
 	is_active: z.boolean(),
@@ -118,7 +125,6 @@ export const cBpartnerRowSchema = z.object({
 	issalesrep: z.boolean(),
 	isvendor: z.boolean(),
 	m_pricelist_id: z.number().nullable(),
-	name: z.string(),
 	po_pricelist_id: z.number().nullable(),
 	taxid: z.string().nullable(),
 	updated_at: z.string(),
@@ -129,6 +135,7 @@ export const cBpartnerInsertSchema = z.object({
 	ad_language: z.string().optional().nullable(),
 	bpartner_parent_id: z.number().optional().nullable(),
 	created_at: z.string().optional(),
+	display_name: z.string(),
 	duns: z.string().optional().nullable(),
 	id: z.number().optional(),
 	is_active: z.boolean().optional(),
@@ -137,7 +144,6 @@ export const cBpartnerInsertSchema = z.object({
 	issalesrep: z.boolean().optional(),
 	isvendor: z.boolean().optional(),
 	m_pricelist_id: z.number().optional().nullable(),
-	name: z.string(),
 	po_pricelist_id: z.number().optional().nullable(),
 	taxid: z.string().optional().nullable(),
 	updated_at: z.string().optional(),
@@ -148,6 +154,7 @@ export const cBpartnerUpdateSchema = z.object({
 	ad_language: z.string().optional().nullable(),
 	bpartner_parent_id: z.number().optional().nullable(),
 	created_at: z.string().optional(),
+	display_name: z.string().optional(),
 	duns: z.string().optional().nullable(),
 	id: z.number().optional(),
 	is_active: z.boolean().optional(),
@@ -156,7 +163,6 @@ export const cBpartnerUpdateSchema = z.object({
 	issalesrep: z.boolean().optional(),
 	isvendor: z.boolean().optional(),
 	m_pricelist_id: z.number().optional().nullable(),
-	name: z.string().optional(),
 	po_pricelist_id: z.number().optional().nullable(),
 	taxid: z.string().optional().nullable(),
 	updated_at: z.string().optional(),
@@ -759,6 +765,82 @@ export const cUomConversionRelationshipsSchema = z.tuple([
 		referencedColumns: z.tuple([z.literal('id')])
 	})
 ]);
+
+export const contactTypesRowSchema = z.object({
+	created_at: z.string(),
+	created_by: z.string().nullable(),
+	id: z.number(),
+	name: z.string(),
+	updated_at: z.string(),
+	updated_by: z.string().nullable()
+});
+
+export const contactTypesInsertSchema = z.object({
+	created_at: z.string().optional(),
+	created_by: z.string().optional().nullable(),
+	id: z.number().optional(),
+	name: z.string(),
+	updated_at: z.string().optional(),
+	updated_by: z.string().optional().nullable()
+});
+
+export const contactTypesUpdateSchema = z.object({
+	created_at: z.string().optional(),
+	created_by: z.string().optional().nullable(),
+	id: z.number().optional(),
+	name: z.string().optional(),
+	updated_at: z.string().optional(),
+	updated_by: z.string().optional().nullable()
+});
+
+export const contactTypesRelationshipsSchema = z.tuple([]);
+
+export const contactsRowSchema = z.object({
+	auth_user_id: z.string().nullable(),
+	contact_types_id: z.number(),
+	created_at: z.string(),
+	created_by: z.string().nullable(),
+	display_name: z.string().nullable(),
+	id: z.number(),
+	identification_number: z.string().nullable(),
+	identification_type: z.string().nullable(),
+	is_active: z.boolean(),
+	updated_at: z.string().nullable(),
+	updated_by: z.string().nullable(),
+	vat_number: z.string().nullable()
+});
+
+export const contactsInsertSchema = z.object({
+	auth_user_id: z.string().optional().nullable(),
+	contact_types_id: z.number().optional(),
+	created_at: z.string().optional(),
+	created_by: z.string().optional().nullable(),
+	display_name: z.string().optional().nullable(),
+	id: z.number().optional(),
+	identification_number: z.string().optional().nullable(),
+	identification_type: z.string().optional().nullable(),
+	is_active: z.boolean().optional(),
+	updated_at: z.string().optional().nullable(),
+	updated_by: z.string().optional().nullable(),
+	vat_number: z.string().optional().nullable()
+});
+
+export const contactsUpdateSchema = z.object({
+	auth_user_id: z.string().optional().nullable(),
+	contact_types_id: z.number().optional(),
+	created_at: z.string().optional(),
+	created_by: z.string().optional().nullable(),
+	display_name: z.string().optional().nullable(),
+	id: z.number().optional(),
+	identification_number: z.string().optional().nullable(),
+	identification_type: z.string().optional().nullable(),
+	is_active: z.boolean().optional(),
+	updated_at: z.string().optional().nullable(),
+	updated_by: z.string().optional().nullable(),
+	vat_number: z.string().optional().nullable()
+});
+
+export const contactsRelationshipsSchema = z.tuple([]);
 
 export const continentsSchema = z.union([
 	z.literal('Africa'),

@@ -5,7 +5,7 @@ export const load = (async ({ locals: { supabase } }) => {
 	const { data: c_bpartner, error: dataError } = await supabase
 		.from('c_bpartner')
 		.select('*')
-		.order('name');
+		.order('display_name');
 
 	if (dataError) {
 		error(401, 'not logged in');

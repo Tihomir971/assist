@@ -7,6 +7,6 @@
 
 <div>
 	{#each bpartners as bpartner}
-		<div class="font-medium">{bpartner.name}</div>
+		<div class="font-medium">{bpartner.display_name}</div>
 	{/each}
 </div>
