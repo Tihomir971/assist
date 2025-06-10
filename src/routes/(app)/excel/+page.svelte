@@ -9,7 +9,7 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
-
+	import { toast } from 'svelte-sonner';
 	// Import utility functions
 	import { handleFileUpload, loadSheetData } from './utils/xlsx-handlers';
 	import { processExcelData } from './utils/data-processors';
@@ -17,10 +17,13 @@
 	import { ComboboxZag, FileUpload, NumberInputZag, SelectZag } from '$lib/components/zag/index.js';
 	import type { FileChangeDetails } from '@zag-js/file-upload';
 	import { retrieveAndParseXml, type Product as XmlProductType } from '$lib/xml-parser-esm';
+	import { NumberFormatter } from '$lib/scripts/intl';
+	import PhPlus from '~icons/ph/plus';
 
 	let { data } = $props();
 	let { supabase } = $derived(data);
 
+	const numberFormatter = new NumberFormatter();
 	// Constants for Spektar XML Import
 	const SPEKTAR_SUPPLIER_ID = 347;
 	const SPEKTAR_XML_URL =
@@ -194,9 +197,18 @@
 			showNotUpdatedProducts = true;
 
 			const selectedSupplierObj = data.c_bpartner.find((s) => s.value === selectedSupplier);
-			alert(
+			toast.info('Import finished', {
+				description: `${result.importedRows} products updated and ${result.insertedRows} products inserted successfully for supplier: ${selectedSupplierObj?.label} (ID: ${selectedSupplierObj?.value})!`,
+
+				/* action: {
+					label: 'Undo',
+					onClick: () => console.info('Undo')
+				} */
+				closeButton: true
+			});
+			/* alert(
 				`${result.importedRows} products updated and ${result.insertedRows} products inserted successfully for supplier: ${selectedSupplierObj?.label} (ID: ${selectedSupplierObj?.value})!`
-			);
+			); */
 		} catch (error) {
 			console.error('Error importing products:', error);
 			alert('An error occurred while updating products. Please check the console for details.');
@@ -471,7 +483,11 @@
 							{#each excelData as product}
 								<Table.Row>
 									{#each productProperties as prop}
-										<Table.Cell>{product[prop]}</Table.Cell>
+										<Table.Cell class={prop === 'pricelist' ? 'text-right' : ''}>
+											{prop === 'pricelist'
+												? numberFormatter.format(product[prop] as number)
+												: product[prop]}
+										</Table.Cell>
 									{/each}
 								</Table.Row>
 							{/each}
@@ -508,10 +524,16 @@
 							{#each productsNotUpdated as product}
 								<Table.Row>
 									{#each productProperties as prop}
-										<Table.Cell>{product[prop]}</Table.Cell>
+										<Table.Cell class={prop === 'pricelist' ? 'text-right' : ''}>
+											{prop === 'pricelist'
+												? numberFormatter.format(product[prop] as number)
+												: product[prop]}
+										</Table.Cell>
 									{/each}
 									<Table.Cell>
-										<Button onclick={() => handleAddProduct(product)}>+</Button>
+										<Button variant="default" size="icon" onclick={() => handleAddProduct(product)}>
+											<PhPlus />
+										</Button>
 									</Table.Cell>
 								</Table.Row>
 							{/each}

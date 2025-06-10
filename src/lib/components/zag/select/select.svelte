@@ -66,13 +66,16 @@
 <div {...api.getRootProps()}>
 	{#if label}
 		<div class="flex items-center justify-between">
-			<label {...api.getLabelProps()}>
+			<label
+				{...api.getLabelProps()}
+				class="leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+			>
 				{label}
 				{#if required || ariaRequired === 'true'}
 					<span class="text-warning">*</span>
 				{/if}
 			</label>
-			<button {...api.getClearTriggerProps()}><PhX /></button>
+			<button {...api.getClearTriggerProps()}><PhX class="text-xs" /></button>
 		</div>
 	{/if}
 

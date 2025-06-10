@@ -1,8 +1,17 @@
+[data-scope='select'][data-part='root'] {
+	display: flex;
+	flex-direction: column;
+	/* row-gap: 6px; */
+	/* align-items: flex-start; */
+	gap: calc(calc(var(--spacing) * 2));
+}
+
 [data-scope='select'][data-part='control'] {
 	display: flex;
 	flex-direction: column;
-	row-gap: 6px;
+	/* row-gap: 6px; */
 	align-items: flex-start;
+	gap: calc(calc(var(--spacing) * 2));
 }
 
 /* [data-scope='select'][data-part='label'] {
