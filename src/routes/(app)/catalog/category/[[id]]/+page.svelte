@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 	// Superforms
 	import { superForm } from 'sveltekit-superforms';
 	import { toast } from 'svelte-sonner';
@@ -16,31 +17,52 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { ComboboxZag, SwitchZag } from '$lib/components/zag/index.js';
 
-	import { Label } from '$lib/components/ui/label/index.js';
 	import { DateHelper } from '$lib/scripts/intl';
 
 	const dateHelper = new DateHelper();
 
 	let { data } = $props();
+	const isCreateMode = !page.params.id;
+
 	const superform = superForm(data.formCategory, {
 		resetForm: false,
 		onSubmit({ formData }) {
 			formData.delete('created_at');
 			formData.delete('updated_at');
+			if (isCreateMode && formData.get('id') === '') {
+				formData.delete('id'); // Ensure ID is not sent if empty for creation
+			}
 		},
 		onUpdated({ form }) {
+			const wasInitialCreateMode = isCreateMode; // Capture initial mode for this submission
+			const isNowEditModeAfterCreate = wasInitialCreateMode && form.data.id && form.valid;
+
 			if (form.valid) {
-				toast.success('Category updated successfully', {
-					description: form.message || 'Your changes have been saved.'
-				});
-
-				// invalidate('catalog:category');
+				toast.success(
+					isNowEditModeAfterCreate
+						? 'Category created successfully'
+						: 'Category updated successfully',
+					{
+						description:
+							form.message ||
+							(isNowEditModeAfterCreate
+								? 'The new category has been saved.'
+								: 'Your changes have been saved.')
+					}
+				);
+				if (isNowEditModeAfterCreate) {
+					// Navigate after toast has a chance to show
+					setTimeout(() => {
+						goto(`/catalog/category/${form.data.id}`, { replaceState: true });
+					}, 500); // Small delay for toast visibility
+				}
 			} else {
-				console.log('form.message', form);
-
-				toast.error('Failed to update category', {
-					description: form.message || 'Please check the form for errors'
-				});
+				toast.error(
+					wasInitialCreateMode ? 'Failed to create category' : 'Failed to update category',
+					{
+						description: form.message || 'Please check the form for errors'
+					}
+				);
 			}
 		}
 	});
@@ -50,19 +72,21 @@
 <div class="mx-auto grid h-full max-w-6xl grid-rows-[auto_1fr] py-6">
 	<div class="mb-6 flex items-center justify-between">
 		<div>
-			<h1 class="text-3xl font-bold">Edit Category</h1>
-			<p class="text-muted-foreground">Update attribute group details</p>
+			<h1 class="text-3xl font-bold">{isCreateMode ? 'Create Category' : 'Edit Category'}</h1>
+			<p class="text-muted-foreground">
+				{isCreateMode ? 'Enter details for the new category' : 'Update category details'}
+			</p>
 		</div>
 		<Button variant="link" href={`/catalog?${page.url.searchParams}`}>Back to List</Button>
 	</div>
 	<ScrollArea class="h-full">
-		<div class="mb-8 grid grid-cols-4 gap-4">
-			<Card.Root class="col-span-3">
-				<form method="POST" use:enhance action="?/categoryUpsert">
-					<Card.Header>
-						<Card.Title>Category Detail</Card.Title>
-					</Card.Header>
-					<Card.Content class="flex w-full flex-col space-y-4">
+		<Card.Root class="col-span-3">
+			<form method="POST" use:enhance action="?/categoryUpsert">
+				<Card.Header>
+					<Card.Title>Category Detail</Card.Title>
+				</Card.Header>
+				<Card.Content class="flex w-full flex-col space-y-4">
+					{#if $formData.id}
 						<div class="grid grid-cols-3 gap-4">
 							<Form.Field form={superform} name="id">
 								<Form.Control>
@@ -102,104 +126,82 @@
 								<Form.FieldErrors />
 							</Form.Field>
 						</div>
-						<Form.Field form={superform} name="name">
+					{/if}
+					<Form.Field form={superform} name="name">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Name</Form.Label>
+								<Input {...props} bind:value={$formData.name} placeholder="Category Name" />
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<div class="flex w-full items-center space-x-3">
+						<Form.Field form={superform} name="is_active">
 							<Form.Control>
 								{#snippet children({ props })}
-									<Form.Label>Name</Form.Label>
-									<Input {...props} bind:value={$formData.name} placeholder="Category Name" />
+									<SwitchZag {...props} bind:checked={$formData.is_active} label="Is Active?" />
 								{/snippet}
 							</Form.Control>
 							<Form.FieldErrors />
 						</Form.Field>
-						<div class="flex w-full items-center space-x-3">
-							<Form.Field form={superform} name="is_active">
-								<Form.Control>
-									{#snippet children({ props })}
-										<SwitchZag {...props} bind:checked={$formData.is_active} label="Is Active?" />
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-							<Form.Field form={superform} name="is_self_service">
-								<Form.Control>
-									{#snippet children({ props })}
-										<SwitchZag
-											{...props}
-											bind:checked={$formData.is_self_service}
-											label="Is Self Service?"
-										/>
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-						</div>
-						<Form.Field form={superform} name="description">
+						<Form.Field form={superform} name="is_self_service">
 							<Form.Control>
 								{#snippet children({ props })}
-									<Form.Label>Description</Form.Label>
-									<Textarea {...props} bind:value={$formData.description} class="resize-y" />
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
-
-						<Form.Field form={superform} name="parent_id">
-							<Form.Control>
-								{#snippet children({ props })}
-									<ComboboxZag
+									<SwitchZag
 										{...props}
-										bind:value={$formData.parent_id}
-										items={data.categories}
-										placeholder="Select a category"
-										label="Category"
+										bind:checked={$formData.is_self_service}
+										label="Is Self Service?"
 									/>
 								{/snippet}
 							</Form.Control>
-							<Form.Description>Choose the product category</Form.Description>
 							<Form.FieldErrors />
 						</Form.Field>
-						<div class="flex flex-row-reverse items-center gap-2">
-							<Form.Button variant="default" disabled={!isTainted($tainted)}>Save</Form.Button>
+					</div>
+					<Form.Field form={superform} name="description">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Description</Form.Label>
+								<Textarea {...props} bind:value={$formData.description} class="resize-y" />
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+
+					<Form.Field form={superform} name="parent_id">
+						<Form.Control>
+							{#snippet children({ props })}
+								<ComboboxZag
+									{...props}
+									bind:value={$formData.parent_id}
+									items={data.categories}
+									placeholder="Select a category"
+									label="Category"
+								/>
+							{/snippet}
+						</Form.Control>
+						<Form.Description>Choose the product category</Form.Description>
+						<Form.FieldErrors />
+					</Form.Field>
+					<div class="flex flex-row-reverse items-center gap-2">
+						<Form.Button variant="default" disabled={!isTainted($tainted)}
+							>{isCreateMode && !$formData.id ? 'Create' : 'Save'}</Form.Button
+						>
+						{#if $formData.id}
 							<Button
 								type="submit"
 								formaction="?/categoryDelete"
 								variant="destructive"
 								onclick={(e) => !confirm('Are you sure?') && e.preventDefault()}>Delete</Button
 							>
-						</div>
-					</Card.Content>
-					<Card.Footer class="flex justify-between"></Card.Footer>
-				</form>
-			</Card.Root>
-			<Card.Root>
-				<Card.Header>
-					<Card.Title>Info</Card.Title>
-				</Card.Header>
-				<Card.Content class="space-y-4">
-					<div class="flex flex-col space-y-2">
-						<label for="id">ID</label>
-						<Input name="id" id="id" value={$formData.id} readonly />
-					</div>
-					<div class="flex flex-col space-y-2">
-						<Label for="created">Created</Label>
-						<Input
-							id="created"
-							type="datetime"
-							value={dateHelper.format($formData.created_at)}
-							readonly
-						/>
-					</div>
-					<div class="flex flex-col space-y-2">
-						<Label for="updated">Updated</Label>
-						<Input
-							id="updated"
-							type="datetime"
-							value={dateHelper.format($formData.updated_at)}
-							readonly
-						/>
+						{/if}
 					</div>
 				</Card.Content>
-			</Card.Root>
+				<Card.Footer class="flex justify-between"></Card.Footer>
+			</form>
+		</Card.Root>
+
+		{#if $formData.id}
 			<div class="col-span-3">
 				<ChannelCard
 					parentId={$formData.id}
@@ -216,6 +218,6 @@
 					priceFormulas={data.priceFormulas}
 				/>
 			</div>
-		</div>
+		{/if}
 	</ScrollArea>
 </div>

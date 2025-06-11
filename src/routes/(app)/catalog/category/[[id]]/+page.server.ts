@@ -8,19 +8,46 @@ import {
 	priceRulesInsertSchema
 } from '$lib/types/supabase.zod.schemas';
 import { deleteByIdSchema } from '$lib/types/zod-delete-by-id';
+import type { Tables } from '$lib/types/supabase.types';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
-	if (!params.id) {
-		throw error(400, 'Category ID is required');
+	let category = null;
+	let priceRules: Tables<'price_rules'>[] = [];
+	let channelMapCategory: Tables<'c_channel_map_category'>[] = [];
+	let categoryId: number | null = null;
+
+	if (params.id) {
+		categoryId = parseInt(params.id);
+		if (isNaN(categoryId)) {
+			throw error(400, 'Invalid Category ID');
+		}
+
+		const { data: fetchedCategory } = await supabase
+			.from('m_product_category')
+			.select('*')
+			.eq('id', categoryId)
+			.maybeSingle();
+		category = fetchedCategory;
+
+		if (category) {
+			const { data: fetchedPriceRules } = await supabase
+				.from('price_rules')
+				.select('*')
+				.eq('m_product_category_id', categoryId);
+			priceRules = fetchedPriceRules || [];
+
+			const { data: fetchedChannelMapCategory } = await supabase
+				.from('c_channel_map_category')
+				.select('*')
+				.eq('m_product_category_id', categoryId);
+			channelMapCategory = fetchedChannelMapCategory || [];
+		} else if (params.id) {
+			// Only throw 404 if an ID was provided but no category found
+			throw error(404, 'Category not found');
+		}
 	}
 
-	const categoryId = parseInt(params.id);
-
-	const { data: category } = await supabase
-		.from('m_product_category')
-		.select('*')
-		.eq('id', categoryId)
-		.maybeSingle();
+	// Common data needed for both create and edit
 	const { data: categories } = await supabase
 		.from('m_product_category')
 		.select('value:id, label:name')
@@ -29,24 +56,16 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 		.from('price_formulas')
 		.select('value:id, label:name')
 		.order('name');
-	const { data: priceRules } = await supabase
-		.from('price_rules')
-		.select('*')
-		.eq('m_product_category_id', categoryId);
-	const { data: channelMapCategory } = await supabase
-		.from('c_channel_map_category')
-		.select('*')
-		.eq('m_product_category_id', categoryId);
 	const { data: channels } = await supabase.from('c_channel').select('label:name,value:id');
 
 	return {
 		formCategory: await superValidate(category, zod(mProductCategoryInsertSchema)),
 		categories: categories || [],
-		priceRules: priceRules || [],
-		formPriceRules: await superValidate(zod(priceRulesInsertSchema)),
+		priceRules,
+		formPriceRules: await superValidate(zod(priceRulesInsertSchema)), // For new price rules
 		priceFormulas: priceFormulas || [],
-		channelMapCategory: channelMapCategory || [],
-		formChannel: await superValidate(zod(cChannelMapCategoryInsertSchema)),
+		channelMapCategory,
+		formChannel: await superValidate(zod(cChannelMapCategoryInsertSchema)), // For new channel maps
 		channels: channels || []
 	};
 };
@@ -59,12 +78,30 @@ export const actions = {
 
 		if (!form.data.id) {
 			// Create Category
-			const { error: insertProductCategoryError } = await supabase
+			const { data: newCategory, error: insertProductCategoryError } = await supabase
 				.from('m_product_category')
-				.insert(form.data);
+				.insert(form.data)
+				.select('id')
+				.single();
+
 			if (insertProductCategoryError) {
-				throw error(400, insertProductCategoryError.message);
+				console.error('Insert Category Error:', insertProductCategoryError);
+				return message(
+					form,
+					{ type: 'error', text: insertProductCategoryError.message },
+					{ status: 400 }
+				);
 			}
+			if (!newCategory || !newCategory.id) {
+				console.error('Insert Category Error: No ID returned after insert');
+				return message(
+					form,
+					{ type: 'error', text: 'Failed to retrieve new category ID after creation.' },
+					{ status: 500 }
+				);
+			}
+			// Assign the new ID to the form data to be returned
+			form.data.id = newCategory.id;
 			return message(form, 'Category created!');
 		} else {
 			// Update Category
