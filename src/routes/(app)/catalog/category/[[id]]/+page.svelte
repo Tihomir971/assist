@@ -24,6 +24,10 @@
 	let { data } = $props();
 	const superform = superForm(data.formCategory, {
 		resetForm: false,
+		onSubmit({ formData }) {
+			formData.delete('created_at');
+			formData.delete('updated_at');
+		},
 		onUpdated({ form }) {
 			if (form.valid) {
 				toast.success('Category updated successfully', {
@@ -59,7 +63,45 @@
 						<Card.Title>Category Detail</Card.Title>
 					</Card.Header>
 					<Card.Content class="flex w-full flex-col space-y-4">
-						<input type="hidden" name="id" value={$formData.id} />
+						<div class="grid grid-cols-3 gap-4">
+							<Form.Field form={superform} name="id">
+								<Form.Control>
+									{#snippet children({ props })}
+										<Form.Label>ID</Form.Label>
+										<Input {...props} bind:value={$formData.id} placeholder="ID" readonly />
+									{/snippet}
+								</Form.Control>
+								<Form.FieldErrors />
+							</Form.Field>
+							<Form.Field form={superform} name="created_at">
+								<Form.Control>
+									{#snippet children({ props })}
+										<Form.Label>Created</Form.Label>
+										<Input
+											{...props}
+											type="datetime"
+											value={dateHelper.format($formData.created_at)}
+											readonly
+										/>
+									{/snippet}
+								</Form.Control>
+								<Form.FieldErrors />
+							</Form.Field>
+							<Form.Field form={superform} name="updated_at">
+								<Form.Control>
+									{#snippet children({ props })}
+										<Form.Label>Updated</Form.Label>
+										<Input
+											{...props}
+											type="datetime"
+											value={dateHelper.format($formData.updated_at)}
+											readonly
+										/>
+									{/snippet}
+								</Form.Control>
+								<Form.FieldErrors />
+							</Form.Field>
+						</div>
 						<Form.Field form={superform} name="name">
 							<Form.Control>
 								{#snippet children({ props })}

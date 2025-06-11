@@ -56,10 +56,9 @@ export const actions = {
 		const formData = await request.formData();
 		const form = await superValidate(formData, zod(mProductCategoryInsertSchema));
 		if (!form.valid) return fail(400, { form });
-		console.log('form categoryUpsert:', form);
 
 		if (!form.data.id) {
-			console.log('Create Category');
+			// Create Category
 			const { error: insertProductCategoryError } = await supabase
 				.from('m_product_category')
 				.insert(form.data);
@@ -69,12 +68,10 @@ export const actions = {
 			return message(form, 'Category created!');
 		} else {
 			// Update Category
-			console.log('Update Category');
 			const { error: updateProductCategoryError } = await supabase
 				.from('m_product_category')
 				.update(form.data)
 				.eq('id', form.data.id);
-
 			if (updateProductCategoryError) {
 				throw error(404, updateProductCategoryError.message);
 			}
@@ -85,7 +82,6 @@ export const actions = {
 		const formData = await request.formData();
 		const form = await superValidate(formData, zod4(deleteByIdSchema));
 		if (!form.valid) return fail(400, { form });
-		console.log('form.data.id', form.data.id, typeof form.data.id);
 
 		const { error: delError } = await supabase
 			.from('m_product_category')
