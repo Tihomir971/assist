@@ -9,26 +9,31 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { toast } from 'svelte-sonner';
 	import { z } from 'zod';
-	import type { priceRulesInsertSchema } from '$lib/types/supabase.zod.schemas.js';
+	import type { cChannelMapCategoryInsertSchema } from '$lib/types/supabase.zod.schemas.js';
 	import { dev } from '$app/environment';
+	import { DateHelper } from '$lib/scripts/intl';
 
-	type Item = { value: number; label: string };
-	type Schema = z.infer<typeof priceRulesInsertSchema>;
+	type ListItem = { value: number; label: string };
+	type Schema = z.infer<typeof cChannelMapCategoryInsertSchema>;
 	type Props = {
 		isSheetOpen: boolean;
-		data: Schema | undefined;
+		item: Schema | undefined;
+		parentId: number | undefined;
 		validatedForm: SuperValidated<Schema>;
-		priceFormulas: Item[];
-		categoryId: number | undefined;
+
+		channels: ListItem[];
 	};
 
 	let {
 		isSheetOpen = $bindable(),
-		data = $bindable(),
+		item = $bindable(),
 		validatedForm,
-		priceFormulas,
-		categoryId
+		channels,
+		parentId
 	}: Props = $props();
+
+	const dateHelper = new DateHelper();
+
 	const superform = superForm(validatedForm, {
 		onSubmit: async ({ formData }) => {
 			formData.delete('created_at');
@@ -38,7 +43,6 @@
 			if (form.valid) {
 				toast.success(form.message || 'Vendor PO operation successful');
 				isSheetOpen = false;
-				// invalidate('catalog:products');
 			} else {
 				console.error('Form is not valid', form.errors, form.message);
 				toast.error(form.message || 'Vendor PO operation failed');
@@ -49,87 +53,84 @@
 		}
 	});
 	const { form, enhance, message, isTainted, tainted, errors, constraints } = superform;
+
 	$effect(() => {
-		if (data) {
-			$form = { ...data };
-		} else {
-			// Reset for new entry
-			Object.assign($form, validatedForm.data); // Start with the base schema structure
-			$form.id = undefined; // Clear ID for new record
-			$form.m_product_category_id = categoryId; // Assign from prop
+		if (isSheetOpen) {
+			if (item) {
+				$form = { ...item };
+			} else {
+				const newEntryState = { ...validatedForm.data };
+				newEntryState.id = undefined;
+				newEntryState.m_product_category_id = parentId;
+				$form = newEntryState;
+			}
 		}
 	});
 </script>
 
 <Sheet.Root bind:open={isSheetOpen}>
 	<Sheet.Content class="sm:max-w-xl">
-		<form method="post" action="?/priceRulesUpsert" use:enhance>
+		<form method="post" action="?/channelMapUpsert" use:enhance>
 			<Sheet.Header>
 				<Sheet.Title>
-					{`${$form.id ? 'Update' : 'Create'} Price rule for Category`}
+					{`${$form.id ? 'Update' : 'Create'} Channel Mapping`}
 				</Sheet.Title>
-				<Sheet.Description>
-					This action cannot be undone. This will permanently delete your account and remove your
-					data from our servers.
-				</Sheet.Description>
 			</Sheet.Header>
 			<div class="overflow-auto px-4">
 				<input type="hidden" name="id" value={$form.id?.toString() || ''} />
-				<input type="hidden" name="m_product_id" value={$form.m_product_id?.toString() || ''} />
 				<input
 					type="hidden"
 					name="m_product_category_id"
 					value={$form.m_product_category_id?.toString() || ''}
 				/>
 				<div class="flex flex-col space-y-4 py-4">
-					<Form.Field form={superform} name="name">
+					<Form.Field form={superform} name="resource_name">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>Name</Form.Label>
-								<Input {...props} bind:value={$form.name} />
+								<Form.Label>resource_name</Form.Label>
+								<Input {...props} bind:value={$form.resource_name} />
 							{/snippet}
 						</Form.Control>
 					</Form.Field>
-					<Form.Field form={superform} name="price_formula_id">
+					<Form.Field form={superform} name="resource_id">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>resource_id</Form.Label>
+								<Input {...props} bind:value={$form.resource_id} />
+							{/snippet}
+						</Form.Control>
+					</Form.Field>
+					<Form.Field form={superform} name="c_channel_id">
 						<Form.Control>
 							{#snippet children({ props })}
 								<ComboboxZag
 									{...props}
-									bind:value={$form.price_formula_id}
-									items={priceFormulas}
-									label="Formula script New"
-								/>
-							{/snippet}
-						</Form.Control>
-					</Form.Field>
-
-					<Form.Field form={superform} name="priority">
-						<Form.Control>
-							{#snippet children({ props })}
-								<NumberInputZag
-									{...props}
-									bind:value={$form.priority}
-									label="Priority"
-									fraction={0}
+									bind:value={$form.c_channel_id}
+									items={channels}
+									label="Channel"
 								/>
 							{/snippet}
 						</Form.Control>
 					</Form.Field>
 					{#if $form.created_at}
-						<div>
-							<span class="text-sm font-medium text-gray-500">Created At:</span>
-							<span class="ml-2 text-sm text-gray-700"
-								>{new Date($form.created_at).toLocaleString()}</span
-							>
-						</div>
+						<Form.Field form={superform} name="created_at">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Created at</Form.Label>
+									<Input {...props} value={dateHelper.format($form.created_at)} readonly />
+								{/snippet}
+							</Form.Control>
+						</Form.Field>
 					{/if}
 					{#if $form.updated_at}
-						<div>
-							<span class="text-sm font-medium text-gray-500">Updated At:</span>
-							<span class="ml-2 text-sm text-gray-700"
-								>{new Date($form.updated_at).toLocaleString()}</span
-							>
-						</div>
+						<Form.Field form={superform} name="updated_at">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Updated at</Form.Label>
+									<Input {...props} value={dateHelper.format($form.updated_at)} readonly />
+								{/snippet}
+							</Form.Control>
+						</Form.Field>
 					{/if}
 				</div>
 			</div>
@@ -137,7 +138,7 @@
 				<Button type="submit" variant="default">Save</Button>
 				<Button
 					type="submit"
-					formaction="?/priceRulesDelete"
+					formaction="?/channelMapDelete"
 					variant="destructive"
 					disabled={!$form.id}
 				>

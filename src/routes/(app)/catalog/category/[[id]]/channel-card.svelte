@@ -4,8 +4,9 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import type { Tables } from '$lib/types/supabase.types';
 
-	import SheetChannel from './sheet-channel.svelte';
-	import PhDotsThreeBold from '~icons/ph/dots-three-bold.js';
+	import ChannelSheet from './channel-sheet.svelte';
+	import PhDotsThreeBold from '~icons/ph/dots-three-bold';
+
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { cChannelMapCategoryInsertSchema } from '$lib/types/supabase.zod.schemas';
 	import z from 'zod';
@@ -50,7 +51,6 @@
 	</Card.Header>
 	<Card.Content>
 		<Table.Root>
-			<Table.Caption>A list of your recent invoices.</Table.Caption>
 			<Table.Header>
 				<Table.Row>
 					<Table.Head class="w-[100px]">Channel</Table.Head>
@@ -83,10 +83,4 @@
 	</Card.Content>
 </Card.Root>
 
-<SheetChannel
-	bind:isSheetOpen
-	bind:data={selectedItem}
-	{validatedForm}
-	{channels}
-	categoryId={parentId}
-/>
+<ChannelSheet bind:isSheetOpen bind:item={selectedItem} {validatedForm} {channels} {parentId} />
