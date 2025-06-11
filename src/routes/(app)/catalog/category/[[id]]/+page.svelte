@@ -9,7 +9,8 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
-	import Sheet from './price-rules-sheet.svelte';
+	import SheetPriceRules from './sheet-price-rules.svelte';
+	import ChannelCard from './channel-card.svelte';
 
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
@@ -23,9 +24,6 @@
 	const dateHelper = new DateHelper();
 
 	let { data } = $props();
-	data.formPriceRules.data.m_product_category_id = data.formCategory.data.id;
-	data.formPriceRules.data.name = data.formCategory.data.name;
-
 	const superform = superForm(data.formCategory, {
 		resetForm: false,
 		onUpdated({ form }) {
@@ -45,14 +43,15 @@
 		}
 	});
 	const { form: formData, enhance, message, isTainted, tainted, errors } = superform;
-	let isSheetOpen = $state(false);
-	let selectedId: number | undefined = $state();
-	let selected = $derived.by(() => {
-		return data.priceRules.find((v) => v.id === selectedId);
+
+	let isSheetOpenPriceRules = $state(false);
+	let selectedIdPriceRule: number | undefined = $state();
+	let selectedPriceRule = $derived.by(() => {
+		return data.priceRules.find((v) => v.id === selectedIdPriceRule);
 	});
 </script>
 
-<div class="container mx-auto py-6">
+<div class="mx-auto h-full max-w-6xl py-6">
 	<div class="mb-6 flex items-center justify-between">
 		<div>
 			<h1 class="text-3xl font-bold">Edit Category</h1>
@@ -60,8 +59,8 @@
 		</div>
 		<Button variant="link" href={`/catalog?${page.url.searchParams}`}>Back to List</Button>
 	</div>
-	<div class="mb-8 grid grid-cols-[2fr_1fr] gap-2 overflow-hidden">
-		<Card.Root>
+	<div class="mb-8 grid grid-cols-4 gap-4 overflow-auto">
+		<Card.Root class="col-span-3">
 			<form method="POST" use:enhance action="?/categoryUpsert">
 				<Card.Header>
 					<Card.Title>Category Detail</Card.Title>
@@ -141,12 +140,12 @@
 			<Card.Header>
 				<Card.Title>Info</Card.Title>
 			</Card.Header>
-			<Card.Content class="space-y-2">
-				<div class="grid grid-cols-[1fr_2fr] items-center">
+			<Card.Content class="space-y-4">
+				<div class="flex flex-col space-y-2">
 					<label for="id">ID</label>
 					<Input name="id" id="id" value={$formData.id} readonly />
 				</div>
-				<div class="grid grid-cols-[1fr_2fr] items-center">
+				<div class="flex flex-col space-y-2">
 					<Label for="created">Created</Label>
 					<Input
 						id="created"
@@ -155,7 +154,7 @@
 						readonly
 					/>
 				</div>
-				<div class="grid grid-cols-[1fr_2fr] items-center">
+				<div class="flex flex-col space-y-2">
 					<Label for="updated">Updated</Label>
 					<Input
 						id="updated"
@@ -166,72 +165,75 @@
 				</div>
 			</Card.Content>
 		</Card.Root>
-	</div>
-	<Card.Root>
-		<Card.Header>
-			<div class="flex items-center justify-between">
-				<Card.Title>Price Rules</Card.Title>
-				<Button
-					variant="outline"
-					onclick={() => {
-						selectedId = undefined;
-						isSheetOpen = !isSheetOpen;
-					}}
-				>
-					Add rule ...
-				</Button>
-			</div>
-		</Card.Header>
-		<Card.Content>
-			<Table.Root>
-				<Table.Header>
-					<Table.Row>
-						<Table.Head class="w-[100px]name">Name</Table.Head>
-						<Table.Head>Is Active?</Table.Head>
-						<Table.Head>Attribute ID</Table.Head>
-						<Table.Head>Price Formula</Table.Head>
-						<Table.Head>Created at</Table.Head>
-						<Table.Head>Updated at</Table.Head>
-						<Table.Head class="w-8"></Table.Head>
-					</Table.Row>
-				</Table.Header>
-				<Table.Body>
-					{#each data.priceRules as row}
+		<div class="col-span-2">
+			<ChannelCard
+				parentId={$formData.id}
+				items={data.channelMapCategory}
+				channels={data.channels}
+				validatedForm={data.formChannel}
+			/>
+		</div>
+
+		<Card.Root class="col-span-2">
+			<Card.Header>
+				<div class="flex items-center justify-between">
+					<Card.Title>Price Rules</Card.Title>
+					<Button
+						variant="link"
+						onclick={() => {
+							selectedIdPriceRule = undefined;
+							isSheetOpenPriceRules = !isSheetOpenPriceRules;
+						}}
+					>
+						Add
+					</Button>
+				</div>
+			</Card.Header>
+			<Card.Content>
+				<Table.Root>
+					<Table.Header>
 						<Table.Row>
-							<Table.Cell class="font-medium">{row.name}</Table.Cell>
-							<!-- <Table.Cell>{row.is_active}</Table.Cell> -->
-							<Table.Cell><CheckboxZag checked={row.is_active} disabled /></Table.Cell>
-							<Table.Cell>{row.m_attribute_id}</Table.Cell>
-							<Table.Cell>{getLabelByValue(row.price_formula_id, data.priceFormulas)}</Table.Cell>
-							<Table.Cell>{dateHelper.format(row.created_at)}</Table.Cell>
-							<Table.Cell>{dateHelper.format(row.updated_at)}</Table.Cell>
-							<Table.Cell>
-								<Button
-									variant="ghost"
-									size="icon"
-									onclick={() => {
-										selectedId = row.id;
-										isSheetOpen = !isSheetOpen;
-									}}
-								>
-									<PhDotsThreeBold />
-								</Button>
-							</Table.Cell>
+							<Table.Head class="w-[100px]name">Name</Table.Head>
+							<Table.Head>Is Active?</Table.Head>
+							<Table.Head>Attribute ID</Table.Head>
+							<Table.Head>Price Formula</Table.Head>
+							<Table.Head class="w-8"></Table.Head>
 						</Table.Row>
-					{/each}
-				</Table.Body>
-			</Table.Root>
-		</Card.Content>
-	</Card.Root>
+					</Table.Header>
+					<Table.Body>
+						{#each data.priceRules as row}
+							<Table.Row>
+								<Table.Cell class="font-medium">{row.name}</Table.Cell>
+								<!-- <Table.Cell>{row.is_active}</Table.Cell> -->
+								<Table.Cell><CheckboxZag checked={row.is_active} disabled /></Table.Cell>
+								<Table.Cell>{row.m_attribute_id}</Table.Cell>
+								<Table.Cell>{getLabelByValue(row.price_formula_id, data.priceFormulas)}</Table.Cell>
+								<Table.Cell>
+									<Button
+										variant="ghost"
+										size="icon"
+										onclick={() => {
+											selectedIdPriceRule = row.id;
+											isSheetOpenPriceRules = !isSheetOpenPriceRules;
+										}}
+									>
+										<PhDotsThreeBold />
+									</Button>
+								</Table.Cell>
+							</Table.Row>
+						{/each}
+					</Table.Body>
+				</Table.Root>
+			</Card.Content>
+		</Card.Root>
+		<SuperDebug data={{ $formData, $errors }} display={dev} />
+	</div>
 </div>
 
-{#if isSheetOpen}
-	<Sheet
-		bind:isSheetOpen
-		bind:data={selected}
-		validatedForm={data.formPriceRules}
-		priceFormulas={data.priceFormulas}
-	/>
-{/if}
-
-<SuperDebug data={{ $formData, $errors }} display={dev} />
+<SheetPriceRules
+	bind:isSheetOpen={isSheetOpenPriceRules}
+	bind:data={selectedPriceRule}
+	validatedForm={data.formPriceRules}
+	priceFormulas={data.priceFormulas}
+	categoryId={$formData.id}
+/>

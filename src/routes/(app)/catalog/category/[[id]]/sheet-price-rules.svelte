@@ -19,15 +19,21 @@
 		data: Schema | undefined;
 		validatedForm: SuperValidated<Schema>;
 		priceFormulas: Item[];
+		categoryId: number | undefined;
 	};
 
 	let {
 		isSheetOpen = $bindable(),
 		data = $bindable(),
 		validatedForm,
-		priceFormulas
+		priceFormulas,
+		categoryId
 	}: Props = $props();
 	const superform = superForm(validatedForm, {
+		onSubmit: async ({ formData }) => {
+			formData.delete('created_at');
+			formData.delete('updated_at');
+		},
 		onUpdated({ form }) {
 			if (form.valid) {
 				toast.success(form.message || 'Vendor PO operation successful');
@@ -43,9 +49,16 @@
 		}
 	});
 	const { form, enhance, message, isTainted, tainted, errors, constraints } = superform;
-	if (data) {
-		$form = { ...data };
-	}
+	$effect(() => {
+		if (data) {
+			$form = { ...data };
+		} else {
+			// Reset for new entry
+			Object.assign($form, validatedForm.data); // Start with the base schema structure
+			$form.id = undefined; // Clear ID for new record
+			$form.m_product_category_id = categoryId; // Assign from prop
+		}
+	});
 </script>
 
 <Sheet.Root bind:open={isSheetOpen}>
@@ -102,6 +115,22 @@
 							{/snippet}
 						</Form.Control>
 					</Form.Field>
+					{#if $form.created_at}
+						<div>
+							<span class="text-sm font-medium text-gray-500">Created At:</span>
+							<span class="ml-2 text-sm text-gray-700"
+								>{new Date($form.created_at).toLocaleString()}</span
+							>
+						</div>
+					{/if}
+					{#if $form.updated_at}
+						<div>
+							<span class="text-sm font-medium text-gray-500">Updated At:</span>
+							<span class="ml-2 text-sm text-gray-700"
+								>{new Date($form.updated_at).toLocaleString()}</span
+							>
+						</div>
+					{/if}
 				</div>
 			</div>
 			<Sheet.Footer>

@@ -260,7 +260,7 @@
 			const transformedProducts: Product[] = xmlResult.products.map((xmlProd: XmlProductType) => ({
 				name: xmlProd.name || '',
 				vendorproductno: xmlProd.code || '',
-				pricelist: typeof xmlProd.price === 'number' ? xmlProd.price : 0,
+				pricelist: typeof xmlProd.price === 'number' && xmlProd.stock === 0 ? xmlProd.price : 0,
 				barcode: xmlProd.ean || '',
 				vendorcategory: xmlProd.category || '',
 				manufacturer: xmlProd.manufacturer || '',
