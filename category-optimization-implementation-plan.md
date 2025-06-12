@@ -1073,3 +1073,313 @@ Once Phase 2 is complete, this pattern can be applied to:
 5. Reporting routes
 
 Each route will benefit from the same optimizations with minimal additional code.
+
+---
+
+## Phase 2A: Priority Implementation - Generic Action Handlers & Payload Builders
+
+### Detailed Implementation Plan
+
+#### Step 1: Create Payload Builder Configuration System
+
+```typescript
+// src/lib/utils/payload-configs.ts
+import type { PayloadBuilderConfig } from './form-payload.utils'
+
+// Category payload configuration
+export const categoryPayloadConfig: PayloadBuilderConfig<CategoryCreate> = {
+  requiredFields: ['name'],
+  optionalFields: ['is_active', 'is_self_service', 'parent_id', 'description'],
+  defaultValues: {
+    is_active: false,
+    is_self_service: false,
+    parent_id: null,
+    description: null
+  },
+  transformers: {
+    parent_id: (value) => value === undefined || value === '' ? null : Number(value),
+    description: (value) => value === undefined || value === '' ? null : value
+  }
+}
+
+// Price Rules payload configuration
+export const priceRulesPayloadConfig: PayloadBuilderConfig<PriceRuleCreate> = {
+  requiredFields: ['m_product_category_id', 'price_formula_id'],
+  optionalFields: ['name', 'is_active', 'm_product_id', 'm_attribute_id', 'priority'],
+  defaultValues: {
+    name: null,
+    is_active: false,
+    m_product_id: null,
+    m_attribute_id: null,
+    priority: 0
+  },
+  transformers: {
+    m_product_category_id: (value) => Number(value),
+    price_formula_id: (value) => Number(value),
+    m_product_id: (value) => value === undefined || value === '' ? null : Number(value),
+    m_attribute_id: (value) => value === undefined || value === '' ? null : Number(value),
+    priority: (value) => value === undefined ? 0 : Number(value)
+  }
+}
+
+// Channel Mapping payload configuration
+export const channelMappingPayloadConfig: PayloadBuilderConfig<ChannelMappingCreate> = {
+  requiredFields: ['c_channel_id', 'resource_id', 'resource_name'],
+  optionalFields: ['is_active', 'm_product_category_id'],
+  defaultValues: {
+    is_active: false,
+    m_product_category_id: null
+  },
+  transformers: {
+    c_channel_id: (value) => Number(value),
+    m_product_category_id: (value) => value === undefined || value === '' ? null : Number(value)
+  }
+}
+```
+
+#### Step 2: Enhanced CRUD Action Factory with Type Safety
+
+```typescript
+// src/lib/utils/crud-actions.factory.ts (Enhanced Version)
+import { message, superValidate } from 'sveltekit-superforms'
+import { zod, zod4 } from 'sveltekit-superforms/adapters'
+import { error, fail, redirect } from '@sveltejs/kit'
+import { deleteByIdSchema } from '$lib/types/zod-delete-by-id'
+import type { CRUDService } from '$lib/services/base/crud.service'
+import type { PayloadBuilder } from './form-payload.utils'
+import type { ZodSchema } from 'zod'
+
+export interface CRUDActionFactoryConfig<T, CreateT, UpdateT> {
+  service: CRUDService<T, CreateT, UpdateT>
+  payloadBuilder: PayloadBuilder<CreateT, UpdateT>
+  entityName: string
+  insertSchema: ZodSchema
+  redirectOnDelete?: string
+  onCreateSuccess?: (entity: T) => void
+  onUpdateSuccess?: (entity: T) => void
+  onDeleteSuccess?: () => void
+}
+
+export function createCRUDActionFactory<T extends { id: number }, CreateT, UpdateT>(
+  getService: (supabase: any) => CRUDService<T, CreateT, UpdateT>,
+  config: Omit<CRUDActionFactoryConfig<T, CreateT, UpdateT>, 'service'>
+) {
+  return {
+    upsert: async ({ request, locals: { supabase } }) => {
+      const service = getService(supabase)
+      const formData = await request.formData()
+      const form = await superValidate(formData, zod(config.insertSchema))
+
+      if (!form.valid) return fail(400, { form })
+
+      try {
+        const entityData = { ...form.data }
+        const isUpdate = entityData.id && !isNaN(Number(entityData.id))
+
+        if (isUpdate) {
+          const id = Number(entityData.id)
+          const updatePayload = config.payloadBuilder.buildUpdatePayload(entityData)
+          const result = await service.update(id, updatePayload)
+          config.onUpdateSuccess?.(result)
+          return message(form, `${config.entityName} updated successfully!`)
+        } else {
+          // Remove invalid ID for create operations
+          if (!entityData.id || isNaN(Number(entityData.id))) {
+            delete entityData.id
+          }
+          
+          const createPayload = config.payloadBuilder.buildCreatePayload(entityData)
+          const result = await service.create(createPayload)
+          form.data.id = result.id
+          config.onCreateSuccess?.(result)
+          return message(form, `${config.entityName} created successfully!`)
+        }
+      } catch (err: unknown) {
+        console.error(`${config.entityName} upsert error:`, err)
+        const errorMessage = err instanceof Error ? err.message : String(err)
+        return message(
+          form,
+          { type: 'error', text: errorMessage },
+          { status: 400 }
+        )
+      }
+    },
+
+    delete: async ({ request, locals: { supabase } }) => {
+      const service = getService(supabase)
+      const formData = await request.formData()
+      const form = await superValidate(formData, zod4(deleteByIdSchema))
+
+      if (!form.valid) return fail(400, { form })
+
+      try {
+        await service.delete(form.data.id)
+        config.onDeleteSuccess?.()
+        
+        if (config.redirectOnDelete) {
+          throw redirect(303, config.redirectOnDelete)
+        }
+        return message(form, `${config.entityName} deleted successfully!`)
+      } catch (err: unknown) {
+        // Handle redirect properly
+        if (typeof err === 'object' && err !== null && 'status' in err && err.status === 303) {
+          throw err
+        }
+        
+        console.error(`${config.entityName} delete error:`, err)
+        const errorMessage = err instanceof Error ? err.message : String(err)
+        return message(
+          form,
+          { type: 'error', text: errorMessage },
+          { status: 500 }
+        )
+      }
+    }
+  }
+}
+```
+
+#### Step 3: Refactored Category Route Using New Utilities
+
+```typescript
+// src/routes/(app)/catalog/category/[[id]]/+page.server.ts (Refactored)
+import { message, superValidate } from 'sveltekit-superforms'
+import { zod, zod4 } from 'sveltekit-superforms/adapters'
+import { error, fail, redirect } from '@sveltejs/kit'
+import type { Actions, PageServerLoad } from './$types'
+import {
+  cChannelMapCategoryInsertSchema,
+  mProductCategoryInsertSchema,
+  priceRulesInsertSchema
+} from '$lib/types/supabase.zod.schemas'
+import { CategoryService } from '$lib/services/supabase/category.service'
+import { PriceRulesService } from '$lib/services/supabase/price-rules.service'
+import { ChannelMappingService } from '$lib/services/supabase/channel-mapping.service'
+import { PayloadBuilder } from '$lib/utils/form-payload.utils'
+import { createCRUDActionFactory } from '$lib/utils/crud-actions.factory'
+import {
+  categoryPayloadConfig,
+  priceRulesPayloadConfig,
+  channelMappingPayloadConfig
+} from '$lib/utils/payload-configs'
+
+// Load function remains the same (already optimized)
+export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
+  // ... existing load logic
+}
+
+// Create payload builders
+const categoryPayloadBuilder = new PayloadBuilder(categoryPayloadConfig)
+const priceRulesPayloadBuilder = new PayloadBuilder(priceRulesPayloadConfig)
+const channelMappingPayloadBuilder = new PayloadBuilder(channelMappingPayloadConfig)
+
+// Create action factories
+const categoryActions = createCRUDActionFactory(
+  (supabase) => new CategoryService(supabase),
+  {
+    payloadBuilder: categoryPayloadBuilder,
+    entityName: 'Category',
+    insertSchema: mProductCategoryInsertSchema,
+    redirectOnDelete: '/catalog/category'
+  }
+)
+
+const priceRulesActions = createCRUDActionFactory(
+  (supabase) => new PriceRulesService(supabase),
+  {
+    payloadBuilder: priceRulesPayloadBuilder,
+    entityName: 'Price Rule',
+    insertSchema: priceRulesInsertSchema
+  }
+)
+
+const channelMappingActions = createCRUDActionFactory(
+  (supabase) => new ChannelMappingService(supabase),
+  {
+    payloadBuilder: channelMappingPayloadBuilder,
+    entityName: 'Channel Mapping',
+    insertSchema: cChannelMapCategoryInsertSchema
+  }
+)
+
+export const actions = {
+  categoryUpsert: categoryActions.upsert,
+  categoryDelete: categoryActions.delete,
+  priceRulesUpsert: priceRulesActions.upsert,
+  priceRulesDelete: priceRulesActions.delete,
+  channelMapUpsert: channelMappingActions.upsert,
+  channelMapDelete: channelMappingActions.delete
+} satisfies Actions
+```
+
+### Implementation Steps & Timeline
+
+#### Week 1: Foundation
+- **Day 1-2**: Implement PayloadBuilder utility class
+- **Day 3-4**: Create payload configurations for all entities
+- **Day 5**: Unit tests for PayloadBuilder
+
+#### Week 2: Action Factory
+- **Day 1-3**: Implement CRUD action factory
+- **Day 4-5**: Integration tests with existing services
+
+#### Week 3: Integration
+- **Day 1-2**: Refactor category route to use new utilities
+- **Day 3-4**: Test all CRUD operations thoroughly
+- **Day 5**: Performance benchmarking
+
+#### Week 4: Documentation & Validation
+- **Day 1-2**: Create documentation and usage examples
+- **Day 3-4**: Code review and refinements
+- **Day 5**: Prepare for Phase 2B implementation
+
+### Expected Benefits
+
+1. **Code Reduction**: 70% less boilerplate in action handlers
+2. **Type Safety**: Compile-time validation of payload construction
+3. **Consistency**: Standardized error handling across all actions
+4. **Maintainability**: Single source of truth for payload logic
+5. **Reusability**: Easy to apply to other routes
+
+### Success Criteria
+
+- [ ] All existing functionality preserved
+- [ ] Action handlers reduced from ~50 lines to ~5 lines each
+- [ ] Zero TypeScript errors
+- [ ] All tests passing
+- [ ] Performance maintained or improved
+
+### Next Phase Preview
+
+After completing Phase 2A, we'll move to Phase 2B: Enhanced Form Handling & Validation, which will build upon these utilities to create smart form components that automatically handle validation, loading states, and user feedback.
+
+### Mermaid Diagram: Phase 2A Architecture
+
+```mermaid
+graph TB
+    A[Form Data] --> B[PayloadBuilder]
+    B --> C{Create or Update?}
+    C -->|Create| D[buildCreatePayload]
+    C -->|Update| E[buildUpdatePayload]
+    D --> F[Validate Required Fields]
+    E --> G[Apply Transformers]
+    F --> H[Apply Defaults]
+    G --> I[Service Layer]
+    H --> I
+    I --> J[Database]
+    
+    K[CRUD Action Factory] --> L[Generic Upsert Handler]
+    K --> M[Generic Delete Handler]
+    L --> B
+    M --> N[Service Delete Method]
+    
+    O[Route Configuration] --> P[Payload Config]
+    O --> Q[Service Factory]
+    O --> R[Schema Validation]
+    P --> B
+    Q --> I
+    R --> L
+    R --> M
+```
+
+This architecture ensures that all routes follow the same pattern while maintaining flexibility for entity-specific requirements.
