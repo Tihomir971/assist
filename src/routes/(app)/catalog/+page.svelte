@@ -126,7 +126,7 @@
 	}
 </script>
 
-<Card.Root class="flex flex-1 flex-col gap-0 overflow-hidden py-0">
+<Card.Root class="flex flex-1 flex-col gap-0 overflow-hidden bg-transparent py-0">
 	<Card.Header class="bg-surface-1 p-3">
 		<DataTableToolbar
 			{table}

@@ -82,7 +82,7 @@
 <div class="container mx-auto py-6">
 	<div class="mb-6 flex items-center justify-between">
 		<h1 class="text-3xl font-bold">Edit Attribute</h1>
-		<Button href="/catalog/product-attributes/attributes">Back to List</Button>
+		<Button variant="link" href="/catalog/product-attributes/attributes">Back to List</Button>
 	</div>
 
 	<Card.Root>

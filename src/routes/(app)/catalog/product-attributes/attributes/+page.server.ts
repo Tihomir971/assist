@@ -9,7 +9,7 @@ import {
 import { fail } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
 
-export const load = async ({ locals, url }: { locals: App.Locals; url: URL }) => {
+export const load = async ({ locals: { supabase }, url }: { locals: App.Locals; url: URL }) => {
 	// Parse and validate search params
 	const searchParams = Object.fromEntries(url.searchParams);
 	const parsedParams = attributesSearchParamsSchema.parse({
@@ -27,7 +27,7 @@ export const load = async ({ locals, url }: { locals: App.Locals; url: URL }) =>
 	const to = from + perPage - 1;
 
 	// Build query
-	let query = locals.supabase
+	let query = supabase
 		.from('m_attribute')
 		.select('*, m_attribute_group!inner(*)', { count: 'exact' });
 
@@ -64,14 +64,17 @@ export const load = async ({ locals, url }: { locals: App.Locals; url: URL }) =>
 
 	// Execute query
 	const { data: attributes, error: queryError, count } = await query;
-
+	const { data: attributesNew } = await supabase
+		.from('m_attribute')
+		.select('*,m_attribute_group(name)')
+		.order('name');
 	if (queryError) {
 		console.error('Error fetching attributes:', queryError);
 		throw error(500, 'Error fetching attributes');
 	}
 
 	// Fetch attribute groups for the dropdown
-	const { data: attributeGroups, error: groupsError } = await locals.supabase
+	const { data: attributeGroups, error: groupsError } = await supabase
 		.from('m_attribute_group')
 		.select('value:id, label:name')
 		.order('name');
@@ -83,6 +86,7 @@ export const load = async ({ locals, url }: { locals: App.Locals; url: URL }) =>
 
 	return {
 		attributes,
+		attributesNew: attributesNew ?? [],
 		attributeGroups,
 		count: count || 0,
 		page,

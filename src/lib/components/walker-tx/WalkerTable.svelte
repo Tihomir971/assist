@@ -13,7 +13,7 @@
 </script>
 
 <Table.Root class="table-auto">
-	<Table.Header class="sticky top-0 z-10 bg-well-1">
+	<Table.Header class="sticky top-0 z-10 bg-sidebar">
 		<Table.Row class="hover:bg-transparent">
 			{#each table.getHeaderGroups() as headerGroup}
 				{#each headerGroup.headers as header}
@@ -55,7 +55,7 @@
 			</Table.Row>
 		{/each}
 	</Table.Body>
-	<Table.Footer class="sticky bottom-0 z-10 bg-well-1 text-muted-foreground">
+	<Table.Footer class="sticky bottom-0 z-10 text-muted-foreground">
 		<Table.Row class="border-none hover:bg-transparent">
 			<Table.Cell colspan={table.getVisibleFlatColumns().length} class="h-12 py-0 text-center">
 				{table.getSelectedRowModel().rows.length} of {table.getRowCount()}

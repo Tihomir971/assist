@@ -32,9 +32,7 @@
 	);
 </script>
 
-<nav
-	class="border-surface-1 bg-well-1 flex h-full flex-col items-center gap-4 border-r px-2 sm:py-5"
->
+<nav class="border-surface-1 flex h-full flex-col items-center gap-4 border-r px-2 sm:py-5">
 	<Tooltip.Provider>
 		<Tooltip.Root>
 			<Tooltip.Trigger>

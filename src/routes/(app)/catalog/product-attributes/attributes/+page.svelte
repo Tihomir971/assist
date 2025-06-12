@@ -11,7 +11,9 @@
 	import { generateCodeFromName } from '$lib/scripts/code-name-generation.js';
 	import type { Enums } from '$lib/types/supabase.types.js';
 	import { SelectZag } from '$lib/components/zag/index.js';
-
+	import DataTable from '$lib/components/ui/data-table.svelte';
+	import { columns } from './columns.js';
+	import WalkerTable from '$lib/components/walker-tx/WalkerTable.svelte';
 	let { data } = $props();
 
 	// Pagination
@@ -226,7 +228,8 @@
 			</div>
 		</Card.Content>
 	</Card.Root>
-
+	<DataTable {columns} data={data.attributesNew} />
+	<!-- <WalkerTable  data={data.attributesNew} /> -->
 	<!-- Results -->
 	<Card.Root>
 		<Card.Header>
