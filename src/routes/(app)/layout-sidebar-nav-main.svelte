@@ -24,42 +24,37 @@
 	<Sidebar.GroupLabel>Platform</Sidebar.GroupLabel>
 	<Sidebar.Menu>
 		{#each items as item (item.title)}
-			<Collapsible.Root open={item.isActive}>
+			<Collapsible.Root open={item.isActive} class="group/collapsible">
 				{#snippet child({ props })}
 					<Sidebar.MenuItem {...props}>
-						<Sidebar.MenuButton tooltipContent={item.title}>
+						<Collapsible.Trigger>
 							{#snippet child({ props })}
-								<a href={item.url} {...props}>
-									<item.icon class="group-[data-state=collapsed]:size-6" />
+								<Sidebar.MenuButton {...props} tooltipContent={item.title}>
+									{#if item.icon}
+										<item.icon />
+									{/if}
 									<span>{item.title}</span>
-								</a>
+									<ChevronRightIcon
+										class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
+									/>
+								</Sidebar.MenuButton>
 							{/snippet}
-						</Sidebar.MenuButton>
-						{#if item.items?.length}
-							<Collapsible.Trigger>
-								{#snippet child({ props })}
-									<Sidebar.MenuAction {...props} class="data-[state=open]:rotate-90">
-										<ChevronRightIcon />
-										<span class="sr-only">Toggle</span>
-									</Sidebar.MenuAction>
-								{/snippet}
-							</Collapsible.Trigger>
-							<Collapsible.Content>
-								<Sidebar.MenuSub>
-									{#each item.items as subItem (subItem.title)}
-										<Sidebar.MenuSubItem>
-											<Sidebar.MenuSubButton>
-												{#snippet child({ props })}
-													<a href={subItem.url} {...props}>
-														<span>{subItem.title}</span>
-													</a>
-												{/snippet}
-											</Sidebar.MenuSubButton>
-										</Sidebar.MenuSubItem>
-									{/each}
-								</Sidebar.MenuSub>
-							</Collapsible.Content>
-						{/if}
+						</Collapsible.Trigger>
+						<Collapsible.Content>
+							<Sidebar.MenuSub>
+								{#each item.items ?? [] as subItem (subItem.title)}
+									<Sidebar.MenuSubItem>
+										<Sidebar.MenuSubButton>
+											{#snippet child({ props })}
+												<a href={subItem.url} {...props}>
+													<span>{subItem.title}</span>
+												</a>
+											{/snippet}
+										</Sidebar.MenuSubButton>
+									</Sidebar.MenuSubItem>
+								{/each}
+							</Sidebar.MenuSub>
+						</Collapsible.Content>
 					</Sidebar.MenuItem>
 				{/snippet}
 			</Collapsible.Root>

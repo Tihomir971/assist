@@ -22,6 +22,7 @@
 				url: '/catalog',
 				icon: PhTag,
 				items: [
+					{ title: 'Pricelists', url: '/catalog/price-lists', icon: PhTag },
 					{
 						title: 'Attributes',
 						url: '/catalog/product-attributes/attributes'

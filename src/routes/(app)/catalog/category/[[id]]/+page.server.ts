@@ -1,6 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database, Tables } from '$lib/types/supabase.types';
-// src/routes/(app)/catalog/category/[[id]]/+page.server.ts (Refactored)
+import type { Database } from '$lib/types/supabase.types';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { error } from '@sveltejs/kit';
@@ -14,12 +13,17 @@ import {
 import { CategoryService } from '$lib/services/supabase/category.service';
 import { PriceRulesService } from '$lib/services/supabase/price-rules.service';
 import { ChannelMappingService } from '$lib/services/supabase/channel-mapping.service';
-import { createSimpleCRUD } from '$lib/utils/simple-crud.factory'; // New factory
-import {
-	categoryPayloadBuilder,
-	priceRulesPayloadBuilder,
-	channelMappingPayloadBuilder
-} from '$lib/utils/payload-configs.simplified'; // New simplified configs
+import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
+import { categoryPayloadBuilder } from './category.payload';
+import { priceRulesPayloadBuilder } from './price-rule.payload';
+import { channelMappingPayloadBuilder } from './channel-mapping.payload'; // Updated import
+// All builders for this route are now co-located.
+// The import from '$lib/utils/payload-configs.simplified' will be empty for these if no other builders remain.
+import type {
+	CChannelMapCategoryRow,
+	MProductCategoryRow,
+	PriceRulesRow
+} from '$lib/types/supabase.zod.schemas-ts';
 
 // Load function remains the same (already optimized)
 export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
@@ -81,10 +85,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 };
 
 // Action factories using the new createSimpleCRUD and imported builders
-const categoryActions = createSimpleCRUD<
-	Tables<'m_product_category'>,
-	typeof mProductCategoryInsertSchema
->(
+const categoryActions = createSimpleCRUD<MProductCategoryRow, typeof mProductCategoryInsertSchema>(
 	'Category',
 	(supabase: SupabaseClient<Database>) => new CategoryService(supabase),
 	categoryPayloadBuilder,
@@ -92,7 +93,7 @@ const categoryActions = createSimpleCRUD<
 	'/catalog/category'
 );
 
-const priceRulesActions = createSimpleCRUD<Tables<'price_rules'>, typeof priceRulesInsertSchema>(
+const priceRulesActions = createSimpleCRUD<PriceRulesRow, typeof priceRulesInsertSchema>(
 	'Price Rule',
 	(supabase: SupabaseClient<Database>) => new PriceRulesService(supabase),
 	priceRulesPayloadBuilder,
@@ -100,7 +101,7 @@ const priceRulesActions = createSimpleCRUD<Tables<'price_rules'>, typeof priceRu
 );
 
 const channelMappingActions = createSimpleCRUD<
-	Tables<'c_channel_map_category'>,
+	CChannelMapCategoryRow,
 	typeof cChannelMapCategoryInsertSchema
 >(
 	'Channel Mapping',
