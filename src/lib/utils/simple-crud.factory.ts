@@ -17,7 +17,7 @@ type GetServiceFn<TEntity extends { id: number }, TCreateInferred, TUpdateInferr
 export function createSimpleCRUD<
 	TEntity extends { id: number },
 	// Schema is a ZodObject that outputs some type (any for now, will be TCreate)
-	Schema extends z.ZodObject<ZodRawShape, UnknownKeysParam, ZodTypeAny, any, any>,
+	Schema extends z.ZodObject<ZodRawShape, UnknownKeysParam, ZodTypeAny>,
 	// TCreate is explicitly inferred from the Schema
 	TCreate = z.infer<Schema>,
 	// TUpdate is Partial of TCreate, also aligning with SmartPayloadBuilder's expectation
