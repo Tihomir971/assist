@@ -14,6 +14,7 @@ import {
 	mReplenishInsertSchema
 } from '$lib/types/supabase.zod.schemas';
 import { deleteByIdSchema } from '$lib/types/zod-delete-by-id';
+import { CategoryService } from '$lib/services/supabase/category.service';
 
 export const load: PageServerLoad = async ({ depends, params, locals: { supabase } }) => {
 	depends('catalog:products');
@@ -22,13 +23,8 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 	const { data: product } = await supabase.from('m_product').select().eq('id', productId).single();
 	if (!product) throw error(404, 'Product not found');
 
-	const getCategories = async () => {
-		const { data } = await supabase
-			.from('m_product_category')
-			.select('value:id, label:name')
-			.order('name');
-		return data || [];
-	};
+	const categoryService = new CategoryService(supabase);
+
 	const getBPartner = async () => {
 		const { data } = await supabase
 			.from('c_bpartner')
@@ -120,7 +116,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		priceFormula
 	] = await Promise.all([
 		ProductService.getUoms(supabase),
-		getCategories(),
+		categoryService.getLookup(),
 		getBPartner(),
 		getReplenishes(),
 		getWarehouses(),

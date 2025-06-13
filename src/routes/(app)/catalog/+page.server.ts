@@ -23,6 +23,7 @@ import { findChildren } from '$lib/scripts/tree';
 import { sourceId } from './types';
 import { catalogSearchParamsSchema } from './search-params.schema';
 import { ProductStatus, type ProductResultGet } from './types-get-market-info';
+import type { MPricelistVersionRow } from '$lib/types/supabase.zod.schemas-ts';
 
 // Add this export near the top or where types are defined
 export type ErrorDetails = { productId?: number; step: string; message: string };
@@ -166,7 +167,7 @@ function filterAndFlattenProducts(
 	selectedReport: string | null,
 	activeWarehouse: number,
 	checkedVat: boolean,
-	activePricelists: Partial<Tables<'m_pricelist_version'>>[] | []
+	activePricelists: Partial<MPricelistVersionRow>[] | []
 ): FlattenedProduct[] {
 	let filteredProducts: ProductWithDetails[];
 	if (selectedReport === 'relocation') {

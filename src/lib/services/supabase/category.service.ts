@@ -105,7 +105,7 @@ export class CategoryService implements CRUDService<Category, CategoryCreate, Ca
 		return data || [];
 	}
 
-	async getCategoryLookup(): Promise<CategoryLookup[]> {
+	async getLookup(): Promise<CategoryLookup[]> {
 		const { data, error } = await this.supabase
 			.from('m_product_category')
 			.select('value:id, label:name')

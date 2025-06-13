@@ -78,4 +78,11 @@ export class DateHelper {
 
 		return dateFormatter.format(todayDate.toDate(localTimeZone));
 	}
+
+	/**
+	 * Gets today's date and time formatted for the instance's locale.
+	 */
+	public formatDateTime(date: Date): string {
+		return this.defaultFormatter.format(date);
+	}
 }

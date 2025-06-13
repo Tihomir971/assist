@@ -40,7 +40,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 		const [categoryWithRelated, lookupCategories, lookupPriceFormulas, lookupChannels] =
 			await Promise.all([
 				categoryId ? categoryService.getCategoryWithRelatedData(categoryId) : Promise.resolve(null),
-				categoryService.getCategoryLookup(),
+				categoryService.getLookup(),
 				priceRulesService.getPriceFormulasLookup(),
 				channelMappingService.getChannelLookup()
 			]);

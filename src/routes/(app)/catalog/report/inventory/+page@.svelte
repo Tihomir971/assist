@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { DateTime } from 'luxon';
+	import { DateHelper } from '$lib/scripts/intl/DateHelper.js';
 
 	const { data } = $props();
 
-	let currentDateTime = $state(DateTime.now());
 	let warehouseName = $state('Loading...');
-
+	const dateHelper = new DateHelper();
 	async function fetchWarehouseName(): Promise<void> {
 		const warehouseIdStr = page.url.searchParams.get('warehouse');
 
@@ -72,7 +71,7 @@
 			</div>
 			<p>
 				<strong>Date and Time:</strong>
-				{currentDateTime.setLocale('sr-Latn').toLocaleString(DateTime.DATETIME_FULL)}
+				{dateHelper.formatDateTime(new Date())}
 			</p>
 		</div>
 
