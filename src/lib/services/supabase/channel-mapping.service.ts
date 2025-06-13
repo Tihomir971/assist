@@ -5,6 +5,7 @@ import type { CRUDService } from '../base/crud.service';
 export type ChannelMapping = Tables<'c_channel_map_category'>; // Exported
 export type ChannelMappingCreate = Omit<ChannelMapping, 'id' | 'created_at' | 'updated_at'>; // Exported
 export type ChannelMappingUpdate = Partial<ChannelMappingCreate>; // Exported
+export type ChannelLookup = { value: number; label: string }; // Exported for lookup
 
 export class ChannelMappingService
 	implements CRUDService<ChannelMapping, ChannelMappingCreate, ChannelMappingUpdate>
@@ -62,6 +63,13 @@ export class ChannelMappingService
 
 		const { data, error } = await query.order('resource_name'); // Assuming 'resource_name' exists for ordering
 		if (error) throw new Error(`Failed to list channel mappings: ${error.message}`);
+		return data || [];
+	}
+
+	async getChannelLookup(): Promise<ChannelLookup[]> {
+		const { data, error } = await this.supabase.from('c_channel').select('label:name, value:id'); // No specific order mentioned, can add if needed
+
+		if (error) throw new Error(`Failed to load channel lookup: ${error.message}`);
 		return data || [];
 	}
 }

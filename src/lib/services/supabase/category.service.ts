@@ -5,6 +5,7 @@ import type { CRUDService } from '../base/crud.service'; // Removed ServiceResul
 export type Category = Tables<'m_product_category'>; // Exported
 export type CategoryCreate = Omit<Category, 'id' | 'created_at' | 'updated_at'>; // Exported
 export type CategoryUpdate = Partial<CategoryCreate>; // Exported
+export type CategoryLookup = { value: number; label: string }; // Exported for lookup
 
 export class CategoryService implements CRUDService<Category, CategoryCreate, CategoryUpdate> {
 	constructor(private supabase: SupabaseClient<Database>) {}
@@ -101,6 +102,16 @@ export class CategoryService implements CRUDService<Category, CategoryCreate, Ca
 			throw new Error(
 				`Failed to fetch channel mappings for category ${categoryId}: ${error.message}`
 			);
+		return data || [];
+	}
+
+	async getCategoryLookup(): Promise<CategoryLookup[]> {
+		const { data, error } = await this.supabase
+			.from('m_product_category')
+			.select('value:id, label:name')
+			.order('name');
+
+		if (error) throw new Error(`Failed to load category lookup: ${error.message}`);
 		return data || [];
 	}
 }

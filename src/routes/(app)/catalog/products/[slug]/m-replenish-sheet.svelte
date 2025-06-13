@@ -5,17 +5,15 @@
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { toast } from 'svelte-sonner';
-	import type { mReplenishInsertSchema } from '$lib/types/supabase.zod.schemas.js';
-	import { z } from 'zod';
 	import { dev } from '$app/environment';
 	import * as Form from '$lib/components/ui/form/index.js';
+	import type { MReplenishInsert } from '$lib/types/supabase.zod.schemas-ts';
 
 	type Item = { value: number; label: string };
-	type Schema = z.infer<typeof mReplenishInsertSchema>;
 	type Props = {
 		isSheetOpen: boolean;
-		data: Schema | undefined;
-		validatedForm: SuperValidated<Schema>;
+		data: MReplenishInsert | undefined;
+		validatedForm: SuperValidated<MReplenishInsert>;
 		warehouses: Item[];
 	};
 	let {

@@ -15,8 +15,6 @@ export const attributeSetsSearchParamsSchema = z.object({
 	isActive: z.enum(['true', 'false', '']).optional()
 });
 
-export type AttributeSetsSearchParams = z.infer<typeof attributeSetsSearchParamsSchema>;
-
 // Schema for creating a new attribute set - extending mAttributesetInsertSchema
 export const createAttributeSetSchema = mAttributesetInsertSchema.extend({
 	name: z.string().min(1, { message: 'Name is required' }).max(100),

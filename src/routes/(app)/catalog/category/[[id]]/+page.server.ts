@@ -1,3 +1,5 @@
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database, Tables } from '$lib/types/supabase.types';
 // src/routes/(app)/catalog/category/[[id]]/+page.server.ts (Refactored)
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -12,17 +14,18 @@ import {
 import { CategoryService } from '$lib/services/supabase/category.service';
 import { PriceRulesService } from '$lib/services/supabase/price-rules.service';
 import { ChannelMappingService } from '$lib/services/supabase/channel-mapping.service';
-import { PayloadBuilder } from '$lib/utils/form-payload.utils';
-import { createCRUDActionFactory } from '$lib/utils/crud-actions.factory';
+import { createSimpleCRUD } from '$lib/utils/simple-crud.factory'; // New factory
 import {
-	categoryPayloadConfig,
-	priceRulesPayloadConfig,
-	channelMappingPayloadConfig
-} from '$lib/utils/payload-configs';
+	categoryPayloadBuilder,
+	priceRulesPayloadBuilder,
+	channelMappingPayloadBuilder
+} from '$lib/utils/payload-configs.simplified'; // New simplified configs
 
 // Load function remains the same (already optimized)
 export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
 	const categoryService = new CategoryService(supabase);
+	const priceRulesService = new PriceRulesService(supabase); // Instantiate PriceRulesService
+	const channelMappingService = new ChannelMappingService(supabase); // Instantiate ChannelMappingService
 
 	let categoryId: number | null = null;
 
@@ -37,29 +40,9 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 		const [categoryWithRelated, lookupCategories, lookupPriceFormulas, lookupChannels] =
 			await Promise.all([
 				categoryId ? categoryService.getCategoryWithRelatedData(categoryId) : Promise.resolve(null),
-				supabase
-					.from('m_product_category')
-					.select('value:id, label:name')
-					.order('name')
-					.then(({ data, error: err }) => {
-						if (err) throw new Error(`Failed to load categories: ${err.message}`);
-						return data || [];
-					}),
-				supabase
-					.from('price_formulas')
-					.select('value:id, label:name')
-					.order('name')
-					.then(({ data, error: err }) => {
-						if (err) throw new Error(`Failed to load price formulas: ${err.message}`);
-						return data || [];
-					}),
-				supabase
-					.from('c_channel')
-					.select('label:name, value:id')
-					.then(({ data, error: err }) => {
-						if (err) throw new Error(`Failed to load channels: ${err.message}`);
-						return data || [];
-					})
+				categoryService.getCategoryLookup(),
+				priceRulesService.getPriceFormulasLookup(),
+				channelMappingService.getChannelLookup()
 			]);
 
 		if (categoryId && !categoryWithRelated?.category) {
@@ -97,32 +80,33 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 	}
 };
 
-// Create payload builders
-const categoryPayloadBuilder = new PayloadBuilder(categoryPayloadConfig);
-const priceRulesPayloadBuilder = new PayloadBuilder(priceRulesPayloadConfig);
-const channelMappingPayloadBuilder = new PayloadBuilder(channelMappingPayloadConfig);
+// Action factories using the new createSimpleCRUD and imported builders
+const categoryActions = createSimpleCRUD<
+	Tables<'m_product_category'>,
+	typeof mProductCategoryInsertSchema
+>(
+	'Category',
+	(supabase: SupabaseClient<Database>) => new CategoryService(supabase),
+	categoryPayloadBuilder,
+	mProductCategoryInsertSchema,
+	'/catalog/category'
+);
 
-// Create action factories
-const categoryActions = createCRUDActionFactory((supabase) => new CategoryService(supabase), {
-	payloadBuilder: categoryPayloadBuilder,
-	entityName: 'Category',
-	insertSchema: mProductCategoryInsertSchema,
-	redirectOnDelete: '/catalog/category'
-});
+const priceRulesActions = createSimpleCRUD<Tables<'price_rules'>, typeof priceRulesInsertSchema>(
+	'Price Rule',
+	(supabase: SupabaseClient<Database>) => new PriceRulesService(supabase),
+	priceRulesPayloadBuilder,
+	priceRulesInsertSchema
+);
 
-const priceRulesActions = createCRUDActionFactory((supabase) => new PriceRulesService(supabase), {
-	payloadBuilder: priceRulesPayloadBuilder,
-	entityName: 'Price Rule',
-	insertSchema: priceRulesInsertSchema
-});
-
-const channelMappingActions = createCRUDActionFactory(
-	(supabase) => new ChannelMappingService(supabase),
-	{
-		payloadBuilder: channelMappingPayloadBuilder,
-		entityName: 'Channel Mapping',
-		insertSchema: cChannelMapCategoryInsertSchema
-	}
+const channelMappingActions = createSimpleCRUD<
+	Tables<'c_channel_map_category'>,
+	typeof cChannelMapCategoryInsertSchema
+>(
+	'Channel Mapping',
+	(supabase: SupabaseClient<Database>) => new ChannelMappingService(supabase),
+	channelMappingPayloadBuilder,
+	cChannelMapCategoryInsertSchema
 );
 
 export const actions = {

@@ -12,14 +12,14 @@
 	import type { cChannelMapCategoryInsertSchema } from '$lib/types/supabase.zod.schemas.js';
 	import { dev } from '$app/environment';
 	import { DateHelper } from '$lib/scripts/intl';
+	import type { CChannelMapCategoryInsert } from '$lib/types/supabase.zod.schemas-ts';
 
 	type ListItem = { value: number; label: string };
-	type Schema = z.infer<typeof cChannelMapCategoryInsertSchema>;
 	type Props = {
 		isSheetOpen: boolean;
-		item: Schema | undefined;
+		item: CChannelMapCategoryInsert | undefined;
 		parentId: number | undefined;
-		validatedForm: SuperValidated<Schema>;
+		validatedForm: SuperValidated<CChannelMapCategoryInsert>;
 
 		channels: ListItem[];
 	};

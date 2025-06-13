@@ -10,12 +10,12 @@
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { cChannelMapCategoryInsertSchema } from '$lib/types/supabase.zod.schemas';
 	import z from 'zod';
+	import type { CChannelMapCategoryInsert } from '$lib/types/supabase.zod.schemas-ts';
 
-	type Schema = z.infer<typeof cChannelMapCategoryInsertSchema>;
 	type Props = {
 		parentId: number | undefined;
 		items: Tables<'c_channel_map_category'>[];
-		validatedForm: SuperValidated<Schema>;
+		validatedForm: SuperValidated<CChannelMapCategoryInsert>;
 		channels: { value: number; label: string }[];
 	};
 	let { parentId = $bindable(), items, validatedForm, channels }: Props = $props();

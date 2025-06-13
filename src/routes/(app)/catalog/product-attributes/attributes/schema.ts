@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import {
-	attributeTypeSchema,
 	mAttributeInsertSchema,
 	mAttributeUpdateSchema,
 	mAttributeOptionInsertSchema
@@ -20,9 +19,6 @@ export const attributesSearchParamsSchema = z.object({
 });
 
 export type AttributesSearchParams = z.infer<typeof attributesSearchParamsSchema>;
-
-// Reusing attributeTypeSchema from supabase.zod.schemas.ts
-export type AttributeType = z.infer<typeof attributeTypeSchema>;
 
 // Schema for creating a new attribute - extending mAttributeInsertSchema
 export const createAttributeSchema = mAttributeInsertSchema.extend({

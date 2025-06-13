@@ -5,6 +5,7 @@ import type { CRUDService } from '../base/crud.service';
 export type PriceRule = Tables<'price_rules'>; // Exported
 export type PriceRuleCreate = Omit<PriceRule, 'id' | 'created_at' | 'updated_at'>; // Exported
 export type PriceRuleUpdate = Partial<PriceRuleCreate>; // Exported
+export type PriceFormulaLookup = { value: number; label: string }; // Exported for lookup
 
 export class PriceRulesService implements CRUDService<PriceRule, PriceRuleCreate, PriceRuleUpdate> {
 	constructor(private supabase: SupabaseClient<Database>) {}
@@ -60,6 +61,16 @@ export class PriceRulesService implements CRUDService<PriceRule, PriceRuleCreate
 
 		const { data, error } = await query.order('name'); // Assuming 'name' exists for ordering
 		if (error) throw new Error(`Failed to list price rules: ${error.message}`);
+		return data || [];
+	}
+
+	async getPriceFormulasLookup(): Promise<PriceFormulaLookup[]> {
+		const { data, error } = await this.supabase
+			.from('price_formulas')
+			.select('value:id, label:name')
+			.order('name');
+
+		if (error) throw new Error(`Failed to load price formulas lookup: ${error.message}`);
 		return data || [];
 	}
 }

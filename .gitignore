@@ -25,3 +25,4 @@ vite.config.js.timestamp-*
 .claude-instruction.txt
 #wrangler.toml
 .dev.*
+supazod.config.*

@@ -6,15 +6,13 @@
 	import Sheet from './m-replenish-sheet.svelte';
 	import * as Table from '$lib/components/ui/table';
 	import PhDotsThreeBold from '~icons/ph/dots-three-bold';
-	import { z } from 'zod';
-	import type { mReplenishInsertSchema } from '$lib/types/supabase.zod.schemas';
 	import { getLabelByValue } from '$lib/scripts/custom';
+	import type { MReplenishInsert } from '$lib/types/supabase.zod.schemas-ts';
 
-	type Schema = z.infer<typeof mReplenishInsertSchema>;
 	interface Props {
-		validatedForm: SuperValidated<Schema>;
+		validatedForm: SuperValidated<MReplenishInsert>;
 		productId: number;
-		data: Schema[];
+		data: MReplenishInsert[];
 		warehouses: Array<{ value: number; label: string }>;
 	}
 

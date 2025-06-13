@@ -4,19 +4,17 @@
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { type SuperValidated } from 'sveltekit-superforms';
 	import PriceRulesSheet from './price-rules-sheet.svelte';
-	import type { priceRulesInsertSchema } from '$lib/types/supabase.zod.schemas';
-	import z from 'zod';
 	import type { Tables } from '$lib/types/supabase.types';
 	import { CheckboxZag } from '$lib/components/zag';
 	import { getLabelByValue } from '$lib/scripts/custom';
 	import PhDotsThreeBold from '~icons/ph/dots-three-bold';
+	import type { PriceRulesInsert } from '$lib/types/supabase.zod.schemas-ts';
 
 	type Item = { value: number; label: string };
-	type Schema = z.infer<typeof priceRulesInsertSchema>;
 	type Props = {
 		parentId: number | undefined;
 		items: Tables<'price_rules'>[];
-		validatedForm: SuperValidated<Schema>;
+		validatedForm: SuperValidated<PriceRulesInsert>;
 		priceFormulas: Item[];
 	};
 	let { parentId = $bindable(), items, validatedForm, priceFormulas }: Props = $props();

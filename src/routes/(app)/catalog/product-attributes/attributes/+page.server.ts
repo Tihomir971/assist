@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit';
-import { attributesSearchParamsSchema, type AttributeType } from './schema.js';
+import { attributesSearchParamsSchema } from './schema.js';
+// import { PublicAttributeType } from '$lib/types/';
 import { superValidate } from 'sveltekit-superforms/server';
 import {
 	createAttributeSchema,
@@ -8,6 +9,7 @@ import {
 } from './schema.js';
 import { fail } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
+import type { PublicAttributeType } from '$lib/types/supabase.zod.schemas-ts.js';
 
 export const load = async ({ locals: { supabase }, url }: { locals: App.Locals; url: URL }) => {
 	// Parse and validate search params
@@ -41,7 +43,7 @@ export const load = async ({ locals: { supabase }, url }: { locals: App.Locals; 
 	}
 
 	if (attributeType) {
-		query = query.eq('attribute_type', attributeType as AttributeType);
+		query = query.eq('attribute_type', attributeType as PublicAttributeType);
 	}
 
 	if (attributeGroupId) {
