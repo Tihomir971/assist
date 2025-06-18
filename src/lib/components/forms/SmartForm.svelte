@@ -63,77 +63,39 @@
 	// Analyze schema to generate base form configuration
 	const analyzedFormConfig: AnalyzedFormConfig = SchemaAnalyzer.analyzeSchema(schema);
 
-	// Merge with user-provided overrides from config prop
-	const finalFields: EnhancedFieldConfig[] = analyzedFormConfig.fields
-		.map((field) => {
-			const override = config.fieldOverrides?.[field.name] as FieldOverride | undefined; // Cast for type safety
+	// Create a map of analyzed fields for easy lookup
+	const analyzedFieldsMap = new Map(analyzedFormConfig.fields.map((f) => [f.name, f]));
 
-			// Determine field type based on overrides
-			let fieldType = field.type;
-
-			// Priority 1: Manual type override
-			if (override?.type) {
-				fieldType = override.type;
+	// Build the list of VISIBLE fields based on the provided config using reduce to avoid type issues
+	const visibleFields: EnhancedFieldConfig[] = Object.entries(config.fieldOverrides || {})
+		.reduce<EnhancedFieldConfig[]>((acc, [fieldName, override]) => {
+			const baseField = analyzedFieldsMap.get(fieldName);
+			// Skip if field not in schema or explicitly hidden
+			if (!baseField || override.hidden) {
+				return acc;
 			}
-			// Priority 2: Options-based type detection
-			else if (override?.options && override.options.length > 0) {
-				// If field has options, use combobox for searchable dropdowns, select for simple ones
+
+			// Determine the final field type
+			let fieldType = override.type || baseField.type;
+			if (!override.type && override.options?.length) {
 				fieldType = override.searchable !== false ? 'combobox' : 'select';
 			}
 
-			return {
-				...field,
-				...(override || {}), // Apply overrides
-				type: fieldType, // Override the field type if needed
-				// Ensure options from overrides are correctly typed if they exist
-				options: override?.options || field.options
-			};
-		})
-		.filter((field) => {
-			// Always include id field if it has a value (needed for updates and deletes)
-			if (field.name === 'id' && initialForm.data?.id) {
-				return true;
-			}
-
-			// Exclude id field when there's no value (create mode)
-			if (field.name === 'id' && !initialForm.data?.id) {
-				return false;
-			}
-
-			// Filter out other hidden fields
-			if (config.fieldOverrides?.[field.name]?.hidden) return false;
-
-			// Note: created_at and updated_at are now shown as readonly fields but excluded from submission by SmartPayloadBuilder
-
-			return true;
-		})
+			acc.push({
+				...baseField,
+				...override,
+				type: fieldType,
+				options: override.options || baseField.options
+			});
+			return acc;
+		}, [])
 		.sort((a, b) => {
-			// Sort by custom order if specified, otherwise use fieldOverrides order
-			const aOrder = config.fieldOverrides?.[a.name]?.order;
-			const bOrder = config.fieldOverrides?.[b.name]?.order;
-
-			if (aOrder !== undefined && bOrder !== undefined) {
-				return aOrder - bOrder;
-			}
-			if (aOrder !== undefined) return -1;
-			if (bOrder !== undefined) return 1;
-
-			// If no explicit order, use the order from fieldOverrides object
+			// Sort fields based on the order they appear in the config.fieldOverrides object
 			if (config.fieldOverrides) {
-				const overrideKeys = Object.keys(config.fieldOverrides);
-				const aIndex = overrideKeys.indexOf(a.name);
-				const bIndex = overrideKeys.indexOf(b.name);
-
-				// If both fields are in fieldOverrides, sort by their position
-				if (aIndex !== -1 && bIndex !== -1) {
-					return aIndex - bIndex;
-				}
-				// Fields in fieldOverrides come first
-				if (aIndex !== -1) return -1;
-				if (bIndex !== -1) return 1;
+				const keys = Object.keys(config.fieldOverrides);
+				return keys.indexOf(a.name) - keys.indexOf(b.name);
 			}
-
-			return 0; // Maintain original order for fields not in fieldOverrides
+			return 0;
 		});
 
 	const superform = superForm(initialForm, {
@@ -185,6 +147,16 @@
 	});
 
 	const { form: formData, enhance, errors, constraints, submitting, tainted, reset } = superform;
+
+	const finalTitle = $derived(
+		`${$formData.id ? 'Update' : 'Create'} ${config.title || analyzedFormConfig.title}`
+	);
+
+	// Determine which fields should be HIDDEN inputs
+	const visibleFieldNames = new Set(visibleFields.map((f) => f.name));
+	const hiddenFieldNames = $derived(
+		Object.keys($formData).filter((key) => !visibleFieldNames.has(key))
+	);
 
 	// Connect enhanced form integration if provided
 	if (enhancedFormIntegration) {
@@ -253,39 +225,40 @@
 	<Card.Root class={config.cardProps?.className}>
 		{#if config.cardProps?.showHeader !== false && (config.title || analyzedFormConfig.title)}
 			<Card.Header class="border-b">
-				<Card.Title>
-					{config.title || analyzedFormConfig.title}
-				</Card.Title>
+				<div class="flex items-center justify-between">
+					<Card.Title class="text-xl font-semibold">{finalTitle}</Card.Title>
+					<Card.Action>
+						<FormActions
+							{entityName}
+							isSubmitting={$submitting}
+							isDirty={Object.keys($tainted || {}).length > 0}
+							onCancel={handleCancel}
+							onReset={reset}
+							{onDelete}
+							{deleteAction}
+							showDelete={!!deleteAction}
+							hasId={!!initialForm.data?.id}
+							{formElement}
+						/>
+					</Card.Action>
+				</div>
 				{#if config.description || analyzedFormConfig.description}
-					<Card.Description>
+					<Card.Description class="mt-1">
 						{config.description || analyzedFormConfig.description}
 					</Card.Description>
 				{/if}
-				<Card.Action>
-					<FormActions
-						{entityName}
-						isSubmitting={$submitting}
-						isDirty={Object.keys($tainted || {}).length > 0}
-						onCancel={handleCancel}
-						{onDelete}
-						{deleteAction}
-						showDelete={!!deleteAction}
-						hasId={!!initialForm.data?.id}
-						{formElement}
-					/>
-				</Card.Action>
 			</Card.Header>
 		{/if}
 
 		<Card.Content>
-			<!-- Hidden fields (rendered outside grid to avoid taking up space) -->
-			{#each finalFields.filter((f) => f.hidden) as field (field.name)}
-				<SmartField {field} {superform} bind:value={$formData[field.name]} />
+			<!-- Automatically render hidden inputs for data not in the visible form -->
+			{#each hiddenFieldNames as fieldName (fieldName)}
+				<input type="hidden" name={fieldName} value={$formData[fieldName] ?? ''} />
 			{/each}
 
 			<!-- Visible fields (rendered in grid) -->
 			<div class={gridClass}>
-				{#each finalFields.filter((f) => !f.hidden) as field (field.name)}
+				{#each visibleFields as field (field.name)}
 					<div class={getFieldSpanClass(field.span)}>
 						<SmartField {field} {superform} bind:value={$formData[field.name]} />
 					</div>

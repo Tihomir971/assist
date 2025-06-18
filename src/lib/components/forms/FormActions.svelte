@@ -10,6 +10,7 @@
 		showDelete?: boolean;
 		onCancel?: () => void;
 		onDelete?: () => void;
+		onReset?: () => void;
 		saveText?: string;
 		cancelText?: string;
 		deleteText?: string;
@@ -26,6 +27,7 @@
 		showDelete = false,
 		onCancel,
 		onDelete,
+		onReset,
 		saveText,
 		cancelText,
 		deleteText,
@@ -84,20 +86,25 @@
 	}
 </script>
 
-<div class="flex items-center gap-2">
+<div class="flex items-center gap-2 *:w-16">
+	{#if onReset && isDirty}
+		<Button type="button" variant="outline" size="sm" disabled={isSubmitting} onclick={onReset}>
+			Reset
+		</Button>
+	{/if}
 	{#if showDelete && hasId}
 		<Button
 			type="button"
 			variant="destructive"
+			size="sm"
 			disabled={isSubmitting}
 			onclick={handleDelete}
-			class="min-w-[80px]"
 		>
 			{finalDeleteText}
 		</Button>
 	{/if}
 
-	<Button type="submit" disabled={finalIsDisabled} class="min-w-[80px]">
+	<Button type="submit" disabled={finalIsDisabled} size="sm">
 		{#if isSubmitting}
 			<Loader class="mr-2 h-3 w-3 animate-spin" />
 			Saving...
@@ -112,7 +119,3 @@
 		</Button>
 	{/if}
 </div>
-
-{#if isDirty && !isSubmitting}
-	<p class="mt-1 text-right text-xs text-muted-foreground">Unsaved changes</p>
-{/if}

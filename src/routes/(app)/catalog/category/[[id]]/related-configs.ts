@@ -24,7 +24,7 @@ export const channelMappingConfig = createRelatedTableConfig<
 	.formSchema(cChannelMapCategoryInsertSchema)
 	.formConfig(
 		createFormConfig<CChannelMapCategoryInsert>()
-			.title('Channel Mapping Details')
+			.title('Channel Mapping')
 			.field('c_channel_id', {
 				span: 6,
 				label: 'Channel',
@@ -34,20 +34,26 @@ export const channelMappingConfig = createRelatedTableConfig<
 			})
 			.field('resource_id', {
 				label: 'Resource ID',
-				span: 6,
+				span: 3,
 				placeholder: 'Enter resource ID'
+			})
+			.field('is_active', {
+				span: 3,
+				label: 'Active'
 			})
 			.field('resource_name', {
 				span: 12,
 				placeholder: 'Enter description'
 			})
-			.field('is_active', {
-				span: 6,
-				label: 'Active'
-			})
+
 			.field('created_at', {
 				span: 6,
 				label: 'Created at'
+			})
+			.field('updated_at', {
+				type: 'datetime',
+				span: 6,
+				label: 'Updated at'
 			})
 			.build()
 	)
@@ -69,7 +75,7 @@ export const priceRulesConfig = createRelatedTableConfig<
 	.formSchema(priceRulesInsertSchema)
 	.formConfig(
 		createFormConfig<PriceRulesInsert>()
-			.title('Price Rule Details')
+			.title('Price Rule')
 			.field('name', {
 				span: 12,
 				placeholder: 'Enter rule name'

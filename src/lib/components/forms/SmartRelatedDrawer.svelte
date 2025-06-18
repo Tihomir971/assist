@@ -107,18 +107,7 @@
 
 <Sheet.Root bind:open={isOpen}>
 	<Sheet.Content class="sm:max-w-2xl">
-		<Sheet.Header>
-			<Sheet.Title>
-				{isCreateMode ? `Create ${config.title}` : `Edit ${config.title}`}
-			</Sheet.Title>
-			{#if config.description}
-				<Sheet.Description>
-					{config.description}
-				</Sheet.Description>
-			{/if}
-		</Sheet.Header>
-
-		<div class="flex-1 overflow-auto px-4">
+		<div class="flex-1 overflow-auto p-4">
 			<SmartForm
 				form={formToRender}
 				schema={config.formSchema}

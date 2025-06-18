@@ -25,9 +25,6 @@
 	// Main category form configuration (unchanged from existing implementation)
 	const categoryFormConfig = createFormConfig<CategoryFormData>()
 		.title('Category Details')
-		.description(
-			isCreateMode ? 'Enter details for the new category' : 'Update category information'
-		)
 		.cardProps({
 			className: 'max-w-4xl mx-auto',
 			showHeader: true,
