@@ -4,13 +4,14 @@ import { z, type ZodSchema, type ZodRawShape, type ZodTypeAny } from 'zod';
 // Define FieldConfig and FormConfig directly in this file
 export interface FieldConfig {
 	name: string;
-	type: 'text' | 'number' | 'boolean' | 'select' | 'combobox' | 'textarea' | 'date';
+	type: 'text' | 'number' | 'boolean' | 'select' | 'combobox' | 'textarea' | 'date' | 'datetime';
 	label: string;
 	required: boolean;
 	placeholder?: string;
 	description?: string;
 	readonly?: boolean;
 	disabled?: boolean;
+	hidden?: boolean;
 	options?: Array<{ value: string | number; label: string }>; // Ensure options align with LookupOption if used broadly
 	validation: {
 		min?: number;
@@ -51,16 +52,27 @@ export class SchemaAnalyzer {
 		const isOptional = this.isOptional(schema);
 		const isNullable = this.isNullable(schema);
 
-		if (['id', 'created_at', 'updated_at'].includes(name)) {
-			return null;
-		}
+		// Mark system fields as readonly by default (they'll be excluded from submission by SmartPayloadBuilder)
+		const isSystemField = ['created_at', 'updated_at'].includes(name);
 
 		let type: FieldConfig['type'] = 'text';
 		const validation: FieldConfig['validation'] = {};
 		let options: FieldConfig['options'] = undefined;
 
 		if (baseSchema instanceof z.ZodString) {
-			type = name.includes('description') || name.includes('note') ? 'textarea' : 'text';
+			// Check for datetime constraint
+			const constraints = baseSchema._def.checks || [];
+			const hasDatetimeCheck = constraints.some(
+				(check: { kind: string }) => check.kind === 'datetime'
+			);
+
+			if (hasDatetimeCheck) {
+				type = 'datetime';
+			} else if (name.includes('description') || name.includes('note')) {
+				type = 'textarea';
+			} else {
+				type = 'text';
+			}
 			validation.min = baseSchema.minLength ?? undefined;
 			validation.max = baseSchema.maxLength ?? undefined;
 		} else if (baseSchema instanceof z.ZodNumber) {
@@ -93,6 +105,7 @@ export class SchemaAnalyzer {
 			required: !isOptional && !isNullable,
 			placeholder: this.generatePlaceholder(name, type),
 			description: schema.description, // Get description from the field's schema
+			readonly: isSystemField, // Mark system fields as readonly by default
 			options,
 			validation
 		};

@@ -73,6 +73,21 @@ export class PriceCalculator {
 		}
 	}
 
+	public evaluate(formula: string, variables: Record<string, unknown>): number {
+		try {
+			const result = evaluate(formula, variables);
+			if (typeof result !== 'number' || isNaN(result)) {
+				throw new Error('Formula result is not a number');
+			}
+			return result;
+		} catch (err) {
+			if (err instanceof Error) {
+				throw new Error(`Formula evaluation error: ${err.message}`);
+			}
+			throw new Error('Unknown formula evaluation error');
+		}
+	}
+
 	private roundPrice(price: number): number {
 		if (price < 100) {
 			return Math.ceil(price) - 0.01;

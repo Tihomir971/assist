@@ -52,20 +52,20 @@
 	}
 </script>
 
-<div class="relative">
-	<Textarea
-		bind:ref={textareaElement}
-		{...textareaAttrs}
-		bind:value
-		class="resize-none"
-		oninput={handleInput}
-		onpaste={handlePaste}
-		style="min-height: 3rem; max-height: 12rem; overflow-y: auto;"
-	/>
+<!-- <div class="relative"> -->
+<Textarea
+	bind:ref={textareaElement}
+	{...textareaAttrs}
+	bind:value
+	class="resize-none"
+	oninput={handleInput}
+	onpaste={handlePaste}
+	style="min-height: 4rem; max-height: 12rem; overflow-y: auto;"
+/>
 
-	{#if field.validation?.max}
-		<div class="absolute right-2 bottom-2 text-xs text-muted-foreground">
-			{value?.length || 0}/{field.validation.max}
-		</div>
-	{/if}
-</div>
+{#if field.validation?.max}
+	<div class="absolute right-2 bottom-2 text-xs text-muted-foreground">
+		{value?.length || 0}/{field.validation.max}
+	</div>
+{/if}
+<!-- </div> -->

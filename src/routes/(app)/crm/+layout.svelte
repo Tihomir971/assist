@@ -5,6 +5,8 @@
 	let { data, children }: { data: LayoutData; children: Snippet } = $props();
 </script>
 
-<div class="p-4">
-	{@render children()}
+<div class="flex-1 overflow-y-auto">
+	<div class="p-4">
+		{@render children()}
+	</div>
 </div>

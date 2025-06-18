@@ -3,13 +3,13 @@
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 
-	// Phase 2B Enhanced Form Components
+	// Enhanced Form Components with new builder API
 	import SmartForm from '$lib/components/forms/SmartForm.svelte';
+	import { createFormConfig } from '$lib/utils/form-config.builder';
 	import { mProductCategoryInsertSchema } from '$lib/types/supabase.zod.schemas';
+	import { z } from 'zod';
 
 	// UI Components
-	import * as Card from '$lib/components/ui/card/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 
 	// Related components (unchanged)
@@ -19,59 +19,74 @@
 	let { data } = $props();
 	const isCreateMode = !page.params.id;
 
-	// SmartForm configuration - this replaces 150+ lines of manual form code
-	const categoryFormConfig = {
-		title: 'Category Details',
-		description: isCreateMode
-			? 'Enter details for the new category'
-			: 'Update category information',
-		layout: 'two-column' as const,
-		showSystemFields: !!data.formCategory.data.id, // Show system fields only in edit mode
-		fieldOverrides: {
-			name: {
-				label: 'Category Name',
-				placeholder: 'Enter category name',
-				description: 'A unique name for this category'
-			},
-			description: {
-				label: 'Description',
-				placeholder: 'Describe this category...',
-				description: 'Optional description for the category'
-			},
-			is_active: {
-				label: 'Active',
-				description: 'Whether this category is currently active'
-			},
-			is_self_service: {
-				label: 'Self Service',
-				description: 'Allow customers to browse this category'
-			},
-			parent_id: {
-				label: 'Parent Category',
-				placeholder: 'Select a parent category',
-				description: 'Choose the parent category (optional)',
-				searchable: true, // This will trigger combobox instead of select
-				options: data.categories.map((cat: any) => ({
-					value: cat.value,
-					label: cat.label,
-					description: cat.description
-				}))
-			},
-			// System fields configuration
-			id: {
-				label: 'ID',
-				readonly: true
-			},
-			created_at: {
-				label: 'Created',
-				readonly: true
-			},
-			updated_at: {
-				label: 'Updated',
-				readonly: true
-			}
-		}
-	};
+	// Type-safe form data from Zod schema
+	type CategoryFormData = z.infer<typeof mProductCategoryInsertSchema>;
+
+	// Enhanced SmartForm configuration using the new builder API with span support
+	const categoryFormConfig = createFormConfig<CategoryFormData>()
+		.title('Category Details')
+		.description(
+			isCreateMode ? 'Enter details for the new category' : 'Update category information'
+		)
+		.cardProps({
+			className: 'max-w-4xl mx-auto',
+			showHeader: true,
+			showFooter: false // We handle delete separately
+		})
+		.gap('sm')
+		// Hidden ID field for updates and deletes
+		.field('id', {
+			// hidden: true
+			span: 4,
+			label: 'ID'
+		})
+		.field('is_active', {
+			span: 4,
+			label: 'Active',
+			description: 'Is category currently active'
+		})
+		.field('is_self_service', {
+			span: 4,
+			label: 'Self Service',
+			description: 'Allow customers to browse this category'
+		})
+		.field('name', {
+			span: 6,
+			// label: 'Category Name',
+			placeholder: 'Enter category name'
+			// description: 'A unique name for this category'
+		})
+		.field('parent_id', {
+			span: 6,
+			label: 'Parent Category',
+			placeholder: 'Select a parent category',
+			// description: 'Choose the parent category (optional)',
+			searchable: true,
+			options: data.categories.map((cat: any) => ({
+				value: cat.value,
+				label: cat.label,
+				description: cat.description
+			}))
+		})
+		.field('description', {
+			span: 12,
+			placeholder: 'Describe this category...'
+			// description: 'Optional description for the category'
+		})
+		// System fields (automatically readonly, only shown in edit mode)
+		.field('created_at', {
+			type: 'datetime',
+			span: 3,
+			label: 'Created',
+			hidden: !data.formCategory.data.id
+		})
+		.field('updated_at', {
+			type: 'datetime',
+			span: 3,
+			label: 'Updated',
+			hidden: !data.formCategory.data.id
+		})
+		.build();
 
 	// Success handler with navigation logic
 	function handleSuccess(formData: any) {
@@ -105,56 +120,32 @@
 		goto(`/catalog?${page.url.searchParams}`);
 	}
 
-	// Delete handler (for existing categories)
+	// Delete handler (for existing categories) - confirmation handled by FormActions
 	function handleDelete() {
-		if (confirm('Are you sure you want to delete this category?')) {
-			// Create a form and submit delete action
-			const form = document.createElement('form');
-			form.method = 'POST';
-			form.action = '?/categoryDelete';
-			document.body.appendChild(form);
-			form.submit();
-		}
+		// Additional logic can be added here if needed (e.g., cleanup, analytics)
+		console.log('Category delete initiated');
 	}
 </script>
 
-<div class="mx-auto grid h-full max-w-6xl grid-rows-[auto_1fr] overflow-hidden py-6">
-	<!-- Header -->
-	<div class="mb-6 flex items-center justify-between">
-		<div>
-			<h1 class="text-3xl font-bold">{isCreateMode ? 'Create Category' : 'Edit Category'}</h1>
-			<p class="text-muted-foreground">
-				{isCreateMode ? 'Enter details for the new category' : 'Update category details'}
-			</p>
-		</div>
-		<Button variant="link" href={`/catalog?${page.url.searchParams}`}>Back to List</Button>
-	</div>
-
+<div class="mx-auto h-full overflow-hidden py-6">
 	<ScrollArea class="h-full">
-		<!-- Main Category Form - This replaces 150+ lines with just 8 lines! -->
-		<Card.Root class="col-span-3">
-			<SmartForm
-				form={data.formCategory}
-				schema={mProductCategoryInsertSchema}
-				action="?/categoryUpsert"
-				entityName="Category"
-				config={categoryFormConfig}
-				onSuccess={handleSuccess}
-				onError={handleError}
-				onCancel={handleCancel}
-			/>
-
-			<!-- Delete button for existing categories -->
-			{#if data.formCategory.data.id}
-				<Card.Footer class="flex justify-between">
-					<Button variant="destructive" onclick={handleDelete}>Delete Category</Button>
-				</Card.Footer>
-			{/if}
-		</Card.Root>
+		<!-- Main Category Form - Enhanced with Card wrapper, span support, and integrated delete -->
+		<SmartForm
+			form={data.formCategory}
+			schema={mProductCategoryInsertSchema}
+			action="?/categoryUpsert"
+			entityName="Category"
+			config={categoryFormConfig}
+			onSuccess={handleSuccess}
+			onError={handleError}
+			onCancel={handleCancel}
+			onDelete={handleDelete}
+			deleteAction="?/categoryDelete"
+		/>
 
 		<!-- Related components (unchanged) -->
 		{#if data.formCategory.data.id}
-			<div class="col-span-3">
+			<div class="mt-4">
 				<ChannelCard
 					parentId={data.formCategory.data.id}
 					items={data.channelMapCategory}
@@ -162,7 +153,7 @@
 					validatedForm={data.formChannel}
 				/>
 			</div>
-			<div class="col-span-3">
+			<div class="mt-4">
 				<PriceRulesCard
 					parentId={data.formCategory.data.id}
 					items={data.priceRules}

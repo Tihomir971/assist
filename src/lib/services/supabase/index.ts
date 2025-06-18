@@ -1,1 +1,6 @@
 export * as ProductService from './product-service';
+export { PricingRulesService } from './pricing-rules.service';
+export { CategoryService } from './category.service';
+export { PartnerService } from './partner.service';
+export { AttributeService } from './attribute.service';
+export { AttributeOptionService } from './attribute-option.service';

@@ -59,7 +59,7 @@
 		value={Array.isArray(value) ? value.map((v) => String(v)) : []}
 		name={restProps.name}
 	>
-		<Select.Trigger {...restProps}>
+		<Select.Trigger {...restProps} class="w-full">
 			{displayValue()}
 		</Select.Trigger>
 		<Select.Content>
@@ -85,7 +85,7 @@
 		value={value ? String(value) : undefined}
 		name={restProps.name}
 	>
-		<Select.Trigger {...restProps}>
+		<Select.Trigger {...restProps} class="w-full">
 			{displayValue()}
 		</Select.Trigger>
 		<Select.Content>

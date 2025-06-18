@@ -18,7 +18,69 @@
 	const data = {
 		navMain: [
 			{
+				title: 'Products',
+				url: '/catalog',
+				icon: PhTag,
+				items: [
+					{ title: 'Catalog', url: '/catalog' },
+					{
+						title: 'Attributes',
+						url: '/catalog/product-attributes/attributes'
+					},
+					{
+						title: 'Attribute Groups',
+						url: '/catalog/product-attributes/attribute-groups'
+					},
+					{
+						title: 'Attribute Sets',
+						url: '/catalog/product-attributes/attribute-sets'
+					}
+				]
+			},
+			{
+				title: 'Sales/Purchase',
+				url: '/catalog',
+				icon: PhTag,
+				items: []
+			},
+			{
+				title: 'Data',
+				url: '#',
+				icon: PhMicrosoftExcelLogo,
+				items: [{ title: 'Import Pricelist', url: '/data/import-pricelist' }]
+			},
+			{
+				title: 'Laboratory',
+				url: '/lab',
+				icon: PhFlask,
+				items: [{ title: 'Colors', url: '/lab' }]
+			}
+		]
+	};
+	const dataSimple = {
+		navMain: [
+			{
 				title: 'Catalog',
+				url: '/catalog',
+				icon: PhTag,
+				items: [
+					{ title: 'Products', url: '/catalog', icon: PhTag },
+					{
+						title: 'Attributes',
+						url: '/catalog/product-attributes/attributes'
+					},
+					{
+						title: 'Attribute Groups',
+						url: '/catalog/product-attributes/attribute-groups'
+					},
+					{
+						title: 'Attribute Sets',
+						url: '/catalog/product-attributes/attribute-sets'
+					}
+				]
+			},
+			{
+				title: 'Sales/Purchase',
 				url: '/catalog',
 				icon: PhTag,
 				items: [
@@ -37,15 +99,24 @@
 					}
 				]
 			},
+
 			{
 				title: 'Import/Export',
 				url: '/excel',
-				icon: PhMicrosoftExcelLogo
+				icon: PhMicrosoftExcelLogo,
+				items: [
+					{ title: 'Import pricelist', url: '/excel' },
+					{ title: 'Pricelists', url: '/catalog/price-lists', icon: PhTag }
+				]
 			},
 			{
 				title: 'Laboratory',
 				url: '/lab',
-				icon: PhFlask
+				icon: PhFlask,
+				items: [
+					{ title: 'Import pricelist', url: '/excel' },
+					{ title: 'Pricelists', url: '/catalog/price-lists', icon: PhTag }
+				]
 			}
 		]
 	};
@@ -62,6 +133,7 @@
 	import { page } from '$app/state';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import type { Database } from '$lib/types/supabase.types';
+	import LayoutSidebarNavSimple from './layout-sidebar-nav-simple.svelte';
 
 	let {
 		ref = $bindable(null),
@@ -111,6 +183,7 @@
 		</Sidebar.Header>
 		<Sidebar.Content>
 			<SidebarNavMain items={data.navMain} />
+			<!-- <LayoutSidebarNavSimple data={dataSimple.navMain} /> -->
 		</Sidebar.Content>
 		<Sidebar.Footer>
 			<SidebarNavUser {profile} {supabase} />

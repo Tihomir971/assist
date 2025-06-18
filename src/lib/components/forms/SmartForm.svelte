@@ -8,11 +8,15 @@
 		type FormConfig as AnalyzedFormConfig,
 		type FieldConfig as AnalyzedFieldConfig
 	} from '$lib/utils/schema-analyzer';
-	import { superForm } from 'sveltekit-superforms';
+	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
+
+	// UI Components
+	import * as Card from '$lib/components/ui/card/index.js';
 	import SmartField from './SmartField.svelte'; // This will be created next (Day 3)
 	import FormActions from './FormActions.svelte';
+	import { dev } from '$app/environment';
 
 	// Define a more specific type for form data, inferring from Zod schema
 	type FormDataFromSchema<S extends ZodSchema<any, any>> = z.infer<S>;
@@ -30,6 +34,8 @@
 		onError?: (error: string | null, form: SuperForm<z.infer<S>>) => void;
 		onSubmit?: (data: FormDataFromSchema<S>, event?: SubmitEvent) => void | Promise<void>;
 		onCancel?: () => void;
+		onDelete?: () => void;
+		deleteAction?: string; // Form action for delete (e.g., "?/categoryDelete")
 		superformInstance?: SuperForm<z.infer<S>>; // Bindable superform instance
 		enhancedFormIntegration?: any; // Enhanced form integration instance
 	}
@@ -45,21 +51,32 @@
 		onError,
 		onSubmit,
 		onCancel,
+		onDelete,
+		deleteAction,
 		superformInstance = $bindable(),
 		enhancedFormIntegration
 	}: SmartFormProps<AnyZodObject> = $props();
+
+	// Enhanced field config type that includes span and other overrides
+	type EnhancedFieldConfig = AnalyzedFieldConfig & FieldOverride;
 
 	// Analyze schema to generate base form configuration
 	const analyzedFormConfig: AnalyzedFormConfig = SchemaAnalyzer.analyzeSchema(schema);
 
 	// Merge with user-provided overrides from config prop
-	const finalFields: AnalyzedFieldConfig[] = analyzedFormConfig.fields
+	const finalFields: EnhancedFieldConfig[] = analyzedFormConfig.fields
 		.map((field) => {
 			const override = config.fieldOverrides?.[field.name] as FieldOverride | undefined; // Cast for type safety
 
 			// Determine field type based on overrides
 			let fieldType = field.type;
-			if (override?.options && override.options.length > 0) {
+
+			// Priority 1: Manual type override
+			if (override?.type) {
+				fieldType = override.type;
+			}
+			// Priority 2: Options-based type detection
+			else if (override?.options && override.options.length > 0) {
 				// If field has options, use combobox for searchable dropdowns, select for simple ones
 				fieldType = override.searchable !== false ? 'combobox' : 'select';
 			}
@@ -73,12 +90,21 @@
 			};
 		})
 		.filter((field) => {
-			// Filter out hidden fields, and system fields unless showSystemFields is true
-			if (config.fieldOverrides?.[field.name]?.hidden) return false;
-			if (['id', 'created_at', 'updated_at'].includes(field.name) && !config.showSystemFields) {
-				// Exception: always show 'id' if it has a value (i.e., we are in edit mode)
-				return field.name === 'id' && initialForm.data?.id;
+			// Always include id field if it has a value (needed for updates and deletes)
+			if (field.name === 'id' && initialForm.data?.id) {
+				return true;
 			}
+
+			// Exclude id field when there's no value (create mode)
+			if (field.name === 'id' && !initialForm.data?.id) {
+				return false;
+			}
+
+			// Filter out other hidden fields
+			if (config.fieldOverrides?.[field.name]?.hidden) return false;
+
+			// Note: created_at and updated_at are now shown as readonly fields but excluded from submission by SmartPayloadBuilder
+
 			return true;
 		})
 		.sort((a, b) => {
@@ -117,15 +143,23 @@
 		validationMethod: 'auto', // Validate on blur and submit, but not immediately on load
 		clearOnSubmit: 'errors-and-message', // Clear errors on successful submit
 		delayMs: 300, // Debounce validation
+		dataType: 'form', // Ensure we're working with FormData
 		onSubmit: async (event) => {
+			// Remove only system timestamp fields from form submission
+			// (id field is kept as it's needed for updates and deletes)
+			const systemTimestampFields = ['created_at', 'updated_at'];
+			systemTimestampFields.forEach((fieldName) => {
+				if (event.formData.has(fieldName)) {
+					event.formData.delete(fieldName);
+				}
+			});
+
 			if (onSubmit) {
 				await onSubmit(
 					event.formData as FormDataFromSchema<AnyZodObject>,
 					event.submitter as unknown as SubmitEvent | undefined
 				);
 			}
-			// If a payloadBuilder is provided, it implies custom logic might be needed
-			// For now, we assume the default superforms behavior or server-side payload construction
 		},
 		onResult: ({ result }) => {
 			if (result.type === 'success' || result.type === 'redirect') {
@@ -159,12 +193,52 @@
 	// Bind the entire superform instance to the parent component
 	superformInstance = superform;
 
-	const layoutClasses = {
-		single: 'grid grid-cols-1 gap-4 md:gap-6',
-		'two-column': 'grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6',
-		'three-column': 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6'
+	// Simplified 12-column responsive grid system
+	const getGridClasses = () => {
+		const baseClasses = 'grid grid-cols-1 md:grid-cols-12';
+		const gapClass = config.gap
+			? `gap-${config.gap === 'sm' ? '2' : config.gap === 'lg' ? '8' : '4'}`
+			: 'gap-4 md:gap-6';
+
+		return `${baseClasses} ${gapClass}`;
 	};
-	const gridClass = layoutClasses[config.layout || 'single'];
+
+	// Calculate field span classes for 12-column grid
+	const getFieldSpanClass = (span?: number) => {
+		if (!span) return 'col-span-1 md:col-span-12'; // Default to full width
+
+		// Use explicit class mapping to ensure Tailwind includes these classes
+		const spanClasses: Record<number, string> = {
+			1: 'col-span-1 md:col-span-1',
+			2: 'col-span-1 md:col-span-2',
+			3: 'col-span-1 md:col-span-3',
+			4: 'col-span-1 md:col-span-4',
+			5: 'col-span-1 md:col-span-5',
+			6: 'col-span-1 md:col-span-6',
+			7: 'col-span-1 md:col-span-7',
+			8: 'col-span-1 md:col-span-8',
+			9: 'col-span-1 md:col-span-9',
+			10: 'col-span-1 md:col-span-10',
+			11: 'col-span-1 md:col-span-11',
+			12: 'col-span-1 md:col-span-12'
+		};
+
+		return spanClasses[span] || 'col-span-1 md:col-span-12';
+	};
+
+	const gridClass = getGridClasses();
+
+	// Form reference for delete functionality
+	let formElement: HTMLFormElement | undefined = $state();
+
+	// Debug: Log the final fields to see what's being rendered
+	$effect(() => {
+		console.log(
+			'Final fields being rendered:',
+			finalFields.map((f) => ({ name: f.name, hidden: f.hidden, type: f.type }))
+		);
+		console.log('Initial form data:', initialForm.data);
+	});
 
 	function handleCancel() {
 		if (onCancel) {
@@ -175,30 +249,50 @@
 	}
 </script>
 
-<form method="POST" {action} use:enhance class="space-y-6">
-	{#if config.title || analyzedFormConfig.title}
-		<div class="space-y-1">
-			<h2 class="text-xl font-semibold tracking-tight">
-				{config.title || analyzedFormConfig.title}
-			</h2>
-			{#if config.description || analyzedFormConfig.description}
-				<p class="text-sm text-muted-foreground">
-					{config.description || analyzedFormConfig.description}
-				</p>
-			{/if}
-		</div>
-	{/if}
+<!-- Card Wrapper with Form -->
+<form method="POST" {action} use:enhance bind:this={formElement}>
+	<Card.Root class={config.cardProps?.className}>
+		{#if config.cardProps?.showHeader !== false && (config.title || analyzedFormConfig.title)}
+			<Card.Header class="border-b">
+				<Card.Title>
+					{config.title || analyzedFormConfig.title}
+				</Card.Title>
+				{#if config.description || analyzedFormConfig.description}
+					<Card.Description>
+						{config.description || analyzedFormConfig.description}
+					</Card.Description>
+				{/if}
+				<Card.Action>
+					<FormActions
+						{entityName}
+						isSubmitting={$submitting}
+						isDirty={Object.keys($tainted || {}).length > 0}
+						onCancel={handleCancel}
+						{onDelete}
+						{deleteAction}
+						showDelete={!!deleteAction}
+						hasId={!!initialForm.data?.id}
+						{formElement}
+					/>
+				</Card.Action>
+			</Card.Header>
+		{/if}
 
-	<div class={gridClass}>
-		{#each finalFields as field (field.name)}
-			<SmartField {field} {superform} bind:value={$formData[field.name]} />
-		{/each}
-	</div>
+		<Card.Content>
+			<!-- Hidden fields (rendered outside grid to avoid taking up space) -->
+			{#each finalFields.filter((f) => f.hidden) as field (field.name)}
+				<SmartField {field} {superform} bind:value={$formData[field.name]} />
+			{/each}
 
-	<FormActions
-		{entityName}
-		isSubmitting={$submitting}
-		isDirty={Object.keys($tainted || {}).length > 0}
-		onCancel={handleCancel}
-	/>
+			<!-- Visible fields (rendered in grid) -->
+			<div class={gridClass}>
+				{#each finalFields.filter((f) => !f.hidden) as field (field.name)}
+					<div class={getFieldSpanClass(field.span)}>
+						<SmartField {field} {superform} bind:value={$formData[field.name]} />
+					</div>
+				{/each}
+			</div>
+			<SuperDebug data={{ $formData, $errors }} display={dev} />
+		</Card.Content>
+	</Card.Root>
 </form>

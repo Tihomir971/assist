@@ -6,6 +6,7 @@
 	// Enhanced Form Components
 	import SmartForm from '$lib/components/forms/SmartForm.svelte';
 	import { createEnhancedFormIntegration, createCrossFieldRules } from '$lib/validation';
+	import { createFormConfig, fieldConfigs } from '$lib/utils/form-config.builder';
 
 	// UI Components
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -170,69 +171,92 @@
 		}
 	});
 
-	// Form configurations for SmartForm
-	const userFormConfig = {
-		title: 'User Registration',
-		description: 'Create a new user account with enhanced validation',
-		layout: 'two-column' as const,
-		fieldOverrides: {
-			email: {
-				placeholder: 'Try "taken@example.com" to see async validation'
-			},
-			bio: {
-				placeholder: 'Tell us about yourself...'
-			},
-			contactMethod: {
-				options: [
-					{ value: 'email', label: 'Email' },
-					{ value: 'phone', label: 'Phone' },
-					{ value: 'sms', label: 'SMS' }
-				]
-			}
-		}
-	};
+	// Enhanced form configurations using the new builder API and span support
+	const userFormConfig = createFormConfig<UserFormData>()
+		.title('User Registration')
+		.description('Create a new user account with enhanced validation and responsive layout')
+		.cardProps({
+			className: 'max-w-4xl mx-auto',
+			showHeader: true,
+			showFooter: true
+		})
+		.gap('md')
+		.field('firstName', { span: 6, placeholder: 'Enter your first name' })
+		.field('lastName', { span: 6, placeholder: 'Enter your last name' })
+		.field('email', { span: 12, placeholder: 'Try "taken@example.com" to see async validation' })
+		.field('password', { span: 6 })
+		.field('confirmPassword', { span: 6 })
+		.field('age', { span: 3 })
+		.field('contactMethod', {
+			span: 3,
+			options: [
+				{ value: 'email', label: 'Email' },
+				{ value: 'phone', label: 'Phone' },
+				{ value: 'sms', label: 'SMS' }
+			]
+		})
+		.field('phone', { span: 6 })
+		.field('bio', { span: 12, placeholder: 'Tell us about yourself...' })
+		.field('birthDate', { span: 6 })
+		.field('newsletter', { span: 3 })
+		.field('terms', { span: 12 })
+		.build();
 
-	const productFormConfig = {
-		title: 'Product Information',
-		description: 'Add or edit product details',
-		layout: 'single' as const,
-		fieldOverrides: {
-			category: {
-				options: [
-					{ value: 'electronics', label: 'Electronics' },
-					{ value: 'clothing', label: 'Clothing' },
-					{ value: 'books', label: 'Books' },
-					{ value: 'home', label: 'Home & Garden' }
-				]
-			},
-			price: {
-				placeholder: '0.00'
-			}
-		}
-	};
+	const productFormConfig = createFormConfig<ProductFormData>()
+		.title('Product Information')
+		.description('Add or edit product details with smart grid layout')
+		.cardProps({
+			className: 'max-w-6xl mx-auto',
+			showHeader: true
+		})
+		.gap('lg')
+		.field('name', { span: 8, placeholder: 'Product name' })
+		.field('category', {
+			span: 4,
+			options: [
+				{ value: 'electronics', label: 'Electronics' },
+				{ value: 'clothing', label: 'Clothing' },
+				{ value: 'books', label: 'Books' },
+				{ value: 'home', label: 'Home & Garden' }
+			]
+		})
+		.field('description', { span: 6, placeholder: 'Product description...' })
+		.field('price', { span: 3, placeholder: '0.00' })
+		.field('inStock', { span: 2 })
+		.field('featured', { span: 2 })
+		.field('launchDate', { span: 5 })
+		.field('tags', { span: 65, placeholder: 'Comma-separated tags' })
+		.build();
 
-	const settingsFormConfig = {
-		title: 'Application Settings',
-		description: 'Configure your preferences',
-		layout: 'two-column' as const,
-		fieldOverrides: {
-			theme: {
-				options: [
-					{ value: 'light', label: 'Light' },
-					{ value: 'dark', label: 'Dark' },
-					{ value: 'auto', label: 'Auto' }
-				]
-			},
-			language: {
-				options: [
-					{ value: 'en', label: 'English' },
-					{ value: 'es', label: 'Spanish' },
-					{ value: 'fr', label: 'French' },
-					{ value: 'de', label: 'German' }
-				]
-			}
-		}
-	};
+	const settingsFormConfig = createFormConfig<SettingsFormData>()
+		.title('Application Settings')
+		.description('Configure your preferences with organized layout')
+		.cardProps({
+			className: 'max-w-5xl mx-auto'
+		})
+		.field(
+			'theme',
+			fieldConfigs.select([
+				{ value: 'light', label: 'Light' },
+				{ value: 'dark', label: 'Dark' },
+				{ value: 'auto', label: 'Auto' }
+			])
+		)
+		.field(
+			'language',
+			fieldConfigs.select([
+				{ value: 'en', label: 'English' },
+				{ value: 'es', label: 'Spanish' },
+				{ value: 'fr', label: 'French' },
+				{ value: 'de', label: 'German' }
+			])
+		)
+		.field('timezone', { placeholder: 'Select timezone' })
+		.field('notifications', {})
+		.field('emailUpdates', {})
+		.field('autoSave', {})
+		.field('debugMode', {})
+		.build();
 
 	// State management
 	let activeTab = $state('overview');

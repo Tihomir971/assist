@@ -2038,6 +2038,48 @@ export type Database = {
           },
         ]
       }
+      pricing_rules: {
+        Row: {
+          conditions: Json
+          created_at: string | null
+          ends_at: string | null
+          formula: Json
+          id: number
+          is_active: boolean
+          name: string
+          priority: number
+          starts_at: string | null
+          target_group: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          conditions?: Json
+          created_at?: string | null
+          ends_at?: string | null
+          formula: Json
+          id?: never
+          is_active?: boolean
+          name: string
+          priority?: number
+          starts_at?: string | null
+          target_group?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          conditions?: Json
+          created_at?: string | null
+          ends_at?: string | null
+          formula?: Json
+          id?: never
+          is_active?: boolean
+          name?: string
+          priority?: number
+          starts_at?: string | null
+          target_group?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       w_basket: {
         Row: {
           ad_user_id: number
@@ -2174,6 +2216,13 @@ export type Database = {
         }
         Returns: undefined
       }
+      check_attributes_match: {
+        Args: {
+          rule_attributes: Json
+          product_attributes: Json
+        }
+        Returns: boolean
+      }
       delete_avatar: {
         Args: {
           avatar_url: string
@@ -2187,9 +2236,32 @@ export type Database = {
         }
         Returns: Record<string, unknown>
       }
+      find_applicable_pricing_rules: {
+        Args: {
+          p_product_id: number
+          p_partner_id?: number
+          p_quantity?: number
+          p_order_value?: number
+          p_target_group?: string
+        }
+        Returns: {
+          id: number
+          name: string
+          conditions: Json
+          formula: Json
+          priority: number
+          target_group: string
+        }[]
+      }
       get_price_formula_variables: {
         Args: {
           p_m_product_id: number
+        }
+        Returns: Json
+      }
+      get_product_attributes: {
+        Args: {
+          p_product_id: number
         }
         Returns: Json
       }

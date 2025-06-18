@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from './$types';
-import type { BSProduct } from '../data/types.js';
+import type { BSProduct } from '../../../lib/types/connectors/biznisoft.js';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { FlattenedProduct, ProductWithDetails } from './columns.svelte.js';
 import type {

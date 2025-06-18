@@ -2102,6 +2102,48 @@ export const priceRulesRelationshipsSchema = z.tuple([
   }),
 ]);
 
+export const pricingRulesRowSchema = z.object({
+  conditions: jsonSchema,
+  created_at: z.string().nullable(),
+  ends_at: z.string().nullable(),
+  formula: jsonSchema,
+  id: z.number(),
+  is_active: z.boolean(),
+  name: z.string(),
+  priority: z.number(),
+  starts_at: z.string().nullable(),
+  target_group: z.string().nullable(),
+  updated_at: z.string().nullable(),
+});
+
+export const pricingRulesInsertSchema = z.object({
+  conditions: jsonSchema.optional(),
+  created_at: z.string().optional().nullable(),
+  ends_at: z.string().optional().nullable(),
+  formula: jsonSchema,
+  id: z.never().optional(),
+  is_active: z.boolean().optional(),
+  name: z.string(),
+  priority: z.number().optional(),
+  starts_at: z.string().optional().nullable(),
+  target_group: z.string().optional().nullable(),
+  updated_at: z.string().optional().nullable(),
+});
+
+export const pricingRulesUpdateSchema = z.object({
+  conditions: jsonSchema.optional(),
+  created_at: z.string().optional().nullable(),
+  ends_at: z.string().optional().nullable(),
+  formula: jsonSchema.optional(),
+  id: z.never().optional(),
+  is_active: z.boolean().optional(),
+  name: z.string().optional(),
+  priority: z.number().optional(),
+  starts_at: z.string().optional().nullable(),
+  target_group: z.string().optional().nullable(),
+  updated_at: z.string().optional().nullable(),
+});
+
 export const wBasketRowSchema = z.object({
   ad_user_id: z.number(),
   c_bpartner_id: z.number().nullable(),
@@ -2237,6 +2279,13 @@ export const bulkUpdateStorageonhandArgsSchema = z.object({
 
 export const bulkUpdateStorageonhandReturnsSchema = z.undefined();
 
+export const checkAttributesMatchArgsSchema = z.object({
+  rule_attributes: jsonSchema,
+  product_attributes: jsonSchema,
+});
+
+export const checkAttributesMatchReturnsSchema = z.boolean();
+
 export const deleteAvatarArgsSchema = z.object({
   avatar_url: z.string(),
 });
@@ -2250,11 +2299,36 @@ export const deleteStorageObjectArgsSchema = z.object({
 
 export const deleteStorageObjectReturnsSchema = z.record(z.unknown());
 
+export const findApplicablePricingRulesArgsSchema = z.object({
+  p_product_id: z.number(),
+  p_partner_id: z.number().optional(),
+  p_quantity: z.number().optional(),
+  p_order_value: z.number().optional(),
+  p_target_group: z.string().optional(),
+});
+
+export const findApplicablePricingRulesReturnsSchema = z.array(
+  z.object({
+    id: z.number(),
+    name: z.string(),
+    conditions: jsonSchema,
+    formula: jsonSchema,
+    priority: z.number(),
+    target_group: z.string(),
+  }),
+);
+
 export const getPriceFormulaVariablesArgsSchema = z.object({
   p_m_product_id: z.number(),
 });
 
 export const getPriceFormulaVariablesReturnsSchema = jsonSchema;
+
+export const getProductAttributesArgsSchema = z.object({
+  p_product_id: z.number(),
+});
+
+export const getProductAttributesReturnsSchema = jsonSchema;
 
 export const isValidGtinArgsSchema = z.object({
   barcode: z.string(),

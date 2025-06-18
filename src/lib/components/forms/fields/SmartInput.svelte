@@ -24,11 +24,12 @@
 		type: inputType,
 		...restProps, // Spread Form.Control props first (includes name, id, aria attributes)
 		// Then override with field-specific props if needed
-		...(field.placeholder && { placeholder: field.placeholder })
-		// readonly: field.readonly, // Assuming readonly is part of AnalyzedFieldConfig
-		// min: field.validation?.min, // Assuming validation is part of AnalyzedFieldConfig
-		// max: field.validation?.max,
-		// pattern: field.validation?.pattern,
+		...(field.placeholder && { placeholder: field.placeholder }),
+		...(field.readonly && { readonly: field.readonly }),
+		...(field.disabled && { disabled: field.disabled }),
+		...(field.validation?.min !== undefined && { min: field.validation.min }),
+		...(field.validation?.max !== undefined && { max: field.validation.max }),
+		...(field.validation?.pattern && { pattern: field.validation.pattern })
 	};
 </script>
 
