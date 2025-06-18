@@ -193,6 +193,14 @@
 	// Bind the entire superform instance to the parent component
 	superformInstance = superform;
 
+	// When a new form object is passed, reset the form to reflect the new data.
+	// This is crucial for the SmartRelatedDrawer to update the form for editing.
+	$effect(() => {
+		if (initialForm) {
+			reset(initialForm);
+		}
+	});
+
 	// Simplified 12-column responsive grid system
 	const getGridClasses = () => {
 		const baseClasses = 'grid grid-cols-1 md:grid-cols-12';
@@ -230,15 +238,6 @@
 
 	// Form reference for delete functionality
 	let formElement: HTMLFormElement | undefined = $state();
-
-	// Debug: Log the final fields to see what's being rendered
-	$effect(() => {
-		console.log(
-			'Final fields being rendered:',
-			finalFields.map((f) => ({ name: f.name, hidden: f.hidden, type: f.type }))
-		);
-		console.log('Initial form data:', initialForm.data);
-	});
 
 	function handleCancel() {
 		if (onCancel) {

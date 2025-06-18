@@ -69,8 +69,8 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 
 			// Lookup data
 			categories: lookupCategories,
-			priceFormulas: lookupPriceFormulas,
-			channels: lookupChannels
+			price_formulas: lookupPriceFormulas,
+			c_channels: lookupChannels
 		};
 	} catch (err: unknown) {
 		console.error('Error loading category data:', err);
