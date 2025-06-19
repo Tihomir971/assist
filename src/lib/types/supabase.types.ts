@@ -1285,6 +1285,7 @@ export type Database = {
           imageurl: string | null
           is_active: boolean
           is_self_service: boolean
+          m_product_brand_id: number | null
           m_product_category_id: number | null
           m_product_uu: string | null
           mpn: string | null
@@ -1311,6 +1312,7 @@ export type Database = {
           imageurl?: string | null
           is_active?: boolean
           is_self_service?: boolean
+          m_product_brand_id?: number | null
           m_product_category_id?: number | null
           m_product_uu?: string | null
           mpn?: string | null
@@ -1337,6 +1339,7 @@ export type Database = {
           imageurl?: string | null
           is_active?: boolean
           is_self_service?: boolean
+          m_product_brand_id?: number | null
           m_product_category_id?: number | null
           m_product_uu?: string | null
           mpn?: string | null
@@ -1378,6 +1381,12 @@ export type Database = {
             foreignKeyName: "m_product_m_attributeset_id_fkey"
             columns: ["attributeset_id"]
             referencedRelation: "m_attributeset"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_product_m_product_brand_id_fkey"
+            columns: ["m_product_brand_id"]
+            referencedRelation: "m_product_brands"
             referencedColumns: ["id"]
           },
           {
@@ -1494,6 +1503,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      m_product_brands: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: number
+          is_active: boolean
+          logo_url: string | null
+          name: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: number
+          is_active?: boolean
+          logo_url?: string | null
+          name: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: number
+          is_active?: boolean
+          logo_url?: string | null
+          name?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
       }
       m_product_category: {
         Row: {

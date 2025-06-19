@@ -9,7 +9,7 @@ export type AttributeUpdate = Partial<AttributeCreate>;
 export type AttributeLookup = { value: number; label: string };
 
 export class AttributeService implements CRUDService<Attribute, AttributeCreate, AttributeUpdate> {
-	constructor(private supabase: SupabaseClient<Database>) {}
+	constructor(public supabase: SupabaseClient<Database>) {}
 
 	async getById(id: number): Promise<Attribute | null> {
 		const { data, error } = await this.supabase
