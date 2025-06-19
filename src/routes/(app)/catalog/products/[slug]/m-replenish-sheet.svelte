@@ -7,7 +7,7 @@
 	import { toast } from 'svelte-sonner';
 	import { dev } from '$app/environment';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import type { MReplenishInsert } from '$lib/types/supabase.zod.schemas-ts';
+	import type { MReplenishInsert } from '$lib/types/supabase.zod.schemas.d';
 
 	type Item = { value: number; label: string };
 	type Props = {

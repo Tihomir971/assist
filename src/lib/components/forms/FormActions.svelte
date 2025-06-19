@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
+	import { toast } from 'svelte-sonner';
 	import Loader from '@lucide/svelte/icons/loader';
 
 	interface FormActionsProps {
@@ -45,42 +46,57 @@
 	// Compute disabled state for the submit button
 	let finalIsDisabled = $derived(isSubmitting || (!isDirty && entityName !== 'Filter'));
 
-	function handleDelete() {
-		// Show native confirmation dialog
+	type ActionResult = {
+		type: 'success' | 'failure' | 'error';
+		data?: {
+			message?: {
+				text: string;
+			};
+		};
+	};
+
+	async function handleDelete() {
 		const confirmed = confirm(
 			`Are you sure you want to delete this ${entityName.toLowerCase()}? This action cannot be undone.`
 		);
-
 		if (!confirmed) return;
 
-		if (onDelete) {
-			onDelete(); // Call the onDelete callback if provided
-		}
-
-		// If deleteAction is present and we have a form reference, programmatically submit
 		if (deleteAction && formElement) {
-			// Get the current form data to extract the ID
 			const formData = new FormData(formElement);
 			const id = formData.get('id');
 
 			if (id) {
-				// Create a new form specifically for the delete action with only the ID
-				const deleteForm = document.createElement('form');
-				deleteForm.method = 'POST';
-				deleteForm.action = deleteAction;
-				deleteForm.style.display = 'none';
+				const deleteFormData = new FormData();
+				deleteFormData.append('id', id.toString());
 
-				// Add only the ID field
-				const idInput = document.createElement('input');
-				idInput.type = 'hidden';
-				idInput.name = 'id';
-				idInput.value = id.toString();
-				deleteForm.appendChild(idInput);
+				const toastId = toast.loading(`Deleting ${entityName.toLowerCase()}...`);
 
-				// Add to DOM, submit, then remove
-				document.body.appendChild(deleteForm);
-				deleteForm.submit();
-				document.body.removeChild(deleteForm);
+				try {
+					const response = await fetch(deleteAction, {
+						method: 'POST',
+						body: deleteFormData
+					});
+
+					// Superforms actions return a result object. We check its type.
+					const result: ActionResult = await response.json();
+
+					if (result.type === 'success') {
+						toast.success(`${entityName} deleted successfully.`, { id: toastId });
+						// This is the key step: call the parent's onDelete handler
+						// which will trigger the refresh logic.
+						if (onDelete) {
+							onDelete();
+						}
+					} else {
+						// Handle failure case reported by the server action
+						const message =
+							result.data?.message?.text || `Failed to delete ${entityName.toLowerCase()}.`;
+						toast.error(message, { id: toastId });
+					}
+				} catch (error) {
+					toast.error(`An unexpected error occurred while deleting.`, { id: toastId });
+					console.error('Delete action failed:', error);
+				}
 			}
 		}
 	}

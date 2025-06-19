@@ -34,7 +34,7 @@
 
 <style>
 	:global(.required::after) {
-		content: ' *';
+		content: '*';
 		color: hsl(var(--destructive));
 		margin-left: 0.125rem;
 	}

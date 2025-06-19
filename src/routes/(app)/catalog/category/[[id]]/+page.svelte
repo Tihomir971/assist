@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 
 	// Enhanced Form Components
@@ -93,7 +93,7 @@
 	// Refresh handler for related tables
 	function handleRefresh() {
 		// Trigger a page refresh or invalidate specific data
-		location.reload();
+		invalidate('app:category-page');
 	}
 
 	// Bulk action handler

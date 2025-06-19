@@ -86,7 +86,7 @@
 
 	// Event handlers
 	function handleSuccess(formData: any) {
-		console.log(`${config.title} ${isCreateMode ? 'created' : 'updated'} successfully`);
+		// console.log(`${config.title} ${isCreateMode ? 'created' : 'updated'} successfully`);
 		onSave?.();
 		onClose?.();
 	}
@@ -100,8 +100,11 @@
 	}
 
 	function handleDelete() {
-		console.log(`${config.title} delete initiated`);
-		// Delete handling is managed by SmartForm
+		// console.log(`${config.title} delete initiated`);
+		// After a successful deletion, we want to trigger the same
+		// logic as a successful save: close the drawer and refresh the table.
+		onSave?.();
+		onClose?.();
 	}
 </script>
 

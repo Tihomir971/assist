@@ -7,7 +7,7 @@
 	import * as Table from '$lib/components/ui/table';
 	import PhDotsThreeBold from '~icons/ph/dots-three-bold';
 	import { getLabelByValue } from '$lib/scripts/custom';
-	import type { MReplenishInsert } from '$lib/types/supabase.zod.schemas-ts';
+	import type { MReplenishInsert } from '$lib/types/supabase.zod.schemas.d';
 
 	interface Props {
 		validatedForm: SuperValidated<MReplenishInsert>;

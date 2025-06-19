@@ -141,16 +141,17 @@ export const columnTypes = {
 	lookup: <T extends Record<string, unknown>>(
 		key: keyof T,
 		label: string,
-		lookupData: Array<{ value: string | number; label: string }> = [],
+		lookupKey: string,
 		options?: Partial<ColumnDefinition<T>>
 	): ColumnDefinition<T> => ({
 		key,
 		label,
 		type: 'lookup',
-		lookupData,
+		lookupKey,
 		sortable: true,
 		searchable: true,
-		formatter: (value) => lookupData.find((item) => item.value === value)?.label || String(value),
+		// The formatter is removed. This logic now belongs in the component
+		// that consumes the lookupKey and the lookupData prop.
 		...options
 	}),
 

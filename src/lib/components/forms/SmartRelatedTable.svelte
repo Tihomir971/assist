@@ -42,28 +42,9 @@
 		onBulkAction
 	}: SmartRelatedTableProps<any, any> = $props();
 
-	// Reactive configuration that merges lookupData into columns
-	const tableConfig = $derived.by(() => {
-		const newConfig = { ...config };
-		if (lookupData && Object.keys(lookupData).length > 0) {
-			newConfig.columns = newConfig.columns.map((col) => {
-				if (col.type === 'lookup') {
-					const lookupKeys = [
-						String(col.key).replace(/_id$/, ''),
-						String(col.key).replace(/_id$/, 's'),
-						String(col.key)
-					];
-					for (const key of lookupKeys) {
-						if (lookupData[key]) {
-							return { ...col, lookupData: lookupData[key] };
-						}
-					}
-				}
-				return col;
-			});
-		}
-		return newConfig;
-	});
+	// The `tableConfig` is an alias for the `config` prop.
+	// The lookup logic is now handled directly and explicitly in `formatCellValue`.
+	const tableConfig = config;
 
 	// State management
 	let isDrawerOpen = $state(false);
@@ -211,7 +192,14 @@
 			case 'datetime':
 				return value ? new Date(value).toLocaleString() : '';
 			case 'lookup':
-				return column.lookupData?.find((item: any) => item.value === value)?.label || value;
+				// Use the explicit lookupKey to find the correct dataset.
+				if (column.lookupKey && lookupData[column.lookupKey]) {
+					return (
+						lookupData[column.lookupKey].find((item: any) => item.value === value)?.label || value
+					);
+				}
+				// Fallback to the raw value if no lookup is found.
+				return value;
 			default:
 				return value || '';
 		}

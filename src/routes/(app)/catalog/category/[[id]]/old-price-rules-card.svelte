@@ -3,12 +3,12 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { type SuperValidated } from 'sveltekit-superforms';
-	import PriceRulesSheet from './price-rules-sheet.svelte';
+	import PriceRulesSheet from './old-price-rules-sheet.svelte';
 	import type { Tables } from '$lib/types/supabase.types';
 	import { CheckboxZag } from '$lib/components/zag';
 	import { getLabelByValue } from '$lib/scripts/custom';
 	import PhDotsThreeBold from '~icons/ph/dots-three-bold';
-	import type { PriceRulesInsert } from '$lib/types/supabase.zod.schemas-ts';
+	import type { PriceRulesInsert } from '$lib/types/supabase.zod.schemas.d';
 
 	type Item = { value: number; label: string };
 	type Props = {

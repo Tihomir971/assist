@@ -13,8 +13,8 @@
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 
 	// Related components (unchanged)
-	import ChannelCard from './channel-card.svelte';
-	import PriceRulesCard from './price-rules-card.svelte';
+	import ChannelCard from './old-channel-card.svelte';
+	import PriceRulesCard from './old-price-rules-card.svelte';
 
 	let { data } = $props();
 	const isCreateMode = !page.params.id;

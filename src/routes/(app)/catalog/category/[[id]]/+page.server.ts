@@ -23,10 +23,13 @@ import type {
 	CChannelMapCategoryRow,
 	MProductCategoryRow,
 	PriceRulesRow
-} from '$lib/types/supabase.zod.schemas-ts';
+} from '$lib/types/supabase.zod.schemas.d';
 
 // Load function remains the same (already optimized)
-export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
+export const load: PageServerLoad = async ({ params, locals: { supabase }, depends }) => {
+	depends('app:category-page');
+	console.log("depends('app:category-page');");
+
 	const categoryService = new CategoryService(supabase);
 	const priceRulesService = new PriceRulesService(supabase); // Instantiate PriceRulesService
 	const channelMappingService = new ChannelMappingService(supabase); // Instantiate ChannelMappingService

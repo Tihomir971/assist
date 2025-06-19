@@ -1,5 +1,5 @@
 import { priceRulesInsertSchema, priceRulesUpdateSchema } from '$lib/types/supabase.zod.schemas';
-import type { PriceRulesInsert, PriceRulesUpdate } from '$lib/types/supabase.zod.schemas-ts';
+import type { PriceRulesInsert, PriceRulesUpdate } from '$lib/types/supabase.zod.schemas.d';
 import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
 
 export const priceRulesPayloadBuilder = new SmartPayloadBuilder<PriceRulesInsert, PriceRulesUpdate>(

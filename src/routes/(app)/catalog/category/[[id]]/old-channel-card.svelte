@@ -4,13 +4,13 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import type { Tables } from '$lib/types/supabase.types';
 
-	import ChannelSheet from './channel-sheet.svelte';
+	import ChannelSheet from './old-channel-sheet.svelte';
 	import PhDotsThreeBold from '~icons/ph/dots-three-bold';
 
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { cChannelMapCategoryInsertSchema } from '$lib/types/supabase.zod.schemas';
 	import z from 'zod';
-	import type { CChannelMapCategoryInsert } from '$lib/types/supabase.zod.schemas-ts';
+	import type { CChannelMapCategoryInsert } from '$lib/types/supabase.zod.schemas.d';
 
 	type Props = {
 		parentId: number | undefined;

@@ -7,7 +7,7 @@ import {
 import type {
 	CChannelMapCategoryInsert,
 	PriceRulesInsert
-} from '$lib/types/supabase.zod.schemas-ts';
+} from '$lib/types/supabase.zod.schemas.d';
 import type { Tables } from '$lib/types/supabase.types';
 
 // Channel Mapping Configuration
@@ -17,7 +17,7 @@ export const channelMappingConfig = createRelatedTableConfig<
 >()
 	.title('Channel Mappings')
 	.description('Manage category mappings across different channels')
-	.column(columnTypes.lookup('c_channel_id', 'Channel', [], { width: '150px' }))
+	.column(columnTypes.lookup('c_channel_id', 'Channel', 'c_channels', { width: '150px' }))
 	.column(columnTypes.text('resource_id', 'Resource ID'))
 	.column(columnTypes.text('resource_name', 'Description'))
 	.column(columnTypes.boolean('is_active', 'Active', { width: '80px' }))
@@ -47,6 +47,7 @@ export const channelMappingConfig = createRelatedTableConfig<
 			})
 
 			.field('created_at', {
+				type: 'datetime',
 				span: 6,
 				label: 'Created at'
 			})
@@ -71,7 +72,7 @@ export const priceRulesConfig = createRelatedTableConfig<
 	.column(columnTypes.text('name', 'Name'))
 	.column(columnTypes.boolean('is_active', 'Active', { width: '80px' }))
 	.column(columnTypes.number('priority', 'Priority', { width: '100px' }))
-	.column(columnTypes.lookup('price_formula_id', 'Formula', [], { width: '150px' }))
+	.column(columnTypes.lookup('price_formula_id', 'Formula', 'price_formulas', { width: '150px' }))
 	.formSchema(priceRulesInsertSchema)
 	.formConfig(
 		createFormConfig<PriceRulesInsert>()

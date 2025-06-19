@@ -12,7 +12,7 @@
 	import type { cChannelMapCategoryInsertSchema } from '$lib/types/supabase.zod.schemas.js';
 	import { dev } from '$app/environment';
 	import { DateHelper } from '$lib/scripts/intl';
-	import type { CChannelMapCategoryInsert } from '$lib/types/supabase.zod.schemas-ts';
+	import type { CChannelMapCategoryInsert } from '$lib/types/supabase.zod.schemas.d';
 
 	type ListItem = { value: number; label: string };
 	type Props = {

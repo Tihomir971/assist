@@ -205,17 +205,9 @@
 				</Card.Content>
 			</Card.Root>
 
-			<!-- Formula Configuration -->
-			<Card.Root>
-				<Card.Header>
-					<Card.Title>Konfiguracija formule</Card.Title>
-				</Card.Header>
-				<Card.Content class="space-y-4">
-					<FormulaBuilder formula={parsedFormula()} onFormulaChange={handleFormulaChange} />
-					<!-- Hidden input to ensure $formData.formula is submitted with the form -->
-					<input type="hidden" name="formula" value={$formData.formula} />
-				</Card.Content>
-			</Card.Root>
+			<FormulaBuilder formula={parsedFormula()} onFormulaChange={handleFormulaChange} />
+			<!-- Hidden input to ensure $formData.formula is submitted with the form -->
+			<input type="hidden" name="formula" value={$formData.formula} />
 
 			<!-- Conditions -->
 			<Card.Root>

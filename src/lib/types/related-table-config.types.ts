@@ -10,7 +10,7 @@ export interface ColumnDefinition<T extends Record<string, unknown>> {
 	searchable?: boolean;
 	formatter?: (value: T[keyof T], row: T) => string;
 	component?: unknown; // Custom Svelte component for rendering
-	lookupData?: Array<{ value: string | number; label: string }>;
+	lookupKey?: string; // Key to find the lookup array in the `lookupData` prop of the table
 	className?: string;
 }
 

@@ -5,7 +5,7 @@ import type {
 	MPricelistInsert,
 	MPricelistRow,
 	MPricelistUpdate
-} from '$lib/types/supabase.zod.schemas-ts';
+} from '$lib/types/supabase.zod.schemas.d';
 
 export type PricelistLookup = { value: number; label: string };
 

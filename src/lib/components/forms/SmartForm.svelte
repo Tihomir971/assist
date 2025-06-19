@@ -149,7 +149,7 @@
 	const { form: formData, enhance, errors, constraints, submitting, tainted, reset } = superform;
 
 	const finalTitle = $derived(
-		`${$formData.id ? 'Update' : 'Create'} ${config.title || analyzedFormConfig.title}`
+		`${$formData.id ? 'Edit' : 'Create'} ${config.title || analyzedFormConfig.title}`
 	);
 
 	// Determine which fields should be HIDDEN inputs

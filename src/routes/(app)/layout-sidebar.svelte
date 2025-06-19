@@ -23,6 +23,8 @@
 				icon: PhTag,
 				items: [
 					{ title: 'Catalog', url: '/catalog' },
+					{ title: 'Price lists', url: '/catalog/price-lists' },
+					{ title: 'Prices', url: '/catalog/prices' },
 					{
 						title: 'Attributes',
 						url: '/catalog/product-attributes/attributes'
@@ -41,7 +43,10 @@
 				title: 'Sales/Purchase',
 				url: '/catalog',
 				icon: PhTag,
-				items: []
+				items: [
+					{ title: 'Contacts', url: '/crm/contacts' },
+					{ title: 'Price Rules', url: '/crm/pricing-rules' }
+				]
 			},
 			{
 				title: 'Data',
@@ -54,69 +59,6 @@
 				url: '/lab',
 				icon: PhFlask,
 				items: [{ title: 'Colors', url: '/lab' }]
-			}
-		]
-	};
-	const dataSimple = {
-		navMain: [
-			{
-				title: 'Catalog',
-				url: '/catalog',
-				icon: PhTag,
-				items: [
-					{ title: 'Products', url: '/catalog', icon: PhTag },
-					{
-						title: 'Attributes',
-						url: '/catalog/product-attributes/attributes'
-					},
-					{
-						title: 'Attribute Groups',
-						url: '/catalog/product-attributes/attribute-groups'
-					},
-					{
-						title: 'Attribute Sets',
-						url: '/catalog/product-attributes/attribute-sets'
-					}
-				]
-			},
-			{
-				title: 'Sales/Purchase',
-				url: '/catalog',
-				icon: PhTag,
-				items: [
-					{ title: 'Pricelists', url: '/catalog/price-lists', icon: PhTag },
-					{
-						title: 'Attributes',
-						url: '/catalog/product-attributes/attributes'
-					},
-					{
-						title: 'Attribute Groups',
-						url: '/catalog/product-attributes/attribute-groups'
-					},
-					{
-						title: 'Attribute Sets',
-						url: '/catalog/product-attributes/attribute-sets'
-					}
-				]
-			},
-
-			{
-				title: 'Import/Export',
-				url: '/excel',
-				icon: PhMicrosoftExcelLogo,
-				items: [
-					{ title: 'Import pricelist', url: '/excel' },
-					{ title: 'Pricelists', url: '/catalog/price-lists', icon: PhTag }
-				]
-			},
-			{
-				title: 'Laboratory',
-				url: '/lab',
-				icon: PhFlask,
-				items: [
-					{ title: 'Import pricelist', url: '/excel' },
-					{ title: 'Pricelists', url: '/catalog/price-lists', icon: PhTag }
-				]
 			}
 		]
 	};
