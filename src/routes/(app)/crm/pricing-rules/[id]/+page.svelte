@@ -4,17 +4,14 @@
 	import { enhance } from '$app/forms';
 	import { toast } from 'svelte-sonner';
 	import { superForm } from 'sveltekit-superforms';
-	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { zod } from 'sveltekit-superforms/adapters';
 
 	// UI Components
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Badge } from '$lib/components/ui/badge/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
-	import * as Select from '$lib/components/ui/select/index.js';
 
 	// Icons
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
@@ -22,7 +19,6 @@
 	import Trash2 from '@lucide/svelte/icons/trash-2';
 
 	import type { PageData } from './$types';
-	import { pricingRulesInsertSchema } from '$lib/types/supabase.zod.schemas';
 	import type { PricingFormula, PricingConditions } from '$lib/types/pricing-rules.types';
 	import FormulaBuilder from '$lib/components/pricing-rules/builders/FormulaBuilder.svelte';
 	import ConditionsBuilder from '$lib/components/pricing-rules/builders/ConditionsBuilder.svelte';
@@ -31,7 +27,7 @@
 
 	// Form setup
 	const form = superForm(data.formPricingRule, {
-		validators: zodClient(pricingRulesInsertSchema),
+		dataType: 'json',
 		onResult: ({ result }) => {
 			if (result.type === 'success') {
 				toast.success(
@@ -41,12 +37,22 @@
 					goto(`/crm/pricing-rules/${result.data.data.id}`);
 				}
 			} else if (result.type === 'failure') {
-				toast.error('Greška pri čuvanju pravila');
+				const errorMessage = result.data?.error || 'Greška pri čuvanju pravila';
+				toast.error(errorMessage);
 			}
 		}
 	});
 
 	const { form: formData, enhance: formEnhance } = form;
+
+	// Handlers for child components
+	function handleFormulaChange(newFormula: PricingFormula) {
+		$formData.formula = newFormula;
+	}
+
+	function handleConditionsChange(newConditions: PricingConditions) {
+		$formData.conditions = newConditions;
+	}
 
 	// Helper functions
 	function goBack() {
@@ -60,63 +66,6 @@
 			toast.success('Pravilo je obrisano');
 			setTimeout(() => goto('/crm/pricing-rules'), 1000);
 		}
-	}
-
-	// Reactive state for parsed formula
-	let parsedFormula = $derived(() => {
-		try {
-			let formulaObj: any;
-			if (typeof $formData.formula === 'string' && $formData.formula.trim() !== '') {
-				formulaObj = JSON.parse($formData.formula);
-			} else if (
-				typeof $formData.formula === 'object' &&
-				$formData.formula !== null &&
-				!Array.isArray($formData.formula)
-			) {
-				formulaObj = $formData.formula;
-			}
-
-			if (formulaObj && typeof formulaObj === 'object' && 'type' in formulaObj) {
-				return formulaObj as PricingFormula;
-			}
-			// Default formula if parsing fails or it's empty/invalid/not an object with 'type'
-			return { type: 'markup_cost', value: 1.2 } as PricingFormula;
-		} catch (e) {
-			console.warn('Failed to parse formula JSON, using default:', $formData.formula, e);
-			return { type: 'markup_cost', value: 1.2 } as PricingFormula;
-		}
-	});
-
-	function handleFormulaChange(newFormula: PricingFormula) {
-		$formData.formula = JSON.stringify(newFormula);
-	}
-
-	// Reactive state for parsed conditions
-	let parsedConditions = $derived(() => {
-		try {
-			let conditionsObj: any;
-			if (typeof $formData.conditions === 'string' && $formData.conditions.trim() !== '') {
-				conditionsObj = JSON.parse($formData.conditions);
-			} else if (
-				typeof $formData.conditions === 'object' &&
-				$formData.conditions !== null
-				// No need to check for Array.isArray here, as PricingConditions is an object
-			) {
-				conditionsObj = $formData.conditions;
-			}
-
-			if (conditionsObj && typeof conditionsObj === 'object' && !Array.isArray(conditionsObj)) {
-				return conditionsObj as PricingConditions;
-			}
-			return {} as PricingConditions; // Default to empty object
-		} catch (e) {
-			console.warn('Failed to parse conditions JSON, using default:', $formData.conditions, e);
-			return {} as PricingConditions;
-		}
-	});
-
-	function handleConditionsChange(newConditions: PricingConditions) {
-		$formData.conditions = JSON.stringify(newConditions);
 	}
 </script>
 
@@ -155,10 +104,6 @@
 
 		<!-- Main Form -->
 		<form method="POST" action="?/upsert" use:formEnhance class="space-y-6">
-			{#if !data.isCreateMode}
-				<input type="hidden" name="id" bind:value={$formData.id} />
-			{/if}
-
 			<!-- Basic Information -->
 			<Card.Root>
 				<Card.Header>
@@ -205,9 +150,10 @@
 				</Card.Content>
 			</Card.Root>
 
-			<FormulaBuilder formula={parsedFormula()} onFormulaChange={handleFormulaChange} />
-			<!-- Hidden input to ensure $formData.formula is submitted with the form -->
-			<input type="hidden" name="formula" value={$formData.formula} />
+			<FormulaBuilder
+				formula={$formData.formula || { type: 'markup_cost', value: 1.2 }}
+				onFormulaChange={handleFormulaChange}
+			/>
 
 			<!-- Conditions -->
 			<Card.Root>
@@ -217,13 +163,11 @@
 				<Card.Content class="space-y-4">
 					{#if data.lookupData && data.supabase}
 						<ConditionsBuilder
-							conditions={parsedConditions()}
+							conditions={$formData.conditions || {}}
 							lookupData={data.lookupData}
 							onConditionsChange={handleConditionsChange}
 							supabase={data.supabase}
 						/>
-						<!-- Hidden input to ensure $formData.conditions is submitted with the form -->
-						<input type="hidden" name="conditions" value={$formData.conditions} />
 					{:else}
 						<p class="text-sm text-destructive">
 							Greška: Lookup podaci ili Supabase klijent nisu dostupni.

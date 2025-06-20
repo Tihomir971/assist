@@ -18,6 +18,12 @@ export const pricingRulesColumns = [
 		className: 'text-center w-20'
 	},
 	{
+		key: 'brandCount',
+		label: 'Brendovi',
+		type: 'number',
+		className: 'text-center w-20'
+	},
+	{
 		key: 'attributeCount',
 		label: 'Atributi',
 		type: 'number',

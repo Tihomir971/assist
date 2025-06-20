@@ -58,7 +58,10 @@
 				title: 'Laboratory',
 				url: '/lab',
 				icon: PhFlask,
-				items: [{ title: 'Colors', url: '/lab' }]
+				items: [
+					{ title: 'Colors', url: '/lab' },
+					{ title: 'Price Rules', url: '/lab/pricing-test' }
+				]
 			}
 		]
 	};

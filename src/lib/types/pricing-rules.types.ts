@@ -16,6 +16,7 @@ export interface PricingConditions {
 	partner_ids?: number[];
 	product_ids?: number[];
 	category_ids?: number[];
+	brand_ids?: number[];
 	attributes?: AttributeCondition[];
 	min_quantity?: number;
 	max_quantity?: number;

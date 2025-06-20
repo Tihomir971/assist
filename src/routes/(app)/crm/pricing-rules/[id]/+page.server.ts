@@ -7,10 +7,25 @@ import {
 	PricingRulesService,
 	PartnerService,
 	CategoryService,
-	AttributeService
+	AttributeService,
+	BrandService
 } from '$lib/services/supabase';
-import { pricingRulesInsertSchema } from '$lib/types/supabase.zod.schemas';
-import type { PricingRule } from '$lib/types/pricing-rules.types';
+import type { PricingRule, PricingRuleCreate } from '$lib/types/pricing-rules.types';
+import { z } from 'zod';
+import { pricingConditionsSchema, pricingFormulaSchema } from '$lib/types/pricing-rules.zod';
+
+// Create a specific schema for the form that uses the detailed condition/formula schemas
+const formSchema = z.object({
+	id: z.number().optional(),
+	name: z.string().min(1, 'Name is required'),
+	conditions: pricingConditionsSchema.optional(),
+	formula: pricingFormulaSchema.optional(),
+	priority: z.number().optional(),
+	is_active: z.boolean().optional(),
+	target_group: z.string().nullable().optional(),
+	starts_at: z.string().nullable().optional(),
+	ends_at: z.string().nullable().optional()
+});
 
 export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
 	const pricingRulesService = new PricingRulesService(supabase);
@@ -31,24 +46,23 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 		isCreateMode = false;
 	}
 
-	// Convert rule to format compatible with Zod schema (exclude id for insert schema)
+	// Convert rule to format compatible with the new form schema
 	const formData = rule
 		? {
+				id: rule.id,
 				name: rule.name,
-				formula: JSON.stringify(rule.formula),
-				conditions: JSON.stringify(rule.conditions || {}),
+				formula: rule.formula,
+				conditions: rule.conditions || {},
 				priority: rule.priority,
 				is_active: rule.is_active,
 				target_group: rule.target_group,
 				starts_at: rule.starts_at,
-				ends_at: rule.ends_at,
-				created_at: rule.created_at,
-				updated_at: rule.updated_at
+				ends_at: rule.ends_at
 			}
 		: {
 				name: '',
-				formula: '{"type": "markup_cost", "value": 1.2}',
-				conditions: '{}',
+				formula: { type: 'markup_cost' as const, value: 1.2 },
+				conditions: {},
 				priority: 0,
 				is_active: true,
 				target_group: null,
@@ -56,20 +70,22 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 				ends_at: null
 			};
 
-	const [partners, categories, attributes] = await Promise.all([
+	const [partners, categories, attributes, brands] = await Promise.all([
 		new PartnerService(supabase).getLookup(),
 		new CategoryService(supabase).getLookup(),
-		new AttributeService(supabase).getLookup()
+		new AttributeService(supabase).getLookup(),
+		new BrandService(supabase).getLookup()
 	]);
 
 	return {
 		rule,
 		isCreateMode,
-		formPricingRule: await superValidate(formData, zod(pricingRulesInsertSchema)),
+		formPricingRule: await superValidate(formData, zod(formSchema)),
 		lookupData: {
 			partners,
 			categories,
-			attributes
+			attributes,
+			brands
 		}
 	};
 };
@@ -77,7 +93,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 // Simple CRUD actions without factory for now due to type compatibility issues
 export const actions: Actions = {
 	upsert: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(pricingRulesInsertSchema));
+		const form = await superValidate(request, zod(formSchema));
 
 		if (!form.valid) {
 			return { form };
@@ -86,15 +102,11 @@ export const actions: Actions = {
 		try {
 			const service = new PricingRulesService(supabase);
 
-			// Convert form data to proper format
-			const ruleData = {
+			// Reconstruct the data object to match the service layer types
+			const ruleData: PricingRuleCreate = {
 				name: form.data.name,
-				formula:
-					typeof form.data.formula === 'string' ? JSON.parse(form.data.formula) : form.data.formula,
-				conditions:
-					typeof form.data.conditions === 'string'
-						? JSON.parse(form.data.conditions || '{}')
-						: form.data.conditions || {},
+				conditions: form.data.conditions || {},
+				formula: form.data.formula || { type: 'markup_cost', value: 1.2 },
 				priority: form.data.priority || 0,
 				is_active: form.data.is_active ?? true,
 				target_group: form.data.target_group || undefined,
@@ -113,8 +125,10 @@ export const actions: Actions = {
 
 			return { form, success: true, data: result };
 		} catch (err) {
-			console.error('Error saving pricing rule:', err);
-			return { form, error: 'Failed to save pricing rule' };
+			console.log('--- CATCH BLOCK ENTERED ---');
+			const error = err as Error;
+			console.error('Error saving pricing rule:', error.message, error.stack);
+			return { form, error: `Save failed: ${error.message}` };
 		}
 	},
 

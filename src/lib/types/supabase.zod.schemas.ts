@@ -1320,6 +1320,7 @@ export const mProductRowSchema = z.object({
   imageurl: z.string().nullable(),
   is_active: z.boolean(),
   is_self_service: z.boolean(),
+  m_product_brand_id: z.number().nullable(),
   m_product_category_id: z.number().nullable(),
   m_product_uu: z.string().nullable(),
   mpn: z.string().nullable(),
@@ -1347,6 +1348,7 @@ export const mProductInsertSchema = z.object({
   imageurl: z.string().optional().nullable(),
   is_active: z.boolean().optional(),
   is_self_service: z.boolean().optional(),
+  m_product_brand_id: z.number().optional().nullable(),
   m_product_category_id: z.number().optional().nullable(),
   m_product_uu: z.string().optional().nullable(),
   mpn: z.string().optional().nullable(),
@@ -1374,6 +1376,7 @@ export const mProductUpdateSchema = z.object({
   imageurl: z.string().optional().nullable(),
   is_active: z.boolean().optional(),
   is_self_service: z.boolean().optional(),
+  m_product_brand_id: z.number().optional().nullable(),
   m_product_category_id: z.number().optional().nullable(),
   m_product_uu: z.string().optional().nullable(),
   mpn: z.string().optional().nullable(),
@@ -1416,6 +1419,12 @@ export const mProductRelationshipsSchema = z.tuple([
     foreignKeyName: z.literal("m_product_m_attributeset_id_fkey"),
     columns: z.tuple([z.literal("attributeset_id")]),
     referencedRelation: z.literal("m_attributeset"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+  z.object({
+    foreignKeyName: z.literal("m_product_m_product_brand_id_fkey"),
+    columns: z.tuple([z.literal("m_product_brand_id")]),
+    referencedRelation: z.literal("m_product_brands"),
     referencedColumns: z.tuple([z.literal("id")]),
   }),
   z.object({
@@ -1536,6 +1545,39 @@ export const mProductAttributeValueRelationshipsSchema = z.tuple([
     referencedColumns: z.tuple([z.literal("id")]),
   }),
 ]);
+
+export const mProductBrandsRowSchema = z.object({
+  created_at: z.string(),
+  description: z.string().nullable(),
+  id: z.number(),
+  is_active: z.boolean(),
+  logo_url: z.string().nullable(),
+  name: z.string(),
+  updated_at: z.string(),
+  website_url: z.string().nullable(),
+});
+
+export const mProductBrandsInsertSchema = z.object({
+  created_at: z.string().optional(),
+  description: z.string().optional().nullable(),
+  id: z.number().optional(),
+  is_active: z.boolean().optional(),
+  logo_url: z.string().optional().nullable(),
+  name: z.string(),
+  updated_at: z.string().optional(),
+  website_url: z.string().optional().nullable(),
+});
+
+export const mProductBrandsUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  description: z.string().optional().nullable(),
+  id: z.number().optional(),
+  is_active: z.boolean().optional(),
+  logo_url: z.string().optional().nullable(),
+  name: z.string().optional(),
+  updated_at: z.string().optional(),
+  website_url: z.string().optional().nullable(),
+});
 
 export const mProductCategoryRowSchema = z.object({
   created_at: z.string(),

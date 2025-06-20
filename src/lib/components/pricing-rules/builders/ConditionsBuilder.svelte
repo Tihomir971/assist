@@ -3,12 +3,14 @@
 	import type { PartnerLookup } from '$lib/services/supabase/partner.service';
 	import type { CategoryLookup } from '$lib/services/supabase/category.service';
 	import type { AttributeLookup } from '$lib/services/supabase/attribute.service';
+	import type { BrandLookup } from '$lib/services/supabase/brand.service';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import type { Database } from '$lib/types/supabase.types';
 
 	import * as Card from '$lib/components/ui/card';
 	import AttributesConditionBuilder from '../condition-types/AttributesConditionBuilder.svelte';
 	import CategoriesSelector from '../condition-types/CategoriesSelector.svelte';
+	import BrandsSelector from '../condition-types/BrandsSelector.svelte';
 	import PartnersSelector from '../condition-types/PartnersSelector.svelte';
 	import QuantityRangeInputs from '../condition-types/QuantityRangeInputs.svelte';
 
@@ -18,6 +20,7 @@
 			partners: PartnerLookup[];
 			categories: CategoryLookup[];
 			attributes: AttributeLookup[];
+			brands: BrandLookup[];
 		};
 		onConditionsChange: (conditions: PricingConditions) => void;
 		supabase: SupabaseClient<Database>; // Required for AttributesConditionBuilder
@@ -52,6 +55,11 @@
 		updateConditions({ partner_ids: partnerIds.length > 0 ? partnerIds : undefined });
 	}
 
+	// Specific handler for brand_ids
+	function handleBrandsChange(brandIds: number[]) {
+		updateConditions({ brand_ids: brandIds.length > 0 ? brandIds : undefined });
+	}
+
 	// Specific handler for quantity/order value fields
 	function handleQuantityChange(
 		quantityUpdates: Pick<PricingConditions, 'min_quantity' | 'max_quantity' | 'min_order_value'>
@@ -74,6 +82,23 @@
 				selectedCategoryIds={currentConditions.category_ids || []}
 				categoriesLookup={lookupData.categories}
 				onCategoriesChange={handleCategoriesChange}
+			/>
+		</Card.Content>
+	</Card.Root>
+
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>Brendovi proizvoda</Card.Title>
+			<Card.Description>
+				Pravilo će se primeniti samo na proizvode izabranih brendova. Ako su svi brendovi ostavljeni
+				prazni, ovaj uslov se ne primenjuje.
+			</Card.Description>
+		</Card.Header>
+		<Card.Content>
+			<BrandsSelector
+				selectedBrandIds={currentConditions.brand_ids || []}
+				brandsLookup={lookupData.brands}
+				onBrandsChange={handleBrandsChange}
 			/>
 		</Card.Content>
 	</Card.Root>

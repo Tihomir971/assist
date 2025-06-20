@@ -1,3 +1,4 @@
+export { BrandService } from './brand.service';
 export * as ProductService from './product-service';
 export { PricingRulesService } from './pricing-rules.service';
 export { CategoryService } from './category.service';

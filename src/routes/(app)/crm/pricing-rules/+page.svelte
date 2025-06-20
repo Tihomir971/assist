@@ -194,6 +194,11 @@
 									</Badge>
 								</Table.Cell>
 								<Table.Cell class="text-center">
+									<Badge variant={rule.brandCount > 0 ? 'default' : 'secondary'}>
+										{rule.brandCount}
+									</Badge>
+								</Table.Cell>
+								<Table.Cell class="text-center">
 									<Badge variant={rule.attributeCount > 0 ? 'default' : 'secondary'}>
 										{rule.attributeCount}
 									</Badge>

@@ -30,11 +30,13 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 			const conditions = rule.conditions || {};
 			const partnerCount = conditions.partner_ids?.length || 0;
 			const categoryCount = conditions.category_ids?.length || 0;
+			const brandCount = conditions.brand_ids?.length || 0;
 			const attributeCount = conditions.attributes?.length || 0;
 			return {
 				...rule,
 				partnerCount,
 				categoryCount,
+				brandCount,
 				attributeCount
 			};
 		});

@@ -261,6 +261,15 @@ export type MProductAttributeValueUpdate = z.infer<
 export type MProductAttributeValueRelationships = z.infer<
   typeof generated.mProductAttributeValueRelationshipsSchema
 >;
+export type MProductBrandsRow = z.infer<
+  typeof generated.mProductBrandsRowSchema
+>;
+export type MProductBrandsInsert = z.infer<
+  typeof generated.mProductBrandsInsertSchema
+>;
+export type MProductBrandsUpdate = z.infer<
+  typeof generated.mProductBrandsUpdateSchema
+>;
 export type MProductCategoryRow = z.infer<
   typeof generated.mProductCategoryRowSchema
 >;
