@@ -89,6 +89,11 @@ export function createRelatedTableConfig<
 			return this;
 		},
 
+		tab(tabConfig) {
+			config.tabConfig = tabConfig;
+			return this;
+		},
+
 		build(): RelatedTableConfig<T, S> {
 			if (!config.title || !config.formSchema) {
 				throw new Error('Title and formSchema are required');

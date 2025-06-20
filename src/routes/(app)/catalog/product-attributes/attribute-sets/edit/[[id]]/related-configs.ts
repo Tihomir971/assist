@@ -1,0 +1,99 @@
+import { mAttributesetAttributeInsertSchema } from '$lib/types/supabase.zod.schemas';
+import { columnTypes, createRelatedTableConfig } from '$lib/utils/related-table-config.builder';
+import { createFormConfig } from '$lib/utils/form-config.builder';
+import { createSplitLayoutConfig, createTabConfig } from '$lib/utils/split-layout-config.builder';
+import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable.svelte';
+import type { SuperValidated } from 'sveltekit-superforms';
+import type { Component } from 'svelte';
+
+const formConfig = createFormConfig()
+	.title('Attribute Set Attribute')
+	.field('attribute_id', {
+		label: 'Attribute',
+		type: 'select',
+		span: 12
+	})
+	.field('sequence', {
+		label: 'Sequence',
+		type: 'number',
+		span: 6
+	})
+	.field('is_required', {
+		label: 'Required',
+		type: 'boolean',
+		span: 3
+	})
+	.field('is_active', {
+		label: 'Active',
+		type: 'boolean',
+		span: 3
+	})
+	.build();
+
+export const attributeSetAttributesConfig = createRelatedTableConfig()
+	.title('Attributes in Set')
+	.tab({
+		tabId: 'attributes',
+		tabLabel: 'Attributes',
+		tabIcon: 'ph:list',
+		tabOrder: 1,
+		tabBadgeKey: 'count',
+		tabDescription: 'Manage attributes that belong to this attribute set'
+	})
+	.column(columnTypes.lookup('attribute_id', 'Attribute', 'attributes'))
+	.column(columnTypes.number('sequence', 'Sequence'))
+	.column(columnTypes.boolean('is_required', 'Required'))
+	.column(columnTypes.boolean('is_active', 'Active'))
+	.formSchema(mAttributesetAttributeInsertSchema)
+	.formConfig(formConfig)
+	.actions('?/attributeUpsert', '?/attributeUpsert', '?/attributeDelete')
+	.parentIdField('attributeset_id')
+	.build();
+
+// Split layout configuration
+export const splitLayoutConfig = createSplitLayoutConfig()
+	.leftPanel({
+		title: 'Attribute Set Details',
+		width: '45%',
+		minWidth: '400px'
+	})
+	.rightPanel({
+		title: 'Related Data',
+		width: '55%',
+		minWidth: '500px'
+	})
+	.responsive({
+		breakpoint: '768px',
+		stackOrder: 'form-first'
+	})
+	.build();
+
+// Tab configurations helper function
+export function createTabConfigs(data: {
+	attributeSetAttributes: Record<string, unknown>[];
+	formAttributeSetAttributes: SuperValidated<Record<string, unknown>>;
+	entity?: { id: number };
+	attributes: Array<{ value: number; label: string }>;
+	onRefresh?: () => void;
+}) {
+	return [
+		createTabConfig(
+			'attributes',
+			'Attributes',
+			SmartRelatedTable as Component,
+			{
+				config: attributeSetAttributesConfig,
+				items: data.attributeSetAttributes,
+				validatedForm: data.formAttributeSetAttributes,
+				parentId: data.entity?.id,
+				lookupData: { attributes: data.attributes },
+				onRefresh: data.onRefresh
+			},
+			{
+				badge: data.attributeSetAttributes?.length || 0,
+				description: 'Manage attributes that belong to this attribute set'
+			}
+		)
+		// Additional tabs can be added here for future related tables
+	];
+}

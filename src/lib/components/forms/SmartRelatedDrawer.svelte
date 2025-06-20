@@ -17,7 +17,7 @@
 		parentId: number | undefined;
 		lookupData?: Record<string, Array<{ value: any; label: string }>>;
 		onClose?: () => void;
-		onSave?: () => void;
+		onSave?: (result?: any) => void;
 	}
 
 	let {
@@ -86,8 +86,7 @@
 
 	// Event handlers
 	function handleSuccess(formData: any) {
-		// console.log(`${config.title} ${isCreateMode ? 'created' : 'updated'} successfully`);
-		onSave?.();
+		onSave?.(formData);
 		onClose?.();
 	}
 
@@ -103,7 +102,7 @@
 		// console.log(`${config.title} delete initiated`);
 		// After a successful deletion, we want to trigger the same
 		// logic as a successful save: close the drawer and refresh the table.
-		onSave?.();
+		onSave?.({ deleted: true, id: item?.id });
 		onClose?.();
 	}
 </script>

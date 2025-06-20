@@ -105,16 +105,37 @@
 		validationMethod: 'auto', // Validate on blur and submit, but not immediately on load
 		clearOnSubmit: 'errors-and-message', // Clear errors on successful submit
 		delayMs: 300, // Debounce validation
-		dataType: 'form', // Ensure we're working with FormData
+		dataType: 'json', // Use JSON to handle nested data structures
 		onSubmit: async (event) => {
-			// Remove only system timestamp fields from form submission
-			// (id field is kept as it's needed for updates and deletes)
-			const systemTimestampFields = ['created_at', 'updated_at'];
-			systemTimestampFields.forEach((fieldName) => {
+			// Remove system timestamp fields and lookup object fields from form submission
+			const fieldsToRemove = ['created_at', 'updated_at'];
+
+			// Also remove any fields that contain objects (lookup data)
+			for (const [key, value] of event.formData.entries()) {
+				if (typeof value === 'string' && value === '[object Object]') {
+					fieldsToRemove.push(key);
+				}
+			}
+
+			fieldsToRemove.forEach((fieldName) => {
 				if (event.formData.has(fieldName)) {
 					event.formData.delete(fieldName);
 				}
 			});
+
+			// Clean up empty string values for optional fields
+			for (const [key, value] of Array.from(event.formData.entries())) {
+				if (typeof value === 'string') {
+					// Remove empty string values for id field (let server assign)
+					if (key === 'id' && value === '') {
+						event.formData.delete(key);
+					}
+					// Remove empty string values for optional numeric fields
+					else if (key === 'sequence' && value === '') {
+						event.formData.delete(key);
+					}
+				}
+			}
 
 			if (onSubmit) {
 				await onSubmit(
@@ -129,6 +150,7 @@
 				toast.success(message || `${entityName} saved successfully!`, {
 					description: message ? undefined : 'Your changes have been saved.'
 				});
+				// Pass the form data which now contains the updated entity data from the server
 				if (onSuccess) onSuccess($formData as FormDataFromSchema<AnyZodObject>);
 			} else if (result.type === 'failure') {
 				const message = 'data' in result && result.data?.message?.text;

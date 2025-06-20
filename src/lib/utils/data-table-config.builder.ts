@@ -111,6 +111,32 @@ export const columnTypes = {
 			};
 		}
 	}),
+	date: <TData>(accessorKey: keyof TData & string, header: string): ColumnDef<TData> => ({
+		accessorKey,
+		header,
+		cell: ({ cell }) => {
+			const value = cell.getValue() as string | null;
+			if (!value) return '';
+			try {
+				return new Date(value).toLocaleDateString();
+			} catch (e) {
+				return value;
+			}
+		}
+	}),
+	dateTime: <TData>(accessorKey: keyof TData & string, header: string): ColumnDef<TData> => ({
+		accessorKey,
+		header,
+		cell: ({ cell }) => {
+			const value = cell.getValue() as string | null;
+			if (!value) return '';
+			try {
+				return new Date(value).toLocaleString();
+			} catch (e) {
+				return value;
+			}
+		}
+	}),
 	custom: <TData, TValue>(
 		accessorKey: keyof TData & string,
 		header: string,

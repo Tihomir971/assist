@@ -34,13 +34,21 @@
 
 	let {
 		config,
-		items,
+		items: initialItems,
 		validatedForm,
 		parentId,
 		lookupData = {},
 		onRefresh,
 		onBulkAction
 	}: SmartRelatedTableProps<any, any> = $props();
+
+	// Internal reactive data that updates automatically
+	let items = $state(initialItems);
+
+	// Update items when initialItems changes (from parent)
+	$effect(() => {
+		items = initialItems;
+	});
 
 	// The `tableConfig` is an alias for the `config` prop.
 	// The lookup logic is now handled directly and explicitly in `formatCellValue`.
@@ -130,7 +138,11 @@
 		selectedItemId = undefined;
 	}
 
-	function handleSave() {
+	function handleSave(result?: any) {
+		// Reset selected item after save
+		selectedItemId = undefined;
+
+		// Always refresh data from parent to ensure consistency
 		onRefresh?.();
 	}
 

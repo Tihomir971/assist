@@ -1,8 +1,9 @@
 import { DataTableConfigBuilder } from '$lib/utils/data-table-config.builder';
 import DataTableActions from '$lib/components/ui/data-table-actions.svelte';
-import { RenderComponentConfig } from '$lib/components/walker-tx/render-component';
+import { renderComponent, RenderComponentConfig } from '$lib/components/walker-tx/render-component';
 import type { Tables } from '$lib/types/supabase.types';
 import type { CellContext, ColumnDef } from '@tanstack/svelte-table';
+import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 
 export type AttributeWithGroup = Tables<'m_attribute'> & { m_attribute_group: { name: string } };
 
@@ -68,8 +69,11 @@ const columns: ColumnDef<AttributeWithGroup>[] = [
 		accessorKey: 'is_active',
 		header: 'Active',
 		enableColumnFilter: true,
-		cell: (context: CellContext<AttributeWithGroup, unknown>) =>
-			context.cell.getValue() ? 'Yes' : 'No',
+		cell: ({ cell }) =>
+			renderComponent(Checkbox, {
+				checked: !!cell.getValue(),
+				disabled: true
+			}),
 		filterFn: (row, columnId, filterValue) => {
 			if (filterValue === null || filterValue === undefined) return true;
 			return row.original.is_active === filterValue;

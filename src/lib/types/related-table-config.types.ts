@@ -1,5 +1,6 @@
 import type { AnyZodObject } from 'zod';
 import type { SmartFormConfig } from './form-config.types';
+import type { RelatedTableTabConfig } from './split-layout-config.types';
 
 export interface ColumnDefinition<T extends Record<string, unknown>> {
 	key: keyof T;
@@ -67,6 +68,9 @@ export interface RelatedTableConfig<
 
 	// Parent relationship
 	parentIdField?: string; // Field name that contains parent ID (e.g., 'm_product_category_id')
+
+	// Tab configuration for split layout
+	tabConfig?: RelatedTableTabConfig;
 }
 
 export interface RelatedTableConfigBuilder<
@@ -93,5 +97,6 @@ export interface RelatedTableConfigBuilder<
 		sortable?: boolean,
 		exportEnabled?: boolean
 	): RelatedTableConfigBuilder<T, S>;
+	tab(config: RelatedTableTabConfig): RelatedTableConfigBuilder<T, S>;
 	build(): RelatedTableConfig<T, S>;
 }

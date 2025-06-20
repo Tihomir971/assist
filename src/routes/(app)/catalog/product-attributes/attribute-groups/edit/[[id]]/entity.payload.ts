@@ -1,0 +1,10 @@
+import {
+	mAttributeGroupInsertSchema,
+	mAttributeGroupUpdateSchema
+} from '$lib/types/supabase.zod.schemas';
+import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
+
+export const attributeGroupPayloadBuilder = new SmartPayloadBuilder(
+	{ schema: mAttributeGroupInsertSchema, defaults: { is_active: true } },
+	{ schema: mAttributeGroupUpdateSchema }
+);

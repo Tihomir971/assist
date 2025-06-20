@@ -32,7 +32,10 @@
 	// Handle value changes for single select
 	function handleSingleValueChange(newValue: string | undefined) {
 		if (newValue !== undefined && newValue !== '') {
-			if (field.type === 'number') {
+			// Check if the field should return numbers based on the options having numeric values
+			const shouldReturnNumber =
+				field.options?.some((opt) => typeof opt.value === 'number') || field.type === 'number';
+			if (shouldReturnNumber) {
 				value = Number(newValue);
 			} else {
 				value = newValue;
@@ -44,7 +47,10 @@
 
 	// Handle value changes for multiple select
 	function handleMultipleValueChange(newValue: string[]) {
-		if (field.type === 'number') {
+		// Check if the field should return numbers based on the options having numeric values
+		const shouldReturnNumber =
+			field.options?.some((opt) => typeof opt.value === 'number') || field.type === 'number';
+		if (shouldReturnNumber) {
 			value = newValue.map((v) => Number(v)).filter((v) => !isNaN(v));
 		} else {
 			value = newValue.filter((v) => v !== '');

@@ -4,17 +4,17 @@
 	import { page } from '$app/state';
 	import { Button } from '$lib/components/ui/button';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import type { AttributeWithGroup } from '../../../routes/(app)/catalog/product-attributes/attributes/datatable.config';
 	import PhDotsThree from '~icons/ph/dots-three';
 
 	interface Props {
-		props: CellContext<AttributeWithGroup, unknown>;
+		props: CellContext<any, unknown>;
 	}
 
 	let { props: prop }: Props = $props();
 	const id = prop.row.original.id;
 
 	function handleEdit() {
+		// All table-based routes now use the /edit/{id} pattern
 		goto(`${page.url.pathname}/edit/${id}`);
 	}
 </script>

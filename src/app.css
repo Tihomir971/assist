@@ -48,6 +48,57 @@
 
 	--radius-sm: calc(var(--radius) - 4px);
 	--radius-md: calc(var(--radius) - 2px);
+}
+
+/* Smart Split Layout Styles */
+.smart-split-layout {
+	--split-gap: 1rem;
+	--split-left-width: 45%;
+	--split-right-width: 55%;
+	--split-left-min-width: 400px;
+	--split-right-min-width: 500px;
+	--split-breakpoint: 768px;
+}
+
+.smart-split-layout__left,
+.smart-split-layout__right {
+	transition: width 0.2s ease-in-out;
+}
+
+/* Responsive behavior */
+@media (max-width: 768px) {
+	.smart-split-layout {
+		flex-direction: column !important;
+	}
+
+	.smart-split-layout__left,
+	.smart-split-layout__right {
+		width: 100% !important;
+		min-width: unset !important;
+		margin: 0 !important;
+	}
+
+	.smart-split-layout__left {
+		margin-bottom: var(--split-gap) !important;
+	}
+}
+
+/* Tab enhancements */
+.smart-related-tabs .tabs-list {
+	background: hsl(var(--muted));
+	border-radius: 0.5rem;
+	padding: 0.25rem;
+}
+
+.smart-related-tabs .tabs-trigger {
+	transition: all 0.2s ease-in-out;
+}
+
+.smart-related-tabs .tabs-trigger[data-state='active'] {
+	background: hsl(var(--background));
+	box-shadow:
+		0 1px 3px 0 rgb(0 0 0 / 0.1),
+		0 1px 2px -1px rgb(0 0 0 / 0.1);
 	--radius-lg: var(--radius);
 	--radius-xl: calc(var(--radius) + 4px);
 

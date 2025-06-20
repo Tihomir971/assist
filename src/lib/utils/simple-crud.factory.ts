@@ -48,12 +48,15 @@ export function createSimpleCRUD<
 
 				if (isUpdate) {
 					const payload = payloadBuilder.buildUpdatePayload(form.data as Record<string, unknown>);
-					await service.update(Number(id), payload);
+					const updatedEntity = await service.update(Number(id), payload);
+					// Update form data with the returned entity data
+					Object.assign(form.data, updatedEntity);
 					return message(form, `${serviceName} updated successfully!`);
 				} else {
 					const payload = payloadBuilder.buildCreatePayload(form.data as Record<string, unknown>);
-					const result = await service.create(payload);
-					(form.data as Partial<TEntity>).id = result.id;
+					const createdEntity = await service.create(payload);
+					// Update form data with the returned entity data (including the new ID)
+					Object.assign(form.data, createdEntity);
 					return message(form, `${serviceName} created successfully!`);
 				}
 			} catch (err: unknown) {
