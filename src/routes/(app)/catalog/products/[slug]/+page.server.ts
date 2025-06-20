@@ -1,106 +1,60 @@
-import { fail, error } from '@sveltejs/kit';
-import type { Actions } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
-import { ProductService } from '$lib/services/supabase/';
-
-import { message, superValidate } from 'sveltekit-superforms';
-import { zod, zod4 } from 'sveltekit-superforms/adapters';
-import type { ChartData } from './chart-types';
-import { connector } from '$lib/ky';
-import { mStorageonhandInsertSchemaАrray, productPackingInsertSchema } from './schema.js';
+import { error } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
+import {
+	ProductService,
+	CategoryService,
+	PartnerService,
+	WarehouseService,
+	AttributeSetService,
+	ProductPackingService,
+	ProductPoService,
+	ReplenishService
+} from '$lib/services/supabase';
+import { TaxCategoryService, StorageOnHandService } from '$lib/services/supabase/';
 import {
 	mProductInsertSchema,
+	mProductPackingInsertSchema,
 	mProductPoInsertSchema,
 	mReplenishInsertSchema
 } from '$lib/types/supabase.zod.schemas';
-import { deleteByIdSchema } from '$lib/types/zod-delete-by-id';
-import { CategoryService } from '$lib/services/supabase/category.service';
+import { productPayloadBuilder } from './product.payload';
+import { productPackingPayloadBuilder } from './product-packing.payload';
+import { productPoPayloadBuilder } from './product-po.payload';
+import { replenishPayloadBuilder } from './replenish.payload';
+import { connector } from '$lib/ky';
+import type { ChartData } from './chart-types';
+import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ depends, params, locals: { supabase } }) => {
 	depends('catalog:products');
 
 	const productId = parseInt(params.slug);
-	const { data: product } = await supabase.from('m_product').select().eq('id', productId).single();
-	if (!product) throw error(404, 'Product not found');
+	if (isNaN(productId)) {
+		throw error(400, 'Invalid product ID');
+	}
 
-	const categoryService = new CategoryService(supabase);
+	const productService = new ProductService(supabase);
+	const product = await productService.getById(productId);
 
-	const getBPartner = async () => {
-		const { data } = await supabase
-			.from('c_bpartner')
-			.select('value:id, label:display_name')
-			.eq('isvendor', true)
-			.order('display_name');
-		return data || [];
-	};
-	const getReplenishes = async () => {
-		const { data } = await supabase
-			.from('m_replenish')
-			.select(
-				'id, m_warehouse_id, m_product_id, level_max, level_min, m_warehousesource_id, qtybatchsize'
-			)
-			.eq('m_product_id', productId)
-			.order('m_warehouse_id');
-		return data || [];
-	};
-	const getWarehouses = async () => {
-		const { data } = await supabase
-			.from('m_warehouse')
-			.select('value:id, label:name')
-			.order('name');
-		return data || [];
-	};
-	const getProductPacking = async () => {
-		const { data } = await supabase
-			.from('m_product_packing')
-			.select('*')
-			.eq('m_product_id', productId)
-			.order('packing_type', { ascending: false });
-		return data || [];
-	};
-	const getTaxes = async () => {
-		const { data } = await supabase
-			.from('c_taxcategory')
-			.select('value:id, label:name')
-			.order('name');
-		return data || [];
-	};
+	if (!product) {
+		throw error(404, 'Product not found');
+	}
+
 	const getSalesData = async (sku: string | null) => {
-		if (!sku) {
+		if (!sku) return { currentYear: new Date().getFullYear(), products: [] };
+		try {
+			const data = await connector
+				.post('api/sales', { json: { productIds: [sku], yearCount: 3 } })
+				.json<ChartData>();
+			return data;
+		} catch (e) {
+			console.error('Failed to fetch sales data', e);
 			return { currentYear: new Date().getFullYear(), products: [] };
 		}
-		const { currentYear, products } = await connector
-			.post('api/sales', {
-				json: {
-					productIds: [sku],
-					yearCount: 3
-				}
-			})
-			.json<ChartData>();
-		return { currentYear, products };
 	};
-	const getStorageOnHand = async () => {
-		const { data } = await supabase
-			.from('m_storageonhand')
-			.select('warehouse_id, qtyonhand,m_product_id')
-			.eq('m_product_id', productId);
-		return data || [];
-	};
-	const getAttributeSets = async () => {
-		const { data } = await supabase
-			.from('m_attributeset')
-			.select('value:id, label:name')
-			.order('name', { ascending: true });
-		return data || [];
-	};
-	const getPriceRules = async () => {
-		const { data } = await supabase
-			.from('price_rules')
-			.select('id, name, price_formula_id')
-			.eq('m_product_id', productId)
-			.single();
-		return data;
-	};
+
 	const [
 		uom,
 		categories,
@@ -112,208 +66,85 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		tax,
 		salesByWeeks,
 		storageonhand,
-		attributeSets,
-		priceFormula
+		attributeSets
 	] = await Promise.all([
-		ProductService.getUoms(supabase),
-		categoryService.getLookup(),
-		getBPartner(),
-		getReplenishes(),
-		getWarehouses(),
-		ProductService.getProductPurchasing(supabase, productId),
-		getProductPacking(),
-		getTaxes(),
+		productService.getUoms(),
+		new CategoryService(supabase).getLookup(),
+		new PartnerService(supabase).getLookup({ isvendor: true }),
+		new ReplenishService(supabase).list({ m_product_id: productId }),
+		new WarehouseService(supabase).getLookup(),
+		new ProductPoService(supabase).list({ m_product_id: productId }),
+		new ProductPackingService(supabase).list({ m_product_id: productId }),
+		new TaxCategoryService(supabase).getLookup(),
 		getSalesData(product.sku),
-		getStorageOnHand(),
-		getAttributeSets(),
-		getPriceRules()
+		new StorageOnHandService(supabase).list({ m_product_id: productId }),
+		new AttributeSetService(supabase).getLookup()
 	]);
 
-	const formProductPacking = await superValidate(zod(productPackingInsertSchema));
-	formProductPacking.data.m_product_id = productId;
-	const formReplenish = await superValidate(zod(mReplenishInsertSchema));
-	formReplenish.data.m_product_id = productId;
-	const formProductPo = await superValidate(zod(mProductPoInsertSchema));
-	formProductPo.data.m_product_id = productId;
-
-	const formStorageOnHand = await superValidate(
-		{ storageonhand },
-		zod(mStorageonhandInsertSchemaАrray)
-	);
+	const [formProduct, formProductPacking, formReplenish, formProductPo] = await Promise.all([
+		superValidate(product, zod(mProductInsertSchema)),
+		superValidate(zod(mProductPackingInsertSchema)),
+		superValidate(zod(mReplenishInsertSchema)),
+		superValidate(zod(mProductPoInsertSchema))
+	]);
 
 	return {
-		productId,
-		formProduct: await superValidate(product, zod(mProductInsertSchema)),
-		formProductPo,
+		entity: product,
+		formProduct,
 		purchases,
-		formProductPacking,
+		formProductPo,
 		productPacking,
+		formProductPacking,
 		replenishes,
 		formReplenish,
-		formStorageOnHand,
-		partners,
-		uom,
-		categories,
-		warehouses,
-		tax,
-		salesByWeeks,
-		attributeSets,
-		priceFormula
+		storageonhand,
+		lookupData: {
+			partners,
+			uom,
+			categories,
+			warehouses,
+			tax,
+			attributeSets
+		},
+		salesByWeeks
 	};
 };
 
-export const actions = {
-	productPackingUpsert: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(productPackingInsertSchema));
-		if (!form.valid) return fail(400, { form });
+const productCRUD = createSimpleCRUD(
+	'Product',
+	(supabase) => new ProductService(supabase),
+	productPayloadBuilder,
+	mProductInsertSchema
+);
 
-		if (!form.data.id) {
-			// CREATE Barcode
-			const { error } = await supabase.from('m_product_packing').insert({ ...form.data });
-			console.log('error', error);
+const productPackingCRUD = createSimpleCRUD(
+	'ProductPacking',
+	(supabase) => new ProductPackingService(supabase),
+	productPackingPayloadBuilder,
+	mProductPackingInsertSchema
+);
 
-			if (error) {
-				return fail(500, {
-					form,
-					message: error.message
-				});
-			}
+const productPoCRUD = createSimpleCRUD(
+	'ProductPo',
+	(supabase) => new ProductPoService(supabase),
+	productPoPayloadBuilder,
+	mProductPoInsertSchema
+);
 
-			return message(form, 'Barcode created!');
-		} else {
-			// UPDATE Barcode
-			const { error } = await supabase
-				.from('m_product_packing')
-				.update({ ...form.data })
-				.eq('id', form.data.id as number);
+const replenishCRUD = createSimpleCRUD(
+	'Replenish',
+	(supabase) => new ReplenishService(supabase),
+	replenishPayloadBuilder,
+	mReplenishInsertSchema
+);
 
-			if (error) {
-				console.log('error', error);
-
-				return fail(500, {
-					form,
-					message: error.message
-				});
-			}
-		}
-
-		return message(form, 'Barcode updated!');
-	},
-	productPackingDelete: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod4(deleteByIdSchema));
-		if (!form.valid) return fail(400, { form });
-
-		const { error } = await supabase.from('m_product_packing').delete().eq('id', form.data.id);
-		if (error) return fail(500, { form, message: error.message });
-
-		return message(form, 'Product packaging deleted successfully!');
-	},
-	productUpsert: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(mProductInsertSchema));
-
-		if (!form.valid) return fail(400, { form });
-
-		if (form.data.id) {
-			const { error: updError } = await supabase
-				.from('m_product')
-				.update(form.data)
-				.eq('id', form.data.id);
-			if (updError) throw error(404, updError.message);
-		} else {
-			const { error: insError } = await supabase.from('m_product').insert(form.data);
-			if (insError) throw error(500, insError.message);
-		}
-
-		return { form };
-	},
-
-	mReplenishUpsert: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(mReplenishInsertSchema));
-		if (!form.valid) return fail(400, { form });
-
-		if (!form.data.id) {
-			// CREATE Barcode
-			const { error } = await supabase.from('m_replenish').insert({ ...form.data });
-
-			if (error) {
-				return fail(500, {
-					form,
-					message: error.message
-				});
-			}
-
-			return message(form, 'Replenish created!');
-		} else {
-			// UPDATE Barcode
-			const { error } = await supabase
-				.from('m_replenish')
-				.update({ ...form.data })
-				.eq('id', form.data.id);
-
-			if (error) {
-				return fail(500, {
-					form,
-					message: error.message
-				});
-			}
-		}
-
-		return message(form, 'Barcode updated!');
-	},
-	mReplenishDelete: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod4(deleteByIdSchema));
-		if (!form.valid) return fail(400, { form });
-
-		const { error } = await supabase.from('m_replenish').delete().eq('id', form.data.id);
-		if (error) return fail(500, { form, message: error.message });
-
-		return message(form, 'Product packaging deleted successfully!');
-	},
-
-	mProductPoUpsert: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(mProductPoInsertSchema));
-		console.log('form', form);
-
-		if (!form.valid) return fail(400, { form });
-
-		if (form.data.id) {
-			// UPDATE m_product_po
-			const { id, ...updateData } = form.data;
-			console.log('id, ...rest:', id, JSON.stringify(updateData, null, 2));
-			const { error } = await supabase.from('m_product_po').update(updateData).eq('id', id);
-			if (error) {
-				console.log('error', error);
-				return fail(500, {
-					form,
-					message: error.message
-				});
-			}
-		} else {
-			// INSERT m_product_po
-			const { error } = await supabase.from('m_product_po').insert(form.data);
-			if (error) {
-				console.log('error', error);
-				return fail(500, {
-					form,
-					message: error.message
-				});
-			}
-		}
-
-		return { form };
-	},
-	mProductPoDelete: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod4(deleteByIdSchema));
-		if (!form.valid) return fail(400, { form });
-
-		if (form.data.id) {
-			const { error: delError } = await supabase
-				.from('m_product_po')
-				.delete()
-				.eq('id', form.data.id);
-			if (delError) throw error(404, delError.message);
-		}
-
-		return { form };
-	}
-} satisfies Actions;
+export const actions: Actions = {
+	productUpsert: productCRUD.upsert,
+	productDelete: productCRUD.delete,
+	productPackingUpsert: productPackingCRUD.upsert,
+	productPackingDelete: productPackingCRUD.delete,
+	productPoUpsert: productPoCRUD.upsert,
+	productPoDelete: productPoCRUD.delete,
+	replenishUpsert: replenishCRUD.upsert,
+	replenishDelete: replenishCRUD.delete
+};

@@ -69,12 +69,17 @@ export class PartnerService implements CRUDService<Partner, PartnerCreate, Partn
 		return data || [];
 	}
 
-	async getLookup(): Promise<PartnerLookup[]> {
-		const { data, error } = await this.supabase
+	async getLookup(filters?: { isvendor?: boolean }): Promise<PartnerLookup[]> {
+		let query = this.supabase
 			.from('c_bpartner')
 			.select('value:id, label:display_name')
-			.eq('is_active', true)
-			.order('display_name');
+			.eq('is_active', true);
+
+		if (filters?.isvendor) {
+			query = query.eq('isvendor', true);
+		}
+
+		const { data, error } = await query.order('display_name');
 
 		if (error) throw new Error(`Failed to load partner lookup: ${error.message}`);
 		return data || [];

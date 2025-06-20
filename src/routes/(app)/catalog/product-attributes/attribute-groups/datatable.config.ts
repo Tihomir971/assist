@@ -21,11 +21,13 @@ const columns: ColumnDef<AttributeGroupType>[] = [
 		filterFn: (row, columnId, filterValue) => {
 			if (filterValue === null || filterValue === undefined) return true;
 			return row.original.is_active === filterValue;
-		}
+		},
+		enableSorting: false
 	},
 	{
 		id: 'actions',
 		enableColumnFilter: false,
+		enableSorting: false,
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		cell: (props) => renderComponent(DataTableActions as any, { props: props })
 	}

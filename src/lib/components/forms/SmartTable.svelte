@@ -10,7 +10,8 @@
 		type SortingState,
 		type VisibilityState,
 		type Updater,
-		type ColumnFiltersState
+		type ColumnFiltersState,
+		type PaginationState
 	} from '$lib/components/walker-tx';
 	import * as Table from '$lib/components/ui/table';
 	import PhArrowUp from '~icons/ph/arrow-up';
@@ -40,6 +41,7 @@
 
 	// TanStack Table State
 	let sorting = $state<SortingState>([]);
+	let pagination = $state<PaginationState>({ pageIndex: page - 1, pageSize: perPage });
 	let columnVisibility = $state<VisibilityState>({});
 	let globalFilter = $state<string>('');
 	let columnFilters = $state<ColumnFiltersState>([]);
@@ -93,9 +95,21 @@
 				applyServerFilters();
 			}
 		},
+		onPaginationChange: (updater: Updater<PaginationState>) => {
+			if (config.mode === 'client') {
+				pagination = typeof updater === 'function' ? updater(pagination) : updater;
+			}
+			// For server mode, pagination is handled by handlePageChange/handlePerPageChange
+		},
 		state: {
 			get sorting() {
 				return sorting;
+			},
+			get pagination() {
+				if (config.mode === 'server') {
+					return { pageIndex: page - 1, pageSize: perPage };
+				}
+				return pagination;
 			},
 			get columnVisibility() {
 				return columnVisibility;
@@ -108,10 +122,6 @@
 			},
 			get rowSelection() {
 				return rowSelection;
-			},
-			pagination: {
-				pageIndex: page - 1,
-				pageSize: perPage
 			}
 		},
 		manualFiltering: config.mode === 'server',
@@ -244,8 +254,8 @@
 				{/each}
 			</Table.Header>
 			<Table.Body>
-				{#if table.getFilteredRowModel().rows?.length}
-					{#each table.getFilteredRowModel().rows as row}
+				{#if table.getRowModel().rows?.length}
+					{#each table.getRowModel().rows as row}
 						<Table.Row data-state={row.getIsSelected() && 'selected'}>
 							{#each row.getVisibleCells() as cell}
 								<Table.Cell>

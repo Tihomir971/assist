@@ -88,7 +88,8 @@ export class DataTableConfigBuilder<TData> {
 export const columnTypes = {
 	text: <TData>(accessorKey: keyof TData & string, header: string): ColumnDef<TData> => ({
 		accessorKey,
-		header
+		header,
+		enableSorting: true
 	}),
 	boolean: <TData>(accessorKey: keyof TData & string, header: string): ColumnDef<TData> => ({
 		accessorKey,
@@ -119,7 +120,7 @@ export const columnTypes = {
 			if (!value) return '';
 			try {
 				return new Date(value).toLocaleDateString();
-			} catch (e) {
+			} catch {
 				return value;
 			}
 		}
@@ -132,7 +133,7 @@ export const columnTypes = {
 			if (!value) return '';
 			try {
 				return new Date(value).toLocaleString();
-			} catch (e) {
+			} catch {
 				return value;
 			}
 		}
