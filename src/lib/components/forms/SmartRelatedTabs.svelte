@@ -36,17 +36,20 @@
 		<Tabs.List
 			class={cn(
 				'grid w-full',
-				orientation === 'horizontal' ? `grid-cols-${sortedTabs.length}` : 'grid-cols-1',
+				orientation === 'horizontal'
+					? 'grid-cols-[repeat(var(--cols),minmax(0,1fr))]'
+					: 'grid-cols-1',
 				variant === 'pills' && 'rounded-lg bg-muted p-1',
 				variant === 'underline' && 'border-b'
 			)}
+			style={`--cols: ${sortedTabs.length}`}
 		>
 			{#each sortedTabs as tab (tab.id)}
 				<Tabs.Trigger
 					value={tab.id}
 					disabled={tab.disabled}
 					class={cn(
-						'flex items-center gap-2',
+						'flex items-center justify-center gap-2',
 						variant === 'pills' &&
 							'data-[state=active]:bg-background data-[state=active]:shadow-sm',
 						variant === 'underline' &&
