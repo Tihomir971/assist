@@ -194,7 +194,139 @@ Transform existing route to use split layout:
 
 ---
 
-## 4. Configuration Options
+## 4. Complete Example
+
+To clarify the pattern, here is a complete, real-world example for an "Attribute Set" entity that has a related table of "Attributes".
+
+### `src/routes/(app)/catalog/product-attributes/attribute-sets/edit/[[id]]/related-configs.ts`
+
+This file defines the configuration for the related table, the split layout, and a helper function to generate the tab configurations.
+
+```typescript
+import { mAttributesetAttributeInsertSchema } from '$lib/types/supabase.zod.schemas';
+import { columnTypes, createRelatedTableConfig } from '$lib/utils/related-table-config.builder';
+import { createFormConfig } from '$lib/utils/form-config.builder';
+import { createSplitLayoutConfig, createTabConfig } from '$lib/utils/split-layout-config.builder';
+import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable.svelte';
+import type { SuperValidated } from 'sveltekit-superforms';
+import type { Component } from 'svelte';
+
+// Form config for the related attribute records
+const formConfig = createFormConfig()
+	.title('Attribute Set Attribute')
+	.field('attribute_id', { label: 'Attribute', type: 'select', span: 12 })
+	.field('sequence', { label: 'Sequence', type: 'number', span: 6 })
+	.field('is_required', { label: 'Required', type: 'boolean', span: 3 })
+	.field('is_active', { label: 'Active', type: 'boolean', span: 3 })
+	.build();
+
+// Configuration for the related attributes table
+export const attributeSetAttributesConfig = createRelatedTableConfig()
+	.title('Attributes in Set')
+	.tab({
+		tabId: 'attributes',
+		tabLabel: 'Attributes',
+		tabIcon: 'ph:list'
+	})
+	.column(columnTypes.lookup('attribute_id', 'Attribute', 'attributes'))
+	.column(columnTypes.number('sequence', 'Sequence'))
+	.formSchema(mAttributesetAttributeInsertSchema)
+	.formConfig(formConfig)
+	.actions('?/attributeUpsert', '?/attributeUpsert', '?/attributeDelete')
+	.parentIdField('attributeset_id')
+	.build();
+
+// Configuration for the split layout itself
+export const splitLayoutConfig = createSplitLayoutConfig()
+	.leftPanel({ width: '45%' })
+	.rightPanel({ width: '55%' })
+	.build();
+
+// Helper function to dynamically create tab configurations
+export function createTabConfigs(data: {
+	attributeSetAttributes: Record<string, unknown>[];
+	formAttributeSetAttributes: SuperValidated<Record<string, unknown>>;
+	entity?: { id: number };
+	attributes: Array<{ value: number; label: string }>;
+}) {
+	return [
+		createTabConfig(
+			'attributes',
+			'Attributes',
+			SmartRelatedTable as Component,
+			{
+				config: attributeSetAttributesConfig,
+				items: data.attributeSetAttributes,
+				validatedForm: data.formAttributeSetAttributes,
+				parentId: data.entity?.id,
+				lookupData: { attributes: data.attributes }
+			},
+			{
+				badge: data.attributeSetAttributes?.length || 0,
+				description: 'Manage attributes that belong to this attribute set'
+			}
+		)
+	];
+}
+```
+
+### `src/routes/(app)/catalog/product-attributes/attribute-sets/edit/[[id]]/+page.svelte`
+
+This Svelte page consumes the configurations and renders the layout.
+
+```svelte
+<script lang="ts">
+	import SmartSplitLayout from '$lib/components/forms/SmartSplitLayout.svelte';
+	import SmartForm from '$lib/components/forms/SmartForm.svelte';
+	import SmartRelatedTabs from '$lib/components/forms/SmartRelatedTabs.svelte';
+	import { createFormConfig } from '$lib/utils/form-config.builder';
+	import { splitLayoutConfig, createTabConfigs } from './related-configs';
+	import { mAttributesetInsertSchema } from '$lib/types/supabase.zod.schemas';
+
+	let { data } = $props();
+
+	// Main form configuration
+	const formConfig = createFormConfig()
+		.title('Attribute Set')
+		.field('name', { label: 'Name', span: 6 })
+		.field('code', { label: 'Code', span: 6 })
+		.field('description', { label: 'Description', type: 'textarea', span: 12 })
+		.field('is_active', { label: 'Active', type: 'boolean', span: 12 })
+		.build();
+
+	// Create reactive tab configurations that update when data changes
+	const tabConfigs = $derived(createTabConfigs(data));
+</script>
+
+<div class="container mx-auto h-full py-6">
+	<SmartSplitLayout {config}={splitLayoutConfig}>
+		{#snippet leftPanel()}
+			<SmartForm
+				entityName="Attribute Set"
+				form={data.form}
+				schema={mAttributesetInsertSchema}
+				config={formConfig}
+				action="?/upsert"
+				deleteAction="?/delete"
+			/>
+		{/snippet}
+
+		{#snippet rightPanel()}
+			{#if data.entity?.id}
+				<SmartRelatedTabs {tabs}={tabConfigs} defaultTab="attributes" />
+			{:else}
+				<div class="empty-state">
+					Save the entity to manage related data.
+				</div>
+			{/if}
+		{/snippet}
+	</SmartSplitLayout>
+</div>
+```
+
+---
+
+## 5. Configuration Options
 
 ### Split Layout Configuration
 

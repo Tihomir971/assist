@@ -55,5 +55,10 @@ export const fieldConfigs = {
 	): Pick<FieldOverride, 'options' | 'searchable'> => ({
 		options,
 		searchable
+	}),
+
+	number: (step: number): Pick<FieldOverride, 'type' | 'step'> => ({
+		type: 'number',
+		step
 	})
 };

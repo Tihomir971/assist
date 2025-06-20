@@ -12,11 +12,13 @@
 		.build();
 </script>
 
-<SmartForm
-	entityName="Attribute Group"
-	form={data.form}
-	schema={mAttributeGroupInsertSchema}
-	action="?/upsert"
-	config={formConfig}
-	deleteAction="?/delete"
-/>
+<div class="container mx-auto h-full max-w-2xl py-6">
+	<SmartForm
+		entityName="Attribute Group"
+		form={data.form}
+		schema={mAttributeGroupInsertSchema}
+		action="?/upsert"
+		config={formConfig}
+		deleteAction="?/delete"
+	/>
+</div>

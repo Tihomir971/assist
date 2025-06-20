@@ -1,4 +1,4 @@
-import type { Component, Snippet } from 'svelte';
+import type { Component, ComponentProps, Snippet } from 'svelte';
 
 // Main split layout configuration
 export interface SplitLayoutConfig {
@@ -27,7 +27,7 @@ export interface ResponsiveConfig {
 }
 
 // Tab configuration for related tables
-export interface TabConfig {
+export interface TabConfig<T extends Component = Component> {
 	id: string;
 	label: string;
 	icon?: string;
@@ -35,8 +35,8 @@ export interface TabConfig {
 	disabled?: boolean;
 	order?: number;
 	description?: string;
-	component: Component;
-	props: Record<string, unknown>;
+	component: T;
+	props: ComponentProps<T>;
 }
 
 // Enhanced related table config with tab metadata
@@ -70,7 +70,7 @@ export interface SmartSplitLayoutProps {
 
 // Props for SmartRelatedTabs component
 export interface SmartRelatedTabsProps {
-	tabs: TabConfig[];
+	tabs: TabConfig<any>[];
 	defaultTab?: string;
 	orientation?: 'horizontal' | 'vertical';
 	variant?: 'default' | 'pills' | 'underline';

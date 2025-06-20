@@ -18,6 +18,7 @@ export interface FieldOverride {
 	span?: number; // NEW: Grid column span (1-12 for CSS Grid)
 	className?: string; // NEW: Additional CSS classes for the field container
 	size?: 'sm' | 'md' | 'lg'; // NEW: Field size variant
+	step?: number; // For number inputs
 }
 
 export interface SmartFormConfig {

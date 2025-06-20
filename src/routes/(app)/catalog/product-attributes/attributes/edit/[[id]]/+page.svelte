@@ -1,9 +1,10 @@
 <script lang="ts">
 	import SmartForm from '$lib/components/forms/SmartForm.svelte';
-	import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable.svelte';
 	import { createFormConfig } from '$lib/utils/form-config.builder';
-	import { attributeOptionsConfig } from './related-configs';
+	import { splitLayoutConfig, createTabConfigs } from './related-configs';
 	import { mAttributeFormSchema } from './schema';
+	import SmartSplitLayout from '$lib/components/forms/SmartSplitLayout.svelte';
+	import SmartRelatedTabs from '$lib/components/forms/SmartRelatedTabs.svelte';
 
 	let { data } = $props();
 
@@ -11,24 +12,24 @@
 		.title('Attribute')
 		.field('name', {
 			label: 'Name',
-			span: 6,
+			span: 12,
 			placeholder: 'e.g., Color, Size'
 		})
 		.field('code', {
 			label: 'Code',
-			span: 6,
+			span: 12,
 			placeholder: 'e.g., COLOR, SIZE'
 		})
 		.field('attribute_group_id', {
 			label: 'Group',
 			type: 'select',
-			span: 6,
+			span: 12,
 			options: data.attributeGroups
 		})
 		.field('attribute_type', {
 			label: 'Type',
 			type: 'select',
-			span: 6,
+			span: 12,
 			options: [
 				{ value: 'text', label: 'Text' },
 				{ value: 'number', label: 'Number' },
@@ -52,26 +53,45 @@
 		.build();
 
 	let attributeType = $derived(data.form.data.attribute_type);
+
+	const tabConfigs = $derived.by(() => {
+		return createTabConfigs({
+			attributeOptions: data.attributeOptions,
+			formAttributeOptions: data.formAttributeOptions,
+			entity: data.entity || undefined
+		});
+	});
 </script>
 
-<div class="container mx-auto h-full max-w-2xl overflow-auto py-6">
-	<SmartForm
-		entityName="Attribute"
-		form={data.form}
-		schema={mAttributeFormSchema}
-		config={formConfig}
-		action="?/upsert"
-		deleteAction="?/delete"
-	/>
-
-	{#if data.entity?.id && (attributeType === 'single_select' || attributeType === 'multi_select')}
-		<div class="mt-8">
-			<SmartRelatedTable
-				config={attributeOptionsConfig}
-				items={data.attributeOptions}
-				validatedForm={data.formAttributeOptions}
-				parentId={data.entity.id}
+<div class="container mx-auto h-full py-6">
+	<SmartSplitLayout config={splitLayoutConfig}>
+		{#snippet leftPanel()}
+			<SmartForm
+				entityName="Attribute"
+				form={data.form}
+				schema={mAttributeFormSchema}
+				config={formConfig}
+				action="?/upsert"
+				deleteAction="?/delete"
 			/>
-		</div>
-	{/if}
+		{/snippet}
+		{#snippet rightPanel()}
+			{#if data.entity?.id && (attributeType === 'single_select' || attributeType === 'multi_select')}
+				<SmartRelatedTabs tabs={tabConfigs} />
+			{:else if data.entity?.id}
+				<div class="flex h-full items-center justify-center text-muted-foreground">
+					Select 'Single Select' or 'Multi Select' type to add options.
+				</div>
+			{:else}
+				<div
+					class="flex h-full items-center justify-center rounded-lg border-2 border-dashed border-muted text-muted-foreground"
+				>
+					<div class="text-center">
+						<p class="text-lg font-medium">Save Attribute First</p>
+						<p class="mt-1 text-sm">Complete the form on the left to manage related data</p>
+					</div>
+				</div>
+			{/if}
+		{/snippet}
+	</SmartSplitLayout>
 </div>

@@ -5,6 +5,7 @@
 
 	// Import individual smart field components (will be created next)
 	import SmartInput from './fields/SmartInput.svelte';
+	import SmartNumberInput from './fields/SmartNumberInput.svelte';
 	import SmartSelect from './fields/SmartSelect.svelte';
 	import SmartCombobox from './fields/SmartCombobox.svelte';
 	import SmartSwitch from './fields/SmartSwitch.svelte';
@@ -60,6 +61,8 @@
 						<SmartDatePicker {field} bind:value {...props} />
 					{:else if field.type === 'datetime'}
 						<SmartDatetime {field} bind:value {...props} />
+					{:else if field.type === 'number'}
+						<SmartNumberInput {field} bind:value {...props} />
 					{:else}
 						<SmartInput {field} bind:value {...props} />
 					{/if}
