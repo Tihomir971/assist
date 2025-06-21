@@ -29,6 +29,7 @@
 
 	import type { PageData } from './$types';
 	import { pricingRulesColumns } from './columns';
+	import { DateHelper } from '$lib/scripts/intl';
 
 	let { data }: { data: PageData } = $props();
 
@@ -39,7 +40,7 @@
 
 	// Dialog state
 	let createDialogOpen = $state(false);
-
+	const dateHelper = new DateHelper();
 	// Create form
 	const createForm = superForm(
 		{ name: '' },
@@ -118,11 +119,6 @@
 		toast.info('Clone funkcionalnost će biti dodana uskoro');
 	}
 
-	function formatDate(dateString: string | null) {
-		if (!dateString) return '-';
-		return new Date(dateString).toLocaleDateString('sr-RS');
-	}
-
 	function formatFormula(formula: any) {
 		if (!formula || typeof formula !== 'object') return 'N/A';
 		return formula.type || 'Unknown';
@@ -171,7 +167,7 @@
 							{#each pricingRulesColumns as column}
 								<Table.Head class={column.className || ''}>{column.label}</Table.Head>
 							{/each}
-							<Table.Head class="w-28 text-center">Promena Prioriteta</Table.Head>
+							<Table.Head class="w-28 text-center">Redosled</Table.Head>
 							<Table.Head class="w-24 text-right">Akcije</Table.Head>
 						</Table.Row>
 					</Table.Header>
@@ -185,7 +181,11 @@
 												{(rule as any)[column.key] ? 'Aktivno' : 'Neaktivno'}
 											</Badge>
 										{:else if column.type === 'date'}
-											{formatDate((rule as any)[column.key])}
+											{#if (rule as any)[column.key]}
+												{dateHelper.format((rule as any)[column.key])}
+											{:else}
+												-
+											{/if}
 										{:else if column.key === 'name'}
 											<button onclick={() => handleEdit(rule.id)} class="text-left hover:underline">
 												{rule.name}

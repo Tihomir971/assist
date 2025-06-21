@@ -47,15 +47,16 @@ export const pricingRulesColumns = [
 		optional: true,
 		className: 'text-muted-foreground'
 	},
+
 	{
-		key: 'created_at',
-		label: 'Kreiran',
+		key: 'starts_at',
+		label: 'Start',
 		type: 'date',
 		className: 'text-sm text-muted-foreground w-32'
 	},
 	{
-		key: 'created_at',
-		label: 'Kreiran',
+		key: 'ends_at',
+		label: 'End',
 		type: 'date',
 		className: 'text-sm text-muted-foreground w-32'
 	},
