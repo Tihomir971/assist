@@ -26,6 +26,7 @@
 	import { deleteByIdSchema } from '$lib/types/zod-delete-by-id';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Button } from '$lib/components/ui/button';
+	import * as Card from '$lib/components/ui/card/index.js';
 
 	type Props = {
 		data: TData[];
@@ -207,73 +208,81 @@
 </script>
 
 <div class="container mx-auto py-6">
-	<SmartTableToolbar
-		{table}
-		{config}
-		bind:globalFilter
-		{lookupData}
-		onApplyFilters={applyServerFilters}
-		onOpenDeleteDialog={openDeleteDialog}
-		onColumnFilterChange={handleColumnFilterChange}
-	/>
-
-	<div class="rounded-md border">
-		<Table.Root>
-			<Table.Header>
-				{#each table.getHeaderGroups() as headerGroup}
-					<Table.Row>
-						{#each headerGroup.headers as header}
-							<Table.Head colspan={header.colSpan}>
-								{#if !header.isPlaceholder}
-									<button
-										type="button"
-										class="flex w-full items-center gap-2"
-										class:cursor-pointer={header.column.getCanSort()}
-										onclick={header.column.getToggleSortingHandler()}
-									>
-										<FlexRender
-											content={header.column.columnDef.header}
-											context={header.getContext()}
-										/>
-										{#if header.column.getCanSort()}
-											<span class="ml-1">
-												{#if header.column.getIsSorted() === 'asc'}
-													<PhArrowUp class="h-4 w-4" />
-												{:else if header.column.getIsSorted() === 'desc'}
-													<PhArrowDown class="h-4 w-4" />
-												{:else}
-													<PhArrowsDownUp class="h-4 w-4 text-muted-foreground/50" />
+	<Card.Root>
+		<Card.Header>
+			<SmartTableToolbar
+				{table}
+				{config}
+				bind:globalFilter
+				{lookupData}
+				onApplyFilters={applyServerFilters}
+				onOpenDeleteDialog={openDeleteDialog}
+				onColumnFilterChange={handleColumnFilterChange}
+			/>
+		</Card.Header>
+		<Card.Content>
+			<div class="rounded-md border">
+				<Table.Root>
+					<Table.Header>
+						{#each table.getHeaderGroups() as headerGroup}
+							<Table.Row>
+								{#each headerGroup.headers as header}
+									<Table.Head colspan={header.colSpan}>
+										{#if !header.isPlaceholder}
+											<button
+												type="button"
+												class="flex w-full items-center gap-2"
+												class:cursor-pointer={header.column.getCanSort()}
+												onclick={header.column.getToggleSortingHandler()}
+											>
+												<FlexRender
+													content={header.column.columnDef.header}
+													context={header.getContext()}
+												/>
+												{#if header.column.getCanSort()}
+													<span class="ml-1">
+														{#if header.column.getIsSorted() === 'asc'}
+															<PhArrowUp class="h-4 w-4" />
+														{:else if header.column.getIsSorted() === 'desc'}
+															<PhArrowDown class="h-4 w-4" />
+														{:else}
+															<PhArrowsDownUp class="h-4 w-4 text-muted-foreground/50" />
+														{/if}
+													</span>
 												{/if}
-											</span>
+											</button>
 										{/if}
-									</button>
-								{/if}
-							</Table.Head>
+									</Table.Head>
+								{/each}
+							</Table.Row>
 						{/each}
-					</Table.Row>
-				{/each}
-			</Table.Header>
-			<Table.Body>
-				{#if table.getRowModel().rows?.length}
-					{#each table.getRowModel().rows as row}
-						<Table.Row data-state={row.getIsSelected() && 'selected'}>
-							{#each row.getVisibleCells() as cell}
-								<Table.Cell>
-									<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
-								</Table.Cell>
+					</Table.Header>
+					<Table.Body>
+						{#if table.getRowModel().rows?.length}
+							{#each table.getRowModel().rows as row}
+								<Table.Row data-state={row.getIsSelected() && 'selected'}>
+									{#each row.getVisibleCells() as cell}
+										<Table.Cell>
+											<FlexRender
+												content={cell.column.columnDef.cell}
+												context={cell.getContext()}
+											/>
+										</Table.Cell>
+									{/each}
+								</Table.Row>
 							{/each}
-						</Table.Row>
-					{/each}
-				{:else}
-					<Table.Row>
-						<Table.Cell colspan={config.columns.length} class="h-24 text-center">
-							No results.
-						</Table.Cell>
-					</Table.Row>
-				{/if}
-			</Table.Body>
-		</Table.Root>
-	</div>
+						{:else}
+							<Table.Row>
+								<Table.Cell colspan={config.columns.length} class="h-24 text-center">
+									No results.
+								</Table.Cell>
+							</Table.Row>
+						{/if}
+					</Table.Body>
+				</Table.Root>
+			</div>
+		</Card.Content>
+	</Card.Root>
 
 	<SmartTablePagination
 		{table}

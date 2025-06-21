@@ -116,74 +116,68 @@
 	}
 </script>
 
-<Card.Root class="mb-6">
-	<Card.Header>
-		<Card.Title>{config.title}</Card.Title>
-		{#if config.filters.length > 0}
-			<Card.Description>Filter {config.title.toLowerCase()} by various criteria</Card.Description>
-		{/if}
-	</Card.Header>
-	<Card.Content>
-		<div class="flex flex-wrap items-end gap-4">
-			<!-- Global Filter -->
-			<div class="min-w-[200px] flex-1">
-				<Label for="globalFilter">Search</Label>
+<Card.Title>{config.title}</Card.Title>
+{#if config.filters.length > 0}
+	<Card.Description>Filter {config.title.toLowerCase()} by various criteria</Card.Description>
+{/if}
+<div class="flex flex-wrap items-end gap-4">
+	<!-- Global Filter -->
+	<div class="min-w-[200px] flex-1">
+		<Label for="globalFilter">Search</Label>
+		<Input
+			id="globalFilter"
+			value={globalFilter}
+			oninput={handleGlobalFilterInput}
+			placeholder="Search all columns..."
+		/>
+	</div>
+
+	<!-- Dynamic Filters -->
+	{#each config.filters as filter (filter.name)}
+		<div class="min-w-[200px] flex-1">
+			{#if filter.type === 'text'}
+				<Label for={filter.name}>{filter.label}</Label>
 				<Input
-					id="globalFilter"
-					value={globalFilter}
-					oninput={handleGlobalFilterInput}
-					placeholder="Search all columns..."
+					id={filter.name}
+					bind:value={filterValues[filter.name]}
+					oninput={(e) => handleFilterChange(filter.name, (e.target as HTMLInputElement).value)}
+					placeholder={filter.placeholder || `Filter by ${filter.label.toLowerCase()}`}
 				/>
-			</div>
-
-			<!-- Dynamic Filters -->
-			{#each config.filters as filter (filter.name)}
-				<div class="min-w-[200px] flex-1">
-					{#if filter.type === 'text'}
-						<Label for={filter.name}>{filter.label}</Label>
-						<Input
-							id={filter.name}
-							bind:value={filterValues[filter.name]}
-							oninput={(e) => handleFilterChange(filter.name, (e.target as HTMLInputElement).value)}
-							placeholder={filter.placeholder || `Filter by ${filter.label.toLowerCase()}`}
-						/>
-					{:else if filter.type === 'select'}
-						<SelectZag
-							bind:value={filterValues[filter.name]}
-							onValueChange={(detail) => handleFilterChange(filter.name, detail.value[0])}
-							items={filter.options || (lookupData ? lookupData[filter.lookupDataKey || ''] : [])}
-							label={filter.label}
-							placeholder={filter.placeholder || `All ${filter.label.toLowerCase()}`}
-						/>
-					{:else if filter.type === 'boolean'}
-						<SelectZag
-							bind:value={filterValues[filter.name]}
-							onValueChange={(detail) => {
-								const value = Array.isArray(detail.value) ? detail.value[0] : detail.value;
-								const boolValue = value === 'true' ? true : value === 'false' ? false : null;
-								handleFilterChange(filter.name, boolValue);
-							}}
-							items={[
-								{ value: 'true', label: 'Active' },
-								{ value: 'false', label: 'Inactive' }
-							]}
-							label={filter.label}
-							placeholder={filter.placeholder || `All ${filter.label.toLowerCase()}`}
-						/>
-					{/if}
-				</div>
-			{/each}
-
-			<!-- Action Buttons -->
-			<div class="flex items-end gap-2">
-				{#if config.mode === 'server'}
-					<Button onclick={applyFilters}>Apply Filters</Button>
-				{/if}
-				<Button variant="outline" onclick={clearFilters}>Clear Filters</Button>
-				{#if config.createButton}
-					<Button href={config.createButton.href}>{config.createButton.label}</Button>
-				{/if}
-			</div>
+			{:else if filter.type === 'select'}
+				<SelectZag
+					bind:value={filterValues[filter.name]}
+					onValueChange={(detail) => handleFilterChange(filter.name, detail.value[0])}
+					items={filter.options || (lookupData ? lookupData[filter.lookupDataKey || ''] : [])}
+					label={filter.label}
+					placeholder={filter.placeholder || `All ${filter.label.toLowerCase()}`}
+				/>
+			{:else if filter.type === 'boolean'}
+				<SelectZag
+					bind:value={filterValues[filter.name]}
+					onValueChange={(detail) => {
+						const value = Array.isArray(detail.value) ? detail.value[0] : detail.value;
+						const boolValue = value === 'true' ? true : value === 'false' ? false : null;
+						handleFilterChange(filter.name, boolValue);
+					}}
+					items={[
+						{ value: 'true', label: 'Active' },
+						{ value: 'false', label: 'Inactive' }
+					]}
+					label={filter.label}
+					placeholder={filter.placeholder || `All ${filter.label.toLowerCase()}`}
+				/>
+			{/if}
 		</div>
-	</Card.Content>
-</Card.Root>
+	{/each}
+
+	<!-- Action Buttons -->
+	<div class="flex items-end gap-2">
+		{#if config.mode === 'server'}
+			<Button onclick={applyFilters}>Apply Filters</Button>
+		{/if}
+		<Button variant="outline" onclick={clearFilters}>Clear Filters</Button>
+		{#if config.createButton}
+			<Button href={config.createButton.href}>{config.createButton.label}</Button>
+		{/if}
+	</div>
+</div>
