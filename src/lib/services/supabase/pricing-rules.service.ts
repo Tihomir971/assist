@@ -145,10 +145,6 @@ export class PricingRulesService
 				price = this.applyProportionalMarkup(formula, context.cost_price || 0);
 				break;
 
-			case 'markup_cost':
-				price = (context.cost_price || 0) * (formula.value || 1);
-				break;
-
 			case 'fixed_price':
 				price = formula.value || 0;
 				break;

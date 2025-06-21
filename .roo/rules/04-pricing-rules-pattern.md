@@ -44,7 +44,7 @@ interface PricingConditions {
 
 // Multi-type formula system
 interface PricingFormula {
-  type: 'markup_cost' | 'fixed_price' | 'discount' | 'percentage_markup' | 'proportional_markup' | 'custom_script';
+  type: 'fixed_price' | 'discount' | 'percentage_markup' | 'proportional_markup' | 'custom_script';
   value?: number;
   discount_percent?: number;
   lower_bound?: number;
@@ -76,7 +76,6 @@ src/lib/components/pricing-rules/
 │   └── QuantityRangeInputs.svelte
 └── formula-types/
     ├── ProportionalMarkupForm.svelte
-    ├── MarkupCostForm.svelte
     ├── FixedPriceForm.svelte
     ├── DiscountForm.svelte
     ├── PercentageMarkupForm.svelte
@@ -152,7 +151,7 @@ export const pricingConditionsSchema = z.object({
 });
 
 export const pricingFormulaSchema = z.object({
-  type: z.enum(['markup_cost', 'fixed_price', 'discount', 'percentage_markup', 'proportional_markup', 'custom_script']),
+  type: z.enum(['fixed_price', 'discount', 'percentage_markup', 'proportional_markup', 'custom_script']),
   value: z.number().optional(),
   discount_percent: z.number().optional(),
   lower_bound: z.number().optional(),
@@ -346,7 +345,6 @@ Implement modular builder components for conditions and formulas:
   import * as Card from '$lib/components/ui/card';
   
   import ProportionalMarkupForm from '../formula-types/ProportionalMarkupForm.svelte';
-  import MarkupCostForm from '../formula-types/MarkupCostForm.svelte';
   import FixedPriceForm from '../formula-types/FixedPriceForm.svelte';
   import DiscountForm from '../formula-types/DiscountForm.svelte';
   import PercentageMarkupForm from '../formula-types/PercentageMarkupForm.svelte';
@@ -361,7 +359,6 @@ Implement modular builder components for conditions and formulas:
 
   const formulaTypes = [
     { value: 'proportional_markup', label: 'Proportional Markup' },
-    { value: 'markup_cost', label: 'Fixed Markup (Multiplier)' },
     { value: 'fixed_price', label: 'Fixed Price' },
     { value: 'discount', label: 'Discount (%)' },
     { value: 'percentage_markup', label: 'Percentage Markup (%)' },
@@ -384,9 +381,6 @@ Implement modular builder components for conditions and formulas:
           min_price: formula.min_price,
           max_price: formula.max_price
         };
-        break;
-      case 'markup_cost':
-        newFormulaBase = { ...newFormulaBase, value: formula.value ?? 1.2 };
         break;
       case 'fixed_price':
         newFormulaBase = { ...newFormulaBase, value: formula.value ?? 100 };
@@ -435,8 +429,6 @@ Implement modular builder components for conditions and formulas:
 
     {#if formula.type === 'proportional_markup'}
       <ProportionalMarkupForm {formula} onFormulaChange={updateFormula} />
-    {:else if formula.type === 'markup_cost'}
-      <MarkupCostForm {formula} onFormulaChange={updateFormula} />
     {:else if formula.type === 'fixed_price'}
       <FixedPriceForm {formula} onFormulaChange={updateFormula} />
     {:else if formula.type === 'discount'}
@@ -490,7 +482,7 @@ export const actions: Actions = {
       const newRule = await service.create({
         name: form.data.name,
         conditions: {},
-        formula: { type: 'markup_cost', value: 1.2 },
+        formula: { type: 'percentage_markup', value: 20 },
         priority: 0,
         is_active: true
       });
@@ -555,7 +547,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
     ends_at: rule.ends_at
   } : {
     name: '',
-    formula: { type: 'markup_cost' as const, value: 1.2 },
+    formula: { type: 'percentage_markup' as const, value: 20 },
     conditions: {},
     priority: 0,
     is_active: true,
@@ -708,7 +700,6 @@ Implement the main form page with builder components:
 - **Quantity-based**: Minimum/maximum quantity and order value conditions
 
 ### Flexible Formula Types
-- **Markup Cost**: Simple multiplier (e.g., cost × 1.2)
 - **Fixed Price**: Set absolute price regardless of cost
 - **Discount**: Percentage discount from base price
 - **Percentage Markup**: Percentage-based markup from cost

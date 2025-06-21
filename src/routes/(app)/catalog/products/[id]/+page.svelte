@@ -24,10 +24,18 @@
 			options: data.lookupData.attributeSets
 		})
 		.field('m_product_category_id', {
-			type: 'select',
+			type: 'combobox',
 			span: 6,
 			label: 'Product Category',
+			placeholder: 'Select a category',
 			options: data.lookupData.categories
+		})
+		.field('m_product_brand_id', {
+			type: 'combobox',
+			span: 6,
+			label: 'Product Brand',
+			placeholder: 'Select a brand',
+			options: data.lookupData.brands // Added product brand field
 		})
 		.field('c_taxcategory_id', {
 			type: 'select',

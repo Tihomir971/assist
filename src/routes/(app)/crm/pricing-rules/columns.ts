@@ -6,6 +6,11 @@ export const pricingRulesColumns = [
 		className: 'font-medium'
 	},
 	{
+		key: 'formulaLabel',
+		label: 'Tip formule',
+		className: 'w-32'
+	},
+	{
 		key: 'partnerCount',
 		label: 'Partneri',
 		type: 'number',
@@ -29,6 +34,7 @@ export const pricingRulesColumns = [
 		type: 'number',
 		className: 'text-center w-20'
 	},
+
 	{
 		key: 'is_active',
 		label: 'Aktivno',
@@ -40,6 +46,12 @@ export const pricingRulesColumns = [
 		label: 'Grupa',
 		optional: true,
 		className: 'text-muted-foreground'
+	},
+	{
+		key: 'created_at',
+		label: 'Kreiran',
+		type: 'date',
+		className: 'text-sm text-muted-foreground w-32'
 	},
 	{
 		key: 'created_at',

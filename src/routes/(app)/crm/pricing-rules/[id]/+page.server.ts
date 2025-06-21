@@ -61,7 +61,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 			}
 		: {
 				name: '',
-				formula: { type: 'markup_cost' as const, value: 1.2 },
+				formula: { type: 'percentage_markup' as const, value: 20 },
 				conditions: {},
 				priority: 0,
 				is_active: true,
@@ -106,7 +106,7 @@ export const actions: Actions = {
 			const ruleData: PricingRuleCreate = {
 				name: form.data.name,
 				conditions: form.data.conditions || {},
-				formula: form.data.formula || { type: 'markup_cost', value: 1.2 },
+				formula: form.data.formula || { type: 'percentage_markup', value: 20 },
 				priority: form.data.priority || 0,
 				is_active: form.data.is_active ?? true,
 				target_group: form.data.target_group || undefined,

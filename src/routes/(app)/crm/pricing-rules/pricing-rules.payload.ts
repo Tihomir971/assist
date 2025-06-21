@@ -15,7 +15,7 @@ export const pricingRulesPayloadBuilder = new SmartPayloadBuilder<
 			is_active: true,
 			priority: 0,
 			conditions: {},
-			formula: { type: 'markup_cost', value: 1.2 }
+			formula: { type: 'percentage_markup', value: 20 }
 		},
 		transformers: {
 			conditions: (value) => {
@@ -33,7 +33,7 @@ export const pricingRulesPayloadBuilder = new SmartPayloadBuilder<
 					try {
 						return JSON.parse(value);
 					} catch {
-						return { type: 'markup_cost', value: 1.2 };
+						return { type: 'percentage_markup', value: 20 };
 					}
 				}
 				return value;
@@ -62,7 +62,7 @@ export const pricingRulesPayloadBuilder = new SmartPayloadBuilder<
 					try {
 						return JSON.parse(value);
 					} catch {
-						return { type: 'markup_cost', value: 1.2 };
+						return { type: 'percentage_markup', value: 20 };
 					}
 				}
 				return value;

@@ -10,7 +10,8 @@ import {
 	AttributeSetService,
 	ProductPackingService,
 	ProductPoService,
-	ReplenishService
+	ReplenishService,
+	BrandService // Added BrandService
 } from '$lib/services/supabase';
 import { TaxCategoryService, StorageOnHandService } from '$lib/services/supabase/';
 import {
@@ -24,13 +25,13 @@ import { productPackingPayloadBuilder } from './product-packing.payload';
 import { productPoPayloadBuilder } from './product-po.payload';
 import { replenishPayloadBuilder } from './replenish.payload';
 import { connector } from '$lib/ky';
-import type { ChartData } from './chart-types';
+import type { ChartData } from '../../../../../lib/components/charts/chart-types';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ depends, params, locals: { supabase } }) => {
 	depends('catalog:products');
 
-	const productId = parseInt(params.slug);
+	const productId = parseInt(params.id);
 	if (isNaN(productId)) {
 		throw error(400, 'Invalid product ID');
 	}
@@ -66,7 +67,8 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		tax,
 		salesByWeeks,
 		storageonhand,
-		attributeSets
+		attributeSets,
+		brands // Added brands
 	] = await Promise.all([
 		productService.getUoms(),
 		new CategoryService(supabase).getLookup(),
@@ -78,7 +80,8 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		new TaxCategoryService(supabase).getLookup(),
 		getSalesData(product.sku),
 		new StorageOnHandService(supabase).list({ m_product_id: productId }),
-		new AttributeSetService(supabase).getLookup()
+		new AttributeSetService(supabase).getLookup(),
+		new BrandService(supabase).getLookup() // Fetch product brands
 	]);
 
 	const [formProduct, formProductPacking, formReplenish, formProductPo] = await Promise.all([
@@ -104,7 +107,8 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 			categories,
 			warehouses,
 			tax,
-			attributeSets
+			attributeSets,
+			brands // Added brands to lookupData
 		},
 		salesByWeeks
 	};

@@ -37,13 +37,7 @@ export interface AttributeCondition {
 }
 
 export interface PricingFormula {
-	type:
-		| 'markup_cost'
-		| 'fixed_price'
-		| 'discount'
-		| 'percentage_markup'
-		| 'proportional_markup'
-		| 'custom_script';
+	type: 'fixed_price' | 'discount' | 'percentage_markup' | 'proportional_markup' | 'custom_script';
 
 	// Standard formulas
 	value?: number;

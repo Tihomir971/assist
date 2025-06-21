@@ -151,7 +151,7 @@
 			</Card.Root>
 
 			<FormulaBuilder
-				formula={$formData.formula || { type: 'markup_cost', value: 1.2 }}
+				formula={$formData.formula || { type: 'percentage_markup', value: 20 }}
 				onFormulaChange={handleFormulaChange}
 			/>
 

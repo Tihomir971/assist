@@ -18,7 +18,7 @@
 	} from 'echarts/components';
 	import { SVGRenderer } from 'echarts/renderers';
 	import { onMount } from 'svelte';
-	import type { ChartData, YearData } from './chart-types';
+	import type { ChartData, YearData } from '$lib/components/charts/chart-types';
 
 	echarts.use([
 		DatasetComponent,

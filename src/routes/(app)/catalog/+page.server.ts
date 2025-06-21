@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from './$types';
-import type { BSProduct } from '../../../lib/types/connectors/biznisoft.js';
+import type { BSProduct } from '$lib/types/connectors/biznisoft.js';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { FlattenedProduct, ProductWithDetails } from './columns.svelte.js';
 import type {
@@ -23,7 +23,8 @@ import { findChildren } from '$lib/scripts/tree';
 import { sourceId } from './types';
 import { catalogSearchParamsSchema } from './search-params.schema';
 import { ProductStatus, type ProductResultGet } from './types-get-market-info';
-import type { MPricelistVersionRow } from '$lib/types/supabase.zod.schemas.d';
+import type { MPricelistVersionRow, MProductCategoryRow } from '$lib/types/supabase.zod.schemas.d';
+import { CategoryService } from '$lib/services/supabase';
 
 // Add this export near the top or where types are defined
 export type ErrorDetails = { productId?: number; step: string; message: string };
@@ -37,7 +38,11 @@ export const load: PageServerLoad = async ({ depends, parent, url, locals: { sup
 		sub: showSubcategories,
 		cat: categoryId = null
 	} = params;
-	const { activeWarehouse, categories } = await parent();
+
+	const { activeWarehouse } = await parent();
+
+	const categoryService = new CategoryService(supabase);
+	const categories = await categoryService.list();
 
 	const [productsData, activePricelists] = await Promise.all([
 		fetchProducts(supabase, categoryId ?? null, showSubcategories, categories),
@@ -61,11 +66,7 @@ async function fetchProducts(
 	supabase: SupabaseClient<Database>,
 	categoryId: string | null,
 	showSubcategories: boolean,
-	categories: {
-		value: number;
-		label: string;
-		parent_id: number | null;
-	}[]
+	categories: MProductCategoryRow[]
 ) {
 	let categoryIds: number[] = [];
 	if (categoryId && showSubcategories) {

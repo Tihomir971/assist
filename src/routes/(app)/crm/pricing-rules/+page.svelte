@@ -168,7 +168,7 @@
 				<Table.Root>
 					<Table.Header>
 						<Table.Row>
-							{#each pricingRulesColumns as column (column.key)}
+							{#each pricingRulesColumns as column}
 								<Table.Head class={column.className || ''}>{column.label}</Table.Head>
 							{/each}
 							<Table.Head class="w-28 text-center">Promena Prioriteta</Table.Head>
@@ -178,43 +178,29 @@
 					<Table.Body>
 						{#each data.rules as rule, index (rule.id)}
 							<Table.Row>
-								<Table.Cell class="font-medium">
-									<button onclick={() => handleEdit(rule.id)} class="text-left hover:underline">
-										{rule.name}
-									</button>
-								</Table.Cell>
-								<Table.Cell class="text-center">
-									<Badge variant={rule.partnerCount > 0 ? 'default' : 'secondary'}>
-										{rule.partnerCount}
-									</Badge>
-								</Table.Cell>
-								<Table.Cell class="text-center">
-									<Badge variant={rule.categoryCount > 0 ? 'default' : 'secondary'}>
-										{rule.categoryCount}
-									</Badge>
-								</Table.Cell>
-								<Table.Cell class="text-center">
-									<Badge variant={rule.brandCount > 0 ? 'default' : 'secondary'}>
-										{rule.brandCount}
-									</Badge>
-								</Table.Cell>
-								<Table.Cell class="text-center">
-									<Badge variant={rule.attributeCount > 0 ? 'default' : 'secondary'}>
-										{rule.attributeCount}
-									</Badge>
-								</Table.Cell>
-								<Table.Cell class="text-center">
-									<Badge variant={rule.is_active ? 'default' : 'secondary'}>
-										{rule.is_active ? 'Aktivno' : 'Neaktivno'}
-									</Badge>
-								</Table.Cell>
-								<Table.Cell class="text-muted-foreground">{rule.target_group || '-'}</Table.Cell>
-								<Table.Cell class="text-sm text-muted-foreground">
-									{formatDate(rule.created_at)}
-								</Table.Cell>
-								<Table.Cell class="text-center">
-									<Badge variant="secondary">{rule.priority}</Badge>
-								</Table.Cell>
+								{#each pricingRulesColumns as column}
+									<Table.Cell class={column.className || ''}>
+										{#if column.type === 'boolean'}
+											<Badge variant={(rule as any)[column.key] ? 'default' : 'secondary'}>
+												{(rule as any)[column.key] ? 'Aktivno' : 'Neaktivno'}
+											</Badge>
+										{:else if column.type === 'date'}
+											{formatDate((rule as any)[column.key])}
+										{:else if column.key === 'name'}
+											<button onclick={() => handleEdit(rule.id)} class="text-left hover:underline">
+												{rule.name}
+											</button>
+										{:else if ['partnerCount', 'categoryCount', 'brandCount', 'attributeCount'].includes(column.key)}
+											<Badge variant={(rule as any)[column.key] > 0 ? 'default' : 'secondary'}>
+												{(rule as any)[column.key]}
+											</Badge>
+										{:else if column.key === 'priority'}
+											<Badge variant="secondary">{rule.priority}</Badge>
+										{:else}
+											{(rule as any)[column.key] || '-'}
+										{/if}
+									</Table.Cell>
+								{/each}
 
 								<Table.Cell class="text-center">
 									<div class="flex items-center justify-center space-x-1">

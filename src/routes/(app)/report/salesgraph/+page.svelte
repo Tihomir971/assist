@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ChartVisualization from '../../catalog/products/[slug]/ChartVisualization.svelte';
+	import ChartVisualization from '$lib/components/charts/ChartVisualization.svelte';
 
 	let { data } = $props();
 	let chartData = $derived(data.chartData);

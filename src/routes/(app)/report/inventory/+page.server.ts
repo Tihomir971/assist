@@ -2,6 +2,7 @@ import { error } from '@sveltejs/kit';
 import { findChildren } from '$lib/scripts/tree';
 import { z } from 'zod/v4';
 import type { PageServerLoad } from './$types';
+import { CategoryService } from '$lib/services/supabase';
 
 const searchParamsSchema = z.object({
 	warehouse: z.coerce.number().min(1, 'Warehouse is required'),
@@ -27,11 +28,13 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 
 	const { warehouse, treeCategory, includeOutOfStock } = params.data;
 	console.log('params.data', params.data);
-
-	const { data: categories } = await supabase
+	const categoryService = new CategoryService(supabase);
+	/* 	const { data: categories } = await supabase
 		.from('m_product_category')
 		.select('value:id, label:name, parent_id')
-		.order('name');
+		.order('name'); */
+
+	const categories = await categoryService.list();
 
 	async function findProductsGroupedByCategory(
 		categories: number[],

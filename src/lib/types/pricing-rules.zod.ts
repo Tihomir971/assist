@@ -25,7 +25,6 @@ export const pricingConditionsSchema = z.object({
 // Schema for PricingFormula
 export const pricingFormulaSchema = z.object({
 	type: z.enum([
-		'markup_cost',
 		'fixed_price',
 		'discount',
 		'percentage_markup',

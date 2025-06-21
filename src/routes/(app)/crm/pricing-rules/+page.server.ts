@@ -26,18 +26,29 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 		const service = new PricingRulesService(supabase);
 		const rulesFromDb = await service.list();
 
+		const formulaLabels: Record<string, string> = {
+			proportional_markup: 'Proporcionalna marža',
+			fixed_price: 'Fiksna cijena',
+			discount: 'Popust (%)',
+			percentage_markup: 'Procentna marža',
+			custom_script: 'Prilagođena skripta'
+		};
+
 		const rules = rulesFromDb.map((rule) => {
 			const conditions = rule.conditions || {};
-			const partnerCount = conditions.partner_ids?.length || 0;
-			const categoryCount = conditions.category_ids?.length || 0;
-			const brandCount = conditions.brand_ids?.length || 0;
-			const attributeCount = conditions.attributes?.length || 0;
+			const formula = rule.formula || null;
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const formulaType = (formula as any)?.type;
+			const formulaLabel = formulaType ? formulaLabels[formulaType] || formulaType : '';
+
 			return {
 				...rule,
-				partnerCount,
-				categoryCount,
-				brandCount,
-				attributeCount
+				partnerCount: conditions.partner_ids?.length || 0,
+				categoryCount: conditions.category_ids?.length || 0,
+				brandCount: conditions.brand_ids?.length || 0,
+				attributeCount: conditions.attributes?.length || 0,
+				formula,
+				formulaLabel
 			};
 		});
 
@@ -66,7 +77,7 @@ export const actions: Actions = {
 			const newRule = await service.create({
 				name: form.data.name,
 				conditions: {},
-				formula: { type: 'markup_cost', value: 1.2 },
+				formula: { type: 'percentage_markup', value: 20 },
 				priority: 0,
 				is_active: true
 			});

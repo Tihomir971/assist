@@ -1,7 +1,7 @@
 import { findChildren } from '$lib/scripts/tree.js';
+import { CategoryService } from '$lib/services/supabase';
 
-export async function load({ parent, url, locals: { supabase } }) {
-	const { categories } = await parent();
+export async function load({ url, locals: { supabase } }) {
 	const category = url.searchParams.get('treeCategory');
 	const warehouse = url.searchParams.get('warehouse');
 	if (!category) {
@@ -10,6 +10,9 @@ export async function load({ parent, url, locals: { supabase } }) {
 	if (!warehouse) {
 		throw new Error('Category and warehouse parameters are required');
 	}
+	const categoryService = new CategoryService(supabase);
+	const categories = await categoryService.list();
+
 	/* const subcategories = await findSubcategories(supabase, parseInt(category)); */
 	const subcategories = findChildren(categories, parseInt(category));
 	const { data: allProducts } = await supabase

@@ -6,7 +6,6 @@
 
 	// Import formula type components - will be created in next steps
 	import ProportionalMarkupForm from '../formula-types/ProportionalMarkupForm.svelte';
-	import MarkupCostForm from '../formula-types/MarkupCostForm.svelte';
 	import FixedPriceForm from '../formula-types/FixedPriceForm.svelte';
 	import DiscountForm from '../formula-types/DiscountForm.svelte';
 	import PercentageMarkupForm from '../formula-types/PercentageMarkupForm.svelte';
@@ -21,7 +20,6 @@
 
 	const formulaTypes = [
 		{ value: 'proportional_markup', label: 'Proporcionalna marža' },
-		{ value: 'markup_cost', label: 'Fiksna marža (množilac)' },
 		{ value: 'fixed_price', label: 'Fiksna cena' },
 		{ value: 'discount', label: 'Popust (%)' },
 		{ value: 'percentage_markup', label: 'Procenat marže (%)' },
@@ -45,9 +43,6 @@
 					min_price: formula.min_price,
 					max_price: formula.max_price
 				};
-				break;
-			case 'markup_cost':
-				newFormulaBase = { ...newFormulaBase, value: formula.value ?? 1.2 };
 				break;
 			case 'fixed_price':
 				newFormulaBase = { ...newFormulaBase, value: formula.value ?? 0 };
@@ -102,8 +97,6 @@
 
 		{#if formula.type === 'proportional_markup'}
 			<ProportionalMarkupForm {formula} onFormulaChange={handleFormulaUpdate} />
-		{:else if formula.type === 'markup_cost'}
-			<MarkupCostForm {formula} onFormulaChange={handleFormulaUpdate} />
 		{:else if formula.type === 'fixed_price'}
 			<FixedPriceForm {formula} onFormulaChange={handleFormulaUpdate} />
 		{:else if formula.type === 'discount'}
