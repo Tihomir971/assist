@@ -64,9 +64,8 @@ export interface PricingContext {
 	quantity: number;
 	order_value?: number;
 	target_group?: string;
-	base_price?: number;
-	cost_price?: number;
-	retail_price?: number;
+	input_price: number;
+	vat_rate?: number;
 }
 
 export type PricingRuleCreate = Omit<PricingRule, 'id' | 'created_at' | 'updated_at'>;

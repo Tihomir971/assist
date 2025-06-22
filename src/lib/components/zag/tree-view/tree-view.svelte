@@ -29,7 +29,6 @@
 			nodeToValue: (node) => node.value.toString(),
 			nodeToString: (node) => node.label,
 			rootNode: {
-				// Use rootNode as per documentation
 				value: 0,
 				label: '',
 				children: items
@@ -53,46 +52,15 @@
 
 	const api = $derived(tree.connect(service, normalizeProps));
 
-	function findPath(
-		nodes: TreeViewItem[],
-		targetValue: number | string | null | undefined, // Changed here
-		currentPath: TreeViewItem[]
-	): TreeViewItem[] | null {
-		if (targetValue == null) return null; // Add null check
-		const targetValueStr = targetValue.toString(); // Convert target to string
-
-		for (const node of nodes) {
-			currentPath.push(node);
-			const nodeValueStr = node.value.toString(); // Stringify node value
-
-			// Compare string versions
-			if (nodeValueStr === targetValueStr) {
-				return currentPath;
-			}
-			if (node.children) {
-				// Pass original targetValue down
-				const result = findPath(node.children, targetValue, currentPath);
-				if (result) {
-					return result;
-				}
-			}
-			currentPath.pop(); // Backtrack
-		}
-		return null;
-	}
-
 	function getParentValues(targetValues: (number | string)[] | null | undefined): string[] {
-		if (targetValues == null || targetValues.length === 0) {
-			return [];
-		}
+		if (!targetValues?.length) return [];
 
 		const allParentValues = new Set<string>();
 
 		for (const targetValue of targetValues) {
-			const path = findPath(items, targetValue, []);
-			if (path && path.length > 1) {
-				// Add parent values to the set
-				path.slice(0, -1).forEach((node) => allParentValues.add(node.value.toString()));
+			const parentNodes = collection.getParentNodes(targetValue.toString());
+			if (parentNodes) {
+				parentNodes.forEach((node) => allParentValues.add(node.value.toString()));
 			}
 		}
 

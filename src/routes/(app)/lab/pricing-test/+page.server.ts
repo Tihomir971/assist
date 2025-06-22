@@ -32,11 +32,6 @@ export const actions: Actions = {
 		try {
 			const pricingService = new PricingRulesService(supabase);
 
-			// If base_price is not provided, default it to cost_price
-			if (!form.data.base_price || form.data.base_price === 0) {
-				form.data.base_price = form.data.cost_price;
-			}
-
 			// Create pricing context from form data
 			const context: PricingContext = {
 				product_id: form.data.product_id,
@@ -44,20 +39,21 @@ export const actions: Actions = {
 				quantity: form.data.quantity,
 				order_value: form.data.order_value,
 				target_group: form.data.target_group,
-				base_price: form.data.base_price,
-				cost_price: form.data.cost_price,
-				retail_price: form.data.retail_price
+				input_price: form.data.input_price,
+				vat_rate: form.data.apply_vat ? (form.data.vat_rate || 0) / 100 : 0
 			};
 
-			// Find applicable rules
-			const applicableRules = await pricingService.findApplicableRules(context);
+			const options = {
+				apply_vat: form.data.apply_vat,
+				rounding_strategy: form.data.rounding_strategy
+			};
 
-			// Calculate final price
-			const calculatedPrice = await pricingService.calculatePrice(context);
+			// Get detailed pricing breakdown
+			const breakdown = await pricingService.getPricingBreakdown(context, options);
 
-			// Test each rule individually for detailed results
+			// Test each applicable rule individually for detailed results
 			const ruleTests = await Promise.all(
-				applicableRules.map(async (rule) => {
+				breakdown.applicableRules.map(async (rule) => {
 					const testResult = await pricingService.testRule(rule.id, context);
 					return {
 						rule,
@@ -71,10 +67,10 @@ export const actions: Actions = {
 				success: true,
 				results: {
 					context,
-					applicableRules,
-					calculatedPrice,
+					applicableRules: breakdown.applicableRules,
+					calculatedPrice: breakdown.finalPrice,
 					ruleTests,
-					fallbackPrice: context.base_price
+					fallbackPrice: breakdown.fallbackPrice
 				}
 			};
 		} catch (error) {

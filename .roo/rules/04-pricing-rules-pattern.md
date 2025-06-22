@@ -56,6 +56,17 @@ interface PricingFormula {
   min_price?: number;
   max_price?: number;
 }
+
+// Context for price calculation
+interface PricingContext {
+  product_id: number;
+  partner_id?: number;
+  quantity: number;
+  order_value?: number;
+  target_group?: string;
+  input_price: number;
+  vat_rate?: number; // Optional VAT rate (e.g., 0.2 for 20%)
+}
 ```
 
 ### File Structure
@@ -172,92 +183,91 @@ Create a comprehensive service class with CRUD operations and business logic:
 ```typescript
 // src/lib/services/supabase/pricing-rules.service.ts
 export class PricingRulesService implements CRUDService<PricingRule, PricingRuleCreate, PricingRuleUpdate> {
-  constructor(private supabase: SupabaseClient<Database>) {}
+  // ... CRUD methods: getById, list, create, update, delete
 
-  async getById(id: number): Promise<PricingRule | null> {
-    const { data, error } = await this.supabase
-      .from('pricing_rules')
-      .select('*')
-      .eq('id', id)
-      .maybeSingle();
+  /**
+   * Calculate price using applicable rules
+   */
+  async calculatePrice(
+    context: PricingContext,
+    options?: {
+      apply_vat?: boolean;
+      rounding_strategy?: 'none' | 'charming';
+    }
+  ): Promise<number> {
+    const rules = await this.findApplicableRules(context);
 
-    if (error) throw new Error(`Failed to fetch pricing rule: ${error.message}`);
-    return data as PricingRule | null;
-  }
-
-  async list(filters?: Record<string, unknown>): Promise<PricingRule[]> {
-    let query = this.supabase.from('pricing_rules').select('*');
-    
-    if (filters?.is_active !== undefined) {
-      query = query.eq('is_active', filters.is_active as boolean);
+    for (const rule of rules) {
+      try {
+        return this.applyFormula(rule.formula, context, options);
+      } catch (error) {
+        console.warn(`Failed to apply pricing rule ${rule.id}:`, error);
+        continue;
+      }
     }
 
-    const { data, error } = await query.order('priority', { ascending: true });
-    if (error) throw new Error(`Failed to list pricing rules: ${error.message}`);
-    return data as PricingRule[];
+    // Fallback to input price, but still apply options
+    let fallbackPrice = context.input_price || 0;
+    if (options?.apply_vat && context.vat_rate) {
+      fallbackPrice *= 1 + context.vat_rate;
+    }
+    if (options?.rounding_strategy === 'charming') {
+      // (rounding logic would be here)
+    }
+    return fallbackPrice;
   }
 
-  async create(data: PricingRuleCreate): Promise<PricingRule> {
-    const insertData = {
-      name: data.name,
-      conditions: data.conditions as unknown as Json,
-      formula: data.formula as unknown as Json,
-      priority: data.priority,
-      is_active: data.is_active,
-      target_group: data.target_group,
-      starts_at: data.starts_at,
-      ends_at: data.ends_at
-    };
+  /**
+   * Apply pricing formula to calculate final price
+   */
+  private applyFormula(
+    formula: PricingFormula,
+    context: PricingContext,
+    options?: {
+      apply_vat?: boolean;
+      rounding_strategy?: 'none' | 'charming';
+    }
+  ): number {
+    let price: number;
 
-    const { data: newRule, error } = await this.supabase
-      .from('pricing_rules')
-      .insert(insertData)
-      .select('*')
-      .single();
-
-    if (error) throw new Error(`Failed to create pricing rule: ${error.message}`);
-    return newRule as PricingRule;
-  }
-
-  async update(id: number, data: PricingRuleUpdate): Promise<PricingRule> {
-    const updateData = {
-      ...data,
-      conditions: data.conditions as unknown as Json,
-      formula: data.formula as unknown as Json
-    };
-
-    const { data: updatedRule, error } = await this.supabase
-      .from('pricing_rules')
-      .update(updateData)
-      .eq('id', id)
-      .select('*')
-      .single();
-
-    if (error) throw new Error(`Failed to update pricing rule: ${error.message}`);
-    return updatedRule as PricingRule;
-  }
-
-  async delete(id: number): Promise<void> {
-    const { error } = await this.supabase.from('pricing_rules').delete().eq('id', id);
-    if (error) throw new Error(`Failed to delete pricing rule: ${error.message}`);
-  }
-
-  // Business logic methods
-  async swapPriorities(rule1Id: number, rule2Id: number): Promise<void> {
-    const [rule1, rule2] = await Promise.all([
-      this.getById(rule1Id),
-      this.getById(rule2Id)
-    ]);
-
-    if (!rule1 || !rule2) {
-      throw new Error('One or both rules not found');
+    switch (formula.type) {
+      case 'proportional_markup':
+        price = this.applyProportionalMarkup(formula, context.input_price || 0);
+        break;
+      case 'fixed_price':
+        price = formula.value || 0;
+        break;
+      case 'discount':
+        price = (context.input_price || 0) * (1 - (formula.discount_percent || 0) / 100);
+        break;
+      case 'percentage_markup':
+        price = (context.input_price || 0) * (1 + (formula.value || 0) / 100);
+        break;
+      case 'custom_script':
+        price = this.evaluateCustomScript(formula, context);
+        break;
+      default:
+        throw new Error(`Unknown formula type: ${formula.type}`);
     }
 
-    await Promise.all([
-      this.update(rule1Id, { priority: rule2.priority }),
-      this.update(rule2Id, { priority: rule1.priority })
-    ]);
+    // Apply price constraints
+    if (formula.min_price && price < formula.min_price) price = formula.min_price;
+    if (formula.max_price && price > formula.max_price) price = formula.max_price;
+
+    // Apply optional VAT
+    if (options?.apply_vat && context.vat_rate) {
+      price *= 1 + context.vat_rate;
+    }
+
+    // Apply optional rounding
+    if (options?.rounding_strategy === 'charming') {
+      price = this._applyCharmingRounding(price); // Assumes method exists
+    }
+
+    return price;
   }
+
+  // ... other business logic methods: swapPriorities, etc.
 }
 ```
 
@@ -701,9 +711,9 @@ Implement the main form page with builder components:
 
 ### Flexible Formula Types
 - **Fixed Price**: Set absolute price regardless of cost
-- **Discount**: Percentage discount from base price
-- **Percentage Markup**: Percentage-based markup from cost
-- **Proportional Markup**: Dynamic markup based on cost ranges with interpolation
+- **Discount**: Percentage discount from input price
+- **Percentage Markup**: Percentage-based markup from input price
+- **Proportional Markup**: Dynamic markup based on input price ranges with interpolation
 - **Custom Script**: JavaScript-based custom pricing logic
 
 ### Priority Management

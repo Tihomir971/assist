@@ -29,7 +29,7 @@ Example usage:
 
 To access LLM instructions for the `zagjs` library, use the `fetch` tool with the following URL:
 
-`https://zagjs.com/llms.txt`
+`https://zagjs.com/llms-svelte.txt`
 
 Example usage:
 ```xml
@@ -38,10 +38,26 @@ Example usage:
 <tool_name>fetch</tool_name>
 <arguments>
 {
-  "url": "https://zagjs.com/llms.txt"
+  "url": "https://zagjs.com/llms-svelte.txt"
 }
 </arguments>
 </use_mcp_tool>
+```
+### 2.2.1. TreeCollection API
+
+To access the detailed, LLM-optimized documentation for the `TreeCollection` utility, read the following local file:
+
+`/.roo/docs/zag-tree-collection.llm.md`
+
+Example usage:
+```xml
+<read_file>
+<args>
+  <file>
+    <path>.roo/docs/zag-tree-collection.llm.md</path>
+  </file>
+</args>
+</read_file>
 ```
 
 ### 2.3. Svelte 5 and SvelteKit

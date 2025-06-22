@@ -1,7 +1,17 @@
 import type { Database, Json } from '$lib/types/supabase.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service';
-import { PriceCalculator } from '$lib/price-calculator';
+import {
+	create,
+	evaluateDependencies,
+	smallerEqDependencies,
+	addDependencies,
+	subtractDependencies,
+	multiplyDependencies,
+	largerEqDependencies,
+	divideDependencies,
+	parseDependencies
+} from 'mathjs/number';
 import type {
 	PricingRule,
 	PricingRuleCreate,
@@ -14,9 +24,30 @@ import type {
 export class PricingRulesService
 	implements CRUDService<PricingRule, PricingRuleCreate, PricingRuleUpdate>
 {
-	private priceCalculator = new PriceCalculator();
+	private evaluate: (expression: string, scope?: object) => number;
 
-	constructor(private supabase: SupabaseClient<Database>) {}
+	constructor(private supabase: SupabaseClient<Database>) {
+		const { evaluate } = create(
+			{
+				...evaluateDependencies,
+				...addDependencies,
+				...subtractDependencies,
+				...multiplyDependencies,
+				...divideDependencies,
+				...parseDependencies,
+				...smallerEqDependencies,
+				...largerEqDependencies
+			},
+			{}
+		);
+		this.evaluate = (expression: string, scope?: object) => {
+			const result = evaluate(expression, scope);
+			if (typeof result !== 'number' || isNaN(result)) {
+				throw new Error('Formula result is not a number');
+			}
+			return result;
+		};
+	}
 
 	async getById(id: number): Promise<PricingRule | null> {
 		const { data, error } = await this.supabase
@@ -116,33 +147,54 @@ export class PricingRulesService
 	/**
 	 * Calculate price using applicable rules
 	 */
-	async calculatePrice(context: PricingContext): Promise<number> {
+	async calculatePrice(
+		context: PricingContext,
+		options?: {
+			apply_vat?: boolean;
+			rounding_strategy?: 'none' | 'charming';
+		}
+	): Promise<number> {
 		// Get only matching rules from database
 		const rules = await this.findApplicableRules(context);
 
 		// Apply first rule (highest priority)
 		for (const rule of rules) {
 			try {
-				return this.applyFormula(rule.formula, context);
+				return this.applyFormula(rule.formula, context, options);
 			} catch (error) {
 				console.warn(`Failed to apply pricing rule ${rule.id}:`, error);
 				continue;
 			}
 		}
 
-		// Fallback to base price
-		return context.base_price || 0;
+		// Fallback to base price, but still apply VAT and rounding if requested
+		let fallbackPrice = context.input_price || 0;
+		if (options?.apply_vat && context.vat_rate) {
+			fallbackPrice *= 1 + context.vat_rate;
+		}
+		if (options?.rounding_strategy === 'charming') {
+			fallbackPrice = this._applyCharmingRounding(fallbackPrice);
+		}
+
+		return fallbackPrice;
 	}
 
 	/**
 	 * Apply pricing formula to calculate final price
 	 */
-	private applyFormula(formula: PricingFormula, context: PricingContext): number {
+	private applyFormula(
+		formula: PricingFormula,
+		context: PricingContext,
+		options?: {
+			apply_vat?: boolean;
+			rounding_strategy?: 'none' | 'charming';
+		}
+	): number {
 		let price: number;
 
 		switch (formula.type) {
 			case 'proportional_markup':
-				price = this.applyProportionalMarkup(formula, context.cost_price || 0);
+				price = this.applyProportionalMarkup(formula, context.input_price || 0);
 				break;
 
 			case 'fixed_price':
@@ -150,11 +202,11 @@ export class PricingRulesService
 				break;
 
 			case 'discount':
-				price = (context.retail_price || 0) * (1 - (formula.discount_percent || 0) / 100);
+				price = (context.input_price || 0) * (1 - (formula.discount_percent || 0) / 100);
 				break;
 
 			case 'percentage_markup':
-				price = (context.base_price || 0) * (1 + (formula.value || 0) / 100);
+				price = (context.input_price || 0) * (1 + (formula.value || 0) / 100);
 				break;
 
 			case 'custom_script':
@@ -166,8 +218,18 @@ export class PricingRulesService
 		}
 
 		// Apply price constraints
-		if (formula.min_price && price < formula.min_price) price = formula.min_price;
-		if (formula.max_price && price > formula.max_price) price = formula.max_price;
+		if (formula.min_price !== undefined && price < formula.min_price) price = formula.min_price;
+		if (formula.max_price !== undefined && price > formula.max_price) price = formula.max_price;
+
+		// Apply optional VAT
+		if (options?.apply_vat && context.vat_rate) {
+			price *= 1 + context.vat_rate;
+		}
+
+		// Apply optional rounding
+		if (options?.rounding_strategy === 'charming') {
+			price = this._applyCharmingRounding(price);
+		}
 
 		return price;
 	}
@@ -214,9 +276,7 @@ export class PricingRulesService
 		if (!formula.script) throw new Error('Custom script formula requires script');
 
 		const variables = {
-			cost_price: context.cost_price || 0,
-			base_price: context.base_price || 0,
-			retail_price: context.retail_price || 0,
+			input_price: context.input_price || 0,
 			quantity: context.quantity || 1,
 			lower_bound: formula.lower_bound || 0,
 			lower_markup: formula.lower_markup || 0,
@@ -225,8 +285,8 @@ export class PricingRulesService
 			...formula.variables
 		};
 
-		// Use existing PriceCalculator for safe evaluation
-		return this.priceCalculator.calculate(formula.script, 0, variables.cost_price);
+		// Use local evaluate for safe evaluation
+		return this.evaluate(formula.script, variables);
 	}
 
 	/**
@@ -246,6 +306,7 @@ export class PricingRulesService
 			const matches = applicableRules.some((r) => r.id === ruleId);
 
 			if (matches) {
+				// Note: testRule does not apply VAT or rounding, it shows the raw rule price.
 				const price = this.applyFormula(rule.formula, context);
 				return { matches: true, price };
 			} else {
@@ -259,31 +320,73 @@ export class PricingRulesService
 	/**
 	 * Get pricing breakdown for debugging
 	 */
-	async getPricingBreakdown(context: PricingContext): Promise<{
+	async getPricingBreakdown(
+		context: PricingContext,
+		options?: {
+			apply_vat?: boolean;
+			rounding_strategy?: 'none' | 'charming';
+		}
+	): Promise<{
 		applicableRules: PricingRuleMatch[];
 		appliedRule?: PricingRuleMatch;
 		finalPrice: number;
+		basePrice: number;
 		fallbackPrice?: number;
 	}> {
 		const applicableRules = await this.findApplicableRules(context);
 		let appliedRule: PricingRuleMatch | undefined;
-		let finalPrice = context.base_price || 0;
+		const basePrice = context.input_price || 0;
+		let finalPrice = basePrice;
 
 		if (applicableRules.length > 0) {
 			appliedRule = applicableRules[0]; // Highest priority
 			try {
-				finalPrice = this.applyFormula(appliedRule.formula, context);
+				finalPrice = this.applyFormula(appliedRule.formula, context, options);
 			} catch (error) {
 				console.warn(`Failed to apply rule ${appliedRule.id}:`, error);
 				appliedRule = undefined;
+				// Recalculate final price with options if rule fails
+				finalPrice = this.applyFormula({ type: 'fixed_price', value: basePrice }, context, options);
 			}
+		} else {
+			// No rule applied, but still process options
+			finalPrice = this.applyFormula({ type: 'fixed_price', value: basePrice }, context, options);
 		}
 
 		return {
 			applicableRules,
 			appliedRule,
 			finalPrice,
-			fallbackPrice: appliedRule ? undefined : context.base_price
+			basePrice,
+			fallbackPrice: appliedRule ? undefined : basePrice
 		};
+	}
+
+	/**
+	 * Applies "charming price" rounding logic using a rule-based system.
+	 */
+	private _applyCharmingRounding(price: number): number {
+		interface RoundingRule {
+			max: number;
+			step: number;
+			offset: number;
+		}
+
+		const roundingRules: RoundingRule[] = [
+			{ max: 50, step: 1, offset: -0.01 },
+			{ max: 100, step: 5, offset: -0.1 },
+			{ max: 1000, step: 10, offset: -0.1 },
+			{ max: 10000, step: 100, offset: -10 },
+			{ max: Infinity, step: 1000, offset: -1 }
+		];
+
+		const rule = roundingRules.find((r) => price < r.max);
+		if (!rule) {
+			// This case should ideally not be reached if the last rule has max: Infinity
+			return price;
+		}
+
+		const rounded = Math.ceil(price / rule.step) * rule.step;
+		return Math.max(0, rounded + rule.offset);
 	}
 }

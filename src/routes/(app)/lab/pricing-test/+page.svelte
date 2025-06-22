@@ -11,6 +11,8 @@
 	import * as Table from '$lib/components/ui/table';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Separator } from '$lib/components/ui/separator';
+	import { Switch } from '$lib/components/ui/switch';
+	import * as Select from '$lib/components/ui/select';
 
 	import { pricingTestSchema } from './schema';
 	import type { PageData } from './$types';
@@ -46,6 +48,15 @@
 	const results = $derived.by(() => {
 		return page.form?.results as TestResult | undefined;
 	});
+
+	const roundingOptions = [
+		{ value: 'none', label: 'None' },
+		{ value: 'charming', label: 'Charming (.99)' }
+	];
+
+	const roundingTriggerContent = $derived(
+		roundingOptions.find((o) => o.value === $formData.rounding_strategy)?.label ?? 'Select rounding'
+	);
 </script>
 
 <div class="container mx-auto space-y-6 overflow-auto py-6 pb-24">
@@ -93,44 +104,18 @@
 
 					<div class="grid grid-cols-2 gap-4">
 						<div class="space-y-2">
-							<Label for="base_price">Base Price</Label>
+							<Label for="input_price">Input Price *</Label>
 							<Input
-								id="base_price"
-								name="base_price"
+								id="input_price"
+								name="input_price"
 								type="number"
 								step="0.01"
-								bind:value={$formData.base_price}
-								placeholder="Optional (defaults to Cost Price)"
-							/>
-						</div>
-
-						<div class="space-y-2">
-							<Label for="cost_price">Cost Price *</Label>
-							<Input
-								id="cost_price"
-								name="cost_price"
-								type="number"
-								step="0.01"
-								bind:value={$formData.cost_price}
+								bind:value={$formData.input_price}
 								placeholder="0.00"
 							/>
-							{#if $errors.cost_price}
-								<span class="text-sm text-red-500">{$errors.cost_price}</span>
+							{#if $errors.input_price}
+								<span class="text-sm text-red-500">{$errors.input_price}</span>
 							{/if}
-						</div>
-					</div>
-
-					<div class="grid grid-cols-2 gap-4">
-						<div class="space-y-2">
-							<Label for="retail_price">Retail Price</Label>
-							<Input
-								id="retail_price"
-								name="retail_price"
-								type="number"
-								step="0.01"
-								bind:value={$formData.retail_price}
-								placeholder="Optional"
-							/>
 						</div>
 
 						<div class="space-y-2">
@@ -166,6 +151,54 @@
 								bind:value={$formData.target_group}
 								placeholder="Optional"
 							/>
+						</div>
+					</div>
+
+					<Separator />
+
+					<div class="space-y-4">
+						<div class="flex items-center justify-between">
+							<Label for="apply_vat" class="flex flex-col gap-1">
+								<span>Apply VAT</span>
+								<span class="text-xs font-normal text-muted-foreground">
+									Adds VAT to the final calculated price.
+								</span>
+							</Label>
+							<Switch id="apply_vat" name="apply_vat" bind:checked={$formData.apply_vat} />
+						</div>
+
+						{#if $formData.apply_vat}
+							<div class="space-y-2">
+								<Label for="vat_rate">VAT Rate (%)</Label>
+								<Input
+									id="vat_rate"
+									name="vat_rate"
+									type="number"
+									bind:value={$formData.vat_rate}
+									placeholder="e.g., 20"
+								/>
+							</div>
+						{/if}
+
+						<div class="space-y-2">
+							<Label for="rounding_strategy">Rounding Strategy</Label>
+							<Select.Root
+								type="single"
+								value={$formData.rounding_strategy}
+								onValueChange={(v) => {
+									if (v) $formData.rounding_strategy = v as 'none' | 'charming';
+								}}
+							>
+								<Select.Trigger class="w-full" id="rounding_strategy">
+									{roundingTriggerContent}
+								</Select.Trigger>
+								<Select.Content>
+									{#each roundingOptions as option}
+										<Select.Item value={option.value}>{option.label}</Select.Item>
+									{/each}
+								</Select.Content>
+							</Select.Root>
+							<input type="hidden" name="rounding_strategy" value={$formData.rounding_strategy} />
 						</div>
 					</div>
 
@@ -287,14 +320,8 @@
 						<div><strong>Product ID:</strong> {results.context.product_id}</div>
 						<div><strong>Quantity:</strong> {results.context.quantity}</div>
 						<div>
-							<strong>Base Price:</strong> ${results.context.base_price?.toFixed(2) || '0.00'}
+							<strong>Input Price:</strong> ${results.context.input_price?.toFixed(2) || '0.00'}
 						</div>
-						<div>
-							<strong>Cost Price:</strong> ${results.context.cost_price?.toFixed(2) || '0.00'}
-						</div>
-						{#if results.context.retail_price}
-							<div><strong>Retail Price:</strong> ${results.context.retail_price.toFixed(2)}</div>
-						{/if}
 						{#if results.context.partner_id}
 							<div><strong>Partner ID:</strong> {results.context.partner_id}</div>
 						{/if}

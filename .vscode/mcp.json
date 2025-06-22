@@ -1,0 +1,19 @@
+{
+	"inputs": [
+		{
+			"id": "input1",
+			"description": "Enter a prompt string",
+			"type": "promptString"
+		}
+	],
+	"servers": {
+		"fetch": {
+			"command": "uvx",
+			"args": ["mcp-server-fetch"]
+		},
+		"svelte-llm": {
+			"command": "npx",
+			"args": ["mcp-remote", "https://svelte-llm.khromov.se/mcp/mcp"]
+		}
+	}
+}
