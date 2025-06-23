@@ -114,4 +114,60 @@ export class CategoryService implements CRUDService<Category, CategoryCreate, Ca
 		if (error) throw new Error(`Failed to load category lookup: ${error.message}`);
 		return data || [];
 	}
+
+	async getCategoryTree(): Promise<Output[]> {
+		const { data, error } = await this.supabase
+			.from('m_product_category')
+			.select('value:id, label:name, parent_id')
+			.order('name');
+
+		if (error) throw new Error(`Failed to load category lookup: ${error.message}`);
+
+		const items = data || [];
+		if (!items) return [];
+		const itemMap = new Map<number, Output>();
+
+		// Initialize the map with items, preparing the basic structure
+		items.forEach((item) => {
+			// Create Output object, ensuring children array is initialized
+			itemMap.set(item.value, { value: item.value, label: item.label, children: [] });
+		});
+
+		const result: Output[] = [];
+		items.forEach((item) => {
+			const currentItem = itemMap.get(item.value)!; // Non-null assertion is safe due to initialization loop
+			if (item.parent_id === null) {
+				// Root item
+				result.push(currentItem);
+			} else {
+				const parent = itemMap.get(item.parent_id);
+				if (parent) {
+					// Parent found, add current item to parent's children
+					// Children array is guaranteed to exist from initialization
+					parent.children!.push(currentItem);
+				}
+			}
+		});
+
+		// Clean up: remove empty children arrays
+		itemMap.forEach((item) => {
+			if (item.children && item.children.length === 0) {
+				delete item.children;
+			}
+			// No need to delete parent_id as it was never added to the Output type
+		});
+
+		return result;
+	}
+}
+
+export interface TableTreeItem {
+	value: number;
+	label: string;
+	parent_id: number | null;
+}
+export interface Output {
+	value: number;
+	label: string;
+	children?: Output[];
 }

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { LayoutData } from './$types';
-	import { arrayToTree } from '$lib/scripts/tree';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -19,7 +18,7 @@
 	let { data, children }: Props = $props();
 
 	let showReportDialog = $state(false);
-	let treeData = $derived(arrayToTree(data.categories));
+	let treeData = $derived(data.categories);
 
 	const initCategory = $derived(page.url.searchParams.get('cat'));
 	let selectedValue = $derived(initCategory ? [initCategory] : []);

@@ -11,11 +11,6 @@ const searchParamsSchema = z.object({
 });
 
 export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
-	console.log(
-		"url.searchParams.get('includeOutOfStock')",
-		url.searchParams.get('includeOutOfStock')
-	);
-
 	const params = searchParamsSchema.safeParse({
 		warehouse: url.searchParams.get('warehouse'),
 		treeCategory: url.searchParams.get('treeCategory'),

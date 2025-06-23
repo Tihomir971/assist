@@ -2,6 +2,7 @@
 	import type { TreeViewItem, TreeViewProps } from './types';
 	import './tree-view.css';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
 
 	import * as tree from '@zag-js/tree-view';
 	import { normalizeProps, useMachine } from '@zag-js/svelte';
@@ -9,9 +10,13 @@
 	import { page } from '$app/state';
 	import { goto, invalidate } from '$app/navigation';
 	import { untrack } from 'svelte';
+	import PhArrowsInSimple from '~icons/ph/arrows-in-simple';
+	import PhX from '~icons/ph/x';
+	import { debounce } from '$lib/scripts/debounce';
 
 	let internalChange = $state(false);
-	console.log('recreate tree');
+	let searchTerm = $state('');
+	let debouncedSearchTerm = $state('');
 
 	interface TreeNodeProps {
 		node: TreeViewItem; // Changed Node to TreeViewItem
@@ -25,10 +30,10 @@
 		label,
 		contextNode = $bindable(),
 		selectedValue = $bindable([]),
-
 		onExpandedChange,
 		...restProps
 	}: TreeViewProps<T> = $props();
+
 	const collection = $derived(
 		tree.collection<TreeViewItem>({
 			nodeToValue: (node) => node.value.toString(),
@@ -38,6 +43,13 @@
 				label: '',
 				children: items
 			}
+		})
+	);
+
+	const filteredCollection = $derived(
+		collection.filter((node) => {
+			if (!debouncedSearchTerm) return true;
+			return node.label.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
 		})
 	);
 
@@ -58,7 +70,7 @@
 	const service = useMachine(tree.machine, {
 		id,
 		get collection() {
-			return collection;
+			return filteredCollection;
 		},
 		get selectedValue() {
 			return selectedValue;
@@ -81,6 +93,28 @@
 	});
 
 	const api = $derived(tree.connect(service, normalizeProps));
+
+	const debouncedUpdate = debounce((value: string) => {
+		debouncedSearchTerm = value;
+	}, 300);
+
+	$effect(() => {
+		debouncedUpdate(searchTerm);
+	});
+
+	$effect(() => {
+		const currentValue = debouncedSearchTerm;
+
+		untrack(() => {
+			if (currentValue) {
+				const allNodeValues = filteredCollection.toJSON();
+				api.setExpandedValue(allNodeValues);
+			} else {
+				api.setExpandedValue(initialExpandedValue);
+			}
+		});
+	});
+
 	$effect(() => {
 		// 'value' is tracked - will trigger the effect
 		const currentValue = value;
@@ -90,7 +124,9 @@
 				internalChange = false;
 			} else {
 				api.setSelectedValue(currentValue); // using the tracked value
-				api.setExpandedValue(initialExpandedValue); // untracked
+				if (!debouncedSearchTerm) {
+					api.setExpandedValue(initialExpandedValue); // untracked
+				}
 				invalidate('catalog:products');
 			}
 		});
@@ -149,27 +185,41 @@
 	{#if label}
 		<h3 {...api.getLabelProps()}>{label}</h3>
 	{/if}
-	<div class="bg-surface-1 flex flex-row-reverse gap-2 p-3">
+	<div class="flex gap-2 p-3">
 		<Button
 			variant="outline"
+			size="icon"
 			onclick={() => {
 				api.collapse();
 				const path = page.url.searchParams;
 				path.delete('cat');
-				console.log(`/catalog?${path.toString()}`);
-
 				goto(`/catalog?${path.toString()}`, {
 					invalidate: ['catalog:products']
 				});
 			}}
 		>
-			Collapse All
+			<PhArrowsInSimple />
 		</Button>
 		<!-- <Button variant="outline" onclick={() => api.expand()}>Expand All</Button> -->
+		<div class="relative flex-1">
+			<Input placeholder="Search..." bind:value={searchTerm} class="pr-8" />
+			{#if searchTerm}
+				<Button
+					variant="ghost"
+					size="icon"
+					class="absolute top-1/2 right-1 h-7 w-7 -translate-y-1/2"
+					onclick={() => {
+						searchTerm = '';
+					}}
+				>
+					<PhX class="h-4 w-4" />
+				</Button>
+			{/if}
+		</div>
 	</div>
 	<div class="flex-1 overflow-x-hidden overflow-y-auto">
 		<div {...api.getTreeProps()}>
-			{#each items as item, index}
+			{#each filteredCollection.rootNode.children || [] as item, index}
 				{@render treeNode({ node: item as TreeViewItem, indexPath: [index], api })}
 			{/each}
 		</div>
