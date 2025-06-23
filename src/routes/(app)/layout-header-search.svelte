@@ -1,23 +1,15 @@
 <script lang="ts">
-	import type { SupabaseClient } from '@supabase/supabase-js';
 	import ky from 'ky';
 	import SearchIcon from '@lucide/svelte/icons/search';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import type { HTMLFormAttributes } from 'svelte/elements';
 	import type { WithElementRef } from '$lib/utils.js';
-	import type { Database, TablesUpdate } from '$lib/types/supabase.types';
+	import type { Database } from '$lib/types/supabase.types';
 	import SearchDialog from './search-dialog.svelte';
-	import ShoppingCart from './layout-header-shopping-cart.svelte';
 	type SearchProductsResult = Database['public']['Functions']['search_products']['Returns'];
 
-	let {
-		ref = $bindable(null),
-		supabase,
-		...restProps
-	}: WithElementRef<HTMLFormAttributes> & {
-		supabase: SupabaseClient<Database>;
-	} = $props();
+	let { ref = $bindable(null), ...restProps }: WithElementRef<HTMLFormAttributes> = $props();
 
 	// Search functionality
 	let searchTerm = $state('');
@@ -47,27 +39,24 @@
 	};
 </script>
 
-<form {...restProps} bind:this={ref}>
-	<div class="flex items-center gap-4">
-		<div class="relative">
-			<Label for="search" class="sr-only">Search</Label>
-			<Sidebar.Input
-				id="search"
-				placeholder="Type to search..."
-				class="h-8 pl-7"
-				bind:value={searchTerm}
-				onkeydown={(event: KeyboardEvent) => {
-					if (event.key === 'Enter') {
-						handleSearch();
-					}
-				}}
-			/>
-			<SearchIcon
-				class="pointer-events-none absolute top-1/2 left-2 size-4 -translate-y-1/2 opacity-50 select-none"
-			/>
-		</div>
-		<!-- <ShoppingCart {supabase} /> -->
+<div class="flex items-center gap-4">
+	<div class="relative">
+		<Label for="search" class="sr-only">Search</Label>
+		<Sidebar.Input
+			id="search"
+			placeholder="Type to search..."
+			class="h-8 pl-7"
+			bind:value={searchTerm}
+			onkeydown={(event: KeyboardEvent) => {
+				if (event.key === 'Enter') {
+					handleSearch();
+				}
+			}}
+		/>
+		<SearchIcon
+			class="pointer-events-none absolute top-1/2 left-2 size-4 -translate-y-1/2 opacity-50 select-none"
+		/>
 	</div>
-</form>
+</div>
 
 <SearchDialog bind:open={dialogOpen} bind:results={searchResults} />

@@ -14,6 +14,7 @@
 
 	function selectProduct(product: (typeof results)[0]) {
 		const path = page.url.searchParams;
+
 		if (product.m_product_category_id) {
 			path.set('cat', product.m_product_category_id.toString());
 		} else {

@@ -21,8 +21,10 @@
 	let showReportDialog = $state(false);
 	let treeData = $derived(arrayToTree(data.categories));
 
-	const initCategory = page.url.searchParams.get('cat');
-	let selectedCategory = $state(initCategory ? parseInt(initCategory) : undefined);
+	const initCategory = $derived(page.url.searchParams.get('cat'));
+	let selectedValue = $derived(initCategory ? [initCategory] : []);
+
+	const selectedCategory = $derived(selectedValue?.[0] ? parseInt(selectedValue[0]) : undefined);
 </script>
 
 <main class="flex w-full flex-1 gap-2 overflow-hidden px-2 py-2">
@@ -54,10 +56,9 @@
 					<TreeViewZag
 						items={treeData}
 						bind:contextNode
-						defaultSelectedValue={selectedCategory ? [selectedCategory.toString()] : undefined}
+						bind:selectedValue
 						onSelectionChange={({ focusedValue }) => {
 							if (!focusedValue) return;
-							selectedCategory = parseInt(focusedValue);
 							const newUrl = new URL(page.url);
 							newUrl.searchParams.set('cat', focusedValue);
 							newUrl.searchParams.delete('search');

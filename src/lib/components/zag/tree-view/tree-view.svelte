@@ -8,6 +8,10 @@
 	import PhCaretRight from '~icons/ph/caret-right';
 	import { page } from '$app/state';
 	import { goto, invalidate } from '$app/navigation';
+	import { untrack } from 'svelte';
+
+	let internalChange = $state(false);
+	console.log('recreate tree');
 
 	interface TreeNodeProps {
 		node: TreeViewItem; // Changed Node to TreeViewItem
@@ -15,15 +19,16 @@
 		api: tree.Api;
 	}
 	let {
-		value = $bindable(),
+		value = [],
 		items = [],
-		defaultSelectedValue = $bindable(),
 		onSelectionChange,
 		label,
 		contextNode = $bindable(),
+		selectedValue = $bindable([]),
+
+		onExpandedChange,
 		...restProps
 	}: TreeViewProps<T> = $props();
-
 	const collection = $derived(
 		tree.collection<TreeViewItem>({
 			nodeToValue: (node) => node.value.toString(),
@@ -35,37 +40,65 @@
 			}
 		})
 	);
+
+	const getParentValues = (targetValues: string[]): string[] => {
+		if (!targetValues?.length) return [];
+		const allParentValues = new Set<string>();
+		for (const targetValue of targetValues) {
+			const parentNodes = collection.getParentNodes(targetValue);
+			if (parentNodes) {
+				parentNodes.forEach((node) => allParentValues.add(node.value.toString()));
+			}
+		}
+		return Array.from(allParentValues);
+	};
+
+	const initialExpandedValue = $derived(getParentValues(selectedValue || []));
 	const id = $props.id();
 	const service = useMachine(tree.machine, {
 		id,
 		get collection() {
 			return collection;
 		},
-		get defaultExpandedValue() {
-			return getParentValues(defaultSelectedValue);
+		get selectedValue() {
+			return selectedValue;
 		},
 		get defaultSelectedValue() {
-			return defaultSelectedValue;
+			return value;
 		},
-		onSelectionChange: onSelectionChange
+		get defaultExpandedValue() {
+			return initialExpandedValue;
+		},
+
+		onSelectionChange(details) {
+			internalChange = true;
+			onSelectionChange?.(details);
+		},
+		onExpandedChange(details) {
+			onExpandedChange?.(details);
+		},
+		...restProps
 	});
 
 	const api = $derived(tree.connect(service, normalizeProps));
+	$effect(() => {
+		// 'value' is tracked - will trigger the effect
+		const currentValue = value;
 
-	function getParentValues(targetValues: (number | string)[] | null | undefined): string[] {
-		if (!targetValues?.length) return [];
-
-		const allParentValues = new Set<string>();
-
-		for (const targetValue of targetValues) {
-			const parentNodes = collection.getParentNodes(targetValue.toString());
-			if (parentNodes) {
-				parentNodes.forEach((node) => allParentValues.add(node.value.toString()));
+		untrack(() => {
+			if (internalChange) {
+				internalChange = false;
+			} else {
+				api.setSelectedValue(currentValue); // using the tracked value
+				api.setExpandedValue(initialExpandedValue); // untracked
+				invalidate('catalog:products');
 			}
-		}
-
-		return Array.from(allParentValues);
-	}
+		});
+	});
+	$inspect('value', value);
+	$inspect('internalChange', internalChange);
+	$inspect('api.selectedValue', api.selectedValue);
+	$inspect('api.expandedValue', api.expandedValue);
 </script>
 
 {#snippet treeNode(nodeProps: TreeNodeProps)}
@@ -123,8 +156,11 @@
 				api.collapse();
 				const path = page.url.searchParams;
 				path.delete('cat');
-				goto(`/catalog?${path.toString()}`);
-				invalidate('catalog:products');
+				console.log(`/catalog?${path.toString()}`);
+
+				goto(`/catalog?${path.toString()}`, {
+					invalidate: ['catalog:products']
+				});
 			}}
 		>
 			Collapse All

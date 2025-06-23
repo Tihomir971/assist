@@ -22,9 +22,11 @@ export const splitLayoutConfig = createSplitLayoutConfig()
 export function createTabConfigs(data: PageData) {
 	// --- Form Configurations for Drawers ---
 	const productPoFormConfig = createFormConfig()
+		.title('Product Supplier')
 		.field('c_bpartner_id', {
 			type: 'combobox',
 			label: 'Partner',
+			placeholder: 'Enter Partner...',
 			span: 12,
 			options: data.lookupData.partners
 		})
@@ -37,6 +39,7 @@ export function createTabConfigs(data: PageData) {
 		.build();
 
 	const productPackingFormConfig = createFormConfig()
+		.title('Packing')
 		.field('packing_type', {
 			type: 'select',
 			label: 'Packing Type',
@@ -53,6 +56,7 @@ export function createTabConfigs(data: PageData) {
 		.build();
 
 	const replenishFormConfig = createFormConfig()
+		.title('Replenishment Rule')
 		.field('m_warehouse_id', {
 			type: 'select',
 			label: 'Warehouse',
@@ -77,6 +81,7 @@ export function createTabConfigs(data: PageData) {
 		.column(columnTypes.text('vendorproductno', 'Vendor PN'))
 		.column(columnTypes.number('order_min', 'MOQ'))
 		.column(columnTypes.number('pricelist', 'Price'))
+		.column(columnTypes.text('url', 'URL'))
 		.column(columnTypes.date('valid_from', 'From'))
 		.column(columnTypes.date('valid_to', 'To'))
 		.formSchema(mProductPoInsertSchema)

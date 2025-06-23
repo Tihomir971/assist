@@ -57,18 +57,8 @@
 		</Button>
 		<Separator orientation="vertical" class="mr-2 h-4" />
 		<div class="flex items-center gap-x-1.5 font-mono text-2xl font-bold">KALISI</div>
-		<!-- <Breadcrumb.Root class="hidden sm:block">
-			<Breadcrumb.List>
-				<Breadcrumb.Item>
-					<Breadcrumb.Link href="#">Building Your Application</Breadcrumb.Link>
-				</Breadcrumb.Item>
-				<Breadcrumb.Separator />
-				<Breadcrumb.Item>
-					<Breadcrumb.Page>Data Fetching</Breadcrumb.Page>
-				</Breadcrumb.Item>
-			</Breadcrumb.List>
-		</Breadcrumb.Root> -->
-		<HeaderSearch class="w-full sm:ml-auto sm:w-auto" {supabase} />
+
+		<HeaderSearch class="w-full sm:ml-auto sm:w-auto" />
 		<HeaderShoppingCart {supabase} />
 	</div>
 </header>
