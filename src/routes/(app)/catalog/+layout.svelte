@@ -34,10 +34,10 @@
 					switch (value) {
 						case 'edit':
 							if (!contextNode) return;
-							goto(`/catalog/category/${contextNode}?${page.url.searchParams}`);
+							goto(`/catalog/category/edit/${contextNode}?${page.url.searchParams}`);
 							break;
 						case 'add':
-							goto('/catalog/category');
+							goto('/catalog/category/edit');
 							break;
 						case 'delete':
 							// handleDelete(contextmenu);

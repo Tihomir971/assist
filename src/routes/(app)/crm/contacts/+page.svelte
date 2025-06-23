@@ -1,9 +1,16 @@
 <script lang="ts">
-	import type { PageData } from './$types';
-	import { columns } from './columns';
-	import DataTable from './data-table.svelte';
+	import SmartTable from '$lib/components/forms/SmartTable.svelte';
+	import { contactsTableConfig } from './datatable.config';
 
-	let { data }: { data: PageData } = $props();
+	let { data } = $props();
 </script>
 
-<DataTable data={data.c_bpartner} {columns} />
+<SmartTable
+	data={data.items}
+	config={contactsTableConfig}
+	count={data.count}
+	page={data.page}
+	perPage={data.perPage}
+	deleteForm={data.deleteForm}
+	lookupData={data.lookup}
+/>

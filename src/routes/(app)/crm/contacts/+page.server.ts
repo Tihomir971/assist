@@ -1,15 +1,13 @@
-import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import { createListPageLoader } from '$lib/utils/list-page.factory';
+import { contactsTableConfig } from './datatable.config';
+import { PartnerService } from '$lib/services/supabase/partner.service';
 
-export const load = (async ({ locals: { supabase } }) => {
-	const { data: c_bpartner, error: dataError } = await supabase
-		.from('c_bpartner')
-		.select('*')
-		.order('display_name');
+const listPage = createListPageLoader({
+	config: contactsTableConfig,
+	baseQuery: (supabase) =>
+		supabase.from('c_bpartner').select('*', { count: 'exact' }).order('display_name'),
+	service: PartnerService
+});
 
-	if (dataError) {
-		error(401, 'not logged in');
-	}
-
-	return { c_bpartner: c_bpartner ?? [] };
-}) satisfies PageServerLoad;
+export const load = listPage.load;
+export const actions = listPage.actions;

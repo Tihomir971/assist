@@ -42,7 +42,9 @@ export function createListPageLoader<TData, TService extends ServiceWithDelete>(
 
 		if (config.mode === 'client') {
 			// Fetch all data for client-side processing
-			const { data, error: queryError } = await baseQuery(supabase);
+			// Supabase's default limit is 1000. We override it here for client-side tables.
+			// Adjust this limit if you expect more than 10,000 records.
+			const { data, error: queryError } = await baseQuery(supabase).limit(10000);
 			if (queryError) {
 				console.error('Error fetching data for client mode:', queryError);
 				throw error(500, 'Error fetching data');

@@ -160,8 +160,8 @@
 						handleFilterChange(filter.name, boolValue);
 					}}
 					items={[
-						{ value: 'true', label: 'Active' },
-						{ value: 'false', label: 'Inactive' }
+						{ value: 'true', label: 'Checked' },
+						{ value: 'false', label: 'Unchecked' }
 					]}
 					label={filter.label}
 					placeholder={filter.placeholder || `All ${filter.label.toLowerCase()}`}

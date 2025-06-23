@@ -1,3 +1,5 @@
+import { RenderComponentConfig } from '$lib/components/walker-tx/render-component';
+import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 import type { ColumnDef } from '@tanstack/svelte-table';
 import type { Snippet } from 'svelte';
 
@@ -86,15 +88,33 @@ export class DataTableConfigBuilder<TData> {
 }
 
 export const columnTypes = {
-	text: <TData>(accessorKey: keyof TData & string, header: string): ColumnDef<TData> => ({
+	text: <TData>(
+		accessorKey: keyof TData & string,
+		header: string,
+		sortable = true
+	): ColumnDef<TData> => ({
 		accessorKey,
 		header,
-		enableSorting: true
+		enableSorting: sortable
 	}),
-	boolean: <TData>(accessorKey: keyof TData & string, header: string): ColumnDef<TData> => ({
+	boolean: <TData>(
+		accessorKey: keyof TData & string,
+		header: string,
+		sortable = false
+	): ColumnDef<TData> => ({
 		accessorKey,
 		header,
-		cell: ({ cell }) => (cell.getValue() ? 'Yes' : 'No')
+		enableSorting: sortable,
+		cell: ({ cell }) => {
+			return new RenderComponentConfig(Checkbox, {
+				checked: cell.getValue() as boolean,
+				disabled: true
+			});
+		},
+		meta: {
+			className: 'w-20 text-center [&:has([role=checkbox])]:pr-2',
+			cellWrapperClass: 'flex justify-center'
+		}
 	}),
 	link: <TData>(
 		accessorKey: keyof TData & string,

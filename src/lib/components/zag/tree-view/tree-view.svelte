@@ -200,7 +200,6 @@
 		>
 			<PhArrowsInSimple />
 		</Button>
-		<!-- <Button variant="outline" onclick={() => api.expand()}>Expand All</Button> -->
 		<div class="relative flex-1">
 			<Input placeholder="Search..." bind:value={searchTerm} class="pr-8" />
 			{#if searchTerm}

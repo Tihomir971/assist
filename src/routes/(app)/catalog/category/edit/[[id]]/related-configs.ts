@@ -6,9 +6,14 @@ import {
 } from '$lib/types/supabase.zod.schemas';
 import type {
 	CChannelMapCategoryInsert,
-	PriceRulesInsert
+	PriceRulesInsert,
+	MProductCategoryRow
 } from '$lib/types/supabase.zod.schemas.d';
 import type { Tables } from '$lib/types/supabase.types';
+import { createSplitLayoutConfig, createTabConfig } from '$lib/utils/split-layout-config.builder';
+import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable.svelte';
+import type { Component } from 'svelte';
+import type { SuperValidated } from 'sveltekit-superforms';
 
 // Channel Mapping Configuration
 export const channelMappingConfig = createRelatedTableConfig<
@@ -17,6 +22,11 @@ export const channelMappingConfig = createRelatedTableConfig<
 >()
 	.title('Channel Mappings')
 	.description('Manage category mappings across different channels')
+	.tab({
+		tabId: 'channel-mappings',
+		tabLabel: 'Channels',
+		tabIcon: 'ph:broadcast'
+	})
 	.column(columnTypes.lookup('c_channel_id', 'Channel', 'c_channels', { width: '150px' }))
 	.column(columnTypes.text('resource_id', 'Resource ID'))
 	.column(columnTypes.text('resource_name', 'Description'))
@@ -69,6 +79,11 @@ export const priceRulesConfig = createRelatedTableConfig<
 >()
 	.title('Price Rules')
 	.description('Configure pricing rules for this category')
+	.tab({
+		tabId: 'price-rules',
+		tabLabel: 'Price Rules',
+		tabIcon: 'ph:tag'
+	})
 	.column(columnTypes.text('name', 'Name'))
 	.column(columnTypes.boolean('is_active', 'Active', { width: '80px' }))
 	.column(columnTypes.number('priority', 'Priority', { width: '100px' }))
@@ -120,3 +135,54 @@ export const priceRulesConfig = createRelatedTableConfig<
 	])
 	.features(true, true, true) // searchable, sortable, exportEnabled
 	.build();
+
+export const splitLayoutConfig = createSplitLayoutConfig()
+	.leftPanel({ width: '45%' })
+	.rightPanel({ width: '55%' })
+	.build();
+
+// Helper function to dynamically create tab configurations
+export function createTabConfigs(data: {
+	priceRules: Record<string, unknown>[];
+	channelMapCategory: Record<string, unknown>[];
+	formPriceRules: SuperValidated<Record<string, unknown>>;
+	formChannel: SuperValidated<Record<string, unknown>>;
+	category: MProductCategoryRow | null;
+	price_formulas: Array<{ value: number; label: string }>;
+	c_channels: Array<{ value: number; label: string }>;
+}) {
+	return [
+		createTabConfig(
+			'channel-mappings',
+			'Channels',
+			SmartRelatedTable as Component,
+			{
+				config: channelMappingConfig,
+				items: data.channelMapCategory,
+				validatedForm: data.formChannel,
+				parentId: data.category?.id,
+				lookupData: { c_channels: data.c_channels }
+			},
+			{
+				badge: data.channelMapCategory?.length || 0,
+				description: 'Manage channel mappings for this category'
+			}
+		),
+		createTabConfig(
+			'price-rules',
+			'Price Rules',
+			SmartRelatedTable as Component,
+			{
+				config: priceRulesConfig,
+				items: data.priceRules,
+				validatedForm: data.formPriceRules,
+				parentId: data.category?.id,
+				lookupData: { price_formulas: data.price_formulas }
+			},
+			{
+				badge: data.priceRules?.length || 0,
+				description: 'Manage price rules for this category'
+			}
+		)
+	];
+}

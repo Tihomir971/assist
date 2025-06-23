@@ -227,12 +227,18 @@
 						{#each table.getHeaderGroups() as headerGroup}
 							<Table.Row>
 								{#each headerGroup.headers as header}
-									<Table.Head colspan={header.colSpan}>
+									<Table.Head
+										colspan={header.colSpan}
+										class={header.column.columnDef.meta?.className}
+									>
 										{#if !header.isPlaceholder}
 											<button
 												type="button"
 												class="flex w-full items-center gap-2"
 												class:cursor-pointer={header.column.getCanSort()}
+												class:justify-center={header.column.columnDef.meta?.className?.includes(
+													'text-center'
+												)}
 												onclick={header.column.getToggleSortingHandler()}
 											>
 												<FlexRender
@@ -262,11 +268,20 @@
 							{#each table.getRowModel().rows as row}
 								<Table.Row data-state={row.getIsSelected() && 'selected'}>
 									{#each row.getVisibleCells() as cell}
-										<Table.Cell>
-											<FlexRender
-												content={cell.column.columnDef.cell}
-												context={cell.getContext()}
-											/>
+										<Table.Cell class={cell.column.columnDef.meta?.className}>
+											{#if cell.column.columnDef.meta?.cellWrapperClass}
+												<div class={cell.column.columnDef.meta.cellWrapperClass}>
+													<FlexRender
+														content={cell.column.columnDef.cell}
+														context={cell.getContext()}
+													/>
+												</div>
+											{:else}
+												<FlexRender
+													content={cell.column.columnDef.cell}
+													context={cell.getContext()}
+												/>
+											{/if}
 										</Table.Cell>
 									{/each}
 								</Table.Row>
@@ -287,8 +302,8 @@
 	<SmartTablePagination
 		{table}
 		{count}
-		{page}
-		{perPage}
+		page={config.mode === 'client' ? table.getState().pagination.pageIndex + 1 : page}
+		perPage={config.mode === 'client' ? table.getState().pagination.pageSize : perPage}
 		onPageChange={handlePageChange}
 		onPerPageChange={handlePerPageChange}
 	/>

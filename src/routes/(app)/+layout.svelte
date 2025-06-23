@@ -16,7 +16,7 @@
 </svelte:head>
 
 <div class="[--header-height:calc(--spacing(14))]">
-	<Sidebar.Provider open={false} class="flex h-screen  flex-col">
+	<Sidebar.Provider open={true} class="flex h-screen  flex-col">
 		<!-- <div class="flex h-screen flex-col"> -->
 		<LayoutHeader supabase={data.supabase} />
 		<!-- <Header supabase={data.supabase} profile={data.profile}></Header> -->
