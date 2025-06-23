@@ -138,6 +138,7 @@ src/routes/(app)/your-route/[[id]]/
         .title('Price Rules')
         .column(columnTypes.text('name', 'Name'))
         .column(columnTypes.boolean('is_active', 'Active'))
+        .column(columnTypes.url('product_url', 'Link'))
         .formSchema(priceRulesInsertSchema)
         .actions('?/priceRuleUpsert', '?/priceRuleUpsert', '?/priceRuleDelete')
         .parentIdField('m_product_category_id') // Foreign key to parent

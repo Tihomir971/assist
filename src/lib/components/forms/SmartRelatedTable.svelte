@@ -21,6 +21,7 @@
 
 	// Related Drawer
 	import SmartRelatedDrawer from './SmartRelatedDrawer.svelte';
+	import UrlCell from './cells/UrlCell.svelte';
 
 	interface SmartRelatedTableProps<T extends Record<string, any>, S extends AnyZodObject> {
 		config: RelatedTableConfig<T, S>;
@@ -293,8 +294,11 @@
 					{#each tableConfig.columns as column}
 						<Table.Head
 							class={`${column.width ? `w-[${column.width}]` : ''} ${tableConfig.sortable && column.sortable !== false ? 'cursor-pointer' : ''}`}
-							onclick={() =>
-								tableConfig.sortable && column.sortable !== false && handleSort(String(column.key))}
+							onclick={() => {
+								if (tableConfig.sortable && column.sortable !== false) {
+									handleSort(String(column.key));
+								}
+							}}
 						>
 							<div class="flex items-center gap-1">
 								{column.label}
@@ -333,6 +337,8 @@
 							<Table.Cell class={column.key === tableConfig.columns[0]?.key ? 'font-medium' : ''}>
 								{#if column.type === 'boolean'}
 									<CheckboxZag checked={row[column.key]} disabled />
+								{:else if column.type === 'url'}
+									<UrlCell value={row[column.key]} />
 								{:else if column.component}
 									<!-- Custom component rendering will be implemented in Phase 3 -->
 									{formatCellValue(row[column.key], column, row)}

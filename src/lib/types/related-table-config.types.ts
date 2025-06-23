@@ -5,7 +5,7 @@ import type { RelatedTableTabConfig } from './split-layout-config.types';
 export interface ColumnDefinition<T extends Record<string, unknown>> {
 	key: keyof T;
 	label: string;
-	type?: 'text' | 'number' | 'boolean' | 'date' | 'datetime' | 'lookup' | 'custom';
+	type?: 'text' | 'number' | 'boolean' | 'date' | 'datetime' | 'lookup' | 'custom' | 'url';
 	width?: string;
 	sortable?: boolean;
 	searchable?: boolean;

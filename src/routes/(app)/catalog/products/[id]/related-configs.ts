@@ -81,7 +81,7 @@ export function createTabConfigs(data: PageData) {
 		.column(columnTypes.text('vendorproductno', 'Vendor PN'))
 		.column(columnTypes.number('order_min', 'MOQ'))
 		.column(columnTypes.number('pricelist', 'Price'))
-		.column(columnTypes.text('url', 'URL'))
+		.column(columnTypes.url('url', 'URL'))
 		.column(columnTypes.date('valid_from', 'From'))
 		.column(columnTypes.date('valid_to', 'To'))
 		.formSchema(mProductPoInsertSchema)

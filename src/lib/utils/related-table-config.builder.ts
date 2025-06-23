@@ -197,5 +197,19 @@ export const columnTypes = {
 		type: 'custom',
 		component,
 		...options
+	}),
+
+	url: <T extends Record<string, unknown>>(
+		key: keyof T,
+		label: string,
+		options?: Partial<ColumnDefinition<T>>
+	): ColumnDefinition<T> => ({
+		key,
+		label,
+		type: 'url',
+		sortable: false,
+		searchable: false,
+		width: '60px',
+		...options
 	})
 };
