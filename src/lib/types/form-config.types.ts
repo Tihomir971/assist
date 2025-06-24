@@ -19,6 +19,7 @@ export interface FieldOverride {
 	className?: string; // NEW: Additional CSS classes for the field container
 	size?: 'sm' | 'md' | 'lg'; // NEW: Field size variant
 	step?: number; // For number inputs
+	fraction?: number; // For number inputs, to specify fraction digits
 }
 
 export interface SmartFormConfig {

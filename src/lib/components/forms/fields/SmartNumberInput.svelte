@@ -3,7 +3,7 @@
 	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer';
 
 	interface SmartNumberInputProps {
-		field: AnalyzedFieldConfig & { step?: number };
+		field: AnalyzedFieldConfig & { step?: number; fraction?: number };
 		value: number | null | undefined;
 		[key: string]: any;
 	}
@@ -27,4 +27,5 @@
 		value = Number.isNaN(details.valueAsNumber) ? null : details.valueAsNumber;
 	}}
 	step={field.step ?? 1}
+	fraction={field.fraction}
 />

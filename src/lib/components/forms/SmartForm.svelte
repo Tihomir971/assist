@@ -200,7 +200,7 @@
 		const baseClasses = 'grid grid-cols-1 md:grid-cols-12';
 		const gapClass = config.gap
 			? `gap-${config.gap === 'sm' ? '2' : config.gap === 'lg' ? '8' : '4'}`
-			: 'gap-4 md:gap-6';
+			: 'gap-4 md:gap-3';
 
 		return `${baseClasses} ${gapClass}`;
 	};

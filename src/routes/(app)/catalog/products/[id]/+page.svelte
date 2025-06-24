@@ -11,12 +11,19 @@
 
 	const formConfig = createFormConfig()
 		.title('Product Details')
-		.field('name', { span: 12, placeholder: 'Enter product name' })
-		.field('sku', { span: 6, label: 'SKU', readonly: true })
-		.field('mpn', { span: 6, label: 'MPN' })
 		.field('is_active', { type: 'boolean', span: 4 })
 		.field('is_self_service', { type: 'boolean', span: 4 })
 		.field('discontinued', { type: 'boolean', span: 4 })
+		.field('sku', { span: 2, label: 'SKU', readonly: true })
+		.field('name', { span: 10, placeholder: 'Enter product name' })
+		.field('m_product_brand_id', {
+			type: 'combobox',
+			span: 6,
+			label: 'Product Brand',
+			placeholder: 'Select a brand',
+			options: data.lookupData.brands // Added product brand field
+		})
+		.field('mpn', { span: 6, label: 'MPN' })
 		.field('attributeset_id', {
 			type: 'select',
 			span: 6,
@@ -30,20 +37,14 @@
 			placeholder: 'Select a category',
 			options: data.lookupData.categories
 		})
-		.field('m_product_brand_id', {
-			type: 'combobox',
-			span: 6,
-			label: 'Product Brand',
-			placeholder: 'Select a brand',
-			options: data.lookupData.brands // Added product brand field
-		})
+
 		.field('c_taxcategory_id', {
 			type: 'select',
 			span: 6,
 			label: 'Tax Category',
 			options: data.lookupData.tax
 		})
-		.field('net_quantity', { type: 'number', span: 3 })
+		.field('net_quantity', { type: 'number', span: 3, fraction: 0 })
 		.field('net_qty_uom_id', {
 			type: 'select',
 			span: 3,
