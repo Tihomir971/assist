@@ -5,6 +5,13 @@
 	import { toast } from 'svelte-sonner';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
+	import {
+		CalendarDate,
+		DateFormatter,
+		type DateValue,
+		getLocalTimeZone,
+		parseDate
+	} from '@internationalized/date';
 
 	// UI Components
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -12,9 +19,12 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
+	import { Calendar } from '$lib/components/ui/calendar/index.js';
+	import * as Popover from '$lib/components/ui/popover/index.js';
 
 	// Icons
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
+	import CalendarIcon from '@lucide/svelte/icons/calendar';
 	import Save from '@lucide/svelte/icons/save';
 	import Trash2 from '@lucide/svelte/icons/trash-2';
 
@@ -45,12 +55,23 @@
 
 	const { form: formData, enhance: formEnhance } = form;
 
+	const df = new DateFormatter('sr-Latn', {
+		dateStyle: 'long'
+	});
+
+	let startsAtValue = $derived($formData.starts_at ? parseDate($formData.starts_at) : undefined);
+	let endsAtValue = $derived($formData.ends_at ? parseDate($formData.ends_at) : undefined);
+
+	console.log('form.', $formData.conditions);
+
 	// Handlers for child components
 	function handleFormulaChange(newFormula: PricingFormula) {
 		$formData.formula = newFormula;
 	}
 
 	function handleConditionsChange(newConditions: PricingConditions) {
+		console.log('newConditions', newConditions);
+
 		$formData.conditions = newConditions;
 	}
 
@@ -185,21 +206,51 @@
 					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 						<div class="space-y-2">
 							<Label for="starts_at">Važi od</Label>
-							<Input
-								id="starts_at"
-								name="starts_at"
-								type="datetime-local"
-								bind:value={$formData.starts_at}
-							/>
+							<Popover.Root>
+								<Popover.Trigger
+									class="flex h-10 w-full items-center justify-start rounded-md border border-input bg-transparent px-3 py-2 text-left text-sm ring-offset-background placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+								>
+									{startsAtValue
+										? df.format(startsAtValue.toDate(getLocalTimeZone()))
+										: 'Početni datum'}
+									<CalendarIcon class="ml-auto size-4 opacity-50" />
+								</Popover.Trigger>
+								<Popover.Content class="w-auto p-0">
+									<Calendar
+										type="single"
+										locale="sr-Latn"
+										value={startsAtValue}
+										onValueChange={(v) => {
+											$formData.starts_at = v ? v.toString() : null;
+										}}
+									/>
+								</Popover.Content>
+							</Popover.Root>
+							<input type="hidden" name="starts_at" value={$formData.starts_at ?? ''} />
 						</div>
 						<div class="space-y-2">
 							<Label for="ends_at">Važi do</Label>
-							<Input
-								id="ends_at"
-								name="ends_at"
-								type="datetime-local"
-								bind:value={$formData.ends_at}
-							/>
+							<Popover.Root>
+								<Popover.Trigger
+									class="flex h-10 w-full items-center justify-start rounded-md border border-input bg-transparent px-3 py-2 text-left text-sm ring-offset-background placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+								>
+									{endsAtValue
+										? df.format(endsAtValue.toDate(getLocalTimeZone()))
+										: 'Krajnji datum'}
+									<CalendarIcon class="ml-auto size-4 opacity-50" />
+								</Popover.Trigger>
+								<Popover.Content class="w-auto p-0">
+									<Calendar
+										type="single"
+										locale="sr-Latn"
+										value={endsAtValue}
+										onValueChange={(v) => {
+											$formData.ends_at = v ? v.toString() : null;
+										}}
+									/>
+								</Popover.Content>
+							</Popover.Root>
+							<input type="hidden" name="ends_at" value={$formData.ends_at ?? ''} />
 						</div>
 					</div>
 				</Card.Content>

@@ -4,7 +4,8 @@ import {
 	today,
 	getLocalTimeZone,
 	ZonedDateTime,
-	CalendarDate
+	CalendarDate,
+	parseDate
 } from '@internationalized/date';
 import { DateFormatter } from '@internationalized/date';
 
@@ -59,6 +60,28 @@ export class DateHelper {
 			return `${condensedDatePart} ${timePart}`;
 		} catch (error) {
 			console.error(`Formatting failed for input "${isoString}":`, error);
+			return null;
+		}
+	}
+
+	/**
+	 * Formats only the date part of an ISO string, ignoring timezone conversion for display.
+	 * @param isoString The ISO 8601 datetime string to format.
+	 * @returns The formatted date string (e.g., "30. 6. 2025."), or null if invalid.
+	 */
+	public formatDateOnly(isoString: string | null | undefined): string | null {
+		if (!isoString) {
+			return null;
+		}
+		try {
+			const datePart = isoString.slice(0, 10);
+			const date = parseDate(datePart);
+			const formatter = new DateFormatter(this.locale, {
+				dateStyle: 'medium'
+			});
+			return formatter.format(date.toDate(getLocalTimeZone()));
+		} catch (error) {
+			console.error(`formatDateOnly failed for input "${isoString}":`, error);
 			return null;
 		}
 	}

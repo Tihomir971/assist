@@ -32,6 +32,7 @@
 		checkedValue = $bindable(),
 		selectionMode = 'multiple',
 		onExpandedChange,
+		onCheckedChange,
 		...restProps
 	}: TreeViewProps<T> = $props();
 
@@ -88,8 +89,8 @@
 			onSelectionChange?.(details);
 		},
 		onCheckedChange(details) {
-			console.log('onCheckedChange', details);
 			checkedValue = details.checkedValue?.map(Number);
+			onCheckedChange?.(details);
 		},
 		onExpandedChange(details) {
 			onExpandedChange?.(details);

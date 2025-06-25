@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PricingConditions, AttributeCondition } from '$lib/types/pricing-rules.types';
 	import type { PartnerLookup } from '$lib/services/supabase/partner.service';
-	import type { CategoryLookup } from '$lib/services/supabase/category.service';
+	import type { Output } from '$lib/services/supabase/category.service';
 	import type { AttributeLookup } from '$lib/services/supabase/attribute.service';
 	import type { BrandLookup } from '$lib/services/supabase/brand.service';
 	import type { SupabaseClient } from '@supabase/supabase-js';
@@ -9,16 +9,18 @@
 
 	import * as Card from '$lib/components/ui/card';
 	import AttributesConditionBuilder from '../condition-types/AttributesConditionBuilder.svelte';
-	import CategoriesSelector from '../condition-types/CategoriesSelector.svelte';
+	import { Badge } from '$lib/components/ui/badge/index.js';
+	import XIcon from '@lucide/svelte/icons/x';
 	import BrandsSelector from '../condition-types/BrandsSelector.svelte';
 	import PartnersSelector from '../condition-types/PartnersSelector.svelte';
 	import QuantityRangeInputs from '../condition-types/QuantityRangeInputs.svelte';
+	import { TreeViewZag } from '$lib/components/zag';
 
 	interface Props {
 		conditions: PricingConditions | undefined; // Can be undefined initially
 		lookupData: {
 			partners: PartnerLookup[];
-			categories: CategoryLookup[];
+			categories: Output[];
 			attributes: AttributeLookup[];
 			brands: BrandLookup[];
 		};
@@ -35,6 +37,29 @@
 
 	// Ensure conditions is always an object for easier partial updates
 	let currentConditions = $derived(conditions || {});
+
+	// Helper function to find category by ID for display
+	function findCategoryById(categories: Output[], id: number): Output | null {
+		for (const category of categories) {
+			if (category.value === id) return category;
+			if (category.children) {
+				const found = findCategoryById(category.children, id);
+				if (found) return found;
+			}
+		}
+		return null;
+	}
+
+	const selectedCategories = $derived(
+		(currentConditions.category_ids || [])
+			.map((id) => findCategoryById(lookupData.categories, id))
+			.filter((cat): cat is Output => cat !== null)
+	);
+
+	function removeCategory(categoryId: number) {
+		const newIds = (currentConditions.category_ids || []).filter((id) => id !== categoryId);
+		handleCategoriesChange(newIds);
+	}
 
 	function updateConditions(updates: Partial<PricingConditions>) {
 		onConditionsChange({ ...currentConditions, ...updates });
@@ -78,11 +103,40 @@
 			</Card.Description>
 		</Card.Header>
 		<Card.Content>
-			<CategoriesSelector
-				selectedCategoryIds={currentConditions.category_ids || []}
-				categoriesLookup={lookupData.categories}
-				onCategoriesChange={handleCategoriesChange}
-			/>
+			<div class="space-y-4">
+				<div class="rounded-md border">
+					<TreeViewZag
+						items={lookupData.categories}
+						selectionMode="multiple"
+						checkedValue={currentConditions.category_ids || []}
+						label="Kategorije proizvoda"
+						onCheckedChange={(details) => handleCategoriesChange(details.checkedValue.map(Number))}
+					/>
+				</div>
+
+				{#if selectedCategories.length > 0}
+					<div class="flex flex-wrap gap-1">
+						{#each selectedCategories as category (category.value)}
+							<Badge variant="secondary" class="flex items-center gap-1">
+								{category.label}
+								<button
+									type="button"
+									onclick={() => removeCategory(category.value)}
+									class="rounded-full hover:bg-muted-foreground/20 focus:outline-none"
+									aria-label={`Ukloni kategoriju ${category.label}`}
+								>
+									<XIcon class="h-3 w-3" />
+								</button>
+							</Badge>
+						{/each}
+					</div>
+				{/if}
+
+				<p class="text-xs text-muted-foreground">
+					Pravilo će se primeniti samo ako proizvod pripada nekoj od izabranih kategorija. Ako
+					nijedna kategorija nije izabrana, ovaj uslov se ignoriše.
+				</p>
+			</div>
 		</Card.Content>
 	</Card.Root>
 

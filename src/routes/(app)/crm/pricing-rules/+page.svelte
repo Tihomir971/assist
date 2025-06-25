@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { enhance } from '$app/forms';
 	import { toast } from 'svelte-sonner';
@@ -73,14 +72,7 @@
 	const { form: createFormData, enhance: createEnhance } = createForm;
 
 	// SubmitFunction for swap priorities form enhance
-	const handleSubmitSwapPriorities: import('@sveltejs/kit').SubmitFunction = async ({
-		action,
-		formData,
-		formElement,
-		controller,
-		submitter,
-		cancel
-	}) => {
+	const handleSubmitSwapPriorities: import('@sveltejs/kit').SubmitFunction = async () => {
 		// Optional: Show loading state or disable buttons before fetch
 		// e.g., submitter?.setAttribute('disabled', 'true');
 
@@ -117,11 +109,6 @@
 	function handleClone(rule: any) {
 		// TODO: Implement clone functionality
 		toast.info('Clone funkcionalnost će biti dodana uskoro');
-	}
-
-	function formatFormula(formula: any) {
-		if (!formula || typeof formula !== 'object') return 'N/A';
-		return formula.type || 'Unknown';
 	}
 
 	function handleDeleteSubmit(event: Event) {

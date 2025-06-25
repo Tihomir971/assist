@@ -56,8 +56,8 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 				priority: rule.priority,
 				is_active: rule.is_active,
 				target_group: rule.target_group,
-				starts_at: rule.starts_at,
-				ends_at: rule.ends_at
+				starts_at: rule.starts_at ? rule.starts_at.slice(0, 10) : null,
+				ends_at: rule.ends_at ? rule.ends_at.slice(0, 10) : null
 			}
 		: {
 				name: '',
@@ -72,7 +72,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 
 	const [partners, categories, attributes, brands] = await Promise.all([
 		new PartnerService(supabase).getLookup(),
-		new CategoryService(supabase).getLookup(),
+		new CategoryService(supabase).getCategoryTree(),
 		new AttributeService(supabase).getLookup(),
 		new BrandService(supabase).getLookup()
 	]);
@@ -110,8 +110,12 @@ export const actions: Actions = {
 				priority: form.data.priority || 0,
 				is_active: form.data.is_active ?? true,
 				target_group: form.data.target_group || undefined,
-				starts_at: form.data.starts_at || undefined,
-				ends_at: form.data.ends_at || undefined
+				starts_at: form.data.starts_at
+					? new Date(form.data.starts_at + 'T00:00:00').toISOString()
+					: undefined,
+				ends_at: form.data.ends_at
+					? new Date(form.data.ends_at + 'T23:59:59').toISOString()
+					: undefined
 			};
 
 			let result;
