@@ -62,16 +62,12 @@
 	let startsAtValue = $derived($formData.starts_at ? parseDate($formData.starts_at) : undefined);
 	let endsAtValue = $derived($formData.ends_at ? parseDate($formData.ends_at) : undefined);
 
-	console.log('form.', $formData.conditions);
-
 	// Handlers for child components
 	function handleFormulaChange(newFormula: PricingFormula) {
 		$formData.formula = newFormula;
 	}
 
 	function handleConditionsChange(newConditions: PricingConditions) {
-		console.log('newConditions', newConditions);
-
 		$formData.conditions = newConditions;
 	}
 
