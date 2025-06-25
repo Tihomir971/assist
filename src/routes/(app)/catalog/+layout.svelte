@@ -56,12 +56,18 @@
 						items={treeData}
 						bind:contextNode
 						bind:selectedValue
-						onSelectionChange={({ focusedValue }) => {
-							if (!focusedValue) return;
+						onSelectionChange={(details) => {
+							// console.log('onSelectionChange details', details);
+
+							if (!details.focusedValue) return;
 							const newUrl = new URL(page.url);
-							newUrl.searchParams.set('cat', focusedValue);
+							newUrl.searchParams.set('cat', details.focusedValue);
 							newUrl.searchParams.delete('search');
-							goto(newUrl, { invalidate: ['catalog:products'] });
+							goto(newUrl, {
+								invalidate: ['catalog:products'],
+								noScroll: true,
+								replaceState: false
+							});
 						}}
 					/>
 				</ContextMenu.Trigger>

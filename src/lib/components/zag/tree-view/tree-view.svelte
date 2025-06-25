@@ -14,7 +14,6 @@
 	import PhX from '~icons/ph/x';
 	import { debounce } from '$lib/scripts/debounce';
 
-	let internalChange = $state(false);
 	let searchTerm = $state('');
 	let debouncedSearchTerm = $state('');
 
@@ -29,7 +28,9 @@
 		onSelectionChange,
 		label,
 		contextNode = $bindable(),
-		selectedValue = $bindable([]),
+		selectedValue = $bindable(),
+		checkedValue = $bindable(),
+		selectionMode = 'multiple',
 		onExpandedChange,
 		...restProps
 	}: TreeViewProps<T> = $props();
@@ -69,6 +70,7 @@
 	const id = $props.id();
 	const service = useMachine(tree.machine, {
 		id,
+		selectionMode,
 		get collection() {
 			return filteredCollection;
 		},
@@ -81,10 +83,14 @@
 		get defaultExpandedValue() {
 			return initialExpandedValue;
 		},
-
+		get defaultCheckedValuee() {
+			return checkedValue;
+		},
 		onSelectionChange(details) {
-			internalChange = true;
 			onSelectionChange?.(details);
+		},
+		onCheckedChange(details) {
+			console.log('onCheckedChange', details);
 		},
 		onExpandedChange(details) {
 			onExpandedChange?.(details);
@@ -116,25 +122,18 @@
 	});
 
 	$effect(() => {
-		// 'value' is tracked - will trigger the effect
-		const currentValue = value;
+		const requiredParents = initialExpandedValue;
 
 		untrack(() => {
-			if (internalChange) {
-				internalChange = false;
-			} else {
-				api.setSelectedValue(currentValue); // using the tracked value
-				if (!debouncedSearchTerm) {
-					api.setExpandedValue(initialExpandedValue); // untracked
-				}
-				invalidate('catalog:products');
+			// We only apply this programmatic expansion if there is no active search.
+			// The search logic has its own separate effect for expanding all nodes.
+			if (!debouncedSearchTerm) {
+				const currentlyExpanded = api.expandedValue;
+				const mergedExpandedState = new Set([...currentlyExpanded, ...requiredParents]);
+				api.setExpandedValue(Array.from(mergedExpandedState));
 			}
 		});
 	});
-	$inspect('value', value);
-	$inspect('internalChange', internalChange);
-	$inspect('api.selectedValue', api.selectedValue);
-	$inspect('api.expandedValue', api.expandedValue);
 </script>
 
 {#snippet treeNode(nodeProps: TreeNodeProps)}
@@ -144,7 +143,17 @@
 	{#if nodeState.isBranch}
 		<div {...api.getBranchProps({ indexPath, node })}>
 			<div {...api.getBranchControlProps({ indexPath, node })}>
-				<!-- <PhFolder /> -->
+				{#if selectionMode === 'multiple'}
+					{#key node.value}
+						{@const checkboxProps = api.getNodeCheckboxProps({ indexPath, node })}
+						<input
+							type="checkbox"
+							{...checkboxProps}
+							checked={checkboxProps['data-state'] === 'checked'}
+							indeterminate={checkboxProps['data-state'] === 'indeterminate'}
+						/>
+					{/key}
+				{/if}
 				<span {...api.getBranchIndicatorProps({ indexPath, node })}>
 					<PhCaretRight />
 				</span>
@@ -161,7 +170,17 @@
 		</div>
 	{:else}
 		<div {...api.getItemProps({ indexPath, node })}>
-			<!-- <PhFile /> -->
+			{#if selectionMode === 'multiple'}
+				{#key node.value}
+					{@const checkboxProps = api.getNodeCheckboxProps({ indexPath, node })}
+					<input
+						type="checkbox"
+						{...checkboxProps}
+						checked={checkboxProps['data-state'] === 'checked'}
+						indeterminate={checkboxProps['data-state'] === 'indeterminate'}
+					/>
+				{/key}
+			{/if}
 			<span class="ml-6 truncate text-sm">
 				{node.label}
 			</span>

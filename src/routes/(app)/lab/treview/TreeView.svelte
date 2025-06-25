@@ -8,13 +8,24 @@
 		rootNode: { children: data }
 	});
 
+	let { checkedValue = $bindable<string[]>([]) }: { checkedValue?: string[] } = $props();
+
 	const service = useMachine(treeView.machine, {
 		collection: treeCollection,
 		id: '1',
-		selectionMode: 'multiple'
+		selectionMode: 'multiple',
+		defaultCheckedValue: checkedValue || [],
+		get checkedValue() {
+			// ADD: Checkbox values getter
+			return checkedValue || [];
+		},
+		onCheckedChange(details) {
+			// ADD: Checkbox change handler
+			checkedValue = details.checkedValue;
+		}
 	});
-
 	const api = $derived(treeView.connect(service, normalizeProps));
+	$inspect('checkedValue', checkedValue);
 
 	type TreeNodeProps = {
 		node: TreeNode;
@@ -32,7 +43,7 @@
 				<span {...api.getBranchIndicatorProps({ indexPath, node })}>
 					{#if nodeState.expanded}&#9660;{:else}&#9654;{/if}
 				</span>
-				<input type="checkbox" {...api.getItemCheckboxProps({ indexPath, node })} />
+				<input type="checkbox" {...api.getNodeCheckboxProps({ indexPath, node })} />
 				<span {...api.getBranchTextProps({ indexPath, node })}>{node.name}</span>
 			</div>
 			{#if nodeState.expanded}
@@ -45,7 +56,7 @@
 		</li>
 	{:else}
 		<li {...api.getItemProps({ indexPath, node })}>
-			<input type="checkbox" {...api.getItemCheckboxProps({ indexPath, node })} />
+			<input type="checkbox" {...api.getNodeCheckboxProps({ indexPath, node })} />
 			<span {...api.getItemTextProps({ indexPath, node })}>{node.name}</span>
 		</li>
 	{/if}

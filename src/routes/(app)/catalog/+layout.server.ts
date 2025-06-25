@@ -6,7 +6,6 @@ import { CategoryService } from '$lib/services/supabase/category.service';
 let warehousesCache: Warehouse[] | [] = [];
 export const load: LayoutServerLoad = async ({ url, depends, locals: { supabase } }) => {
 	depends('catalog:categories');
-	console.log('catalog:categories');
 
 	const whParam = url.searchParams.get('wh');
 	if (!whParam) {

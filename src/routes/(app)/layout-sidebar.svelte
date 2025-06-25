@@ -60,7 +60,9 @@
 				icon: PhFlask,
 				items: [
 					{ title: 'Colors', url: '/lab' },
-					{ title: 'Price Rules', url: '/lab/pricing-test' }
+					{ title: 'Price Rules', url: '/lab/pricing-test' },
+					{ title: 'tree-view-test', url: '/lab/tree-view-test' },
+					{ title: 'tree-view', url: '/lab/treview' }
 				]
 			}
 		]
