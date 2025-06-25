@@ -83,14 +83,13 @@
 		get defaultExpandedValue() {
 			return initialExpandedValue;
 		},
-		get defaultCheckedValuee() {
-			return checkedValue;
-		},
+		defaultCheckedValue: checkedValue?.map(String),
 		onSelectionChange(details) {
 			onSelectionChange?.(details);
 		},
 		onCheckedChange(details) {
 			console.log('onCheckedChange', details);
+			checkedValue = details.checkedValue?.map(Number);
 		},
 		onExpandedChange(details) {
 			onExpandedChange?.(details);

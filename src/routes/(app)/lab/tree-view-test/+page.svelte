@@ -3,7 +3,7 @@
 	import { data as items } from './data';
 
 	// For testing, let's check 'Node 1.1' which has value 11
-	let checkedValue = $state<string[]>(['11']);
+	let checkedValue = $state<number[]>([11]);
 	let selectedValue = $state<string[]>(['11']);
 </script>
 
