@@ -30,7 +30,7 @@ const columns: ColumnDef<AttributeGroupType>[] = [
 		enableColumnFilter: false,
 		enableSorting: false,
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		cell: (props) => renderComponent(DataTableActions as any, { props: props })
+		cell: ({ row }) => renderComponent(DataTableActions as any, { id: row.original.id })
 	}
 ];
 

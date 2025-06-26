@@ -3,6 +3,7 @@
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
+	import * as Form from '$lib/components/ui/form/index.js';
 
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
@@ -17,6 +18,8 @@
 	import { pricingTestSchema } from './schema';
 	import type { PageData } from './$types';
 	import type { PricingContext, PricingRuleMatch } from '$lib/types/pricing-rules.types';
+	import { NumberInputZag } from '$lib/components/zag';
+	import { Field } from 'formsnap';
 
 	let { data }: { data: PageData } = $props();
 
@@ -104,15 +107,18 @@
 
 					<div class="grid grid-cols-2 gap-4">
 						<div class="space-y-2">
-							<Label for="input_price">Input Price *</Label>
-							<Input
-								id="input_price"
-								name="input_price"
-								type="number"
-								step="0.01"
-								bind:value={$formData.input_price}
-								placeholder="0.00"
-							/>
+							<Form.Field {form} name="input_price">
+								<Form.Control>
+									{#snippet children({ props })}
+										<NumberInputZag
+											{...props}
+											bind:value={$formData.input_price}
+											label="Input Price"
+										/>
+									{/snippet}
+								</Form.Control>
+							</Form.Field>
+							{$formData.input_price}
 							{#if $errors.input_price}
 								<span class="text-sm text-red-500">{$errors.input_price}</span>
 							{/if}
@@ -157,15 +163,15 @@
 					<Separator />
 
 					<div class="space-y-4">
-						<div class="flex items-center justify-between">
-							<Label for="apply_vat" class="flex flex-col gap-1">
-								<span>Apply VAT</span>
-								<span class="text-xs font-normal text-muted-foreground">
-									Adds VAT to the final calculated price.
-								</span>
-							</Label>
-							<Switch id="apply_vat" name="apply_vat" bind:checked={$formData.apply_vat} />
-						</div>
+						<Form.Field {form} name="apply_vat">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Label for="apply_vat" class="flex items-center gap-2">Apply VAT</Label>
+									<Switch {...props} bind:checked={$formData.apply_vat} />
+								{/snippet}
+							</Form.Control>
+							<Form.Description>Adds VAT to the final calculated price.</Form.Description>
+						</Form.Field>
 
 						{#if $formData.apply_vat}
 							<div class="space-y-2">

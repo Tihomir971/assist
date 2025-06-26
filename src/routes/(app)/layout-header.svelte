@@ -50,14 +50,18 @@
 	const sidebar = Sidebar.useSidebar();
 </script>
 
-<header class="sticky top-0 z-50 flex w-full items-center border-b bg-background">
-	<div class="flex h-(--header-height) w-full items-center gap-2 pr-4 pl-2">
+<header
+	class="sticky top-0 z-50 grid h-(--header-height) w-full grid-cols-[auto_auto_1fr_auto] items-center gap-2 border-b bg-background"
+>
+	<div class="flex w-(--sidebar-width-icon) items-center justify-center border-r">
 		<Button class="size-8" variant="ghost" size="icon" onclick={sidebar.toggle}>
 			<SidebarIcon />
 		</Button>
-		<Separator orientation="vertical" class="mr-2 h-4" />
-		<div class="flex items-center gap-x-1.5 font-mono text-2xl font-bold">KALISI</div>
-
+	</div>
+	<p class="flex items-center gap-x-1.5 font-mono text-2xl font-bold">KALISI</p>
+	<!-- <Separator orientation="vertical" class="mr-2 h-4" /> -->
+	<div></div>
+	<div class="flex w-full items-center gap-2 pr-4 pl-2">
 		<HeaderSearch class="w-full sm:ml-auto sm:w-auto" />
 		<HeaderShoppingCart {supabase} />
 	</div>

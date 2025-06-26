@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { CellContext } from '@tanstack/svelte-table';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { Button } from '$lib/components/ui/button';
@@ -7,11 +6,10 @@
 	import PhDotsThree from '~icons/ph/dots-three';
 
 	interface Props {
-		props: CellContext<any, unknown>;
+		id: number | string;
 	}
 
-	let { props: prop }: Props = $props();
-	const id = prop.row.original.id;
+	let { id }: Props = $props();
 
 	function handleEdit() {
 		// All table-based routes now use the /edit/{id} pattern

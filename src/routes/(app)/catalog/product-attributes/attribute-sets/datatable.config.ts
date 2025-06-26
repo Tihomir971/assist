@@ -29,7 +29,7 @@ const columns: ColumnDef<AttributeSet>[] = [
 		id: 'actions',
 		enableColumnFilter: false,
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		cell: (props) => new RenderComponentConfig(DataTableActions as any, { props: props })
+		cell: ({ row }) => new RenderComponentConfig(DataTableActions as any, { id: row.original.id })
 	}
 ];
 

@@ -5,15 +5,12 @@
 		getFilteredRowModel,
 		getSortedRowModel,
 		getPaginationRowModel,
-		type Table as TanstackTable,
-		type ColumnDef,
 		type SortingState,
 		type VisibilityState,
 		type Updater,
 		type ColumnFiltersState,
 		type PaginationState
 	} from '$lib/components/walker-tx';
-	import * as Table from '$lib/components/ui/table';
 	import PhArrowUp from '~icons/ph/arrow-up';
 	import PhArrowDown from '~icons/ph/arrow-down';
 	import PhArrowsDownUp from '~icons/ph/arrows-down-up';
@@ -23,7 +20,6 @@
 	import type { DataTableConfig, SelectFilterOption } from '$lib/utils/data-table-config.builder';
 	import { page as pageStore } from '$app/state'; // Renamed to avoid conflict with prop
 	import { superForm } from 'sveltekit-superforms/client';
-	import { deleteByIdSchema } from '$lib/types/zod-delete-by-id';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card/index.js';
