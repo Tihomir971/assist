@@ -2260,8 +2260,8 @@ export type Database = {
       }
       check_attributes_match: {
         Args: {
-          rule_attributes: Json
-          product_attributes: Json
+          p_rule_attributes: Json
+          p_product_attributes: Json
         }
         Returns: boolean
       }

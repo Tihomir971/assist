@@ -1,17 +1,9 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database, Json } from '$lib/types/supabase.types';
+import type { Database } from '$lib/types/supabase.types';
 import type { ExportData, SalesActionData } from './types';
 import { utils, writeFile } from 'xlsx';
-// import FormulaJSWrapper from '$lib/scripts/excel_formula_evaluator';
-import { PriceCalculator } from '$lib/price-calculator';
-// const evaluator = new FormulaJSWrapper();
-
-interface PriceCalculationParams {
-	lowerBound: number;
-	upperBound: number;
-	lowerPercent: number;
-	upperPercent: number;
-}
+import { PricingRulesService } from '$lib/services/supabase/pricing-rules.service';
+import type { PricingContext } from '$lib/types/pricing-rules.types';
 
 type FetchedProduct = Awaited<ReturnType<typeof fetchProducts>>[number];
 
@@ -131,236 +123,145 @@ export async function processExport(
 	try {
 		const selectedVendorIds = vendors.filter((v) => v.selected).map((v) => v.id);
 		const productIds = cartItems.map((item) => item.id);
+		const pricingRulesService = new PricingRulesService(supabase);
 
 		const products = await fetchProducts(supabase, productIds);
-
-		// Fetch price formula variables for all products
-		const productVariablesMap = new Map<number, PriceCalculationParams | null>();
-		if (products.length > 0) {
-			const rpcCalls = products.map(async (p) => {
-				const { data, error } = await supabase.rpc('get_price_formula_variables', {
-					p_m_product_id: p.id
-				});
-				return { productId: p.id, variables: data as Json | null, error };
-			});
-			const resolvedVariablesResults = await Promise.all(rpcCalls);
-			console.log('resolvedVariablesResults', resolvedVariablesResults);
-
-			resolvedVariablesResults.forEach((res) => {
-				if (res.error) {
-					console.error(
-						`Error fetching price formula variables for product ${res.productId}:`,
-						res.error
-					);
-					productVariablesMap.set(res.productId, null);
-				} else {
-					const vars = res.variables;
-					// Basic validation for the structure of variables
-					if (vars && typeof vars === 'object' && vars !== null && !Array.isArray(vars)) {
-						// At this point, vars is a non-null, non-array object.
-						// We can cast to Record<string, unknown> to safely access potential properties.
-						const potentialParams = vars as Record<string, unknown>;
-						if (
-							typeof potentialParams.lowerBound === 'number' &&
-							typeof potentialParams.upperBound === 'number' &&
-							typeof potentialParams.lowerPercent === 'number' &&
-							typeof potentialParams.upperPercent === 'number'
-						) {
-							productVariablesMap.set(res.productId, {
-								lowerBound: potentialParams.lowerBound,
-								upperBound: potentialParams.upperBound,
-								lowerPercent: potentialParams.lowerPercent,
-								upperPercent: potentialParams.upperPercent
-							} as PriceCalculationParams);
-						} else {
-							// Object structure doesn't match PriceCalculationParams
-							console.warn(
-								`Price formula variables for product ${res.productId} have missing or mistyped properties:`,
-								vars
-							);
-							productVariablesMap.set(res.productId, null);
-						}
-					} else {
-						// vars is null, not an object, or is an array
-						if (vars !== null) {
-							// Log if data is present but not a suitable object structure
-							console.warn(
-								`Price formula variables for product ${res.productId} have unexpected type (expected object, got ${typeof vars}):`,
-								vars
-							);
-						}
-						productVariablesMap.set(res.productId, null);
-					}
-				}
-			});
-		}
-
-		const flattenedProducts = products.map((product) => {
-			const flatProduct = flattenProduct(product, selectedVendorIds);
-			return {
-				...flatProduct,
-				priceFormulaVariables: productVariablesMap.get(product.id) || null
-			};
-		});
+		const flattenedProducts = products.map((product) => flattenProduct(product, selectedVendorIds));
 
 		// Create data structure based on report type
-		const cartData = cartItems
-			.map((item) => {
-				const product = flattenedProducts.find((p) => p.id === item.id) as
-					| (ReturnType<typeof flattenProduct> & {
-							priceFormulaVariables: PriceCalculationParams | null;
-					  })
-					| undefined;
-				if (!product) return null;
+		const cartDataPromises = cartItems.map(async (item) => {
+			const product = flattenedProducts.find((p) => p.id === item.id);
+			if (!product) return null;
 
-				if (selectReportValue === 'sales_action') {
-					// Collect vendor prices first
-					const vendorPrices: number[] = [];
-					selectedVendorIds.forEach((vendorId) => {
-						const vendorPrice = product.vendorPrices[vendorId] || null;
-						if (vendorPrice !== null) {
-							vendorPrices.push(vendorPrice);
-						}
-					});
-
-					// Calculate max price and final prices
-					const maxPrice = Math.max(product.pricePurchase || 0, ...vendorPrices);
-					const cenaSaPdv = Math.ceil(maxPrice * (1 + (product.taxPercent || 0))) - 0.01;
-
-					// Create base data without final prices
-					const salesActionData: SalesActionData = {
-						Artikal: product.sku || '',
-						name: item.name,
-						pricePurchase: product.pricePurchase || 0,
-						priceRetail: product.priceRetail || 0
-					};
-
-					// Add vendor columns
-					selectedVendorIds.forEach((vendorId) => {
-						const vendorName = vendors.find((v) => v.id === vendorId)?.name || 'Unknown';
-						salesActionData[`${vendorName}Price`] = product.vendorPrices[vendorId] || null;
-						salesActionData[`${vendorName}PN`] = product.vendorProductNos[vendorId] || '';
-					});
-
-					// Add final prices as last columns
-					salesActionData['Cena bez PDV'] = maxPrice;
-					salesActionData['Cena sa PDV'] = cenaSaPdv;
-
-					return salesActionData;
-				} else if (selectReportValue === 'internal_transfer') {
-					const levelMax = product.levelMax || 0;
-					const qtyRetail = product.qtyRetail || 0;
-					const qtyBatchSize = product.qtyBatchSize || 0;
-					const qtyWholesale = product.qtyWholesale || 0;
-
-					let kolicina = 0;
-					if (qtyBatchSize > 0 && levelMax - qtyRetail >= qtyBatchSize) {
-						const numberOfBatches = Math.floor((levelMax - qtyRetail) / qtyBatchSize);
-						kolicina = Math.min(numberOfBatches * qtyBatchSize, qtyWholesale);
+			if (selectReportValue === 'sales_action') {
+				// Collect vendor prices first
+				const vendorPrices: number[] = [];
+				selectedVendorIds.forEach((vendorId) => {
+					const vendorPrice = product.vendorPrices[vendorId] || null;
+					if (vendorPrice !== null) {
+						vendorPrices.push(vendorPrice);
 					}
-					const calculator = new PriceCalculator();
+				});
 
-					const defaultCalcParams: PriceCalculationParams = {
-						lowerBound: 0,
-						upperBound: 100,
-						lowerPercent: 0.2,
-						upperPercent: 0.3
-					};
+				// Calculate max price and final prices
+				const maxPrice = Math.max(product.pricePurchase || 0, ...vendorPrices);
+				const cenaSaPdv = Math.ceil(maxPrice * (1 + (product.taxPercent || 0))) - 0.01;
 
-					const formulaVars = product.priceFormulaVariables;
-					// More robust check for a valid parameters object
-					const calcParams =
-						formulaVars &&
-						typeof formulaVars === 'object' &&
-						Object.keys(formulaVars).length > 0 && // Ensure it's not an empty object
-						typeof formulaVars.lowerBound === 'number' &&
-						typeof formulaVars.upperBound === 'number' &&
-						typeof formulaVars.lowerPercent === 'number' &&
-						typeof formulaVars.upperPercent === 'number'
-							? formulaVars
-							: defaultCalcParams;
+				// Create base data without final prices
+				const salesActionData: SalesActionData = {
+					Artikal: product.sku || '',
+					name: item.name,
+					pricePurchase: product.pricePurchase || 0,
+					priceRetail: product.priceRetail || 0
+				};
 
-					const cenaUobjektu2 = calculator.customCalculate(
-						product.pricePurchase,
-						product.taxPercent,
-						calcParams
-					);
-					// Debug log for calculation inputs
-					console.log('Debug Cena u obj.2', {
-						productId: product.id,
-						pricePurchase: product.pricePurchase,
-						taxPercent: product.taxPercent,
-						calcParams,
-						cenaUobjektu2
-					});
+				// Add vendor columns
+				selectedVendorIds.forEach((vendorId) => {
+					const vendorName = vendors.find((v) => v.id === vendorId)?.name || 'Unknown';
+					salesActionData[`${vendorName}Price`] = product.vendorPrices[vendorId] || null;
+					salesActionData[`${vendorName}PN`] = product.vendorProductNos[vendorId] || '';
+				});
 
-					return {
-						Šifra: product.sku || '',
-						name: item.name,
-						unitsperpack: product.unitsperpack || 0,
-						qtyWholesale: product.qtyWholesale || 0,
-						qtyRetail: product.qtyRetail || 0,
-						levelMin: product.levelMin || 0,
-						levelMax: product.levelMax || 0,
-						qtyBatchSize: product.qtyBatchSize || 0,
-						'Pack Qty.': Number((kolicina / product.unitsperpack || 0).toFixed(2)),
-						Količina: kolicina,
-						'Cena u obj.2': cenaUobjektu2
-					};
-				} else if (selectReportValue === 'vendor_orders') {
-					// Default export
-					const vpMaxVal = product.levelMaxWarehouse2 || 0;
-					const mpMaxVal = product.levelMax || 0;
-					const mpQtyVal = product.qtyRetail || 0;
-					const mpBatchVal = product.qtyBatchSize || 0;
-					const vpQtyVal = product.qtyWholesale || 0;
-					const vpBatchVal = product.qtyBatchSizeWarehouse2 || 0;
+				// Add final prices as last columns
+				salesActionData['Cena bez PDV'] = maxPrice;
+				salesActionData['Cena sa PDV'] = cenaSaPdv;
 
-					let orderQty: number;
+				return salesActionData;
+			} else if (selectReportValue === 'internal_transfer') {
+				const levelMax = product.levelMax || 0;
+				const qtyRetail = product.qtyRetail || 0;
+				const qtyBatchSize = product.qtyBatchSize || 0;
+				const qtyWholesale = product.qtyWholesale || 0;
 
-					if (vpMaxVal === 0) {
-						if (mpBatchVal > 0 && mpMaxVal > mpQtyVal) {
-							orderQty = Math.floor((mpMaxVal - mpQtyVal) / mpBatchVal) * mpBatchVal;
-						} else {
-							orderQty = 0;
-						}
-					} else {
-						if (vpBatchVal > 0 && vpMaxVal > vpQtyVal) {
-							orderQty = Math.floor((vpMaxVal - vpQtyVal) / vpBatchVal) * vpBatchVal;
-						} else {
-							orderQty = 0;
-						}
-					}
-
-					const data: ExportData = {
-						SKU: product.sku || '',
-						MPN: product.mpn || '',
-						Name: item.name,
-						'Order Qty.': orderQty, // Use the calculated value
-						'Pack Qty.': product.unitsperpack || 0,
-						Tax: product.taxPercent || 0,
-						'VP Qty.': vpQtyVal,
-						'MP Qty.': mpQtyVal,
-						'VP Max': vpMaxVal,
-						'VP Batch': vpBatchVal,
-						'MP Max': mpMaxVal,
-						'MP Batch': mpBatchVal,
-						pricePurchase: product.pricePurchase || 0,
-						priceRetail: product.priceRetail || 0
-					};
-
-					selectedVendorIds.forEach((vendorId) => {
-						const vendorName = vendors.find((v) => v.id === vendorId)?.name || 'Unknown';
-						data[`${vendorName}Price`] = product.vendorPrices[vendorId] || null;
-						data[`${vendorName}PN`] = product.vendorProductNos[vendorId] || '';
-					});
-
-					return data;
+				let kolicina = 0;
+				if (qtyBatchSize > 0 && levelMax - qtyRetail >= qtyBatchSize) {
+					const numberOfBatches = Math.floor((levelMax - qtyRetail) / qtyBatchSize);
+					kolicina = Math.min(numberOfBatches * qtyBatchSize, qtyWholesale);
 				}
-			})
-			.filter((item) => item !== null);
 
-		const worksheet = utils.json_to_sheet(cartData);
+				const pricingContext: PricingContext = {
+					product_id: product.id,
+					quantity: 1,
+					input_price: product.pricePurchase,
+					vat_rate: product.taxPercent
+				};
+
+				const cenaUobjektu2 = await pricingRulesService.calculatePrice(pricingContext, {
+					apply_vat: true,
+					rounding_strategy: 'charming'
+				});
+
+				return {
+					Šifra: product.sku || '',
+					name: item.name,
+					unitsperpack: product.unitsperpack || 0,
+					qtyWholesale: product.qtyWholesale || 0,
+					qtyRetail: product.qtyRetail || 0,
+					levelMin: product.levelMin || 0,
+					levelMax: product.levelMax || 0,
+					qtyBatchSize: product.qtyBatchSize || 0,
+					'Pack Qty.': Number((kolicina / product.unitsperpack || 0).toFixed(2)),
+					Količina: kolicina,
+					'Cena u obj.2': cenaUobjektu2
+				};
+			} else if (selectReportValue === 'vendor_orders') {
+				// Default export
+				const vpMaxVal = product.levelMaxWarehouse2 || 0;
+				const mpMaxVal = product.levelMax || 0;
+				const mpQtyVal = product.qtyRetail || 0;
+				const mpBatchVal = product.qtyBatchSize || 0;
+				const vpQtyVal = product.qtyWholesale || 0;
+				const vpBatchVal = product.qtyBatchSizeWarehouse2 || 0;
+
+				let orderQty: number;
+
+				if (vpMaxVal === 0) {
+					if (mpBatchVal > 0 && mpMaxVal > mpQtyVal) {
+						orderQty = Math.floor((mpMaxVal - mpQtyVal) / mpBatchVal) * mpBatchVal;
+					} else {
+						orderQty = 0;
+					}
+				} else {
+					if (vpBatchVal > 0 && vpMaxVal > vpQtyVal) {
+						orderQty = Math.floor((vpMaxVal - vpQtyVal) / vpBatchVal) * vpBatchVal;
+					} else {
+						orderQty = 0;
+					}
+				}
+
+				const data: ExportData = {
+					SKU: product.sku || '',
+					MPN: product.mpn || '',
+					Name: item.name,
+					'Order Qty.': orderQty, // Use the calculated value
+					'Pack Qty.': product.unitsperpack || 0,
+					Tax: product.taxPercent || 0,
+					'VP Qty.': vpQtyVal,
+					'MP Qty.': mpQtyVal,
+					'VP Max': vpMaxVal,
+					'VP Batch': vpBatchVal,
+					'MP Max': mpMaxVal,
+					'MP Batch': mpBatchVal,
+					pricePurchase: product.pricePurchase || 0,
+					priceRetail: product.priceRetail || 0
+				};
+
+				selectedVendorIds.forEach((vendorId) => {
+					const vendorName = vendors.find((v) => v.id === vendorId)?.name || 'Unknown';
+					data[`${vendorName}Price`] = product.vendorPrices[vendorId] || null;
+					data[`${vendorName}PN`] = product.vendorProductNos[vendorId] || '';
+				});
+
+				return data;
+			}
+		});
+
+		const cartData = (await Promise.all(cartDataPromises)).filter(
+			(item): item is ExportData | SalesActionData => item !== null
+		);
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const worksheet = utils.json_to_sheet(cartData as any[]);
 
 		// Get the range of the worksheet for further processing
 		const range = utils.decode_range(worksheet['!ref'] || 'A1');

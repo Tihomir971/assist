@@ -2322,8 +2322,8 @@ export const bulkUpdateStorageonhandArgsSchema = z.object({
 export const bulkUpdateStorageonhandReturnsSchema = z.undefined();
 
 export const checkAttributesMatchArgsSchema = z.object({
-  rule_attributes: jsonSchema,
-  product_attributes: jsonSchema,
+  p_rule_attributes: jsonSchema,
+  p_product_attributes: jsonSchema,
 });
 
 export const checkAttributesMatchReturnsSchema = z.boolean();
