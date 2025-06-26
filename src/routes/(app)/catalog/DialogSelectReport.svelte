@@ -70,7 +70,7 @@
 				onclick={() => {
 					showReportDialog = false;
 					window.open(
-						`${page.url.origin}/catalog/report/${report}?warehouse=${value}&treeCategory=${activeCategory}&includeOutOfStock=${includeOutOfStock}`,
+						`${page.url.origin}/report/${report}?warehouse=${value}&treeCategory=${activeCategory}&includeOutOfStock=${includeOutOfStock}`,
 						'_blank'
 					);
 				}}

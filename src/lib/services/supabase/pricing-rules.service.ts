@@ -377,8 +377,8 @@ export class PricingRulesService
 			// { max: 100, step: 5, offset: -0.1 },
 			{ max: 100, step: 1, offset: -0.01 },
 			{ max: 1000, step: 10, offset: -0.1 },
-			{ max: 10000, step: 100, offset: -10 },
-			{ max: Infinity, step: 1000, offset: -1 }
+			{ max: 10000, step: 100, offset: -1 },
+			{ max: Infinity, step: 1000, offset: -10 }
 		];
 
 		const rule = roundingRules.find((r) => price < r.max);

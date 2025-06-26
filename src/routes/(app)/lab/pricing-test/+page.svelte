@@ -114,6 +114,7 @@
 											{...props}
 											bind:value={$formData.input_price}
 											label="Input Price"
+											fraction={2}
 										/>
 									{/snippet}
 								</Form.Control>
