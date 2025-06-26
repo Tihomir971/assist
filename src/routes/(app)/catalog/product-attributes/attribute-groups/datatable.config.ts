@@ -8,6 +8,7 @@ import Checkbox from '$lib/components/zag/checkbox/checkbox.svelte';
 export type AttributeGroupType = Tables<'m_attribute_group'>;
 
 const columns: ColumnDef<AttributeGroupType>[] = [
+	columnTypes.hiddenId('id'),
 	columnTypes.text('name', 'Name'),
 	columnTypes.text('code', 'Code'),
 	{

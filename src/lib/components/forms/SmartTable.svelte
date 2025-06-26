@@ -42,7 +42,10 @@
 
 	// TanStack Table State
 	let sorting = $state<SortingState>([]);
-	let pagination = $state<PaginationState>({ pageIndex: page - 1, pageSize: perPage });
+	let pagination = $state<PaginationState>({
+		pageIndex: config.mode === 'client' ? 0 : page - 1,
+		pageSize: config.mode === 'client' ? data.length : perPage
+	});
 	let columnVisibility = $state<VisibilityState>({});
 	let globalFilter = $state<string>('');
 	let columnFilters = $state<ColumnFiltersState>([]);
@@ -70,7 +73,7 @@
 		getCoreRowModel: getCoreRowModel(),
 		getFilteredRowModel: config.mode === 'client' ? getFilteredRowModel() : undefined,
 		getSortedRowModel: config.mode === 'client' ? getSortedRowModel() : undefined,
-		getPaginationRowModel: config.mode === 'client' ? getPaginationRowModel() : undefined,
+		getPaginationRowModel: config.mode === 'client' ? undefined : getPaginationRowModel(),
 		globalFilterFn: 'includesString',
 		onSortingChange: (updater: Updater<SortingState>) => {
 			sorting = typeof updater === 'function' ? updater(sorting) : updater;
@@ -222,91 +225,98 @@
 		</Card.Header>
 		<Card.Content>
 			<div class="rounded-md border">
-				<Table.Root>
-					<Table.Header>
-						{#each table.getHeaderGroups() as headerGroup}
-							<Table.Row>
-								{#each headerGroup.headers as header}
-									<Table.Head
-										colspan={header.colSpan}
-										class={header.column.columnDef.meta?.className}
+				<div class="max-h-[750px] overflow-y-auto">
+					<table class="w-full caption-bottom text-sm">
+						<thead class="[&_tr]:border-b">
+							{#each table.getHeaderGroups() as headerGroup}
+								<tr>
+									{#each headerGroup.headers as header}
+										<th
+											colspan={header.colSpan}
+											class={`sticky top-0 z-30 border-b bg-background px-4 py-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 ${header.column.columnDef.meta?.className || ''}`}
+										>
+											{#if !header.isPlaceholder}
+												<button
+													type="button"
+													class="flex w-full items-center gap-2"
+													class:cursor-pointer={header.column.getCanSort()}
+													class:justify-center={header.column.columnDef.meta?.className?.includes(
+														'text-center'
+													)}
+													onclick={header.column.getToggleSortingHandler()}
+												>
+													<FlexRender
+														content={header.column.columnDef.header}
+														context={header.getContext()}
+													/>
+													{#if header.column.getCanSort()}
+														<span class="ml-1">
+															{#if header.column.getIsSorted() === 'asc'}
+																<PhArrowUp class="h-4 w-4" />
+															{:else if header.column.getIsSorted() === 'desc'}
+																<PhArrowDown class="h-4 w-4" />
+															{:else}
+																<PhArrowsDownUp class="h-4 w-4 text-muted-foreground/50" />
+															{/if}
+														</span>
+													{/if}
+												</button>
+											{/if}
+										</th>
+									{/each}
+								</tr>
+							{/each}
+						</thead>
+						<tbody class="[&_tr:last-child]:border-0">
+							{#if table.getRowModel().rows?.length}
+								{#each table.getRowModel().rows as row}
+									<tr
+										data-state={row.getIsSelected() && 'selected'}
+										class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
 									>
-										{#if !header.isPlaceholder}
-											<button
-												type="button"
-												class="flex w-full items-center gap-2"
-												class:cursor-pointer={header.column.getCanSort()}
-												class:justify-center={header.column.columnDef.meta?.className?.includes(
-													'text-center'
-												)}
-												onclick={header.column.getToggleSortingHandler()}
+										{#each row.getVisibleCells() as cell}
+											<td
+												class={`p-2 align-middle [&:has([role=checkbox])]:pr-0 ${cell.column.columnDef.meta?.className || ''}`}
 											>
-												<FlexRender
-													content={header.column.columnDef.header}
-													context={header.getContext()}
-												/>
-												{#if header.column.getCanSort()}
-													<span class="ml-1">
-														{#if header.column.getIsSorted() === 'asc'}
-															<PhArrowUp class="h-4 w-4" />
-														{:else if header.column.getIsSorted() === 'desc'}
-															<PhArrowDown class="h-4 w-4" />
-														{:else}
-															<PhArrowsDownUp class="h-4 w-4 text-muted-foreground/50" />
-														{/if}
-													</span>
-												{/if}
-											</button>
-										{/if}
-									</Table.Head>
-								{/each}
-							</Table.Row>
-						{/each}
-					</Table.Header>
-					<Table.Body>
-						{#if table.getRowModel().rows?.length}
-							{#each table.getRowModel().rows as row}
-								<Table.Row data-state={row.getIsSelected() && 'selected'}>
-									{#each row.getVisibleCells() as cell}
-										<Table.Cell class={cell.column.columnDef.meta?.className}>
-											{#if cell.column.columnDef.meta?.cellWrapperClass}
-												<div class={cell.column.columnDef.meta.cellWrapperClass}>
+												{#if cell.column.columnDef.meta?.cellWrapperClass}
+													<div class={cell.column.columnDef.meta.cellWrapperClass}>
+														<FlexRender
+															content={cell.column.columnDef.cell}
+															context={cell.getContext()}
+														/>
+													</div>
+												{:else}
 													<FlexRender
 														content={cell.column.columnDef.cell}
 														context={cell.getContext()}
 													/>
-												</div>
-											{:else}
-												<FlexRender
-													content={cell.column.columnDef.cell}
-													context={cell.getContext()}
-												/>
-											{/if}
-										</Table.Cell>
-									{/each}
-								</Table.Row>
-							{/each}
-						{:else}
-							<Table.Row>
-								<Table.Cell colspan={config.columns.length} class="h-24 text-center">
-									No results.
-								</Table.Cell>
-							</Table.Row>
-						{/if}
-					</Table.Body>
-				</Table.Root>
+												{/if}
+											</td>
+										{/each}
+									</tr>
+								{/each}
+							{:else}
+								<tr>
+									<td colspan={config.columns.length} class="h-24 text-center"> No results. </td>
+								</tr>
+							{/if}
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</Card.Content>
 	</Card.Root>
 
-	<SmartTablePagination
-		{table}
-		{count}
-		page={config.mode === 'client' ? table.getState().pagination.pageIndex + 1 : page}
-		perPage={config.mode === 'client' ? table.getState().pagination.pageSize : perPage}
-		onPageChange={handlePageChange}
-		onPerPageChange={handlePerPageChange}
-	/>
+	{#if config.mode === 'server'}
+		<SmartTablePagination
+			{table}
+			{count}
+			{page}
+			{perPage}
+			onPageChange={handlePageChange}
+			onPerPageChange={handlePerPageChange}
+		/>
+	{/if}
 </div>
 
 <!-- Delete Confirmation Dialog -->

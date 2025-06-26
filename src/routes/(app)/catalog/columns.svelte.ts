@@ -30,6 +30,7 @@ export interface ProductWithDetails {
 		pricelist: number | null;
 		c_bpartner: TablesUpdate<'c_bpartner'>;
 	}[];
+	m_product_brands?: { name: string } | null;
 }
 export interface FlattenedProduct {
 	id: number;
@@ -63,6 +64,7 @@ export interface FlattenedProduct {
 		tax: number | null;
 		iscustomer: boolean;
 	}[];
+	brand: string | null;
 }
 
 type RawSnippetParams = {
@@ -124,6 +126,7 @@ export const columnDefs = [
 		header: 'SKU',
 		enableHiding: false
 	}),
+	colHelp.accessor('brand', { header: 'Brand' }),
 	colHelp.accessor('mpn', { header: 'MPN' }),
 	colHelp.accessor('name', {
 		header: 'Name',

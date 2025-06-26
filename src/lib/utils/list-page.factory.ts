@@ -33,6 +33,7 @@ export function createListPageLoader<TData, TService extends ServiceWithDelete>(
 	}) => {
 		const queryBuilder = new QueryBuilder(supabase);
 		const deleteForm = await superValidate(zod4(deleteByIdSchema));
+		const searchParams = url.searchParams;
 
 		let items: TData[] = [];
 		let count = 0;
@@ -53,7 +54,6 @@ export function createListPageLoader<TData, TService extends ServiceWithDelete>(
 			count = items.length;
 		} else {
 			// Server-side processing
-			const searchParams = url.searchParams;
 
 			// Prepare filter map for QueryBuilder
 			const filterMap: Record<

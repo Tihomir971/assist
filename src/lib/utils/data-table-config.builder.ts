@@ -88,6 +88,17 @@ export class DataTableConfigBuilder<TData> {
 }
 
 export const columnTypes = {
+	hiddenId: <TData>(
+		accessorKey: keyof TData & string = 'id' as keyof TData & string
+	): ColumnDef<TData> => ({
+		accessorKey,
+		header: 'ID',
+		enableColumnFilter: false,
+		enableSorting: false,
+		meta: {
+			className: 'hidden'
+		}
+	}),
 	text: <TData>(
 		accessorKey: keyof TData & string,
 		header: string,

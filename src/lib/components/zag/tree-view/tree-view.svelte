@@ -30,7 +30,7 @@
 		contextNode = $bindable(),
 		selectedValue = $bindable(),
 		checkedValue = $bindable(),
-		selectionMode = 'multiple',
+		selectionMode = 'single',
 		onExpandedChange,
 		onCheckedChange,
 		...restProps

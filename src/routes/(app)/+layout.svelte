@@ -15,7 +15,7 @@
 	<meta name="description" content="This is where the description goes for SEO" />
 </svelte:head>
 
-<div class="[--header-height:calc(--spacing(14))]">
+<div class="flex min-h-screen flex-col [--header-height:calc(--spacing(14))]">
 	<Sidebar.Provider open={true} class="flex h-screen  flex-col">
 		<!-- <div class="flex h-screen flex-col"> -->
 		<LayoutHeader supabase={data.supabase} />

@@ -116,6 +116,9 @@ async function fetchProducts(
 					display_name,
 					iscustomer
 				)
+			),
+			m_product_brands(
+				name
 			)
 			`
 		)
@@ -321,6 +324,7 @@ function flattenProduct(
 		// priceGros: checkedVat ? gros * (1 + tax / 100) : gros,
 		priceMarketBest: checkedVat ? minMarketPrice * (1 + tax / 100) : minMarketPrice,
 		priceVendorBest: checkedVat ? minVendorPrice * (1 + tax / 100) : minVendorPrice,
+		brand: product.m_product_brands?.name || null,
 		action,
 		priceMarket: priceMarket.map((pm) => ({
 			...pm,

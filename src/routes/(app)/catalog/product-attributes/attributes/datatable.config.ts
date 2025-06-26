@@ -1,4 +1,4 @@
-import { DataTableConfigBuilder } from '$lib/utils/data-table-config.builder';
+import { DataTableConfigBuilder, columnTypes } from '$lib/utils/data-table-config.builder';
 import DataTableActions from '$lib/components/ui/data-table-actions.svelte';
 import { renderComponent, RenderComponentConfig } from '$lib/components/walker-tx/render-component';
 import type { Tables } from '$lib/types/supabase.types';
@@ -27,6 +27,7 @@ function getAttributeTypeDisplay(type: string) {
 }
 
 const columns: ColumnDef<AttributeWithGroup>[] = [
+	columnTypes.hiddenId('id'),
 	{
 		accessorKey: 'code',
 		header: 'Code',

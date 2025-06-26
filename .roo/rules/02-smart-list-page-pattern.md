@@ -62,6 +62,9 @@ export type YourDataType = Tables<'your_table'> & {
 
 // Define columns using TanStack Table ColumnDef
 const columns: ColumnDef<YourDataType>[] = [
+  // IMPORTANT: Always include a column for the 'id' field.
+  // It can be hidden, but it's required for row actions to work correctly.
+  columnTypes.hiddenId('id'),
   columnTypes.text('name', 'Name'),
   columnTypes.boolean('is_active', 'Active'),
   columnTypes.link('code', 'Code', (row) => `/your-route/${row.id}`),
@@ -264,11 +267,20 @@ type FilterDefinition = {
 
 ```typescript
 const columnTypes = {
+  hiddenId: (accessorKey = 'id') => ({
+    accessorKey,
+    header: 'ID',
+    enableColumnFilter: false,
+    enableSorting: false,
+    meta: {
+      className: 'hidden'
+    }
+  }),
   text: (accessorKey, header) => ({ accessorKey, header }),
-  boolean: (accessorKey, header) => ({ 
-    accessorKey, 
-    header, 
-    cell: ({ cell }) => cell.getValue() ? 'Yes' : 'No' 
+  boolean: (accessorKey, header) => ({
+    accessorKey,
+    header,
+    cell: ({ cell }) => (cell.getValue() ? 'Yes' : 'No')
   }),
   link: (accessorKey, header, hrefBuilder) => ({
     accessorKey,
@@ -456,6 +468,9 @@ const columns: ColumnDef<YourDataType>[] = [
 **Pagination showing wrong counts:**
 - Verify your base query includes `.count()` for server mode
 - Check that the service delete method properly removes records
+
+**Row actions (edit/delete) not working on paginated pages:**
+- Ensure you have included a column for the `id` field in your `columns` definition. It can be hidden using `columnTypes.hiddenId('id')`. This is required for TanStack Table to correctly identify rows.
 
 **TypeScript errors:**
 - Ensure your data type includes all joined table fields

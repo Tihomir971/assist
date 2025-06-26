@@ -7,6 +7,7 @@ import { RenderComponentConfig } from '$lib/components/walker-tx/render-componen
 export type ContactDataType = Tables<'c_bpartner'>;
 
 const columns: ColumnDef<ContactDataType>[] = [
+	columnTypes.hiddenId('id'),
 	columnTypes.text('display_name', 'Name'),
 	columnTypes.text('value', 'Value'),
 	columnTypes.text('taxid', 'PIB/MB'),

@@ -8,6 +8,7 @@ import type { ColumnDef } from '$lib/components/walker-tx';
 export type AttributeSet = Tables<'m_attributeset'>;
 
 const columns: ColumnDef<AttributeSet>[] = [
+	columnTypes.hiddenId('id'),
 	columnTypes.text('name', 'Name'),
 	columnTypes.text('code', 'Code'),
 	{
