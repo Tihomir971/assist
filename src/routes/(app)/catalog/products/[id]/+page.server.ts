@@ -25,7 +25,7 @@ import { productPackingPayloadBuilder } from './product-packing.payload';
 import { productPoPayloadBuilder } from './product-po.payload';
 import { replenishPayloadBuilder } from './replenish.payload';
 import { connector } from '$lib/ky';
-import type { ChartData } from '../../../../../lib/components/charts/chart-types';
+import type { ChartData } from '$lib/components/charts/chart-types';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ depends, params, locals: { supabase } }) => {

@@ -14,6 +14,7 @@ import { createSplitLayoutConfig, createTabConfig } from '$lib/utils/split-layou
 import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable.svelte';
 import type { Component } from 'svelte';
 import type { SuperValidated } from 'sveltekit-superforms';
+import { invalidate } from '$app/navigation';
 
 // Channel Mapping Configuration
 export const channelMappingConfig = createRelatedTableConfig<
@@ -151,6 +152,11 @@ export function createTabConfigs(data: {
 	price_formulas: Array<{ value: number; label: string }>;
 	c_channels: Array<{ value: number; label: string }>;
 }) {
+	// Refresh handler to reload data after operations
+	const handleRefresh = () => {
+		invalidate('app:category-page');
+	};
+
 	return [
 		createTabConfig(
 			'channel-mappings',
@@ -161,7 +167,8 @@ export function createTabConfigs(data: {
 				items: data.channelMapCategory,
 				validatedForm: data.formChannel,
 				parentId: data.category?.id,
-				lookupData: { c_channels: data.c_channels }
+				lookupData: { c_channels: data.c_channels },
+				onRefresh: handleRefresh
 			},
 			{
 				badge: data.channelMapCategory?.length || 0,
@@ -177,7 +184,8 @@ export function createTabConfigs(data: {
 				items: data.priceRules,
 				validatedForm: data.formPriceRules,
 				parentId: data.category?.id,
-				lookupData: { price_formulas: data.price_formulas }
+				lookupData: { price_formulas: data.price_formulas },
+				onRefresh: handleRefresh
 			},
 			{
 				badge: data.priceRules?.length || 0,

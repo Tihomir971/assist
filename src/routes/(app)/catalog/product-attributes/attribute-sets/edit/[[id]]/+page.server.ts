@@ -12,7 +12,9 @@ import {
 import { attributeSetPayloadBuilder } from './attribute-set.payload.js';
 import { attributeSetAttributePayloadBuilder } from './attribute-set-attribute.payload.js';
 
-export const load = async ({ params, locals: { supabase } }) => {
+export const load = async ({ depends, params, locals: { supabase } }) => {
+	depends('catalog:attribute-sets');
+
 	const id = params.id ? parseInt(params.id) : null;
 	if (params.id && isNaN(id as number)) {
 		throw error(400, 'Invalid attribute set ID');

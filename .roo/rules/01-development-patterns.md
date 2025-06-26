@@ -179,6 +179,55 @@ src/routes/(app)/your-route/[[id]]/
     {/if}
     ```
 
+### Important: Data Refresh for Related Tables
+
+**Critical Implementation Detail**: When using `SmartRelatedTable` components, you MUST provide an `onRefresh` callback to ensure deleted items are immediately removed from the UI.
+
+#### Required Implementation
+
+In your `related-configs.ts` file, add a refresh handler:
+
+```typescript
+// src/routes/(app)/your-route/[[id]]/related-configs.ts
+import { invalidate } from '$app/navigation';
+
+export function createTabConfigs(data: PageData) {
+    // Refresh handler to reload data after operations
+    const handleRefresh = () => {
+        invalidate('catalog:products'); // Use your main dependency key
+    };
+
+    return [
+        createTabConfig(
+            'related-items',
+            'Related Items',
+            SmartRelatedTable as Component,
+            {
+                config: relatedItemsConfig,
+                items: data.relatedItems,
+                validatedForm: data.formRelatedItems,
+                parentId: data.entity.id,
+                onRefresh: handleRefresh // REQUIRED: Add this line
+            }
+        ),
+        // ... other tabs
+    ];
+}
+```
+
+#### Why This Is Required
+
+- **Problem**: Without `onRefresh`, deleted items remain visible in the table until page refresh
+- **Root Cause**: `SmartRelatedTable` calls `onRefresh?.()` after operations but no callback is provided
+- **Solution**: The refresh handler calls `invalidate()` to reload fresh data from the server
+
+#### Implementation Checklist
+
+- [ ] Import `invalidate` from `$app/navigation`
+- [ ] Create `handleRefresh` function that calls `invalidate()` with your main dependency
+- [ ] Add `onRefresh: handleRefresh` to ALL `SmartRelatedTable` components
+- [ ] Ensure your `+page.server.ts` has the corresponding `depends()` call
+
 ---
 
 ## 4. Best Practices
@@ -188,3 +237,4 @@ src/routes/(app)/your-route/[[id]]/
 - **Co-location**: Keep entity-specific files (payloads, configs) within the route directory they are used in. This makes routes self-contained and easier to manage.
 - **Service Layer Abstraction**: All database logic MUST be in a `service` class. Server `load` and `action` functions should not contain direct `supabase` calls, but rather call methods on a service instance.
 - **Declarative UI**: Prefer configuring `SmartForm` and `SmartRelatedTable` over building custom UI. This ensures consistency and reduces code.
+- **Refresh Handlers**: Always provide `onRefresh` callbacks to `SmartRelatedTable` components to ensure immediate UI updates after delete operations.

@@ -8,9 +8,10 @@ import {
 	mReplenishInsertSchema
 } from '$lib/types/supabase.zod.schemas';
 import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable.svelte';
-import ChartVisualization from '../../../../../lib/components/charts/ChartVisualization.svelte';
+import ChartVisualization from '$lib/components/charts/ChartVisualization.svelte';
 import StorageOnHandDisplay from './m-storageonhand-display.svelte';
 import { createFormConfig } from '$lib/utils/form-config.builder';
+import { invalidate } from '$app/navigation';
 
 // Define the split layout configuration
 export const splitLayoutConfig = createSplitLayoutConfig()
@@ -20,6 +21,11 @@ export const splitLayoutConfig = createSplitLayoutConfig()
 
 // Helper function to create tab configurations
 export function createTabConfigs(data: PageData) {
+	// Refresh handler to reload data after operations
+	const handleRefresh = () => {
+		invalidate('catalog:products');
+	};
+
 	// --- Form Configurations for Drawers ---
 	const productPoFormConfig = createFormConfig()
 		.title('Product Supplier')
@@ -125,7 +131,8 @@ export function createTabConfigs(data: PageData) {
 				items: data.purchases,
 				validatedForm: data.formProductPo,
 				parentId: data.entity.id,
-				lookupData: { partners: data.lookupData.partners }
+				lookupData: { partners: data.lookupData.partners },
+				onRefresh: handleRefresh
 			},
 			{ badge: data.purchases?.length || 0, order: 1 }
 		),
@@ -137,7 +144,8 @@ export function createTabConfigs(data: PageData) {
 				config: productPackingConfig,
 				items: data.productPacking,
 				validatedForm: data.formProductPacking,
-				parentId: data.entity.id
+				parentId: data.entity.id,
+				onRefresh: handleRefresh
 			},
 			{ badge: data.productPacking?.length || 0, order: 2 }
 		),
@@ -160,7 +168,8 @@ export function createTabConfigs(data: PageData) {
 				items: data.replenishes,
 				validatedForm: data.formReplenish,
 				parentId: data.entity.id,
-				lookupData: { warehouses: data.lookupData.warehouses }
+				lookupData: { warehouses: data.lookupData.warehouses },
+				onRefresh: handleRefresh
 			},
 			{ badge: data.replenishes?.length || 0, order: 4 }
 		),

@@ -10,7 +10,9 @@ import { attributePayloadBuilder } from './attribute.payload';
 import { attributeOptionPayloadBuilder } from './attribute-option.payload';
 import { AttributeGroupService } from '$lib/services/supabase/attribute-group.service';
 
-export const load = async ({ params, locals: { supabase } }) => {
+export const load = async ({ depends, params, locals: { supabase } }) => {
+	depends('catalog:attributes');
+
 	const id = params.id ? parseInt(params.id) : null;
 	if (params.id && isNaN(id as number)) {
 		throw error(400, 'Invalid attribute ID');

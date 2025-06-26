@@ -5,6 +5,7 @@ import { createSplitLayoutConfig, createTabConfig } from '$lib/utils/split-layou
 import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable.svelte';
 import type { SuperValidated } from 'sveltekit-superforms';
 import type { Component } from 'svelte';
+import { invalidate } from '$app/navigation';
 
 const formConfig = createFormConfig()
 	.title('Attribute Option')
@@ -40,6 +41,11 @@ export function createTabConfigs(data: {
 	formAttributeOptions: SuperValidated<Record<string, unknown>>;
 	entity?: { id: number };
 }) {
+	// Refresh handler to reload data after operations
+	const handleRefresh = () => {
+		invalidate('catalog:attributes');
+	};
+
 	return [
 		createTabConfig(
 			'options',
@@ -49,7 +55,8 @@ export function createTabConfigs(data: {
 				config: attributeOptionsConfig,
 				items: data.attributeOptions,
 				validatedForm: data.formAttributeOptions,
-				parentId: data.entity?.id
+				parentId: data.entity?.id,
+				onRefresh: handleRefresh
 			},
 			{
 				badge: data.attributeOptions?.length || 0,

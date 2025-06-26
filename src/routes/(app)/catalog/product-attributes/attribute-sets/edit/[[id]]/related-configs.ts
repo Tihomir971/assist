@@ -5,6 +5,7 @@ import { createSplitLayoutConfig, createTabConfig } from '$lib/utils/split-layou
 import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable.svelte';
 import type { SuperValidated } from 'sveltekit-superforms';
 import type { Component } from 'svelte';
+import { invalidate } from '$app/navigation';
 
 const formConfig = createFormConfig()
 	.title('Attribute Set Attribute')
@@ -74,8 +75,12 @@ export function createTabConfigs(data: {
 	formAttributeSetAttributes: SuperValidated<Record<string, unknown>>;
 	entity?: { id: number };
 	attributes: Array<{ value: number; label: string }>;
-	onRefresh?: () => void;
 }) {
+	// Refresh handler to reload data after operations
+	const handleRefresh = () => {
+		invalidate('catalog:attribute-sets');
+	};
+
 	return [
 		createTabConfig(
 			'attributes',
@@ -87,7 +92,7 @@ export function createTabConfigs(data: {
 				validatedForm: data.formAttributeSetAttributes,
 				parentId: data.entity?.id,
 				lookupData: { attributes: data.attributes },
-				onRefresh: data.onRefresh
+				onRefresh: handleRefresh
 			},
 			{
 				badge: data.attributeSetAttributes?.length || 0,

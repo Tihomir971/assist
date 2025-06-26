@@ -60,8 +60,7 @@
 			attributeSetAttributes: attributeSetAttributes,
 			formAttributeSetAttributes: data.formAttributeSetAttributes,
 			entity: data.entity || undefined,
-			attributes: data.attributes,
-			onRefresh: refreshRelatedData
+			attributes: data.attributes
 		})
 	);
 </script>
