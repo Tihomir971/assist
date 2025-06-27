@@ -13,7 +13,7 @@
 <td
 	bind:this={ref}
 	data-slot="table-cell"
-	class={cn("whitespace-nowrap p-4 align-middle [&:has([role=checkbox])]:pr-0", className)}
+	class={cn("whitespace-nowrap p-2 align-middle [&:has([role=checkbox])]:pr-0", className)}
 	{...restProps}
 >
 	{@render children?.()}
