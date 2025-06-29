@@ -26,6 +26,7 @@
 }
 
 [data-scope='number-input'][data-part='input'] {
+	font-size: var(--text-sm);
 	width: 100%;
 	border: none;
 	height: 36px;

@@ -170,6 +170,7 @@ export type Database = {
           po_pricelist_id: number | null
           taxid: string | null
           updated_at: string
+          url: string | null
           value: string | null
         }
         Insert: {
@@ -188,6 +189,7 @@ export type Database = {
           po_pricelist_id?: number | null
           taxid?: string | null
           updated_at?: string
+          url?: string | null
           value?: string | null
         }
         Update: {
@@ -206,6 +208,7 @@ export type Database = {
           po_pricelist_id?: number | null
           taxid?: string | null
           updated_at?: string
+          url?: string | null
           value?: string | null
         }
         Relationships: [

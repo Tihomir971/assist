@@ -14,6 +14,7 @@ const columns: ColumnDef<ContactDataType>[] = [
 	columnTypes.boolean('is_active', 'Active'),
 	columnTypes.boolean('iscustomer', 'Customer'),
 	columnTypes.boolean('isvendor', 'Vendor'),
+	columnTypes.text('url', 'URL'),
 	{
 		id: 'actions',
 		enableColumnFilter: false,
@@ -26,7 +27,7 @@ export const contactsTableConfig = new DataTableConfigBuilder<ContactDataType>()
 	.title('Contacts')
 	.columns(columns)
 	.createButton('Create Contact', '/crm/contacts/edit')
-	.mode('client')
+	.mode('server')
 	.deleteAction('?/delete')
 	.addFilter({
 		name: 'name',

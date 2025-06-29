@@ -42,6 +42,8 @@ export function createTabConfigs(data: PageData) {
 		.field('valid_from', { type: 'date', label: 'Valid From', span: 6 })
 		.field('valid_to', { type: 'date', label: 'Valid To', span: 6 })
 		.field('url', { label: 'URL', span: 12 })
+		.field('created_at', { type: 'datetime', label: 'Created at', span: 6, readonly: true })
+		.field('updated_at', { type: 'datetime', label: 'Updated at', span: 6, readonly: true })
 		.build();
 
 	const productPackingFormConfig = createFormConfig()

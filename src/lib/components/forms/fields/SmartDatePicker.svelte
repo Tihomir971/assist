@@ -22,7 +22,7 @@
 
 	let { field, value = $bindable(), ...restProps }: SmartDatePickerProps = $props();
 
-	const df = new DateFormatter('en-US', { dateStyle: 'long' });
+	const df = new DateFormatter('sr-Latn-RS', { dateStyle: 'long' });
 
 	// Convert value to DateValue for Calendar
 	let dateValue = $state<DateValue | undefined>(undefined);
