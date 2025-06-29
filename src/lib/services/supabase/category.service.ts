@@ -68,28 +68,15 @@ export class CategoryService implements CRUDService<Category, CategoryCreate, Ca
 	// Category-specific methods
 	async getCategoryWithRelatedData(id: number) {
 		// Corrected to call instance methods for price rules and channel mappings
-		const [category, priceRules, channelMappings] = await Promise.all([
+		const [category, channelMappings] = await Promise.all([
 			this.getById(id),
-			this.getPriceRules(id),
 			this.getChannelMappings(id)
 		]);
 
 		return {
 			category,
-			priceRules,
 			channelMappings
 		};
-	}
-
-	private async getPriceRules(categoryId: number) {
-		const { data, error } = await this.supabase
-			.from('price_rules')
-			.select('*')
-			.eq('m_product_category_id', categoryId);
-
-		if (error)
-			throw new Error(`Failed to fetch price rules for category ${categoryId}: ${error.message}`);
-		return data || [];
 	}
 
 	private async getChannelMappings(categoryId: number) {

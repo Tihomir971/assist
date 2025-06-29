@@ -76,12 +76,9 @@ export const splitLayoutConfig = createSplitLayoutConfig()
 
 // Helper function to dynamically create tab configurations
 export function createTabConfigs(data: {
-	priceRules: Record<string, unknown>[];
 	channelMapCategory: Record<string, unknown>[];
-	formPriceRules: SuperValidated<Record<string, unknown>>;
 	formChannel: SuperValidated<Record<string, unknown>>;
 	category: MProductCategoryRow | null;
-	price_formulas: Array<{ value: number; label: string }>;
 	c_channels: Array<{ value: number; label: string }>;
 }) {
 	// Refresh handler to reload data after operations

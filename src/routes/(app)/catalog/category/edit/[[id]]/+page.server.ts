@@ -6,23 +6,19 @@ import { error } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import {
 	cChannelMapCategoryInsertSchema,
-	mProductCategoryInsertSchema,
-	priceRulesInsertSchema
+	mProductCategoryInsertSchema
 } from '$lib/types/supabase.zod.schemas';
 // deleteByIdSchema is imported by the factory itself.
 import { CategoryService } from '$lib/services/supabase/category.service';
-import { PriceRulesService } from '$lib/services/supabase/price-rules.service';
 import { ChannelMappingService } from '$lib/services/supabase/channel-mapping.service';
 import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
 import { categoryPayloadBuilder } from './category.payload';
-import { priceRulesPayloadBuilder } from './price-rule.payload';
 import { channelMappingPayloadBuilder } from './channel-mapping.payload'; // Updated import
 // All builders for this route are now co-located.
 // The import from '$lib/utils/payload-configs.simplified' will be empty for these if no other builders remain.
 import type {
 	CChannelMapCategoryRow,
-	MProductCategoryRow,
-	PriceRulesRow
+	MProductCategoryRow
 } from '$lib/types/supabase.zod.schemas.d';
 
 // Load function remains the same (already optimized)
@@ -31,7 +27,6 @@ export const load: PageServerLoad = async ({ params, locals: { supabase }, depen
 	console.log("depends('app:category-page');");
 
 	const categoryService = new CategoryService(supabase);
-	const priceRulesService = new PriceRulesService(supabase); // Instantiate PriceRulesService
 	const channelMappingService = new ChannelMappingService(supabase); // Instantiate ChannelMappingService
 
 	let categoryId: number | null = null;
@@ -44,13 +39,11 @@ export const load: PageServerLoad = async ({ params, locals: { supabase }, depen
 	}
 
 	try {
-		const [categoryWithRelated, lookupCategories, lookupPriceFormulas, lookupChannels] =
-			await Promise.all([
-				categoryId ? categoryService.getCategoryWithRelatedData(categoryId) : Promise.resolve(null),
-				categoryService.getLookup(),
-				priceRulesService.getPriceFormulasLookup(),
-				channelMappingService.getChannelLookup()
-			]);
+		const [categoryWithRelated, lookupCategories, lookupChannels] = await Promise.all([
+			categoryId ? categoryService.getCategoryWithRelatedData(categoryId) : Promise.resolve(null),
+			categoryService.getLookup(),
+			channelMappingService.getChannelLookup()
+		]);
 
 		if (categoryId && !categoryWithRelated?.category) {
 			throw error(404, 'Category not found');
@@ -62,17 +55,14 @@ export const load: PageServerLoad = async ({ params, locals: { supabase }, depen
 				categoryWithRelated?.category,
 				zod(mProductCategoryInsertSchema)
 			),
-			formPriceRules: await superValidate(null, zod(priceRulesInsertSchema)),
 			formChannel: await superValidate(null, zod(cChannelMapCategoryInsertSchema)),
 
 			// Data
 			category: categoryWithRelated?.category || null,
-			priceRules: categoryWithRelated?.priceRules || [],
 			channelMapCategory: categoryWithRelated?.channelMappings || [],
 
 			// Lookup data
 			categories: lookupCategories,
-			price_formulas: lookupPriceFormulas,
 			c_channels: lookupChannels
 		};
 	} catch (err: unknown) {
@@ -96,13 +86,6 @@ const categoryActions = createSimpleCRUD<MProductCategoryRow, typeof mProductCat
 	'/catalog/category'
 );
 
-const priceRulesActions = createSimpleCRUD<PriceRulesRow, typeof priceRulesInsertSchema>(
-	'Price Rule',
-	(supabase: SupabaseClient<Database>) => new PriceRulesService(supabase),
-	priceRulesPayloadBuilder,
-	priceRulesInsertSchema
-);
-
 const channelMappingActions = createSimpleCRUD<
 	CChannelMapCategoryRow,
 	typeof cChannelMapCategoryInsertSchema
@@ -116,8 +99,6 @@ const channelMappingActions = createSimpleCRUD<
 export const actions = {
 	categoryUpsert: categoryActions.upsert,
 	categoryDelete: categoryActions.delete,
-	priceRulesUpsert: priceRulesActions.upsert,
-	priceRulesDelete: priceRulesActions.delete,
 	channelMapUpsert: channelMappingActions.upsert,
 	channelMapDelete: channelMappingActions.delete
 } satisfies Actions;

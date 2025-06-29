@@ -341,31 +341,6 @@ export type MSubstituteRelationships = z.infer<
 export type MWarehouseRow = z.infer<typeof generated.mWarehouseRowSchema>;
 export type MWarehouseInsert = z.infer<typeof generated.mWarehouseInsertSchema>;
 export type MWarehouseUpdate = z.infer<typeof generated.mWarehouseUpdateSchema>;
-export type PriceFormulasRow = z.infer<typeof generated.priceFormulasRowSchema>;
-export type PriceFormulasInsert = z.infer<
-  typeof generated.priceFormulasInsertSchema
->;
-export type PriceFormulasUpdate = z.infer<
-  typeof generated.priceFormulasUpdateSchema
->;
-export type PriceRuleAttributeOptionsRow = z.infer<
-  typeof generated.priceRuleAttributeOptionsRowSchema
->;
-export type PriceRuleAttributeOptionsInsert = z.infer<
-  typeof generated.priceRuleAttributeOptionsInsertSchema
->;
-export type PriceRuleAttributeOptionsUpdate = z.infer<
-  typeof generated.priceRuleAttributeOptionsUpdateSchema
->;
-export type PriceRuleAttributeOptionsRelationships = z.infer<
-  typeof generated.priceRuleAttributeOptionsRelationshipsSchema
->;
-export type PriceRulesRow = z.infer<typeof generated.priceRulesRowSchema>;
-export type PriceRulesInsert = z.infer<typeof generated.priceRulesInsertSchema>;
-export type PriceRulesUpdate = z.infer<typeof generated.priceRulesUpdateSchema>;
-export type PriceRulesRelationships = z.infer<
-  typeof generated.priceRulesRelationshipsSchema
->;
 export type PricingRulesRow = z.infer<typeof generated.pricingRulesRowSchema>;
 export type PricingRulesInsert = z.infer<
   typeof generated.pricingRulesInsertSchema
