@@ -2,14 +2,15 @@
 
 ## 1. Overview
 
-The **Smart List Page** pattern provides a reusable, flexible, and declarative approach for building list pages (data tables) with filtering, sorting, and pagination capabilities. This pattern abstracts away boilerplate code and supports both client-side and server-side data operations.
+The **Smart List Page** pattern provides a reusable, flexible, and declarative approach for building list pages (data tables) with filtering, sorting, and pagination capabilities. This pattern abstracts away boilerplate code and supports both client-side and server-side data operations with **automatic filtering** and **unified user experience**.
 
 The pattern consists of:
 1. **DataTableConfigBuilder**: Declarative configuration for table structure and behavior
-2. **QueryBuilder Service**: Server-side query enhancement with dynamic filtering/sorting
+2. **QueryBuilder Service**: Server-side query enhancement with dynamic filtering/sorting and automatic wildcard handling
 3. **createListPageLoader Factory**: Generates load functions and actions for `+page.server.ts`
-4. **SmartTable Components**: Reusable Svelte 5 components with TanStack Table integration
-5. **Dual Mode Support**: Client-side (all data loaded) or server-side (paginated queries)
+4. **SmartTable Components**: Reusable Svelte 5 components with TanStack Table integration and unified filtering logic
+5. **Dual Mode Support**: Client-side (all data loaded) or server-side (paginated queries) with identical user experience
+6. **Automatic Filtering**: No manual "Apply" buttons needed - filters work as you type or select
 
 ---
 
@@ -115,7 +116,7 @@ export const yourTableConfig = new DataTableConfigBuilder<YourDataType>()
 
 ### Step 2: Implement Server Logic
 
-Create `+page.server.ts` using the factory:
+Create `+page.server.ts` using the factory with reactive data loading:
 
 ```typescript
 // src/routes/(app)/your-route/+page.server.ts
@@ -123,12 +124,13 @@ import { createListPageLoader } from '$lib/utils/list-page.factory';
 import { yourTableConfig } from './datatable.config';
 import { YourService } from '$lib/services/supabase/your.service';
 
-const listPage = createListPageLoader({
+const listPageLoader = createListPageLoader({
   config: yourTableConfig,
-  baseQuery: (supabase) => 
+  baseQuery: (supabase) =>
     supabase
       .from('your_table')
-      .select('*, related_table!inner(name)'),
+      .select('*, related_table!inner(name)', { count: 'exact' })
+      .order('name'),
   service: YourService,
   lookupData: {
     statusOptions: (service) => service.getStatusLookup(),
@@ -139,8 +141,13 @@ const listPage = createListPageLoader({
   }
 });
 
-export const load = listPage.load;
-export const actions = listPage.actions;
+// IMPORTANT: Add depends() for reactive filtering
+export const load = async (event) => {
+  event.depends('your-section:your-entity'); // e.g., 'crm:contacts'
+  return await listPageLoader.load(event);
+};
+
+export const actions = listPageLoader.actions;
 ```
 
 ### Step 3: Create Frontend Page
@@ -169,7 +176,52 @@ Create `+page.svelte` with minimal code:
 
 ---
 
-## 4. Integration with Smart CRUD Pattern
+## 4. Automatic Filtering Behavior
+
+The Smart List Page Pattern now includes **automatic filtering** that eliminates the need for manual "Apply Filters" buttons:
+
+### Client Mode Filtering
+- **Text inputs**: Filter instantly as you type
+- **Select/Boolean inputs**: Filter immediately on selection change
+- **Processing**: All filtering happens in the browser using TanStack Table
+- **Performance**: Instant results, no server requests
+
+### Server Mode Filtering
+- **Text inputs**: Auto-filter after 500ms typing pause (debounced)
+- **Select/Boolean inputs**: Filter immediately on selection change
+- **Processing**: Server-side queries with efficient data transfer
+- **URL State**: All filters preserved in URL for bookmarking/sharing
+
+### Key Features
+- **No "Apply" button needed**: Filters work automatically
+- **Debounced text search**: Prevents excessive server requests while typing
+- **Wildcard text matching**: Text filters use `%value%` for partial matches
+- **Reactive data loading**: Uses SvelteKit's `depends`/`invalidate` pattern
+- **Clean UI**: Only "Clear Filters" and "Create" buttons remain
+
+### Filter Configuration
+```typescript
+.addFilter({
+  name: 'display_name',
+  label: 'Name',
+  type: 'text',           // Auto-debounced in server mode
+  placeholder: 'Filter by name...',
+  field: 'display_name',  // Database field for server mode
+  operator: 'ilike'       // Automatically adds % wildcards
+})
+.addFilter({
+  name: 'is_active',
+  label: 'Active',
+  type: 'boolean',        // Immediate filtering
+  field: 'is_active',
+  operator: 'eq',
+  dbType: 'boolean'
+})
+```
+
+---
+
+## 5. Integration with Smart CRUD Pattern
 
 When implementing the Smart List Page Pattern, the edit/create functionality should follow the Smart CRUD pattern:
 

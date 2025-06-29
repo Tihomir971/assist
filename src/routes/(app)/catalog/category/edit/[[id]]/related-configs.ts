@@ -1,12 +1,8 @@
 import { createRelatedTableConfig, columnTypes } from '$lib/utils/related-table-config.builder';
 import { createFormConfig } from '$lib/utils/form-config.builder';
-import {
-	cChannelMapCategoryInsertSchema,
-	priceRulesInsertSchema
-} from '$lib/types/supabase.zod.schemas';
+import { cChannelMapCategoryInsertSchema } from '$lib/types/supabase.zod.schemas';
 import type {
 	CChannelMapCategoryInsert,
-	PriceRulesInsert,
 	MProductCategoryRow
 } from '$lib/types/supabase.zod.schemas.d';
 import type { Tables } from '$lib/types/supabase.types';
@@ -73,70 +69,6 @@ export const channelMappingConfig = createRelatedTableConfig<
 	.parentIdField('m_product_category_id')
 	.build();
 
-// Price Rules Configuration
-export const priceRulesConfig = createRelatedTableConfig<
-	Tables<'price_rules'>,
-	typeof priceRulesInsertSchema
->()
-	.title('Price Rules')
-	.description('Configure pricing rules for this category')
-	.tab({
-		tabId: 'price-rules',
-		tabLabel: 'Price Rules',
-		tabIcon: 'ph:tag'
-	})
-	.column(columnTypes.text('name', 'Name'))
-	.column(columnTypes.boolean('is_active', 'Active', { width: '80px' }))
-	.column(columnTypes.number('priority', 'Priority', { width: '100px' }))
-	.column(columnTypes.lookup('price_formula_id', 'Formula', 'price_formulas', { width: '150px' }))
-	.formSchema(priceRulesInsertSchema)
-	.formConfig(
-		createFormConfig<PriceRulesInsert>()
-			.title('Price Rule')
-			.field('name', {
-				span: 12,
-				placeholder: 'Enter rule name'
-			})
-			.field('price_formula_id', {
-				span: 6,
-				label: 'Price Formula',
-				type: 'combobox',
-				searchable: true
-			})
-			.field('priority', {
-				span: 6,
-				type: 'number',
-				placeholder: '0'
-			})
-			.field('is_active', {
-				span: 6,
-				label: 'Active'
-			})
-			.build()
-	)
-	.actions('?/priceRulesUpsert', '?/priceRulesUpsert', '?/priceRulesDelete')
-	.parentIdField('m_product_category_id')
-	.bulkOperations(true, [
-		{
-			label: 'Activate Selected',
-			action: '?/bulkActivate',
-			variant: 'default'
-		},
-		{
-			label: 'Deactivate Selected',
-			action: '?/bulkDeactivate',
-			variant: 'outline'
-		},
-		{
-			label: 'Delete Selected',
-			action: '?/bulkDelete',
-			variant: 'destructive',
-			confirmMessage: 'Are you sure you want to delete the selected price rules?'
-		}
-	])
-	.features(true, true, true) // searchable, sortable, exportEnabled
-	.build();
-
 export const splitLayoutConfig = createSplitLayoutConfig()
 	.leftPanel({ width: '45%' })
 	.rightPanel({ width: '55%' })
@@ -173,23 +105,6 @@ export function createTabConfigs(data: {
 			{
 				badge: data.channelMapCategory?.length || 0,
 				description: 'Manage channel mappings for this category'
-			}
-		),
-		createTabConfig(
-			'price-rules',
-			'Price Rules',
-			SmartRelatedTable as Component,
-			{
-				config: priceRulesConfig,
-				items: data.priceRules,
-				validatedForm: data.formPriceRules,
-				parentId: data.category?.id,
-				lookupData: { price_formulas: data.price_formulas },
-				onRefresh: handleRefresh
-			},
-			{
-				badge: data.priceRules?.length || 0,
-				description: 'Manage price rules for this category'
 			}
 		)
 	];

@@ -31,6 +31,7 @@ export type DataTableConfig<TData> = {
 		href: string;
 	};
 	mode: 'client' | 'server';
+	showGlobalFilter: boolean;
 	deleteAction?: string; // Action path for delete operation
 	rowActions?: Snippet<[{ row: TData }]>; // Snippet for custom row actions
 };
@@ -38,7 +39,8 @@ export type DataTableConfig<TData> = {
 export class DataTableConfigBuilder<TData> {
 	private config: Partial<DataTableConfig<TData>> = {
 		filters: [],
-		mode: 'client' // Default to client mode
+		mode: 'client', // Default to client mode
+		showGlobalFilter: true
 	};
 
 	title(title: string): this {
@@ -63,6 +65,9 @@ export class DataTableConfigBuilder<TData> {
 
 	mode(mode: 'client' | 'server'): this {
 		this.config.mode = mode;
+		if (mode === 'server') {
+			this.config.showGlobalFilter = false;
+		}
 		return this;
 	}
 

@@ -19,6 +19,8 @@
 	import SmartTablePagination from './SmartTablePagination.svelte';
 	import type { DataTableConfig, SelectFilterOption } from '$lib/utils/data-table-config.builder';
 	import { page as pageStore } from '$app/state'; // Renamed to avoid conflict with prop
+	import { goto } from '$app/navigation';
+	import { invalidate } from '$app/navigation';
 	import { superForm } from 'sveltekit-superforms/client';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Button } from '$lib/components/ui/button';
@@ -54,8 +56,8 @@
 		onResult: ({ result }) => {
 			if (result.type === 'success') {
 				deleteDialogOpen = false;
-				// Reload page to reflect changes
-				window.location.reload();
+				// Reload data to reflect changes
+				invalidate('crm:contacts');
 			}
 		}
 	});
@@ -74,7 +76,16 @@
 		onSortingChange: (updater: Updater<SortingState>) => {
 			sorting = typeof updater === 'function' ? updater(sorting) : updater;
 			if (config.mode === 'server') {
-				applyServerFilters();
+				const params = new URLSearchParams(pageStore.url.searchParams);
+				if (sorting.length > 0) {
+					params.set('sort', sorting[0].id);
+					params.set('order', sorting[0].desc ? 'desc' : 'asc');
+				} else {
+					params.delete('sort');
+					params.delete('order');
+				}
+				params.set('page', '1');
+				goto(`?${params.toString()}`, { replaceState: true });
 			}
 		},
 		onColumnVisibilityChange: (updater: Updater<VisibilityState>) => {
@@ -82,18 +93,15 @@
 		},
 		onGlobalFilterChange: (updater: Updater<string>) => {
 			globalFilter = typeof updater === 'function' ? updater(globalFilter) : updater;
-			if (config.mode === 'server') {
-				applyServerFilters();
-			}
+			// Global filter changes are now handled by the toolbar component
 		},
 		onRowSelectionChange: (updater: Updater<Record<string, boolean>>) => {
 			rowSelection = typeof updater === 'function' ? updater(rowSelection) : updater;
 		},
 		onColumnFiltersChange: (updater: Updater<ColumnFiltersState>) => {
 			columnFilters = typeof updater === 'function' ? updater(columnFilters) : updater;
-			if (config.mode === 'server') {
-				applyServerFilters();
-			}
+			// We no longer apply server filters automatically on column filter change.
+			// This will be handled by a button in the toolbar.
 		},
 		onPaginationChange: (updater: Updater<PaginationState>) => {
 			if (config.mode === 'client') {
@@ -134,40 +142,12 @@
 
 	// Debug: Log available columns
 
-	// Server-side filtering/sorting/pagination logic
-	function applyServerFilters() {
-		if (config.mode === 'server') {
-			const params = new URLSearchParams(pageStore.url.searchParams); // Use pageStore
-
-			// Apply global filter
-			if (globalFilter) {
-				params.set('globalFilter', globalFilter);
-			} else {
-				params.delete('globalFilter');
-			}
-
-			// Apply sorting
-			if (sorting.length > 0) {
-				params.set('sort', sorting[0].id);
-				params.set('order', sorting[0].desc ? 'desc' : 'asc');
-			} else {
-				params.delete('sort');
-				params.delete('order');
-			}
-
-			// Reset page to 1 when filters or sort change
-			params.set('page', '1');
-
-			window.location.href = `?${params.toString()}`;
-		}
-	}
-
 	// Handle pagination changes for server mode
 	function handlePageChange(newPage: number) {
 		if (config.mode === 'server') {
-			const params = new URLSearchParams(pageStore.url.searchParams); // Use pageStore
+			const params = new URLSearchParams(pageStore.url.searchParams);
 			params.set('page', newPage.toString());
-			window.location.href = `?${params.toString()}`;
+			goto(`?${params.toString()}`, { replaceState: true });
 		} else {
 			table.setPageIndex(newPage - 1);
 		}
@@ -175,10 +155,10 @@
 
 	function handlePerPageChange(newPerPage: number) {
 		if (config.mode === 'server') {
-			const params = new URLSearchParams(pageStore.url.searchParams); // Use pageStore
+			const params = new URLSearchParams(pageStore.url.searchParams);
 			params.set('perPage', newPerPage.toString());
 			params.set('page', '1'); // Reset to first page
-			window.location.href = `?${params.toString()}`;
+			goto(`?${params.toString()}`, { replaceState: true });
 		} else {
 			table.setPageSize(newPerPage);
 		}
@@ -188,21 +168,6 @@
 	function openDeleteDialog(id: number) {
 		$deleteSuperForm.id = id;
 		deleteDialogOpen = true;
-	}
-
-	function handleColumnFilterChange(id: string, value: unknown) {
-		// Update TanStack Table column filters
-		const newFilters = columnFilters.filter((f) => f.id !== id);
-		if (value !== '' && value !== null && value !== undefined) {
-			newFilters.push({ id, value });
-		}
-		columnFilters = newFilters;
-
-		// Also directly set the column filter for immediate effect
-		const column = table.getColumn(id);
-		if (column) {
-			column.setFilterValue(value);
-		}
 	}
 </script>
 
@@ -214,9 +179,7 @@
 				{config}
 				bind:globalFilter
 				{lookupData}
-				onApplyFilters={applyServerFilters}
 				onOpenDeleteDialog={openDeleteDialog}
-				onColumnFilterChange={handleColumnFilterChange}
 			/>
 		</Card.Header>
 		<Card.Content>

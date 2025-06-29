@@ -25,31 +25,37 @@ export type SortConfig = {
 	ascending: boolean;
 };
 
-export class QueryBuilder<T> {
+// Type for Supabase query builder - using the actual Supabase types
+type SupabaseQueryBuilder = ReturnType<SupabaseClient<Database>['from']>;
+
+export class QueryBuilder {
 	constructor(private supabase: SupabaseClient<Database>) {}
 
 	apply(
-		baseQuery: any, // SupabasePostgrestQueryBuilder<any, any, T>,
+		baseQuery: SupabaseQueryBuilder,
 		params: URLSearchParams,
 		filterMap: Record<
 			string,
 			{ field: string; operator: FilterOperator; type?: 'number' | 'boolean' | 'array' }
 		> = {},
 		sortableFields: string[] = []
-	) {
+	): SupabaseQueryBuilder {
 		let query = baseQuery;
 
 		// Apply filters
 		for (const [paramName, config] of Object.entries(filterMap)) {
 			const paramValue = params.get(paramName);
 			if (paramValue !== null && paramValue !== '') {
-				let value: any = paramValue;
+				let value: string | number | boolean | string[] = paramValue;
 				if (config.type === 'number') {
 					value = Number(paramValue);
 				} else if (config.type === 'boolean') {
 					value = paramValue === 'true';
 				} else if (config.type === 'array') {
 					value = paramValue.split(',');
+				} else if (config.operator === 'ilike' || config.operator === 'like') {
+					// Add wildcards for text search operations
+					value = `%${paramValue}%`;
 				}
 				query = query[config.operator](config.field, value);
 			}

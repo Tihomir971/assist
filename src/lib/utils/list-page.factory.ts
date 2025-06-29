@@ -13,12 +13,9 @@ type ServiceWithDelete = {
 
 type ServiceConstructor<TService> = new (supabase: SupabaseClient<Database>) => TService;
 
-// Type for Supabase query builder return
-type SupabaseQueryBuilder = ReturnType<SupabaseClient<Database>['from']>;
-
 export function createListPageLoader<TData, TService extends ServiceWithDelete>(options: {
 	config: DataTableConfig<TData>;
-	baseQuery: (supabase: SupabaseClient<Database>) => SupabaseQueryBuilder;
+	baseQuery: (supabase: SupabaseClient<Database>) => ReturnType<SupabaseClient<Database>['from']>;
 	service: ServiceConstructor<TService>;
 	lookupData?: Record<string, (service: TService) => Promise<SelectFilterOption[]>>;
 }) {
@@ -75,14 +72,14 @@ export function createListPageLoader<TData, TService extends ServiceWithDelete>(
 				.map((col) => ('accessorKey' in col ? col.accessorKey : null))
 				.filter(Boolean) as string[];
 
-			const query = queryBuilder.apply(
+			const enhancedQuery = queryBuilder.apply(
 				baseQuery(supabase),
 				searchParams,
 				filterMap,
 				sortableFields
 			);
 
-			const { data, error: queryError, count: totalCount } = await query;
+			const { data, error: queryError, count: totalCount } = await enhancedQuery;
 
 			if (queryError) {
 				console.error('Error fetching data for server mode:', queryError);

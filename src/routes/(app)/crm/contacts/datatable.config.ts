@@ -30,7 +30,7 @@ export const contactsTableConfig = new DataTableConfigBuilder<ContactDataType>()
 	.mode('server')
 	.deleteAction('?/delete')
 	.addFilter({
-		name: 'name',
+		name: 'display_name',
 		label: 'Name',
 		type: 'text',
 		placeholder: 'Filter by name...',
