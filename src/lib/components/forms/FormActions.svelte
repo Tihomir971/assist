@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { toast } from 'svelte-sonner';
 	import Loader from '@lucide/svelte/icons/loader';
 
 	interface FormActionsProps {
@@ -46,58 +45,30 @@
 	// Compute disabled state for the submit button
 	let finalIsDisabled = $derived(isSubmitting || (!isDirty && entityName !== 'Filter'));
 
-	type ActionResult = {
-		type: 'success' | 'failure' | 'error';
-		data?: {
-			message?: {
-				text: string;
-			};
-		};
-	};
-
-	async function handleDelete() {
+	function handleDelete() {
 		const confirmed = confirm(
 			`Are you sure you want to delete this ${entityName.toLowerCase()}? This action cannot be undone.`
 		);
 		if (!confirmed) return;
 
+		// Change the form's action to the delete action and submit
 		if (deleteAction && formElement) {
-			const formData = new FormData(formElement);
-			const id = formData.get('id');
+			const originalAction = formElement.action;
+			formElement.action = deleteAction;
 
-			if (id) {
-				const deleteFormData = new FormData();
-				deleteFormData.append('id', id.toString());
+			// Create a hidden input to indicate this is a delete operation
+			const deleteInput = document.createElement('input');
+			deleteInput.type = 'hidden';
+			deleteInput.name = '_delete';
+			deleteInput.value = 'true';
+			formElement.appendChild(deleteInput);
 
-				const toastId = toast.loading(`Deleting ${entityName.toLowerCase()}...`);
+			// Submit the form
+			formElement.requestSubmit();
 
-				try {
-					const response = await fetch(deleteAction, {
-						method: 'POST',
-						body: deleteFormData
-					});
-
-					// Superforms actions return a result object. We check its type.
-					const result: ActionResult = await response.json();
-
-					if (result.type === 'success') {
-						toast.success(`${entityName} deleted successfully.`, { id: toastId });
-						// This is the key step: call the parent's onDelete handler
-						// which will trigger the refresh logic.
-						if (onDelete) {
-							onDelete();
-						}
-					} else {
-						// Handle failure case reported by the server action
-						const message =
-							result.data?.message?.text || `Failed to delete ${entityName.toLowerCase()}.`;
-						toast.error(message, { id: toastId });
-					}
-				} catch (error) {
-					toast.error(`An unexpected error occurred while deleting.`, { id: toastId });
-					console.error('Delete action failed:', error);
-				}
-			}
+			// Clean up - restore original action and remove delete input
+			formElement.action = originalAction;
+			formElement.removeChild(deleteInput);
 		}
 	}
 </script>

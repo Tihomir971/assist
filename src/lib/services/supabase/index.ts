@@ -17,3 +17,5 @@ export { AttributeSetAttributeService } from './attribute-set-attribute.service'
 
 export { ProductAttributeOptionService } from './product-attribute-option.service';
 export { ProductAttributeValueService } from './product-attribute-value.service';
+
+export { UOMService } from './uom.service';

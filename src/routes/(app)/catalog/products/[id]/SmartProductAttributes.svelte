@@ -82,6 +82,14 @@
 		<h3 class="text-lg font-medium">Product Attributes</h3>
 		<div class="rounded-md border">
 			<table class="w-full text-sm">
+				<thead>
+					<tr class="border-b">
+						<th class="p-4 text-left font-medium">Attribute</th>
+						<th class="p-4 text-left font-medium">Value</th>
+						<th class="p-4 text-left font-medium">UOM</th>
+						<th class="p-4 text-right font-medium">Actions</th>
+					</tr>
+				</thead>
 				<tbody>
 					{#each attributeSetAttributes as attribute (attribute.id)}
 						{@const isOptionType =
@@ -149,6 +157,9 @@
 								{:else}
 									{currentValue ?? 'Not set'}
 								{/if}
+							</td>
+							<td class="p-4 text-muted-foreground">
+								{attribute.m_attribute.c_uom?.uomsymbol ?? ''}
 							</td>
 							<td class="p-4 text-right">
 								{#if editingAttributeId !== attribute.id}

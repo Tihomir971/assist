@@ -14,7 +14,8 @@ const attributeTypeOptions = [
 
 const listPage = createListPageLoader({
 	config: attributesTableConfig,
-	baseQuery: (supabase) => supabase.from('m_attribute').select('*, m_attribute_group!inner(name)'),
+	baseQuery: (supabase) =>
+		supabase.from('m_attribute').select('*, m_attribute_group!inner(name), c_uom(name, uomsymbol)'),
 	service: AttributeService,
 	lookupData: {
 		attributeGroups: (service) => new AttributeGroupService(service.supabase).getLookup(),

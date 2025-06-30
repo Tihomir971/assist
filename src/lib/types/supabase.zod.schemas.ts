@@ -914,6 +914,7 @@ export const countriesUpdateSchema = z.object({
 export const mAttributeRowSchema = z.object({
   attribute_group_id: z.number(),
   attribute_type: publicAttributeTypeSchema,
+  c_uom_id: z.number().nullable(),
   code: z.string(),
   created_at: z.string(),
   description: z.string().nullable(),
@@ -926,6 +927,7 @@ export const mAttributeRowSchema = z.object({
 export const mAttributeInsertSchema = z.object({
   attribute_group_id: z.number().optional(),
   attribute_type: publicAttributeTypeSchema,
+  c_uom_id: z.number().optional().nullable(),
   code: z.string(),
   created_at: z.string().optional(),
   description: z.string().optional().nullable(),
@@ -938,6 +940,7 @@ export const mAttributeInsertSchema = z.object({
 export const mAttributeUpdateSchema = z.object({
   attribute_group_id: z.number().optional(),
   attribute_type: publicAttributeTypeSchema.optional(),
+  c_uom_id: z.number().optional().nullable(),
   code: z.string().optional(),
   created_at: z.string().optional(),
   description: z.string().optional().nullable(),
@@ -952,6 +955,12 @@ export const mAttributeRelationshipsSchema = z.tuple([
     foreignKeyName: z.literal("m_attribute_attribute_group_id_fkey"),
     columns: z.tuple([z.literal("attribute_group_id")]),
     referencedRelation: z.literal("m_attribute_group"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+  z.object({
+    foreignKeyName: z.literal("m_attribute_c_uom_id_fkey"),
+    columns: z.tuple([z.literal("c_uom_id")]),
+    referencedRelation: z.literal("c_uom"),
     referencedColumns: z.tuple([z.literal("id")]),
   }),
 ]);
@@ -985,7 +994,6 @@ export const mAttributeGroupUpdateSchema = z.object({
 
 export const mAttributeOptionRowSchema = z.object({
   attribute_id: z.number(),
-  code: z.string(),
   created_at: z.string().nullable(),
   id: z.number(),
   is_active: z.boolean().nullable(),
@@ -996,7 +1004,6 @@ export const mAttributeOptionRowSchema = z.object({
 
 export const mAttributeOptionInsertSchema = z.object({
   attribute_id: z.number(),
-  code: z.string(),
   created_at: z.string().optional().nullable(),
   id: z.number().optional(),
   is_active: z.boolean().optional().nullable(),
@@ -1007,7 +1014,6 @@ export const mAttributeOptionInsertSchema = z.object({
 
 export const mAttributeOptionUpdateSchema = z.object({
   attribute_id: z.number().optional(),
-  code: z.string().optional(),
   created_at: z.string().optional().nullable(),
   id: z.number().optional(),
   is_active: z.boolean().optional().nullable(),

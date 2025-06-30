@@ -1,4 +1,4 @@
-import { message, superValidate } from 'sveltekit-superforms';
+import { superValidate } from 'sveltekit-superforms';
 import { zod, zod4 } from 'sveltekit-superforms/adapters';
 import { fail, redirect, type RequestEvent } from '@sveltejs/kit';
 import { deleteByIdSchema } from '$lib/types/zod-delete-by-id';
@@ -7,6 +7,7 @@ import type { CRUDService } from '$lib/services/base/crud.service';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/supabase.types';
 import { z, type ZodRawShape, type ZodTypeAny, type UnknownKeysParam } from 'zod';
+import { extractStructuredSupabaseError } from '$lib/server/utils/supabase-error.utils';
 
 // Define a more specific type for the getService function
 // TCreateInferred and TUpdateInferred will be derived from the Zod schema passed to createSimpleCRUD
@@ -51,18 +52,39 @@ export function createSimpleCRUD<
 					const updatedEntity = await service.update(Number(id), payload);
 					// Update form data with the returned entity data
 					Object.assign(form.data, updatedEntity);
-					return message(form, `${serviceName} updated successfully!`);
+					// Return success data without message - let client handle toast
+					return { form, success: true, entity: updatedEntity, operation: 'update' };
 				} else {
 					const payload = payloadBuilder.buildCreatePayload(form.data as Record<string, unknown>);
 					const createdEntity = await service.create(payload);
 					// Update form data with the returned entity data (including the new ID)
 					Object.assign(form.data, createdEntity);
-					return message(form, `${serviceName} created successfully!`);
+					// Return success data without message - let client handle toast
+					return { form, success: true, entity: createdEntity, operation: 'create' };
 				}
 			} catch (err: unknown) {
-				const errorMessage = err instanceof Error ? err.message : String(err);
-				return message(form, { type: 'error', text: errorMessage } as const, {
-					status: 400
+				const id = (form.data as Partial<TEntity>).id;
+				const isUpdate = id !== undefined && !isNaN(Number(id));
+				const operation = isUpdate ? 'update' : 'create';
+
+				// Extract structured error information
+				const structuredError = extractStructuredSupabaseError(
+					err,
+					operation,
+					serviceName.toLowerCase()
+				);
+
+				// Return structured error data for client handling
+				return fail(400, {
+					form,
+					error: structuredError.details,
+					errorTitle: structuredError.title,
+					errorConstraint: structuredError.constraint,
+					errorSuggestion: structuredError.suggestion,
+					errorCode: structuredError.code,
+					isStructuredError: structuredError.isStructured,
+					errorType: 'validation',
+					operation
 				});
 			}
 		},
@@ -79,16 +101,37 @@ export function createSimpleCRUD<
 			try {
 				await service.delete(form.data.id);
 				if (redirectOnDelete) {
-					throw redirect(303, redirectOnDelete);
+					// Add success message to redirect URL
+					const url = new URL(redirectOnDelete, 'http://localhost');
+					url.searchParams.set('deleted', 'true');
+					url.searchParams.set('entity', serviceName.toLowerCase());
+					throw redirect(303, url.pathname + url.search);
 				}
-				return message(form, `${serviceName} deleted successfully!`);
+				// Return success data without message - let client handle toast
+				return { form, success: true, operation: 'delete' };
 			} catch (err: unknown) {
 				if (err && typeof err === 'object' && 'status' in err && err.status === 303) {
 					throw err; // Re-throw redirects
 				}
-				const errorMessage = err instanceof Error ? err.message : String(err);
-				return message(form, { type: 'error', text: errorMessage } as const, {
-					status: 500
+
+				// Extract structured error information for delete operations
+				const structuredError = extractStructuredSupabaseError(
+					err,
+					'delete',
+					serviceName.toLowerCase()
+				);
+
+				// Return structured error data for client handling
+				return fail(500, {
+					form,
+					error: structuredError.details,
+					errorTitle: structuredError.title,
+					errorConstraint: structuredError.constraint,
+					errorSuggestion: structuredError.suggestion,
+					errorCode: structuredError.code,
+					isStructuredError: structuredError.isStructured,
+					errorType: 'server',
+					operation: 'delete'
 				});
 			}
 		}

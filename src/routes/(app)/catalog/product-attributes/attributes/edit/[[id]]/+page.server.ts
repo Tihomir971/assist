@@ -9,6 +9,7 @@ import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
 import { attributePayloadBuilder } from './attribute.payload';
 import { attributeOptionPayloadBuilder } from './attribute-option.payload';
 import { AttributeGroupService } from '$lib/services/supabase/attribute-group.service';
+import { UOMService } from '$lib/services/supabase/uom.service';
 
 export const load = async ({ depends, params, locals: { supabase } }) => {
 	depends('catalog:attributes');
@@ -21,11 +22,13 @@ export const load = async ({ depends, params, locals: { supabase } }) => {
 	const attributeService = new AttributeService(supabase);
 	const attributeOptionService = new AttributeOptionService(supabase);
 	const attributeGroupService = new AttributeGroupService(supabase);
+	const uomService = new UOMService(supabase);
 
-	const [entity, attributeOptions, attributeGroups] = await Promise.all([
+	const [entity, attributeOptions, attributeGroups, uoms] = await Promise.all([
 		id ? attributeService.getById(id) : Promise.resolve(null),
 		id ? attributeOptionService.getByAttributeId(id) : Promise.resolve([]),
-		attributeGroupService.getLookup()
+		attributeGroupService.getLookup(),
+		uomService.getLookup()
 	]);
 
 	if (id && !entity) {
@@ -40,7 +43,8 @@ export const load = async ({ depends, params, locals: { supabase } }) => {
 		formAttributeOptions,
 		entity,
 		attributeOptions,
-		attributeGroups
+		attributeGroups,
+		uoms
 	};
 };
 

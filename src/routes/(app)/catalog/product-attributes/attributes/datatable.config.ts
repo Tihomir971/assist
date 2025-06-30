@@ -5,7 +5,10 @@ import type { Tables } from '$lib/types/supabase.types';
 import type { CellContext, ColumnDef } from '@tanstack/svelte-table';
 import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 
-export type AttributeWithGroup = Tables<'m_attribute'> & { m_attribute_group: { name: string } };
+export type AttributeWithGroup = Tables<'m_attribute'> & {
+	m_attribute_group: { name: string };
+	c_uom: { name: string; uomsymbol: string | null } | null;
+};
 
 function getAttributeTypeDisplay(type: string) {
 	switch (type) {
@@ -60,6 +63,12 @@ const columns: ColumnDef<AttributeWithGroup>[] = [
 			if (!filterValue) return true;
 			return row.original.attribute_type === filterValue;
 		}
+	},
+	{
+		id: 'c_uom.uomsymbol',
+		accessorFn: (row) => row.c_uom?.uomsymbol,
+		header: 'UOM',
+		enableColumnFilter: false
 	},
 	{
 		accessorKey: 'description',

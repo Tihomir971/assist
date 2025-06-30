@@ -893,6 +893,7 @@ export type Database = {
         Row: {
           attribute_group_id: number
           attribute_type: Database["public"]["Enums"]["attribute_type"]
+          c_uom_id: number | null
           code: string
           created_at: string
           description: string | null
@@ -904,6 +905,7 @@ export type Database = {
         Insert: {
           attribute_group_id?: number
           attribute_type: Database["public"]["Enums"]["attribute_type"]
+          c_uom_id?: number | null
           code: string
           created_at?: string
           description?: string | null
@@ -915,6 +917,7 @@ export type Database = {
         Update: {
           attribute_group_id?: number
           attribute_type?: Database["public"]["Enums"]["attribute_type"]
+          c_uom_id?: number | null
           code?: string
           created_at?: string
           description?: string | null
@@ -928,6 +931,12 @@ export type Database = {
             foreignKeyName: "m_attribute_attribute_group_id_fkey"
             columns: ["attribute_group_id"]
             referencedRelation: "m_attribute_group"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "m_attribute_c_uom_id_fkey"
+            columns: ["c_uom_id"]
+            referencedRelation: "c_uom"
             referencedColumns: ["id"]
           },
         ]
@@ -962,7 +971,6 @@ export type Database = {
       m_attribute_option: {
         Row: {
           attribute_id: number
-          code: string
           created_at: string | null
           id: number
           is_active: boolean | null
@@ -972,7 +980,6 @@ export type Database = {
         }
         Insert: {
           attribute_id: number
-          code: string
           created_at?: string | null
           id?: number
           is_active?: boolean | null
@@ -982,7 +989,6 @@ export type Database = {
         }
         Update: {
           attribute_id?: number
-          code?: string
           created_at?: string | null
           id?: number
           is_active?: boolean | null

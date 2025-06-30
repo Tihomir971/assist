@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { enhance } from '$app/forms';
-	import { toast } from 'svelte-sonner';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { z } from 'zod';
+	import { toastManager } from '$lib/utils/toast-manager';
 
 	// UI Components
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -48,23 +48,21 @@
 			onResult: ({ result }) => {
 				if (result.type === 'success' && result.data?.ruleId) {
 					createDialogOpen = false;
-					toast.success('Pravilo je uspešno kreirano');
+					toastManager.showSuccess('Pravilo je uspešno kreirano', {
+						dedupeKey: 'pricing-rule-create-success'
+					});
 					goto(`/crm/pricing-rules/${result.data.ruleId}`);
 				} else if (result.type === 'failure') {
-					// Assuming 'failure' from superForm means a validation error or server fail() with data
-					const formError =
-						result.data &&
-						typeof result.data === 'object' &&
-						'form' in result.data &&
-						(result.data.form as { message?: string })?.message
-							? (result.data.form as { message: string }).message
-							: 'Greška pri kreiranju pravila.';
-					toast.error(formError);
+					const errorMessage = result.data?.error || 'Greška pri kreiranju pravila.';
+					toastManager.showError(errorMessage, {
+						dedupeKey: `pricing-rule-create-error-${errorMessage.slice(0, 20)}`
+					});
 				}
 			},
 			onError: ({ result }) => {
-				// This catches errors like SvelteKit error() or unexpected server issues
-				toast.error(result.error.message || 'Nepoznata greška prilikom kreiranja.');
+				toastManager.showError(result.error.message || 'Nepoznata greška prilikom kreiranja.', {
+					dedupeKey: 'pricing-rule-unexpected-error'
+				});
 			}
 		}
 	);
@@ -81,16 +79,19 @@
 			// e.g., submitter?.removeAttribute('disabled');
 
 			if (result.type === 'success') {
-				toast.success('Prioritet je uspešno promenjen.');
+				toastManager.showSuccess('Prioritet je uspešno promenjen.', {
+					dedupeKey: 'priority-swap-success'
+				});
 			} else if (result.type === 'failure') {
-				const errorMessage =
-					result.data && typeof result.data === 'object' && 'error' in result.data
-						? (result.data as { error: string }).error
-						: 'Greška pri promeni prioriteta.';
-				toast.error(errorMessage);
+				const errorMessage = result.data?.error || 'Greška pri promeni prioriteta.';
+				toastManager.showError(errorMessage, {
+					dedupeKey: `priority-swap-error-${errorMessage.slice(0, 20)}`
+				});
 			} else if (result.type === 'error') {
-				// This catches SvelteKit error() or unexpected server issues
-				toast.error(result.error.message || 'Nepoznata greška prilikom promene prioriteta.');
+				toastManager.showError(
+					result.error.message || 'Nepoznata greška prilikom promene prioriteta.',
+					{ dedupeKey: 'priority-swap-unexpected-error' }
+				);
 			}
 			// Call update to refresh data from the load function
 			// This is crucial for the UI to reflect the new order.
@@ -108,7 +109,9 @@
 
 	function handleClone(rule: any) {
 		// TODO: Implement clone functionality
-		toast.info('Clone funkcionalnost će biti dodana uskoro');
+		toastManager.showInfo('Clone funkcionalnost će biti dodana uskoro', {
+			dedupeKey: 'clone-not-implemented'
+		});
 	}
 
 	function handleDeleteSubmit(event: Event) {

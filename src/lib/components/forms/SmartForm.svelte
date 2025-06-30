@@ -10,7 +10,7 @@
 	} from '$lib/utils/schema-analyzer';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
-	import { toast } from 'svelte-sonner';
+	import { toastManager } from '$lib/utils/toast-manager';
 
 	// UI Components
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -145,24 +145,62 @@
 			}
 		},
 		onResult: ({ result }) => {
-			if (result.type === 'success' || result.type === 'redirect') {
-				const message = 'data' in result && result.data?.message?.text;
-				toast.success(message || `${entityName} saved successfully!`, {
-					description: message ? undefined : 'Your changes have been saved.'
-				});
-				// Pass the form data which now contains the updated entity data from the server
+			if (result.type === 'success') {
+				if (result.data?.success) {
+					const operation = result.data.operation || 'save';
+					const message =
+						operation === 'create'
+							? `${entityName} created successfully!`
+							: operation === 'update'
+								? `${entityName} updated successfully!`
+								: operation === 'delete'
+									? `${entityName} deleted successfully!`
+									: `${entityName} saved successfully!`;
+
+					toastManager.showSuccess(message, {
+						dedupeKey: `${entityName.toLowerCase()}-${operation}-success`
+					});
+
+					// Pass the form data which now contains the updated entity data from the server
+					if (onSuccess) onSuccess($formData as FormDataFromSchema<AnyZodObject>);
+				}
+			} else if (result.type === 'redirect') {
+				// Handle redirects - typically after successful delete operations
+				// Don't show toast here as the redirect will handle the feedback
+				// The redirect usually goes to a list page which should show its own success message
 				if (onSuccess) onSuccess($formData as FormDataFromSchema<AnyZodObject>);
 			} else if (result.type === 'failure') {
-				const message = 'data' in result && result.data?.message?.text;
-				toast.error(message || `Failed to save ${entityName.toLowerCase()}`, {
-					description: message ? undefined : 'Please check the form for errors.'
-				});
-				if (onError) onError(message || null, superform);
+				const operation = result.data?.operation || 'save';
+
+				// Check if we have structured error data
+				if (result.data?.isStructuredError && result.data?.errorTitle) {
+					toastManager.showStructuredError(
+						{
+							title: result.data.errorTitle,
+							details: result.data.error || `Failed to ${operation} ${entityName.toLowerCase()}`,
+							constraint: result.data.errorConstraint,
+							suggestion: result.data.errorSuggestion
+						},
+						undefined,
+						{
+							dedupeKey: `${entityName.toLowerCase()}-${operation}-structured-error-${result.data.errorConstraint || 'unknown'}`
+						}
+					);
+				} else {
+					// Fallback to simple error message
+					const errorMessage = result.data?.error || `Failed to save ${entityName.toLowerCase()}`;
+					toastManager.showError(errorMessage, {
+						dedupeKey: `${entityName.toLowerCase()}-${operation}-error-${errorMessage.slice(0, 20)}`
+					});
+				}
+
+				if (onError) onError(result.data?.error || null, superform);
 			} else if (result.type === 'error') {
-				// Handle general errors
-				toast.error(`An unexpected error occurred while saving ${entityName.toLowerCase()}`, {
-					description: result.error?.message || 'Please try again.'
-				});
+				toastManager.showError(
+					`An unexpected error occurred while saving ${entityName.toLowerCase()}`,
+					{ dedupeKey: `${entityName.toLowerCase()}-unexpected-error` }
+				);
+
 				if (onError) onError(result.error?.message || null, superform);
 			}
 		}

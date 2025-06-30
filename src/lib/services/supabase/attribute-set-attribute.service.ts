@@ -4,7 +4,7 @@ import type { CRUDService } from '../base/crud.service';
 
 export type AttributeSetAttribute = Tables<'m_attributeset_attribute'>;
 export type AttributeSetAttributeWithAttribute = AttributeSetAttribute & {
-	m_attribute: Tables<'m_attribute'>;
+	m_attribute: Tables<'m_attribute'> & { c_uom: Tables<'c_uom'> | null };
 };
 export type AttributeSetAttributeCreate = Omit<
 	AttributeSetAttribute,
@@ -80,7 +80,7 @@ export class AttributeSetAttributeService
 	async getByAttributeSetId(attributeSetId: number): Promise<AttributeSetAttributeWithAttribute[]> {
 		const { data, error } = await this.supabase
 			.from('m_attributeset_attribute')
-			.select('*, m_attribute(*)')
+			.select('*, m_attribute(*, c_uom(*))')
 			.eq('attributeset_id', attributeSetId)
 			.order('sequence');
 

@@ -25,6 +25,7 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import { toastManager } from '$lib/utils/toast-manager';
 
 	type Props = {
 		data: TData[];
@@ -55,9 +56,36 @@
 		resetForm: true,
 		onResult: ({ result }) => {
 			if (result.type === 'success') {
-				deleteDialogOpen = false;
-				// Reload data to reflect changes
-				invalidate('crm:contacts');
+				if (result.data?.success) {
+					deleteDialogOpen = false;
+					toastManager.showSuccess('Item deleted successfully', {
+						dedupeKey: 'table-delete-success'
+					});
+					// Reload data to reflect changes
+					invalidate('crm:contacts'); // Update with appropriate dependency
+				}
+			} else if (result.type === 'failure') {
+				// Check if we have structured error data
+				if (result.data?.isStructuredError && result.data?.errorTitle) {
+					toastManager.showStructuredError(
+						{
+							title: result.data.errorTitle,
+							details: result.data.error || 'Failed to delete item',
+							constraint: result.data.errorConstraint,
+							suggestion: result.data.errorSuggestion
+						},
+						undefined,
+						{
+							dedupeKey: `table-delete-structured-error-${result.data.errorConstraint || 'unknown'}`
+						}
+					);
+				} else {
+					// Fallback to simple error message
+					const errorMessage = result.data?.error || 'Failed to delete item';
+					toastManager.showError(errorMessage, {
+						dedupeKey: `table-delete-error-${errorMessage.slice(0, 20)}`
+					});
+				}
 			}
 		}
 	});

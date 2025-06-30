@@ -86,11 +86,13 @@
 
 	// Event handlers
 	function handleSuccess(formData: any) {
+		// SmartForm already handled the success toast
 		onSave?.(formData);
 		onClose?.();
 	}
 
 	function handleError(error: string | null) {
+		// SmartForm already handled the error toast
 		console.error(`Failed to ${isCreateMode ? 'create' : 'update'} ${config.title}:`, error);
 	}
 
@@ -99,9 +101,7 @@
 	}
 
 	function handleDelete() {
-		// console.log(`${config.title} delete initiated`);
-		// After a successful deletion, we want to trigger the same
-		// logic as a successful save: close the drawer and refresh the table.
+		// SmartForm already handled the delete toast
 		onSave?.({ deleted: true, id: item?.id });
 		onClose?.();
 	}

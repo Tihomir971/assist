@@ -8,51 +8,68 @@
 
 	let { data } = $props();
 
-	const formConfig = createFormConfig()
-		.title('Attribute')
-		.field('name', {
-			label: 'Name',
-			span: 12,
-			placeholder: 'e.g., Color, Size'
-		})
-		.field('code', {
-			label: 'Code',
-			span: 12,
-			placeholder: 'e.g., COLOR, SIZE'
-		})
-		.field('attribute_group_id', {
-			label: 'Group',
-			type: 'select',
-			span: 12,
-			options: data.attributeGroups
-		})
-		.field('attribute_type', {
-			label: 'Type',
-			type: 'select',
-			span: 12,
-			options: [
-				{ value: 'text', label: 'Text' },
-				{ value: 'number', label: 'Number' },
-				{ value: 'boolean', label: 'Boolean' },
-				{ value: 'date', label: 'Date' },
-				{ value: 'single_select', label: 'Single Select' },
-				{ value: 'multi_select', label: 'Multi Select' }
-			]
-		})
-		.field('description', {
-			label: 'Description',
-			type: 'textarea',
-			span: 12,
-			placeholder: 'Enter a description for the attribute'
-		})
-		.field('is_active', {
-			label: 'Active',
-			type: 'boolean',
-			span: 12
-		})
-		.build();
-
 	let attributeType = $derived(data.form.data.attribute_type);
+
+	const formConfig = $derived.by(() => {
+		const showUom =
+			attributeType === 'number' ||
+			attributeType === 'single_select' ||
+			attributeType === 'multi_select';
+
+		return createFormConfig()
+			.title('Attribute')
+			.field('name', {
+				label: 'Name',
+				span: 12,
+				placeholder: 'e.g., Color, Size, Screen Diagonal'
+			})
+			.field('code', {
+				label: 'Code',
+				span: 12,
+				placeholder: 'e.g., COLOR, SIZE, SCREEN_DIAGONAL'
+			})
+			.field('attribute_group_id', {
+				label: 'Group',
+				type: 'select',
+				span: 6,
+				options: data.attributeGroups
+			})
+			.field('attribute_type', {
+				label: 'Type',
+				type: 'select',
+				span: 6,
+				options: [
+					{ value: 'text', label: 'Text' },
+					{ value: 'number', label: 'Number' },
+					{ value: 'boolean', label: 'Boolean' },
+					{ value: 'date', label: 'Date' },
+					{ value: 'single_select', label: 'Single Select' },
+					{ value: 'multi_select', label: 'Multi Select' }
+				]
+			})
+			.field('c_uom_id', {
+				label: 'Unit of Measure',
+				type: 'select',
+				span: 6,
+				options: data.uoms,
+				placeholder: 'Select unit (optional)',
+				description:
+					'Specify the unit for numeric values or select/multi-select options (e.g., inches, cm, kg)',
+				hidden: !showUom
+			})
+			.field('description', {
+				label: 'Description',
+				type: 'textarea',
+				span: 12,
+				placeholder: 'Enter a description for the attribute'
+			})
+			.field('is_active', {
+				label: 'Active',
+				type: 'boolean',
+				span: 12
+			})
+			.build();
+	});
 
 	const tabConfigs = $derived.by(() => {
 		return createTabConfigs({

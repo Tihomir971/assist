@@ -6,6 +6,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/supabase.types';
 import { QueryBuilder, type FilterOperator } from '$lib/services/supabase/query.builder';
 import type { DataTableConfig, SelectFilterOption } from './data-table-config.builder';
+import { extractStructuredSupabaseError } from '$lib/server/utils/supabase-error.utils';
 
 type ServiceWithDelete = {
 	delete(id: number): Promise<void>;
@@ -128,13 +129,33 @@ export function createListPageLoader<TData, TService extends ServiceWithDelete>(
 			if ('delete' in serviceInstance && typeof serviceInstance.delete === 'function') {
 				try {
 					await serviceInstance.delete(Number(form.data.id));
-					return { form };
+					return { form, success: true, operation: 'delete' };
 				} catch (err) {
-					const message = err instanceof Error ? err.message : 'An unknown error occurred.';
-					return fail(500, { form, error: message });
+					// Extract structured error information for delete operations
+					const structuredError = extractStructuredSupabaseError(err, 'delete', 'item');
+
+					return fail(500, {
+						form,
+						error: structuredError.details,
+						errorTitle: structuredError.title,
+						errorConstraint: structuredError.constraint,
+						errorSuggestion: structuredError.suggestion,
+						errorCode: structuredError.code,
+						isStructuredError: structuredError.isStructured,
+						errorType: 'server',
+						operation: 'delete'
+					});
 				}
 			} else {
-				return fail(500, { form, error: 'Delete method not available on service.' });
+				return fail(500, {
+					form,
+					error: 'Delete method not available on service.',
+					errorTitle: 'Configuration Error',
+					errorSuggestion: 'Please contact your administrator.',
+					isStructuredError: false,
+					errorType: 'configuration',
+					operation: 'delete'
+				});
 			}
 		}
 	};
