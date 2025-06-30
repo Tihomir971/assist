@@ -8,28 +8,36 @@ import {
 	PartnerService,
 	WarehouseService,
 	AttributeSetService,
+	AttributeService,
 	ProductPackingService,
 	ProductPoService,
 	ReplenishService,
-	BrandService // Added BrandService
+	BrandService, // Added BrandService
+	ProductAttributeOptionService,
+	ProductAttributeValueService,
+	AttributeSetAttributeService
 } from '$lib/services/supabase';
 import { TaxCategoryService, StorageOnHandService } from '$lib/services/supabase/';
 import {
 	mProductInsertSchema,
 	mProductPackingInsertSchema,
 	mProductPoInsertSchema,
-	mReplenishInsertSchema
+	mReplenishInsertSchema,
+	mProductAttributeOptionInsertSchema,
+	mProductAttributeValueInsertSchema
 } from '$lib/types/supabase.zod.schemas';
 import { productPayloadBuilder } from './product.payload';
 import { productPackingPayloadBuilder } from './product-packing.payload';
 import { productPoPayloadBuilder } from './product-po.payload';
 import { replenishPayloadBuilder } from './replenish.payload';
+import { productAttributeOptionPayloadBuilder } from './product-attribute-option.payload';
+import { productAttributeValuePayloadBuilder } from './product-attribute-value.payload';
 import { connector } from '$lib/ky';
 import type { ChartData } from '$lib/components/charts/chart-types';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ depends, params, locals: { supabase } }) => {
-	depends('catalog:products');
+	depends('catalog:product');
 
 	const productId = parseInt(params.id);
 	if (isNaN(productId)) {
@@ -68,7 +76,10 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		salesByWeeks,
 		storageonhand,
 		attributeSets,
-		brands // Added brands
+		brands, // Added brands
+		productAttributeValues,
+		productAttributeOptions,
+		attributeSetAttributes
 	] = await Promise.all([
 		productService.getUoms(),
 		new CategoryService(supabase).getLookup(),
@@ -81,14 +92,49 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		getSalesData(product.sku),
 		new StorageOnHandService(supabase).list({ m_product_id: productId }),
 		new AttributeSetService(supabase).getLookup(),
-		new BrandService(supabase).getLookup() // Fetch product brands
+		new BrandService(supabase).getLookup(), // Fetch product brands
+		new ProductAttributeValueService(supabase).getByProductId(productId),
+		new ProductAttributeOptionService(supabase).getByProductId(productId),
+		product.attributeset_id
+			? new AttributeSetAttributeService(supabase).getByAttributeSetId(product.attributeset_id)
+			: Promise.resolve([])
 	]);
 
-	const [formProduct, formProductPacking, formReplenish, formProductPo] = await Promise.all([
+	const attributeService = new AttributeService(supabase);
+	const attributeOptionsLookup = new Map();
+
+	if (attributeSetAttributes) {
+		const optionBasedAttributes = attributeSetAttributes.filter(
+			(attr) =>
+				attr.m_attribute.attribute_type === 'single_select' ||
+				attr.m_attribute.attribute_type === 'multi_select'
+		);
+
+		const optionsPromises = optionBasedAttributes.map((attr) =>
+			attributeService.getAttributeOptions(attr.attribute_id)
+		);
+
+		const optionsResults = await Promise.all(optionsPromises);
+
+		optionBasedAttributes.forEach((attr, index) => {
+			attributeOptionsLookup.set(attr.attribute_id, optionsResults[index]);
+		});
+	}
+
+	const [
+		formProduct,
+		formProductPacking,
+		formReplenish,
+		formProductPo,
+		formProductAttributeValue,
+		formProductAttributeOption
+	] = await Promise.all([
 		superValidate(product, zod(mProductInsertSchema)),
 		superValidate(zod(mProductPackingInsertSchema)),
 		superValidate(zod(mReplenishInsertSchema)),
-		superValidate(zod(mProductPoInsertSchema))
+		superValidate(zod(mProductPoInsertSchema)),
+		superValidate(zod(mProductAttributeValueInsertSchema)),
+		superValidate(zod(mProductAttributeOptionInsertSchema))
 	]);
 
 	return {
@@ -101,6 +147,12 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		replenishes,
 		formReplenish,
 		storageonhand,
+		productAttributeValues,
+		formProductAttributeValue,
+		productAttributeOptions,
+		formProductAttributeOption,
+		attributeSetAttributes,
+		attributeOptionsLookup,
 		lookupData: {
 			partners,
 			uom,
@@ -150,5 +202,17 @@ export const actions: Actions = {
 	productPoUpsert: productPoCRUD.upsert,
 	productPoDelete: productPoCRUD.delete,
 	replenishUpsert: replenishCRUD.upsert,
-	replenishDelete: replenishCRUD.delete
+	replenishDelete: replenishCRUD.delete,
+	attributeValueUpsert: createSimpleCRUD(
+		'ProductAttributeValue',
+		(supabase) => new ProductAttributeValueService(supabase),
+		productAttributeValuePayloadBuilder,
+		mProductAttributeValueInsertSchema
+	).upsert,
+	attributeOptionUpsert: createSimpleCRUD(
+		'ProductAttributeOption',
+		(supabase) => new ProductAttributeOptionService(supabase),
+		productAttributeOptionPayloadBuilder,
+		mProductAttributeOptionInsertSchema
+	).upsert
 };

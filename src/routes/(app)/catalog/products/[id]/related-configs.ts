@@ -10,6 +10,7 @@ import {
 import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable.svelte';
 import ChartVisualization from '$lib/components/charts/ChartVisualization.svelte';
 import StorageOnHandDisplay from './m-storageonhand-display.svelte';
+import SmartProductAttributes from './SmartProductAttributes.svelte';
 import { createFormConfig } from '$lib/utils/form-config.builder';
 import { invalidate } from '$app/navigation';
 
@@ -183,6 +184,23 @@ export function createTabConfigs(data: PageData) {
 				data: data.salesByWeeks
 			},
 			{ order: 5 }
+		),
+		createTabConfig(
+			'attributes',
+			'Attributes',
+			SmartProductAttributes as Component,
+			{
+				supabase: data.supabase,
+				productId: data.entity.id,
+				attributeSetId: data.entity.attributeset_id,
+				productAttributeValues: data.productAttributeValues,
+				formProductAttributeValue: data.formProductAttributeValue,
+				productAttributeOptions: data.productAttributeOptions,
+				formProductAttributeOption: data.formProductAttributeOption,
+				attributeSetAttributes: data.attributeSetAttributes,
+				attributeOptionsLookup: data.attributeOptionsLookup
+			},
+			{ order: 6 }
 		)
 	];
 }

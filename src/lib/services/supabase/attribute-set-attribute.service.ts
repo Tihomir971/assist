@@ -3,6 +3,9 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service';
 
 export type AttributeSetAttribute = Tables<'m_attributeset_attribute'>;
+export type AttributeSetAttributeWithAttribute = AttributeSetAttribute & {
+	m_attribute: Tables<'m_attribute'>;
+};
 export type AttributeSetAttributeCreate = Omit<
 	AttributeSetAttribute,
 	'id' | 'created_at' | 'updated_at'
@@ -74,7 +77,7 @@ export class AttributeSetAttributeService
 		return data || [];
 	}
 
-	async getByAttributeSetId(attributeSetId: number): Promise<AttributeSetAttribute[]> {
+	async getByAttributeSetId(attributeSetId: number): Promise<AttributeSetAttributeWithAttribute[]> {
 		const { data, error } = await this.supabase
 			.from('m_attributeset_attribute')
 			.select('*, m_attribute(*)')
@@ -82,6 +85,6 @@ export class AttributeSetAttributeService
 			.order('sequence');
 
 		if (error) throw new Error(`Failed to fetch attribute set attributes: ${error.message}`);
-		return data || [];
+		return (data as AttributeSetAttributeWithAttribute[]) || [];
 	}
 }

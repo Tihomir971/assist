@@ -14,3 +14,6 @@ export { StorageOnHandService } from './storage-on-hand.service';
 
 export { AttributeSetService } from './attribute-set.service';
 export { AttributeSetAttributeService } from './attribute-set-attribute.service';
+
+export { ProductAttributeOptionService } from './product-attribute-option.service';
+export { ProductAttributeValueService } from './product-attribute-value.service';
