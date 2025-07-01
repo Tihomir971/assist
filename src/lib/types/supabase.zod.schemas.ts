@@ -939,7 +939,7 @@ export const mAttributeGroupRowSchema = z.object({
   code: z.string(),
   created_at: z.string(),
   id: z.number(),
-  is_active: z.boolean().nullable(),
+  is_active: z.boolean(),
   name: z.string(),
   updated_at: z.string(),
 });
@@ -948,7 +948,7 @@ export const mAttributeGroupInsertSchema = z.object({
   code: z.string(),
   created_at: z.string().optional(),
   id: z.number().optional(),
-  is_active: z.boolean().optional().nullable(),
+  is_active: z.boolean().optional(),
   name: z.string(),
   updated_at: z.string().optional(),
 });
@@ -957,7 +957,7 @@ export const mAttributeGroupUpdateSchema = z.object({
   code: z.string().optional(),
   created_at: z.string().optional(),
   id: z.number().optional(),
-  is_active: z.boolean().optional().nullable(),
+  is_active: z.boolean().optional(),
   name: z.string().optional(),
   updated_at: z.string().optional(),
 });

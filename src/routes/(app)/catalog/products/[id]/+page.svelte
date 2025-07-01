@@ -21,7 +21,7 @@
 			span: 6,
 			label: 'Product Brand',
 			placeholder: 'Select a brand',
-			options: data.lookupData.brands // Added product brand field
+			options: data.lookupData.brands
 		})
 		.field('mpn', { span: 6, label: 'MPN' })
 		.field('attributeset_id', {
@@ -44,7 +44,7 @@
 			label: 'Tax Category',
 			options: data.lookupData.tax
 		})
-		.field('net_quantity', { type: 'number', span: 3, fraction: 0 })
+		.field('net_quantity', { type: 'number', span: 3, fraction: 4 })
 		.field('net_qty_uom_id', {
 			type: 'select',
 			span: 3,

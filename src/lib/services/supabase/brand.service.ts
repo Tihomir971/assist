@@ -68,7 +68,8 @@ export class BrandService implements CRUDService<Brand, BrandCreate, BrandUpdate
 			.from('m_product_brands')
 			.select('value:id, label:name')
 			.eq('is_active', true)
-			.order('name');
+			.order('name')
+			.limit(1000); // Limit to 1000 active brands
 
 		if (error) throw new Error(`Failed to load brand lookup: ${error.message}`);
 		return data || [];

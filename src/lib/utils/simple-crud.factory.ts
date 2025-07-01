@@ -101,11 +101,9 @@ export function createSimpleCRUD<
 			try {
 				await service.delete(form.data.id);
 				if (redirectOnDelete) {
-					// Add success message to redirect URL
-					const url = new URL(redirectOnDelete, 'http://localhost');
-					url.searchParams.set('deleted', 'true');
-					url.searchParams.set('entity', serviceName.toLowerCase());
-					throw redirect(303, url.pathname + url.search);
+					// Construct a clean redirect URL without carrying over old search params
+					const redirectPath = `${redirectOnDelete}?deleted=true&entity=${serviceName.toLowerCase()}`;
+					throw redirect(303, redirectPath);
 				}
 				// Return success data without message - let client handle toast
 				return { form, success: true, operation: 'delete' };

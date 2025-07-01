@@ -916,7 +916,7 @@ export type Database = {
           code: string
           created_at: string
           id: number
-          is_active: boolean | null
+          is_active: boolean
           name: string
           updated_at: string
         }
@@ -924,7 +924,7 @@ export type Database = {
           code: string
           created_at?: string
           id?: number
-          is_active?: boolean | null
+          is_active?: boolean
           name: string
           updated_at?: string
         }
@@ -932,7 +932,7 @@ export type Database = {
           code?: string
           created_at?: string
           id?: number
-          is_active?: boolean | null
+          is_active?: boolean
           name?: string
           updated_at?: string
         }

@@ -83,7 +83,7 @@ const categoryActions = createSimpleCRUD<MProductCategoryRow, typeof mProductCat
 	(supabase: SupabaseClient<Database>) => new CategoryService(supabase),
 	categoryPayloadBuilder,
 	mProductCategoryInsertSchema,
-	'/catalog/category'
+	'/catalog'
 );
 
 const channelMappingActions = createSimpleCRUD<
