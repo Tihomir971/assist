@@ -1,3 +1,4 @@
+export { AttributeGroupService } from './attribute-group.service';
 export { BrandService } from './brand.service';
 export { ProductService } from './product.service';
 export { ProductPackingService } from './product-packing.service';

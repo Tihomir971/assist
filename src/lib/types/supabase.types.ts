@@ -123,36 +123,6 @@ export type Database = {
           },
         ]
       }
-      asset: {
-        Row: {
-          created_at: string
-          id: number
-          mimeType: string | null
-          name: string
-          source: string
-          type: string | null
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          mimeType?: string | null
-          name: string
-          source: string
-          type?: string | null
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          mimeType?: string | null
-          name?: string
-          source?: string
-          type?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
       c_bpartner: {
         Row: {
           ad_language: string | null
@@ -1043,6 +1013,7 @@ export type Database = {
           id: number
           is_active: boolean
           is_required: boolean
+          is_searchable: boolean
           sequence: number | null
           updated_at: string
         }
@@ -1053,6 +1024,7 @@ export type Database = {
           id?: number
           is_active?: boolean
           is_required?: boolean
+          is_searchable?: boolean
           sequence?: number | null
           updated_at?: string
         }
@@ -1063,6 +1035,7 @@ export type Database = {
           id?: number
           is_active?: boolean
           is_required?: boolean
+          is_searchable?: boolean
           sequence?: number | null
           updated_at?: string
         }
@@ -1289,7 +1262,6 @@ export type Database = {
           description: string | null
           descriptionurl: string | null
           discontinued: boolean
-          featuredAssetId: number | null
           id: number
           imageurl: string | null
           is_active: boolean
@@ -1316,7 +1288,6 @@ export type Database = {
           description?: string | null
           descriptionurl?: string | null
           discontinued?: boolean
-          featuredAssetId?: number | null
           id?: number
           imageurl?: string | null
           is_active?: boolean
@@ -1343,7 +1314,6 @@ export type Database = {
           description?: string | null
           descriptionurl?: string | null
           discontinued?: boolean
-          featuredAssetId?: number | null
           id?: number
           imageurl?: string | null
           is_active?: boolean
@@ -1378,12 +1348,6 @@ export type Database = {
             foreignKeyName: "m_product_c_uom_id_fkey"
             columns: ["c_uom_id"]
             referencedRelation: "c_uom"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "m_product_featuredAssetId_fkey"
-            columns: ["featuredAssetId"]
-            referencedRelation: "asset"
             referencedColumns: ["id"]
           },
           {

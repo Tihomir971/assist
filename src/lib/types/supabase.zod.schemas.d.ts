@@ -22,9 +22,6 @@ export type AdUserUpdate = z.infer<typeof generated.adUserUpdateSchema>;
 export type AdUserRelationships = z.infer<
   typeof generated.adUserRelationshipsSchema
 >;
-export type AssetRow = z.infer<typeof generated.assetRowSchema>;
-export type AssetInsert = z.infer<typeof generated.assetInsertSchema>;
-export type AssetUpdate = z.infer<typeof generated.assetUpdateSchema>;
 export type CBpartnerRow = z.infer<typeof generated.cBpartnerRowSchema>;
 export type CBpartnerInsert = z.infer<typeof generated.cBpartnerInsertSchema>;
 export type CBpartnerUpdate = z.infer<typeof generated.cBpartnerUpdateSchema>;

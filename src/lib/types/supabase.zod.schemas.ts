@@ -123,36 +123,6 @@ export const adUserRelationshipsSchema = z.tuple([
   }),
 ]);
 
-export const assetRowSchema = z.object({
-  created_at: z.string(),
-  id: z.number(),
-  mimeType: z.string().nullable(),
-  name: z.string(),
-  source: z.string(),
-  type: z.string().nullable(),
-  updated_at: z.string(),
-});
-
-export const assetInsertSchema = z.object({
-  created_at: z.string().optional(),
-  id: z.number().optional(),
-  mimeType: z.string().optional().nullable(),
-  name: z.string(),
-  source: z.string(),
-  type: z.string().optional().nullable(),
-  updated_at: z.string().optional(),
-});
-
-export const assetUpdateSchema = z.object({
-  created_at: z.string().optional(),
-  id: z.number().optional(),
-  mimeType: z.string().optional().nullable(),
-  name: z.string().optional(),
-  source: z.string().optional(),
-  type: z.string().optional().nullable(),
-  updated_at: z.string().optional(),
-});
-
 export const cBpartnerRowSchema = z.object({
   ad_language: z.string().nullable(),
   bpartner_parent_id: z.number().nullable(),
@@ -1068,6 +1038,7 @@ export const mAttributesetAttributeRowSchema = z.object({
   id: z.number(),
   is_active: z.boolean(),
   is_required: z.boolean(),
+  is_searchable: z.boolean(),
   sequence: z.number().nullable(),
   updated_at: z.string(),
 });
@@ -1079,6 +1050,7 @@ export const mAttributesetAttributeInsertSchema = z.object({
   id: z.number().optional(),
   is_active: z.boolean().optional(),
   is_required: z.boolean().optional(),
+  is_searchable: z.boolean().optional(),
   sequence: z.number().optional().nullable(),
   updated_at: z.string().optional(),
 });
@@ -1090,6 +1062,7 @@ export const mAttributesetAttributeUpdateSchema = z.object({
   id: z.number().optional(),
   is_active: z.boolean().optional(),
   is_required: z.boolean().optional(),
+  is_searchable: z.boolean().optional(),
   sequence: z.number().optional().nullable(),
   updated_at: z.string().optional(),
 });
@@ -1324,7 +1297,6 @@ export const mProductRowSchema = z.object({
   description: z.string().nullable(),
   descriptionurl: z.string().nullable(),
   discontinued: z.boolean(),
-  featuredAssetId: z.number().nullable(),
   id: z.number(),
   imageurl: z.string().nullable(),
   is_active: z.boolean(),
@@ -1352,7 +1324,6 @@ export const mProductInsertSchema = z.object({
   description: z.string().optional().nullable(),
   descriptionurl: z.string().optional().nullable(),
   discontinued: z.boolean().optional(),
-  featuredAssetId: z.number().optional().nullable(),
   id: z.number().optional(),
   imageurl: z.string().optional().nullable(),
   is_active: z.boolean().optional(),
@@ -1380,7 +1351,6 @@ export const mProductUpdateSchema = z.object({
   description: z.string().optional().nullable(),
   descriptionurl: z.string().optional().nullable(),
   discontinued: z.boolean().optional(),
-  featuredAssetId: z.number().optional().nullable(),
   id: z.number().optional(),
   imageurl: z.string().optional().nullable(),
   is_active: z.boolean().optional(),
@@ -1416,12 +1386,6 @@ export const mProductRelationshipsSchema = z.tuple([
     foreignKeyName: z.literal("m_product_c_uom_id_fkey"),
     columns: z.tuple([z.literal("c_uom_id")]),
     referencedRelation: z.literal("c_uom"),
-    referencedColumns: z.tuple([z.literal("id")]),
-  }),
-  z.object({
-    foreignKeyName: z.literal("m_product_featuredAssetId_fkey"),
-    columns: z.tuple([z.literal("featuredAssetId")]),
-    referencedRelation: z.literal("asset"),
     referencedColumns: z.tuple([z.literal("id")]),
   }),
   z.object({

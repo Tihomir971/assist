@@ -52,9 +52,32 @@ export class ProductAttributeOptionService
 		return updatedRecord;
 	}
 
+	async createMultiple(records: ProductAttributeOptionCreate[]): Promise<ProductAttributeOption[]> {
+		const { data, error } = await this.supabase
+			.from('m_product_attribute_option')
+			.insert(records)
+			.select('*');
+
+		if (error)
+			throw new Error(`Failed to create multiple product attribute options: ${error.message}`);
+		return data || [];
+	}
+
 	async delete(id: number): Promise<void> {
 		const { error } = await this.supabase.from('m_product_attribute_option').delete().eq('id', id);
 		if (error) throw new Error(`Failed to delete product attribute option: ${error.message}`);
+	}
+
+	async deleteByProductAndAttribute(productId: number, attributeId: number): Promise<void> {
+		const { error } = await this.supabase
+			.from('m_product_attribute_option')
+			.delete()
+			.eq('product_id', productId)
+			.eq('attribute_id', attributeId);
+
+		if (error) {
+			throw new Error(`Failed to delete product attribute options: ${error.message}`);
+		}
 	}
 
 	async list(filters?: Record<string, unknown>): Promise<ProductAttributeOption[]> {
@@ -80,5 +103,53 @@ export class ProductAttributeOptionService
 
 		if (error) throw new Error(`Failed to fetch product attribute options: ${error.message}`);
 		return data || [];
+	}
+
+	async upsertMultipleOptions(
+		productId: number,
+		attributeId: number,
+		optionIds: number[]
+	): Promise<ProductAttributeOption[]> {
+		const existingOptions = await this.list({
+			product_id: productId,
+			attribute_id: attributeId
+		});
+		const existingOptionIds = new Set(existingOptions.map((o) => o.option_id));
+		const newOptionIds = new Set(optionIds);
+
+		const optionsToDelete = existingOptions
+			.filter((o) => !newOptionIds.has(o.option_id))
+			.map((o) => o.id);
+
+		const optionsToInsert = optionIds
+			.filter((id) => !existingOptionIds.has(id))
+			.map(
+				(optionId) =>
+					({
+						product_id: productId,
+						attribute_id: attributeId,
+						option_id: optionId,
+						is_active: true
+					}) as ProductAttributeOptionCreate
+			);
+
+		if (optionsToDelete.length > 0) {
+			const { error } = await this.supabase
+				.from('m_product_attribute_option')
+				.delete()
+				.in('id', optionsToDelete);
+			if (error) throw new Error(`Failed to delete product attribute options: ${error.message}`);
+		}
+
+		let inserted: ProductAttributeOption[] = [];
+		if (optionsToInsert.length > 0) {
+			inserted = await this.createMultiple(optionsToInsert);
+		}
+
+		const finalOptions = existingOptions
+			.filter((o) => newOptionIds.has(o.option_id))
+			.concat(inserted);
+
+		return finalOptions;
 	}
 }

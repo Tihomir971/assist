@@ -15,7 +15,8 @@ import {
 	BrandService, // Added BrandService
 	ProductAttributeOptionService,
 	ProductAttributeValueService,
-	AttributeSetAttributeService
+	AttributeSetAttributeService,
+	AttributeGroupService
 } from '$lib/services/supabase';
 import { TaxCategoryService, StorageOnHandService } from '$lib/services/supabase/';
 import {
@@ -35,6 +36,7 @@ import { productAttributeValuePayloadBuilder } from './product-attribute-value.p
 import { connector } from '$lib/ky';
 import type { ChartData } from '$lib/components/charts/chart-types';
 import type { PageServerLoad, Actions } from './$types';
+import { fail } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ depends, params, locals: { supabase } }) => {
 	depends('catalog:product');
@@ -79,7 +81,8 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		brands, // Added brands
 		productAttributeValues,
 		productAttributeOptions,
-		attributeSetAttributes
+		attributeSetAttributes,
+		attributeGroups
 	] = await Promise.all([
 		productService.getUoms(),
 		new CategoryService(supabase).getLookup(),
@@ -97,7 +100,8 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		new ProductAttributeOptionService(supabase).getByProductId(productId),
 		product.attributeset_id
 			? new AttributeSetAttributeService(supabase).getByAttributeSetId(product.attributeset_id)
-			: Promise.resolve([])
+			: Promise.resolve([]),
+		new AttributeGroupService(supabase).getLookup()
 	]);
 
 	const attributeService = new AttributeService(supabase);
@@ -105,18 +109,18 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 
 	if (attributeSetAttributes) {
 		const optionBasedAttributes = attributeSetAttributes.filter(
-			(attr) =>
+			(attr: (typeof attributeSetAttributes)[0]) =>
 				attr.m_attribute.attribute_type === 'single_select' ||
 				attr.m_attribute.attribute_type === 'multi_select'
 		);
 
-		const optionsPromises = optionBasedAttributes.map((attr) =>
+		const optionsPromises = optionBasedAttributes.map((attr: (typeof optionBasedAttributes)[0]) =>
 			attributeService.getAttributeOptions(attr.attribute_id)
 		);
 
 		const optionsResults = await Promise.all(optionsPromises);
 
-		optionBasedAttributes.forEach((attr, index) => {
+		optionBasedAttributes.forEach((attr: (typeof optionBasedAttributes)[0], index: number) => {
 			attributeOptionsLookup.set(attr.attribute_id, optionsResults[index]);
 		});
 	}
@@ -154,6 +158,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		attributeSetAttributes,
 		attributeOptionsLookup,
 		lookupData: {
+			attributeGroups: attributeGroups || [],
 			partners,
 			uom,
 			categories,
@@ -209,10 +214,60 @@ export const actions: Actions = {
 		productAttributeValuePayloadBuilder,
 		mProductAttributeValueInsertSchema
 	).upsert,
-	attributeOptionUpsert: createSimpleCRUD(
-		'ProductAttributeOption',
-		(supabase) => new ProductAttributeOptionService(supabase),
-		productAttributeOptionPayloadBuilder,
-		mProductAttributeOptionInsertSchema
-	).upsert
+	attributeOptionUpsert: async ({ request, locals: { supabase } }) => {
+		const formData = await request.formData();
+		const isMultiSelect = formData.get('is_multi_select') === 'true';
+
+		if (isMultiSelect) {
+			const productId = parseInt(formData.get('product_id') as string);
+			const attributeId = parseInt(formData.get('attribute_id') as string);
+			const selectedOptions = JSON.parse(
+				(formData.get('selected_options') as string) || '[]'
+			) as string[];
+
+			if (isNaN(productId) || isNaN(attributeId)) {
+				return fail(400, { message: 'Invalid product or attribute ID.' });
+			}
+
+			const service = new ProductAttributeOptionService(supabase);
+			try {
+				await service.upsertMultipleOptions(
+					productId,
+					attributeId,
+					selectedOptions.map((id) => parseInt(id))
+				);
+				return { success: true };
+			} catch (e) {
+				console.error('Failed to save multi-select options:', e);
+				const message = e instanceof Error ? e.message : 'An unknown error occurred.';
+				return fail(500, { message: `Failed to save multi-select options: ${message}` });
+			}
+		} else {
+			// Fallback to existing simple CRUD for single-select
+			const simpleCrudAction = createSimpleCRUD(
+				'ProductAttributeOption',
+				(supabase) => new ProductAttributeOptionService(supabase),
+				productAttributeOptionPayloadBuilder,
+				mProductAttributeOptionInsertSchema
+			).upsert;
+
+			// Re-create a request object for the simple CRUD handler.
+			// This is a bit of a workaround because we've already consumed the request body.
+			const newRequest = new Request(request.url, {
+				method: 'POST',
+				headers: request.headers,
+				body: new URLSearchParams(formData as unknown as Record<string, string>).toString()
+			});
+			Object.defineProperty(newRequest, 'formData', {
+				value: async () => new URLSearchParams(formData as unknown as Record<string, string>)
+			});
+
+			const event = {
+				request: newRequest,
+				locals: { supabase }
+			};
+
+			return simpleCrudAction(event as Parameters<typeof simpleCrudAction>[0]);
+		}
+	}
 };

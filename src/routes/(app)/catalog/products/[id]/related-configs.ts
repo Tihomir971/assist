@@ -198,7 +198,8 @@ export function createTabConfigs(data: PageData) {
 				productAttributeOptions: data.productAttributeOptions,
 				formProductAttributeOption: data.formProductAttributeOption,
 				attributeSetAttributes: data.attributeSetAttributes,
-				attributeOptionsLookup: data.attributeOptionsLookup
+				attributeOptionsLookup: data.attributeOptionsLookup,
+				lookupData: data.lookupData
 			},
 			{ order: 6 }
 		)

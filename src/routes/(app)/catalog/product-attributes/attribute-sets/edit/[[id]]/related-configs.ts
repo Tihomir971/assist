@@ -20,7 +20,12 @@ const formConfig = createFormConfig()
 		span: 6
 	})
 	.field('is_required', {
-		label: 'Required',
+		label: 'Mandatory',
+		type: 'boolean',
+		span: 3
+	})
+	.field('is_searchable', {
+		label: 'Searchable',
 		type: 'boolean',
 		span: 3
 	})
@@ -43,7 +48,8 @@ export const attributeSetAttributesConfig = createRelatedTableConfig()
 	})
 	.column(columnTypes.lookup('attribute_id', 'Attribute', 'attributes'))
 	.column(columnTypes.number('sequence', 'Sequence'))
-	.column(columnTypes.boolean('is_required', 'Required'))
+	.column(columnTypes.boolean('is_required', 'Mandatory'))
+	.column(columnTypes.boolean('is_searchable', 'Searchable'))
 	.column(columnTypes.boolean('is_active', 'Active'))
 	.formSchema(mAttributesetAttributeInsertSchema)
 	.formConfig(formConfig)
