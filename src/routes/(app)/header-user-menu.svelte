@@ -3,14 +3,14 @@
 	import { enhance } from '$app/forms';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import type { Database, TablesUpdate } from '$lib/types/supabase.types';
+	import type { AdUserRow, Database } from '@tihomir971/assist-shared';
 
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { AvatarZag } from '$lib/components/zag/index.js';
 
 	type Props = {
 		supabase: SupabaseClient<Database>;
-		profile: TablesUpdate<'ad_user'> | null;
+		profile: AdUserRow | null;
 	};
 	let { supabase, profile }: Props = $props();
 

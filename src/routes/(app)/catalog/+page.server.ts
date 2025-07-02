@@ -5,10 +5,16 @@ import type { FlattenedProduct, ProductWithDetails } from './columns.svelte.js';
 import type {
 	Database,
 	Enums,
-	Tables,
-	TablesInsert,
-	TablesUpdate
-} from '$lib/types/supabase.types';
+	MPricelistVersionUpdate,
+	MProductPackingInsert,
+	MProductPoInsert,
+	MProductPoRow,
+	MProductpriceInsert,
+	MProductpriceRow,
+	MProductRow,
+	MStorageonhandInsert,
+	MStorageonhandRow
+} from '@tihomir971/assist-shared';
 import type { ProductsResultSearch } from './types-search-vendor-products';
 import type { ApiResponse } from '$lib/types/api.types';
 import type { ProductRequest } from './types-api-market';
@@ -151,7 +157,7 @@ async function fetchProducts(
 
 async function getPriceLists(
 	supabase: SupabaseClient<Database>
-): Promise<Partial<Tables<'m_pricelist_version'>>[] | []> {
+): Promise<Partial<MPricelistVersionRow>[] | []> {
 	const nowBelgrade = DateTime.now().setZone('Europe/Belgrade');
 	const targetDate = nowBelgrade.toFormat("yyyy-MM-dd'T'HH:mm:ssZZ");
 
@@ -245,7 +251,7 @@ function flattenProduct(
 	product: ProductWithDetails,
 	activeWarehouse: number,
 	checkedVat: boolean,
-	activePricelists: TablesUpdate<'m_pricelist_version'>[]
+	activePricelists: MPricelistVersionUpdate[]
 ): FlattenedProduct {
 	const smallestPricestd = Math.min(
 		...product.m_productprice
@@ -377,25 +383,25 @@ export const actions = {
 			.eq('c_channel_id', 1);
 
 		const errors: ErrorDetails[] = [];
-		const productUpdates: { id: number; data: Partial<Tables<'m_product'>> }[] = [];
-		const barcodeInserts: TablesInsert<'m_product_packing'>[] = []; // Use Insert<>
+		const productUpdates: { id: number; data: Partial<MProductRow> }[] = [];
+		const barcodeInserts: MProductPackingInsert[] = []; // Use Insert<>
 		// Arrays for Product PO
-		const productPoInserts: TablesInsert<'m_product_po'>[] = []; // Use Insert<>
+		const productPoInserts: MProductPoInsert[] = []; // Use Insert<>
 		const productPoUpdates: {
 			where: { m_product_id: number; c_bpartner_id: number };
-			data: Partial<Tables<'m_product_po'>>;
+			data: Partial<MProductPoRow>;
 		}[] = [];
 		// Arrays for Stock
-		const stockInserts: TablesInsert<'m_storageonhand'>[] = []; // Use Insert<>
+		const stockInserts: MStorageonhandInsert[] = []; // Use Insert<>
 		const stockUpdates: {
 			where: { m_product_id: number; warehouse_id: number };
-			data: Partial<Tables<'m_storageonhand'>>;
+			data: Partial<MStorageonhandRow>;
 		}[] = [];
 		// Arrays for Price
-		const priceInserts: TablesInsert<'m_productprice'>[] = []; // Use Insert<>
+		const priceInserts: MProductpriceInsert[] = []; // Use Insert<>
 		const priceUpdates: {
 			where: { m_product_id: number; m_pricelist_version_id: number };
-			data: Partial<Tables<'m_productprice'>>;
+			data: Partial<MProductpriceRow>;
 		}[] = [];
 
 		// --- Pre-fetch Product IDs ---
@@ -859,9 +865,9 @@ export const actions = {
 
 		const productPoUpdates: {
 			where: { m_product_id: number; c_bpartner_id: number };
-			data: Partial<Tables<'m_product_po'>>;
+			data: Partial<MProductPoRow>;
 		}[] = [];
-		const productPoInserts: TablesInsert<'m_product_po'>[] = [];
+		const productPoInserts: MProductPoInsert[] = [];
 
 		try {
 			const batchSize = 30;
@@ -978,7 +984,7 @@ export const actions = {
 					priceWithoutTax =
 						product.price || product.price === 0 ? product.price / (1 + taxRate) : undefined;
 				}
-				const poData: Partial<Tables<'m_product_po'>> = {
+				const poData: Partial<MProductPoRow> = {
 					vendorproductno: product.sku ?? '', // Handle potentially null SKU
 					barcode: product.barcodes?.join(', '),
 					manufacturer: product.brand,
@@ -1000,7 +1006,7 @@ export const actions = {
 						m_product_id: productId,
 						c_bpartner_id: bpartnerId,
 						...poData
-					} as TablesInsert<'m_product_po'>);
+					} as MProductPoInsert);
 					existingPoSet.add(poKey); // Add to set to prevent duplicate inserts in this batch
 				}
 

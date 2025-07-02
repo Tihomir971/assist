@@ -4,7 +4,13 @@ import TableCheckbox from '$lib/components/walker-tx/table-checkbox.svelte';
 import DataTableTitleCell from './data-table-title-cell.svelte';
 import DataTableActionsVendor from './data-table-actions-vendor.svelte';
 import { createRawSnippet } from 'svelte';
-import type { TablesUpdate } from '$lib/types/supabase.types';
+import type {
+	CBpartnerUpdate,
+	MProductPackingUpdate,
+	MProductpriceUpdate,
+	MReplenishUpdate,
+	MStorageonhandUpdate
+} from '@tihomir971/assist-shared';
 import { NumberFormatter } from '$lib/scripts/intl';
 
 export interface Warehouse {
@@ -20,15 +26,15 @@ export interface ProductWithDetails {
 	is_active: boolean;
 	imageurl: string | null;
 	discontinued: boolean;
-	m_storageonhand: TablesUpdate<'m_storageonhand'>[];
-	m_product_packing: TablesUpdate<'m_product_packing'>[];
-	m_replenish: TablesUpdate<'m_replenish'>[];
+	m_storageonhand: MStorageonhandUpdate[];
+	m_product_packing: MProductPackingUpdate[];
+	m_replenish: MReplenishUpdate[];
 	c_taxcategory?: { c_tax: { rate: number }[] } | null;
-	m_productprice: TablesUpdate<'m_productprice'>[];
+	m_productprice: MProductpriceUpdate[];
 	m_product_po: {
 		c_bpartner_id: number;
 		pricelist: number | null;
-		c_bpartner: TablesUpdate<'c_bpartner'>;
+		c_bpartner: CBpartnerUpdate;
 	}[];
 	m_product_brands?: { name: string } | null;
 }

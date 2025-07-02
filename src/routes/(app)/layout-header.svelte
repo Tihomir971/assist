@@ -1,7 +1,5 @@
 <script lang="ts">
-	// import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Separator } from '$lib/components/ui/separator/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	type SearchProductsResult = Database['public']['Functions']['search_products']['Returns'];
@@ -11,7 +9,7 @@
 	import HeaderShoppingCart from './layout-header-shopping-cart.svelte';
 	//Icons
 	import SidebarIcon from '@lucide/svelte/icons/sidebar';
-	import type { Database, TablesUpdate } from '$lib/types/supabase.types';
+	import type { Database } from '@tihomir971/assist-shared';
 	import ky from 'ky';
 
 	interface Props {

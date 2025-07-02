@@ -2,7 +2,7 @@ import type { Product, ProductToUpdate } from '../types';
 import { normalizeVendorProductNo, modifyPrice } from './data-processors';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { isValidGTIN } from '$lib/scripts/gtin';
-import type { Database, TablesInsert } from '$lib/types/supabase.types';
+import type { Database, MProductPoInsert } from '@tihomir971/assist-shared';
 
 export async function importProducts(
 	supabase: SupabaseClient<Database>,
@@ -135,7 +135,7 @@ export async function importProducts(
 						valid_to: product.valid_to || null
 					};
 				})
-				.filter(Boolean) as TablesInsert<'m_product_po'>[];
+				.filter(Boolean) as MProductPoInsert[];
 
 			const { data, error } = await supabase.from('m_product_po').insert(insertData).select();
 

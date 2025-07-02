@@ -2,7 +2,7 @@
 	// Libs
 	// Types
 	import type { SupabaseClient } from '@supabase/supabase-js';
-	import type { Database, Tables } from '$lib/types/supabase.types.js';
+	import type { MProductpriceRow, Database, Tables } from '@tihomir971/assist-shared';
 	// Components
 	import * as TableShow from '$lib/components/ui/table/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -17,7 +17,7 @@
 	const dateHelper = new DateHelper();
 
 	let pricelistVersions = $state<Tables<'m_pricelist_version'>[]>([]);
-	let productPrices = $state<Tables<'m_productprice'>[]>([]);
+	let productPrices = $state<MProductpriceRow[]>([]);
 
 	let selectedPricelistId = $state<number | null>(null);
 	let selectedVersionId = $state<number | null>(null);

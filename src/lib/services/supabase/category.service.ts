@@ -1,4 +1,4 @@
-import type { Database, Tables } from '$lib/types/supabase.types';
+import type { Database, Tables } from '@tihomir971/assist-shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service'; // Removed ServiceResult as it's not directly used here
 

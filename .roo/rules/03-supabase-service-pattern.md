@@ -34,7 +34,7 @@ For each service, define the necessary types in the service file, typically at t
 
 ```typescript
 // src/lib/services/supabase/your-entity.service.ts
-import type { Tables } from '$lib/types/supabase.types';
+import type { Tables } from '@tihomir971/assist-shared';
 
 export type YourEntity = Tables<'your_table_name'>;
 export type YourEntityCreate = Omit<YourEntity, 'id' | 'created_at' | 'updated_at'>;
@@ -48,7 +48,7 @@ Create the service class in `src/lib/services/supabase/your-entity.service.ts`, 
 
 ```typescript
 // src/lib/services/supabase/your-entity.service.ts
-import type { Database, Tables } from '$lib/types/supabase.types';
+import type { Database, Tables } from '@tihomir971/assist-shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service'; // Ensure this path is correct
 
@@ -188,7 +188,7 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 
 ## 5. Best Practices
 
--   **Single Source of Truth**: All data structures and validation should originate from `supabase.zod.schemas.ts` and `supabase.types.ts`.
+-   **Single Source of Truth**: All data structures and validation should originate from `supabase.zod.schemas.ts` and `@tihomir971/assist-shared`.
 -   **Service Layer Abstraction**: All direct Supabase calls must be encapsulated within service methods. `+page.server.ts` files should interact with services, not directly with `supabase` client.
 -   **Parallel Data Fetching**: Always use `Promise.all` when fetching multiple independent lookup datasets in `load` functions to improve performance.
 -   **Type Safety**: Leverage TypeScript types (`Entity`, `EntityCreate`, `EntityUpdate`, `EntityLookup`) to ensure strong typing throughout the service layer.

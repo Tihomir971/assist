@@ -5,7 +5,7 @@ import type {
 	CChannelMapCategoryInsert,
 	MProductCategoryRow
 } from '$lib/types/supabase.zod.schemas.d';
-import type { Tables } from '$lib/types/supabase.types';
+import type { Tables } from '@tihomir971/assist-shared';
 import { createSplitLayoutConfig, createTabConfig } from '$lib/utils/split-layout-config.builder';
 import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable.svelte';
 import type { Component } from 'svelte';
