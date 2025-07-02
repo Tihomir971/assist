@@ -1,11 +1,11 @@
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import type { Warehouse } from './columns.svelte';
-import { CategoryService } from '$lib/services/supabase/category.service';
 
 let warehousesCache: Warehouse[] | [] = [];
-export const load: LayoutServerLoad = async ({ url, depends, locals: { supabase } }) => {
-	depends('catalog:categories');
+export const load: LayoutServerLoad = async ({ url, parent, locals: { supabase } }) => {
+	const { categoryTree } = await parent();
+	console.log('categoryTreeLayout');
 
 	const whParam = url.searchParams.get('wh');
 	if (!whParam) {
@@ -26,10 +26,8 @@ export const load: LayoutServerLoad = async ({ url, depends, locals: { supabase 
 		return warehousesCache;
 	}
 
-	const categoryService = new CategoryService(supabase);
-
 	return {
-		categories: await categoryService.getCategoryTree(),
+		categories: categoryTree,
 		warehouses: await getWarehouses(),
 		activeWarehouse
 	};

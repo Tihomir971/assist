@@ -31,6 +31,7 @@
 	const storageColumnVisibility = new LocalStorage<VisibilityState>('hiddenColumns', {});
 	let columnVisibility = $state<VisibilityState>(storageColumnVisibility.current);
 	let globalFilterTableState = $state<GlobalFilterTableState>();
+	$inspect('globalFilterTableState', globalFilterTableState);
 
 	function onRowSelectionChange(updater: Updater<RowSelectionState>) {
 		// Update the selection state by reassigning the $state
@@ -41,12 +42,6 @@
 		}
 	}
 
-	function handleSearch(e: Event) {
-		const target = e.target as HTMLInputElement;
-		if (target) {
-			table.setGlobalFilter(target.value);
-		}
-	}
 	// Create the table and bind the row selection state using a getter.
 	const table = createSvelteTable({
 		get data() {

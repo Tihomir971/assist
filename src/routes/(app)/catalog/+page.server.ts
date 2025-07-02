@@ -25,12 +25,11 @@ import { isValidGTIN } from '$lib/scripts/gtin';
 import { connector, scrapper } from '$lib/ky';
 import { DateTime } from 'luxon';
 import { productSelectSchema } from './schema';
-import { findChildren } from '$lib/scripts/tree';
 import { sourceId } from './types';
 import { catalogSearchParamsSchema } from './search-params.schema';
 import { ProductStatus, type ProductResultGet } from './types-get-market-info';
-import type { MPricelistVersionRow, MProductCategoryRow } from '$lib/types/supabase.zod.schemas.d';
-import { CategoryService } from '$lib/services/supabase';
+import type { MPricelistVersionRow } from '$lib/types/supabase.zod.schemas.d';
+import { CategoryService } from '$lib/services/supabase/category.service';
 
 // Add this export near the top or where types are defined
 export type ErrorDetails = { productId?: number; step: string; message: string };
@@ -42,16 +41,15 @@ export const load: PageServerLoad = async ({ depends, parent, url, locals: { sup
 		report: selectedReport,
 		vat: checkedVat,
 		sub: showSubcategories,
-		cat: categoryId = null
+		cat: categoryId = null,
+		search: searchTerm
 	} = params;
+	console.log('categoryId', categoryId);
 
 	const { activeWarehouse } = await parent();
 
-	const categoryService = new CategoryService(supabase);
-	const categories = await categoryService.list();
-
 	const [productsData, activePricelists] = await Promise.all([
-		fetchProducts(supabase, categoryId ?? null, showSubcategories, categories),
+		fetchProducts(supabase, categoryId ?? null, showSubcategories),
 		getPriceLists(supabase)
 	]);
 
@@ -64,19 +62,23 @@ export const load: PageServerLoad = async ({ depends, parent, url, locals: { sup
 	);
 
 	return {
-		products
+		products,
+		searchTerm
 	};
 };
 
 async function fetchProducts(
 	supabase: SupabaseClient<Database>,
 	categoryId: string | null,
-	showSubcategories: boolean,
-	categories: MProductCategoryRow[]
+	showSubcategories: boolean
 ) {
 	let categoryIds: number[] = [];
 	if (categoryId && showSubcategories) {
-		categoryIds = findChildren(categories, parseInt(categoryId));
+		// Create TreeCollection on-demand for efficient descendant lookup
+		const categoryService = new CategoryService(supabase);
+		const categoryTreeCollection = await categoryService.getCategoryTreeCollection();
+		const descendantValues = categoryTreeCollection.getDescendantValues(categoryId);
+		categoryIds = descendantValues.map((value: string) => parseInt(value));
 	}
 	let query = supabase
 		.from('m_product')

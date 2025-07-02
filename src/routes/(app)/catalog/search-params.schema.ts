@@ -14,5 +14,6 @@ export const catalogSearchParamsSchema = z.object({
 		.string()
 		.optional()
 		.transform((val) => val === 'true'),
-	cat: z.string().optional()
+	cat: z.string().optional(),
+	search: z.string().optional()
 });

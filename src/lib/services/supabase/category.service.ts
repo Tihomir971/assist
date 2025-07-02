@@ -1,6 +1,7 @@
 import type { Database, Tables } from '@tihomir971/assist-shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service'; // Removed ServiceResult as it's not directly used here
+import { TreeCollection } from '@zag-js/collection';
 
 export type Category = Tables<'m_product_category'>; // Exported
 export type CategoryCreate = Omit<Category, 'id' | 'created_at' | 'updated_at'>; // Exported
@@ -145,6 +146,21 @@ export class CategoryService implements CRUDService<Category, CategoryCreate, Ca
 		});
 
 		return result;
+	}
+
+	async getCategoryTreeCollection(): Promise<TreeCollection<Output>> {
+		const treeData = await this.getCategoryTree();
+
+		return new TreeCollection<Output>({
+			rootNode: {
+				value: 0,
+				label: 'Root',
+				children: treeData
+			} as Output,
+			nodeToValue: (node) => node.value.toString(),
+			nodeToString: (node) => node.label,
+			nodeToChildren: (node) => node.children || []
+		});
 	}
 }
 

@@ -21,9 +21,8 @@
 			path.delete('cat');
 		}
 		path.set('search', product.id.toString());
-		goto(`/catalog?${path.toString()}`, {
-			invalidate: ['catalog:categories']
-		});
+		goto(`/catalog?${path.toString()}`, { invalidate: ['catalog:products'] });
+		//
 
 		open = false;
 	}
