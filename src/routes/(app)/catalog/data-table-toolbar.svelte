@@ -42,16 +42,10 @@
 	// let checkedSubcategories = $derived(page.url.searchParams.get('sub') === 'true');
 	const searchParams = page.url.searchParams;
 	let inputValueWarehouse = $derived(searchParams.get('wh') ?? '');
-	let inputGlobaSearch = $derived(searchParams.get('search'));
 	const toggleGroupValue: string[] = [
 		...(searchParams.get('vat') === 'true' ? ['vat'] : []),
 		...(searchParams.get('sub') === 'true' ? ['sub'] : [])
 	];
-	$effect(() => {
-		if (inputGlobaSearch) {
-			table.setGlobalFilter(inputGlobaSearch);
-		}
-	});
 	const triggerWarehouseLabel = $derived(
 		warehouses.find((f) => f.value === inputValueWarehouse)?.label ?? 'Select warehouse'
 	);

@@ -31,7 +31,6 @@
 	const storageColumnVisibility = new LocalStorage<VisibilityState>('hiddenColumns', {});
 	let columnVisibility = $state<VisibilityState>(storageColumnVisibility.current);
 	let globalFilterTableState = $state<GlobalFilterTableState>();
-	$inspect('globalFilterTableState', globalFilterTableState);
 
 	function onRowSelectionChange(updater: Updater<RowSelectionState>) {
 		// Update the selection state by reassigning the $state
@@ -90,6 +89,12 @@
 			}
 		},
 		getRowId: (originalRow) => originalRow.id.toString()
+	});
+
+	$effect(() => {
+		if (data.searchTerm) {
+			table.setGlobalFilter(data.searchTerm);
+		}
 	});
 	async function addToCart(): Promise<void> {
 		if (browser && cartService) {
