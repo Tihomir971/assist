@@ -112,6 +112,22 @@ export class PricingRulesService
 		if (error) throw new Error(`Failed to delete pricing rule: ${error.message}`);
 	}
 
+	async clone(id: number): Promise<PricingRule> {
+		const originalRule = await this.getById(id);
+		if (!originalRule) {
+			throw new Error(`Pricing rule with id ${id} not found.`);
+		}
+
+		const newRuleData: PricingRuleCreate = {
+			...originalRule,
+			name: `${originalRule.name} (Clone)`,
+			is_active: false
+		};
+
+		// The create method handles the rest
+		return this.create(newRuleData);
+	}
+
 	async list(filters?: Record<string, unknown>): Promise<PricingRule[]> {
 		let query = this.supabase.from('pricing_rules').select('*');
 

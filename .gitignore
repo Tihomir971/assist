@@ -26,3 +26,4 @@ vite.config.js.timestamp-*
 #wrangler.toml
 .dev.*
 supazod.config.*
+.npmrc

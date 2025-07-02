@@ -21,6 +21,11 @@ const swapPrioritiesSchema = z.object({
 	rule2Id: z.number()
 });
 
+// Schema for cloning a rule
+const cloneSchema = z.object({
+	id: z.number()
+});
+
 export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 	try {
 		const service = new PricingRulesService(supabase);
@@ -141,6 +146,24 @@ export const actions: Actions = {
 		} catch (error) {
 			console.error('Error swapping priorities:', error);
 			return fail(500, { error: 'Greška prilikom zamene prioriteta.' });
+		}
+	},
+
+	clone: async ({ request, locals: { supabase } }) => {
+		const form = await superValidate(request, zod(cloneSchema));
+
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+
+		try {
+			const service = new PricingRulesService(supabase);
+			const newRule = await service.clone(form.data.id);
+
+			return { success: true, newRuleId: newRule.id };
+		} catch (error) {
+			console.error('Error cloning pricing rule:', error);
+			return fail(500, { error: 'Failed to clone pricing rule' });
 		}
 	}
 };

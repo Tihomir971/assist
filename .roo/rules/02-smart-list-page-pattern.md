@@ -51,7 +51,7 @@ Create `datatable.config.ts` in your route directory:
 ```typescript
 // src/routes/(app)/your-route/datatable.config.ts
 import { DataTableConfigBuilder, columnTypes } from '$lib/utils/data-table-config.builder';
-import type { Tables } from '$lib/types/supabase.types';
+import type { Tables } from '@tihomir971/assist-shared';
 import type { ColumnDef } from '@tanstack/svelte-table';
 import DataTableActions from '$lib/components/ui/data-table-actions.svelte';
 import { RenderComponentConfig } from '$lib/components/walker-tx/render-component';
@@ -378,7 +378,7 @@ Your service class must implement the `ServiceWithDelete` interface:
 ```typescript
 // src/lib/services/supabase/your.service.ts
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '$lib/types/supabase.types';
+import type { Database } from '@tihomir971/assist-shared';
 
 export class YourService {
   constructor(public supabase: SupabaseClient<Database>) {}

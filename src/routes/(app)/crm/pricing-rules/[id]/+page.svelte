@@ -16,6 +16,7 @@
 	// UI Components
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
@@ -32,6 +33,7 @@
 	import type { PricingFormula, PricingConditions } from '$lib/types/pricing-rules.types';
 	import FormulaBuilder from '$lib/components/pricing-rules/builders/FormulaBuilder.svelte';
 	import ConditionsBuilder from '$lib/components/pricing-rules/builders/ConditionsBuilder.svelte';
+	import { NumberInputZag } from '$lib/components/zag';
 
 	let { data }: { data: PageData } = $props();
 
@@ -138,16 +140,19 @@
 								required
 							/>
 						</div>
-						<div class="space-y-2">
-							<Label for="priority">Prioritet</Label>
-							<Input
-								id="priority"
-								name="priority"
-								type="number"
-								bind:value={$formData.priority}
-								placeholder="0"
-							/>
-						</div>
+						<Form.Field name="priority" {form}>
+							<Form.Control>
+								{#snippet children({ props })}
+									<NumberInputZag
+										{...props}
+										bind:value={$formData.priority}
+										label="Priority"
+										fraction={0}
+									/>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors class="mt-1 text-sm" />
+						</Form.Field>
 					</div>
 					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 						<div class="space-y-2">

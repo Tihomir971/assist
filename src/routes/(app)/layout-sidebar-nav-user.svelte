@@ -9,7 +9,7 @@
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import type { Database } from '$lib/types/supabase.types';
+	import type { Database } from '@tihomir971/assist-shared';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';

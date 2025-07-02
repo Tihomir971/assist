@@ -99,19 +99,32 @@
 		};
 	};
 
+	const handleSubmitClone: import('@sveltejs/kit').SubmitFunction = async () => {
+		return async ({ result, update }) => {
+			if (result.type === 'success') {
+				toastManager.showSuccess('Pravilo je uspešno klonirano.', {
+					dedupeKey: 'clone-success'
+				});
+			} else if (result.type === 'failure') {
+				const errorMessage = result.data?.error || 'Greška pri kloniranju pravila.';
+				toastManager.showError(errorMessage, {
+					dedupeKey: `clone-error-${errorMessage.slice(0, 20)}`
+				});
+			} else if (result.type === 'error') {
+				toastManager.showError(result.error.message || 'Nepoznata greška prilikom kloniranja.', {
+					dedupeKey: 'clone-unexpected-error'
+				});
+			}
+			await update({ reset: false });
+		};
+	};
+
 	function handleEdit(id: number) {
 		goto(`/crm/pricing-rules/${id}`);
 	}
 
 	function handleCreate() {
 		createDialogOpen = true;
-	}
-
-	function handleClone(rule: any) {
-		// TODO: Implement clone functionality
-		toastManager.showInfo('Clone funkcionalnost će biti dodana uskoro', {
-			dedupeKey: 'clone-not-implemented'
-		});
 	}
 
 	function handleDeleteSubmit(event: Event) {
@@ -241,9 +254,22 @@
 												<Pencil class="h-4 w-4" />
 												Edituj
 											</DropdownMenu.Item>
-											<DropdownMenu.Item onclick={() => handleClone(rule)} class="gap-2">
-												<Copy class="h-4 w-4" />
-												Kloniraj
+											<DropdownMenu.Item class="gap-2 p-0">
+												<form
+													method="POST"
+													action="?/clone"
+													use:enhance={handleSubmitClone}
+													class="w-full"
+												>
+													<input type="hidden" name="id" value={rule.id} />
+													<button
+														type="submit"
+														class="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left hover:bg-accent"
+													>
+														<Copy class="h-4 w-4" />
+														Kloniraj
+													</button>
+												</form>
 											</DropdownMenu.Item>
 											<DropdownMenu.Item class="gap-2 p-0 text-destructive focus:text-destructive">
 												<form

@@ -80,7 +80,7 @@
 	import { cn } from '$lib/utils';
 	import { page } from '$app/state';
 	import type { SupabaseClient } from '@supabase/supabase-js';
-	import type { Database } from '$lib/types/supabase.types';
+	import type { Database } from '@tihomir971/assist-shared';
 	import LayoutSidebarNavSimple from './layout-sidebar-nav-simple.svelte';
 
 	let {

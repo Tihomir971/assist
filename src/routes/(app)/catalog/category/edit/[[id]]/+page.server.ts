@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '$lib/types/supabase.types';
+import type { Database } from '@tihomir971/assist-shared';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { error } from '@sveltejs/kit';

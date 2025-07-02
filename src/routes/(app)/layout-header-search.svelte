@@ -5,7 +5,7 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import type { HTMLFormAttributes } from 'svelte/elements';
 	import type { WithElementRef } from '$lib/utils.js';
-	import type { Database } from '$lib/types/supabase.types';
+	import type { Database } from '@tihomir971/assist-shared';
 	import SearchDialog from './search-dialog.svelte';
 	type SearchProductsResult = Database['public']['Functions']['search_products']['Returns'];
 
