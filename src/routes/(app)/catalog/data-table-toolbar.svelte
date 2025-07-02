@@ -71,7 +71,18 @@
 	<Input
 		type="search"
 		value={globalFilterTableState ?? ''}
-		oninput={handleSearch}
+		oninput={(e) => {
+			const target = e.target as HTMLInputElement;
+			if (page.url.searchParams.get('search')) {
+				const newUrl = new URL(page.url);
+				newUrl.searchParams.delete('search');
+				goto(newUrl);
+			}
+
+			if (target) {
+				table.setGlobalFilter(target.value);
+			}
+		}}
 		placeholder="Filter products..."
 		class="max-w-sm"
 	/>

@@ -5,7 +5,6 @@ import type { Warehouse } from './columns.svelte';
 let warehousesCache: Warehouse[] | [] = [];
 export const load: LayoutServerLoad = async ({ url, parent, locals: { supabase } }) => {
 	const { categoryTree } = await parent();
-	console.log('categoryTreeLayout');
 
 	const whParam = url.searchParams.get('wh');
 	if (!whParam) {
