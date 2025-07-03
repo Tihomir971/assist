@@ -16,10 +16,7 @@ import { categoryPayloadBuilder } from './category.payload';
 import { channelMappingPayloadBuilder } from './channel-mapping.payload'; // Updated import
 // All builders for this route are now co-located.
 // The import from '$lib/utils/payload-configs.simplified' will be empty for these if no other builders remain.
-import type {
-	CChannelMapCategoryRow,
-	MProductCategoryRow
-} from '$lib/types/supabase.zod.schemas.d';
+import type { CChannelMapCategoryRow, MProductCategoryRow } from '@tihomir971/assist-shared';
 
 // Load function remains the same (already optimized)
 export const load: PageServerLoad = async ({ params, locals: { supabase }, depends }) => {

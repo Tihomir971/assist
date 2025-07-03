@@ -1,5 +1,5 @@
 import { mPricelistInsertSchema, mPricelistUpdateSchema } from '$lib/types/supabase.zod.schemas';
-import type { MPricelistInsert, MPricelistUpdate } from '$lib/types/supabase.zod.schemas.d';
+import type { MPricelistInsert, MPricelistUpdate } from '@tihomir971/assist-shared';
 import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
 
 // Pricelist Configuration

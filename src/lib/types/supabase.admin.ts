@@ -1,6 +1,6 @@
 // src/lib/types.ts
 import type { User } from '@supabase/supabase-js';
-import type { Database } from './supabase.types';
+import type { Database } from '@tihomir971/assist-shared';
 
 // Use Supabase type helpers
 export type Profile = Database['public']['Tables']['ad_user']['Row'];

@@ -2,10 +2,7 @@ import {
 	mProductCategoryInsertSchema,
 	mProductCategoryUpdateSchema
 } from '$lib/types/supabase.zod.schemas';
-import type {
-	MProductCategoryInsert,
-	MProductCategoryUpdate
-} from '$lib/types/supabase.zod.schemas.d';
+import type { MProductCategoryInsert, MProductCategoryUpdate } from '@tihomir971/assist-shared';
 import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
 
 export const categoryPayloadBuilder = new SmartPayloadBuilder<

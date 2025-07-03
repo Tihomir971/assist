@@ -28,7 +28,7 @@ import { productSelectSchema } from './schema';
 import { sourceId } from './types';
 import { catalogSearchParamsSchema } from './search-params.schema';
 import { ProductStatus, type ProductResultGet } from './types-get-market-info';
-import type { MPricelistVersionRow } from '$lib/types/supabase.zod.schemas.d';
+import type { MPricelistVersionRow } from '@tihomir971/assist-shared';
 import { CategoryService } from '$lib/services/supabase/category.service';
 
 // Add this export near the top or where types are defined

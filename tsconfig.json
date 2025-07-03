@@ -13,7 +13,6 @@
 		"types": [
 			"./src/worker-configuration.d.ts",
 			"unplugin-icons/types/svelte"
-			// "./src/lib/types/supabase.zod.schemas.d.ts"
 			// "src/lib/types/tanstack-table.d.ts"
 		]
 	}
