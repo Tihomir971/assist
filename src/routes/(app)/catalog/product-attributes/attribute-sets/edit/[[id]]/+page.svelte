@@ -4,7 +4,7 @@
 	import SmartRelatedTabs from '$lib/components/forms/SmartRelatedTabs.svelte';
 	import { createFormConfig } from '$lib/utils/form-config.builder';
 	import { splitLayoutConfig, createTabConfigs } from './related-configs';
-	import { mAttributesetInsertSchema } from '$lib/types/supabase.zod.schemas';
+	import { mAttributesetInsertSchema } from '@tihomir971/assist-shared';
 	import { AttributeSetAttributeService } from '$lib/services/supabase/attribute-set-attribute.service';
 	import { browser } from '$app/environment';
 	import { page } from '$app/state';

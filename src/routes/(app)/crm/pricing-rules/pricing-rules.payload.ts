@@ -1,8 +1,5 @@
 import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
-import {
-	pricingRulesInsertSchema,
-	pricingRulesUpdateSchema
-} from '$lib/types/supabase.zod.schemas';
+import { pricingRulesInsertSchema, pricingRulesUpdateSchema } from '@tihomir971/assist-shared';
 import type { PricingRulesInsert, PricingRulesUpdate } from '@tihomir971/assist-shared';
 
 export const pricingRulesPayloadBuilder = new SmartPayloadBuilder<

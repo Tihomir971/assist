@@ -26,7 +26,7 @@ import {
 	mReplenishInsertSchema,
 	mProductAttributeOptionInsertSchema,
 	mProductAttributeValueInsertSchema
-} from '$lib/types/supabase.zod.schemas';
+} from '@tihomir971/assist-shared';
 import { productPayloadBuilder } from './product.payload';
 import { productPackingPayloadBuilder } from './product-packing.payload';
 import { productPoPayloadBuilder } from './product-po.payload';

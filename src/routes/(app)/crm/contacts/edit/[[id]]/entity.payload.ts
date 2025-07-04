@@ -1,4 +1,4 @@
-import { cBpartnerInsertSchema, cBpartnerUpdateSchema } from '$lib/types/supabase.zod.schemas';
+import { cBpartnerInsertSchema, cBpartnerUpdateSchema } from '@tihomir971/assist-shared';
 import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
 
 export const contactPayloadBuilder = new SmartPayloadBuilder(

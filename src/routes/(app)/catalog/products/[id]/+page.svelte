@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { mProductInsertSchema } from '$lib/types/supabase.zod.schemas';
+	import { mProductInsertSchema } from '@tihomir971/assist-shared';
 	import { createTabConfigs, splitLayoutConfig } from './related-configs';
 	import SmartSplitLayout from '$lib/components/forms/SmartSplitLayout.svelte';
 	import SmartRelatedTabs from '$lib/components/forms/SmartRelatedTabs.svelte';
@@ -49,7 +49,8 @@
 			type: 'select',
 			span: 3,
 			label: 'UOM',
-			options: data.lookupData.uom
+			options: data.lookupData.uom,
+			placeholder: 'Select UOM'
 		})
 		.field('shelf_life', { type: 'number', span: 6, label: 'Shelf Life (days)' })
 		.field('descriptionurl', { type: 'text', span: 12, label: 'Manufacturer URL' })

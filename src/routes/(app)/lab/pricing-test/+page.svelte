@@ -91,50 +91,44 @@
 								<span class="text-sm text-red-500">{$errors.product_id}</span>
 							{/if}
 						</div>
-
-						<div class="space-y-2">
-							<Label for="quantity">Quantity</Label>
-							<Input
-								id="quantity"
-								name="quantity"
-								type="number"
-								bind:value={$formData.quantity}
-								placeholder="1"
-								min="1"
-							/>
-						</div>
+						<Form.Field {form} name="quantity">
+							<Form.Control>
+								{#snippet children({ props })}
+									<NumberInputZag {...props} bind:value={$formData.quantity} label="Quantity" />
+								{/snippet}
+							</Form.Control>
+							<Form.Description>Number of items to test pricing for.</Form.Description>
+						</Form.Field>
 					</div>
 
 					<div class="grid grid-cols-2 gap-4">
-						<div class="space-y-2">
-							<Form.Field {form} name="input_price">
-								<Form.Control>
-									{#snippet children({ props })}
-										<NumberInputZag
-											{...props}
-											bind:value={$formData.input_price}
-											label="Input Price"
-											fraction={2}
-										/>
-									{/snippet}
-								</Form.Control>
-							</Form.Field>
-							{$formData.input_price}
-							{#if $errors.input_price}
-								<span class="text-sm text-red-500">{$errors.input_price}</span>
-							{/if}
-						</div>
-
-						<div class="space-y-2">
-							<Label for="partner_id">Partner ID</Label>
-							<Input
-								id="partner_id"
-								name="partner_id"
-								type="number"
-								bind:value={$formData.partner_id}
-								placeholder="Optional"
-							/>
-						</div>
+						<Form.Field {form} name="input_price">
+							<Form.Control>
+								{#snippet children({ props })}
+									<NumberInputZag
+										{...props}
+										bind:value={$formData.input_price}
+										label="Input Price"
+										fraction={2}
+									/>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+						<Form.Field {form} name="partner_id">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Partner ID</Form.Label>
+									<Input
+										{...props}
+										type="number"
+										bind:value={$formData.partner_id}
+										placeholder="Optional"
+									/>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
 					</div>
 
 					<div class="grid grid-cols-2 gap-4">

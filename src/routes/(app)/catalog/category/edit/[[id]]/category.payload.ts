@@ -1,7 +1,7 @@
 import {
 	mProductCategoryInsertSchema,
 	mProductCategoryUpdateSchema
-} from '$lib/types/supabase.zod.schemas';
+} from '@tihomir971/assist-shared';
 import type { MProductCategoryInsert, MProductCategoryUpdate } from '@tihomir971/assist-shared';
 import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
 

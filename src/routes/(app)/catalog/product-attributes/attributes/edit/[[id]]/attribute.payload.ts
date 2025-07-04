@@ -1,4 +1,4 @@
-import { mAttributeInsertSchema, mAttributeUpdateSchema } from '$lib/types/supabase.zod.schemas';
+import { mAttributeInsertSchema, mAttributeUpdateSchema } from '@tihomir971/assist-shared';
 import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
 
 export const attributePayloadBuilder = new SmartPayloadBuilder(

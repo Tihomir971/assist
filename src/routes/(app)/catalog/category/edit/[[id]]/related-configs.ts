@@ -1,6 +1,6 @@
 import { createRelatedTableConfig, columnTypes } from '$lib/utils/related-table-config.builder';
 import { createFormConfig } from '$lib/utils/form-config.builder';
-import { cChannelMapCategoryInsertSchema } from '$lib/types/supabase.zod.schemas';
+import { cChannelMapCategoryInsertSchema } from '@tihomir971/assist-shared';
 import type { CChannelMapCategoryInsert, MProductCategoryRow } from '@tihomir971/assist-shared';
 import type { Tables } from '@tihomir971/assist-shared';
 import { createSplitLayoutConfig, createTabConfig } from '$lib/utils/split-layout-config.builder';

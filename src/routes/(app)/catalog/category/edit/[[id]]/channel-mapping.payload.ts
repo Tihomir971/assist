@@ -1,7 +1,7 @@
 import {
 	cChannelMapCategoryInsertSchema,
 	cChannelMapCategoryUpdateSchema
-} from '$lib/types/supabase.zod.schemas';
+} from '@tihomir971/assist-shared';
 import type {
 	CChannelMapCategoryInsert,
 	CChannelMapCategoryUpdate

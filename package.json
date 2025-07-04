@@ -68,7 +68,7 @@
     "@tailwindcss/vite": "4.1.11",
     "@tanstack/svelte-table": "npm:tanstack-table-8-svelte-5@^0.1",
     "@tanstack/table-core": "^8.21.3",
-    "@tihomir971/assist-shared": "^1.0.5",
+    "@tihomir971/assist-shared": "^1.0.8",
     "@zag-js/avatar": "^1.17.4",
     "@zag-js/checkbox": "^1.17.4",
     "@zag-js/collection": "^1.17.4",

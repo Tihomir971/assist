@@ -1,4 +1,4 @@
-import { mAttributeOptionInsertSchema } from '$lib/types/supabase.zod.schemas';
+import { mAttributeOptionInsertSchema } from '@tihomir971/assist-shared';
 import { columnTypes, createRelatedTableConfig } from '$lib/utils/related-table-config.builder';
 import { createFormConfig } from '$lib/utils/form-config.builder';
 import { createSplitLayoutConfig, createTabConfig } from '$lib/utils/split-layout-config.builder';

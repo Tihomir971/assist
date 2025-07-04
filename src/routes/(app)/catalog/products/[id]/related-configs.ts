@@ -6,7 +6,7 @@ import {
 	mProductPackingInsertSchema,
 	mProductPoInsertSchema,
 	mReplenishInsertSchema
-} from '$lib/types/supabase.zod.schemas';
+} from '@tihomir971/assist-shared';
 import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable.svelte';
 import ChartVisualization from '$lib/components/charts/ChartVisualization.svelte';
 import StorageOnHandDisplay from './m-storageonhand-display.svelte';

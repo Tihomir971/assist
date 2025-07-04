@@ -1,8 +1,5 @@
 import { z } from 'zod';
-import {
-	mAttributesetInsertSchema,
-	mAttributesetUpdateSchema
-} from '$lib/types/supabase.zod.schemas';
+import { mAttributesetInsertSchema, mAttributesetUpdateSchema } from '@tihomir971/assist-shared';
 
 // Schema for attribute set list filtering and sorting
 export const attributeSetsSearchParamsSchema = z.object({

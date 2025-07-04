@@ -7,7 +7,7 @@ import type { Actions, PageServerLoad } from './$types';
 import {
 	cChannelMapCategoryInsertSchema,
 	mProductCategoryInsertSchema
-} from '$lib/types/supabase.zod.schemas';
+} from '@tihomir971/assist-shared';
 // deleteByIdSchema is imported by the factory itself.
 import { CategoryService } from '$lib/services/supabase/category.service';
 import { ChannelMappingService } from '$lib/services/supabase/channel-mapping.service';

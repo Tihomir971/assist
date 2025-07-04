@@ -8,7 +8,7 @@ import { AttributeSetAttributeService } from '$lib/services/supabase/attribute-s
 import {
 	mAttributesetInsertSchema,
 	mAttributesetAttributeInsertSchema
-} from '$lib/types/supabase.zod.schemas';
+} from '@tihomir971/assist-shared';
 import { attributeSetPayloadBuilder } from './attribute-set.payload.js';
 import { attributeSetAttributePayloadBuilder } from './attribute-set-attribute.payload.js';
 

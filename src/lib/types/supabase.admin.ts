@@ -1,16 +1,11 @@
 // src/lib/types.ts
 import type { User } from '@supabase/supabase-js';
-import type { Database } from '@tihomir971/assist-shared';
-
-// Use Supabase type helpers
-export type Profile = Database['public']['Tables']['ad_user']['Row'];
-export type ProfileInsert = Database['public']['Tables']['ad_user']['Insert'];
-export type ProfileUpdate = Database['public']['Tables']['ad_user']['Update'];
+import type { AdUserRow } from '@tihomir971/assist-shared';
 
 // Define allowed user metadata keys
 export interface UserMetadata {
 	name?: string;
-	role?: Profile['role'];
+	role?: AdUserRow['role'];
 	avatar_url?: string;
 	phone?: string;
 	[key: string]: string | number | boolean | null | undefined;
@@ -51,7 +46,7 @@ export interface DeleteUserResponse {
 }
 
 // Helper types for better type safety
-export type UserRole = Profile['role'];
+export type UserRole = AdUserRow['role'];
 
 // Auth user update data type
 export interface AuthUserUpdateData {

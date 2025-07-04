@@ -1,7 +1,7 @@
 import { PartnerService } from '$lib/services/supabase/partner.service';
 import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
 import { contactPayloadBuilder } from './entity.payload';
-import { cBpartnerInsertSchema } from '$lib/types/supabase.zod.schemas';
+import { cBpartnerInsertSchema } from '@tihomir971/assist-shared';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { error } from '@sveltejs/kit';
