@@ -12,8 +12,13 @@ export function normalizeVendorProductNo(
 		normalized = normalized.padStart(9, '0');
 		// If it's longer than 9 digits, take the last 9
 		normalized = normalized.slice(-9);
+	} else if (supplierId === 347) {
+		// For Spektar (ID 347), we must preserve the original code,
+		// as it can contain leading zeros that are significant.
+		// We just return the original value after removing non-digit characters.
+		return normalized;
 	} else {
-		// For other suppliers, just remove leading zeros
+		// For all other suppliers, continue to remove leading zeros.
 		normalized = normalized.replace(/^0+/, '');
 	}
 

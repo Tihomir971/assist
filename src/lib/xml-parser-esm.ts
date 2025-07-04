@@ -1,5 +1,5 @@
 // xml-parser.ts
-import { XMLParser } from 'fast-xml-parser';
+import { XMLParser, type X2jOptions } from 'fast-xml-parser';
 
 export interface Product {
 	name: string;
@@ -98,20 +98,9 @@ export async function retrieveAndParseXml(
  * @returns Object with parsed products
  */
 export function parseXmlString(xmlString: string): Omit<ParsedXmlResult, 'source' | 'parsedAt'> {
-	const parserOptions = {
+	const parserOptions: X2jOptions = {
 		// Preserve attributes
 		ignoreAttributes: false,
-
-		// Parse attribute values (convert numbers, booleans)
-		parseAttributeValue: true,
-
-		// Parse tag values (convert numbers, booleans)
-		// Set to false to prevent automatic conversion of values like "04259" to numbers.
-		// Specific numeric conversions are handled by parseNumber().
-		parseTagValue: false,
-
-		// Only parse actual numbers, not strings that look like numbers
-		parseTrueNumberOnly: true,
 
 		// Handle CDATA sections
 		cdataPropName: '__cdata', // String value for CDATA property name
@@ -140,7 +129,11 @@ export function parseXmlString(xmlString: string): Omit<ParsedXmlResult, 'source
 		processEntities: true,
 
 		// Handle empty tags
-		allowBooleanAttributes: true
+		allowBooleanAttributes: true,
+		numberParseOptions: {
+			hex: true, // Allow hexadecimal numbers
+			leadingZeros: false // Allow leading zeros in numbers
+		}
 	};
 
 	try {
