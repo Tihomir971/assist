@@ -5,6 +5,9 @@
 	import SmartRelatedTabs from '$lib/components/forms/SmartRelatedTabs.svelte';
 	import SmartForm from '$lib/components/forms/SmartForm.svelte';
 	import { createFormConfig } from '$lib/utils/form-config.builder';
+	import path from 'path';
+	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 
 	let { data } = $props();
 	const tabConfigs = $derived(createTabConfigs(data));
@@ -66,6 +69,12 @@
 			action="?/productUpsert"
 			deleteAction="?/productDelete"
 			entityName="Product"
+			onCancel={() => {
+				const searchParam = page.url.searchParams;
+				goto(`/catalog?${searchParam.toString()}`, {
+					invalidate: ['catalog:products']
+				});
+			}}
 		/>
 	{/snippet}
 	{#snippet rightPanel()}

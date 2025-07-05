@@ -57,7 +57,7 @@
 						bind:contextNode
 						bind:selectedValue
 						onSelectionChange={(details) => {
-							// console.log('onSelectionChange details', details);
+							console.log('onSelectionChange details', details);
 
 							if (!details.focusedValue) return;
 							const newUrl = new URL(page.url);

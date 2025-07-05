@@ -82,7 +82,7 @@
 				<DropdownMenu.Group>
 					<DropdownMenu.Item onSelect={() => goto('/account/profile')}>
 						<BadgeCheckIcon />
-						Account
+						Profile
 					</DropdownMenu.Item>
 				</DropdownMenu.Group>
 				<DropdownMenu.Separator />
@@ -90,6 +90,11 @@
 					<DropdownMenu.Item onSelect={() => goto('/account/settings')}>
 						<CreditCardIcon />
 						Settings
+					</DropdownMenu.Item>
+
+					<DropdownMenu.Item onSelect={() => goto('/system')}>
+						<CreditCardIcon />
+						System
 					</DropdownMenu.Item>
 					<!-- <DropdownMenu.Item>
 						<BellIcon />

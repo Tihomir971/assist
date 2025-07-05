@@ -23,28 +23,6 @@
 	let searchResults = $state<SearchProductsResult>([]);
 	let dialogOpen = $state(false);
 
-	const handleSearch = async () => {
-		// Only proceed if value is at least 2 characters
-		if (searchTerm.length < 2) {
-			searchResults = [];
-			dialogOpen = false;
-			return;
-		}
-
-		try {
-			const response = await ky
-				.get(`/api/search?term=${encodeURIComponent(searchTerm)}`)
-				.json<{ products: typeof searchResults }>();
-			searchResults = response.products;
-
-			// Always open the dialog, even when there are no results
-			dialogOpen = true;
-		} catch (error) {
-			console.error('Search failed:', error);
-			searchResults = [];
-			dialogOpen = true; // Show dialog with error message
-		}
-	};
 	const sidebar = Sidebar.useSidebar();
 </script>
 
