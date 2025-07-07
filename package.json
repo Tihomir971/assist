@@ -11,14 +11,12 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "update-deps": "pnpx npm-check-updates -i --format group --install always",
     "update-next": "pnpx npm-check-updates -i --format group --install always --target \"@next\"",
-    "supazod": "pnpm exec supazod -i \"./src/lib/types/supabase.types.ts\" -o \"./src/lib/types/supabase.zod.schemas.ts\"  -t \"./src/lib/types/supabase.zod.schemas.d.ts\" -s public",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
     "format": "prettier --plugin-search-dir . --write .",
     "knip": "knip",
     "deploy": "pnpm run build && wrangler deploy",
-    "cf-typegen": "wrangler types ./src/worker-configuration.d.ts",
-    "supabase-to-zod": "pnpm exec supabase-to-zod --input \"./src/lib/types/supabase.types.ts\" --output \"./src/lib/types/supabase.zod.schemas.ts\""
+    "cf-typegen": "wrangler types ./src/worker-configuration.d.ts"
   },
   "devDependencies": {
     "@eslint/compat": "^1.3.1",
@@ -45,8 +43,6 @@
     "prettier-plugin-svelte": "^3.4.0",
     "prettier-plugin-tailwindcss": "^0.6.13",
     "supabase": "^2.30.4",
-    "supabase-to-zod": "^1.0.7",
-    "supazod": "^2.0.0",
     "svelte": "^5.35.2",
     "svelte-check": "^4.2.2",
     "tailwind-variants": "^1.0.0",
@@ -68,7 +64,7 @@
     "@tailwindcss/vite": "4.1.11",
     "@tanstack/svelte-table": "npm:tanstack-table-8-svelte-5@^0.1",
     "@tanstack/table-core": "^8.21.3",
-    "@tihomir971/assist-shared": "^1.0.8",
+    "@tihomir971/assist-shared": "^1.1.1",
     "@zag-js/avatar": "^1.18.2",
     "@zag-js/checkbox": "^1.18.2",
     "@zag-js/collection": "^1.18.2",
@@ -94,7 +90,7 @@
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "4.1.11",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
-    "zod": "^3.25.74"
+    "zod": "^3.25.75"
   },
   "pnpm": {
     "overrides": {

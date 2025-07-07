@@ -10,7 +10,7 @@
 	variant="ghost"
 	size="icon"
 	onclick={() => {
-		goto(`/catalog/products/${id}`);
+		goto(`/catalog/products/edit/${id}`);
 	}}
 	class="relative size-8 p-0"
 >

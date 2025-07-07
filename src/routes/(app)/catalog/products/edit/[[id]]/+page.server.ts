@@ -16,7 +16,9 @@ import {
 	ProductAttributeOptionService,
 	ProductAttributeValueService,
 	AttributeSetAttributeService,
-	AttributeGroupService
+	AttributeGroupService,
+	ChannelMappingProductService, // Added ChannelMappingProductService
+	ChannelService
 } from '$lib/services/supabase';
 import { TaxCategoryService, StorageOnHandService } from '$lib/services/supabase/';
 import {
@@ -25,14 +27,17 @@ import {
 	mProductPoInsertSchema,
 	mReplenishInsertSchema,
 	mProductAttributeOptionInsertSchema,
-	mProductAttributeValueInsertSchema
+	mProductAttributeValueInsertSchema,
+	cChannelMapProductInsertSchema // Added cChannelMapProductInsertSchema
 } from '@tihomir971/assist-shared';
+import type { CChannelMapProductRow } from '@tihomir971/assist-shared';
 import { productPayloadBuilder } from './product.payload';
 import { productPackingPayloadBuilder } from './product-packing.payload';
 import { productPoPayloadBuilder } from './product-po.payload';
 import { replenishPayloadBuilder } from './replenish.payload';
 import { productAttributeOptionPayloadBuilder } from './product-attribute-option.payload';
 import { productAttributeValuePayloadBuilder } from './product-attribute-value.payload';
+import { channelMappingProductPayloadBuilder } from './channel-mapping-product.payload'; // Added channelMappingProductPayloadBuilder
 import { connector } from '$lib/ky';
 import type { ChartData } from '$lib/components/charts/chart-types';
 import type { PageServerLoad, Actions } from './$types';
@@ -41,7 +46,7 @@ import { fail } from '@sveltejs/kit';
 export const load: PageServerLoad = async ({ depends, params, locals: { supabase } }) => {
 	depends('catalog:product');
 
-	const productId = parseInt(params.id);
+	const productId = parseInt(params.id!);
 	if (isNaN(productId)) {
 		throw error(400, 'Invalid product ID');
 	}
@@ -82,7 +87,9 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		productAttributeValues,
 		productAttributeOptions,
 		attributeSetAttributes,
-		attributeGroups
+		attributeGroups,
+		channelMapProduct,
+		channels
 	] = await Promise.all([
 		productService.getUoms(),
 		new CategoryService(supabase).getLookup(),
@@ -101,7 +108,9 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		product.attributeset_id
 			? new AttributeSetAttributeService(supabase).getByAttributeSetId(product.attributeset_id)
 			: Promise.resolve([]),
-		new AttributeGroupService(supabase).getLookup()
+		new AttributeGroupService(supabase).getLookup(),
+		new ChannelMappingProductService(supabase).list({ m_product_id: productId }),
+		new ChannelService(supabase).getChannelLookup()
 	]);
 
 	const attributeService = new AttributeService(supabase);
@@ -131,14 +140,16 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		formReplenish,
 		formProductPo,
 		formProductAttributeValue,
-		formProductAttributeOption
+		formProductAttributeOption,
+		formChannelMapProduct
 	] = await Promise.all([
 		superValidate(product, zod(mProductInsertSchema)),
 		superValidate(zod(mProductPackingInsertSchema)),
 		superValidate(zod(mReplenishInsertSchema)),
 		superValidate(zod(mProductPoInsertSchema)),
 		superValidate(zod(mProductAttributeValueInsertSchema)),
-		superValidate(zod(mProductAttributeOptionInsertSchema))
+		superValidate(zod(mProductAttributeOptionInsertSchema)),
+		superValidate(zod(cChannelMapProductInsertSchema))
 	]);
 
 	return {
@@ -157,6 +168,8 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		formProductAttributeOption,
 		attributeSetAttributes,
 		attributeOptionsLookup,
+		channelMapProduct,
+		formChannelMapProduct,
 		lookupData: {
 			attributeGroups: attributeGroups || [],
 			partners,
@@ -165,7 +178,8 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 			warehouses,
 			tax,
 			attributeSets,
-			brands // Added brands to lookupData
+			brands, // Added brands to lookupData
+			channels
 		},
 		salesByWeeks
 	};
@@ -197,6 +211,16 @@ const replenishCRUD = createSimpleCRUD(
 	(supabase) => new ReplenishService(supabase),
 	replenishPayloadBuilder,
 	mReplenishInsertSchema
+);
+
+const channelMappingProductCRUD = createSimpleCRUD<
+	CChannelMapProductRow,
+	typeof cChannelMapProductInsertSchema
+>(
+	'ChannelMappingProduct',
+	(supabase) => new ChannelMappingProductService(supabase),
+	channelMappingProductPayloadBuilder,
+	cChannelMapProductInsertSchema
 );
 
 export const actions: Actions = {
@@ -269,5 +293,7 @@ export const actions: Actions = {
 
 			return simpleCrudAction(event as Parameters<typeof simpleCrudAction>[0]);
 		}
-	}
+	},
+	channelMapProductUpsert: channelMappingProductCRUD.upsert,
+	channelMapProductDelete: channelMappingProductCRUD.delete
 };

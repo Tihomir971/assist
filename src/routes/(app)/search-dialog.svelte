@@ -20,8 +20,7 @@
 		} else {
 			path.delete('cat');
 		}
-		// path.set('search', product.id.toString());
-		goto(`/catalog/products/${product.id.toString()}?${path.toString()}`, {
+		goto(`/catalog/products/edit/${product.id.toString()}?${path.toString()}`, {
 			invalidate: ['catalog:products']
 		});
 		//

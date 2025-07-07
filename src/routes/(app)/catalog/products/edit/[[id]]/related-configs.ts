@@ -5,7 +5,8 @@ import { columnTypes, createRelatedTableConfig } from '$lib/utils/related-table-
 import {
 	mProductPackingInsertSchema,
 	mProductPoInsertSchema,
-	mReplenishInsertSchema
+	mReplenishInsertSchema,
+	cChannelMapProductInsertSchema
 } from '@tihomir971/assist-shared';
 import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable.svelte';
 import ChartVisualization from '$lib/components/charts/ChartVisualization.svelte';
@@ -16,8 +17,8 @@ import { invalidate } from '$app/navigation';
 
 // Define the split layout configuration
 export const splitLayoutConfig = createSplitLayoutConfig()
-	.leftPanel({ width: '45%' })
-	.rightPanel({ width: '55%' })
+	.leftPanel({ width: '40%' })
+	.rightPanel({ width: '60%' })
 	.build();
 
 // Helper function to create tab configurations
@@ -124,7 +125,44 @@ export function createTabConfigs(data: PageData) {
 		.parentIdField('m_product_id')
 		.build();
 
+	const channelMappingFormConfig = createFormConfig()
+		.title('Channel Product Mapping')
+		.field('c_channel_id', {
+			type: 'combobox',
+			label: 'Channel',
+			options: data.lookupData.channels,
+			span: 12
+		})
+		.field('external_product_id', { label: 'External ID', span: 12 })
+		.field('url', { label: 'URL', span: 12 })
+		.build();
+
+	const channelMappingConfig = createRelatedTableConfig()
+		.title('Channel Mapping')
+		.column(columnTypes.lookup('c_channel_id', 'Channel', 'channels'))
+		.column(columnTypes.text('external_product_id', 'External ID'))
+		.column(columnTypes.url('url', 'URL'))
+		.formSchema(cChannelMapProductInsertSchema)
+		.formConfig(channelMappingFormConfig)
+		.actions('?/channelMapProductUpsert', '?/channelMapProductUpsert', '?/channelMapProductDelete')
+		.parentIdField('m_product_id')
+		.build();
+
 	return [
+		createTabConfig(
+			'channel-mapping',
+			'Mapping',
+			SmartRelatedTable as Component,
+			{
+				config: channelMappingConfig,
+				items: data.channelMapProduct,
+				validatedForm: data.formChannelMapProduct,
+				parentId: data.entity.id,
+				lookupData: { channels: data.lookupData.channels },
+				onRefresh: handleRefresh
+			},
+			{ badge: data.channelMapProduct?.length || 0, order: 0 }
+		),
 		createTabConfig(
 			'vendors',
 			'Vendors',

@@ -20,3 +20,10 @@ export { ProductAttributeOptionService } from './product-attribute-option.servic
 export { ProductAttributeValueService } from './product-attribute-value.service';
 
 export { UOMService } from './uom.service';
+export { ChannelService } from './channel.service';
+
+export { ChannelMappingCategoryService } from './channel-mapping-category.service';
+export { ChannelMappingProductService } from './channel-mapping-product.service';
+export { ChannelMappingBrandService } from './channel-mapping-brand.service';
+export { ChannelMappingUomService } from './channel-mapping-uom.service';
+export { ChannelMappingTaxCategoryService } from './channel-mapping-taxcategory.service';

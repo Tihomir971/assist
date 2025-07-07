@@ -11,7 +11,7 @@
 	variant="ghost"
 	size="icon"
 	onclick={() => {
-		goto(`/catalog/products/${id}?${page.url.searchParams}`);
+		goto(`/catalog/products/edit/${id}?${page.url.searchParams}`);
 	}}
 	class="relative size-8 p-0"
 >

@@ -10,7 +10,8 @@ import {
 } from '@tihomir971/assist-shared';
 // deleteByIdSchema is imported by the factory itself.
 import { CategoryService } from '$lib/services/supabase/category.service';
-import { ChannelMappingService } from '$lib/services/supabase/channel-mapping.service';
+import { ChannelMappingCategoryService } from '$lib/services/supabase/channel-mapping-category.service';
+import { ChannelService } from '$lib/services/supabase/channel.service';
 import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
 import { categoryPayloadBuilder } from './category.payload';
 import { channelMappingPayloadBuilder } from './channel-mapping.payload'; // Updated import
@@ -24,7 +25,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase }, depen
 	console.log("depends('app:category-page');");
 
 	const categoryService = new CategoryService(supabase);
-	const channelMappingService = new ChannelMappingService(supabase); // Instantiate ChannelMappingService
+	const channelService = new ChannelService(supabase);
 
 	let categoryId: number | null = null;
 
@@ -39,7 +40,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase }, depen
 		const [categoryWithRelated, lookupCategories, lookupChannels] = await Promise.all([
 			categoryId ? categoryService.getCategoryWithRelatedData(categoryId) : Promise.resolve(null),
 			categoryService.getLookup(),
-			channelMappingService.getChannelLookup()
+			channelService.getChannelLookup()
 		]);
 
 		if (categoryId && !categoryWithRelated?.category) {
@@ -88,7 +89,7 @@ const channelMappingActions = createSimpleCRUD<
 	typeof cChannelMapCategoryInsertSchema
 >(
 	'Channel Mapping',
-	(supabase: SupabaseClient<Database>) => new ChannelMappingService(supabase),
+	(supabase: SupabaseClient<Database>) => new ChannelMappingCategoryService(supabase),
 	channelMappingPayloadBuilder,
 	cChannelMapCategoryInsertSchema
 );

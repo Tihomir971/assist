@@ -2,17 +2,20 @@ import type { Database, Tables } from '@tihomir971/assist-shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service';
 
-export type ChannelMapping = Tables<'c_channel_map_category'>; // Exported
-export type ChannelMappingCreate = Omit<ChannelMapping, 'id' | 'created_at' | 'updated_at'>; // Exported
-export type ChannelMappingUpdate = Partial<ChannelMappingCreate>; // Exported
-export type ChannelLookup = { value: number; label: string }; // Exported for lookup
+export type ChannelMappingCategory = Tables<'c_channel_map_category'>;
+export type ChannelMappingCategoryCreate = Omit<
+	ChannelMappingCategory,
+	'id' | 'created_at' | 'updated_at'
+>;
+export type ChannelMappingCategoryUpdate = Partial<ChannelMappingCategoryCreate>;
 
-export class ChannelMappingService
-	implements CRUDService<ChannelMapping, ChannelMappingCreate, ChannelMappingUpdate>
+export class ChannelMappingCategoryService
+	implements
+		CRUDService<ChannelMappingCategory, ChannelMappingCategoryCreate, ChannelMappingCategoryUpdate>
 {
 	constructor(private supabase: SupabaseClient<Database>) {}
 
-	async getById(id: number): Promise<ChannelMapping | null> {
+	async getById(id: number): Promise<ChannelMappingCategory | null> {
 		const { data, error } = await this.supabase
 			.from('c_channel_map_category')
 			.select('*')
@@ -23,7 +26,7 @@ export class ChannelMappingService
 		return data;
 	}
 
-	async create(data: ChannelMappingCreate): Promise<ChannelMapping> {
+	async create(data: ChannelMappingCategoryCreate): Promise<ChannelMappingCategory> {
 		const { data: newMapping, error } = await this.supabase
 			.from('c_channel_map_category')
 			.insert(data)
@@ -35,7 +38,7 @@ export class ChannelMappingService
 		return newMapping;
 	}
 
-	async update(id: number, data: ChannelMappingUpdate): Promise<ChannelMapping> {
+	async update(id: number, data: ChannelMappingCategoryUpdate): Promise<ChannelMappingCategory> {
 		const { data: updatedMapping, error } = await this.supabase
 			.from('c_channel_map_category')
 			.update(data)
@@ -54,22 +57,31 @@ export class ChannelMappingService
 		if (error) throw new Error(`Failed to delete channel mapping: ${error.message}`);
 	}
 
-	async list(filters?: Record<string, unknown>): Promise<ChannelMapping[]> {
+	async list(filters?: Record<string, unknown>): Promise<ChannelMappingCategory[]> {
 		let query = this.supabase.from('c_channel_map_category').select('*');
 
 		if (filters?.m_product_category_id) {
 			query = query.eq('m_product_category_id', filters.m_product_category_id as number);
 		}
 
-		const { data, error } = await query.order('resource_name'); // Assuming 'resource_name' exists for ordering
+		const { data, error } = await query.order('resource_name');
 		if (error) throw new Error(`Failed to list channel mappings: ${error.message}`);
 		return data || [];
 	}
 
-	async getChannelLookup(): Promise<ChannelLookup[]> {
-		const { data, error } = await this.supabase.from('c_channel').select('label:name, value:id'); // No specific order mentioned, can add if needed
+	async getByCategory(categoryId: number): Promise<ChannelMappingCategory[]> {
+		const { data, error } = await this.supabase
+			.from('c_channel_map_category')
+			.select(
+				`
+                *,
+                c_channel:c_channel_id (id, name, code)
+            `
+			)
+			.eq('m_product_category_id', categoryId)
+			.order('created_at', { ascending: false });
 
-		if (error) throw new Error(`Failed to load channel lookup: ${error.message}`);
+		if (error) throw new Error(`Failed to fetch category mappings: ${error.message}`);
 		return data || [];
 	}
 }

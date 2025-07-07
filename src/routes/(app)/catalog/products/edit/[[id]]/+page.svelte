@@ -5,7 +5,7 @@
 	import SmartRelatedTabs from '$lib/components/forms/SmartRelatedTabs.svelte';
 	import SmartForm from '$lib/components/forms/SmartForm.svelte';
 	import { createFormConfig } from '$lib/utils/form-config.builder';
-	import path from 'path';
+	// import path from 'path'; // REMOVED
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 
