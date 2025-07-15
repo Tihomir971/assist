@@ -36,8 +36,8 @@ importers:
         specifier: ^8.21.3
         version: 8.21.3
       '@tihomir971/assist-shared':
-        specifier: ^2.2.6
-        version: 2.2.6
+        specifier: ^2.2.7
+        version: 2.2.7
       '@zag-js/avatar':
         specifier: ^1.18.3
         version: 1.18.3
@@ -1231,8 +1231,8 @@ packages:
     resolution: {integrity: sha512-ldZXEhOBb8Is7xLs01fR3YEc3DERiz5silj8tnGkFZytt1abEvl/GhUmCE0PMLaMPTa3Jk4HbKmRlHmu+gCftg==}
     engines: {node: '>=12'}
 
-  '@tihomir971/assist-shared@2.2.6':
-    resolution: {integrity: sha512-4ijg7GJ34JAY3DNI8mtecFahU0cAL+l41KuxCWES9NX9jm1dFV1/I70VZtpJxoOezhDPac8ydm/YtWnGrnEz7A==}
+  '@tihomir971/assist-shared@2.2.7':
+    resolution: {integrity: sha512-Bq4YWhsFsDq+a9UeE/LR5ddBAOpMiIeFBKcJ2BMf2DbZSDeiObM2zTkHX3XUdnQZgkzky+xHKQwy6QDyzyuXnQ==}
 
   '@tybys/wasm-util@0.9.0':
     resolution: {integrity: sha512-6+7nlbMVX/PVDCwaIQ8nTOPveOcFLSt8GcXdx8hD0bt39uWxYT88uXzqTd4fTvqta7oeUJqudepapKNt2DYJFw==}
@@ -3655,7 +3655,7 @@ snapshots:
 
   '@tanstack/table-core@8.21.3': {}
 
-  '@tihomir971/assist-shared@2.2.6':
+  '@tihomir971/assist-shared@2.2.7':
     dependencies:
       zod: 3.25.76
 
