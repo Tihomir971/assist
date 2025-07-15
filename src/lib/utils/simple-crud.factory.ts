@@ -6,7 +6,7 @@ import type { SmartPayloadBuilder } from './smart-payload.builder';
 import type { CRUDService } from '$lib/services/base/crud.service';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@tihomir971/assist-shared';
-import { z, type ZodRawShape, type ZodTypeAny, type UnknownKeysParam } from 'zod';
+import { z, type ZodRawShape, type ZodTypeAny, type UnknownKeysParam } from 'zod/v3';
 import { extractStructuredSupabaseError } from '$lib/server/utils/supabase-error.utils';
 
 // Define a more specific type for the getService function

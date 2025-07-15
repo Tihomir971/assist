@@ -1,7 +1,7 @@
 import { connector } from '$lib/ky';
 import type { PageServerLoad } from './$types';
 import type { ChartData } from '../../../../lib/components/charts/chart-types';
-import { z } from 'zod';
+import * as z from 'zod/v3';
 
 const searchParamsSchema = z.object({
 	skus: z

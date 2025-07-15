@@ -5,7 +5,7 @@
 	import { createFormConfig } from '$lib/utils/form-config.builder';
 	import { splitLayoutConfig, createTabConfigs } from './related-configs';
 	import { mProductCategoryInsertSchema } from '@tihomir971/assist-shared';
-	import type { z } from 'zod';
+	import * as z from 'zod/v3';
 
 	let { data } = $props();
 

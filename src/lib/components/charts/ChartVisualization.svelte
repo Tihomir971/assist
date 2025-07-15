@@ -1,24 +1,21 @@
 <script lang="ts">
 	import * as echarts from 'echarts/core';
-	import { BarChart } from 'echarts/charts';
+	import { BarChart, type BarSeriesOption } from 'echarts/charts';
 	import {
 		DatasetComponent,
 		TooltipComponent,
 		GridComponent,
 		LegendComponent,
-		MarkLineComponent
-	} from 'echarts/components';
-	import type { BarSeriesOption } from 'echarts/charts';
-	import type {
-		DatasetComponentOption,
-		TooltipComponentOption,
-		GridComponentOption,
-		LegendComponentOption,
-		MarkLineComponentOption
+		MarkLineComponent,
+		type DatasetComponentOption,
+		type TooltipComponentOption,
+		type GridComponentOption,
+		type LegendComponentOption,
+		type MarkLineComponentOption
 	} from 'echarts/components';
 	import { SVGRenderer } from 'echarts/renderers';
-	import { onMount } from 'svelte';
 	import type { ChartData, YearData } from '$lib/components/charts/chart-types';
+	import Echarts from '$lib/components/charts/Echarts.svelte';
 
 	echarts.use([
 		DatasetComponent,
@@ -43,10 +40,8 @@
 	let { data }: Props = $props();
 
 	function aggregateData(data: ChartData): YearData[] {
-		// Create a map to store aggregated values by year and month
 		const yearMap = new Map<number, Map<number, number>>();
 
-		// Aggregate values from all products
 		data.products.forEach((product) => {
 			product.years.forEach((year) => {
 				if (!yearMap.has(year.year)) {
@@ -61,11 +56,10 @@
 			});
 		});
 
-		// Convert the map back to the YearData structure
 		const aggregatedYears: YearData[] = Array.from(yearMap.entries()).map(([year, monthMap]) => ({
 			year,
 			months: Array.from(monthMap.entries())
-				.sort((a, b) => a[0] - b[0]) // Sort by month
+				.sort((a, b) => a[0] - b[0])
 				.map(([month, value]) => ({
 					month,
 					value
@@ -81,16 +75,15 @@
 		years.forEach((year) => {
 			let months = year.months;
 
-			// For current year, only include completed months
 			if (year.year === currentYear) {
-				const currentMonth = new Date().getMonth() + 1; // 1-based month
+				const currentMonth = new Date().getMonth() + 1;
 				months = months.filter((m) => m.month < currentMonth);
 			}
 
 			if (months.length > 0) {
 				const sum = months.reduce((acc, month) => acc + month.value, 0);
 				const average = sum / months.length;
-				averages.set(year.year, Math.round(average * 100) / 100); // Round to 2 decimal places
+				averages.set(year.year, Math.round(average * 100) / 100);
 			}
 		});
 
@@ -101,22 +94,23 @@
 		return new Date(2000, month - 1, 1).toLocaleString('default', { month: 'short' });
 	}
 
-	function initializeChart() {
-		if (!chartContainer || !data?.products) return;
+	const chartOptions = $derived.by(() => {
+		if (!data?.products || data.products.length === 0) {
+			return {
+				title: {
+					text: 'No data available',
+					left: 'center',
+					top: 'center'
+				}
+			};
+		}
 
-		chartInstance = echarts.init(chartContainer);
-
-		// Aggregate data if there are multiple products
 		const chartYears =
 			data.products.length > 1 ? aggregateData(data) : data.products[0]?.years || [];
 
-		// Sort years in ascending order
 		const sortedYears = [...chartYears].sort((a, b) => a.year - b.year);
-
-		// Calculate yearly averages
 		const yearlyAverages = calculateYearlyAverages(sortedYears, data.currentYear);
 
-		// Prepare series data for each year
 		const series: BarSeriesOption[] = sortedYears.map((year) => ({
 			type: 'bar',
 			name: year.year.toString(),
@@ -160,7 +154,7 @@
 				textStyle: { color: 'var(--color-muted-foreground)' }
 			},
 			grid: {
-				top: '15%', // Increased to accommodate labels
+				top: '15%',
 				bottom: '15%',
 				containLabel: true
 			},
@@ -177,60 +171,10 @@
 			series
 		};
 
-		chartInstance.setOption(option);
-	}
-
-	// Re-initialize chart options when data changes, only if chart exists
-	$effect(() => {
-		if (chartInstance && data?.products) {
-			console.log('Data changed, re-initializing chart options');
-			initializeChart(); // Re-calculates options based on new data and applies them
-		}
-	});
-
-	let chartInstance: echarts.ECharts | null = null;
-	let chartContainer: HTMLDivElement;
-
-	let chartWidth = $state(0);
-	let chartHeight = $state(0);
-
-	// Effect for handling initialization and resize based on container dimensions
-	$effect(() => {
-		const width = chartWidth;
-		const height = chartHeight;
-
-		if (width > 0 && height > 0) {
-			if (!chartInstance && chartContainer) {
-				// Initialize chart only when container has dimensions and chart is not already initialized
-				initializeChart();
-			} else if (chartInstance) {
-				// Resize existing chart instance
-				chartInstance.resize();
-			}
-		} else if (chartInstance) {
-			// Optional: Log when dimensions become zero (e.g., tab hidden)
-			// console.log(`Chart container dimensions became zero.`);
-		}
-	});
-
-	onMount(() => {
-		// Chart initialization is now handled by the $effect watching dimensions
-		// Cleanup on destroy
-		return () => {
-			if (chartInstance) {
-				chartInstance.dispose();
-				chartInstance = null;
-			}
-		};
+		return option;
 	});
 </script>
 
-<div
-	bind:this={chartContainer}
-	bind:clientWidth={chartWidth}
-	bind:clientHeight={chartHeight}
-	style="width: 100%; height: 500px;"
-></div>
-
-<!-- Debug output -->
-<!-- <p>Container Size: {chartWidth} x {chartHeight}</p> -->
+<div style="width: 100%; height: 500px;">
+	<Echarts init={echarts.init} options={chartOptions} />
+</div>

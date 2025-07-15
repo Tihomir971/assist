@@ -4,7 +4,7 @@ import type {
 	ColumnDefinition,
 	BulkOperation
 } from '$lib/types/related-table-config.types';
-import type { AnyZodObject } from 'zod';
+import type { AnyZodObject } from 'zod/v3';
 
 export function createRelatedTableConfig<
 	T extends Record<string, unknown>,

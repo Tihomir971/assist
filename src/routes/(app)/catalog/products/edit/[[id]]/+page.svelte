@@ -47,15 +47,22 @@
 			label: 'Tax Category',
 			options: data.lookupData.tax
 		})
-		.field('net_quantity', { type: 'number', span: 3, fraction: 4 })
-		.field('net_qty_uom_id', {
+		.field('c_uom_id', {
 			type: 'select',
-			span: 3,
+			span: 6,
 			label: 'UOM',
 			options: data.lookupData.uom,
 			placeholder: 'Select UOM'
 		})
-		.field('shelf_life', { type: 'number', span: 6, label: 'Shelf Life (days)' })
+		.field('net_quantity', { type: 'number', span: 4, fraction: 4 })
+		.field('net_qty_uom_id', {
+			type: 'select',
+			span: 4,
+			label: 'Net Qty. UOM',
+			options: data.lookupData.uom,
+			placeholder: 'Select UOM'
+		})
+		.field('shelf_life', { type: 'number', span: 4, label: 'Shelf Life (days)', fraction: 0 })
 		.field('descriptionurl', { type: 'text', span: 12, label: 'Manufacturer URL' })
 		.build();
 </script>

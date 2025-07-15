@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import * as z from 'zod/v4';
 
 export const SalesDataRequestSchema = z.object({
 	productIds: z.array(z.string()).min(1, 'At least one product ID is required'),

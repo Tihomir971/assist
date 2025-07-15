@@ -1,4 +1,4 @@
-import { z, type ZodSchema } from 'zod';
+import { z, type ZodSchema } from 'zod/v3';
 
 /**
  * Real-time validation engine with debouncing and caching

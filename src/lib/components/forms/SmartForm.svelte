@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { SuperValidated, SuperForm } from 'sveltekit-superforms';
-	import type { AnyZodObject, z, ZodSchema } from 'zod';
+	import type { AnyZodObject, z, ZodSchema } from 'zod/v3';
 	import type { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
 	import type { SmartFormConfig, FieldOverride } from '$lib/types/form-config.types';
 	import {

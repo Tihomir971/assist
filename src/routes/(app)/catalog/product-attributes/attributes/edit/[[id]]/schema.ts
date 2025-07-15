@@ -1,5 +1,5 @@
 import { mAttributeInsertSchema } from '@tihomir971/assist-shared';
-import { z } from 'zod';
+import { z } from 'zod/v3';
 
 // Create a form-specific schema with coercion for the attribute group ID
 export const mAttributeFormSchema = mAttributeInsertSchema.extend({

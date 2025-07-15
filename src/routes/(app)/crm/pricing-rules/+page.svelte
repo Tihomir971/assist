@@ -3,7 +3,7 @@
 	import { enhance } from '$app/forms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { z } from 'zod';
+	import * as z from 'zod/v3';
 	import { toastManager } from '$lib/utils/toast-manager';
 
 	// UI Components

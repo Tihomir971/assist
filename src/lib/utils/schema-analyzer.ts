@@ -1,4 +1,4 @@
-import { z, type ZodSchema, type ZodRawShape, type ZodTypeAny } from 'zod';
+import { z, type ZodSchema, type ZodRawShape, type ZodTypeAny } from 'zod/v3';
 // Removed: import type { FieldConfig, FormConfig } from '$lib/types/form-config.types';
 
 // Define FieldConfig and FormConfig directly in this file

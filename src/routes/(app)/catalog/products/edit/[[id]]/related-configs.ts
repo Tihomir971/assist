@@ -79,9 +79,9 @@ export function createTabConfigs(data: PageData) {
 			span: 6,
 			options: data.lookupData.warehouses
 		})
-		.field('level_min', { type: 'number', label: 'Min. Level', span: 4 })
-		.field('level_max', { type: 'number', label: 'Max. Level', span: 4 })
-		.field('qtybatchsize', { type: 'number', label: 'Batch Size', span: 4 })
+		.field('level_min', { type: 'number', label: 'Min. Level', span: 4, fraction: 0 })
+		.field('level_max', { type: 'number', label: 'Max. Level', span: 4, fraction: 0 })
+		.field('qtybatchsize', { type: 'number', label: 'Batch Size', span: 4, fraction: 0 })
 		.build();
 
 	// --- Related Table Configurations ---

@@ -1,4 +1,4 @@
-import type { AnyZodObject } from 'zod';
+import type { AnyZodObject } from 'zod/v3';
 import type { SmartFormConfig } from './form-config.types';
 import type { RelatedTableTabConfig } from './split-layout-config.types';
 

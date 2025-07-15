@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v3';
 import { mAttributesetInsertSchema, mAttributesetUpdateSchema } from '@tihomir971/assist-shared';
 
 // Schema for attribute set list filtering and sorting

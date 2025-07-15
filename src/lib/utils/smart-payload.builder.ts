@@ -1,4 +1,4 @@
-import { z, type ZodSchema, type ZodRawShape, type ZodTypeAny } from 'zod';
+import { z, type ZodSchema, type ZodRawShape, type ZodTypeAny } from 'zod/v3';
 
 export interface SmartPayloadConfig<T> {
 	schema: ZodSchema<T>;

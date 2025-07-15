@@ -12,7 +12,7 @@
 	import SmartTextarea from './fields/SmartTextarea.svelte';
 	import SmartDatePicker from './fields/SmartDatePicker.svelte';
 	import SmartDatetime from './fields/SmartDatetime.svelte';
-	import type { AnyZodObject, z } from 'zod'; // Import z for z.infer
+	import type { AnyZodObject, z } from 'zod/v3'; // Import z for z.infer
 
 	interface SmartFieldProps<S extends AnyZodObject> {
 		field: AnalyzedFieldConfig;

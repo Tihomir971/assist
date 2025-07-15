@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v3';
 
 // Schema for AttributeCondition
 export const attributeConditionSchema = z.object({
@@ -38,7 +38,7 @@ export const pricingFormulaSchema = z.object({
 	upper_bound: z.number().optional(),
 	upper_markup: z.number().optional(),
 	script: z.string().optional(),
-	variables: z.record(z.number()).optional(),
+	variables: z.record(z.string(), z.number()).optional(),
 	min_price: z.number().optional(),
 	max_price: z.number().optional()
 });
