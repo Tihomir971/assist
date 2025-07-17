@@ -22,7 +22,6 @@ import type { CChannelMapCategoryRow, MProductCategoryRow } from '@tihomir971/as
 // Load function remains the same (already optimized)
 export const load: PageServerLoad = async ({ params, locals: { supabase }, depends }) => {
 	depends('app:category-page');
-	console.log("depends('app:category-page');");
 
 	const categoryService = new CategoryService(supabase);
 	const channelService = new ChannelService(supabase);

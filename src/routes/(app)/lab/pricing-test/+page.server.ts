@@ -23,7 +23,6 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 export const actions: Actions = {
 	test: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(pricingTestSchema));
-		console.log('form', form);
 
 		if (!form.valid) {
 			return fail(400, { form });

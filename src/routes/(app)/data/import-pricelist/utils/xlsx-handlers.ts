@@ -90,18 +90,46 @@ function parseExcelDate(
 
 		dt = DateTime.fromJSDate(date, { zone });
 	}
-	// If it's a string in MM/DD/YY format
-	else if (typeof value === 'string' && value.match(/^\d{2}\/\d{2}\/\d{2}$/)) {
+	// If it's a string in M/D/YY or MM/DD/YY format
+	else if (typeof value === 'string' && value.match(/^\d{1,2}\/\d{1,2}\/\d{2}$/)) {
 		const [month, day, year] = value.split('/').map(Number);
 		// Convert 2-digit year to 4-digit year (assuming 20xx for years 00-99)
 		const fullYear = year + 2000;
 		dt = DateTime.fromObject({ year: fullYear, month, day }, { zone });
+	}
+	// If it's a string in DD.MM.YYYY format (European format)
+	else if (typeof value === 'string' && value.match(/^\d{1,2}\.\d{1,2}\.\d{4}$/)) {
+		const [day, month, year] = value.split('.').map(Number);
+		dt = DateTime.fromObject({ year, month, day }, { zone });
+	}
+	// If it's a string in DD/MM/YYYY format
+	else if (typeof value === 'string' && value.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+		const [day, month, year] = value.split('/').map(Number);
+		dt = DateTime.fromObject({ year, month, day }, { zone });
 	}
 	// Try parsing as a general date string
 	else {
 		const parsed = DateTime.fromSQL(String(value), { zone });
 		if (parsed.isValid) {
 			dt = parsed;
+		} else {
+			// Try parsing with Luxon's fromFormat for various common formats
+			const formats = [
+				'd.M.yyyy',
+				'dd.MM.yyyy',
+				'd/M/yyyy',
+				'dd/MM/yyyy',
+				'yyyy-MM-dd',
+				'dd-MM-yyyy'
+			];
+
+			for (const format of formats) {
+				const formatted = DateTime.fromFormat(String(value), format, { zone });
+				if (formatted.isValid) {
+					dt = formatted;
+					break;
+				}
+			}
 		}
 	}
 
@@ -184,16 +212,24 @@ export function processExcelData(
 			let processedRows = 0;
 			const excelData: Product[] = [];
 
-			for (const row of jsonData) {
+			for (let i = 0; i < jsonData.length; i++) {
+				const row = jsonData[i];
+
 				const product: Partial<Product> = {};
 				Object.entries(mappings).forEach(([prop, header]) => {
-					if (header && row[header] !== undefined) {
-						const value = processValue(row[header], prop as keyof Product);
+					if (header && row[header] !== undefined && row[header] !== null && row[header] !== '') {
+						const originalValue = row[header];
+						const value = processValue(originalValue, prop as keyof Product);
 						if (value !== null) {
 							(product[prop as keyof Product] as ProductValue) = value;
 						}
 					}
+					// Always include the property even if empty to maintain structure
+					else if (header) {
+						(product[prop as keyof Product] as ProductValue) = '';
+					}
 				});
+
 				excelData.push(product as Product);
 				processedRows++;
 			}

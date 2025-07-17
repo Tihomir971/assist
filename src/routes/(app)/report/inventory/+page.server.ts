@@ -22,7 +22,6 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 	}
 
 	const { warehouse, treeCategory, includeOutOfStock } = params.data;
-	console.log('params.data', params.data);
 	const categoryService = new CategoryService(supabase);
 	/* 	const { data: categories } = await supabase
 		.from('m_product_category')

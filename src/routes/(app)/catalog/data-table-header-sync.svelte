@@ -95,8 +95,6 @@
 	class="hidden"
 	use:enhance={() => {
 		return async ({ result }) => {
-			console.log('result', result);
-
 			if (result.type === 'success') {
 				const data = result.data;
 				if (data && data.success) {
@@ -134,8 +132,6 @@
 	class="hidden"
 	use:enhance={() => {
 		return async ({ result }) => {
-			console.log('result', result);
-
 			if (result.type === 'success') {
 				const data = result.data;
 				if (data && data.success) {

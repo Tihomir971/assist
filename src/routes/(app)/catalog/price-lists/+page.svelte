@@ -88,9 +88,7 @@
 			.select('*')
 			.eq('m_pricelist_id', id);
 		if (data) {
-			console.log('data', data);
 			pricelistVersions = data as Tables<'m_pricelist_version'>[];
-			console.log('pricelistVersions', pricelistVersions);
 		}
 		selectedPricelistId = id;
 		selectedVersionId = null;

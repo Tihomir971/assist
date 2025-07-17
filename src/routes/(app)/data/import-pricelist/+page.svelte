@@ -107,7 +107,6 @@
 		}
 	}
 	async function handleFileSelect(details: FileChangeDetails) {
-		console.log('details', details);
 		selectedFile = details.acceptedFiles.length > 0 ? details.acceptedFiles[0] : null;
 		if (!selectedFile) {
 			resetAll(); // Or handle no file selected case
@@ -130,7 +129,6 @@
 	}
 
 	async function handleSheetSelect() {
-		console.log('hello inside2', selectedSheet);
 		if (selectedSheet && selectedFile) {
 			const reader = new FileReader();
 			reader.onload = (e) => {
@@ -350,7 +348,6 @@
 	});
 
 	let selectedSupplier: number | undefined = $state();
-	$inspect('selectedSupplier', selectedSupplier == null);
 </script>
 
 <div class="mx-auto grid h-full max-w-7xl grid-rows-[auto_1fr_auto] gap-4 p-2">
@@ -430,18 +427,32 @@
 			<Card.Root>
 				<Card.Header>
 					<Card.Title>Map Columns to Product Properties</Card.Title>
-					<Card.Description>Map Columns to Product Properties</Card.Description>
+					<Card.Description
+						>Match Excel columns to product fields. Required: vendorproductno, pricelist</Card.Description
+					>
 				</Card.Header>
 				<Card.Content>
 					<div class="flex flex-col gap-2">
 						{#each productProperties as prop}
 							<div class="flex items-center justify-between">
-								<Label for={prop}>{prop}:</Label>
+								<Label for={prop}>
+									{prop === 'vendorproductno'
+										? 'SKU'
+										: prop === 'valid_from'
+											? 'Valid From'
+											: prop === 'valid_to'
+												? 'Valid To'
+												: prop}
+									{#if prop === 'vendorproductno' || prop === 'pricelist'}
+										<span class="text-red-500">*</span>
+									{/if}
+								</Label>
 								<Select.Root type="single" bind:value={mappings[prop]}>
-									<Select.Trigger class="w-64" id={prop}
-										>{headers.find((f) => f === mappings[prop])}</Select.Trigger
-									>
+									<Select.Trigger class="w-64" id={prop}>
+										{mappings[prop] || 'Select column...'}
+									</Select.Trigger>
 									<Select.Content>
+										<Select.Item value="">-- None --</Select.Item>
 										{#each headers as header}
 											<Select.Item value={header}>{header}</Select.Item>
 										{/each}
@@ -450,9 +461,26 @@
 							</div>
 						{/each}
 					</div>
+					{#if !mappings.valid_from || !mappings.valid_to}
+						<div class="mt-4 rounded-md bg-blue-50 p-3">
+							<p class="text-sm text-blue-800">
+								💡 <strong>Tip:</strong> Map <code>valid_from</code> to <code>datum_od</code> and
+								<code>valid_to</code>
+								to <code>datum_do</code> to include date validity in your import.
+							</p>
+						</div>
+					{/if}
 				</Card.Content>
 				<Card.Footer>
-					<Button onclick={handleMapping}>Apply Mapping</Button>
+					<div class="flex w-full justify-between">
+						<span class="text-sm text-muted-foreground"> Fields marked with * are required </span>
+						<Button
+							onclick={handleMapping}
+							disabled={!mappings.vendorproductno || !mappings.pricelist}
+						>
+							Apply Mapping
+						</Button>
+					</div>
 				</Card.Footer>
 			</Card.Root>
 		{/if}
@@ -484,9 +512,17 @@
 								<Table.Row>
 									{#each productProperties as prop}
 										<Table.Cell class={prop === 'pricelist' ? 'text-right' : ''}>
-											{prop === 'pricelist'
-												? numberFormatter.format(product[prop] as number)
-												: product[prop]}
+											{#if prop === 'pricelist'}
+												{numberFormatter.format(product[prop] as number)}
+											{:else if prop === 'valid_from' || prop === 'valid_to'}
+												{#if product[prop]}
+													{new Date(product[prop] as string).toLocaleDateString('sr-RS')}
+												{:else}
+													-
+												{/if}
+											{:else}
+												{product[prop] || '-'}
+											{/if}
 										</Table.Cell>
 									{/each}
 								</Table.Row>

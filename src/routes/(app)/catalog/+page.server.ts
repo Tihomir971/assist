@@ -44,7 +44,6 @@ export const load: PageServerLoad = async ({ depends, parent, url, locals: { sup
 		cat: categoryId = null,
 		search: searchTerm
 	} = params;
-	console.log('categoryId', categoryId);
 
 	const { activeWarehouse } = await parent();
 

@@ -41,7 +41,6 @@
 				return;
 			}
 			value = details.valueAsNumber;
-			console.log('value', value);
 
 			if (onValueChange) {
 				onValueChange(details);

@@ -129,7 +129,6 @@ export const actions: Actions = {
 
 			return { form, success: true, data: result };
 		} catch (err) {
-			console.log('--- CATCH BLOCK ENTERED ---');
 			const error = err as Error;
 			console.error('Error saving pricing rule:', error.message, error.stack);
 			return { form, error: `Save failed: ${error.message}` };

@@ -12,7 +12,6 @@ export const load: PageServerLoad = async () => {
 export const actions = {
 	login: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod(loginSchema));
-		console.log('form', form);
 
 		if (!form.valid) {
 			return fail(400, {
@@ -26,8 +25,6 @@ export const actions = {
 		});
 
 		if (error) {
-			console.log('error', error);
-
 			if (error instanceof AuthApiError && error.status === 400) {
 				return fail(400, {
 					error: 'Invalid credentials.',
@@ -48,7 +45,6 @@ export const actions = {
 	},
 
 	signout: async ({ locals: { supabase, session } }) => {
-		console.log('signout');
 		if (session) {
 			await supabase.auth.signOut();
 			throw redirect(303, '/');
