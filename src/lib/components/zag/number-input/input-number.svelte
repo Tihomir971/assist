@@ -1,5 +1,5 @@
 <script lang="ts">
-	import './number-input.css';
+	import './input-number.css';
 	import * as numberInput from '@zag-js/number-input';
 	import { normalizeProps, useMachine } from '@zag-js/svelte';
 	import type { NumberInputProps } from './types';
@@ -32,6 +32,7 @@
 		required: required || ariaRequired === 'true',
 		invalid: ariaInvalid === 'true',
 		inputMode: fraction === 0 ? 'numeric' : 'decimal',
+		pattern: locale === 'sr-RS' ? '^-?\\d{1,3}(\\.\\d{3})*(,\\d+)?$' : undefined,
 		defaultValue: value != null ? value.toLocaleString(locale) : undefined,
 		get value() {
 			return value != null ? value.toLocaleString(locale) : undefined;
