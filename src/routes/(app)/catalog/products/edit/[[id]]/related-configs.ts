@@ -148,6 +148,11 @@ export function createTabConfigs(data: PageData) {
 		.parentIdField('m_product_id')
 		.build();
 
+	// Return empty array if no entity (new product creation)
+	if (!data.entity) {
+		return [];
+	}
+
 	return [
 		createTabConfig(
 			'channel-mapping',

@@ -46,7 +46,84 @@ import { fail } from '@sveltejs/kit';
 export const load: PageServerLoad = async ({ depends, params, locals: { supabase } }) => {
 	depends('catalog:product');
 
-	const productId = parseInt(params.id!);
+	const productId = params.id ? parseInt(params.id) : null;
+
+	// Handle new product creation
+	if (productId === null) {
+		const [
+			uom,
+			categories,
+			partners,
+			warehouses,
+			tax,
+			attributeSets,
+			brands,
+			attributeGroups,
+			channels
+		] = await Promise.all([
+			new ProductService(supabase).getUoms(),
+			new CategoryService(supabase).getLookup(),
+			new PartnerService(supabase).getLookup({ isvendor: true }),
+			new WarehouseService(supabase).getLookup(),
+			new TaxCategoryService(supabase).getLookup(),
+			new AttributeSetService(supabase).getLookup(),
+			new BrandService(supabase).getLookup(),
+			new AttributeGroupService(supabase).getLookup(),
+			new ChannelService(supabase).getChannelLookup()
+		]);
+
+		const [
+			formProduct,
+			formProductPacking,
+			formReplenish,
+			formProductPo,
+			formProductAttributeValue,
+			formProductAttributeOption,
+			formChannelMapProduct
+		] = await Promise.all([
+			superValidate(zod(mProductInsertSchema)),
+			superValidate(zod(mProductPackingInsertSchema)),
+			superValidate(zod(mReplenishInsertSchema)),
+			superValidate(zod(mProductPoInsertSchema)),
+			superValidate(zod(mProductAttributeValueInsertSchema)),
+			superValidate(zod(mProductAttributeOptionInsertSchema)),
+			superValidate(zod(cChannelMapProductInsertSchema))
+		]);
+
+		return {
+			entity: null,
+			formProduct,
+			purchases: [],
+			formProductPo,
+			productPacking: [],
+			formProductPacking,
+			replenishes: [],
+			formReplenish,
+			storageonhand: [],
+			productAttributeValues: [],
+			formProductAttributeValue,
+			productAttributeOptions: [],
+			formProductAttributeOption,
+			attributeSetAttributes: [],
+			attributeOptionsLookup: new Map(),
+			channelMapProduct: [],
+			formChannelMapProduct,
+			lookupData: {
+				attributeGroups: attributeGroups || [],
+				partners,
+				uom,
+				categories,
+				warehouses,
+				tax,
+				attributeSets,
+				brands,
+				channels
+			},
+			salesByWeeks: { currentYear: new Date().getFullYear(), products: [] }
+		};
+	}
+
+	// Handle existing product edit
 	if (isNaN(productId)) {
 		throw error(400, 'Invalid product ID');
 	}

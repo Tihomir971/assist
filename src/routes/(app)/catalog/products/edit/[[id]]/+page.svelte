@@ -17,7 +17,7 @@
 		.field('is_active', { type: 'boolean', span: 4 })
 		.field('is_self_service', { type: 'boolean', span: 4 })
 		.field('discontinued', { type: 'boolean', span: 4 })
-		.field('sku', { span: 2, label: 'SKU', readonly: true })
+		.field('sku', { span: 2, label: 'SKU', readonly: !!data.entity?.id })
 		.field('name', { span: 10, placeholder: 'Enter product name' })
 		.field('m_product_brand_id', {
 			type: 'combobox',
