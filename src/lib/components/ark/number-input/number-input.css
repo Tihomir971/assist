@@ -1,0 +1,43 @@
+/* [data-scope='number-input'][data-part='root'] {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+} */
+/* [data-scope='number-input'][data-part='label'] {
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+	font-weight: 500;
+	color: var(--fg);
+} */
+/* 
+	[data-scope='number-input'][data-part='control'] {
+		position: relative;
+		display: inline-block;
+	} */
+
+/* [data-scope='number-input'][data-part='input'] {
+	border-width: 1px;
+	height: 2.5rem;
+	padding-right: 1.25rem;
+	padding-left: 0.75rem;
+	background: transparent;
+	border-color: yellow !important;
+} */
+
+/* [data-scope='number-input'][data-part='input'] + div {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	position: absolute;
+	width: 1.5rem;
+	right: 3px;
+	top: 3px;
+}
+ */
+/* [data-scope='number-input']:is([data-part='increment-trigger'], [data-part='decrement-trigger']) {
+	width: 100%;
+	background: var(--colors-bg-bold);
+	display: flex;
+	justify-content: center;
+}
+ */

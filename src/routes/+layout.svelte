@@ -7,6 +7,7 @@
 	import { invalidate } from '$app/navigation';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import { ModeWatcher } from 'mode-watcher';
+	import { LocaleProvider } from '@ark-ui/svelte/locale';
 
 	let { data, children } = $props();
 	let { session, supabase } = $derived(data);
@@ -25,4 +26,6 @@
 <ModeWatcher />
 <Toaster position="bottom-center" richColors />
 
-{@render children?.()}
+<LocaleProvider locale="sr-RS">
+	{@render children?.()}
+</LocaleProvider>
