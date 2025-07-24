@@ -1,6 +1,6 @@
 @import './lib/style/open-props/css/color/palette.oklch.css';
-@import './lib/style/open-props/css/color/hues.oklch.css';
-@import './lib/style/open-props/css/media-queries.css';
+/* @import './lib/style/open-props/css/color/hues.oklch.css'; */
+/* @import './lib/style/open-props/css/media-queries.css'; */
 /* @import './open-props/css/shadows.css'; */
 
 :root {
