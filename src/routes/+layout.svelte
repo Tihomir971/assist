@@ -8,6 +8,7 @@
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import { ModeWatcher } from 'mode-watcher';
 	import { LocaleProvider } from '@ark-ui/svelte/locale';
+	import 'iconify-icon';
 
 	let { data, children } = $props();
 	let { session, supabase } = $derived(data);

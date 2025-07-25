@@ -10,9 +10,25 @@
 
 :root {
 	--font-sans: 'Nunito Variable', sans-serif;
+	--font-mono: 'Fira Code Variable', monospace;
 }
 .dark {
 	--font-sans: 'Nunito Variable', sans-serif;
+	--font-mono: 'Fira Code Variable', monospace;
+}
+
+/* Iconify Icon */
+iconify-icon {
+	display: inline-block;
+	width: 1.2em;
+	height: 1.2em;
+}
+code {
+	/* color: var(--sd-code-default, var(--sd-vscode-code-default, #999)); */
+	/* background-color: var(--_sd-bg-color); */
+	font-size: 0.9em;
+	/* margin-bottom: 0; */
+	padding: 1em 0 1em 1em;
 }
 
 /* Smart Split Layout Styles */

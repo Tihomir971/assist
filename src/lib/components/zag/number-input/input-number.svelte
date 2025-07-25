@@ -85,10 +85,10 @@
 		<div class="absolute top-0 right-0 flex h-full w-6 flex-col items-center border-l">
 			{#if !restProps.readOnly}
 				<button {...api.getIncrementTriggerProps()}>
-					<PhCaretUp />
+					<iconify-icon icon="ph:caret-up"></iconify-icon>
 				</button>
 				<button {...api.getDecrementTriggerProps()}>
-					<PhCaretDown />
+					<iconify-icon icon="ph:caret-down"></iconify-icon>
 				</button>
 			{:else}
 				<div class="flex h-full items-center">

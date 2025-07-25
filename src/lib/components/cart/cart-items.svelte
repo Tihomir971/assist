@@ -52,7 +52,8 @@
 			<div class="mb-2 flex items-center justify-end gap-2">
 				<Button variant="destructive" onclick={clearCart}>Clear All</Button>
 				<Button onclick={() => (showVendorDialog = true)}>
-					<PhMicrosoftExcelLogo />
+					<iconify-icon icon="ph:microsoft-excel-logo" height="16"></iconify-icon>
+					<!-- <PhMicrosoftExcelLogo /> -->
 					Export to Excel
 				</Button>
 			</div>
@@ -93,7 +94,8 @@
 										class="size-icon variant-destructive"
 										onclick={() => removeItem(cartItem)}
 									>
-										<PhTrash />
+										<iconify-icon icon="ph:trash"></iconify-icon>
+										<!-- <PhTrash /> -->
 									</button>
 								</Table.Cell>
 							</Table.Row>

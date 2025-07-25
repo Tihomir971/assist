@@ -4,6 +4,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { loginSchema } from './schema';
 import { zod } from 'sveltekit-superforms/adapters';
+import { setError } from 'sveltekit-superforms/server';
 
 export const load: PageServerLoad = async () => {
 	return { form: await superValidate(zod(loginSchema)) };
@@ -33,6 +34,8 @@ export const actions = {
 					}
 				});
 			}
+			return setError(form, 'email', error.message);
+
 			return fail(500, {
 				error: 'Server error. Try again later.',
 				values: {

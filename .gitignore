@@ -27,3 +27,9 @@ vite.config.js.timestamp-*
 .dev.*
 supazod.config.*
 .npmrc
+
+# Supabase
+data.sql
+roles.sql
+schema.sql
+auth_backup.sql

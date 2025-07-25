@@ -15,8 +15,6 @@
 	import PhDotsThreeBold from '~icons/ph/dots-three-bold';
 	import PhPlus from '~icons/ph/plus';
 	import PhMagnifyingGlass from '~icons/ph/magnifying-glass';
-	import PhCaretUp from '~icons/ph/caret-up';
-	import PhCaretDown from '~icons/ph/caret-down';
 	import PhDownload from '~icons/ph/download';
 
 	// Related Drawer
@@ -305,9 +303,9 @@
 								{#if tableConfig.sortable && column.sortable !== false}
 									{#if sortColumn === String(column.key)}
 										{#if sortDirection === 'asc'}
-											<PhCaretUp class="h-4 w-4" />
+											<iconify-icon icon="ph:caret-up"></iconify-icon>
 										{:else}
-											<PhCaretDown class="h-4 w-4" />
+											<iconify-icon icon="ph:caret-down"></iconify-icon>
 										{/if}
 									{/if}
 								{/if}
