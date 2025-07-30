@@ -46,8 +46,15 @@
 				icon: PhTag,
 				items: [
 					{ title: 'Contacts', url: '/crm/contacts' },
-					{ title: 'Price Rules', url: '/crm/pricing-rules' }
+					{ title: 'Price Rules', url: '/crm/pricing-rules' },
+					{ title: 'Generate Document', url: '/crm/generate-document' }
 				]
+			},
+			{
+				title: 'System',
+				url: '/system',
+				icon: PhTag,
+				items: [{ title: 'Document Templates', url: '/system/doc-templates' }]
 			},
 			{
 				title: 'Data',

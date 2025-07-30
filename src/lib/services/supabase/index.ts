@@ -27,3 +27,9 @@ export { ChannelMappingProductService } from './channel-mapping-product.service'
 export { ChannelMappingBrandService } from './channel-mapping-brand.service';
 export { ChannelMappingUomService } from './channel-mapping-uom.service';
 export { ChannelMappingTaxCategoryService } from './channel-mapping-taxcategory.service';
+
+export { DocTemplateService } from './doc-template.service';
+
+export { DocGeneratedDocumentService } from './doc-generated-document.service';
+
+export type { DocGeneratedDocumentWithTemplate } from './doc-generated-document.service';

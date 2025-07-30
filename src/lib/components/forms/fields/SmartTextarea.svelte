@@ -37,7 +37,9 @@
 		maxlength: field.validation?.max,
 		...restProps, // Spread Form.Control props first (includes name, id, aria attributes)
 		// Then override with field-specific props if needed
-		...(field.placeholder && { placeholder: field.placeholder })
+		...(field.placeholder && { placeholder: field.placeholder }),
+		// Finally, spread any custom props from the form config
+		...(field.componentProps && (field.componentProps as Record<string, any>))
 	};
 
 	// Handle input events for auto-resize

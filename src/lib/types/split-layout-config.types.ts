@@ -70,7 +70,7 @@ export interface SmartSplitLayoutProps {
 
 // Props for SmartRelatedTabs component
 export interface SmartRelatedTabsProps {
-	tabs: TabConfig<any>[];
+	tabs: TabConfig<Component>[];
 	defaultTab?: string;
 	orientation?: 'horizontal' | 'vertical';
 	variant?: 'default' | 'pills' | 'underline';

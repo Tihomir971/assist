@@ -1,5 +1,5 @@
 @import './lib/style/open-props/css/color/palette.oklch.css';
-/* @import './lib/style/open-props/css/color/hues.oklch.css'; */
+@import './lib/style/open-props/css/color/hues.oklch.css';
 
 :root {
 	color-scheme: light dark;
@@ -8,7 +8,7 @@
 	--palette-chroma: 0.1;
 
 	--color-max: oklch(70% 100% var(--palette-hue));
-	/* --primary: oklch(70% 100% var(--palette-hue)); */
+	--primary: oklch(70% 100% var(--palette-hue));
 	/* --primary: oklch(from var(--color-max) l c var(--oklch-red)); */
 	/* Primary */
 	/* --primary: oklch(50% 50% var(--palette-hue)); */

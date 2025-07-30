@@ -1,0 +1,69 @@
+/* TipTap Editor Styles - Classic CSS */
+.ProseMirror {
+	min-height: 100px;
+	padding: 0.75rem;
+	outline: none;
+}
+
+.ProseMirror p {
+	margin-bottom: 0.5rem;
+}
+
+.ProseMirror h1,
+.ProseMirror h2 {
+	font-weight: 700;
+}
+
+.ProseMirror h1 {
+	font-size: 1.875rem;
+	line-height: 2.25rem;
+}
+
+.ProseMirror h2 {
+	font-size: 1.5rem;
+	line-height: 2rem;
+}
+
+.ProseMirror:focus {
+	outline: none;
+}
+
+/* Additional TipTap editor enhancements */
+.ProseMirror ul,
+.ProseMirror ol {
+	margin-left: 1rem;
+	margin-bottom: 0.5rem;
+}
+
+.ProseMirror li {
+	margin-bottom: 0.25rem;
+}
+
+.ProseMirror blockquote {
+	border-left: 4px solid #d1d5db;
+	padding-left: 1rem;
+	font-style: italic;
+	margin-bottom: 0.5rem;
+}
+
+.ProseMirror code {
+	background-color: #f3f4f6;
+	padding: 0.125rem 0.25rem;
+	border-radius: 0.25rem;
+	font-size: 0.875rem;
+	font-family:
+		ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+.ProseMirror pre {
+	background-color: #f3f4f6;
+	padding: 0.75rem;
+	border-radius: 0.25rem;
+	margin-bottom: 0.5rem;
+	overflow-x: auto;
+}
+
+.ProseMirror pre code {
+	background-color: transparent;
+	padding: 0;
+}

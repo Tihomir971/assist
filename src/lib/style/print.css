@@ -1,0 +1,139 @@
+/* Global Print Styles */
+@media print {
+	/* Hide elements with print:hidden class */
+	.print\:hidden {
+		display: none !important;
+	}
+
+	/* Hide specific layout elements */
+	header,
+	nav,
+	aside,
+	.sidebar,
+	.header,
+	button,
+	.button,
+	[role='button'],
+	.btn,
+	.card-footer,
+	.dialog-header,
+	.dialog-footer {
+		display: none !important;
+	}
+
+	/* Hide form elements and page titles */
+	.container > h1,
+	.container > form,
+	.card-header,
+	.card-footer {
+		display: none !important;
+	}
+
+	/* Hide parent containers and layout elements */
+	.space-y-6 > *:not(.printable):not([class*='printable']),
+	.overflow-hidden,
+	.h-screen,
+	.min-h-screen {
+		display: none !important;
+	}
+
+	/* Hide scrollbars and overflow containers */
+	body {
+		overflow: visible !important;
+	}
+
+	* {
+		overflow: visible !important;
+	}
+
+	.printable {
+		overflow: visible !important;
+	}
+
+	/* Style the printable content */
+	.printable {
+		position: static !important;
+		width: 100% !important;
+		height: auto !important;
+		margin: 0 !important;
+		padding: 20px !important;
+		border: none !important;
+		box-shadow: none !important;
+		background: white !important;
+		color: black !important;
+		font-size: 12pt;
+		line-height: 1.4;
+		page-break-inside: avoid;
+	}
+
+	/* Remove backgrounds and shadows from non-printable elements */
+	*:not(.printable):not(.printable *) {
+		background: transparent !important;
+		box-shadow: none !important;
+		text-shadow: none !important;
+	}
+
+	/* Ensure text in printable content is black */
+	.printable,
+	.printable * {
+		color: black !important;
+	}
+
+	/* Handle headings in printable content */
+	.printable h1 {
+		font-size: 18pt;
+		font-weight: bold;
+		margin-bottom: 12pt;
+		margin-top: 0;
+	}
+	.printable h2 {
+		font-size: 16pt;
+		font-weight: bold;
+		margin-bottom: 10pt;
+		margin-top: 12pt;
+	}
+	.printable h3 {
+		font-size: 14pt;
+		font-weight: bold;
+		margin-bottom: 8pt;
+		margin-top: 10pt;
+	}
+	.printable h4 {
+		font-size: 12pt;
+		font-weight: bold;
+		margin-bottom: 6pt;
+		margin-top: 8pt;
+	}
+
+	/* Handle paragraphs and lists in printable content */
+	.printable p {
+		margin-bottom: 6pt;
+		margin-top: 0;
+	}
+	.printable ul,
+	.printable ol {
+		margin-bottom: 6pt;
+		margin-top: 6pt;
+		padding-left: 20pt;
+	}
+	.printable li {
+		margin-bottom: 3pt;
+	}
+
+	/* Handle tables in printable content */
+	.printable table {
+		border-collapse: collapse;
+		width: 100%;
+		margin-bottom: 12pt;
+	}
+	.printable th,
+	.printable td {
+		border: 1pt solid black;
+		padding: 4pt;
+		text-align: left;
+	}
+	.printable th {
+		background: #f0f0f0 !important;
+		font-weight: bold;
+	}
+}

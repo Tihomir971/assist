@@ -20,6 +20,7 @@ export interface FieldOverride {
 	size?: 'sm' | 'md' | 'lg'; // NEW: Field size variant
 	step?: number; // For number inputs
 	fraction?: number; // For number inputs, to specify fraction digits
+	componentProps?: Record<string, unknown>; // NEW: Pass-through props for the underlying component
 }
 
 export interface SmartFormConfig {

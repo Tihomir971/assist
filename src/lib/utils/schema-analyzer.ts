@@ -19,6 +19,7 @@ export interface FieldConfig {
 		pattern?: string;
 		custom?: string[];
 	};
+	componentProps?: Record<string, unknown>;
 }
 
 export interface FormConfig {
