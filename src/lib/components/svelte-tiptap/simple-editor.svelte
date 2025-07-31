@@ -1,11 +1,47 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, type Component } from 'svelte';
 	import type { Readable } from 'svelte/store';
 	import { createEditor, Editor, EditorContent } from 'svelte-tiptap';
 	import StarterKit from '@tiptap/starter-kit';
-	import { cn } from '$lib/utils';
+	import Table from '@tiptap/extension-table';
+	import TableCell from '@tiptap/extension-table-cell';
+	import TableHeader from '@tiptap/extension-table-header';
+	import TableRow from '@tiptap/extension-table-row';
+	import TextAlign from '@tiptap/extension-text-align';
+	// import ListItem from '@tiptap/extension-list-item';
+	// import OrderedList from '@tiptap/extension-ordered-list';
+	// import BulletList from '@tiptap/extension-bullet-list';
+
+	import MdiTablePlus from '~icons/mdi/table-plus';
+	import MdiTableRemove from '~icons/mdi/table-remove';
+	import MdiTableColumnPlusBefore from '~icons/mdi/table-column-plus-before';
+	import MdiTableColumnPlusAfter from '~icons/mdi/table-column-plus-after';
+	import MdiTableColumnRemove from '~icons/mdi/table-column-remove';
+	import MdiTableRowPlusBefore from '~icons/mdi/table-row-plus-before';
+	import MdiTableRowPlusAfter from '~icons/mdi/table-row-plus-after';
+	import MdiTableRowRemove from '~icons/mdi/table-row-remove';
+	import MdiTableMergeCells from '~icons/mdi/table-merge-cells';
+	import MdiTableSplitCell from '~icons/mdi/table-split-cell';
+
 	import './tiptap-editor.css';
-	import { ToggleGroup, useToggleGroup } from '@ark-ui/svelte/toggle-group';
+	import { ToggleGroup } from '@ark-ui/svelte/toggle-group';
+	import { Separator } from '$lib/components/ui/separator';
+	import {
+		Bold,
+		Italic,
+		Strikethrough,
+		Code,
+		Heading1,
+		Heading2,
+		Pilcrow,
+		AlignLeft,
+		AlignCenter,
+		AlignRight,
+		AlignJustify,
+		List,
+		ListOrdered
+	} from '@lucide/svelte';
+
 	// Define Content type based on TipTap's expected content types
 	type HTMLContent = string;
 	type JSONContent = {
@@ -27,20 +63,30 @@
 	let { content = $bindable() }: Props = $props();
 
 	const extensions = [
-		StarterKit
-		// SvelteCounterExtension,
-		// SvelteEditableExtension,
-		// Placeholder.configure({ placeholder: 'Write something...' }),
+		StarterKit,
+		Table.configure({
+			resizable: true
+		}),
+		TableRow,
+		TableHeader,
+		TableCell,
+		TextAlign.configure({
+			types: ['heading', 'paragraph']
+		})
 	];
 
 	let editor = $state() as Readable<Editor>;
+
 	onMount(() => {
 		editor = createEditor({
 			extensions,
-			content: content || `Hello world!`,
+			content: content || ``,
 			editorProps: {
 				attributes: {
-					class: 'border-2 border-black rounded-b-md p-3 outline-hidden'
+					class:
+						// 'prose dark:prose-invert min-h-[512px] w-full max-w-none rounded-b-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+						//'prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl focus:outline-none'
+						'prose focus:outline-none bg-white max-w-none'
 				}
 			},
 			onUpdate: ({ editor }) => {
@@ -49,81 +95,303 @@
 		});
 	});
 
-	const toggleHeading = (level: 1 | 2) => {
-		return () => {
-			$editor.chain().focus().toggleHeading({ level }).run();
-		};
+	type Command = () => void;
+
+	type MenuItem = {
+		name: string;
+		command: Command;
+		icon?: Component;
+		content?: string;
+		active: () => boolean;
+		disabled?: () => boolean;
 	};
 
-	const setParagraph = () => {
-		$editor.chain().focus().setParagraph().run();
+	type MenuGroup = MenuItem[];
+
+	const isActive = (nameOrAttrs: string | Record<string, any>, attrs = {}) => {
+		if (!editor) return false;
+		if (typeof nameOrAttrs === 'string') {
+			return $editor.isActive(nameOrAttrs, attrs);
+		}
+		return $editor.isActive(nameOrAttrs);
 	};
 
-	const toggleBold = () => {
-		$editor.chain().focus().toggleBold().run();
-	};
-
-	const toggleItalic = () => {
-		$editor.chain().focus().toggleItalic().run();
-	};
-
-	const isActive = (name: string, attrs = {}) => $editor.isActive(name, attrs);
-
-	const menuItems = $derived([
+	const headingItems: MenuGroup = $derived([
 		{
 			name: 'heading-1',
-			command: toggleHeading(1),
+			command: () => $editor?.chain().focus().toggleHeading({ level: 1 }).run(),
+			icon: Heading1,
 			content: 'H1',
 			active: () => isActive('heading', { level: 1 })
 		},
 		{
 			name: 'heading-2',
-			command: toggleHeading(2),
+			command: () => $editor?.chain().focus().toggleHeading({ level: 2 }).run(),
+			icon: Heading2,
 			content: 'H2',
 			active: () => isActive('heading', { level: 2 })
 		},
 		{
 			name: 'paragraph',
-			command: setParagraph,
+			command: () => $editor?.chain().focus().setParagraph().run(),
+			icon: Pilcrow,
 			content: 'P',
 			active: () => isActive('paragraph')
-		},
+		}
+	]);
+
+	const markItems: MenuGroup = $derived([
 		{
 			name: 'bold',
-			command: toggleBold,
-			content: 'B',
-			active: () => isActive('bold')
+			command: () => $editor?.chain().focus().toggleBold().run(),
+			icon: Bold,
+			active: () => isActive('bold'),
+			disabled: () => !$editor?.can().chain().focus().toggleBold().run()
 		},
 		{
 			name: 'italic',
-			command: toggleItalic,
-			content: 'I',
-			active: () => isActive('italic')
+			command: () => $editor?.chain().focus().toggleItalic().run(),
+			icon: Italic,
+			active: () => isActive('italic'),
+			disabled: () => !$editor?.can().chain().focus().toggleItalic().run()
+		},
+		{
+			name: 'strike',
+			command: () => $editor?.chain().focus().toggleStrike().run(),
+			icon: Strikethrough,
+			active: () => isActive('strike'),
+			disabled: () => !$editor?.can().chain().focus().toggleStrike().run()
+		},
+		{
+			name: 'code',
+			command: () => $editor?.chain().focus().toggleCode().run(),
+			icon: Code,
+			active: () => isActive('code'),
+			disabled: () => !$editor?.can().chain().focus().toggleCode().run()
 		}
 	]);
-	const id = $props.id();
-	const toggleGroup = useToggleGroup({ id });
-	$inspect('tougleGroup', toggleGroup());
+
+	const tableItems: MenuGroup = $derived([
+		{
+			name: 'insertTable',
+			command: () =>
+				$editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(),
+			icon: MdiTablePlus,
+			active: () => false
+		},
+		{
+			name: 'addColumnBefore',
+			command: () => $editor?.chain().focus().addColumnBefore().run(),
+			icon: MdiTableColumnPlusBefore,
+			active: () => false,
+			disabled: () => !$editor?.can().addColumnBefore()
+		},
+		{
+			name: 'addColumnAfter',
+			command: () => $editor?.chain().focus().addColumnAfter().run(),
+			icon: MdiTableColumnPlusAfter,
+			active: () => false,
+			disabled: () => !$editor?.can().addColumnAfter()
+		},
+		{
+			name: 'deleteColumn',
+			command: () => $editor?.chain().focus().deleteColumn().run(),
+			icon: MdiTableColumnRemove,
+			active: () => false,
+			disabled: () => !$editor?.can().deleteColumn()
+		},
+		{
+			name: 'addRowBefore',
+			command: () => $editor?.chain().focus().addRowBefore().run(),
+			icon: MdiTableRowPlusBefore,
+			active: () => false,
+			disabled: () => !$editor?.can().addRowBefore()
+		},
+		{
+			name: 'addRowAfter',
+			command: () => $editor?.chain().focus().addRowAfter().run(),
+			icon: MdiTableRowPlusAfter,
+			active: () => false,
+			disabled: () => !$editor?.can().addRowAfter()
+		},
+		{
+			name: 'deleteRow',
+			command: () => $editor?.chain().focus().deleteRow().run(),
+			icon: MdiTableRowRemove,
+			active: () => false,
+			disabled: () => !$editor?.can().deleteRow()
+		},
+		{
+			name: 'deleteTable',
+			command: () => $editor?.chain().focus().deleteTable().run(),
+			icon: MdiTableRemove,
+			active: () => false,
+			disabled: () => !$editor?.can().deleteTable()
+		},
+		{
+			name: 'mergeCells',
+			command: () => $editor?.chain().focus().mergeCells().run(),
+			icon: MdiTableMergeCells,
+			active: () => isActive('tableCell'),
+			disabled: () => !$editor?.can().mergeCells()
+		},
+		{
+			name: 'splitCell',
+			command: () => $editor?.chain().focus().splitCell().run(),
+			icon: MdiTableSplitCell,
+			active: () => false,
+			disabled: () => !$editor?.can().splitCell()
+		}
+	]);
+
+	const alignItems: MenuGroup = $derived([
+		{
+			name: 'align-left',
+			command: () => $editor?.chain().focus().setTextAlign('left').run(),
+			icon: AlignLeft,
+			active: () => isActive({ textAlign: 'left' })
+		},
+		{
+			name: 'align-center',
+			command: () => $editor?.chain().focus().setTextAlign('center').run(),
+			icon: AlignCenter,
+			active: () => isActive({ textAlign: 'center' })
+		},
+		{
+			name: 'align-right',
+			command: () => $editor?.chain().focus().setTextAlign('right').run(),
+			icon: AlignRight,
+			active: () => isActive({ textAlign: 'right' })
+		},
+		{
+			name: 'align-justify',
+			command: () => $editor?.chain().focus().setTextAlign('justify').run(),
+			icon: AlignJustify,
+			active: () => isActive({ textAlign: 'justify' })
+		}
+	]);
+
+	const listItems: MenuGroup = $derived([
+		{
+			name: 'bulletList',
+			command: () => $editor?.chain().focus().toggleBulletList().run(),
+			icon: List,
+			active: () => isActive('bulletList')
+		},
+		{
+			name: 'orderedList',
+			command: () => $editor?.chain().focus().toggleOrderedList().run(),
+			icon: ListOrdered,
+			active: () => isActive('orderedList')
+		}
+	]);
+
+	const menuGroups = $derived([headingItems, markItems, tableItems, alignItems, listItems]);
+
+	let activeValues = $state<string[]>([]);
+	$effect(() => {
+		if (!editor) return;
+		const newActiveValues: string[] = [];
+		for (const group of menuGroups) {
+			for (const item of group) {
+				if (item.active()) {
+					newActiveValues.push(item.name);
+				}
+			}
+		}
+		activeValues = newActiveValues;
+	});
 </script>
 
 {#if editor}
-	<div class="flex gap-1 rounded-t-md border-2 border-b-0 border-black p-2">
-		{#each menuItems as item (item.name)}
-			<button
-				type="button"
-				class={cn('h-7 w-7 rounded-sm hover:bg-black hover:text-white', {
-					'bg-black text-white': item.active()
-				})}
-				onclick={item.command}
-			>
-				{item.content}
-			</button>
-		{/each}
-		<ToggleGroup.RootProvider value={toggleGroup}>
-			{#each menuItems as item (item.name)}
-				<ToggleGroup.Item value={item.name}>{item.content}</ToggleGroup.Item>
-			{/each}
-		</ToggleGroup.RootProvider>
+	<div class="flex flex-col items-start gap-2 rounded-t-md border border-b-0 border-input p-2">
+		<div class="flex items-center gap-2">
+			<ToggleGroup.Root value={activeValues}>
+				{#each headingItems as item (item.name)}
+					<ToggleGroup.Item
+						value={item.name}
+						aria-label={item.name}
+						onclick={item.command}
+						disabled={item.disabled?.()}
+					>
+						{#if item.icon}
+							<item.icon />
+						{/if}
+					</ToggleGroup.Item>
+				{/each}
+			</ToggleGroup.Root>
+
+			<Separator orientation="vertical" class="h-6" />
+
+			<ToggleGroup.Root multiple value={activeValues}>
+				{#each markItems as item (item.name)}
+					<ToggleGroup.Item
+						value={item.name}
+						aria-label={item.name}
+						onclick={item.command}
+						disabled={item.disabled?.()}
+						class="data-[state=on]:bg-accent data-[state=on]:text-white"
+					>
+						{#if item.icon}
+							<item.icon />
+						{/if}
+					</ToggleGroup.Item>
+				{/each}
+			</ToggleGroup.Root>
+
+			<Separator orientation="vertical" class="h-6" />
+
+			<ToggleGroup.Root value={activeValues}>
+				{#each alignItems as item (item.name)}
+					<ToggleGroup.Item
+						value={item.name}
+						aria-label={item.name}
+						onclick={item.command}
+						disabled={item.disabled?.()}
+						class="data-[state=on]:bg-accent data-[state=on]:text-white"
+					>
+						{#if item.icon}
+							<item.icon />
+						{/if}
+					</ToggleGroup.Item>
+				{/each}
+			</ToggleGroup.Root>
+
+			<Separator orientation="vertical" class="h-6" />
+
+			<ToggleGroup.Root value={activeValues}>
+				{#each listItems as item (item.name)}
+					<ToggleGroup.Item
+						value={item.name}
+						aria-label={item.name}
+						onclick={item.command}
+						disabled={item.disabled?.()}
+						class="data-[state=on]:bg-accent data-[state=on]:text-white"
+					>
+						{#if item.icon}
+							<item.icon />
+						{/if}
+					</ToggleGroup.Item>
+				{/each}
+			</ToggleGroup.Root>
+		</div>
+		<div class="flex items-center gap-2">
+			<ToggleGroup.Root value={activeValues}>
+				{#each tableItems as item (item.name)}
+					<ToggleGroup.Item
+						value={item.name}
+						aria-label={item.name}
+						onclick={item.command}
+						disabled={item.disabled?.()}
+						class="data-[state=on]:bg-accent data-[state=on]:text-white"
+					>
+						{#if item.icon}
+							<item.icon />
+						{/if}
+					</ToggleGroup.Item>
+				{/each}
+			</ToggleGroup.Root>
+		</div>
 	</div>
 {/if}
 
@@ -153,12 +421,14 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		padding: 0.5rem 0.75rem;
-		font-size: 0.875rem;
-		font-weight: 500;
-		line-height: 1.25rem;
-		color: hsl(var(--foreground));
-		background-color: transparent;
+		padding: 0.1rem;
+		height: 24px;
+		width: 24px;
+		/* font-size: 0.875rem; */
+		/* font-weight: 500; */
+		/* line-height: 1.25rem; */
+		color: var(--foreground);
+		background-color: var(--background);
 		border: 0;
 		cursor: pointer;
 		transition: all 0.15s ease-in-out;
@@ -206,8 +476,9 @@
 	}
 
 	:global([data-part='item'][data-state='off']) {
-		color: black;
-		/* color: hsl(var(--muted-foreground)); */
+		/* color: black; */
+		color: var(--muted-foreground);
+		background-color: var(--muted);
 	}
 
 	:global([data-part='item'][data-state='on']) {
