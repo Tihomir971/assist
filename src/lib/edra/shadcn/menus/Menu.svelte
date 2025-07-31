@@ -6,9 +6,9 @@
 	import { cn } from '$lib/utils.js';
 	import { isTextSelection } from '@tiptap/core';
 	import Alignment from '../components/toolbar/Alignment.svelte';
-	import FontSize from '../components/toolbar/FontSize.svelte';
+	// import FontSize from '../components/toolbar/FontSize.svelte';
 	import Headings from '../components/toolbar/Headings.svelte';
-	import QuickColors from '../components/toolbar/QuickColors.svelte';
+	// import QuickColors from '../components/toolbar/QuickColors.svelte';
 	import ToolBarIcon from '../components/ToolBarIcon.svelte';
 
 	const {
@@ -93,7 +93,7 @@
 	pluginKey="link-bubble-menu"
 	{shouldShow}
 	class={cn(
-		'edra-bubble-menu bg-popover flex h-fit w-fit items-center rounded-lg p-0.5',
+		'edra-bubble-menu flex h-fit w-fit items-center rounded-lg bg-popover p-0.5',
 		className
 	)}
 >
@@ -112,7 +112,7 @@
 				{/each}
 			{/if}
 		{/each}
-		<FontSize {editor} />
-		<QuickColors {editor} />
+		<!-- <FontSize {editor} /> -->
+		<!-- <QuickColors {editor} /> -->
 	{/if}
 </BubbleMenu>

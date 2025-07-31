@@ -2,13 +2,13 @@
 	import { cn } from '$lib/utils.js';
 	import commands from '../commands/toolbar-commands.js';
 	import type { EdraToolbarProps } from '../types.js';
-	import Alignment from './components/toolbar/Alignment.svelte';
+	import Alignment from './toolbar/Alignment.svelte';
 	// import FontSize from './components/toolbar/FontSize.svelte';
-	import Headings from './components/toolbar/Headings.svelte';
-	import Tables from './components/toolbar/Tables.svelte';
+	import Headings from './toolbar/Headings.svelte';
+	// import Tables from './components/toolbar/Tables.svelte';
 	// import QuickColors from './components/toolbar/QuickColors.svelte';
 	// import SearchAndReplace from './components/toolbar/SearchAndReplace.svelte';
-	import ToolBarIcon from './components/ToolBarIcon.svelte';
+	import ToolBarIcon from './ToolBarIcon.svelte';
 
 	const { editor, class: className, excludedCommands, children }: EdraToolbarProps = $props();
 
@@ -25,7 +25,7 @@
 			{:else if cmd === 'alignment'}
 				<Alignment {editor} />
 			{:else if cmd === 'table'}
-				<Tables {editor} />
+				<!-- <Tables {editor} /> -->
 			{:else}
 				{@const commandGroup = commands[cmd]}
 				{#each commandGroup as command (command)}

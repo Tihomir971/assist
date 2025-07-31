@@ -11,10 +11,17 @@
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 	import type { PageData } from './$types';
-	import { SimpleEditor } from '$lib/components/svelte-tiptap';
+	// import { SimpleEditor } from '$lib/components/svelte-tiptap';
+	import type { Editor } from '@tiptap/core';
+	import {
+		EdraBubbleMenu,
+		EdraEditor,
+		EdraToolBar,
+		EdraDragHandleExtended
+	} from '$lib/edra/shadcn/index.js';
+	let editor = $state<Editor>();
 
 	let { data }: { data: PageData } = $props();
-
 	const { form, errors, enhance, submitting } = superForm(data.form, {
 		validators: zod4(docTemplateInsertSchema),
 		onResult: ({ result }) => {
@@ -87,7 +94,25 @@
 						<Label for="content">Template Content</Label>
 						<!-- <TiptapEditor bind:content={$form.content} /> -->
 						<!-- <TipTapEditor2 bind:content={$form.content} /> -->
-						<SimpleEditor bind:content={$form.content} />
+						<!-- <SimpleEditor bind:content={$form.content} /> -->
+						{#if editor && !editor.isDestroyed}
+							<EdraToolBar
+								class="flex w-full items-center overflow-x-auto border-b border-dashed bg-secondary/50 p-0.5"
+								{editor}
+							/>
+							<EdraDragHandleExtended {editor} />
+							<!-- Add bubble menu -->
+							<EdraBubbleMenu {editor} class="bg-popover" />
+						{/if}
+						<EdraEditor
+							bind:editor
+							content={$form.content}
+							class="h-[30rem] max-h-screen overflow-y-scroll pr-2 pl-6"
+							onUpdate={() => {
+								if (!editor) return;
+								$form.content = editor.getHTML();
+							}}
+						/>
 						<input type="hidden" name="content" bind:value={$form.content} />
 						<p class="mt-1 text-sm text-muted-foreground">
 							Use Mustache syntax. Example: &lt;h1&gt;Invoice for
