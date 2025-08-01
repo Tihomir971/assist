@@ -27,6 +27,7 @@ import ListOrdered from '@lucide/svelte/icons/list-ordered';
 // import Audio from '@lucide/svelte/icons/audio-lines';
 // import IFrame from '@lucide/svelte/icons/code-xml';
 import Table from '@lucide/svelte/icons/table';
+import Merge from '@lucide/svelte/icons/merge';
 
 const commands: Record<string, EdraToolBarCommands[]> = {
 	'undo-redo': [
@@ -385,10 +386,10 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 		{
 			icon: Table,
 			name: 'table',
-			tooltip: 'Table',
+			tooltip: 'Insert/Delete Table',
 			onClick: (editor) => {
 				if (editor.isActive('table')) {
-					const del = confirm('Do you really want to delete this table??');
+					const del = confirm('Do you really want to delete this table?');
 					if (del) {
 						editor.chain().focus().deleteTable().run();
 						return;
@@ -399,13 +400,17 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 			isActive: (editor) => editor.isActive('table')
 		},
 		{
-			icon: Table,
+			icon: Merge,
 			name: 'mergeOrSplit',
-			tooltip: 'Merge or Split',
+			tooltip: 'Merge or Split Cells',
 			onClick: (editor) => {
 				editor.chain().focus().mergeOrSplit().run();
 			},
-			isActive: (editor) => editor.isActive('table')
+			clickable: (editor) => {
+				return editor.isActive('table') && editor.can().mergeOrSplit();
+			},
+			isActive: (editor) => editor.isActive('table'),
+			contextDependent: true
 		}
 	]
 };

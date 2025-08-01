@@ -19,6 +19,7 @@
 		EdraToolBar,
 		EdraDragHandleExtended
 	} from '$lib/edra/shadcn/index.js';
+	import DragHandle from '$lib/edra/components/DragHandle.svelte';
 	let editor = $state<Editor>();
 
 	let { data }: { data: PageData } = $props();
@@ -101,6 +102,7 @@
 								{editor}
 							/>
 							<EdraDragHandleExtended {editor} />
+							<!-- <DragHandle {editor} /> -->
 							<!-- Add bubble menu -->
 							<EdraBubbleMenu {editor} class="bg-popover" />
 						{/if}

@@ -9,4 +9,5 @@ export interface EdraToolBarCommands {
 	onClick?: (editor: Editor) => void;
 	isActive?: (editor: Editor) => boolean;
 	clickable?: (editor: Editor) => boolean;
+	contextDependent?: boolean;
 }

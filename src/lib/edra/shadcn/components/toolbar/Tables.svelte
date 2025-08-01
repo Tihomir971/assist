@@ -1,12 +1,7 @@
 <script lang="ts">
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import commands from '../../../commands/toolbar-commands.js';
 	import type { Editor } from '@tiptap/core';
-	import Table from '@lucide/svelte/icons/table';
-	import EdraToolTip from '../EdraToolTip.svelte';
-	import ChevronDown from '@lucide/svelte/icons/chevron-down';
-	import { buttonVariants } from '$lib/components/ui/button/index.js';
-	import { cn } from '$lib/utils.js';
+	import ToolBarIcon from '../ToolBarIcon.svelte';
 
 	interface Props {
 		editor: Editor;
@@ -15,57 +10,24 @@
 
 	const tables = commands['table'];
 
-	const isActive = $derived.by(() => {
-		return tables.find((table) => table.isActive?.(editor)) !== undefined;
-	});
+	// Separate always-visible commands from context-dependent ones
+	const alwaysVisibleCommands = tables.filter((table) => !table.contextDependent);
+	const contextDependentCommands = tables.filter((table) => table.contextDependent);
 
-	const TableIcon = $derived.by(() => {
-		const a = tables.find((table) => table.isActive?.(editor));
-		if (a) return a.icon;
-		else return Table;
+	// Check if cursor is inside a table to show context-dependent commands
+	const isInsideTable = $derived.by(() => {
+		return editor && editor.isActive('table');
 	});
 </script>
 
-<EdraToolTip tooltip="Tables">
-	<div
-		class={buttonVariants({
-			variant: 'ghost',
-			size: 'icon',
-			class: cn('gap-0')
-		})}
-		class:bg-muted={isActive}
-	>
-		<TableIcon />
-	</div>
-</EdraToolTip>
-{#if isActive}
-	<DropdownMenu.Root>
-		<DropdownMenu.Trigger>
-			<EdraToolTip tooltip="Tables">
-				<div
-					class={buttonVariants({
-						variant: 'ghost',
-						size: 'icon',
-						class: cn('gap-0')
-					})}
-					class:bg-muted={isActive}
-				>
-					<TableIcon />
-					<ChevronDown class="!size-2 text-muted-foreground" />
-				</div>
-			</EdraToolTip>
-		</DropdownMenu.Trigger>
-		<DropdownMenu.Content portalProps={{ disabled: true, to: undefined }}>
-			{#each tables as table (table)}
-				{@const Icon = table.icon}
-				<DropdownMenu.Item onclick={() => table.onClick?.(editor)}>
-					<Icon />
-					<span>{table.tooltip}</span>
-					<DropdownMenu.Shortcut>
-						{table.shortCut}
-					</DropdownMenu.Shortcut>
-				</DropdownMenu.Item>
-			{/each}
-		</DropdownMenu.Content>
-	</DropdownMenu.Root>
+<!-- Always show insertTable/deleteTable icon -->
+{#each alwaysVisibleCommands as command (command.name)}
+	<ToolBarIcon {editor} {command} />
+{/each}
+
+<!-- Show context-dependent commands (like mergeOrSplit) only when cursor is inside table -->
+{#if isInsideTable}
+	{#each contextDependentCommands as command (command.name)}
+		<ToolBarIcon {editor} {command} />
+	{/each}
 {/if}
