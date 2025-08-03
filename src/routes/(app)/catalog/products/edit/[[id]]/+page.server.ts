@@ -30,7 +30,7 @@ import {
 	mProductAttributeValueInsertSchema,
 	cChannelMapProductInsertSchema // Added cChannelMapProductInsertSchema
 } from '@tihomir971/assist-shared';
-import type { CChannelMapProductRow } from '@tihomir971/assist-shared';
+import type { ApiResponseT, CChannelMapProductRow } from '@tihomir971/assist-shared';
 import { productPayloadBuilder } from './product.payload';
 import { productPackingPayloadBuilder } from './product-packing.payload';
 import { productPoPayloadBuilder } from './product-po.payload';
@@ -39,7 +39,7 @@ import { productAttributeOptionPayloadBuilder } from './product-attribute-option
 import { productAttributeValuePayloadBuilder } from './product-attribute-value.payload';
 import { channelMappingProductPayloadBuilder } from './channel-mapping-product.payload'; // Added channelMappingProductPayloadBuilder
 import { connector } from '$lib/ky';
-import type { ChartData } from '$lib/components/charts/chart-types';
+import type { EChartsData } from '$lib/components/charts/chart-types';
 import type { PageServerLoad, Actions } from './$types';
 import { fail } from '@sveltejs/kit';
 
@@ -135,16 +135,16 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		throw error(404, 'Product not found');
 	}
 
-	const getSalesData = async (sku: string | null) => {
-		if (!sku) return { currentYear: new Date().getFullYear(), products: [] };
+	const getSalesData = async (sku: string | null): Promise<ApiResponseT<EChartsData>> => {
+		if (!sku) return { data: { xAxis: { data: [] }, series: [] }, error: null };
 		try {
 			const data = await connector
 				.post('api/sales', { json: { productIds: [sku], yearCount: 3 } })
-				.json<ChartData>();
+				.json<ApiResponseT<EChartsData>>();
 			return data;
 		} catch (e) {
 			console.error('Failed to fetch sales data', e);
-			return { currentYear: new Date().getFullYear(), products: [] };
+			return { data: { xAxis: { data: [] }, series: [] }, error: null };
 		}
 	};
 

@@ -24,3 +24,15 @@ export interface ChartData {
 	products: ProductChartData[];
 	currentYear: number;
 }
+
+export interface EChartsSeries {
+	name: string;
+	data: number[];
+}
+
+export interface EChartsData {
+	xAxis: {
+		data: string[];
+	};
+	series: EChartsSeries[];
+}

@@ -1,7 +1,8 @@
 import { connector } from '$lib/ky';
 import type { PageServerLoad } from './$types';
-import type { ChartData } from '../../../../lib/components/charts/chart-types';
-import * as z from 'zod/v3';
+import type { EChartsData } from '$lib/components/charts/chart-types';
+import * as z from 'zod/v4';
+import type { ApiResponseT } from '@tihomir971/assist-shared';
 
 const searchParamsSchema = z.object({
 	skus: z
@@ -18,8 +19,8 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 	if (!params.success) {
 		return {
 			chartData: {
-				products: [],
-				currentYear: new Date().getFullYear()
+				series: [],
+				xAxis: { data: [] }
 			}
 		};
 	}
@@ -29,8 +30,8 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 	if (productIds.length === 0) {
 		return {
 			chartData: {
-				products: [],
-				currentYear: new Date().getFullYear()
+				series: [],
+				xAxis: { data: [] }
 			}
 		};
 	}
@@ -42,18 +43,19 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 			data?.filter((item): item is { sku: string } => item.sku !== null).map((item) => item.sku) ||
 			[];
 
-		const chartData = (await connector
+		const apiResponse = await connector
 			.post('api/sales', {
 				json: {
 					productIds: skus,
 					yearCount: 3
 				}
 			})
-			.json<ChartData>()) || {
-			products: [],
-			currentYear: new Date().getFullYear()
-		};
+			.json<ApiResponseT<EChartsData>>();
 
+		const chartData = apiResponse?.data ?? {
+			series: [],
+			xAxis: { data: [] }
+		};
 		return {
 			chartData
 		};
@@ -61,8 +63,8 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 		console.error('Error fetching sales data:', error);
 		return {
 			chartData: {
-				products: [],
-				currentYear: new Date().getFullYear()
+				series: [],
+				xAxis: { data: [] }
 			}
 		};
 	}

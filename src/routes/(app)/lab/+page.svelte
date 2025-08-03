@@ -2,6 +2,32 @@
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+
+	import { Chart } from 'svelte-echarts';
+	import { init, use } from 'echarts/core';
+	import { BarChart } from 'echarts/charts';
+	import { GridComponent, TitleComponent } from 'echarts/components';
+	import { CanvasRenderer } from 'echarts/renderers';
+	import type { EChartsOption } from 'echarts';
+
+	// now with tree-shaking
+	use([BarChart, GridComponent, CanvasRenderer, TitleComponent]);
+
+	let options: EChartsOption = {
+		xAxis: {
+			type: 'category',
+			data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+		},
+		yAxis: {
+			type: 'value'
+		},
+		series: [
+			{
+				data: [120, 200, 150, 80, 70, 110, 130],
+				type: 'bar'
+			}
+		]
+	};
 </script>
 
 <div class="flex h-full content-center gap-4 p-8 *:size-28 *:place-content-center *:text-center">
@@ -12,3 +38,13 @@
 	<div class="bg-info">Info</div>
 	<div class="bg-success">Success</div>
 </div>
+<div class="app">
+	<Chart {init} {options} />
+</div>
+
+<style>
+	.app {
+		width: 100vw;
+		height: 100vh;
+	}
+</style>

@@ -9,11 +9,11 @@ import {
 	cChannelMapProductInsertSchema
 } from '@tihomir971/assist-shared';
 import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable.svelte';
-import ChartVisualization from '$lib/components/charts/ChartVisualization.svelte';
 import StorageOnHandDisplay from './m-storageonhand-display.svelte';
 import SmartProductAttributes from './SmartProductAttributes.svelte';
 import { createFormConfig } from '$lib/utils/form-config.builder';
 import { invalidate } from '$app/navigation';
+import InTabEChart from '$lib/components/charts/InTabEChart.svelte';
 
 // Define the split layout configuration
 export const splitLayoutConfig = createSplitLayoutConfig()
@@ -222,9 +222,9 @@ export function createTabConfigs(data: PageData) {
 		createTabConfig(
 			'sales-chart',
 			'Sales Chart',
-			ChartVisualization as Component,
+			InTabEChart as Component,
 			{
-				data: data.salesByWeeks
+				data: data.salesByWeeks.data
 			},
 			{ order: 5 }
 		),
