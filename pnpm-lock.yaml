@@ -42,8 +42,8 @@ importers:
         specifier: ^8.21.3
         version: 8.21.3
       '@tihomir971/assist-shared':
-        specifier: ^2.4.1
-        version: 2.4.1
+        specifier: ^2.5.0
+        version: 2.5.0
       '@tiptap/core':
         specifier: ^3.0.9
         version: 3.0.9(@tiptap/pm@3.0.9)
@@ -1347,8 +1347,8 @@ packages:
     resolution: {integrity: sha512-ldZXEhOBb8Is7xLs01fR3YEc3DERiz5silj8tnGkFZytt1abEvl/GhUmCE0PMLaMPTa3Jk4HbKmRlHmu+gCftg==}
     engines: {node: '>=12'}
 
-  '@tihomir971/assist-shared@2.4.1':
-    resolution: {integrity: sha512-ZC2yRmiQqG6xBA4IuiaLPLi6g8ub9FLnIzY7De4m9VncUanDh4Pf4/iPb+jtco0YNLQh7rfHhXttsV3WgU2rpQ==}
+  '@tihomir971/assist-shared@2.5.0':
+    resolution: {integrity: sha512-ml4VPWIm/qS8yKoTuW8hOKKWE5UxM9w101eoBcKwo+hLSL1Y72Kx2VqAg7BPd9GIa2kGefd0qUqox7K5H2tLOA==}
 
   '@tiptap/core@3.0.9':
     resolution: {integrity: sha512-1zdDyILerBcD3P0fu8kCtPLOFj0R5utjexCQ2CZ46pckn/Wk4V+WUBARzhG5Yz2JDkmJIUIcmLBVrL6G1rjJWg==}
@@ -4395,7 +4395,7 @@ snapshots:
 
   '@tanstack/table-core@8.21.3': {}
 
-  '@tihomir971/assist-shared@2.4.1':
+  '@tihomir971/assist-shared@2.5.0':
     dependencies:
       zod: 3.25.76
 

@@ -116,10 +116,75 @@
 							}}
 						/>
 						<input type="hidden" name="content" bind:value={$form.content} />
-						<p class="mt-1 text-sm text-muted-foreground">
-							Use Mustache syntax. Example: &lt;h1&gt;Invoice for
-							&#123;&#123;customer.display_name&#125;&#125;&lt;/h1&gt;
-						</p>
+						<div class="mt-2 space-y-2">
+							<p class="text-sm text-muted-foreground">
+								Use Mustache syntax for dynamic content. Supports both simple variables and complex
+								nested data from linked tables.
+							</p>
+
+							<details class="text-sm">
+								<summary class="cursor-pointer font-medium text-blue-600 hover:text-blue-800">
+									📝 Template Syntax Examples
+								</summary>
+								<div class="mt-2 rounded border p-3">
+									<div class="space-y-3 text-xs">
+										<div>
+											<strong>Basic Variables:</strong>
+											<pre class="mt-1 rounded border p-2"><code
+													>&lt;h1&gt;Invoice for &#123;&#123;customer.display_name&#125;&#125;&lt;/h1&gt;
+&lt;p&gt;Email: &#123;&#123;customer.email&#125;&#125;&lt;/p&gt;</code
+												></pre>
+										</div>
+
+										<div>
+											<strong>Conditional Content:</strong>
+											<pre class="mt-1 rounded border p-2"><code
+													>&#123;&#123;#customer.iscustomer&#125;&#125;
+		&lt;p&gt;This is a customer&lt;/p&gt;
+&#123;&#123;/customer.iscustomer&#125;&#125;
+
+&#123;&#123;^customer.iscustomer&#125;&#125;
+		&lt;p&gt;This is not a customer&lt;/p&gt;
+&#123;&#123;/customer.iscustomer&#125;&#125;</code
+												></pre>
+										</div>
+
+										<div>
+											<strong>Looping Through Linked Data:</strong>
+											<pre class="mt-1 rounded border p-2"><code
+													>&#123;&#123;#customer.locations&#125;&#125;
+		&lt;div class="location"&gt;
+				&lt;h3&gt;&#123;&#123;name&#125;&#125;&lt;/h3&gt;
+				&lt;p&gt;&#123;&#123;l_location.street_address_1&#125;&#125;&lt;/p&gt;
+				&#123;&#123;#l_location.street_address_2&#125;&#125;
+						&lt;p&gt;&#123;&#123;l_location.street_address_2&#125;&#125;&lt;/p&gt;
+				&#123;&#123;/l_location.street_address_2&#125;&#125;
+				&lt;p&gt;Phone: &#123;&#123;phone&#125;&#125;&lt;/p&gt;
+				&#123;&#123;#isbillto&#125;&#125;&lt;span&gt;Billing Address&lt;/span&gt;&#123;&#123;/isbillto&#125;&#125;
+		&lt;/div&gt;
+&#123;&#123;/customer.locations&#125;&#125;</code
+												></pre>
+										</div>
+
+										<div>
+											<strong>Empty State Handling:</strong>
+											<pre class="mt-1 rounded border p-2"><code
+													>&#123;&#123;^customer.locations&#125;&#125;
+		&lt;p&gt;No locations found for this customer.&lt;/p&gt;
+&#123;&#123;/customer.locations&#125;&#125;</code
+												></pre>
+										</div>
+									</div>
+								</div>
+							</details>
+
+							<div class="rounded border border-green-200 bg-green-50 p-2">
+								<p class="text-xs text-green-800">
+									💡 <strong>Pro Tip:</strong> Use the enhanced context schema to access related data
+									like customer locations, order items, or any other linked tables in your database.
+								</p>
+							</div>
+						</div>
 						{#if $errors.content}
 							<p class="mt-1 text-sm text-red-500">{$errors.content}</p>
 						{/if}
@@ -136,10 +201,197 @@
 							placeholder={'{ "roles": [{ "name": "customer", "label": "Customer", "source_table": "c_bpartner" }] }'}
 							class={$errors.context_schema ? 'border-red-500' : ''}
 						/>
-						<p class="mt-1 text-sm text-muted-foreground">
-							Defines the data roles. Example: &#123; "roles": [&#123; "name": "customer", "label":
-							"Customer", "source_table": "c_bpartner" &#125;] &#125;
-						</p>
+						<div class="mt-2 space-y-2">
+							<p class="text-sm text-muted-foreground">
+								Defines the data roles and their relationships. Supports both simple and enhanced
+								schemas with linked tables.
+							</p>
+
+							<details class="text-sm">
+								<summary class="cursor-pointer font-medium text-blue-600 hover:text-blue-800">
+									📖 Simple Schema Example (Basic Usage)
+								</summary>
+								<div class="mt-2 rounded border p-3">
+									<pre class="overflow-x-auto text-xs"><code
+											>&#123;
+		"roles": [
+				&#123;
+						"name": "customer",
+						"label": "Customer",
+						"source_table": "c_bpartner"
+				&#125;
+		]
+&#125;</code
+										></pre>
+									<p class="mt-2 text-xs text-gray-600">
+										Template usage: <code>&#123;&#123;customer.display_name&#125;&#125;</code>,
+										<code>&#123;&#123;customer.email&#125;&#125;</code>
+									</p>
+								</div>
+							</details>
+
+							<details class="text-sm">
+								<summary class="cursor-pointer font-medium text-blue-600 hover:text-blue-800">
+									🔗 Enhanced Schema Example (With Linked Tables)
+								</summary>
+								<div class="mt-2 rounded border p-3">
+									<pre class="overflow-x-auto text-xs"><code
+											>&#123;
+		"roles": [
+				&#123;
+						"name": "customer",
+						"label": "Customer",
+						"source_table": "c_bpartner",
+						"linked_tables": [
+								&#123;
+									 "name": "locations",
+									 "relationship_type": "one_to_many",
+									 "join_table": "c_bpartner_location",
+									 "join_conditions": [
+									   &#123;
+									     "local_field": "id",
+									     "foreign_field": "c_bpartner_id"
+									   &#125;
+									 ],
+									 "target_table": "l_location",
+									 "target_join": &#123;
+									   "local_field": "l_location_id",
+									   "foreign_field": "id"
+									 &#125;,
+									 "select_fields": ["street_address_1", "street_address_2"],
+									 "include_join_fields": ["name", "phone", "isbillto", "isshipto"],
+									 "where_conditions": [
+									   &#123;
+									     "field": "is_active",
+									     "operator": "eq",
+									     "value": true
+									   &#125;
+									 ],
+									 "order_by": [
+									   &#123;
+									     "field": "name",
+									     "direction": "asc"
+									   &#125;
+									 ]
+								&#125;
+						]
+				&#125;
+		]
+&#125;</code
+										></pre>
+									<p class="mt-2 text-xs text-gray-600">
+										Template usage: <code>&#123;&#123;customer.display_name&#125;&#125;</code>,
+										<code
+											>&#123;&#123;#customer.locations&#125;&#125;&#123;&#123;name&#125;&#125; -
+											&#123;&#123;l_location.street_address_1&#125;&#125;&#123;&#123;/customer.locations&#125;&#125;</code
+										>
+									</p>
+								</div>
+							</details>
+
+							<details class="text-sm">
+								<summary class="cursor-pointer font-medium text-green-600 hover:text-green-800">
+									📝 Template Variables Guide
+								</summary>
+								<div class="mt-2 rounded border bg-green-50 p-3 dark:bg-green-800">
+									<div class="space-y-2 text-xs">
+										<div>
+											<strong>Simple Schema Variables:</strong>
+											<ul class="mt-1 ml-4 list-disc">
+												<li>
+													<code>&#123;&#123;customer.display_name&#125;&#125;</code> - Customer name
+												</li>
+												<li>
+													<code>&#123;&#123;customer.email&#125;&#125;</code> - Customer email
+												</li>
+												<li>
+													<code>&#123;&#123;customer.iscustomer&#125;&#125;</code> - Boolean fields
+												</li>
+											</ul>
+										</div>
+										<div>
+											<strong>Enhanced Schema Variables (with locations):</strong>
+											<ul class="mt-1 ml-4 list-disc">
+												<li>
+													<code
+														>&#123;&#123;#customer.locations&#125;&#125;...&#123;&#123;/customer.locations&#125;&#125;</code
+													> - Loop through locations
+												</li>
+												<li>
+													<code>&#123;&#123;customer.locations.0.name&#125;&#125;</code> - First location
+													name
+												</li>
+												<li>
+													<code>&#123;&#123;customer.locations.0.phone&#125;&#125;</code> - First location
+													phone
+												</li>
+												<li>
+													<code
+														>&#123;&#123;customer.locations.0.l_location.street_address_1&#125;&#125;</code
+													> - Address from linked table
+												</li>
+												<li>
+													<code
+														>&#123;&#123;#customer.locations.0.isbillto&#125;&#125;Billing&#123;&#123;/customer.locations.0.isbillto&#125;&#125;</code
+													> - Conditional display
+												</li>
+											</ul>
+										</div>
+										<div>
+											<strong>System Variables:</strong>
+											<ul class="mt-1 ml-4 list-disc">
+												<li>
+													<code>&#123;&#123;generated_at&#125;&#125;</code> - Document generation timestamp
+												</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</details>
+
+							<details class="text-sm">
+								<summary class="cursor-pointer font-medium text-purple-600 hover:text-purple-800">
+									⚙️ Schema Configuration Options
+								</summary>
+								<div class="mt-2 rounded border bg-purple-50 p-3 dark:bg-purple-800">
+									<div class="space-y-2 text-xs">
+										<div>
+											<strong>Relationship Types:</strong>
+											<ul class="mt-1 ml-4 list-disc">
+												<li><code>one_to_one</code> - Single related record</li>
+												<li><code>one_to_many</code> - Multiple related records (array)</li>
+												<li><code>many_to_many</code> - Complex relationships</li>
+											</ul>
+										</div>
+										<div>
+											<strong>Where Operators:</strong>
+											<ul class="mt-1 ml-4 list-disc">
+												<li><code>eq</code> - Equals</li>
+												<li><code>neq</code> - Not equals</li>
+												<li><code>gt/gte</code> - Greater than (or equal)</li>
+												<li><code>lt/lte</code> - Less than (or equal)</li>
+												<li><code>like</code> - Pattern matching</li>
+												<li><code>in</code> - In array</li>
+											</ul>
+										</div>
+										<div>
+											<strong>Order Directions:</strong>
+											<ul class="mt-1 ml-4 list-disc">
+												<li><code>asc</code> - Ascending (A-Z, 1-9)</li>
+												<li><code>desc</code> - Descending (Z-A, 9-1)</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</details>
+
+							<div class="rounded border border-blue-200 bg-blue-50 p-2 dark:bg-blue-800">
+								<p class="text-xs text-blue-900 dark:text-blue-50">
+									💡 <strong>Tip:</strong> The system automatically detects enhanced schemas and maintains
+									backward compatibility. Existing simple schemas continue to work without changes.
+								</p>
+							</div>
+						</div>
 						{#if $errors.context_schema}
 							<p class="mt-1 text-sm text-red-500">{$errors.context_schema}</p>
 						{/if}

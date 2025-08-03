@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Customer Information Report</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 20px;
+				line-height: 1.6;
+			}
+			.header {
+				border-bottom: 2px solid #007bff;
+				padding-bottom: 10px;
+				margin-bottom: 20px;
+			}
+			.customer-details {
+				background: #f8f9fa;
+				padding: 15px;
+				border-radius: 5px;
+				margin-bottom: 20px;
+			}
+			.location {
+				border: 1px solid #dee2e6;
+				padding: 15px;
+				margin: 10px 0;
+				border-radius: 5px;
+				background: white;
+			}
+			.location h3 {
+				margin-top: 0;
+				color: #495057;
+			}
+			.badge {
+				background: #007bff;
+				color: white;
+				padding: 3px 8px;
+				border-radius: 12px;
+				font-size: 12px;
+				margin-right: 5px;
+			}
+			.badge.billing {
+				background: #28a745;
+			}
+			.badge.shipping {
+				background: #17a2b8;
+			}
+			.no-locations {
+				text-align: center;
+				color: #6c757d;
+				font-style: italic;
+				padding: 20px;
+			}
+			.footer {
+				margin-top: 30px;
+				padding-top: 15px;
+				border-top: 1px solid #dee2e6;
+				font-size: 12px;
+				color: #6c757d;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="header">
+			<h1>Customer Information Report</h1>
+		</div>
+
+		<div class="customer-details">
+			<h2>Customer Details</h2>
+			<p><strong>Name:</strong> {{customer.display_name}}</p>
+			{{#customer.email}}
+			<p><strong>Email:</strong> {{customer.email}}</p>
+			{{/customer.email}}
+			<p>
+				<strong>Customer Type:</strong>
+				{{#customer.iscustomer}}Customer{{/customer.iscustomer}} {{^customer.iscustomer}}Not a
+				Customer{{/customer.iscustomer}} {{#customer.isvendor}} | Vendor{{/customer.isvendor}}
+			</p>
+			{{#customer.description}}
+			<p><strong>Description:</strong> {{customer.description}}</p>
+			{{/customer.description}}
+		</div>
+
+		<div class="locations-section">
+			<h2>Locations</h2>
+
+			{{#customer.locations}}
+			<div class="location">
+				<h3>{{name}}</h3>
+
+				<div class="address">
+					<p><strong>Address:</strong></p>
+					{{#l_location}}
+					<p>{{street_address_1}}</p>
+					{{#street_address_2}}
+					<p>{{street_address_2}}</p>
+					{{/street_address_2}} {{/l_location}}
+				</div>
+
+				{{#phone}}
+				<p><strong>Phone:</strong> {{phone}}</p>
+				{{/phone}} {{#phone2}}
+				<p><strong>Phone 2:</strong> {{phone2}}</p>
+				{{/phone2}}
+
+				<div class="location-types">
+					<p>
+						<strong>Location Type:</strong> {{#isbillto}}<span class="badge billing"
+							>Billing Address</span
+						>{{/isbillto}} {{#isshipto}}<span class="badge shipping">Shipping Address</span
+						>{{/isshipto}}
+					</p>
+				</div>
+			</div>
+			{{/customer.locations}} {{^customer.locations}}
+			<div class="no-locations">
+				<p>No locations found for this customer.</p>
+			</div>
+			{{/customer.locations}}
+		</div>
+
+		<div class="footer">
+			<p>Generated on: {{generated_at}}</p>
+			<p>This report contains customer information and associated location details.</p>
+		</div>
+	</body>
+</html>

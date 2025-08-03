@@ -1,0 +1,51 @@
+{
+    "roles": [
+        {
+            "name": "customer",
+            "label": "Customer",
+            "source_table": "c_bpartner",
+            "linked_tables": [
+                {
+                    "name": "locations",
+                    "relationship_type": "one_to_many",
+                    "join_table": "c_bpartner_location",
+                    "join_conditions": [
+                        {
+                            "local_field": "id",
+                            "foreign_field": "c_bpartner_id"
+                        }
+                    ],
+                    "target_table": "l_location",
+                    "target_join": {
+                        "local_field": "l_location_id",
+                        "foreign_field": "id"
+                    },
+                    "select_fields": [
+                        "street_address_1",
+                        "street_address_2"
+                    ],
+                    "include_join_fields": [
+                        "name",
+                        "phone",
+                        "phone2",
+                        "isbillto",
+                        "isshipto"
+                    ],
+                    "where_conditions": [
+                        {
+                            "field": "is_active",
+                            "operator": "eq",
+                            "value": true
+                        }
+                    ],
+                    "order_by": [
+                        {
+                            "field": "name",
+                            "direction": "asc"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
