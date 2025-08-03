@@ -38,13 +38,11 @@ export const orderByClauseSchema = z.object({
 
 export const linkedTableDefinitionSchema = z.object({
 	name: z.string().min(1, 'Name is required'),
-	relationship_type: z.enum(['one_to_one', 'one_to_many', 'many_to_many']),
 	join_table: z.string().optional(),
 	join_conditions: z.array(joinConditionSchema).min(1, 'At least one join condition is required'),
 	target_table: z.string().optional(),
 	target_join: joinConditionSchema.optional(),
-	select_fields: z.array(z.string()).min(1, 'At least one select field is required'),
-	include_join_fields: z.array(z.string()).optional(),
+	fields: z.array(z.string()).min(1, 'At least one field is required'),
 	where_conditions: z.array(whereConditionSchema).optional(),
 	order_by: z.array(orderByClauseSchema).optional()
 });

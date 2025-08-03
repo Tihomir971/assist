@@ -95,10 +95,13 @@ export class EnhancedQueryBuilder {
 		linkedTable: LinkedTableDefinition
 	): Promise<unknown[]> {
 		// Step 1: Get join table data (e.g., c_bpartner_location)
-		const joinFields = ['*', ...(linkedTable.include_join_fields || [])];
+		// Extract fields that don't have dot notation (these come from join table)
+		const joinFields = linkedTable.fields.filter((field) => !field.includes('.'));
+		const joinFieldsToSelect = joinFields.length > 0 ? ['*', ...joinFields] : ['*'];
+
 		let joinQuery = this.supabase
 			.from(linkedTable.join_table as keyof Database['public']['Tables'])
-			.select(joinFields.join(', '));
+			.select(joinFieldsToSelect.join(', '));
 
 		// Apply join conditions to link to source entity
 		for (const joinCondition of linkedTable.join_conditions) {
@@ -144,8 +147,13 @@ export class EnhancedQueryBuilder {
 			return joinData; // Return join data without target data
 		}
 
+		// Extract fields with dot notation and remove the table prefix
+		const targetFields = linkedTable.fields
+			.filter((field) => field.includes('.'))
+			.map((field) => field.split('.')[1]); // Remove table prefix
+
 		// Ensure the foreign key field is included in the select fields for proper mapping
-		const selectFields = [...linkedTable.select_fields];
+		const selectFields = [...targetFields];
 		const foreignKeyField = linkedTable.target_join!.foreign_field;
 		if (!selectFields.includes(foreignKeyField)) {
 			selectFields.push(foreignKeyField);
@@ -191,7 +199,7 @@ export class EnhancedQueryBuilder {
 		linkedTable: LinkedTableDefinition
 	): Promise<unknown[]> {
 		const queryTable = linkedTable.join_table || linkedTable.target_table;
-		const selectClause = linkedTable.select_fields.join(', ');
+		const selectClause = linkedTable.fields.join(', ');
 
 		let query = this.supabase
 			.from(queryTable as keyof Database['public']['Tables'])
