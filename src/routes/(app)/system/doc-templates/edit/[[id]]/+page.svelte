@@ -109,7 +109,7 @@
 						<EdraEditor
 							bind:editor
 							content={$form.content}
-							class="h-[30rem] max-h-screen overflow-y-scroll pr-2 pl-6"
+							class="h-[60rem] max-h-screen overflow-y-scroll pr-2 pl-6"
 							onUpdate={() => {
 								if (!editor) return;
 								$form.content = editor.getHTML();
@@ -231,8 +231,49 @@
 							</details>
 
 							<details class="text-sm">
+								<summary class="cursor-pointer font-medium text-green-600 hover:text-green-800">
+									🚀 Native Supabase JS Format (Recommended)
+								</summary>
+								<div class="mt-2 rounded border border-green-200 bg-green-50 p-3">
+									<pre class="overflow-x-auto text-xs"><code
+											>&#123;
+		"roles": [
+				&#123;
+						"name": "customer",
+						"label": "Customer",
+						"query": &#123;
+								"from": "c_bpartner",
+								"select": "*, c_bpartner_location(name, phone, phone2, isbillto, isshipto, l_location(street_address_1, street_address_2))",
+								"eq": ["id", "$entityId"],
+								"c_bpartner_location.eq": ["is_active", true],
+								"c_bpartner_location.order": "name"
+						&#125;
+				&#125;
+		]
+&#125;</code
+										></pre>
+									<p class="mt-2 text-xs text-green-800">
+										<strong>✨ Native Format:</strong> Uses familiar Supabase JS client syntax for maximum
+										power and intuition.
+									</p>
+									<p class="mt-1 text-xs text-green-800">
+										Template usage: <code>&#123;&#123;customer.display_name&#125;&#125;</code>,
+										<code
+											>&#123;&#123;#customer.c_bpartner_location&#125;&#125;&#123;&#123;name&#125;&#125;
+											-
+											&#123;&#123;l_location.street_address_1&#125;&#125;&#123;&#123;/customer.c_bpartner_location&#125;&#125;</code
+										>
+									</p>
+									<p class="mt-1 text-xs text-green-800">
+										<strong>Features:</strong> All Supabase filters (eq, neq, gt, gte, lt, lte, like,
+										ilike, in), nested filtering, $entityId placeholder
+									</p>
+								</div>
+							</details>
+
+							<details class="text-sm">
 								<summary class="cursor-pointer font-medium text-blue-600 hover:text-blue-800">
-									🔗 Enhanced Schema Example (With Linked Tables) - Ultra-Simplified
+									🔗 Legacy Custom DSL (Still Supported)
 								</summary>
 								<div class="mt-2 rounded border p-3">
 									<pre class="overflow-x-auto text-xs"><code
@@ -267,8 +308,8 @@
 &#125;</code
 										></pre>
 									<p class="mt-2 text-xs text-gray-600">
-										<strong>Ultra-Simplified Format:</strong> Uses intuitive field names and dot notation
-										for target table fields.
+										<strong>Legacy Format:</strong> Custom DSL with intuitive field names. Still supported
+										but native format is recommended.
 									</p>
 									<p class="mt-1 text-xs text-gray-600">
 										Template usage: <code>&#123;&#123;customer.display_name&#125;&#125;</code>,

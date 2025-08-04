@@ -88,7 +88,10 @@
 		}
 	});
 
-	function getLookupData(sourceTable: string) {
+	function getLookupData(role: any) {
+		// For native format, extract table name from query.from
+		const sourceTable = role.query?.from || role.source_table;
+
 		// Check if we have lookup data for this source table
 		if (data.lookups[sourceTable]) {
 			return data.lookups[sourceTable];
@@ -174,29 +177,34 @@
 					<div class="space-y-4">
 						<div class="text-sm text-muted-foreground">
 							<p>
-								<strong>Context Schema Format:</strong> Ultra-simplified linked table definitions
+								<strong>Context Schema Format:</strong> This template supports enhanced data fetching
 							</p>
-							<p>This template supports enhanced data fetching with the following structure:</p>
-							<ul class="mt-2 list-disc space-y-1 pl-4">
-								<li><code>from</code>: Source/join table (e.g., "c_bpartner_location")</li>
-								<li><code>join_on</code>: Field to join on (e.g., "c_bpartner_id")</li>
-								<li><code>to</code>: Target table for additional data (e.g., "l_location")</li>
-								<li><code>to_key</code>: Foreign key field (e.g., "l_location_id")</li>
-								<li>
-									<code>fields</code>: Array of fields, use dot notation for target table fields
-									(e.g., "l_location.street_address_1")
-								</li>
-								<li><code>where</code>: Simple where clause (e.g., "is_active = true")</li>
-								<li><code>order</code>: Simple order clause (e.g., "name" or "name desc")</li>
-							</ul>
+							<p>The template uses one of the following schema formats:</p>
+							<div class="mt-2 space-y-2">
+								<div class="rounded border border-green-200 bg-green-50 p-2">
+									<p class="text-xs font-medium text-green-800">
+										✨ Native Supabase JS Format (Recommended)
+									</p>
+									<p class="text-xs text-green-700">
+										Uses familiar Supabase client syntax with query objects
+									</p>
+								</div>
+								<div class="rounded border p-2">
+									<p class="text-xs font-medium text-gray-700">Legacy Custom DSL Format</p>
+									<p class="text-xs text-gray-600">
+										Custom fields like from, join_on, to_key (still supported)
+									</p>
+								</div>
+							</div>
 						</div>
 					</div>
 					{#each contextSchema.roles as role (role.name)}
 						{@const currentValue = $formData.data_context?.[role.name]?.id}
+						{@const sourceTable = role.query?.from || role.source_table}
 						<div class="space-y-2">
 							<Label>{role.label}</Label>
 							<SmartCombobox
-								options={getLookupData(role.source_table)}
+								options={getLookupData(role)}
 								placeholder={`Select a ${role.label.toLowerCase()}...`}
 								value={currentValue}
 								onValueChange={(value: number | string | null) => {
@@ -205,7 +213,7 @@
 									}
 									if (value && typeof value === 'number') {
 										$formData.data_context[role.name] = {
-											table: role.source_table,
+											table: sourceTable,
 											id: value
 										};
 									} else {
@@ -244,7 +252,7 @@
 	</div>
 
 	{#if renderedContent}
-		<Card.Root>
+		<Card.Root class="mx-auto w-4xl">
 			<Card.Header>
 				<Card.Title>Preview</Card.Title>
 			</Card.Header>

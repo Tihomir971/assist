@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Customer Document</title>
+	</head>
+	<body>
+		<h1>Customer Information</h1>
+
+		<p><strong>Name:</strong> {{customer.display_name}}</p>
+		<p><strong>Tax ID:</strong> {{customer.taxid}}</p>
+		<p>
+			<strong>Customer:</strong>
+			{{#customer.iscustomer}}Yes{{/customer.iscustomer}}{{^customer.iscustomer}}No{{/customer.iscustomer}}
+		</p>
+
+		<h2>Locations</h2>
+
+		{{#customer.c_bpartner_location}}
+		<div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0">
+			<p><strong>Location Name:</strong> {{name}}</p>
+			<p><strong>Phone:</strong> {{phone}}</p>
+			{{#phone2}}
+			<p><strong>Phone 2:</strong> {{phone2}}</p>
+			{{/phone2}}
+			<p><strong>Address:</strong> {{l_location.street_address_1}}</p>
+			{{#l_location.street_address_2}}
+			<p><strong>Address 2:</strong> {{l_location.street_address_2}}</p>
+			{{/l_location.street_address_2}}
+			<p>
+				<strong>Billing Address:</strong> {{#isbillto}}Yes{{/isbillto}}{{^isbillto}}No{{/isbillto}}
+			</p>
+			<p>
+				<strong>Shipping Address:</strong> {{#isshipto}}Yes{{/isshipto}}{{^isshipto}}No{{/isshipto}}
+			</p>
+		</div>
+		{{/customer.c_bpartner_location}} {{^customer.c_bpartner_location}}
+		<p>No locations found for this customer.</p>
+		{{/customer.c_bpartner_location}}
+
+		<hr />
+		<p><small>Generated at: {{generated_at}}</small></p>
+	</body>
+</html>

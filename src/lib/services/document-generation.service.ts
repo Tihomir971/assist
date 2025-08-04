@@ -1,7 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database, Tables } from '@tihomir971/assist-shared';
-import type { EnhancedContextSchemaStructure } from '$lib/types/supabase.zod.schemas';
-import { EnhancedQueryBuilder } from './enhanced-query.builder';
+import type { NativeContextSchemaStructure } from '$lib/types/supabase.zod.schemas';
+import { NativeSupabaseQueryBuilder } from './native-supabase-query.builder';
 import Mustache from 'mustache';
 
 type DocGeneratedDocument = Tables<'doc_generated_document'> & {
@@ -9,10 +9,10 @@ type DocGeneratedDocument = Tables<'doc_generated_document'> & {
 };
 
 export class DocumentGenerationService {
-	private queryBuilder: EnhancedQueryBuilder;
+	private nativeQueryBuilder: NativeSupabaseQueryBuilder;
 
 	constructor(private supabase: SupabaseClient<Database>) {
-		this.queryBuilder = new EnhancedQueryBuilder(supabase);
+		this.nativeQueryBuilder = new NativeSupabaseQueryBuilder(supabase);
 	}
 
 	/**
@@ -34,41 +34,78 @@ export class DocumentGenerationService {
 			{ table: string; id: number }
 		>;
 
-		// Check if template has enhanced context schema
+		// Check if template has context schema
 		const contextSchema = generatedDocument.doc_template
-			.context_schema as EnhancedContextSchemaStructure | null;
+			.context_schema as NativeContextSchemaStructure | null;
 
 		let viewData: Record<string, unknown> = {};
 
-		// Detect if this is an enhanced schema
-		const isEnhancedSchema = contextSchema?.roles?.some(
-			(role) => 'linked_tables' in role && role.linked_tables && role.linked_tables.length > 0
-		);
-
-		if (isEnhancedSchema && contextSchema) {
-			// Use enhanced schema-based data fetching
-			viewData = await this.fetchEnhancedData(contextSchema, contextConfig);
-		} else {
-			// Fallback to legacy simple data fetching for backward compatibility
-			viewData = await this.fetchLegacyData(contextConfig);
+		// Use native Supabase query format only
+		if (contextSchema) {
+			viewData = await this.fetchNativeData(
+				contextSchema as NativeContextSchemaStructure,
+				contextConfig
+			);
 		}
 
 		// Add metadata
 		viewData.generated_at = new Date().toISOString();
 
+		// Debug logging to see what data is being passed to the template
+		console.log(
+			'[DocumentGenerationService] Final viewData for template:',
+			JSON.stringify(viewData, null, 2)
+		);
+		console.log('[DocumentGenerationService] Template content:', templateContent);
+
+		// Test array access specifically
+		if (viewData.customer && typeof viewData.customer === 'object') {
+			const customer = viewData.customer as Record<string, unknown>;
+			console.log('[DocumentGenerationService] Customer object keys:', Object.keys(customer));
+			if (customer.c_bpartner_location) {
+				console.log(
+					'[DocumentGenerationService] c_bpartner_location type:',
+					typeof customer.c_bpartner_location
+				);
+				console.log(
+					'[DocumentGenerationService] c_bpartner_location is array:',
+					Array.isArray(customer.c_bpartner_location)
+				);
+				const locations = customer.c_bpartner_location;
+				if (Array.isArray(locations)) {
+					console.log('[DocumentGenerationService] c_bpartner_location length:', locations.length);
+				}
+				if (Array.isArray(locations) && locations.length > 0) {
+					console.log(
+						'[DocumentGenerationService] First location:',
+						JSON.stringify(locations[0], null, 2)
+					);
+					const firstLocation = locations[0] as Record<string, unknown>;
+					console.log('[DocumentGenerationService] First location phone:', firstLocation?.phone);
+				}
+			}
+		}
+
 		// Render template
 		const renderedContent = Mustache.render(templateContent, viewData);
+
+		console.log('[DocumentGenerationService] Rendered content:', renderedContent);
+
 		return renderedContent;
 	}
 
 	/**
-	 * Fetch data using enhanced context schema with linked tables
+	 * Fetch data using native Supabase query format (preferred method)
 	 */
-	private async fetchEnhancedData(
-		contextSchema: EnhancedContextSchemaStructure,
+	private async fetchNativeData(
+		contextSchema: NativeContextSchemaStructure,
 		contextConfig: Record<string, { table: string; id: number }>
 	): Promise<Record<string, unknown>> {
 		const viewData: Record<string, unknown> = {};
+
+		console.log('[DocumentGenerationService] fetchNativeData called with:');
+		console.log('- contextSchema:', JSON.stringify(contextSchema, null, 2));
+		console.log('- contextConfig:', JSON.stringify(contextConfig, null, 2));
 
 		for (const role of contextSchema.roles) {
 			const roleConfig = contextConfig[role.name];
@@ -77,8 +114,16 @@ export class DocumentGenerationService {
 				continue;
 			}
 
+			console.log(
+				`[DocumentGenerationService] Processing role: ${role.name} with ID: ${roleConfig.id}`
+			);
+
 			try {
-				const roleData = await this.queryBuilder.fetchRoleData(role, roleConfig.id);
+				const roleData = await this.nativeQueryBuilder.fetchRoleData(role, roleConfig.id);
+				console.log(
+					`[DocumentGenerationService] Role ${role.name} data:`,
+					JSON.stringify(roleData, null, 2)
+				);
 				viewData[role.name] = roleData;
 			} catch (error) {
 				console.error(`Error fetching data for role ${role.name}:`, error);
@@ -86,32 +131,7 @@ export class DocumentGenerationService {
 			}
 		}
 
-		return viewData;
-	}
-
-	/**
-	 * Legacy data fetching for backward compatibility
-	 * This is the original implementation
-	 */
-	private async fetchLegacyData(
-		contextConfig: Record<string, { table: string; id: number }>
-	): Promise<Record<string, unknown>> {
-		const viewData: Record<string, unknown> = {};
-
-		for (const role in contextConfig) {
-			const { table, id } = contextConfig[role];
-			const tableName = table as keyof Database['public']['Tables'];
-
-			const { data, error } = await this.supabase.from(tableName).select('*').eq('id', id).single();
-
-			if (error) {
-				console.error(`Error fetching data for role '${role}':`, error);
-				viewData[role] = { error: `Data not found for ${role}` };
-			} else {
-				viewData[role] = data;
-			}
-		}
-
+		console.log('[DocumentGenerationService] Final viewData:', JSON.stringify(viewData, null, 2));
 		return viewData;
 	}
 }

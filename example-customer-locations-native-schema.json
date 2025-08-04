@@ -1,0 +1,21 @@
+{
+    "roles": [
+        {
+            "name": "customer",
+            "label": "Customer",
+            "query": {
+                "from": "c_bpartner",
+                "select": "*, c_bpartner_location(name, phone, phone2, isbillto, isshipto, l_location(street_address_1, street_address_2))",
+                "eq": [
+                    "id",
+                    "$entityId"
+                ],
+                "c_bpartner_location.eq": [
+                    "is_active",
+                    true
+                ],
+                "c_bpartner_location.order": "name"
+            }
+        }
+    ]
+}

@@ -371,15 +371,19 @@ For basic document generation without linked tables:
     {
       "name": "customer",
       "label": "Customer",
-      "source_table": "c_bpartner"
+      "query": {
+        "from": "c_bpartner",
+        "select": "*",
+        "eq": ["id", "$entityId"]
+      }
     }
   ]
 }
 ```
 
-### 4.2 🔗 Enhanced Schema Example (With Linked Tables)
+### 4.2 🔗 Native Supabase JS Format (Recommended)
 
-**Ultra-Simplified Format** - Create this example schema for testing:
+**Native Supabase Query Format** - Uses familiar Supabase JS syntax:
 
 ```json
 {
@@ -387,27 +391,13 @@ For basic document generation without linked tables:
     {
       "name": "customer",
       "label": "Customer",
-      "source_table": "c_bpartner",
-      "linked_tables": [
-        {
-          "name": "locations",
-          "from": "c_bpartner_location",
-          "join_on": "c_bpartner_id",
-          "to": "l_location",
-          "to_key": "l_location_id",
-          "fields": [
-            "name",
-            "phone",
-            "phone2",
-            "isbillto",
-            "isshipto",
-            "l_location.street_address_1",
-            "l_location.street_address_2"
-          ],
-          "where": "is_active = true",
-          "order": "name"
-        }
-      ]
+      "query": {
+        "from": "c_bpartner",
+        "select": "*, c_bpartner_location(name, phone, phone2, isbillto, isshipto, l_location(street_address_1, street_address_2))",
+        "eq": ["id", "$entityId"],
+        "c_bpartner_location.eq": ["is_active", true],
+        "c_bpartner_location.order": "name"
+      }
     }
   ]
 }
@@ -418,40 +408,41 @@ For basic document generation without linked tables:
 **Available Template Variables:**
 
 - **Main Entity Fields**: `{{customer.display_name}}`, `{{customer.email}}`, etc.
-- **Linked Table Arrays**: `{{#customer.locations}}...{{/customer.locations}}`
+- **Nested Related Data**: `{{#customer.c_bpartner_location}}...{{/customer.c_bpartner_location}}`
 - **Join Table Fields**: `{{name}}`, `{{phone}}`, `{{isbillto}}` (within location loop)
 - **Target Table Fields**: `{{l_location.street_address_1}}`, `{{l_location.street_address_2}}` (within location loop)
 - **System Variables**: `{{generated_at}}` (automatically added)
 
-### ⚙️ Schema Configuration Options
+### ⚙️ Native Supabase Query Configuration
 
-**Ultra-Simplified Linked Table Definition:**
+**Query Object Structure:**
 
 | Field | Required | Description | Example |
 |-------|----------|-------------|---------|
-| `name` | ✅ | Unique identifier for the linked data | `"locations"` |
-| `from` | ✅ | Source/join table name | `"c_bpartner_location"` |
-| `join_on` | ✅ | Field to join on | `"c_bpartner_id"` |
-| `to` | ⚪ | Target table for additional data | `"l_location"` |
-| `to_key` | ⚪ | Foreign key field to target table | `"l_location_id"` |
-| `fields` | ✅ | Array of fields to select | `["name", "l_location.street_address_1"]` |
-| `where` | ⚪ | Simple where clause | `"is_active = true"` |
-| `order` | ⚪ | Simple order clause | `"name"` or `"name desc"` |
+| `from` | ✅ | Table name to query from | `"c_bpartner"` |
+| `select` | ✅ | Supabase select clause with joins | `"*, c_bpartner_location(...)"` |
+| `eq` | ⚪ | Equality filter | `["id", "$entityId"]` |
+| `neq` | ⚪ | Not equal filter | `["status", "inactive"]` |
+| `gt/gte` | ⚪ | Greater than (or equal) | `["priority", 5]` |
+| `lt/lte` | ⚪ | Less than (or equal) | `["created_at", "2024-01-01"]` |
+| `like/ilike` | ⚪ | Pattern matching | `["name", "%john%"]` |
+| `in` | ⚪ | In array | `["status", ["active", "pending"]]` |
+| `order` | ⚪ | Order clause | `"name"` or `"created_at desc"` |
+| `limit` | ⚪ | Limit results | `10` |
 
-**Field Selection Rules:**
-- **Join table fields**: Use field name directly (`"name"`, `"phone"`)
-- **Target table fields**: Use dot notation (`"l_location.street_address_1"`)
-- **Mixed fields**: Combine both in the same `fields` array
+**Special Variables:**
+- `$entityId` - Replaced with the actual entity ID from context
 
-**Where Clause Examples:**
-- `"is_active = true"` (boolean)
-- `"status = 'active'"` (string)
-- `"priority > 5"` (number)
+**Nested Filtering Examples:**
+- `"c_bpartner_location.eq": ["is_active", true]` - Filter nested table
+- `"c_bpartner_location.order": "name"` - Order nested results
+- `"l_location.neq": ["status", "deleted"]` - Filter deeply nested table
 
-**Order Clause Examples:**
-- `"name"` (ascending)
-- `"name desc"` (descending)
-- `"created_at desc"` (date descending)
+**Select Clause Examples:**
+- `"*"` - All fields from main table
+- `"name, email, created_at"` - Specific fields
+- `"*, c_bpartner_location(*)"` - Main table + all related fields
+- `"*, c_bpartner_location(name, phone, l_location(street_address_1))"` - Selective nested fields
 
 ### 4.2 Enhanced Template Example
 
