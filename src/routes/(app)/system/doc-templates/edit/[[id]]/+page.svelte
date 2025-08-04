@@ -232,7 +232,7 @@
 
 							<details class="text-sm">
 								<summary class="cursor-pointer font-medium text-blue-600 hover:text-blue-800">
-									🔗 Enhanced Schema Example (With Linked Tables)
+									🔗 Enhanced Schema Example (With Linked Tables) - Ultra-Simplified
 								</summary>
 								<div class="mt-2 rounded border p-3">
 									<pre class="overflow-x-auto text-xs"><code
@@ -245,34 +245,21 @@
 						"linked_tables": [
 								&#123;
 									 "name": "locations",
-									 "relationship_type": "one_to_many",
-									 "join_table": "c_bpartner_location",
-									 "join_conditions": [
-									   &#123;
-									     "local_field": "id",
-									     "foreign_field": "c_bpartner_id"
-									   &#125;
+									 "from": "c_bpartner_location",
+									 "join_on": "c_bpartner_id",
+									 "to": "l_location",
+									 "to_key": "l_location_id",
+									 "fields": [
+									   "name",
+									   "phone",
+									   "phone2",
+									   "isbillto",
+									   "isshipto",
+									   "l_location.street_address_1",
+									   "l_location.street_address_2"
 									 ],
-									 "target_table": "l_location",
-									 "target_join": &#123;
-									   "local_field": "l_location_id",
-									   "foreign_field": "id"
-									 &#125;,
-									 "select_fields": ["street_address_1", "street_address_2"],
-									 "include_join_fields": ["name", "phone", "isbillto", "isshipto"],
-									 "where_conditions": [
-									   &#123;
-									     "field": "is_active",
-									     "operator": "eq",
-									     "value": true
-									   &#125;
-									 ],
-									 "order_by": [
-									   &#123;
-									     "field": "name",
-									     "direction": "asc"
-									   &#125;
-									 ]
+									 "where": "is_active = true",
+									 "order": "name"
 								&#125;
 						]
 				&#125;
@@ -280,6 +267,10 @@
 &#125;</code
 										></pre>
 									<p class="mt-2 text-xs text-gray-600">
+										<strong>Ultra-Simplified Format:</strong> Uses intuitive field names and dot notation
+										for target table fields.
+									</p>
+									<p class="mt-1 text-xs text-gray-600">
 										Template usage: <code>&#123;&#123;customer.display_name&#125;&#125;</code>,
 										<code
 											>&#123;&#123;#customer.locations&#125;&#125;&#123;&#123;name&#125;&#125; -
@@ -351,34 +342,66 @@
 
 							<details class="text-sm">
 								<summary class="cursor-pointer font-medium text-purple-600 hover:text-purple-800">
-									⚙️ Schema Configuration Options
+									⚙️ Schema Configuration Options - Ultra-Simplified Format
 								</summary>
 								<div class="mt-2 rounded border bg-purple-50 p-3 dark:bg-purple-800">
-									<div class="space-y-2 text-xs">
+									<div class="space-y-3 text-xs">
 										<div>
-											<strong>Relationship Types:</strong>
+											<strong>Required Fields:</strong>
 											<ul class="mt-1 ml-4 list-disc">
-												<li><code>one_to_one</code> - Single related record</li>
-												<li><code>one_to_many</code> - Multiple related records (array)</li>
-												<li><code>many_to_many</code> - Complex relationships</li>
+												<li><code>"name"</code> - Unique identifier (e.g., "locations")</li>
+												<li>
+													<code>"from"</code> - Source/join table (e.g., "c_bpartner_location")
+												</li>
+												<li><code>"join_on"</code> - Join field (e.g., "c_bpartner_id")</li>
+												<li><code>"fields"</code> - Array of fields to select</li>
 											</ul>
 										</div>
 										<div>
-											<strong>Where Operators:</strong>
+											<strong>Optional Fields:</strong>
 											<ul class="mt-1 ml-4 list-disc">
-												<li><code>eq</code> - Equals</li>
-												<li><code>neq</code> - Not equals</li>
-												<li><code>gt/gte</code> - Greater than (or equal)</li>
-												<li><code>lt/lte</code> - Less than (or equal)</li>
-												<li><code>like</code> - Pattern matching</li>
-												<li><code>in</code> - In array</li>
+												<li>
+													<code>"to"</code> - Target table for additional data (e.g., "l_location")
+												</li>
+												<li>
+													<code>"to_key"</code> - Foreign key to target table (e.g., "l_location_id")
+												</li>
+												<li>
+													<code>"where"</code> - Simple where clause (e.g., "is_active = true")
+												</li>
+												<li>
+													<code>"order"</code> - Simple order clause (e.g., "name" or "name desc")
+												</li>
 											</ul>
 										</div>
 										<div>
-											<strong>Order Directions:</strong>
+											<strong>Field Selection Rules:</strong>
 											<ul class="mt-1 ml-4 list-disc">
-												<li><code>asc</code> - Ascending (A-Z, 1-9)</li>
-												<li><code>desc</code> - Descending (Z-A, 9-1)</li>
+												<li>
+													<strong>Join table fields:</strong> Use field name directly ("name", "phone")
+												</li>
+												<li>
+													<strong>Target table fields:</strong> Use dot notation ("l_location.street_address_1")
+												</li>
+												<li>
+													<strong>Mixed fields:</strong> Combine both in the same "fields" array
+												</li>
+											</ul>
+										</div>
+										<div>
+											<strong>Where Clause Examples:</strong>
+											<ul class="mt-1 ml-4 list-disc">
+												<li><code>"is_active = true"</code> - Boolean condition</li>
+												<li><code>"status = 'active'"</code> - String condition</li>
+												<li><code>"priority > 5"</code> - Number condition</li>
+											</ul>
+										</div>
+										<div>
+											<strong>Order Clause Examples:</strong>
+											<ul class="mt-1 ml-4 list-disc">
+												<li><code>"name"</code> - Ascending order</li>
+												<li><code>"name desc"</code> - Descending order</li>
+												<li><code>"created_at desc"</code> - Date descending</li>
 											</ul>
 										</div>
 									</div>

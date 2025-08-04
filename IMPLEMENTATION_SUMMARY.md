@@ -125,24 +125,32 @@ The system automatically detects enhanced schemas and uses appropriate data fetc
 
 ## Example Use Case: Customer with Locations
 
-### Context Schema
+### Ultra-Simplified Context Schema
 ```json
 {
   "roles": [
     {
       "name": "customer",
-      "label": "Customer", 
+      "label": "Customer",
       "source_table": "c_bpartner",
       "linked_tables": [
         {
           "name": "locations",
-          "relationship_type": "one_to_many",
-          "join_table": "c_bpartner_location",
-          "join_conditions": [{"local_field": "id", "foreign_field": "c_bpartner_id"}],
-          "target_table": "l_location",
-          "target_join": {"local_field": "l_location_id", "foreign_field": "id"},
-          "select_fields": ["street_address_1", "street_address_2"],
-          "include_join_fields": ["name", "phone", "isbillto", "isshipto"]
+          "from": "c_bpartner_location",
+          "join_on": "c_bpartner_id",
+          "to": "l_location",
+          "to_key": "l_location_id",
+          "fields": [
+            "name",
+            "phone",
+            "phone2",
+            "isbillto",
+            "isshipto",
+            "l_location.street_address_1",
+            "l_location.street_address_2"
+          ],
+          "where": "is_active = true",
+          "order": "name"
         }
       ]
     }
@@ -154,9 +162,18 @@ The system automatically detects enhanced schemas and uses appropriate data fetc
 - `{{customer.display_name}}` - Customer name
 - `{{customer.email}}` - Customer email
 - `{{customer.locations}}` - Array of locations
-- `{{customer.locations.0.name}}` - First location name
-- `{{customer.locations.0.l_location.street_address_1}}` - First location address
-- `{{customer.locations.0.phone}}` - First location phone
+- `{{customer.locations.0.name}}` - First location name (from join table)
+- `{{customer.locations.0.l_location.street_address_1}}` - First location address (from target table)
+- `{{customer.locations.0.phone}}` - First location phone (from join table)
+
+### Schema Field Explanation
+- **`from`**: Source/join table (`c_bpartner_location`)
+- **`join_on`**: Field to join on (`c_bpartner_id`)
+- **`to`**: Target table for additional data (`l_location`)
+- **`to_key`**: Foreign key to target table (`l_location_id`)
+- **`fields`**: Mixed array - join table fields (`name`, `phone`) and target table fields (`l_location.street_address_1`)
+- **`where`**: Simple SQL-like condition (`is_active = true`)
+- **`order`**: Simple ordering (`name` or `name desc`)
 
 ### Data Context (unchanged)
 ```json

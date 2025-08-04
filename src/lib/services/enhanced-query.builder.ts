@@ -2,8 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@tihomir971/assist-shared';
 import type {
 	EnhancedContextSchemaRole,
-	LinkedTableDefinition,
-	WhereCondition
+	LinkedTableDefinition
 } from '$lib/types/supabase.zod.schemas';
 
 export class EnhancedQueryBuilder {
@@ -27,6 +26,12 @@ export class EnhancedQueryBuilder {
 		// Fetch linked table data if defined
 		if (role.linked_tables) {
 			for (const linkedTable of role.linked_tables) {
+				// Debug: Log the raw linkedTable object from database
+				console.log(
+					`DEBUG: Raw linkedTable object for ${linkedTable.name}:`,
+					JSON.stringify(linkedTable, null, 2)
+				);
+
 				const linkedData = await this.fetchLinkedTableData(
 					role.source_table,
 					entityId,
@@ -73,7 +78,10 @@ export class EnhancedQueryBuilder {
 		linkedTable: LinkedTableDefinition
 	): Promise<unknown[]> {
 		try {
-			if (linkedTable.join_table && linkedTable.target_table && linkedTable.target_join) {
+			// Check if we have fields with dot notation (indicating target table fields)
+			const hasTargetFields = linkedTable.fields.some((field) => field.includes('.'));
+
+			if (linkedTable.from && linkedTable.to && linkedTable.to_key && hasTargetFields) {
 				// Complex join: use two-step approach to avoid Supabase join issues
 				return await this.fetchComplexJoinData(entityId, linkedTable);
 			} else {
@@ -100,28 +108,35 @@ export class EnhancedQueryBuilder {
 		const joinFieldsToSelect = joinFields.length > 0 ? ['*', ...joinFields] : ['*'];
 
 		let joinQuery = this.supabase
-			.from(linkedTable.join_table as keyof Database['public']['Tables'])
+			.from(linkedTable.from as keyof Database['public']['Tables'])
 			.select(joinFieldsToSelect.join(', '));
 
-		// Apply join conditions to link to source entity
-		for (const joinCondition of linkedTable.join_conditions) {
-			if (joinCondition.local_field === 'id') {
-				joinQuery = joinQuery.eq(joinCondition.foreign_field, entityId);
+		// Apply join condition to link to source entity (simplified)
+		joinQuery = joinQuery.eq(linkedTable.join_on, entityId);
+
+		// Apply where condition (simplified string format)
+		if (linkedTable.where) {
+			// Parse simple where conditions like "is_active = true"
+			const whereMatch = linkedTable.where.match(/(\w+)\s*=\s*(.+)/);
+			if (whereMatch) {
+				const [, field, value] = whereMatch;
+				const parsedValue =
+					value === 'true'
+						? true
+						: value === 'false'
+							? false
+							: !isNaN(Number(value))
+								? Number(value)
+								: value.replace(/['"]/g, '');
+				joinQuery = joinQuery.eq(field, parsedValue);
 			}
 		}
 
-		// Apply where conditions
-		if (linkedTable.where_conditions) {
-			for (const whereCondition of linkedTable.where_conditions) {
-				joinQuery = this.applyWhereCondition(joinQuery, whereCondition);
-			}
-		}
-
-		// Apply ordering
-		if (linkedTable.order_by) {
-			for (const orderBy of linkedTable.order_by) {
-				joinQuery = joinQuery.order(orderBy.field, { ascending: orderBy.direction === 'asc' });
-			}
+		// Apply ordering (simplified string format)
+		if (linkedTable.order) {
+			const isDesc = linkedTable.order.toLowerCase().includes('desc');
+			const field = linkedTable.order.replace(/\s+(asc|desc)$/i, '').trim();
+			joinQuery = joinQuery.order(field, { ascending: !isDesc });
 		}
 
 		const { data: joinData, error: joinError } = await joinQuery;
@@ -137,14 +152,15 @@ export class EnhancedQueryBuilder {
 
 		// Step 2: Get target table data (e.g., l_location) for each join record
 		const targetIds = joinData
-			.map(
-				(record) =>
-					(record as unknown as Record<string, unknown>)[linkedTable.target_join!.local_field]
-			)
+			.map((record) => (record as unknown as Record<string, unknown>)[linkedTable.to_key!])
 			.filter(Boolean);
 
 		if (targetIds.length === 0) {
-			return joinData; // Return join data without target data
+			// No target IDs found, but still create the expected structure with null target data
+			return joinData.map((joinRecord) => ({
+				...(joinRecord as unknown as Record<string, unknown>),
+				[linkedTable.to!]: null
+			}));
 		}
 
 		// Extract fields with dot notation and remove the table prefix
@@ -154,13 +170,13 @@ export class EnhancedQueryBuilder {
 
 		// Ensure the foreign key field is included in the select fields for proper mapping
 		const selectFields = [...targetFields];
-		const foreignKeyField = linkedTable.target_join!.foreign_field;
+		const foreignKeyField = 'id'; // Always 'id' in simplified schema
 		if (!selectFields.includes(foreignKeyField)) {
 			selectFields.push(foreignKeyField);
 		}
 
 		const { data: targetData, error: targetError } = await this.supabase
-			.from(linkedTable.target_table as keyof Database['public']['Tables'])
+			.from(linkedTable.to as keyof Database['public']['Tables'])
 			.select(selectFields.join(', '))
 			.in(foreignKeyField, targetIds);
 
@@ -172,19 +188,19 @@ export class EnhancedQueryBuilder {
 		// Step 3: Merge the data
 		const targetMap = new Map(
 			(targetData || []).map((record) => [
-				(record as unknown as Record<string, unknown>)[linkedTable.target_join!.foreign_field],
+				(record as unknown as Record<string, unknown>)[foreignKeyField],
 				record
 			])
 		);
 
 		const result = joinData.map((joinRecord) => {
 			const joinRecordTyped = joinRecord as unknown as Record<string, unknown>;
-			const targetId = joinRecordTyped[linkedTable.target_join!.local_field];
+			const targetId = joinRecordTyped[linkedTable.to_key!];
 			const targetRecord = targetMap.get(targetId);
 
 			return {
 				...joinRecordTyped,
-				[linkedTable.target_table!]: targetRecord || null
+				[linkedTable.to!]: targetRecord || null
 			};
 		});
 
@@ -198,32 +214,47 @@ export class EnhancedQueryBuilder {
 		entityId: number,
 		linkedTable: LinkedTableDefinition
 	): Promise<unknown[]> {
-		const queryTable = linkedTable.join_table || linkedTable.target_table;
-		const selectClause = linkedTable.fields.join(', ');
+		// For simple queries, we should use the 'from' table (join table)
+		const queryTable = linkedTable.from;
+
+		if (!queryTable) {
+			console.error('No table specified for simple query');
+			return [];
+		}
+
+		// Filter out dot notation fields for simple queries (they can't be handled here)
+		const simpleFields = linkedTable.fields.filter((field) => !field.includes('.'));
+		const selectClause = simpleFields.length > 0 ? simpleFields.join(', ') : '*';
 
 		let query = this.supabase
 			.from(queryTable as keyof Database['public']['Tables'])
 			.select(selectClause);
 
-		// Apply join conditions to link to source entity
-		for (const joinCondition of linkedTable.join_conditions) {
-			if (joinCondition.local_field === 'id') {
-				query = query.eq(joinCondition.foreign_field, entityId);
+		// Apply join condition to link to source entity (simplified)
+		query = query.eq(linkedTable.join_on, entityId);
+
+		// Apply where condition (simplified string format)
+		if (linkedTable.where) {
+			const whereMatch = linkedTable.where.match(/(\w+)\s*=\s*(.+)/);
+			if (whereMatch) {
+				const [, field, value] = whereMatch;
+				const parsedValue =
+					value === 'true'
+						? true
+						: value === 'false'
+							? false
+							: !isNaN(Number(value))
+								? Number(value)
+								: value.replace(/['"]/g, '');
+				query = query.eq(field, parsedValue);
 			}
 		}
 
-		// Apply where conditions
-		if (linkedTable.where_conditions) {
-			for (const whereCondition of linkedTable.where_conditions) {
-				query = this.applyWhereCondition(query, whereCondition);
-			}
-		}
-
-		// Apply ordering
-		if (linkedTable.order_by) {
-			for (const orderBy of linkedTable.order_by) {
-				query = query.order(orderBy.field, { ascending: orderBy.direction === 'asc' });
-			}
+		// Apply ordering (simplified string format)
+		if (linkedTable.order) {
+			const isDesc = linkedTable.order.toLowerCase().includes('desc');
+			const field = linkedTable.order.replace(/\s+(asc|desc)$/i, '').trim();
+			query = query.order(field, { ascending: !isDesc });
 		}
 
 		const { data, error } = await query;
@@ -234,34 +265,5 @@ export class EnhancedQueryBuilder {
 		}
 
 		return data || [];
-	}
-
-	/**
-	 * Apply where condition to query
-	 */
-	private applyWhereCondition(
-		query: ReturnType<SupabaseClient<Database>['from']>,
-		condition: WhereCondition
-	): ReturnType<SupabaseClient<Database>['from']> {
-		switch (condition.operator) {
-			case 'eq':
-				return query.eq(condition.field, condition.value);
-			case 'neq':
-				return query.neq(condition.field, condition.value);
-			case 'gt':
-				return query.gt(condition.field, condition.value);
-			case 'gte':
-				return query.gte(condition.field, condition.value);
-			case 'lt':
-				return query.lt(condition.field, condition.value);
-			case 'lte':
-				return query.lte(condition.field, condition.value);
-			case 'like':
-				return query.like(condition.field, condition.value);
-			case 'in':
-				return query.in(condition.field, condition.value);
-			default:
-				return query;
-		}
 	}
 }

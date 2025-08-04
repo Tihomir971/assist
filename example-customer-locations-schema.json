@@ -7,18 +7,10 @@
             "linked_tables": [
                 {
                     "name": "locations",
-                    "join_table": "c_bpartner_location",
-                    "join_conditions": [
-                        {
-                            "local_field": "id",
-                            "foreign_field": "c_bpartner_id"
-                        }
-                    ],
-                    "target_table": "l_location",
-                    "target_join": {
-                        "local_field": "l_location_id",
-                        "foreign_field": "id"
-                    },
+                    "from": "c_bpartner_location",
+                    "join_on": "c_bpartner_id",
+                    "to": "l_location",
+                    "to_key": "l_location_id",
                     "fields": [
                         "name",
                         "phone",
@@ -28,19 +20,8 @@
                         "l_location.street_address_1",
                         "l_location.street_address_2"
                     ],
-                    "where_conditions": [
-                        {
-                            "field": "is_active",
-                            "operator": "eq",
-                            "value": true
-                        }
-                    ],
-                    "order_by": [
-                        {
-                            "field": "name",
-                            "direction": "asc"
-                        }
-                    ]
+                    "where": "is_active = true",
+                    "order": "name"
                 }
             ]
         }

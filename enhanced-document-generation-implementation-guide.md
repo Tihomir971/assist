@@ -361,11 +361,25 @@ export class DocumentGenerationService {
 
 ## Phase 4: Template Schema Examples
 
-### 4.1 Customer with Locations Schema
+### 4.1 Simple Schema Example (Basic Usage)
 
-Create this example schema for testing:
+For basic document generation without linked tables:
 
-**Example Enhanced Context Schema:**
+```json
+{
+  "roles": [
+    {
+      "name": "customer",
+      "label": "Customer",
+      "source_table": "c_bpartner"
+    }
+  ]
+}
+```
+
+### 4.2 🔗 Enhanced Schema Example (With Linked Tables)
+
+**Ultra-Simplified Format** - Create this example schema for testing:
 
 ```json
 {
@@ -377,40 +391,67 @@ Create this example schema for testing:
       "linked_tables": [
         {
           "name": "locations",
-          "relationship_type": "one_to_many",
-          "join_table": "c_bpartner_location",
-          "join_conditions": [
-            {
-              "local_field": "id",
-              "foreign_field": "c_bpartner_id"
-            }
+          "from": "c_bpartner_location",
+          "join_on": "c_bpartner_id",
+          "to": "l_location",
+          "to_key": "l_location_id",
+          "fields": [
+            "name",
+            "phone",
+            "phone2",
+            "isbillto",
+            "isshipto",
+            "l_location.street_address_1",
+            "l_location.street_address_2"
           ],
-          "target_table": "l_location",
-          "target_join": {
-            "local_field": "l_location_id",
-            "foreign_field": "id"
-          },
-          "select_fields": ["street_address_1", "street_address_2"],
-          "include_join_fields": ["name", "phone", "isbillto", "isshipto"],
-          "where_conditions": [
-            {
-              "field": "is_active",
-              "operator": "eq",
-              "value": true
-            }
-          ],
-          "order_by": [
-            {
-              "field": "name",
-              "direction": "asc"
-            }
-          ]
+          "where": "is_active = true",
+          "order": "name"
         }
       ]
     }
   ]
 }
 ```
+
+### 📝 Template Variables Guide
+
+**Available Template Variables:**
+
+- **Main Entity Fields**: `{{customer.display_name}}`, `{{customer.email}}`, etc.
+- **Linked Table Arrays**: `{{#customer.locations}}...{{/customer.locations}}`
+- **Join Table Fields**: `{{name}}`, `{{phone}}`, `{{isbillto}}` (within location loop)
+- **Target Table Fields**: `{{l_location.street_address_1}}`, `{{l_location.street_address_2}}` (within location loop)
+- **System Variables**: `{{generated_at}}` (automatically added)
+
+### ⚙️ Schema Configuration Options
+
+**Ultra-Simplified Linked Table Definition:**
+
+| Field | Required | Description | Example |
+|-------|----------|-------------|---------|
+| `name` | ✅ | Unique identifier for the linked data | `"locations"` |
+| `from` | ✅ | Source/join table name | `"c_bpartner_location"` |
+| `join_on` | ✅ | Field to join on | `"c_bpartner_id"` |
+| `to` | ⚪ | Target table for additional data | `"l_location"` |
+| `to_key` | ⚪ | Foreign key field to target table | `"l_location_id"` |
+| `fields` | ✅ | Array of fields to select | `["name", "l_location.street_address_1"]` |
+| `where` | ⚪ | Simple where clause | `"is_active = true"` |
+| `order` | ⚪ | Simple order clause | `"name"` or `"name desc"` |
+
+**Field Selection Rules:**
+- **Join table fields**: Use field name directly (`"name"`, `"phone"`)
+- **Target table fields**: Use dot notation (`"l_location.street_address_1"`)
+- **Mixed fields**: Combine both in the same `fields` array
+
+**Where Clause Examples:**
+- `"is_active = true"` (boolean)
+- `"status = 'active'"` (string)
+- `"priority > 5"` (number)
+
+**Order Clause Examples:**
+- `"name"` (ascending)
+- `"name desc"` (descending)
+- `"created_at desc"` (date descending)
 
 ### 4.2 Enhanced Template Example
 

@@ -171,6 +171,26 @@
 
 				{#if contextSchema && contextSchema.roles.length > 0}
 					<hr />
+					<div class="space-y-4">
+						<div class="text-sm text-muted-foreground">
+							<p>
+								<strong>Context Schema Format:</strong> Ultra-simplified linked table definitions
+							</p>
+							<p>This template supports enhanced data fetching with the following structure:</p>
+							<ul class="mt-2 list-disc space-y-1 pl-4">
+								<li><code>from</code>: Source/join table (e.g., "c_bpartner_location")</li>
+								<li><code>join_on</code>: Field to join on (e.g., "c_bpartner_id")</li>
+								<li><code>to</code>: Target table for additional data (e.g., "l_location")</li>
+								<li><code>to_key</code>: Foreign key field (e.g., "l_location_id")</li>
+								<li>
+									<code>fields</code>: Array of fields, use dot notation for target table fields
+									(e.g., "l_location.street_address_1")
+								</li>
+								<li><code>where</code>: Simple where clause (e.g., "is_active = true")</li>
+								<li><code>order</code>: Simple order clause (e.g., "name" or "name desc")</li>
+							</ul>
+						</div>
+					</div>
 					{#each contextSchema.roles as role (role.name)}
 						{@const currentValue = $formData.data_context?.[role.name]?.id}
 						<div class="space-y-2">

@@ -20,31 +20,15 @@ export type ContextSchemaRole = z.infer<typeof contextSchemaRoleSchema>;
 export type ContextSchemaStructure = z.infer<typeof contextSchemaStructureSchema>;
 
 // Enhanced schemas for linked table support
-export const joinConditionSchema = z.object({
-	local_field: z.string().min(1, 'Local field is required'),
-	foreign_field: z.string().min(1, 'Foreign field is required')
-});
-
-export const whereConditionSchema = z.object({
-	field: z.string().min(1, 'Field is required'),
-	operator: z.enum(['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'like', 'in']),
-	value: z.any()
-});
-
-export const orderByClauseSchema = z.object({
-	field: z.string().min(1, 'Field is required'),
-	direction: z.enum(['asc', 'desc']).default('asc')
-});
-
 export const linkedTableDefinitionSchema = z.object({
 	name: z.string().min(1, 'Name is required'),
-	join_table: z.string().optional(),
-	join_conditions: z.array(joinConditionSchema).min(1, 'At least one join condition is required'),
-	target_table: z.string().optional(),
-	target_join: joinConditionSchema.optional(),
+	from: z.string().min(1, 'From table is required'),
+	join_on: z.string().min(1, 'Join field is required'),
+	to: z.string().optional(),
+	to_key: z.string().optional(),
 	fields: z.array(z.string()).min(1, 'At least one field is required'),
-	where_conditions: z.array(whereConditionSchema).optional(),
-	order_by: z.array(orderByClauseSchema).optional()
+	where: z.string().optional(),
+	order: z.string().optional()
 });
 
 // Enhanced context schema role (extends existing)
@@ -58,9 +42,6 @@ export const enhancedContextSchemaStructureSchema = z.object({
 });
 
 // Export enhanced types
-export type JoinCondition = z.infer<typeof joinConditionSchema>;
-export type WhereCondition = z.infer<typeof whereConditionSchema>;
-export type OrderByClause = z.infer<typeof orderByClauseSchema>;
 export type LinkedTableDefinition = z.infer<typeof linkedTableDefinitionSchema>;
 export type EnhancedContextSchemaRole = z.infer<typeof enhancedContextSchemaRoleSchema>;
 export type EnhancedContextSchemaStructure = z.infer<typeof enhancedContextSchemaStructureSchema>;
