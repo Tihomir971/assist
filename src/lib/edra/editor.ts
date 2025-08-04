@@ -6,6 +6,7 @@ import { getHandlePaste } from './utils.js';
 // import Typography from '@tiptap/extension-typography';
 // import { ColorHighlighter } from './extensions/ColorHighlighter.js';
 // import { FontSize, TextStyle, Color } from '@tiptap/extension-text-style';
+import { TextStyleKit } from '@tiptap/extension-text-style';
 import TextAlign from '@tiptap/extension-text-align';
 // import Highlight from '@tiptap/extension-highlight';
 // import SearchAndReplace from './extensions/FindAndReplace.js';
@@ -16,6 +17,9 @@ import { Table, TableCell, TableRow, TableHeader } from './extensions/table/inde
 // import MathExtension from '@aarkue/tiptap-math-extension';
 // import AutoJoiner from 'tiptap-extension-auto-joiner';
 // import 'katex/dist/katex.min.css';
+// import { Pagination } from 'tiptap-pagination-breaks';
+import { PageBreak } from '$lib/tiptap/extensions/page-break.js';
+import { CustomHorizontalRule } from '$lib/tiptap/extensions/custom-horizontal-rule.js';
 
 export default (
 	element?: HTMLElement,
@@ -46,8 +50,10 @@ export default (
 					autolink: true,
 					linkOnPaste: true
 				}, */
-				codeBlock: false
+				codeBlock: false,
+				horizontalRule: false
 			}),
+			CustomHorizontalRule,
 			Table,
 			TableHeader,
 			TableRow,
@@ -78,6 +84,7 @@ export default (
 			TextAlign.configure({
 				types: ['heading', 'paragraph']
 			}),
+			TextStyleKit.configure({ backgroundColor: false, color: false }),
 			/* TaskList,
 			TaskItem.configure({
 				nested: true
@@ -100,7 +107,7 @@ export default (
 				transformPastedText: true,
 				transformCopiedText: false
 			}), */
-
+			PageBreak,
 			...(extensions ?? [])
 		],
 		...options

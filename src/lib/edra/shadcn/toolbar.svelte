@@ -3,7 +3,7 @@
 	import commands from '../commands/toolbar-commands.js';
 	import type { EdraToolbarProps } from '../types.js';
 	import Alignment from './components/toolbar/Alignment.svelte';
-	// import FontSize from './components/toolbar/FontSize.svelte';
+	import FontSize from './components/toolbar/FontSize.svelte';
 	import Headings from './components/toolbar/Headings.svelte';
 	import Tables from './components/toolbar/Tables.svelte';
 	// import QuickColors from './components/toolbar/QuickColors.svelte';
@@ -33,7 +33,7 @@
 				{/each}
 			{/if}
 		{/each}
-		<!-- <FontSize {editor} /> -->
+		<FontSize {editor} />
 		<!-- <QuickColors {editor} /> -->
 		<!-- <SearchAndReplace {editor} /> -->
 	{/if}

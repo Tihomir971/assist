@@ -28,6 +28,7 @@ import ListOrdered from '@lucide/svelte/icons/list-ordered';
 // import IFrame from '@lucide/svelte/icons/code-xml';
 import Table from '@lucide/svelte/icons/table';
 import Merge from '@lucide/svelte/icons/merge';
+import CarbonPageBreak from '~icons/carbon/page-break';
 
 const commands: Record<string, EdraToolBarCommands[]> = {
 	'undo-redo': [
@@ -411,6 +412,20 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 			},
 			isActive: (editor) => editor.isActive('table'),
 			contextDependent: true
+		}
+	],
+	'page-break': [
+		{
+			icon: CarbonPageBreak,
+			name: 'pageBreak',
+			tooltip: 'Insert Page Break',
+			shortCut: `${isMac ? '⌘' : 'Ctrl+'}Enter`,
+			onClick: (editor) => {
+				editor.chain().focus().insertPageBreak().run();
+			},
+			clickable: (editor) => {
+				return editor.can().chain().insertContent({ type: 'pageBreak' }).run();
+			}
 		}
 	]
 };

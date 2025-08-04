@@ -105,3 +105,42 @@ code {
 		@apply bg-background text-foreground;
 	}
 }
+
+/* Page break - visible in editor */
+hr[data-type='page-break'] {
+	border: none;
+	border-top: 2px dashed #ccc;
+	margin: 2rem 0;
+	position: relative;
+	background: none;
+}
+
+hr[data-type='page-break']::after {
+	content: 'Page Break';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background: white;
+	padding: 0 0.5rem;
+	color: #666;
+	font-size: 0.75rem;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+}
+
+/* Page break - forces page break in print */
+@media print {
+	hr[data-type='page-break'] {
+		page-break-after: always;
+		break-after: page;
+		margin: 0;
+		border: none;
+		visibility: hidden;
+		height: 0;
+	}
+
+	hr[data-type='page-break']::after {
+		display: none;
+	}
+}

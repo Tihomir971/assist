@@ -56,6 +56,9 @@ importers:
       '@tiptap/extension-floating-menu':
         specifier: ^3.0.9
         version: 3.0.9(@floating-ui/dom@1.7.3)(@tiptap/core@3.0.9(@tiptap/pm@3.0.9))(@tiptap/pm@3.0.9)
+      '@tiptap/extension-horizontal-rule':
+        specifier: ^3.0.9
+        version: 3.0.9(@tiptap/core@3.0.9(@tiptap/pm@3.0.9))(@tiptap/pm@3.0.9)
       '@tiptap/extension-list-item':
         specifier: ^3.0.9
         version: 3.0.9(@tiptap/extension-list@3.0.9(@tiptap/core@3.0.9(@tiptap/pm@3.0.9))(@tiptap/pm@3.0.9))
@@ -173,6 +176,9 @@ importers:
       tailwindcss:
         specifier: 4.1.11
         version: 4.1.11
+      tiptap-pagination-breaks:
+        specifier: ^1.0.3
+        version: 1.0.3(@tiptap/pm@3.0.9)
       xlsx:
         specifier: https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz
         version: https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz
@@ -186,6 +192,9 @@ importers:
       '@eslint/js':
         specifier: ^9.32.0
         version: 9.32.0
+      '@iconify-json/carbon':
+        specifier: ^1.2.11
+        version: 1.2.11
       '@iconify-json/devicon':
         specifier: ^1.2.35
         version: 1.2.35
@@ -785,6 +794,9 @@ packages:
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
 
+  '@iconify-json/carbon@1.2.11':
+    resolution: {integrity: sha512-fWcoR0V4dLGLsgUvgjioBcTmj+l8NlMMEP/aMMUwR9PWAr5mCBg52rsTe/bvOnL1zj9PUCNxaj2M4H27GrnO3g==}
+
   '@iconify-json/devicon@1.2.35':
     resolution: {integrity: sha512-popev3jWTeM66Wc801tszk/930qkUqVoej65+lVLLvnm9ycSA3Ov8HFy3yvodGdx5WTU2rAB7KEVh2diZo3kaQ==}
 
@@ -1352,6 +1364,11 @@ packages:
 
   '@tihomir971/assist-shared@2.5.0':
     resolution: {integrity: sha512-ml4VPWIm/qS8yKoTuW8hOKKWE5UxM9w101eoBcKwo+hLSL1Y72Kx2VqAg7BPd9GIa2kGefd0qUqox7K5H2tLOA==}
+
+  '@tiptap/core@2.26.1':
+    resolution: {integrity: sha512-fymyd/XZvYiHjBoLt1gxs024xP/LY26d43R1vluYq7AHBL/7DE3ywzy+1GEsGyAv5Je2L0KBhNIR/izbq3Kaqg==}
+    peerDependencies:
+      '@tiptap/pm': ^2.7.0
 
   '@tiptap/core@3.0.9':
     resolution: {integrity: sha512-1zdDyILerBcD3P0fu8kCtPLOFj0R5utjexCQ2CZ46pckn/Wk4V+WUBARzhG5Yz2JDkmJIUIcmLBVrL6G1rjJWg==}
@@ -3185,6 +3202,9 @@ packages:
     resolution: {integrity: sha512-tX5e7OM1HnYr2+a2C/4V0htOcSQcoSTH9KgJnVvNm5zm/cyEWKJ7j7YutsH9CxMdtOkkLFy2AHrMci9IM8IPZQ==}
     engines: {node: '>=12.0.0'}
 
+  tiptap-pagination-breaks@1.0.3:
+    resolution: {integrity: sha512-t7Q9lG40Me73WHxHxKu4UG16VLSF9IcV2uoUSL86oZxv1OZxexlG0gTrUBxa8RMB+lPq2ienb+s9dlL2djvjmg==}
+
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
@@ -3904,6 +3924,10 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
+  '@iconify-json/carbon@1.2.11':
+    dependencies:
+      '@iconify/types': 2.0.0
+
   '@iconify-json/devicon@1.2.35':
     dependencies:
       '@iconify/types': 2.0.0
@@ -4406,6 +4430,10 @@ snapshots:
   '@tihomir971/assist-shared@2.5.0':
     dependencies:
       zod: 3.25.76
+
+  '@tiptap/core@2.26.1(@tiptap/pm@3.0.9)':
+    dependencies:
+      '@tiptap/pm': 3.0.9
 
   '@tiptap/core@3.0.9(@tiptap/pm@3.0.9)':
     dependencies:
@@ -6642,6 +6670,13 @@ snapshots:
     dependencies:
       fdir: 6.4.6(picomatch@4.0.3)
       picomatch: 4.0.3
+
+  tiptap-pagination-breaks@1.0.3(@tiptap/pm@3.0.9):
+    dependencies:
+      '@tiptap/core': 2.26.1(@tiptap/pm@3.0.9)
+      prosemirror-state: 1.4.3
+    transitivePeerDependencies:
+      - '@tiptap/pm'
 
   to-regex-range@5.0.1:
     dependencies:
