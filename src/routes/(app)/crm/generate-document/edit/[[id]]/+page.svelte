@@ -384,4 +384,9 @@
 			margin-bottom: 2pt !important;
 		}
 	}
+
+	/* Ensure empty paragraphs are visible */
+	:global(.printable p:empty)::before {
+		content: '\00a0'; /* Non-breaking space */
+	}
 </style>

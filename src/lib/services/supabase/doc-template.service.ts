@@ -75,7 +75,7 @@ export class DocTemplateService {
 
 		if (error) {
 			console.error('Error deleting document template:', error);
-			throw new Error('Failed to delete document template.');
+			throw error;
 		}
 	}
 

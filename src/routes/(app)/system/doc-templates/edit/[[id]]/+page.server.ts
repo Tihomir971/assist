@@ -1,4 +1,4 @@
-import { error, fail, json } from '@sveltejs/kit';
+import { error, fail, json, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { docTemplateInsertSchema } from '$lib/types/supabase.zod.schemas';
@@ -91,19 +91,31 @@ export const actions = {
 		}
 	},
 
-	delete: async ({ params, locals: { supabase } }) => {
+	delete: async ({ request, params, locals: { supabase } }) => {
+		const form = await superValidate(request, zod4(docTemplateInsertSchema));
+		if (!form.valid) {
+			return fail(400, { form });
+		}
 		const id = params.id ? parseInt(params.id) : null;
 		if (!id) {
-			return fail(400, { error: 'Invalid ID' });
+			return fail(400, { form, error: 'Invalid ID' });
 		}
 
 		try {
 			const service = new DocTemplateService(supabase);
 			await service.delete(id);
-			return { success: true };
-		} catch (err) {
+			redirect(303, '/system/doc-templates');
+		} catch (err: unknown) {
+			const error = err as { code?: string };
+			if (error.code === '23503') {
+				return fail(409, {
+					form,
+					error:
+						'This template is in use and cannot be deleted. Please reassign documents using this template before deleting.'
+				});
+			}
 			console.error('Error deleting document template:', err);
-			return fail(500, { error: 'Failed to delete document template' });
+			return fail(500, { form, error: 'Failed to delete document template' });
 		}
 	},
 
