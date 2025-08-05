@@ -17,7 +17,6 @@ import { Table, TableCell, TableRow, TableHeader } from './extensions/table/inde
 // import MathExtension from '@aarkue/tiptap-math-extension';
 // import AutoJoiner from 'tiptap-extension-auto-joiner';
 // import 'katex/dist/katex.min.css';
-// import { Pagination } from 'tiptap-pagination-breaks';
 import { PageBreak } from '$lib/tiptap/extensions/page-break.js';
 import { CustomHorizontalRule } from '$lib/tiptap/extensions/custom-horizontal-rule.js';
 
