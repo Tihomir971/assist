@@ -1,5 +1,5 @@
-import { z, type ZodSchema } from 'zod/v3';
-import { SchemaAnalyzer, type FieldConfig } from '$lib/utils/schema-analyzer';
+import { z, type ZodType } from 'zod/v4';
+import { SchemaAnalyzer, type FieldConfig } from '$lib/utils/schema-analyzer4';
 
 /**
  * Schema-based validation integration with Zod schemas
@@ -24,7 +24,7 @@ export interface FieldValidationConfig {
 }
 
 export interface SchemaValidationConfig<T = Record<string, unknown>> {
-	schema: ZodSchema<T>;
+	schema: ZodType<T>;
 	customMessages?: Record<string, Record<string, string>>; // field -> rule -> message
 	i18nMessages?: Record<string, Record<string, Record<string, string>>>; // locale -> field -> rule -> message
 	currentLocale?: string;
@@ -308,7 +308,7 @@ export class SchemaValidator<T extends Record<string, unknown>> {
 			await this.config.schema.parseAsync(formData);
 		} catch (error) {
 			if (error instanceof z.ZodError) {
-				error.errors.forEach((zodError) => {
+				error.issues.forEach((zodError) => {
 					const fieldPath = zodError.path.join('.');
 					if (fieldPath) {
 						if (!fieldErrors[fieldPath]) {
@@ -541,7 +541,7 @@ export class SchemaValidator<T extends Record<string, unknown>> {
 	/**
 	 * Update schema and reinitialize rules
 	 */
-	updateSchema(newSchema: ZodSchema<T>): void {
+	updateSchema(newSchema: ZodType<T>): void {
 		this.config.schema = newSchema;
 		this.clearCache();
 		this.initializeValidationRules();

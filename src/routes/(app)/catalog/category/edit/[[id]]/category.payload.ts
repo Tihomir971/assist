@@ -3,7 +3,7 @@ import {
 	mProductCategoryUpdateSchema
 } from '@tihomir971/assist-shared';
 import type { MProductCategoryInsert, MProductCategoryUpdate } from '@tihomir971/assist-shared';
-import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
+import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder4';
 
 export const categoryPayloadBuilder = new SmartPayloadBuilder<
 	MProductCategoryInsert,

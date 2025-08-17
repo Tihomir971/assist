@@ -1,5 +1,6 @@
-import { z, type ZodSchema } from 'zod/v3';
+import { z, type ZodType } from 'zod/v4';
 import type { SuperForm } from 'sveltekit-superforms';
+import { SvelteDate, SvelteMap } from 'svelte/reactivity';
 
 /**
  * Enhanced form state management with Svelte 5 runes
@@ -38,7 +39,7 @@ export interface AutoSaveConfig {
 }
 
 export interface EnhancedFormStateConfig<T> {
-	schema: ZodSchema<T>;
+	schema: ZodType<T>;
 	initialData: T;
 	autoSave?: AutoSaveConfig;
 	validateOnChange?: boolean;
@@ -64,7 +65,7 @@ export class EnhancedFormStateManager<T extends Record<string, unknown>> {
 
 	private _config: EnhancedFormStateConfig<T>;
 	private _autoSaveTimeout: ReturnType<typeof setTimeout> | null = null;
-	private _validationTimeouts = new Map<string, ReturnType<typeof setTimeout>>();
+	private _validationTimeouts = new SvelteMap<string, ReturnType<typeof setTimeout>>();
 	private _superForm: SuperForm<T> | null = null;
 	private _unsubscribeSuperFormSubmitting: (() => void) | null = null;
 	private _unsubscribeSuperFormErrors: (() => void) | null = null;
@@ -286,13 +287,13 @@ export class EnhancedFormStateManager<T extends Record<string, unknown>> {
 		} catch (error) {
 			field.isValid = false;
 			if (error instanceof z.ZodError) {
-				field.errors = error.errors.map((e) => e.message);
+				field.errors = error.issues.map((e) => e.message);
 			} else {
 				field.errors = ['Validation error'];
 			}
 		} finally {
 			field.isValidating = false;
-			field.lastValidated = new Date();
+			field.lastValidated = new SvelteDate();
 			this.updateFormValidState();
 		}
 	}
@@ -318,7 +319,7 @@ export class EnhancedFormStateManager<T extends Record<string, unknown>> {
 		} catch (error) {
 			if (error instanceof z.ZodError) {
 				// Update field-level errors
-				error.errors.forEach((err) => {
+				error.issues.forEach((err) => {
 					const fieldName = err.path[0] as string;
 					if (fieldName && this._state.fields[fieldName]) {
 						this._state.fields[fieldName].isValid = false;
@@ -329,7 +330,7 @@ export class EnhancedFormStateManager<T extends Record<string, unknown>> {
 				});
 
 				// Update validation errors for superforms compatibility
-				this._state.validationErrors = error.errors.reduce(
+				this._state.validationErrors = error.issues.reduce(
 					(acc, err) => {
 						const fieldName = err.path[0] as string;
 						if (fieldName) {
@@ -394,7 +395,7 @@ export class EnhancedFormStateManager<T extends Record<string, unknown>> {
 			});
 
 			await this._config.autoSave.onAutoSave(dataToSave);
-			this._state.lastAutoSave = new Date();
+			this._state.lastAutoSave = new SvelteDate();
 			this._state.hasUnsavedChanges = false;
 		} catch (error) {
 			console.error('Auto-save failed:', error);
@@ -408,7 +409,7 @@ export class EnhancedFormStateManager<T extends Record<string, unknown>> {
 	 * Mark form as saved (typically called after successful submission)
 	 */
 	markAsSaved(): void {
-		this._state.lastSaved = new Date();
+		this._state.lastSaved = new SvelteDate();
 		this._state.hasUnsavedChanges = false;
 		this._state.isDirty = false;
 
@@ -470,13 +471,14 @@ export class EnhancedFormStateManager<T extends Record<string, unknown>> {
 	/**
 	 * Extract field schema from main schema (simplified implementation)
 	 */
-	private extractFieldSchema(fieldName: string): ZodSchema | null {
+	private extractFieldSchema(fieldName: string): ZodType | null {
 		try {
 			// This is a simplified approach - in a real implementation,
 			// you might want to use a more sophisticated schema introspection
 			if ('shape' in this._config.schema) {
 				const shape = (this._config.schema as unknown as z.ZodObject<z.ZodRawShape>).shape;
-				return shape?.[fieldName] || null;
+				const fieldSchema = shape?.[fieldName];
+				return fieldSchema ? (fieldSchema as unknown as ZodType) : null;
 			}
 			return null;
 		} catch {

@@ -1,4 +1,4 @@
-import { z, type ZodSchema } from 'zod/v3';
+import { z, type ZodType } from 'zod/v4';
 
 /**
  * Real-time validation engine with debouncing and caching
@@ -38,7 +38,7 @@ export interface ValidationCache {
 }
 
 export interface RealTimeValidatorConfig<T = Record<string, unknown>> {
-	schema: ZodSchema<T>;
+	schema: ZodType<T>;
 	debounceMs?: number;
 	enableCaching?: boolean;
 	cacheTtlMs?: number;
@@ -363,7 +363,7 @@ export class RealTimeValidator<T extends Record<string, unknown>> {
 			result.isValid = false;
 
 			if (error instanceof z.ZodError) {
-				result.errors = error.errors.map((e) => e.message);
+				result.errors = error.issues.map((e) => e.message);
 			} else {
 				result.errors = ['Validation error'];
 			}
@@ -375,11 +375,12 @@ export class RealTimeValidator<T extends Record<string, unknown>> {
 	/**
 	 * Extract field schema from main schema
 	 */
-	private extractFieldSchema(fieldName: string): ZodSchema | null {
+	private extractFieldSchema(fieldName: string): ZodType | null {
 		try {
 			if ('shape' in this.config.schema) {
 				const shape = (this.config.schema as unknown as z.ZodObject<z.ZodRawShape>).shape;
-				return shape?.[fieldName] || null;
+				const fieldSchema = shape?.[fieldName];
+				return fieldSchema ? (fieldSchema as unknown as ZodType) : null;
 			}
 			return null;
 		} catch {

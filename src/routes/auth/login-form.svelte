@@ -3,19 +3,19 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 
-	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import { type SuperValidated, superForm } from 'sveltekit-superforms';
 	import { loginSchema, type LoginSchema } from './schema';
-	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { zod4Client } from 'sveltekit-superforms/adapters';
 
-	export let data: SuperValidated<Infer<LoginSchema>>;
+	export let data: SuperValidated<LoginSchema>;
 
 	const form = superForm(data, {
-		validators: zodClient(loginSchema)
+		validators: zod4Client(loginSchema)
 	});
 	const { form: formData, enhance } = form;
 </script>
 
-<Card.Root class="mx-auto max-w-sm shadow-4">
+<Card.Root class="shadow-4 mx-auto max-w-sm">
 	<Card.Header>
 		<Card.Title class="text-2xl">Login</Card.Title>
 		<Card.Description>Enter your email and password below to login to your account</Card.Description

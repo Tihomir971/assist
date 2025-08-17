@@ -3,6 +3,7 @@
 	import '@fontsource-variable/nunito';
 	import '@fontsource-variable/merriweather';
 	import '@fontsource-variable/fira-code';
+	import '@fontsource-variable/outfit';
 
 	import { invalidate } from '$app/navigation';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';

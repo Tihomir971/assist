@@ -5,22 +5,23 @@ import type { FlattenedProduct, ProductWithDetails } from './columns.svelte.js';
 import type {
 	Database,
 	Enums,
-	MPricelistVersionUpdate,
-	MProductPackingInsert,
 	MProductPoInsert,
 	MProductPoRow,
 	MProductpriceInsert,
 	MProductpriceRow,
 	MProductRow,
 	MStorageonhandInsert,
-	MStorageonhandRow
+	MStorageonhandRow,
+	Tables,
+	TablesInsert,
+	TablesUpdate
 } from '@tihomir971/assist-shared';
 import type { ProductsResultSearch } from './types-search-vendor-products';
 import type { ApiResponse } from '$lib/types/api.types';
 import type { ProductRequest } from './types-api-market';
 
 import { fail, superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
+import { zod4 } from 'sveltekit-superforms/adapters';
 import { isValidGTIN } from '$lib/scripts/gtin';
 import { connector, scrapper } from '$lib/ky';
 import { DateTime } from 'luxon';
@@ -158,7 +159,7 @@ async function fetchProducts(
 
 async function getPriceLists(
 	supabase: SupabaseClient<Database>
-): Promise<Partial<MPricelistVersionRow>[] | []> {
+): Promise<Partial<Tables<'m_pricelist_version'>>[] | []> {
 	const nowBelgrade = DateTime.now().setZone('Europe/Belgrade');
 	const targetDate = nowBelgrade.toFormat("yyyy-MM-dd'T'HH:mm:ssZZ");
 
@@ -252,7 +253,7 @@ function flattenProduct(
 	product: ProductWithDetails,
 	activeWarehouse: number,
 	checkedVat: boolean,
-	activePricelists: MPricelistVersionUpdate[]
+	activePricelists: TablesUpdate<'m_pricelist_version'>[]
 ): FlattenedProduct {
 	const smallestPricestd = Math.min(
 		...product.m_productprice
@@ -343,7 +344,7 @@ function flattenProduct(
 
 export const actions = {
 	getErpInfo: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(productSelectSchema));
+		const form = await superValidate(request, zod4(productSelectSchema));
 		if (!form.valid) return fail(400, { form });
 
 		const { data: skus } = await supabase
@@ -385,7 +386,7 @@ export const actions = {
 
 		const errors: ErrorDetails[] = [];
 		const productUpdates: { id: number; data: Partial<MProductRow> }[] = [];
-		const barcodeInserts: MProductPackingInsert[] = []; // Use Insert<>
+		const barcodeInserts: TablesInsert<'m_product_packing'>[] = []; // Use Insert<>
 		// Arrays for Product PO
 		const productPoInserts: MProductPoInsert[] = []; // Use Insert<>
 		const productPoUpdates: {
@@ -779,7 +780,7 @@ export const actions = {
 		}
 	},
 	getMarketInfo: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(productSelectSchema));
+		const form = await superValidate(request, zod4(productSelectSchema));
 		if (!form.valid) return fail(400, { form });
 
 		const { ids, type } = form.data;
@@ -1089,7 +1090,7 @@ export const actions = {
 		}
 	},
 	searchVendorProducts: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(productSelectSchema));
+		const form = await superValidate(request, zod4(productSelectSchema));
 		if (!form.valid) return fail(400, { form });
 
 		const { ids } = form.data;

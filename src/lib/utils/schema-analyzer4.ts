@@ -5,6 +5,7 @@ interface ZodDef {
 	typeName?: string;
 	values?: (string | number)[];
 	shape?: ZodRawShape;
+	innerType?: ZodType;
 }
 
 interface ZodSchema {
@@ -166,10 +167,16 @@ export class SchemaAnalyzer {
 	}
 
 	private static getSchemaShape(schema: ZodType<unknown>): ZodRawShape {
-		const typeName = (schema as ZodSchema)._def.typeName;
+		const typeName = (schema as ZodSchema)._def?.typeName;
 
+		// Check if it's a ZodObject directly
 		if (typeName === 'ZodObject') {
 			return (schema as ZodSchema).shape || {};
+		}
+
+		// Check if schema has a shape property directly (Zod v4 compatibility)
+		if ('shape' in schema && schema.shape) {
+			return schema.shape as ZodRawShape;
 		}
 
 		// Handle wrapped schemas by checking for innerType or unwrap methods
@@ -181,8 +188,22 @@ export class SchemaAnalyzer {
 			return this.getSchemaShape(schema.innerType() as ZodType);
 		}
 
+		// Handle ZodDefault, ZodOptional, ZodNullable, etc.
+		if ('_def' in schema && schema._def && 'innerType' in schema._def) {
+			const def = schema._def as ZodDef;
+			if (def.innerType) {
+				return this.getSchemaShape(def.innerType);
+			}
+		}
+
+		// Last resort: try to access shape through _def
+		if ('_def' in schema && schema._def && 'shape' in schema._def) {
+			const def = schema._def as ZodDef;
+			return def.shape || {};
+		}
+
 		throw new Error(
-			`Could not extract shape from Zod schema type: ${typeName}. Ensure it is a ZodObject or a wrapped ZodObject.`
+			`Could not extract shape from Zod schema type: ${typeName || 'unknown'}. Ensure it is a ZodObject or a wrapped ZodObject.`
 		);
 	}
 

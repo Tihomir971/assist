@@ -1,18 +1,27 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import { AuthApiError } from '@supabase/supabase-js';
-import type { Actions, PageServerLoad } from './$types';
-import { superValidate } from 'sveltekit-superforms';
-import { loginSchema } from './schema';
-import { zod } from 'sveltekit-superforms/adapters';
-import { setError } from 'sveltekit-superforms/server';
+import type { Actions } from './$types';
+import { fail, setError, superValidate } from 'sveltekit-superforms';
+// import { loginSchema } from './schema';
+import { zod4 } from 'sveltekit-superforms/adapters';
 
-export const load: PageServerLoad = async () => {
-	return { form: await superValidate(zod(loginSchema)) };
+import { z } from 'zod/v4';
+
+const loginSchema = z.object({
+	email: z.email(),
+	password: z.string()
+});
+
+export const load = async () => {
+	const form = await superValidate(zod4(loginSchema));
+
+	// Always return { form } in load functions
+	return { form };
 };
 
 export const actions = {
 	login: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(loginSchema));
+		const form = await superValidate(request, zod4(loginSchema));
 
 		if (!form.valid) {
 			return fail(400, {
@@ -35,13 +44,6 @@ export const actions = {
 				});
 			}
 			return setError(form, 'email', error.message);
-
-			return fail(500, {
-				error: 'Server error. Try again later.',
-				values: {
-					email: form.data.email
-				}
-			});
 		}
 		throw redirect(303, '/dashboard');
 		// return { form };

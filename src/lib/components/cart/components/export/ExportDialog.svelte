@@ -7,6 +7,7 @@
 	import { getCartContext } from '../../ctx.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { CheckboxZag } from '$lib/components/zag/index.js';
+	import { CheckboxArk } from '$lib/components/ark/index.js';
 
 	interface Props {
 		supabase: SupabaseClient<Database>;
@@ -28,7 +29,7 @@
 
 	let vendors = $state([
 		{ id: 480, name: 'Agrofina', selected: false },
-		{ id: 4, name: 'Mercator', selected: false },
+		{ id: 4, name: 'Idea', selected: false },
 		{ id: 89, name: 'Mivex', selected: false },
 		{ id: 2, name: 'Cenoteka', selected: false },
 		{ id: 714, name: 'Harizma', selected: false }
@@ -68,7 +69,7 @@
 			<div class="flex flex-col space-y-2 overflow-y-auto">
 				{#each vendors as vendor (vendor.id)}
 					<label class="flex items-center space-x-2">
-						<CheckboxZag bind:checked={vendor.selected} label={vendor.name} />
+						<CheckboxArk bind:checked={vendor.selected} label={vendor.name} />
 					</label>
 				{/each}
 			</div>

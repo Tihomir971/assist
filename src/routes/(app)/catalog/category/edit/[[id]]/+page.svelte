@@ -1,11 +1,11 @@
 <script lang="ts">
 	import SmartSplitLayout from '$lib/components/forms/SmartSplitLayout.svelte';
-	import SmartForm from '$lib/components/forms/SmartForm.svelte';
+	import SmartForm from '$lib/components/forms/SmartForm4.svelte';
 	import SmartRelatedTabs from '$lib/components/forms/SmartRelatedTabs.svelte';
 	import { createFormConfig } from '$lib/utils/form-config.builder';
 	import { splitLayoutConfig, createTabConfigs } from './related-configs';
 	import { mProductCategoryInsertSchema } from '@tihomir971/assist-shared';
-	import * as z from 'zod/v3';
+	import * as z from 'zod/v4';
 
 	let { data } = $props();
 

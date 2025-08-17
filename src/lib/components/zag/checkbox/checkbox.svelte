@@ -1,5 +1,5 @@
 <script lang="ts">
-	import './checkbox.css';
+	// import './checkbox.css';
 	import * as checkbox from '@zag-js/checkbox';
 	import { normalizeProps, useMachine } from '@zag-js/svelte';
 	import type { CheckboxProps } from './types';

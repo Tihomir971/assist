@@ -1,9 +1,9 @@
 import { PartnerService } from '$lib/services/supabase/partner.service';
-import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
+import { createSimpleCRUD } from '$lib/utils/simple-crud.factory4';
 import { contactPayloadBuilder } from './entity.payload';
 import { cBpartnerInsertSchema } from '@tihomir971/assist-shared';
 import { superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
+import { zod4 } from 'sveltekit-superforms/adapters';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params, locals: { supabase } }) => {
@@ -14,13 +14,13 @@ export const load = async ({ params, locals: { supabase } }) => {
 	let form;
 
 	if (isCreateMode) {
-		form = await superValidate(zod(cBpartnerInsertSchema));
+		form = await superValidate(zod4(cBpartnerInsertSchema));
 	} else {
 		const entity = await partnerService.getById(id);
 		if (!entity) {
 			error(404, 'Contact not found');
 		}
-		form = await superValidate(entity, zod(cBpartnerInsertSchema));
+		form = await superValidate(entity, zod4(cBpartnerInsertSchema));
 	}
 
 	return {

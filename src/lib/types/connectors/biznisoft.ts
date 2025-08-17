@@ -1,4 +1,4 @@
-import * as z from 'zod/v3';
+import * as z from 'zod/v4';
 
 export interface BSProduct {
 	sifra: number;

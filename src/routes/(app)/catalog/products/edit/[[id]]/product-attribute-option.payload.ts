@@ -2,7 +2,7 @@ import {
 	mProductAttributeOptionInsertSchema,
 	mProductAttributeOptionUpdateSchema
 } from '@tihomir971/assist-shared';
-import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
+import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder4';
 
 export const productAttributeOptionPayloadBuilder = new SmartPayloadBuilder(
 	{ schema: mProductAttributeOptionInsertSchema },

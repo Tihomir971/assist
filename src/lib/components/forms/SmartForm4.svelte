@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { SuperValidated, SuperForm } from 'sveltekit-superforms';
-	import type { ZodObject, z, ZodSchema } from 'zod/v4';
-	import type { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
+	import type { ZodObject, z, ZodType } from 'zod/v4';
+	import type { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder4';
 	import type { SmartFormConfig, FieldOverride } from '$lib/types/form-config.types';
 	import {
 		SchemaAnalyzer,
@@ -19,7 +19,7 @@
 	import { dev } from '$app/environment';
 
 	// Define a more specific type for form data, inferring from Zod schema
-	type FormDataFromSchema<S extends ZodSchema<any, any>> = z.infer<S>;
+	type FormDataFromSchema<S extends ZodType<any, any>> = z.infer<S>;
 
 	interface SmartFormProps<S extends ZodObject<any>> {
 		form: SuperValidated<z.infer<S>>; // Superforms instance

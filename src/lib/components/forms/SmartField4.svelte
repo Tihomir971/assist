@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { SuperForm } from 'sveltekit-superforms';
-	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer'; // Renamed to avoid conflict
+	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer4'; // Renamed to avoid conflict
 	import * as Form from '$lib/components/ui/form'; // Using shadcn-svelte form components
 
 	// Import individual smart field components (will be created next)

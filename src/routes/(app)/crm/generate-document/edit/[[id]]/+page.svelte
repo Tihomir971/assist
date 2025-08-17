@@ -14,7 +14,7 @@
 	import html2canvas from 'html2canvas';
 	import type { DocTemplateLookupWithSchema } from '$lib/services/supabase/doc-template.service';
 	import type { ContextSchemaStructure } from '$lib/types/supabase.zod.schemas';
-	import { deleteByIdSchema } from '$lib/types/zod-delete-by-id';
+	import { deleteByIdSchema } from '$lib/types/zod-delete-by-id4';
 
 	let { data } = $props<{ data: PageData }>();
 

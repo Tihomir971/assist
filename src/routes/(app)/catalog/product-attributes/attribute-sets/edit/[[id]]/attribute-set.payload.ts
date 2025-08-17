@@ -1,4 +1,4 @@
-import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
+import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder4';
 import { mAttributesetInsertSchema, mAttributesetUpdateSchema } from '@tihomir971/assist-shared';
 
 export const attributeSetPayloadBuilder = new SmartPayloadBuilder(

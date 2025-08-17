@@ -1,12 +1,12 @@
 import { error, fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { deleteByIdSchema } from '$lib/types/zod-delete-by-id';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@tihomir971/assist-shared';
 import { QueryBuilder, type FilterOperator } from '$lib/services/supabase/query.builder';
 import type { DataTableConfig, SelectFilterOption } from './data-table-config.builder';
 import { extractStructuredSupabaseError } from '$lib/server/utils/supabase-error.utils';
+import { deleteByIdSchema } from '$lib/types/zod-delete-by-id4';
 
 type ServiceWithDelete = {
 	delete(id: number): Promise<void>;

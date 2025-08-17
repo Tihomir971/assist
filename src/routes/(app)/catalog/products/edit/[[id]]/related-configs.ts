@@ -1,14 +1,14 @@
 import { createSplitLayoutConfig, createTabConfig } from '$lib/utils/split-layout-config.builder';
 import type { Component } from 'svelte';
 import type { PageData } from './$types';
-import { columnTypes, createRelatedTableConfig } from '$lib/utils/related-table-config.builder';
+import { columnTypes, createRelatedTableConfig } from '$lib/utils/related-table-config.builder4';
 import {
 	mProductPackingInsertSchema,
 	mProductPoInsertSchema,
 	mReplenishInsertSchema,
 	cChannelMapProductInsertSchema
 } from '@tihomir971/assist-shared';
-import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable.svelte';
+import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable4.svelte';
 import StorageOnHandDisplay from './m-storageonhand-display.svelte';
 import SmartProductAttributes from './SmartProductAttributes.svelte';
 import { createFormConfig } from '$lib/utils/form-config.builder';

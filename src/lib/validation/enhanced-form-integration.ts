@@ -1,4 +1,4 @@
-import type { ZodSchema } from 'zod/v3';
+import type { ZodType } from 'zod/v4';
 import type { SuperForm } from 'sveltekit-superforms';
 import {
 	EnhancedFormStateManager,
@@ -19,7 +19,7 @@ import { SchemaValidator, createSchemaValidator } from '$lib/validation/schema-v
  */
 
 export interface EnhancedFormConfig<T extends Record<string, unknown>> {
-	schema: ZodSchema<T>;
+	schema: ZodType<T>;
 	initialData: T;
 
 	// State management options

@@ -1,6 +1,6 @@
 import type { PageServerLoad, Actions } from './$types';
 import { superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
+import { zod4 } from 'sveltekit-superforms/adapters';
 import { fail } from '@sveltejs/kit';
 import { PricingRulesService } from '$lib/services/supabase/pricing-rules.service';
 import { pricingTestSchema } from './schema';
@@ -8,7 +8,7 @@ import type { PricingContext } from '$lib/types/pricing-rules.types';
 
 export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 	// Initialize form with default values
-	const form = await superValidate(zod(pricingTestSchema));
+	const form = await superValidate(zod4(pricingTestSchema));
 
 	// Load active pricing rules for display
 	const pricingService = new PricingRulesService(supabase);
@@ -22,7 +22,7 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 
 export const actions: Actions = {
 	test: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(pricingTestSchema));
+		const form = await superValidate(request, zod4(pricingTestSchema));
 
 		if (!form.valid) {
 			return fail(400, { form });

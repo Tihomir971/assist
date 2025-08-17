@@ -1,7 +1,7 @@
 import type { PageServerLoad, Actions } from './$types';
 
 import { superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
+import { zod4 } from 'sveltekit-superforms/adapters';
 import { error } from '@sveltejs/kit';
 import {
 	PricingRulesService,
@@ -11,8 +11,8 @@ import {
 	BrandService
 } from '$lib/services/supabase';
 import type { PricingRule, PricingRuleCreate } from '$lib/types/pricing-rules.types';
-import * as z from 'zod/v3';
-import { pricingConditionsSchema, pricingFormulaSchema } from '$lib/types/pricing-rules.zod';
+import * as z from 'zod/v4';
+import { pricingConditionsSchema, pricingFormulaSchema } from '$lib/types/pricing-rules.zod4';
 
 // Create a specific schema for the form that uses the detailed condition/formula schemas
 const formSchema = z.object({
@@ -80,7 +80,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 	return {
 		rule,
 		isCreateMode,
-		formPricingRule: await superValidate(formData, zod(formSchema)),
+		formPricingRule: await superValidate(formData, zod4(formSchema)),
 		lookupData: {
 			partners,
 			categories,
@@ -93,7 +93,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 // Simple CRUD actions without factory for now due to type compatibility issues
 export const actions: Actions = {
 	upsert: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(formSchema));
+		const form = await superValidate(request, zod4(formSchema));
 
 		if (!form.valid) {
 			return { form };

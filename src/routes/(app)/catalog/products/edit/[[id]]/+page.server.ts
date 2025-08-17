@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
-import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
+import { zod4 } from 'sveltekit-superforms/adapters';
+import { createSimpleCRUD } from '$lib/utils/simple-crud.factory4';
 import {
 	ProductService,
 	CategoryService,
@@ -81,13 +81,13 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 			formProductAttributeOption,
 			formChannelMapProduct
 		] = await Promise.all([
-			superValidate(zod(mProductInsertSchema)),
-			superValidate(zod(mProductPackingInsertSchema)),
-			superValidate(zod(mReplenishInsertSchema)),
-			superValidate(zod(mProductPoInsertSchema)),
-			superValidate(zod(mProductAttributeValueInsertSchema)),
-			superValidate(zod(mProductAttributeOptionInsertSchema)),
-			superValidate(zod(cChannelMapProductInsertSchema))
+			superValidate(zod4(mProductInsertSchema)),
+			superValidate(zod4(mProductPackingInsertSchema)),
+			superValidate(zod4(mReplenishInsertSchema)),
+			superValidate(zod4(mProductPoInsertSchema)),
+			superValidate(zod4(mProductAttributeValueInsertSchema)),
+			superValidate(zod4(mProductAttributeOptionInsertSchema)),
+			superValidate(zod4(cChannelMapProductInsertSchema))
 		]);
 
 		return {
@@ -220,13 +220,13 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		formProductAttributeOption,
 		formChannelMapProduct
 	] = await Promise.all([
-		superValidate(product, zod(mProductInsertSchema)),
-		superValidate(zod(mProductPackingInsertSchema)),
-		superValidate(zod(mReplenishInsertSchema)),
-		superValidate(zod(mProductPoInsertSchema)),
-		superValidate(zod(mProductAttributeValueInsertSchema)),
-		superValidate(zod(mProductAttributeOptionInsertSchema)),
-		superValidate(zod(cChannelMapProductInsertSchema))
+		superValidate(product, zod4(mProductInsertSchema)),
+		superValidate(zod4(mProductPackingInsertSchema)),
+		superValidate(zod4(mReplenishInsertSchema)),
+		superValidate(zod4(mProductPoInsertSchema)),
+		superValidate(zod4(mProductAttributeValueInsertSchema)),
+		superValidate(zod4(mProductAttributeOptionInsertSchema)),
+		superValidate(zod4(cChannelMapProductInsertSchema))
 	]);
 
 	return {

@@ -1,4 +1,4 @@
-import { z } from 'zod/v3';
+import { z } from 'zod/v4';
 
 export const pricingTestSchema = z.object({
 	product_id: z.coerce.number().min(1, 'Product ID is required'),

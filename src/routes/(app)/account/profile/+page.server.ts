@@ -1,8 +1,8 @@
 import { fail, redirect, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms/server';
-import * as z from 'zod/v3';
+import * as z from 'zod/v4';
 import type { PageServerLoad, Actions } from './$types';
-import { zod } from 'sveltekit-superforms/adapters';
+import { zod4 } from 'sveltekit-superforms/adapters';
 import { adUserUpdateSchema } from '@tihomir971/assist-shared';
 
 // Define the session user type
@@ -29,7 +29,7 @@ const adUserSchema = adUserUpdateSchema
 	);
 const authUsersSchema = z
 	.object({
-		email: z.string().email().nullable(),
+		email: z.email().nullable(),
 		last_name: z.string().min(1).nullable(),
 		first_name: z.string().min(3).nullable(),
 		password: z.string().min(6).optional(),
@@ -67,7 +67,7 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession, supabase 
 		throw error(500, 'Error fetching user data');
 	}
 
-	return { form: await superValidate(adUser, zod(adUserSchema)) };
+	return { form: await superValidate(adUser, zod4(adUserSchema)) };
 };
 
 export const actions = {
@@ -79,7 +79,7 @@ export const actions = {
 
 		const user = session.user as SessionUser;
 
-		const form = await superValidate(request, zod(authUsersSchema));
+		const form = await superValidate(request, zod4(authUsersSchema));
 
 		if (!form.valid) {
 			return fail(400, { form });

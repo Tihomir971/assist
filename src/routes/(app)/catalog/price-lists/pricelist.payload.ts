@@ -1,6 +1,6 @@
 import { mPricelistInsertSchema, mPricelistUpdateSchema } from '@tihomir971/assist-shared';
 import type { MPricelistInsert, MPricelistUpdate } from '@tihomir971/assist-shared';
-import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
+import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder4';
 
 // Pricelist Configuration
 export const pricelistPayloadBuilder = new SmartPayloadBuilder<MPricelistInsert, MPricelistUpdate>(

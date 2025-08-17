@@ -1,7 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@tihomir971/assist-shared';
 import { superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
+import { zod4 } from 'sveltekit-superforms/adapters';
 import { error } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import {
@@ -12,7 +12,7 @@ import {
 import { CategoryService } from '$lib/services/supabase/category.service';
 import { ChannelMappingCategoryService } from '$lib/services/supabase/channel-mapping-category.service';
 import { ChannelService } from '$lib/services/supabase/channel.service';
-import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
+import { createSimpleCRUD } from '$lib/utils/simple-crud.factory4';
 import { categoryPayloadBuilder } from './category.payload';
 import { channelMappingPayloadBuilder } from './channel-mapping.payload'; // Updated import
 // All builders for this route are now co-located.
@@ -50,9 +50,9 @@ export const load: PageServerLoad = async ({ params, locals: { supabase }, depen
 			// Form validation objects
 			formCategory: await superValidate(
 				categoryWithRelated?.category,
-				zod(mProductCategoryInsertSchema)
+				zod4(mProductCategoryInsertSchema)
 			),
-			formChannel: await superValidate(null, zod(cChannelMapCategoryInsertSchema)),
+			formChannel: await superValidate(null, zod4(cChannelMapCategoryInsertSchema)),
 
 			// Data
 			category: categoryWithRelated?.category || null,

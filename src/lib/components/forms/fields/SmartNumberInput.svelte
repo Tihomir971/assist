@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { NumberInputZag } from '$lib/components/zag';
-	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer';
+	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer4';
 
 	interface SmartNumberInputProps {
 		field: AnalyzedFieldConfig & { step?: number; fraction?: number };

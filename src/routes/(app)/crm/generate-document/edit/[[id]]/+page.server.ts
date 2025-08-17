@@ -19,7 +19,7 @@ import type {
 	DocGeneratedDocumentCreate,
 	DocGeneratedDocumentUpdate
 } from '$lib/services/supabase/doc-generated-document.service';
-import { deleteByIdSchema } from '$lib/types/zod-delete-by-id';
+import { deleteByIdSchema } from '$lib/types/zod-delete-by-id4';
 
 export const load = async ({ params, locals: { supabase } }) => {
 	const id = params.id ? parseInt(params.id) : null;

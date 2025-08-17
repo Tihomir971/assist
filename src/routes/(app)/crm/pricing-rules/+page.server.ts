@@ -2,8 +2,8 @@ import type { PageServerLoad, Actions } from './$types';
 import { PricingRulesService } from '$lib/services/supabase/pricing-rules.service';
 import { fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
-import * as z from 'zod/v3';
+import { zod4 } from 'sveltekit-superforms/adapters';
+import * as z from 'zod/v4';
 
 // Simple delete schema
 const deleteSchema = z.object({
@@ -70,7 +70,7 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 
 export const actions: Actions = {
 	create: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(createSchema));
+		const form = await superValidate(request, zod4(createSchema));
 
 		if (!form.valid) {
 			return fail(400, { form });
@@ -95,7 +95,7 @@ export const actions: Actions = {
 	},
 
 	delete: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(deleteSchema));
+		const form = await superValidate(request, zod4(deleteSchema));
 
 		if (!form.valid) {
 			return fail(400, { form });
@@ -113,7 +113,7 @@ export const actions: Actions = {
 	},
 
 	swapPriorities: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(swapPrioritiesSchema));
+		const form = await superValidate(request, zod4(swapPrioritiesSchema));
 
 		if (!form.valid) {
 			return fail(400, { form });
@@ -150,7 +150,7 @@ export const actions: Actions = {
 	},
 
 	clone: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(cloneSchema));
+		const form = await superValidate(request, zod4(cloneSchema));
 
 		if (!form.valid) {
 			return fail(400, { form });

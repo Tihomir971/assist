@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
-	import { zod } from 'sveltekit-superforms/adapters';
+	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
 	import * as Form from '$lib/components/ui/form/index.js';
 
@@ -32,7 +32,7 @@
 	};
 
 	const form = superForm(data.form, {
-		validators: zod(pricingTestSchema),
+		validators: zod4(pricingTestSchema),
 		resetForm: false,
 		onResult: ({ result }) => {
 			if (result.type === 'failure') {

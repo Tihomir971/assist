@@ -3,19 +3,19 @@ import { fail } from '@sveltejs/kit';
 import { message } from 'sveltekit-superforms';
 
 import { superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
-import * as z from 'zod/v3';
+import { zod4 } from 'sveltekit-superforms/adapters';
+import * as z from 'zod/v4';
 
 const schema = z.object({ search_term: z.string() });
 
 export const load: PageServerLoad = async () => {
-	const form = await superValidate(zod(schema));
+	const form = await superValidate(zod4(schema));
 	return { form };
 };
 
 export const actions = {
 	default: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(schema));
+		const form = await superValidate(request, zod4(schema));
 		if (!form.valid) {
 			return fail(400, { form });
 		}

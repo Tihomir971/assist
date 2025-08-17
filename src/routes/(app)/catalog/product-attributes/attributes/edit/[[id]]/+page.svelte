@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SmartForm from '$lib/components/forms/SmartForm.svelte';
+	import SmartForm from '$lib/components/forms/SmartForm4.svelte';
 	import { createFormConfig } from '$lib/utils/form-config.builder';
 	import { splitLayoutConfig, createTabConfigs } from './related-configs';
 	import { mAttributeFormSchema } from './schema';

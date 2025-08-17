@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer';
+	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer4';
 	import { Textarea } from '$lib/components/ui/textarea';
 
 	interface SmartTextareaProps {

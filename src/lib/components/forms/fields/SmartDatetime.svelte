@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer';
+	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer4';
 	import { Input } from '$lib/components/ui/input';
 	import { DateHelper } from '$lib/scripts/intl/DateHelper';
 

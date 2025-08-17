@@ -2,8 +2,8 @@
 	import { goto } from '$app/navigation';
 	import { enhance } from '$app/forms';
 	import { superForm } from 'sveltekit-superforms';
-	import { zodClient } from 'sveltekit-superforms/adapters';
-	import * as z from 'zod/v3';
+	import { zod4Client } from 'sveltekit-superforms/adapters';
+	import * as z from 'zod/v4';
 	import { toastManager } from '$lib/utils/toast-manager';
 
 	// UI Components
@@ -44,7 +44,7 @@
 	const createForm = superForm(
 		{ name: '' },
 		{
-			validators: zodClient(createSchema),
+			validators: zod4Client(createSchema),
 			onResult: ({ result }) => {
 				if (result.type === 'success' && result.data?.ruleId) {
 					createDialogOpen = false;

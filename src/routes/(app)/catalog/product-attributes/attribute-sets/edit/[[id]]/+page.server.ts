@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
-import { zod } from 'sveltekit-superforms/adapters';
-import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
+import { zod4 } from 'sveltekit-superforms/adapters';
+import { createSimpleCRUD } from '$lib/utils/simple-crud.factory4';
 import { AttributeSetService } from '$lib/services/supabase/attribute-set.service';
 import { AttributeService } from '$lib/services/supabase/attribute.service';
 import { AttributeSetAttributeService } from '$lib/services/supabase/attribute-set-attribute.service';
@@ -34,8 +34,8 @@ export const load = async ({ depends, params, locals: { supabase } }) => {
 		throw error(404, 'Attribute set not found');
 	}
 
-	const form = await superValidate(entity, zod(mAttributesetInsertSchema));
-	const formAttributeSetAttributes = await superValidate(zod(mAttributesetAttributeInsertSchema));
+	const form = await superValidate(entity, zod4(mAttributesetInsertSchema));
+	const formAttributeSetAttributes = await superValidate(zod4(mAttributesetAttributeInsertSchema));
 
 	return {
 		form,

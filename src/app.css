@@ -11,7 +11,8 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-	--font-sans: 'Nunito Variable', sans-serif;
+	/* --font-sans: 'Nunito Variable', sans-serif; */
+	--font-sans: 'Outfit Variable', sans-serif;
 	--font-mono: 'Fira Code Variable', monospace;
 }
 .dark {

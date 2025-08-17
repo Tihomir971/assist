@@ -1,9 +1,9 @@
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
-import { zod } from 'sveltekit-superforms/adapters';
+import { zod4 } from 'sveltekit-superforms/adapters';
 import { mProductBrandsInsertSchema } from '@tihomir971/assist-shared';
 import { BrandService } from '$lib/services/supabase/brand.service';
-import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
+import { createSimpleCRUD } from '$lib/utils/simple-crud.factory4';
 import { brandPayloadBuilder } from './brand.payload';
 
 export const load = async ({ params, locals: { supabase } }) => {
@@ -20,7 +20,7 @@ export const load = async ({ params, locals: { supabase } }) => {
 		throw error(404, 'Brand not found');
 	}
 
-	const form = await superValidate(entity, zod(mProductBrandsInsertSchema));
+	const form = await superValidate(entity, zod4(mProductBrandsInsertSchema));
 
 	return {
 		form,
