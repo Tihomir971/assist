@@ -92,6 +92,7 @@ async function fetchProducts(
 			unitsperpack,
 			imageurl,
 			discontinued,
+			net_quantity,
 			m_product_packing(
 				packing_type,
 				unitsperpack
@@ -306,7 +307,7 @@ function flattenProduct(
 		tax: tax ? tax / 100 : null,
 		iscustomer: po.c_bpartner.iscustomer
 	}));
-
+	const priceVendorBest = checkedVat ? minVendorPrice * (1 + tax / 100) : minVendorPrice;
 	return {
 		id: product.id,
 		sku: product.sku,
@@ -325,13 +326,14 @@ function flattenProduct(
 		levelMin: getLevelMin.get(activeWarehouse) ?? null,
 		levelMax: getLevelMax.get(activeWarehouse) ?? null,
 		qtybatchsize: getQtybatchsize.get(activeWarehouse) ?? null,
+		price_uom: priceVendorBest / (product.net_quantity ? product.net_quantity : 1),
 		// priceAgrofina: checkedVat ? agrofina * (1 + tax / 100) : agrofina,
 		// priceMercator: checkedVat ? mercator * (1 + tax / 100) : mercator,
 		// priceMivex: checkedVat ? mivex * (1 + tax / 100) : mivex,
 		// priceCenoteka: checkedVat ? cenoteka * (1 + tax / 100) : cenoteka,
 		// priceGros: checkedVat ? gros * (1 + tax / 100) : gros,
 		priceMarketBest: checkedVat ? minMarketPrice * (1 + tax / 100) : minMarketPrice,
-		priceVendorBest: checkedVat ? minVendorPrice * (1 + tax / 100) : minVendorPrice,
+		priceVendorBest: priceVendorBest,
 		brand: product.m_product_brands?.name || null,
 		action,
 		priceMarket: priceMarket.map((pm) => ({

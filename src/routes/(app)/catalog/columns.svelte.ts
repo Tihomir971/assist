@@ -26,6 +26,7 @@ export interface ProductWithDetails {
 	is_active: boolean;
 	imageurl: string | null;
 	discontinued: boolean;
+	net_quantity: number | null;
 	m_storageonhand: MStorageonhandUpdate[];
 	m_product_packing: MProductPackingUpdate[];
 	m_replenish: MReplenishUpdate[];
@@ -56,6 +57,7 @@ export interface FlattenedProduct {
 	levelMin: number | null;
 	levelMax: number | null;
 	qtybatchsize: number | null;
+	price_uom: number | null;
 	// priceAgrofina: number | null;
 	// priceMercator: number | null;
 	// priceMivex: number | null;
@@ -166,6 +168,15 @@ export const columnDefs = [
 		header: 'Pack',
 		cell: ({ cell }) => {
 			return renderSnippet(rightAlignSnippet, { value: cell.getValue() });
+		},
+		enableSorting: false
+	}),
+	colHelp.accessor('price_uom', {
+		header: 'Unit Price',
+		cell: ({ cell }) => {
+			return renderSnippet(rightAlignSnippet, {
+				value: numberFormatter.formatNumber(cell.getValue())
+			});
 		},
 		enableSorting: false
 	}),
