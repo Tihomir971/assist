@@ -1,3 +1,7 @@
+export interface MultilingualFieldConfig {
+	required?: string[]; // Required locale codes
+}
+
 export interface LookupOption {
 	value: string | number;
 	label: string;
@@ -9,7 +13,17 @@ export interface FieldOverride {
 	label?: string;
 	placeholder?: string;
 	description?: string;
-	type?: 'text' | 'number' | 'boolean' | 'select' | 'combobox' | 'textarea' | 'date' | 'datetime'; // Manual field type override
+	type?:
+		| 'text'
+		| 'number'
+		| 'boolean'
+		| 'select'
+		| 'combobox'
+		| 'textarea'
+		| 'date'
+		| 'datetime'
+		| 'multilingual_input'
+		| 'multilingual_textarea'; // Manual field type override
 	options?: LookupOption[];
 	hidden?: boolean;
 	readonly?: boolean;
@@ -21,6 +35,8 @@ export interface FieldOverride {
 	step?: number; // For number inputs
 	fraction?: number; // For number inputs, to specify fraction digits
 	componentProps?: Record<string, unknown>; // NEW: Pass-through props for the underlying component
+	multilingualConfig?: MultilingualFieldConfig;
+	rows?: number;
 }
 
 export interface SmartFormConfig {
@@ -42,6 +58,25 @@ export interface FormConfigBuilder<T extends Record<string, unknown>> {
 	title(title: string): FormConfigBuilder<T>;
 	description(description: string): FormConfigBuilder<T>;
 	field<K extends keyof T>(fieldName: K, override: FieldOverride): FormConfigBuilder<T>;
+	multilingualInput<K extends keyof T>(
+		fieldName: K,
+		options: Omit<FieldOverride, 'type' | 'multilingualConfig'> & {
+			requiredLocales?: string[];
+			defaultLocale?: string;
+			showAddLocale?: boolean;
+			copyBetweenLocales?: boolean;
+		}
+	): FormConfigBuilder<T>;
+	multilingualTextarea<K extends keyof T>(
+		fieldName: K,
+		options: Omit<FieldOverride, 'type' | 'multilingualConfig'> & {
+			requiredLocales?: string[];
+			defaultLocale?: string;
+			showAddLocale?: boolean;
+			copyBetweenLocales?: boolean;
+			rows?: number;
+		}
+	): FormConfigBuilder<T>;
 	cardProps(props: SmartFormConfig['cardProps']): FormConfigBuilder<T>;
 	gap(size: SmartFormConfig['gap']): FormConfigBuilder<T>;
 	build(): SmartFormConfig;

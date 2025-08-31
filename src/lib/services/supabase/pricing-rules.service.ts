@@ -1,4 +1,4 @@
-import type { Database, Json } from '@tihomir971/assist-shared';
+import type { Database, Json } from '$lib/types/supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service';
 import {

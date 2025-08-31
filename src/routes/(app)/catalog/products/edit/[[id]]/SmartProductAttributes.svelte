@@ -18,7 +18,7 @@
 	import type {
 		MProductAttributeOptionInsert,
 		MProductAttributeValueInsert
-	} from '@tihomir971/assist-shared';
+	} from '$lib/types/supabase.zod';
 	import type { ProductAttributeValue } from '$lib/services/supabase/product-attribute-value.service';
 	import type { ProductAttributeOption } from '$lib/services/supabase/product-attribute-option.service';
 

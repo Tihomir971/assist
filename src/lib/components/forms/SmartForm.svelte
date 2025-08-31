@@ -14,7 +14,7 @@
 
 	// UI Components
 	import * as Card from '$lib/components/ui/card/index.js';
-	import SmartField from './SmartField4.svelte'; // This will be created next (Day 3)
+	import SmartField from './SmartField.svelte'; // This will be created next (Day 3)
 	import FormActions from './FormActions.svelte';
 	import { dev } from '$app/environment';
 

@@ -28,6 +28,50 @@ export function createFormConfig<T extends Record<string, unknown>>(): FormConfi
 			return this;
 		},
 
+		multilingualInput<K extends keyof T>(
+			fieldName: K,
+			options: Omit<FieldOverride, 'type' | 'multilingualConfig'> & {
+				requiredLocales?: string[];
+				defaultLocale?: string;
+				showAddLocale?: boolean;
+				copyBetweenLocales?: boolean;
+				enableCopyPaste?: boolean;
+				enableSuggestions?: boolean;
+				autoSave?: boolean;
+				autoSaveDelay?: number;
+			} = {}
+		) {
+			return this.field(fieldName, {
+				...options,
+				type: 'multilingual_input',
+				multilingualConfig: {
+					required: options.requiredLocales
+				}
+			});
+		},
+
+		multilingualTextarea<K extends keyof T>(
+			fieldName: K,
+			options: Omit<FieldOverride, 'type' | 'multilingualConfig'> & {
+				requiredLocales?: string[];
+				defaultLocale?: string;
+				showAddLocale?: boolean;
+				copyBetweenLocales?: boolean;
+				autoResize?: boolean;
+				autoSave?: boolean;
+				autoSaveDelay?: number;
+				rows?: number;
+			} = {}
+		) {
+			return this.field(fieldName, {
+				...options,
+				type: 'multilingual_textarea',
+				multilingualConfig: {
+					required: options.requiredLocales
+				}
+			});
+		},
+
 		cardProps(props: SmartFormConfig['cardProps']) {
 			config.cardProps = props;
 			return this;

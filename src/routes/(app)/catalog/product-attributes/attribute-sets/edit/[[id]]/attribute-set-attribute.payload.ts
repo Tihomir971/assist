@@ -1,7 +1,7 @@
 import {
 	mAttributesetAttributeInsertSchema,
 	mAttributesetAttributeUpdateSchema
-} from '@tihomir971/assist-shared';
+} from '$lib/types/supabase.schemas';
 import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder4';
 
 export const attributeSetAttributePayloadBuilder = new SmartPayloadBuilder(

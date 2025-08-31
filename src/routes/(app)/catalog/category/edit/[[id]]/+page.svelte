@@ -1,32 +1,41 @@
 <script lang="ts">
 	import SmartSplitLayout from '$lib/components/forms/SmartSplitLayout.svelte';
-	import SmartForm from '$lib/components/forms/SmartForm4.svelte';
+	import SmartForm from '$lib/components/forms/SmartForm.svelte';
 	import SmartRelatedTabs from '$lib/components/forms/SmartRelatedTabs.svelte';
 	import { createFormConfig } from '$lib/utils/form-config.builder';
 	import { splitLayoutConfig, createTabConfigs } from './related-configs';
-	import { mProductCategoryInsertSchema } from '@tihomir971/assist-shared';
-	import * as z from 'zod/v4';
+	import { mProductCategoryInsertSchema } from '$lib/types/supabase.schemas';
+	import type { MProductCategoryInsert } from '$lib/types/supabase.zod';
 
 	let { data } = $props();
 
-	type CategoryFormData = z.infer<typeof mProductCategoryInsertSchema>;
+	type CategoryFormData = MProductCategoryInsert;
 
-	// Main form configuration
 	const formConfig = createFormConfig<CategoryFormData>()
 		.title('Category Details')
-		.field('name', { label: 'Name', span: 6 })
+		.multilingualInput('names', {
+			label: 'Name',
+			span: 12,
+			requiredLocales: ['en-US'],
+			defaultLocale: 'en-US'
+		})
+		.multilingualTextarea('descriptions', {
+			label: 'Description',
+			span: 12,
+			rows: 4,
+			showAddLocale: true,
+			copyBetweenLocales: true
+		})
 		.field('parent_id', {
 			label: 'Parent Category',
 			span: 6,
 			searchable: true,
 			options: data.categories
 		})
-		.field('description', { label: 'Description', type: 'textarea', span: 12 })
 		.field('is_active', { label: 'Active', type: 'boolean', span: 6 })
 		.field('is_self_service', { label: 'Self Service', type: 'boolean', span: 6 })
 		.build();
 
-	// Create reactive tab configurations that update when data changes
 	const tabConfigs = $derived(createTabConfigs(data));
 </script>
 

@@ -1,10 +1,6 @@
-export { default as AvatarZag } from './avatar/avatar.svelte';
 export { default as CheckboxZag } from './checkbox/checkbox.svelte';
 export { default as ComboboxZag } from './combobox/combobox.svelte';
-export { default as FileUpload } from './file-upload/file-upload.svelte';
 export { default as NumberInputZag } from './number-input/input-number.svelte';
-export { default as SelectSimpleZag } from './select/select-simple.svelte';
 export { default as SelectZag } from './select/select.svelte';
-export { default as SwitchZag } from './switch/switch.svelte';
 export { default as TreeViewZag } from './tree-view/tree-view.svelte';
 export * from './context-menu/index.js';

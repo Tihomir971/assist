@@ -2,14 +2,12 @@
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	// Utils
 	import { getCartContext } from './ctx.svelte';
-	import type { Database } from '@tihomir971/assist-shared';
+	import type { Database } from '$lib/types/supabase';
 	import type { CartItem } from './types';
 	// Components
 	import { Button } from '$lib/components/ui/button/index.js';
 	import ExportDialog from './components/export/ExportDialog.svelte';
 	// Icons
-	import PhMicrosoftExcelLogo from '~icons/ph/microsoft-excel-logo';
-	import PhTrash from '~icons/ph/trash';
 	import PhPlus from '~icons/ph/plus';
 	import PhMinus from '~icons/ph/minus';
 	import * as Table from '$lib/components/ui/table/index.js';

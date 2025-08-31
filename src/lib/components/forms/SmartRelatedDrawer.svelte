@@ -7,7 +7,7 @@
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 
 	// Smart Form Integration
-	import SmartForm from './SmartForm4.svelte';
+	import SmartForm from './SmartForm.svelte';
 
 	interface SmartRelatedDrawerProps<T extends Record<string, any>, S extends ZodObject<any>> {
 		isOpen: boolean;

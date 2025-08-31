@@ -1,6 +1,6 @@
 // src/lib/types.ts
 import type { User } from '@supabase/supabase-js';
-import type { AdUserRow } from '@tihomir971/assist-shared';
+import type { AdUserRow } from '$lib/types/supabase.zod';
 
 // Define allowed user metadata keys
 export interface UserMetadata {

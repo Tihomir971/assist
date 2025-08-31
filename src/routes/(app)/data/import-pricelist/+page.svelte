@@ -14,11 +14,12 @@
 	import { handleFileUpload, loadSheetData } from './utils/xlsx-handlers';
 	import { processExcelData } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
-	import { ComboboxZag, FileUpload, NumberInputZag, SelectZag } from '$lib/components/zag/index.js';
-	import type { FileChangeDetails } from '@zag-js/file-upload';
+	import { ComboboxZag, NumberInputZag, SelectZag } from '$lib/components/zag/index.js';
 	import { retrieveAndParseXml, type Product as XmlProductType } from '$lib/xml-parser-esm';
 	import { NumberFormatter } from '$lib/scripts/intl';
 	import PhPlus from '~icons/ph/plus';
+	import { UploadBasicDocument } from '$lib/components/ark';
+	import type { FileUpload } from '@ark-ui/svelte/file-upload';
 
 	let { data } = $props();
 	let { supabase } = $derived(data);
@@ -106,7 +107,7 @@
 			localStorage.setItem('supplierMappings', JSON.stringify(parsedMappings));
 		}
 	}
-	async function handleFileSelect(details: FileChangeDetails) {
+	async function handleFileChange(details: FileUpload.FileChangeDetails) {
 		selectedFile = details.acceptedFiles.length > 0 ? details.acceptedFiles[0] : null;
 		if (!selectedFile) {
 			resetAll(); // Or handle no file selected case
@@ -372,13 +373,13 @@
 			/>
 
 			{#if selectedDataSource === 'excel'}
+				<UploadBasicDocument
+					fileType="excel"
+					onFileChange={handleFileChange}
+					disabled={selectedSupplier == null}
+					label="Select file"
+				/>
 				<div class="flex flex-col gap-2">
-					<FileUpload
-						accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-						onFileChange={handleFileSelect}
-						label="Upload Excel File"
-						disabled={selectedSupplier == null}
-					/>
 					{#if sheetNames.length > 1}
 						<SelectZag
 							bind:value={selectedSheet}

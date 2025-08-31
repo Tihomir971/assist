@@ -5,7 +5,7 @@
 	import type { AttributeLookup } from '$lib/services/supabase/attribute.service';
 	import type { BrandLookup } from '$lib/services/supabase/brand.service';
 	import type { SupabaseClient } from '@supabase/supabase-js';
-	import type { Database } from '@tihomir971/assist-shared';
+	import type { Database } from '$lib/types/supabase';
 
 	import * as Card from '$lib/components/ui/card';
 	import AttributesConditionBuilder from '../condition-types/AttributesConditionBuilder.svelte';

@@ -1,5 +1,5 @@
 import { DataTableConfigBuilder, columnTypes } from '$lib/utils/data-table-config.builder';
-import type { Tables } from '@tihomir971/assist-shared';
+import type { Tables } from '$lib/types/supabase';
 import type { ColumnDef } from '@tanstack/svelte-table';
 import DataTableActions from '$lib/components/ui/data-table-actions.svelte';
 import { renderComponent } from '$lib/components/walker-tx/render-component';

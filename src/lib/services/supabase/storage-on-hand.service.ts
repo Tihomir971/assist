@@ -1,4 +1,4 @@
-import type { Database, Tables } from '@tihomir971/assist-shared';
+import type { Database, Tables } from '$lib/types/supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 export type StorageOnHand = Tables<'m_storageonhand'>;

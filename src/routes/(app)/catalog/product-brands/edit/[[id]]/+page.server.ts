@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { mProductBrandsInsertSchema } from '@tihomir971/assist-shared';
+import { mProductBrandsInsertSchema } from '$lib/types/supabase.schemas';
 import { BrandService } from '$lib/services/supabase/brand.service';
 import { createSimpleCRUD } from '$lib/utils/simple-crud.factory4';
 import { brandPayloadBuilder } from './brand.payload';

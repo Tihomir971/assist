@@ -1,4 +1,4 @@
-import type { Database, Tables } from '@tihomir971/assist-shared';
+import type { Database, Tables } from '$lib/types/supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service';
 
@@ -44,7 +44,8 @@ export class AttributeGroupService
 			.single();
 
 		if (error) throw new Error(`Failed to update AttributeGroup: ${error.message}`);
-		if (!updatedAttributeGroup) throw new Error('Failed to update AttributeGroup: No data returned');
+		if (!updatedAttributeGroup)
+			throw new Error('Failed to update AttributeGroup: No data returned');
 		return updatedAttributeGroup;
 	}
 

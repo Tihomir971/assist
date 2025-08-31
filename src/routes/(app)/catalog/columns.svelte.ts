@@ -10,7 +10,7 @@ import type {
 	MProductpriceUpdate,
 	MReplenishUpdate,
 	MStorageonhandUpdate
-} from '@tihomir971/assist-shared';
+} from '$lib/types/supabase.zod';
 import { NumberFormatter } from '$lib/scripts/intl';
 
 export interface Warehouse {

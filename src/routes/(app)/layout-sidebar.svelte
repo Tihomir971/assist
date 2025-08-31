@@ -1,19 +1,7 @@
 <script lang="ts" module>
-	import PhLayout from '~icons/ph/layout';
 	import PhTag from '~icons/ph/tag';
 	import PhMicrosoftExcelLogo from '~icons/ph/microsoft-excel-logo';
-	import PhSquaresFour from '~icons/ph/squares-four';
 	import PhFlask from '~icons/ph/flask';
-	import SquareTerminalIcon from '@lucide/svelte/icons/square-terminal';
-	import BotIcon from '@lucide/svelte/icons/bot';
-	import BookOpenIcon from '@lucide/svelte/icons/book-open';
-	import Settings2Icon from '@lucide/svelte/icons/settings-2';
-	import LifeBuoyIcon from '@lucide/svelte/icons/life-buoy';
-	import SendIcon from '@lucide/svelte/icons/send';
-	import FrameIcon from '@lucide/svelte/icons/frame';
-	import PieChartIcon from '@lucide/svelte/icons/pie-chart';
-	import MapIcon from '@lucide/svelte/icons/map';
-	import CommandIcon from '@lucide/svelte/icons/command';
 
 	const data = {
 		navMain: [
@@ -87,7 +75,7 @@
 	import { cn } from '$lib/utils';
 	import { page } from '$app/state';
 	import type { SupabaseClient } from '@supabase/supabase-js';
-	import type { Database } from '@tihomir971/assist-shared';
+	import type { Database } from '$lib/types/supabase';
 	import LayoutSidebarNavSimple from './layout-sidebar-nav-simple.svelte';
 
 	let {

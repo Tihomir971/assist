@@ -1,9 +1,9 @@
 <script lang="ts">
 	import SmartSplitLayout from '$lib/components/forms/SmartSplitLayout.svelte';
-	import SmartForm from '$lib/components/forms/SmartForm4.svelte';
+	import SmartForm from '$lib/components/forms/SmartForm.svelte';
 	import { createFormConfig } from '$lib/utils/form-config.builder';
 	import { splitLayoutConfig } from './related-configs';
-	import { cBpartnerInsertSchema } from '@tihomir971/assist-shared';
+	import { cBpartnerInsertSchema } from '$lib/types/supabase.schemas';
 
 	let { data } = $props();
 

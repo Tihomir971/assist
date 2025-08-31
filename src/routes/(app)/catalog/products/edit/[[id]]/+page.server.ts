@@ -29,8 +29,9 @@ import {
 	mProductAttributeOptionInsertSchema,
 	mProductAttributeValueInsertSchema,
 	cChannelMapProductInsertSchema // Added cChannelMapProductInsertSchema
-} from '@tihomir971/assist-shared';
-import type { ApiResponseT, CChannelMapProductRow } from '@tihomir971/assist-shared';
+} from '$lib/types/supabase.schemas';
+import type { ApiResponseT } from '@tihomir971/assist-shared';
+import type { CChannelMapProductRow } from '$lib/types/supabase.zod';
 import { productPayloadBuilder } from './product.payload';
 import { productPackingPayloadBuilder } from './product-packing.payload';
 import { productPoPayloadBuilder } from './product-po.payload';

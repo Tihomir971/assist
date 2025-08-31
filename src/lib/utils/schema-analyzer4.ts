@@ -1,4 +1,5 @@
 import { type ZodRawShape, type ZodType } from 'zod/v4';
+import type { MultilingualFieldConfig } from '$lib/types/form-config.types';
 
 // Type definitions for Zod internal structures
 interface ZodDef {
@@ -19,7 +20,17 @@ interface ZodSchema {
 // Define FieldConfig and FormConfig directly in this file
 export interface FieldConfig {
 	name: string;
-	type: 'text' | 'number' | 'boolean' | 'select' | 'combobox' | 'textarea' | 'date' | 'datetime';
+	type:
+		| 'text'
+		| 'number'
+		| 'boolean'
+		| 'select'
+		| 'combobox'
+		| 'textarea'
+		| 'date'
+		| 'datetime'
+		| 'multilingual_input'
+		| 'multilingual_textarea';
 	label: string;
 	required: boolean;
 	placeholder?: string;
@@ -35,6 +46,7 @@ export interface FieldConfig {
 		custom?: string[];
 	};
 	componentProps?: Record<string, unknown>;
+	multilingualConfig?: MultilingualFieldConfig;
 }
 
 export interface FormConfig {

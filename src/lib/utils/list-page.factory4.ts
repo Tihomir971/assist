@@ -3,7 +3,7 @@ import { superValidate } from 'sveltekit-superforms/server';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { deleteByIdSchema } from '$lib/types/zod-delete-by-id4';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '@tihomir971/assist-shared';
+import type { Database } from '$lib/types/supabase';
 import { QueryBuilder, type FilterOperator } from '$lib/services/supabase/query.builder';
 import type { DataTableConfig, SelectFilterOption } from './data-table-config.builder';
 import { extractStructuredSupabaseError } from '$lib/server/utils/supabase-error.utils';

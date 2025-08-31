@@ -1,4 +1,4 @@
-import { mReplenishInsertSchema, mReplenishUpdateSchema } from '@tihomir971/assist-shared';
+import { mReplenishInsertSchema, mReplenishUpdateSchema } from '$lib/types/supabase.schemas';
 import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder4';
 
 export const replenishPayloadBuilder = new SmartPayloadBuilder(

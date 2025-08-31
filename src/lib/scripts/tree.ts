@@ -1,4 +1,4 @@
-import type { MProductCategoryRow } from '@tihomir971/assist-shared';
+import type { MProductCategoryRow } from '$lib/types/supabase.zod';
 
 export function findChildren(categories: MProductCategoryRow[], id: number): number[] {
 	const result: number[] = [];

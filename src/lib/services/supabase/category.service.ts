@@ -1,9 +1,11 @@
-import type { Database, Tables } from '@tihomir971/assist-shared';
+import type { Database, Tables } from '$lib/types/supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service'; // Removed ServiceResult as it's not directly used here
 import { TreeCollection } from '@zag-js/collection';
 
 export type Category = Tables<'m_product_category'>; // Exported
+// type CategoryWithLocalized = Category & { localized_name: string };
+
 export type CategoryCreate = Omit<Category, 'id' | 'created_at' | 'updated_at'>; // Exported
 export type CategoryUpdate = Partial<CategoryCreate>; // Exported
 export type CategoryLookup = { value: number; label: string }; // Exported for lookup
@@ -14,11 +16,12 @@ export class CategoryService implements CRUDService<Category, CategoryCreate, Ca
 	async getById(id: number): Promise<Category | null> {
 		const { data, error } = await this.supabase
 			.from('m_product_category')
-			.select('*')
+			.select(`*`)
 			.eq('id', id)
 			.maybeSingle();
 
 		if (error) throw new Error(`Failed to fetch category: ${error.message}`);
+		console.log('Fetched category by ID:', data);
 		return data;
 	}
 
@@ -106,7 +109,7 @@ export class CategoryService implements CRUDService<Category, CategoryCreate, Ca
 	async getCategoryTree(): Promise<Output[]> {
 		const { data, error } = await this.supabase
 			.from('m_product_category')
-			.select('value:id, label:name, parent_id')
+			.select('value:id, label:names->>"en-US", parent_id')
 			.order('name');
 
 		if (error) throw new Error(`Failed to load category lookup: ${error.message}`);

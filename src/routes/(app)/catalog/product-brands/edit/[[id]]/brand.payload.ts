@@ -1,4 +1,7 @@
-import { mProductBrandsInsertSchema, mProductBrandsUpdateSchema } from '@tihomir971/assist-shared';
+import {
+	mProductBrandsInsertSchema,
+	mProductBrandsUpdateSchema
+} from '$lib/types/supabase.schemas';
 import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder4';
 
 export const brandPayloadBuilder = new SmartPayloadBuilder(

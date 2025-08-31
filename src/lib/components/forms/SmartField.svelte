@@ -12,6 +12,8 @@
 	import SmartTextarea from './fields/SmartTextarea.svelte';
 	import SmartDatePicker from './fields/SmartDatePicker.svelte';
 	import SmartDatetime from './fields/SmartDatetime.svelte';
+	import MultilingualInput from './fields/multilingual/MultilingualInput.svelte';
+	import MultilingualTextarea from './fields/multilingual/MultilingualTextarea.svelte';
 	import type { ZodObject, z } from 'zod/v4'; // Import z for z.infer
 
 	interface SmartFieldProps<S extends ZodObject<any>> {
@@ -63,6 +65,22 @@
 						<SmartDatetime {field} bind:value {...props} />
 					{:else if field.type === 'number'}
 						<SmartNumberInput {field} bind:value {...props} />
+					{:else if field.type === 'multilingual_input'}
+						<MultilingualInput
+							bind:value
+							{superform}
+							config={field.multilingualConfig || {}}
+							placeholder={field.placeholder}
+							{...props}
+						/>
+					{:else if field.type === 'multilingual_textarea'}
+						<MultilingualTextarea
+							bind:value
+							{superform}
+							config={field.multilingualConfig || {}}
+							placeholder={field.placeholder}
+							{...props}
+						/>
 					{:else}
 						<SmartInput {field} bind:value {...props} />
 					{/if}

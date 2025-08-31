@@ -1,30 +1,28 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '@tihomir971/assist-shared';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { error } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import {
-	cChannelMapCategoryInsertSchema,
-	mProductCategoryInsertSchema
-} from '@tihomir971/assist-shared';
-// deleteByIdSchema is imported by the factory itself.
 import { CategoryService } from '$lib/services/supabase/category.service';
 import { ChannelMappingCategoryService } from '$lib/services/supabase/channel-mapping-category.service';
 import { ChannelService } from '$lib/services/supabase/channel.service';
+import { LocaleService } from '$lib/services/supabase/locale.service';
 import { createSimpleCRUD } from '$lib/utils/simple-crud.factory4';
 import { categoryPayloadBuilder } from './category.payload';
-import { channelMappingPayloadBuilder } from './channel-mapping.payload'; // Updated import
-// All builders for this route are now co-located.
-// The import from '$lib/utils/payload-configs.simplified' will be empty for these if no other builders remain.
-import type { CChannelMapCategoryRow, MProductCategoryRow } from '@tihomir971/assist-shared';
+import { channelMappingPayloadBuilder } from './channel-mapping.payload';
+import {
+	cChannelMapCategoryInsertSchema,
+	mProductCategoryInsertSchema
+} from '$lib/types/supabase.schemas';
+import type { Database } from '$lib/types/supabase';
+import type { CChannelMapCategoryRow, MProductCategoryRow } from '$lib/types/supabase.zod';
 
-// Load function remains the same (already optimized)
 export const load: PageServerLoad = async ({ params, locals: { supabase }, depends }) => {
 	depends('app:category-page');
 
 	const categoryService = new CategoryService(supabase);
 	const channelService = new ChannelService(supabase);
+	const localeService = new LocaleService(supabase);
 
 	let categoryId: number | null = null;
 
@@ -36,31 +34,35 @@ export const load: PageServerLoad = async ({ params, locals: { supabase }, depen
 	}
 
 	try {
-		const [categoryWithRelated, lookupCategories, lookupChannels] = await Promise.all([
-			categoryId ? categoryService.getCategoryWithRelatedData(categoryId) : Promise.resolve(null),
-			categoryService.getLookup(),
-			channelService.getChannelLookup()
-		]);
+		const [categoryWithRelated, lookupCategories, lookupChannels, availableLocales] =
+			await Promise.all([
+				categoryId ? categoryService.getCategoryWithRelatedData(categoryId) : Promise.resolve(null),
+				categoryService.getLookup(),
+				channelService.getChannelLookup(),
+				localeService.getLocales()
+			]);
 
 		if (categoryId && !categoryWithRelated?.category) {
 			throw error(404, 'Category not found');
 		}
 
 		return {
-			// Form validation objects
 			formCategory: await superValidate(
 				categoryWithRelated?.category,
 				zod4(mProductCategoryInsertSchema)
 			),
 			formChannel: await superValidate(null, zod4(cChannelMapCategoryInsertSchema)),
-
-			// Data
 			category: categoryWithRelated?.category || null,
 			channelMapCategory: categoryWithRelated?.channelMappings || [],
-
-			// Lookup data
 			categories: lookupCategories,
-			c_channels: lookupChannels
+			c_channels: lookupChannels,
+			availableLocales,
+			multilingualConfig: {
+				defaultLocale: 'en-US',
+				requiredLocales: ['en-US'],
+				enableAdvancedActions: true,
+				enableImportExport: true
+			}
 		};
 	} catch (err: unknown) {
 		console.error('Error loading category data:', err);
@@ -74,7 +76,6 @@ export const load: PageServerLoad = async ({ params, locals: { supabase }, depen
 	}
 };
 
-// Action factories using the new createSimpleCRUD and imported builders
 const categoryActions = createSimpleCRUD<MProductCategoryRow, typeof mProductCategoryInsertSchema>(
 	'Category',
 	(supabase: SupabaseClient<Database>) => new CategoryService(supabase),

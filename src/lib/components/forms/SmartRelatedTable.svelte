@@ -9,7 +9,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
-	import { CheckboxZag } from '$lib/components/zag';
+	// import { CheckboxZag } from '$lib/components/zag';
 
 	// Icons
 	import PhDotsThreeBold from '~icons/ph/dots-three-bold';
@@ -18,8 +18,9 @@
 	import PhDownload from '~icons/ph/download';
 
 	// Related Drawer
-	import SmartRelatedDrawer from './SmartRelatedDrawer4.svelte';
+	import SmartRelatedDrawer from './SmartRelatedDrawer.svelte';
 	import UrlCell from './cells/UrlCell.svelte';
+	import { CheckboxArk } from '../ark/checkbox';
 
 	interface SmartRelatedTableProps<T extends Record<string, any>, S extends ZodObject<any>> {
 		config: RelatedTableConfig<T, S>;
@@ -334,7 +335,7 @@
 						{#each tableConfig.columns as column}
 							<Table.Cell class={column.key === tableConfig.columns[0]?.key ? 'font-medium' : ''}>
 								{#if column.type === 'boolean'}
-									<CheckboxZag checked={row[column.key]} disabled />
+									<CheckboxArk checked={row[column.key]} disabled />
 								{:else if column.type === 'url'}
 									<UrlCell value={row[column.key]} />
 								{:else if column.component}

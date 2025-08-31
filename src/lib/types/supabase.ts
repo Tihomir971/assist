@@ -1083,6 +1083,58 @@ export type Database = {
           },
         ]
       }
+      l_locales: {
+        Row: {
+          code: string
+          created_at: string
+          id: number
+          is_active: boolean
+          is_default: boolean
+          l_country_id: string | null
+          language_code: string
+          name: string
+          native_name: string | null
+          script_code: string | null
+          short_code: string | null
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: number
+          is_active?: boolean
+          is_default?: boolean
+          l_country_id?: string | null
+          language_code: string
+          name: string
+          native_name?: string | null
+          script_code?: string | null
+          short_code?: string | null
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: number
+          is_active?: boolean
+          is_default?: boolean
+          l_country_id?: string | null
+          language_code?: string
+          name?: string
+          native_name?: string | null
+          script_code?: string | null
+          short_code?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "l_locales_l_country_id_fkey"
+            columns: ["l_country_id"]
+            referencedRelation: "l_countries"
+            referencedColumns: ["iso2"]
+          },
+        ]
+      }
       l_location: {
         Row: {
           created_at: string
@@ -1922,30 +1974,36 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
+          descriptions: Json | null
           id: number
           is_active: boolean
           is_self_service: boolean
           name: string
+          names: Json
           parent_id: number | null
           updated_at: string
         }
         Insert: {
           created_at?: string
           description?: string | null
+          descriptions?: Json | null
           id?: number
           is_active?: boolean
           is_self_service?: boolean
           name: string
+          names?: Json
           parent_id?: number | null
           updated_at?: string
         }
         Update: {
           created_at?: string
           description?: string | null
+          descriptions?: Json | null
           id?: number
           is_active?: boolean
           is_self_service?: boolean
           name?: string
+          names?: Json
           parent_id?: number | null
           updated_at?: string
         }

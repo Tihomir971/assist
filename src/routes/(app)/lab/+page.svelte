@@ -1,34 +1,13 @@
 <script lang="ts">
+	import { CheckboxArk } from '$lib/components/ark/checkbox';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 
-	import { Chart } from 'svelte-echarts';
-	import { init, use } from 'echarts/core';
-	import { BarChart } from 'echarts/charts';
-	import { GridComponent, TitleComponent } from 'echarts/components';
-	import { CanvasRenderer } from 'echarts/renderers';
-	import type { EChartsOption } from 'echarts';
-	import { CheckboxArk } from '$lib/components/ark';
+	// import { CheckboxArk } from '$lib/components/ark';
 
 	// now with tree-shaking
-	use([BarChart, GridComponent, CanvasRenderer, TitleComponent]);
 
-	let options: EChartsOption = {
-		xAxis: {
-			type: 'category',
-			data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-		},
-		yAxis: {
-			type: 'value'
-		},
-		series: [
-			{
-				data: [120, 200, 150, 80, 70, 110, 130],
-				type: 'bar'
-			}
-		]
-	};
 	let checked: 'indeterminate' | boolean = $state('indeterminate');
 	$inspect('checked', checked);
 </script>

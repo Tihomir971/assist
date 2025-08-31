@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { mProductInsertSchema } from '@tihomir971/assist-shared';
+	import { mProductInsertSchema } from '$lib/types/supabase.schemas';
 	import { createTabConfigs, splitLayoutConfig } from './related-configs';
 	import SmartSplitLayout from '$lib/components/forms/SmartSplitLayout.svelte';
 	import SmartRelatedTabs from '$lib/components/forms/SmartRelatedTabs.svelte';
-	import SmartForm from '$lib/components/forms/SmartForm4.svelte';
+	import SmartForm from '$lib/components/forms/SmartForm.svelte';
 	import { createFormConfig } from '$lib/utils/form-config.builder';
 	// import path from 'path'; // REMOVED
 	import { page } from '$app/state';

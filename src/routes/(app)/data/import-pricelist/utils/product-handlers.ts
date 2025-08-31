@@ -2,7 +2,8 @@ import type { Product, ProductToUpdate } from '../types';
 import { normalizeVendorProductNo, modifyPrice } from './data-processors';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { isValidGTIN } from '$lib/scripts/gtin';
-import type { Database, MProductPoInsert } from '@tihomir971/assist-shared';
+import type { MProductPoInsert } from '$lib/types/supabase.zod';
+import type { Database } from '$lib/types/supabase';
 
 export async function importProducts(
 	supabase: SupabaseClient<Database>,

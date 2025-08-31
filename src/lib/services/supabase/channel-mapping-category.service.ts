@@ -1,6 +1,6 @@
-import type { Database, Tables } from '@tihomir971/assist-shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service';
+import type { Database, Tables } from '$lib/types/supabase';
 
 export type ChannelMappingCategory = Tables<'c_channel_map_category'>;
 export type ChannelMappingCategoryCreate = Omit<

@@ -1,8 +1,8 @@
-import { mAttributesetAttributeInsertSchema } from '@tihomir971/assist-shared';
+import { mAttributesetAttributeInsertSchema } from '$lib/types/supabase.schemas';
 import { columnTypes, createRelatedTableConfig } from '$lib/utils/related-table-config.builder4';
 import { createFormConfig } from '$lib/utils/form-config.builder';
 import { createSplitLayoutConfig, createTabConfig } from '$lib/utils/split-layout-config.builder';
-import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable4.svelte';
+import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable.svelte';
 import type { SuperValidated } from 'sveltekit-superforms';
 import type { Component } from 'svelte';
 import { invalidate } from '$app/navigation';

@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '@tihomir971/assist-shared';
+import type { Database } from '$lib/types/supabase';
 import type { ExportData, SalesActionData } from './types';
 import { utils, writeFile } from 'xlsx';
 import { PricingRulesService } from '$lib/services/supabase/pricing-rules.service';
@@ -116,12 +116,12 @@ function flattenProduct(product: FetchedProduct, vendorIds: number[], vat: boole
 
 export async function processExport(
 	cartItems: { id: number; name: string; quantity: number; sku: string | null }[],
-	vendors: { id: number; name: string; selected: boolean }[],
+	vendors: { value: number; label: string; selected: boolean }[],
 	selectReportValue: string | undefined,
 	supabase: SupabaseClient<Database>
 ) {
 	try {
-		const selectedVendorIds = vendors.filter((v) => v.selected).map((v) => v.id);
+		const selectedVendorIds = vendors.filter((v) => v.selected).map((v) => v.value);
 		const productIds = cartItems.map((item) => item.id);
 		const pricingRulesService = new PricingRulesService(supabase);
 
@@ -157,7 +157,7 @@ export async function processExport(
 
 				// Add vendor columns
 				selectedVendorIds.forEach((vendorId) => {
-					const vendorName = vendors.find((v) => v.id === vendorId)?.name || 'Unknown';
+					const vendorName = vendors.find((v) => v.value === vendorId)?.label || 'Unknown';
 					salesActionData[`${vendorName}Price`] = product.vendorPrices[vendorId] || null;
 					salesActionData[`${vendorName}PN`] = product.vendorProductNos[vendorId] || '';
 				});
@@ -247,7 +247,7 @@ export async function processExport(
 				};
 
 				selectedVendorIds.forEach((vendorId) => {
-					const vendorName = vendors.find((v) => v.id === vendorId)?.name || 'Unknown';
+					const vendorName = vendors.find((v) => v.value === vendorId)?.label || 'Unknown';
 					data[`${vendorName}Price`] = product.vendorPrices[vendorId] || null;
 					data[`${vendorName}PN`] = product.vendorProductNos[vendorId] || '';
 				});

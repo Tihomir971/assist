@@ -1,4 +1,4 @@
-import type { Tables } from '@tihomir971/assist-shared';
+import type { Database, Tables } from '$lib/types/supabase';
 import type { PageServerLoad } from './$types';
 
 type PLVerison = Tables<'m_pricelist_version'>;

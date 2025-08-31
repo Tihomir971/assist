@@ -1,11 +1,8 @@
 import {
 	cChannelMapCategoryInsertSchema,
 	cChannelMapCategoryUpdateSchema
-} from '@tihomir971/assist-shared';
-import type {
-	CChannelMapCategoryInsert,
-	CChannelMapCategoryUpdate
-} from '@tihomir971/assist-shared';
+} from '$lib/types/supabase.schemas';
+import type { CChannelMapCategoryInsert, CChannelMapCategoryUpdate } from '$lib/types/supabase.zod';
 import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder4';
 
 export const channelMappingPayloadBuilder = new SmartPayloadBuilder<

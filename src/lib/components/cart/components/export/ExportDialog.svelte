@@ -3,11 +3,11 @@
 	import { processExport } from '../../export-utils';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import type { Database } from '@tihomir971/assist-shared';
+	import type { Database } from '$lib/types/supabase';
 	import { getCartContext } from '../../ctx.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { CheckboxZag } from '$lib/components/zag/index.js';
-	import { CheckboxArk } from '$lib/components/ark/index.js';
+	import { CheckboxGroupArk } from '$lib/components/ark/checkbox';
+	// import { CheckboxArk } from '$lib/components/ark/index.js';
 
 	interface Props {
 		supabase: SupabaseClient<Database>;
@@ -27,12 +27,19 @@
 		selectReportOptions.find((f) => f.value === selectReportValue)?.label ?? 'Select report type'
 	);
 
-	let vendors = $state([
+	/* 	let vendors = $state([
 		{ id: 480, name: 'Agrofina', selected: false },
 		{ id: 4, name: 'Idea', selected: false },
 		{ id: 89, name: 'Mivex', selected: false },
 		{ id: 2, name: 'Cenoteka', selected: false },
 		{ id: 714, name: 'Harizma', selected: false }
+	]); */
+	let vendors = $state([
+		{ value: 480, label: 'Agrofina', selected: false },
+		{ value: 4, label: 'Idea', selected: false },
+		{ value: 89, label: 'Mivex', selected: false },
+		{ value: 2, label: 'Cenoteka', selected: false },
+		{ value: 714, label: 'Harizma', selected: false }
 	]);
 
 	async function handleExport() {
@@ -67,11 +74,17 @@
 		</Select.Root>
 		<div class="flex max-h-[40vh] flex-col space-y-4">
 			<div class="flex flex-col space-y-2 overflow-y-auto">
-				{#each vendors as vendor (vendor.id)}
-					<label class="flex items-center space-x-2">
-						<CheckboxArk bind:checked={vendor.selected} label={vendor.name} />
-					</label>
+				<CheckboxGroupArk bind:items={vendors} />
+				<!-- 	{#each vendors as vendor (vendor.id)}
+					<CheckboxArk
+						checked={vendor.selected}
+						onCheckedChange={(e) => {
+							vendor.selected = e.checked as boolean;
+						}}
+						label={vendor.name}
+					/>
 				{/each}
+				{JSON.stringify(vendors)} -->
 			</div>
 		</div>
 		<Dialog.Footer>

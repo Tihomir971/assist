@@ -3,19 +3,15 @@ import type { BSProduct } from '$lib/types/connectors/biznisoft.js';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { FlattenedProduct, ProductWithDetails } from './columns.svelte.js';
 import type {
-	Database,
-	Enums,
 	MProductPoInsert,
 	MProductPoRow,
 	MProductpriceInsert,
 	MProductpriceRow,
 	MProductRow,
 	MStorageonhandInsert,
-	MStorageonhandRow,
-	Tables,
-	TablesInsert,
-	TablesUpdate
-} from '@tihomir971/assist-shared';
+	MStorageonhandRow
+} from '$lib/types/supabase.zod';
+import type { Database, Enums, Tables, TablesInsert, TablesUpdate } from '$lib/types/supabase';
 import type { ProductsResultSearch } from './types-search-vendor-products';
 import type { ApiResponse } from '$lib/types/api.types';
 import type { ProductRequest } from './types-api-market';
@@ -29,7 +25,7 @@ import { productSelectSchema } from './schema';
 import { sourceId } from './types';
 import { catalogSearchParamsSchema } from './search-params.schema';
 import { ProductStatus, type ProductResultGet } from './types-get-market-info';
-import type { MPricelistVersionRow } from '@tihomir971/assist-shared';
+import type { MPricelistVersionRow } from '$lib/types/supabase.zod';
 import { CategoryService } from '$lib/services/supabase/category.service';
 
 // Add this export near the top or where types are defined

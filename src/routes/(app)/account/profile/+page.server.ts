@@ -3,7 +3,7 @@ import { superValidate, message } from 'sveltekit-superforms/server';
 import * as z from 'zod/v4';
 import type { PageServerLoad, Actions } from './$types';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { adUserUpdateSchema } from '@tihomir971/assist-shared';
+import { adUserUpdateSchema } from '$lib/types/supabase.schemas';
 
 // Define the session user type
 type SessionUser = {

@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database, Tables } from '@tihomir971/assist-shared';
+import type { Database, Tables } from '$lib/types/supabase';
 
 import { docTemplateInsertSchema, docTemplateUpdateSchema } from '$lib/types/supabase.zod.schemas';
 import type { z } from 'zod/v4';
