@@ -99,7 +99,7 @@ export class CategoryService implements CRUDService<Category, CategoryCreate, Ca
 	async getLookup(): Promise<CategoryLookup[]> {
 		const { data, error } = await this.supabase
 			.from('m_product_category')
-			.select('value:id, label:name')
+			.select('value:id, label:names->>"en-US"')
 			.order('name');
 
 		if (error) throw new Error(`Failed to load category lookup: ${error.message}`);
@@ -110,7 +110,7 @@ export class CategoryService implements CRUDService<Category, CategoryCreate, Ca
 		const { data, error } = await this.supabase
 			.from('m_product_category')
 			.select('value:id, label:names->>"en-US", parent_id')
-			.order('name');
+			.order('names');
 
 		if (error) throw new Error(`Failed to load category lookup: ${error.message}`);
 
