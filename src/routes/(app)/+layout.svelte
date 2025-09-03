@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import Aside from './Aside.svelte';
 	import LayoutHeader from './layout-header.svelte';
 	import LayoutSidebar from './layout-sidebar.svelte';
 	import { setCartContext } from '$lib/components/cart/ctx.svelte';
@@ -61,7 +60,6 @@
 		<!-- <Header supabase={data.supabase} profile={data.profile}></Header> -->
 		<!-- <div class="flex flex-1"> -->
 		<div class="flex flex-1 overflow-hidden">
-			<!-- <Aside></Aside> -->
 			<LayoutSidebar profile={data.profile} supabase={data.supabase} />
 			{@render children()}
 		</div>
