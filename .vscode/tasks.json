@@ -9,7 +9,7 @@
 			"command": "git push origin dev:main",
 			"group": {
 				"kind": "build",
-				"isDefault": false
+				"isDefault": true
 			},
 			"problemMatcher": []
 		}
