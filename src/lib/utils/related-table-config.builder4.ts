@@ -5,7 +5,7 @@ import type {
 	RelatedTableConfigBuilder,
 	ColumnDefinition,
 	BulkOperation
-} from '$lib/types/related-table-config.types4';
+} from '$lib/types/related-table-config.types';
 
 export function createRelatedTableConfig<
 	T extends Record<string, unknown>,

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PricingConditions, AttributeCondition } from '$lib/types/pricing-rules.types';
 	import type { PartnerLookup } from '$lib/services/supabase/partner.service';
-	import type { Output } from '$lib/services/supabase/category.service';
+	import type { TreeStructure } from '$lib/services/supabase/category.service';
 	import type { AttributeLookup } from '$lib/services/supabase/attribute.service';
 	import type { BrandLookup } from '$lib/services/supabase/brand.service';
 	import type { SupabaseClient } from '@supabase/supabase-js';
@@ -20,7 +20,7 @@
 		conditions: PricingConditions | undefined; // Can be undefined initially
 		lookupData: {
 			partners: PartnerLookup[];
-			categories: Output[];
+			categories: TreeStructure[];
 			attributes: AttributeLookup[];
 			brands: BrandLookup[];
 		};
@@ -39,7 +39,7 @@
 	let currentConditions = $derived(conditions || {});
 
 	// Helper function to find category by ID for display
-	function findCategoryById(categories: Output[], id: number): Output | null {
+	function findCategoryById(categories: TreeStructure[], id: number): TreeStructure | null {
 		for (const category of categories) {
 			if (category.value === id) return category;
 			if (category.children) {
@@ -53,7 +53,7 @@
 	const selectedCategories = $derived(
 		(currentConditions.category_ids || [])
 			.map((id) => findCategoryById(lookupData.categories, id))
-			.filter((cat): cat is Output => cat !== null)
+			.filter((cat): cat is TreeStructure => cat !== null)
 	);
 
 	function removeCategory(categoryId: number) {

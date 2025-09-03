@@ -11,12 +11,6 @@ export const contextSchemaRoleSchema = z.object({
 export const contextSchemaStructureSchema = z.object({
 	roles: z.array(contextSchemaRoleSchema).min(1, 'At least one role is required')
 });
-
-// Generate JSON Schema for client-side validation
-export const contextSchemaJSONSchema = z.toJSONSchema(contextSchemaStructureSchema);
-
-// Export types for TypeScript usage
-export type ContextSchemaRole = z.infer<typeof contextSchemaRoleSchema>;
 export type ContextSchemaStructure = z.infer<typeof contextSchemaStructureSchema>;
 
 // Native Supabase JS query format - much simpler and more intuitive
@@ -53,7 +47,6 @@ export const nativeContextSchemaStructureSchema = z.object({
 });
 
 // Export native types
-export type NativeSupabaseQuery = z.infer<typeof nativeSupabaseQuerySchema>;
 export type NativeContextSchemaRole = z.infer<typeof nativeContextSchemaRoleSchema>;
 export type NativeContextSchemaStructure = z.infer<typeof nativeContextSchemaStructureSchema>;
 

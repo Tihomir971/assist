@@ -1,7 +1,49 @@
 import type { Database, Tables } from '$lib/types/supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { CRUDService } from '../base/crud.service'; // Removed ServiceResult as it's not directly used here
+import type { CRUDService } from '../base/crud.service';
 import { TreeCollection } from '@zag-js/collection';
+import { getCurrentUserLocale, getDefaultLocale } from '$lib/utils/locale.utils';
+
+export async function getRPCLookup(
+	supabase: SupabaseClient<Database>,
+	tableName: string,
+	labelColumn: string,
+	preferredLocale: string,
+	fallbackLocale: string = 'en-US',
+	options: {
+		searchTerm?: string;
+		filterActive?: boolean;
+		extraColumn?: string;
+	} = {}
+): Promise<(CategoryLookup & { [key: string]: string | number | null })[] | null> {
+	const { searchTerm, filterActive = true, extraColumn } = options;
+
+	const { data, error } = await supabase.rpc('get_localized_lookup', {
+		table_name: tableName,
+		label_column_name: labelColumn,
+		preferred_locale: preferredLocale,
+		fallback_locale: fallbackLocale,
+		search_term: searchTerm,
+		filter_active: filterActive,
+		extra_column_name: extraColumn // Pass the column name to the RPC
+	});
+
+	if (error) {
+		console.error(`Error fetching options for table "${tableName}":`, error);
+		return null;
+	}
+
+	// If an extra column was requested, we need to rename 'extra_data' to the dynamic key.
+	if (extraColumn && data) {
+		return data.map(({ value, label, extra_data }) => ({
+			value,
+			label,
+			[extraColumn]: extra_data
+		}));
+	}
+
+	return data;
+}
 
 export type Category = Tables<'m_product_category'>; // Exported
 // type CategoryWithLocalized = Category & { localized_name: string };
@@ -10,7 +52,17 @@ export type CategoryCreate = Omit<Category, 'id' | 'created_at' | 'updated_at'>;
 export type CategoryUpdate = Partial<CategoryCreate>; // Exported
 export type CategoryLookup = { value: number; label: string }; // Exported for lookup
 
-export class CategoryService implements CRUDService<Category, CategoryCreate, CategoryUpdate> {
+/**
+ * Interface for services that support localized tree structures
+ */
+export interface LocalizedTreeService {
+	getLookup(): Promise<Array<{ value: number; label: string }>>;
+	getCategoryTree(): Promise<Array<{ value: number; label: string; parent_id?: number }>>;
+}
+
+export class CategoryService
+	implements CRUDService<Category, CategoryCreate, CategoryUpdate>, LocalizedTreeService
+{
 	constructor(private supabase: SupabaseClient<Database>) {}
 
 	async getById(id: number): Promise<Category | null> {
@@ -21,7 +73,6 @@ export class CategoryService implements CRUDService<Category, CategoryCreate, Ca
 			.maybeSingle();
 
 		if (error) throw new Error(`Failed to fetch category: ${error.message}`);
-		console.log('Fetched category by ID:', data);
 		return data;
 	}
 
@@ -97,36 +148,67 @@ export class CategoryService implements CRUDService<Category, CategoryCreate, Ca
 	}
 
 	async getLookup(): Promise<CategoryLookup[]> {
-		const { data, error } = await this.supabase
-			.from('m_product_category')
-			.select('value:id, label:names->>"en-US"')
-			.order('name');
+		// Automatically detect user's preferred locale and get dynamic default locale
+		const [preferredLocale, fallbackLocale] = await Promise.all([
+			getCurrentUserLocale(this.supabase),
+			getDefaultLocale(this.supabase)
+		]);
+		console.log('Preferred Locale:', preferredLocale, 'Fallback Locale:', fallbackLocale);
 
-		if (error) throw new Error(`Failed to load category lookup: ${error.message}`);
+		// Using inline COALESCE for better performance and type safety
+
+		const data = await getRPCLookup(
+			this.supabase,
+			'm_product_category',
+			'names',
+			preferredLocale,
+			fallbackLocale
+		);
+		console.log('Lookup Data:', JSON.stringify(data, null, 2));
 		return data || [];
 	}
 
-	async getCategoryTree(): Promise<Output[]> {
-		const { data, error } = await this.supabase
-			.from('m_product_category')
-			.select('value:id, label:names->>"en-US", parent_id')
-			.order('names');
+	async getCategoryTree(): Promise<TreeStructure[]> {
+		// Automatically detect user's preferred locale and get dynamic default locale
+		const [preferredLocale, fallbackLocale] = await Promise.all([
+			getCurrentUserLocale(this.supabase),
+			getDefaultLocale(this.supabase)
+		]);
 
-		if (error) throw new Error(`Failed to load category lookup: ${error.message}`);
+		const data = await getRPCLookup(
+			this.supabase,
+			'm_product_category',
+			'names',
+			preferredLocale,
+			fallbackLocale,
+			{ extraColumn: 'parent_id' }
+		);
 
 		const items = data || [];
-		if (!items) return [];
-		const itemMap = new Map<number, Output>();
+		if (!items.length) return [];
+
+		const itemMap = new Map<number, TreeStructure>();
+		const orphanedNodes: TreeStructure[] = [];
+
+		// Transform data with client-side localization (optimized)
+		const transformedItems = items.map((item) => ({
+			value: item.value,
+			label: item.label,
+			parent_id: item.parent_id ? Number(item.parent_id) : null
+		}));
 
 		// Initialize the map with items, preparing the basic structure
-		items.forEach((item) => {
+		transformedItems.forEach((item) => {
 			// Create Output object, ensuring children array is initialized
 			itemMap.set(item.value, { value: item.value, label: item.label, children: [] });
 		});
 
-		const result: Output[] = [];
-		items.forEach((item) => {
+		const result: TreeStructure[] = [];
+
+		// Build tree structure and collect orphaned nodes
+		transformedItems.forEach((item) => {
 			const currentItem = itemMap.get(item.value)!; // Non-null assertion is safe due to initialization loop
+
 			if (item.parent_id === null) {
 				// Root item
 				result.push(currentItem);
@@ -134,32 +216,46 @@ export class CategoryService implements CRUDService<Category, CategoryCreate, Ca
 				const parent = itemMap.get(item.parent_id);
 				if (parent) {
 					// Parent found, add current item to parent's children
-					// Children array is guaranteed to exist from initialization
 					parent.children!.push(currentItem);
+				} else {
+					// Parent not found - this is an orphaned node
+					// Add it to orphaned nodes collection for potential recovery
+					console.warn(
+						`Category ${item.value} (${item.label}) has missing parent_id: ${item.parent_id}`
+					);
+					orphanedNodes.push(currentItem);
 				}
 			}
 		});
+
+		// Add orphaned nodes to root level to prevent data loss
+		// This ensures all nodes are visible even if their parent relationships are broken
+		if (orphanedNodes.length > 0) {
+			console.warn(
+				`Found ${orphanedNodes.length} orphaned category nodes, adding them to root level`
+			);
+			result.push(...orphanedNodes);
+		}
 
 		// Clean up: remove empty children arrays
 		itemMap.forEach((item) => {
 			if (item.children && item.children.length === 0) {
 				delete item.children;
 			}
-			// No need to delete parent_id as it was never added to the Output type
 		});
 
 		return result;
 	}
 
-	async getCategoryTreeCollection(): Promise<TreeCollection<Output>> {
+	async getCategoryTreeCollection(): Promise<TreeCollection<TreeStructure>> {
 		const treeData = await this.getCategoryTree();
 
-		return new TreeCollection<Output>({
+		return new TreeCollection<TreeStructure>({
 			rootNode: {
 				value: 0,
 				label: 'Root',
 				children: treeData
-			} as Output,
+			} as TreeStructure,
 			nodeToValue: (node) => node.value.toString(),
 			nodeToString: (node) => node.label,
 			nodeToChildren: (node) => node.children || []
@@ -167,13 +263,8 @@ export class CategoryService implements CRUDService<Category, CategoryCreate, Ca
 	}
 }
 
-export interface TableTreeItem {
+export interface TreeStructure {
 	value: number;
 	label: string;
-	parent_id: number | null;
-}
-export interface Output {
-	value: number;
-	label: string;
-	children?: Output[];
+	children?: TreeStructure[];
 }

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { ZodObject, z } from 'zod/v4';
-	import type { RelatedTableConfig } from '$lib/types/related-table-config.types4';
+	import type { RelatedTableConfig } from '$lib/types/related-table-config.types';
 
 	// UI Components
 	import * as Sheet from '$lib/components/ui/sheet/index.js';

@@ -3,6 +3,7 @@ import type { BSProduct } from '$lib/types/connectors/biznisoft.js';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { FlattenedProduct, ProductWithDetails } from './columns.svelte.js';
 import type {
+	MPricelistVersionRow,
 	MProductPoInsert,
 	MProductPoRow,
 	MProductpriceInsert,
@@ -25,7 +26,6 @@ import { productSelectSchema } from './schema';
 import { sourceId } from './types';
 import { catalogSearchParamsSchema } from './search-params.schema';
 import { ProductStatus, type ProductResultGet } from './types-get-market-info';
-import type { MPricelistVersionRow } from '$lib/types/supabase.zod';
 import { CategoryService } from '$lib/services/supabase/category.service';
 
 // Add this export near the top or where types are defined

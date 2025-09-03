@@ -6,7 +6,7 @@ import type { Database } from '$lib/types/supabase';
 import { QueryBuilder, type FilterOperator } from '$lib/services/supabase/query.builder';
 import type { DataTableConfig, SelectFilterOption } from './data-table-config.builder';
 import { extractStructuredSupabaseError } from '$lib/server/utils/supabase-error.utils';
-import { deleteByIdSchema } from '$lib/types/zod-delete-by-id4';
+import { deleteByIdSchema } from '$lib/types/zod-delete-by-id';
 
 type ServiceWithDelete = {
 	delete(id: number): Promise<void>;

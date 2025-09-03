@@ -69,6 +69,7 @@ export const adUserRowSchema = z.object({
 	is_admin: z.boolean(),
 	last_name: z.string().nullable(),
 	phone: z.string().nullable(),
+	preferences: jsonSchema.nullable(),
 	role: z.string(),
 	supervisor_id: z.number().nullable(),
 	updated_at: z.string()
@@ -86,6 +87,7 @@ export const adUserInsertSchema = z.object({
 	is_admin: z.boolean().optional(),
 	last_name: z.string().optional().nullable(),
 	phone: z.string().optional().nullable(),
+	preferences: jsonSchema.optional().nullable(),
 	role: z.string().optional(),
 	supervisor_id: z.number().optional().nullable(),
 	updated_at: z.string().optional()
@@ -103,6 +105,7 @@ export const adUserUpdateSchema = z.object({
 	is_admin: z.boolean().optional(),
 	last_name: z.string().optional().nullable(),
 	phone: z.string().optional().nullable(),
+	preferences: jsonSchema.optional().nullable(),
 	role: z.string().optional(),
 	supervisor_id: z.number().optional().nullable(),
 	updated_at: z.string().optional()
@@ -2031,7 +2034,7 @@ export const mProductBrandsUpdateSchema = z.object({
 export const mProductCategoryRowSchema = z.object({
 	created_at: z.string(),
 	description: z.string().nullable(),
-	descriptions: jsonSchema.nullable(),
+	descriptions: jsonSchema,
 	id: z.number(),
 	is_active: z.boolean(),
 	is_self_service: z.boolean(),
@@ -2044,7 +2047,7 @@ export const mProductCategoryRowSchema = z.object({
 export const mProductCategoryInsertSchema = z.object({
 	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
-	descriptions: jsonSchema.optional().nullable(),
+	descriptions: jsonSchema.optional(),
 	id: z.number().optional(),
 	is_active: z.boolean().optional(),
 	is_self_service: z.boolean().optional(),
@@ -2057,7 +2060,7 @@ export const mProductCategoryInsertSchema = z.object({
 export const mProductCategoryUpdateSchema = z.object({
 	created_at: z.string().optional(),
 	description: z.string().optional().nullable(),
-	descriptions: jsonSchema.optional().nullable(),
+	descriptions: jsonSchema.optional(),
 	id: z.number().optional(),
 	is_active: z.boolean().optional(),
 	is_self_service: z.boolean().optional(),

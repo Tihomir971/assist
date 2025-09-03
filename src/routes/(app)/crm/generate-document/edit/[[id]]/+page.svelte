@@ -4,7 +4,7 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Label } from '$lib/components/ui/label';
 	import SmartCombobox from '$lib/components/forms/fields/SmartCombobox.svelte';
-	import type { PageData, ActionData } from './$types';
+	import type { PageData } from './$types';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { docGeneratedDocumentInsertSchema } from '$lib/types/supabase.zod.schemas';
@@ -13,8 +13,7 @@
 	import jsPDF from 'jspdf';
 	import html2canvas from 'html2canvas';
 	import type { DocTemplateLookupWithSchema } from '$lib/services/supabase/doc-template.service';
-	import type { ContextSchemaStructure } from '$lib/types/supabase.zod.schemas';
-	import { deleteByIdSchema } from '$lib/types/zod-delete-by-id4';
+	import { deleteByIdSchema } from '$lib/types/zod-delete-by-id';
 
 	let { data } = $props<{ data: PageData }>();
 

@@ -1,7 +1,7 @@
 import { error, fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { deleteByIdSchema } from '$lib/types/zod-delete-by-id4';
+import { deleteByIdSchema } from '$lib/types/zod-delete-by-id';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/supabase';
 import { QueryBuilder, type FilterOperator } from '$lib/services/supabase/query.builder';

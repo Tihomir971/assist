@@ -70,6 +70,7 @@ export type Database = {
           is_admin: boolean
           last_name: string | null
           phone: string | null
+          preferences: Json | null
           role: string
           supervisor_id: number | null
           updated_at: string
@@ -86,6 +87,7 @@ export type Database = {
           is_admin?: boolean
           last_name?: string | null
           phone?: string | null
+          preferences?: Json | null
           role?: string
           supervisor_id?: number | null
           updated_at?: string
@@ -102,6 +104,7 @@ export type Database = {
           is_admin?: boolean
           last_name?: string | null
           phone?: string | null
+          preferences?: Json | null
           role?: string
           supervisor_id?: number | null
           updated_at?: string
@@ -1974,7 +1977,7 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
-          descriptions: Json | null
+          descriptions: Json
           id: number
           is_active: boolean
           is_self_service: boolean
@@ -1986,7 +1989,7 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
-          descriptions?: Json | null
+          descriptions?: Json
           id?: number
           is_active?: boolean
           is_self_service?: boolean
@@ -1998,7 +2001,7 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
-          descriptions?: Json | null
+          descriptions?: Json
           id?: number
           is_active?: boolean
           is_self_service?: boolean
@@ -2591,6 +2594,23 @@ export type Database = {
           formula: Json
           priority: number
           target_group: string
+        }[]
+      }
+      get_localized_lookup: {
+        Args: {
+          table_name: string
+          label_column_name: string
+          preferred_locale: string
+          fallback_locale: string
+          search_term?: string
+          filter_active?: boolean
+          extra_column_name?: string
+          undefined_field_text?: string
+        }
+        Returns: {
+          value: number
+          label: string
+          extra_data: string
         }[]
       }
       get_price_formula_variables: {

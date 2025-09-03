@@ -30,11 +30,6 @@ export class LocaleService {
 		return this.transformLocales(this.localeCache);
 	}
 
-	async getDefaultLocale(): Promise<Locale | null> {
-		const locales = this.localeCache ?? (await this.getActiveLocales());
-		return locales.find((locale) => locale.is_default) || null;
-	}
-
 	private transformLocales(locales: Locale[]): LocaleLookup[] {
 		return locales.map((locale) => ({
 			value: locale.code,
@@ -42,23 +37,6 @@ export class LocaleService {
 			label: locale.name,
 			isDefault: locale.is_default
 		}));
-	}
-
-	public async getActiveLocales(): Promise<Locale[]> {
-		if (this.isCacheValid()) {
-			return this.localeCache!;
-		}
-		const { data, error } = await this.supabase
-			.from('l_locales')
-			.select('*')
-			.eq('is_active', true)
-			.order('is_default', { ascending: false })
-			.order('name');
-
-		if (error) throw new Error(`Failed to fetch locales: ${error.message}`);
-		this.localeCache = data || [];
-		this.cacheTimestamp = Date.now();
-		return this.localeCache;
 	}
 
 	private isCacheValid(): boolean {
