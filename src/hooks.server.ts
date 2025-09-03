@@ -1,5 +1,4 @@
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
-// import type { Database } from '$lib/types/supabase';
 import { createServerClient } from '@supabase/ssr';
 import { type Handle, redirect } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
@@ -59,18 +58,23 @@ const authGuard: Handle = async ({ event, resolve }) => {
 
 	const userAgent = event.request.headers.get('user-agent') || '';
 
-	// Check if the request is for an API route
-	if (event.url.pathname.startsWith('/api')) {
-		// Allow access only for authenticated users
-		if (event.locals.session) {
-			return resolve(event);
-		} else {
-			// Redirect unauthenticated users to the auth page
-			return redirect(303, '/auth');
-		}
-	}
+	// From: https://github.com/j4w8n/sveltekit-supabase-ssr/blob/main/src/hooks.server.ts
+	const auth_protected_paths = new Set(['(app)', 'api']);
+	if (!session && auth_protected_paths.has(event.route.id?.split('/')[1] || ''))
+		redirect(307, '/auth');
 
-	if (event.locals.session) {
+	// Check if the request is for an API route
+	//	if (event.url.pathname.startsWith('/api')) {
+	// Allow access only for authenticated users
+	//		if (event.locals.session) {
+	//	return resolve(event);
+	//		} else {
+	// Redirect unauthenticated users to the auth page
+	//			return redirect(303, '/auth');
+	//		}
+	//	}
+
+	if (session) {
 		if (isMobile(userAgent) && !event.url.pathname.startsWith('/mobile')) {
 			return redirect(303, '/mobile');
 		}
