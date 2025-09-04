@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { NumberInputArk } from '$lib/components/ark';
-	import type { PageData } from './$types';
+	import Async from '$lib/components/ark/combobox/async.svelte';
 	import { Field } from '@ark-ui/svelte/field';
 
 	// export let data: PageData;
@@ -28,4 +28,6 @@
 		name="Tihomir"
 		bind:value={variable}
 	/>
+
+	<Async />
 </div>

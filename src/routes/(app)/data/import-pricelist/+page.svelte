@@ -271,8 +271,8 @@
 			totalRows = transformedProducts.length;
 			processedRows = transformedProducts.length; // Processing is done by transformation
 			selectedSheet = 'Spektar XML Data'; // For display consistency
-			headers = productProperties; // Use existing productProperties for table headers
-			showModal = false; // Ensure mapping modal is hidden
+			headers = productProperties;
+			showModal = false;
 
 			// console.log('Transformed Spektar products:', excelData);
 		} catch (error) {
