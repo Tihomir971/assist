@@ -5,7 +5,7 @@ import { mAttributeOptionInsertSchema } from '$lib/types/supabase.schemas';
 import { mAttributeFormSchema } from './schema';
 import { AttributeService } from '$lib/services/supabase/attribute.service';
 import { AttributeOptionService } from '$lib/services/supabase/attribute-option.service';
-import { createSimpleCRUD } from '$lib/utils/simple-crud.factory4';
+import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
 import { attributePayloadBuilder } from './attribute.payload';
 import { attributeOptionPayloadBuilder } from './attribute-option.payload';
 import { AttributeGroupService } from '$lib/services/supabase/attribute-group.service';

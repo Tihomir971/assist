@@ -1,6 +1,6 @@
 import { mPricelistInsertSchema, mPricelistUpdateSchema } from '$lib/types/supabase.schemas';
 import type { MPricelistInsert, MPricelistUpdate } from '$lib/types/supabase.zod';
-import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder4';
+import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
 
 // Pricelist Configuration
 export const pricelistPayloadBuilder = new SmartPayloadBuilder<MPricelistInsert, MPricelistUpdate>(

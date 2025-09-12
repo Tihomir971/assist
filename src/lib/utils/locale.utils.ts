@@ -11,6 +11,10 @@ const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
  * Get current user's preferred locale from database
  * This is the key function that services use to automatically detect locale
  */
+// Cache for user locale to avoid repeated database queries
+const userLocaleCache: { [userId: string]: { locale: string; timestamp: number } } = {};
+const USER_LOCALE_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
 export async function getCurrentUserLocale(supabase: SupabaseClient<Database>): Promise<string> {
 	try {
 		// Get current user from Supabase auth
@@ -18,16 +22,34 @@ export async function getCurrentUserLocale(supabase: SupabaseClient<Database>): 
 			data: { user }
 		} = await supabase.auth.getUser();
 
-		// Get default locale from l_locales table
-		const defaultLocale = await getDefaultLocale(supabase);
+		if (!user) {
+			// Get default locale from l_locales table
+			return await getDefaultLocale(supabase);
+		}
 
-		if (!user) return defaultLocale;
+		// Check cache first
+		const now = Date.now();
+		const cached = userLocaleCache[user.id];
+		if (cached && now - cached.timestamp < USER_LOCALE_CACHE_DURATION) {
+			return cached.locale;
+		}
 
-		// Get user preferences
-		const preferencesService = new UserPreferencesService(supabase);
+		// Get default locale and user preferences in parallel
+		const [defaultLocale, preferencesService] = await Promise.all([
+			getDefaultLocale(supabase),
+			Promise.resolve(new UserPreferencesService(supabase))
+		]);
+
 		const preferences = await preferencesService.getUserPreferences(user.id);
+		const userLocale = preferences?.preferred_data_locale || defaultLocale;
 
-		return preferences?.preferred_data_locale || defaultLocale;
+		// Cache the result
+		userLocaleCache[user.id] = {
+			locale: userLocale,
+			timestamp: now
+		};
+
+		return userLocale;
 	} catch (error) {
 		console.warn('Failed to get user locale, using fallback:', error);
 		// If everything fails, return a hardcoded fallback
@@ -45,7 +67,7 @@ export async function getDefaultLocale(supabase: SupabaseClient<Database>): Prom
 	if (defaultLocaleCache && now - defaultLocaleCacheTime < CACHE_DURATION) {
 		return defaultLocaleCache;
 	}
-
+	// Fetching default locale from database (cached for 5 minutes)
 	try {
 		const { data, error } = await supabase
 			.from('l_locales')

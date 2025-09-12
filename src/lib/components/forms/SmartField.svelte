@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { SuperForm } from 'sveltekit-superforms';
-	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer4'; // Renamed to avoid conflict
+	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer'; // Renamed to avoid conflict
 	import * as Form from '$lib/components/ui/form'; // Using shadcn-svelte form components
 
 	// Import individual smart field components (will be created next)
@@ -14,7 +14,7 @@
 	import SmartDatetime from './fields/SmartDatetime.svelte';
 	import MultilingualInput from './fields/multilingual/MultilingualInput.svelte';
 	import MultilingualTextarea from './fields/multilingual/MultilingualTextarea.svelte';
-	import type { ZodObject, z } from 'zod/v4'; // Import z for z.infer
+	import type { ZodObject, z } from 'zod'; // Import z for z.infer
 
 	interface SmartFieldProps<S extends ZodObject<any>> {
 		field: AnalyzedFieldConfig;

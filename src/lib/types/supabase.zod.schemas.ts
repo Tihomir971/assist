@@ -1,4 +1,4 @@
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 // Define the structure for context schema roles
 export const contextSchemaRoleSchema = z.object({

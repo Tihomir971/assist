@@ -1,7 +1,7 @@
 import { connector } from '$lib/ky';
 import type { PageServerLoad } from './$types';
 import type { EChartsData } from '$lib/components/charts/chart-types';
-import * as z from 'zod/v4';
+import { z } from 'zod';
 import type { ApiResponseT } from '@tihomir971/assist-shared';
 
 const searchParamsSchema = z.object({

@@ -1,4 +1,4 @@
-import { z, type ZodType } from 'zod/v4';
+import { z, type ZodType } from 'zod';
 
 /**
  * Real-time validation engine with debouncing and caching
@@ -58,7 +58,7 @@ export class RealTimeValidator<T extends Record<string, unknown>> {
 
 	constructor(config: RealTimeValidatorConfig<T>) {
 		this.config = {
-			debounceMs: 300,
+			debounceMs: 150,
 			enableCaching: true,
 			cacheTtlMs: 5 * 60 * 1000, // 5 minutes
 			...config

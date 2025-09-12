@@ -57,7 +57,7 @@ z.string().min(5, {
 The issue formats have been dramatically streamlined.
 
 ```typescript
-import * as z from "zod"; // v4
+import { z } from "zod"; // v4
  
 type IssueFormats = 
   | z.core.$ZodIssueInvalidType
@@ -76,7 +76,7 @@ type IssueFormats =
 Below is the list of Zod 3 issues types and their Zod 4 equivalent:
 
 ```typescript
-import * as z from "zod"; // v3
+import { z } from "zod"; // v3
  
 export type IssueFormats =
   | z.ZodInvalidTypeIssue // ♻️ renamed to z.core.$ZodIssueInvalidType
@@ -578,20 +578,20 @@ The need for `z.ZodTypeAny` has been eliminated; just use `z.ZodType` instead.
 
 ### adds `z.core`
 
-Many utility functions and types have been moved to the new `zod/v4/core` sub-package, to facilitate code sharing between Zod and Zod Mini.
+Many utility functions and types have been moved to the new `zod/core` sub-package, to facilitate code sharing between Zod and Zod Mini.
 
 ```typescript
-import * as z from "zod/v4/core";
+import { z } from "zod/core";
  
 function handleError(iss: z.$ZodError) {
   // do stuff
 }
 ```
 
-For convenience, the contents of `zod/v4/core` are also re-exported from `zod` and `zod/mini` under the `z.core` namespace.
+For convenience, the contents of `zod/core` are also re-exported from `zod` and `zod/mini` under the `z.core` namespace.
 
 ```typescript
-import * as z from "zod";
+import { z } from "zod";
  
 function handleError(iss: z.core.$ZodError) {
   // do stuff
@@ -613,7 +613,7 @@ Previously both refinements and transformations lived inside a wrapper class cal
 This is particularly apparent in the Zod Mini API, which heavily relies on the `.check()` method to compose various validations together.
 
 ```typescript
-import * as z from "zod/mini";
+import { z } from "zod/mini";
  
 z.string().check(
   z.minLength(10),
@@ -628,7 +628,7 @@ z.string().check(
 Meanwhile, transforms have been moved into a dedicated `ZodTransform` class. This schema class represents an input transform; in fact, you can actually define standalone transformations now:
 
 ```typescript
-import * as z from "zod";
+import { z } from "zod";
  
 const schema = z.transform(input => String(input));
  

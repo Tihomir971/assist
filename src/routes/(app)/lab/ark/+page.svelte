@@ -1,33 +1,174 @@
 <script lang="ts">
 	import { NumberInputArk } from '$lib/components/ark';
-	import Async from '$lib/components/ark/combobox/async.svelte';
+	import { ComboboxAsync } from '$lib/components/ark/combobox';
+	import { searchUsers } from '$lib/components/ark/combobox/async.remote';
+	import { searchCategories } from '$lib/remote/category.remote';
 	import { Field } from '@ark-ui/svelte/field';
+	// Define types for better type safety
+	interface User {
+		id: number;
+		name: string;
+		email: string;
+		avatar: string;
+	}
 
+	interface Fruit {
+		id: number;
+		name: string;
+		color: string;
+		category: string;
+	}
 	// export let data: PageData;
 	let variable = $state(1325.53);
-	$inspect(variable, 'variable');
+	let selectedUser = $state<User | null>(null);
+	let { data } = $props();
+
+	const searchUsersWrapper = async (query: string) => {
+		// const result = await searchUsers(query);
+		const result = await searchCategories(query);
+		console.log('Search Result:', result);
+		return result;
+	};
+
+	const searchFruits = async (query: string): Promise<Fruit[]> => {
+		const fruits: Fruit[] = [
+			{ id: 1, name: 'Apple', color: 'Red', category: 'Tree Fruit' },
+			{ id: 2, name: 'Banana', color: 'Yellow', category: 'Tropical' },
+			{ id: 3, name: 'Orange', color: 'Orange', category: 'Citrus' },
+			{ id: 4, name: 'Grape', color: 'Purple', category: 'Vine Fruit' },
+			{ id: 5, name: 'Strawberry', color: 'Red', category: 'Berry' },
+			{ id: 6, name: 'Blueberry', color: 'Blue', category: 'Berry' },
+			{ id: 7, name: 'Pineapple', color: 'Yellow', category: 'Tropical' },
+			{ id: 8, name: 'Mango', color: 'Orange', category: 'Tropical' }
+		];
+
+		// Simulate API delay
+		await new Promise((resolve) => setTimeout(resolve, 300));
+
+		return fruits.filter(
+			(fruit) =>
+				fruit.name.toLowerCase().includes(query.toLowerCase()) ||
+				fruit.category.toLowerCase().includes(query.toLowerCase())
+		);
+	};
 </script>
 
-<div class="p-16">
-	<Field.Root readOnly required>
-		<Field.Label>Field Label<Field.RequiredIndicator>*</Field.RequiredIndicator></Field.Label>
-		<NumberInputArk
-			name="Tihomir"
-			bind:value={variable}
-			formatOptions={{ maximumFractionDigits: 2 }}
+<div class="space-y-8 p-16">
+	<h1 class="text-2xl font-bold">Ark UI ComboboxAsync Examples</h1>
+
+	<!-- Basic User Search -->
+	<div class="space-y-2">
+		<h2 class="text-lg font-semibold">User Search (Basic)</h2>
+		<ComboboxAsync
+			label="Search Users"
+			placeholder="Type a name or email..."
+			search={searchUsersWrapper}
+			itemToValue={(user) => user.value.toString()}
+			itemToString={(user) => user.label}
+			minChars={1}
+			debounceMs={200}
 		/>
-		<Field.HelperText>Additional Info</Field.HelperText>
-		<Field.ErrorText>Error Info</Field.ErrorText>
-	</Field.Root>
+	</div>
 
-	<hr class="my-4" />
+	<!-- User Search with Custom Content -->
+	<div class="space-y-2">
+		<h2 class="text-lg font-semibold">User Search (Custom Content)</h2>
+		<ComboboxAsync
+			label="Search Users with Details"
+			placeholder="Type a name or email..."
+			search={searchUsersWrapper}
+			itemToValue={(user) => user.value.toString()}
+			itemToString={(user) => user.label}
+		>
+			{#snippet itemContent({ item })}
+				<div class="flex w-full items-center justify-between">
+					<div class="flex items-center space-x-3">
+						<div
+							class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-sm font-medium text-white"
+						>
+							<!-- {item.avatar} -->
+						</div>
+						<div>
+							<!-- <div class="font-medium text-gray-900 dark:text-gray-100">{item.name}</div> -->
+							<!-- <div class="text-sm text-gray-500 dark:text-gray-400">{item.email}</div> -->
+						</div>
+					</div>
+				</div>
+			{/snippet}
+		</ComboboxAsync>
+	</div>
 
-	<NumberInputArk
-		formatOptions={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
-		defaultValue="1.00"
-		name="Tihomir"
-		bind:value={variable}
-	/>
+	<!-- Fruit Search Example -->
+	<div class="space-y-2">
+		<h2 class="text-lg font-semibold">Fruit Search (Custom Data)</h2>
+		<ComboboxAsync
+			label="Search Fruits"
+			placeholder="Type a fruit name or category..."
+			search={searchFruits}
+			itemToValue={(fruit: Fruit) => fruit.id.toString()}
+			itemToString={(fruit: Fruit) => fruit.name}
+			minChars={2}
+		>
+			{#snippet itemContent({ item })}
+				<div class="flex w-full items-center justify-between">
+					<div class="flex items-center space-x-3">
+						<div
+							class="h-4 w-4 rounded-full"
+							style="background-color: {item.color.toLowerCase()}"
+						></div>
+						<div>
+							<div class="font-medium text-gray-900 dark:text-gray-100">{item.name}</div>
+							<div class="text-sm text-gray-500 dark:text-gray-400">{item.category}</div>
+						</div>
+					</div>
+				</div>
+			{/snippet}
+		</ComboboxAsync>
+	</div>
 
-	<Async />
+	<!-- Configuration Examples -->
+	<div class="space-y-2">
+		<h2 class="text-lg font-semibold">Configuration Examples</h2>
+
+		<!-- Fast search with no minimum characters -->
+		<div class="space-y-1">
+			<h3 class="text-md font-medium">Fast Search (No minimum chars)</h3>
+			<Field.Root required>
+				<Field.Label>Country</Field.Label>
+				<ComboboxAsync
+					label="Instant Search"
+					placeholder="Search immediately..."
+					search={searchUsersWrapper}
+					itemToValue={(user) => user.value.toString()}
+					itemToString={(user) => user.label}
+					minChars={0}
+					debounceMs={100}
+				/>
+				<Field.HelperText>Additional Info</Field.HelperText>
+				<Field.ErrorText>Error Info</Field.ErrorText>
+			</Field.Root>
+		</div>
+
+		<!-- Slow search with higher minimum -->
+		<div class="space-y-1">
+			<h3 class="text-md font-medium">Slow Search (3+ chars required)</h3>
+			<ComboboxAsync
+				label="Detailed Search"
+				placeholder="Type at least 3 characters..."
+				search={searchUsersWrapper}
+				itemToValue={(x) => x.value.toString()}
+				itemToString={(x) => x.label}
+				minChars={3}
+				debounceMs={500}
+			/>
+		</div>
+	</div>
+
+	<!-- Debug Info -->
+	{#if selectedUser}
+		<div class="mt-8 rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
+			<h3 class="mb-2 font-semibold">Selected User:</h3>
+			<pre class="text-sm">{JSON.stringify(selectedUser, null, 2)}</pre>
+		</div>
+	{/if}
 </div>

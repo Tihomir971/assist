@@ -1,10 +1,10 @@
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { fail, redirect, type RequestEvent } from '@sveltejs/kit';
-import type { SmartPayloadBuilder } from './smart-payload.builder4';
+import type { SmartPayloadBuilder } from './smart-payload.builder';
 import type { CRUDService } from '$lib/services/base/crud.service';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { z, type ZodRawShape } from 'zod/v4';
+import { z, type ZodRawShape } from 'zod';
 import { extractStructuredSupabaseError } from '$lib/server/utils/supabase-error.utils';
 import { deleteByIdSchema } from '$lib/types/zod-delete-by-id';
 import type { Database } from '$lib/types/supabase';

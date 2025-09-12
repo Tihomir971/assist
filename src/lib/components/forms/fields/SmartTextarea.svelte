@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer4';
+	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer';
 	import { Textarea } from '$lib/components/ui/textarea';
 
 	interface SmartTextareaProps {
@@ -24,8 +24,8 @@
 	// Auto-resize when value changes
 	$effect(() => {
 		if (value !== undefined) {
-			// Use setTimeout to ensure DOM is updated
-			setTimeout(autoResize, 0);
+			// Use queueMicrotask for better performance than setTimeout
+			queueMicrotask(autoResize);
 		}
 	});
 
@@ -49,8 +49,8 @@
 
 	// Handle paste events for auto-resize
 	function handlePaste() {
-		// Use setTimeout to allow paste content to be processed
-		setTimeout(autoResize, 0);
+		// Use queueMicrotask to allow paste content to be processed
+		queueMicrotask(autoResize);
 	}
 </script>
 

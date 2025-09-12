@@ -1,4 +1,4 @@
-import type { ZodObject } from 'zod/v4';
+import type { ZodObject } from 'zod';
 import type { $ZodShape, $ZodObjectConfig } from 'zod/v4/core';
 import type {
 	RelatedTableConfig,

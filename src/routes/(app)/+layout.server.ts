@@ -1,6 +1,5 @@
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
-import { CategoryService } from '$lib/services/supabase/category.service';
 import { LocaleService } from '$lib/services/supabase/locale.service';
 import { UserPreferencesService } from '$lib/services/supabase/user-preferences.service';
 
@@ -10,7 +9,7 @@ import { UserPreferencesService } from '$lib/services/supabase/user-preferences.
  * send a server request, and thus trigger `hooks.server.ts`.
  **/
 export const load: LayoutServerLoad = async ({ locals: { supabase, safeGetSession }, depends }) => {
-	depends('catalog:categories');
+	// Keep depends for user preferences; category tree will be loaded client-side via in-memory cache
 	depends('user:preferences');
 
 	const { session } = await safeGetSession();
@@ -19,18 +18,17 @@ export const load: LayoutServerLoad = async ({ locals: { supabase, safeGetSessio
 		redirect(303, '/');
 	}
 
-	const categoryService = new CategoryService(supabase);
 	const localeService = new LocaleService(supabase);
 	const preferencesService = new UserPreferencesService(supabase);
 
-	const [profile, categoryTree, availableLocales, userPreferences] = await Promise.all([
+	// Load profile, locales and user preferences in parallel; category tree removed from server load
+	const [profile, availableLocales, userPreferences] = await Promise.all([
 		supabase
 			.from('ad_user')
 			.select('first_name, last_name, avatar_url')
 			.eq('auth_user_id', session.user.id)
 			.single()
 			.then(({ data }) => data),
-		categoryService.getCategoryTree(),
 		localeService.getLocales(),
 		preferencesService.getUserPreferences(session.user.id)
 	]);
@@ -42,7 +40,7 @@ export const load: LayoutServerLoad = async ({ locals: { supabase, safeGetSessio
 	return {
 		session,
 		profile,
-		categoryTree,
+		// categoryTree intentionally removed — client will initialize and fetch as needed
 		localePreferences: {
 			preferredDataLocale: effectiveDataLocale,
 			availableLocales

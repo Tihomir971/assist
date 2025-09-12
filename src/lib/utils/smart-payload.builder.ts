@@ -1,4 +1,4 @@
-import { z, type ZodType, type ZodRawShape } from 'zod/v4';
+import { z, type ZodType, type ZodRawShape } from 'zod';
 
 // Type definitions for Zod v4 internal structures
 interface ZodInternalDef {

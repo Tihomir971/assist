@@ -3,7 +3,7 @@ import {
 	cChannelMapCategoryUpdateSchema
 } from '$lib/types/supabase.schemas';
 import type { CChannelMapCategoryInsert, CChannelMapCategoryUpdate } from '$lib/types/supabase.zod';
-import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder4';
+import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
 
 export const channelMappingPayloadBuilder = new SmartPayloadBuilder<
 	CChannelMapCategoryInsert,

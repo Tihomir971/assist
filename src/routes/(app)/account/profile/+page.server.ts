@@ -1,6 +1,6 @@
 import { fail, redirect, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms/server';
-import * as z from 'zod/v4';
+import { z } from 'zod';
 import type { PageServerLoad, Actions } from './$types';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { adUserUpdateSchema } from '$lib/types/supabase.schemas';

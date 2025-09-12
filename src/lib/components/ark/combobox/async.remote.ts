@@ -25,8 +25,6 @@ const allUsers = [
 
 // Simulate API call
 export const searchUsers = query(z.string(), async (query: string): Promise<User[]> => {
-	// await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
-
 	if (!query) return [];
 
 	return allUsers.filter(

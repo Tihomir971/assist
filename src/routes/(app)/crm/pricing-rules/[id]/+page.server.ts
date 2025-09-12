@@ -11,7 +11,7 @@ import {
 	BrandService
 } from '$lib/services/supabase';
 import type { PricingRule, PricingRuleCreate } from '$lib/types/pricing-rules.types';
-import * as z from 'zod/v4';
+import { z } from 'zod';
 import { pricingConditionsSchema, pricingFormulaSchema } from '$lib/types/pricing-rules.zod';
 
 // Create a specific schema for the form that uses the detailed condition/formula schemas

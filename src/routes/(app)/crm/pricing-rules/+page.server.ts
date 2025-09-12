@@ -3,7 +3,7 @@ import { PricingRulesService } from '$lib/services/supabase/pricing-rules.servic
 import { fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import * as z from 'zod/v4';
+import { z } from 'zod';
 
 // Simple delete schema
 const deleteSchema = z.object({

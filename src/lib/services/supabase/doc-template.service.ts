@@ -2,7 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database, Tables } from '$lib/types/supabase';
 
 import { docTemplateInsertSchema, docTemplateUpdateSchema } from '$lib/types/supabase.zod.schemas';
-import type { z } from 'zod/v4';
+import type { z } from 'zod';
 import type { ContextSchemaStructure } from '$lib/types/supabase.zod.schemas';
 
 type DocTemplate = Tables<'doc_template'>;

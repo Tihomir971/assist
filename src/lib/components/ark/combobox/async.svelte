@@ -15,6 +15,7 @@
 	let isLoading = $state(false);
 	let inputValue = $state('');
 
+	const instanceId = $props.id();
 	const { collection, set } = useListCollection<User>({
 		initialItems: [],
 		itemToString: (item) => item.name,
@@ -23,6 +24,7 @@
 
 	const combobox = useCombobox({
 		collection,
+		id: instanceId,
 		placeholder: 'Type to search users...',
 		get inputValue() {
 			return inputValue;

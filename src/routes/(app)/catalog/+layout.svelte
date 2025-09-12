@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import type { LayoutData } from './$types';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
@@ -9,6 +10,9 @@
 	import type { Snippet } from 'svelte';
 	// Icons
 	import { TreeViewZag } from '$lib/components/zag';
+	import { categoryCache } from '$lib/stores/category-cache.svelte';
+	import { getLocaleManagerContext } from '$lib/stores/locale-manager.svelte';
+
 	let contextNode: string | null = $state(null);
 	interface Props {
 		data: LayoutData;
@@ -18,7 +22,29 @@
 	let { data, children }: Props = $props();
 
 	let showReportDialog = $state(false);
-	let treeData = $derived(data.categories);
+	// Use a plain reactive state for treeData; server may no longer provide categories
+	let treeData = $state<any[]>([]);
+
+	// Load categories from cache
+	onMount(async () => {
+		if (!categoryCache) return;
+
+		try {
+			// Get user's preferred locale from LocaleManager if available
+			let userLocale = 'sr-Latn-RS';
+			try {
+				const localeManager = getLocaleManagerContext();
+				userLocale = localeManager.currentDataLocale;
+			} catch {
+				// locale manager missing — fall back to default
+			}
+
+			const cats = await categoryCache.getCategories(userLocale);
+			treeData = cats;
+		} catch (err) {
+			console.warn('Failed to load categories from cache:', err);
+		}
+	});
 
 	const initCategory = $derived(page.url.searchParams.get('cat'));
 	let selectedValue = $derived(initCategory ? [initCategory] : []);

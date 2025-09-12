@@ -1,4 +1,4 @@
-import { type ZodRawShape, type ZodType } from 'zod/v4';
+import { type ZodRawShape, type ZodType } from 'zod';
 import type { MultilingualFieldConfig } from '$lib/types/form-config.types';
 
 // Type definitions for Zod internal structures

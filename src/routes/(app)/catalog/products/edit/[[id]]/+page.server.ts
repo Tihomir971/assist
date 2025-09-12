@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { createSimpleCRUD } from '$lib/utils/simple-crud.factory4';
+import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
 import {
 	ProductService,
 	CategoryService,

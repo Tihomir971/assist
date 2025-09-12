@@ -3,8 +3,10 @@ import type { LayoutServerLoad } from './$types';
 import type { Warehouse } from './columns.svelte';
 
 let warehousesCache: Warehouse[] | [] = [];
-export const load: LayoutServerLoad = async ({ url, parent, locals: { supabase } }) => {
-	const { categoryTree } = await parent();
+export const load: LayoutServerLoad = async ({ url, locals: { supabase } }) => {
+	// parent() previously returned categoryTree from root layout.
+	// Category tree is now loaded client-side via the in-memory cache,
+	// so we no longer rely on parent() for category data.
 
 	const whParam = url.searchParams.get('wh');
 	if (!whParam) {
@@ -26,7 +28,7 @@ export const load: LayoutServerLoad = async ({ url, parent, locals: { supabase }
 	}
 
 	return {
-		categories: categoryTree,
+		// categories moved to client-side in-memory cache
 		warehouses: await getWarehouses(),
 		activeWarehouse
 	};

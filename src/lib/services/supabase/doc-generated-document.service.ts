@@ -4,7 +4,7 @@ import type {
 	docGeneratedDocumentInsertSchema,
 	docGeneratedDocumentUpdateSchema
 } from '$lib/types/supabase.zod.schemas';
-import type { z } from 'zod/v4';
+import type { z } from 'zod';
 
 export type DocGeneratedDocument = Tables<'doc_generated_document'>;
 export type DocGeneratedDocumentWithTemplate = DocGeneratedDocument & {

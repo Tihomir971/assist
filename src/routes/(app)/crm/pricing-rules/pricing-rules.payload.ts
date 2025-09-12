@@ -1,4 +1,4 @@
-import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder4';
+import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
 import { pricingRulesInsertSchema, pricingRulesUpdateSchema } from '$lib/types/supabase.schemas';
 import type { PricingRulesInsert, PricingRulesUpdate } from '$lib/types/supabase.zod';
 

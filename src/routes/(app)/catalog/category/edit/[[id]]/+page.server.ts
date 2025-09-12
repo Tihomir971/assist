@@ -7,7 +7,7 @@ import { CategoryService } from '$lib/services/supabase/category.service';
 import { ChannelMappingCategoryService } from '$lib/services/supabase/channel-mapping-category.service';
 import { ChannelService } from '$lib/services/supabase/channel.service';
 import { LocaleService } from '$lib/services/supabase/locale.service';
-import { createSimpleCRUD } from '$lib/utils/simple-crud.factory4';
+import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
 import { categoryPayloadBuilder } from './category.payload';
 import { channelMappingPayloadBuilder } from './channel-mapping.payload';
 import {
@@ -46,11 +46,24 @@ export const load: PageServerLoad = async ({ params, locals: { supabase }, depen
 			throw error(404, 'Category not found');
 		}
 
+		// Ensure multilingual JSONB fields are initialized for new entities so components
+		// that bind to nested locales never receive `null`/`undefined`.
+		const initialCategory = categoryWithRelated?.category ?? {
+			created_at: undefined,
+			description: undefined,
+			descriptions: {},
+			id: undefined,
+			is_active: false,
+			is_self_service: false,
+			name: '',
+			names: {},
+			parent_id: null,
+			updated_at: undefined
+		};
+
 		return {
-			formCategory: await superValidate(
-				categoryWithRelated?.category,
-				zod4(mProductCategoryInsertSchema)
-			),
+			// Provide a fully-initialized form object to superValidate so multilingual fields are objects
+			formCategory: await superValidate(initialCategory, zod4(mProductCategoryInsertSchema)),
 			formChannel: await superValidate(null, zod4(cChannelMapCategoryInsertSchema)),
 			category: categoryWithRelated?.category || null,
 			channelMapCategory: categoryWithRelated?.channelMappings || [],

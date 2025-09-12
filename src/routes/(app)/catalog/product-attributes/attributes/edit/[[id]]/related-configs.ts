@@ -1,5 +1,5 @@
 import { mAttributeOptionInsertSchema } from '$lib/types/supabase.schemas';
-import { columnTypes, createRelatedTableConfig } from '$lib/utils/related-table-config.builder4';
+import { columnTypes, createRelatedTableConfig } from '$lib/utils/related-table-config.builder';
 import { createFormConfig } from '$lib/utils/form-config.builder';
 import { createSplitLayoutConfig, createTabConfig } from '$lib/utils/split-layout-config.builder';
 import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable.svelte';

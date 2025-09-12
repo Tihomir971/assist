@@ -4,6 +4,7 @@
 	import LayoutSidebar from './layout-sidebar.svelte';
 	import { setCartContext } from '$lib/components/cart/ctx.svelte';
 	import { LocaleManager, setLocaleManagerContext } from '$lib/stores/locale-manager.svelte';
+	import { initializeCategoryCache, categoryCache } from '$lib/stores/category-cache.svelte';
 
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { invalidate } from '$app/navigation';
@@ -33,6 +34,13 @@
 	}
 
 	onMount(() => {
+		// Initialize in-memory category cache (client-side only)
+		try {
+			initializeCategoryCache(data.supabase);
+		} catch (err) {
+			console.warn('Failed to initialize category cache:', err);
+		}
+
 		// Subscribe to auth changes and invalidate when user changes
 		const {
 			data: { subscription }
@@ -41,6 +49,14 @@
 				invalidate('supabase:auth');
 				// Also invalidate user preferences when auth state changes
 				invalidate('user:preferences');
+				// Clear in-memory cache on auth changes if initialized
+				if (categoryCache) {
+					try {
+						categoryCache.invalidate();
+					} catch (err) {
+						console.warn('Failed to invalidate category cache:', err);
+					}
+				}
 			}
 		});
 

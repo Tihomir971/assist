@@ -1,4 +1,4 @@
-import type { ZodType } from 'zod/v4';
+import type { ZodType } from 'zod';
 import type { SuperForm } from 'sveltekit-superforms';
 import {
 	EnhancedFormStateManager,

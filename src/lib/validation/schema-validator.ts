@@ -1,5 +1,5 @@
-import { z, type ZodType } from 'zod/v4';
-import { SchemaAnalyzer, type FieldConfig } from '$lib/utils/schema-analyzer4';
+import { z, type ZodType } from 'zod';
+import { SchemaAnalyzer, type FieldConfig } from '$lib/utils/schema-analyzer';
 
 /**
  * Schema-based validation integration with Zod schemas

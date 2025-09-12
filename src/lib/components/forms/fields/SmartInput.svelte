@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer4';
+	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer';
 	import { Input } from '$lib/components/ui/input'; // Assuming shadcn-svelte input
 
 	interface SmartInputProps {

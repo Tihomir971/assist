@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { createSimpleCRUD } from '$lib/utils/simple-crud.factory4';
+import { createSimpleCRUD } from '$lib/utils/simple-crud.factory.js';
 import { AttributeSetService } from '$lib/services/supabase/attribute-set.service';
 import { AttributeService } from '$lib/services/supabase/attribute.service';
 import { AttributeSetAttributeService } from '$lib/services/supabase/attribute-set-attribute.service';

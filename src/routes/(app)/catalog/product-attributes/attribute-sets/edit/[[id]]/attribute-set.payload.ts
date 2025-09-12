@@ -1,4 +1,4 @@
-import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder4';
+import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
 import { mAttributesetInsertSchema, mAttributesetUpdateSchema } from '$lib/types/supabase.schemas';
 
 export const attributeSetPayloadBuilder = new SmartPayloadBuilder(

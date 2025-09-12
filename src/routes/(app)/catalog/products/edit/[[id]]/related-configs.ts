@@ -1,7 +1,7 @@
 import { createSplitLayoutConfig, createTabConfig } from '$lib/utils/split-layout-config.builder';
 import type { Component } from 'svelte';
 import type { PageData } from './$types';
-import { columnTypes, createRelatedTableConfig } from '$lib/utils/related-table-config.builder4';
+import { columnTypes, createRelatedTableConfig } from '$lib/utils/related-table-config.builder';
 import {
 	mProductPackingInsertSchema,
 	mProductPoInsertSchema,

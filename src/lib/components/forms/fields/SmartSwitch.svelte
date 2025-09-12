@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer4';
+	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer';
 	import { Switch } from '$lib/components/ui/switch';
 
 	interface SmartSwitchProps {

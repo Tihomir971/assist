@@ -57,7 +57,7 @@ export class ToastManager {
 
 		// Show the toast
 		const toastId = toast[type](message, {
-			duration: options.duration || 4000,
+			duration: options.duration || 3000, // Reduced from 4000ms to 3000ms
 			action: options.showRetry
 				? {
 						label: 'Retry',
@@ -70,7 +70,7 @@ export class ToastManager {
 		const timeout = setTimeout(() => {
 			this.activeToasts.delete(key);
 			this.toastTimeouts.delete(key);
-		}, options.duration || 4000);
+		}, options.duration || 3000); // Reduced from 4000ms to 3000ms
 
 		this.toastTimeouts.set(key, timeout);
 
@@ -147,7 +147,7 @@ export class ToastManager {
 		// Show structured error toast with title and description
 		const toastId = toast.error(title, {
 			description: description,
-			duration: options.duration || 6000, // Longer duration for detailed errors
+			duration: options.duration || 4000, // Reduced from 6000ms to 4000ms
 			action: options.showRetry
 				? {
 						label: 'Retry',
@@ -160,11 +160,20 @@ export class ToastManager {
 		const timeout = setTimeout(() => {
 			this.activeToasts.delete(dedupeKey);
 			this.toastTimeouts.delete(dedupeKey);
-		}, options.duration || 6000);
+		}, options.duration || 4000); // Reduced from 6000ms to 4000ms
 
 		this.toastTimeouts.set(dedupeKey, timeout);
 
 		return toastId;
+	}
+
+	/**
+	 * Clear all active timeouts - useful for cleanup
+	 */
+	clearAllTimeouts(): void {
+		this.toastTimeouts.forEach((timeout) => clearTimeout(timeout));
+		this.toastTimeouts.clear();
+		this.activeToasts.clear();
 	}
 
 	private buildStructuredDescription(structured: StructuredErrorMessage): string {

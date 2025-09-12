@@ -1,6 +1,6 @@
 import type { PageServerLoad, Actions } from './$types';
 import { PriceListService } from '$lib/services/supabase/pricelist.service';
-import { createSimpleCRUD } from '$lib/utils/simple-crud.factory4';
+import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { mPricelistInsertSchema } from '$lib/types/supabase.schemas';
 import type { MPricelistRow } from '$lib/types/supabase.zod';

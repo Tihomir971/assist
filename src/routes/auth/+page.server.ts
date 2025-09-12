@@ -5,7 +5,7 @@ import { fail, setError, superValidate } from 'sveltekit-superforms';
 // import { loginSchema } from './schema';
 import { zod4 } from 'sveltekit-superforms/adapters';
 
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 const loginSchema = z.object({
 	email: z.email(),

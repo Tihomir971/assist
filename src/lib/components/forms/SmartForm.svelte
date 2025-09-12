@@ -1,13 +1,14 @@
 <script lang="ts">
+	import { onDestroy } from 'svelte';
 	import type { SuperValidated, SuperForm } from 'sveltekit-superforms';
-	import type { ZodObject, z, ZodType } from 'zod/v4';
-	import type { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder4';
+	import type { ZodObject, z, ZodType } from 'zod';
+	import type { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
 	import type { SmartFormConfig, FieldOverride } from '$lib/types/form-config.types';
 	import {
 		SchemaAnalyzer,
 		type FormConfig as AnalyzedFormConfig,
 		type FieldConfig as AnalyzedFieldConfig
-	} from '$lib/utils/schema-analyzer4';
+	} from '$lib/utils/schema-analyzer';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { toastManager } from '$lib/utils/toast-manager';
@@ -104,7 +105,7 @@
 		taintedMessage: null, // Disable default tainted message, we show our own
 		validationMethod: 'auto', // Validate on blur and submit, but not immediately on load
 		clearOnSubmit: 'errors-and-message', // Clear errors on successful submit
-		delayMs: 300, // Debounce validation
+		delayMs: 150, // Reduced debounce validation to prevent setTimeout violations
 		dataType: 'json', // Use JSON to handle nested data structures
 		onSubmit: async (event) => {
 			// Remove system timestamp fields and lookup object fields from form submission
@@ -224,6 +225,13 @@
 	}
 	// Bind the entire superform instance to the parent component
 	superformInstance = superform;
+
+	// Clean up enhanced form integration on component destroy
+	onDestroy(() => {
+		if (enhancedFormIntegration && typeof enhancedFormIntegration.destroy === 'function') {
+			enhancedFormIntegration.destroy();
+		}
+	});
 
 	// When a new form object is passed, reset the form to reflect the new data.
 	// This is crucial for the SmartRelatedDrawer to update the form for editing.

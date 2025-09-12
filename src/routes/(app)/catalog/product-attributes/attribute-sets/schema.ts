@@ -1,4 +1,4 @@
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import { mAttributesetInsertSchema, mAttributesetUpdateSchema } from '$lib/types/supabase.schemas';
 
 // Schema for attribute set list filtering and sorting

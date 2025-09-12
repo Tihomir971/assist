@@ -70,11 +70,40 @@ async function fetchProducts(
 ) {
 	let categoryIds: number[] = [];
 	if (categoryId && showSubcategories) {
-		// Create TreeCollection on-demand for efficient descendant lookup
-		const categoryService = new CategoryService(supabase);
-		const categoryTreeCollection = await categoryService.getCategoryTreeCollection();
-		const descendantValues = categoryTreeCollection.getDescendantValues(categoryId);
-		categoryIds = descendantValues.map((value: string) => parseInt(value));
+		// Try to use in-memory category cache (initialized client-side normally).
+		// On server we can still initialize/read it to avoid repeated tree queries.
+		try {
+			// Lazy import of cache utilities
+			// Note: initializeCategoryCache returns a singleton that wraps CategoryService internally.
+			const { initializeCategoryCache, categoryCache } = await import(
+				'$lib/stores/category-cache.svelte'
+			);
+			// Ensure cache singleton exists
+			initializeCategoryCache(supabase);
+
+			// Attempt to use locale from parent() merged data if available.
+			// parent() is available from the caller (PageServerLoad); here we attempt to read process.env fallback.
+			const userLocale = 'sr-Latn-RS';
+			// Attempt to read preferredDataLocale from global layout (if present)
+			try {
+				// The calling load function has already awaited parent() and may pass merged data.
+				// We cannot call parent() from here (not in scope) so keep default.
+			} catch {
+				// ignore
+			}
+
+			if (categoryCache) {
+				const treeCollection = await categoryCache.getTreeCollection(userLocale);
+				const descendantValues = treeCollection.getDescendantValues(categoryId);
+				categoryIds = descendantValues.map((value: string) => parseInt(value));
+			}
+		} catch {
+			// Fallback to legacy CategoryService behaviour if cache fails/unavailable
+			const categoryService = new CategoryService(supabase);
+			const categoryTreeCollection = await categoryService.getCategoryTreeCollection();
+			const descendantValues = categoryTreeCollection.getDescendantValues(categoryId);
+			categoryIds = descendantValues.map((value: string) => parseInt(value));
+		}
 	}
 	let query = supabase
 		.from('m_product')

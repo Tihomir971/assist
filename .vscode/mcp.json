@@ -14,6 +14,10 @@
 		"svelte-llm": {
 			"command": "npx",
 			"args": ["mcp-remote", "https://svelte-llm.khromov.se/mcp/mcp"]
+		},
+		"ark-ui": {
+			"command": "npx",
+			"args": ["-y", "@ark-ui/mcp"]
 		}
 	}
 }

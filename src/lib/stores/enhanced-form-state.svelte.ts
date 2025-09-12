@@ -1,4 +1,4 @@
-import { z, type ZodType } from 'zod/v4';
+import { z, type ZodType } from 'zod';
 import type { SuperForm } from 'sveltekit-superforms';
 import { SvelteDate, SvelteMap } from 'svelte/reactivity';
 
@@ -261,7 +261,7 @@ export class EnhancedFormStateManager<T extends Record<string, unknown>> {
 		// Set validation timeout
 		const timeout = setTimeout(() => {
 			this.performFieldValidation(fieldName);
-		}, this._config.debounceValidationMs || 300);
+		}, this._config.debounceValidationMs || 150);
 
 		this._validationTimeouts.set(fieldName, timeout);
 	}
@@ -427,6 +427,13 @@ export class EnhancedFormStateManager<T extends Record<string, unknown>> {
 		this.initializeState(dataToUse);
 
 		// Clear timeouts
+		this.clearAllTimeouts();
+	}
+
+	/**
+	 * Clear all timeouts - useful for cleanup
+	 */
+	clearAllTimeouts(): void {
 		if (this._autoSaveTimeout) {
 			clearTimeout(this._autoSaveTimeout);
 			this._autoSaveTimeout = null;

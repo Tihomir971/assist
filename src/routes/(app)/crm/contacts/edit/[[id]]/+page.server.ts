@@ -1,5 +1,5 @@
 import { PartnerService } from '$lib/services/supabase/partner.service';
-import { createSimpleCRUD } from '$lib/utils/simple-crud.factory4';
+import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
 import { contactPayloadBuilder } from './entity.payload';
 import { cBpartnerInsertSchema } from '$lib/types/supabase.schemas';
 import { superValidate } from 'sveltekit-superforms';

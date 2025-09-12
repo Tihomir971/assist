@@ -1,4 +1,5 @@
 <script lang="ts" generics="TData">
+	import { onDestroy } from 'svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
@@ -83,10 +84,15 @@
 		}
 	}
 
-	// Debounced version of applyFilters for text inputs
+	// Debounced version of applyFilters for text inputs - reduced delay for better UX
 	const debouncedApplyFilters = debounce(() => {
 		applyFilters();
-	}, 500);
+	}, 250);
+
+	// Clean up debounced function on component destroy
+	onDestroy(() => {
+		debouncedApplyFilters.cancel();
+	});
 
 	function handleFilterChange(id: string, value: unknown, filterType: string = 'select') {
 		// Convert boolean values to strings for consistency with URL params

@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { findChildren } from '$lib/scripts/tree';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import type { PageServerLoad } from './$types';
 import { CategoryService } from '$lib/services/supabase';
 

@@ -3,6 +3,8 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service';
 import { TreeCollection } from '@zag-js/collection';
 import { getCurrentUserLocale, getDefaultLocale } from '$lib/utils/locale.utils';
+import { query } from '$app/server';
+import { z } from 'zod';
 
 export async function getRPCLookup(
 	supabase: SupabaseClient<Database>,
@@ -162,11 +164,30 @@ export class CategoryService
 			'm_product_category',
 			'names',
 			preferredLocale,
-			fallbackLocale
+			fallbackLocale,
+			{ searchTerm: undefined, filterActive: true }
+		);
+		return data || [];
+	}
+	getLookupAsync = query(z.string(), async (query: string): Promise<CategoryLookup[]> => {
+		// Automatically detect user's preferred locale and get dynamic default locale
+		const [preferredLocale, fallbackLocale] = await Promise.all([
+			getCurrentUserLocale(this.supabase),
+			getDefaultLocale(this.supabase)
+		]);
+		console.log('Preferred Locale:', preferredLocale, 'Fallback Locale:', fallbackLocale);
+
+		const data = await getRPCLookup(
+			this.supabase,
+			'm_product_category',
+			'names',
+			preferredLocale,
+			fallbackLocale,
+			{ searchTerm: query, filterActive: true }
 		);
 		console.log('Lookup Data:', JSON.stringify(data, null, 2));
 		return data || [];
-	}
+	});
 
 	async getCategoryTree(): Promise<TreeStructure[]> {
 		// Automatically detect user's preferred locale and get dynamic default locale

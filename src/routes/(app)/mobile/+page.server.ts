@@ -4,7 +4,7 @@ import { message } from 'sveltekit-superforms';
 
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import * as z from 'zod/v4';
+import { z } from 'zod';
 
 const schema = z.object({ search_term: z.string() });
 

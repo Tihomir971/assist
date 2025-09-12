@@ -4,7 +4,7 @@
 	import SmartSelect from '$lib/components/forms/fields/SmartSelect.svelte';
 	import type { PartnerLookup } from '$lib/services/supabase/partner.service';
 	import { Label } from '$lib/components/ui/label';
-	import type { FieldConfig } from '$lib/utils/schema-analyzer4';
+	import type { FieldConfig } from '$lib/utils/schema-analyzer';
 
 	type Role = {
 		name: string;
