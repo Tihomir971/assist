@@ -1,6 +1,5 @@
 <script lang="ts" generics="TData">
 	import type { Table as TanstackTable } from '$lib/components/walker-tx';
-	import * as Table from '$lib/components/ui/table';
 	import { Button } from '$lib/components/ui/button';
 	import { SelectZag } from '$lib/components/zag';
 
