@@ -1,10 +1,6 @@
 <script lang="ts">
-	// import ChartVisualization from '$lib/components/charts/ChartVisualization.svelte';
-
 	let { data } = $props();
 	let chartData = $derived(data.chartData);
-
-	import { Chart } from 'svelte-echarts';
 
 	import { init, use } from 'echarts/core';
 	import { BarChart } from 'echarts/charts';
@@ -16,6 +12,7 @@
 	} from 'echarts/components';
 	import { CanvasRenderer } from 'echarts/renderers';
 	import type { EChartsOption } from 'echarts/types/dist/echarts';
+	import { Chart } from '$lib/components/svelte-echarts/index.js';
 
 	// now with tree-shaking
 	use([BarChart, GridComponent, CanvasRenderer, TitleComponent, LegendComponent, TooltipComponent]);
@@ -70,7 +67,6 @@
 		<p>No data available. Please select products to view their sales data.</p>
 	{:else}
 		<div class="aspect-video h-full w-full">
-			<!-- <ChartVisualization data={chartData} /> -->
 			<Chart {init} {options} />
 		</div>
 	{/if}

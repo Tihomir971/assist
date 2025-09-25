@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Chart } from 'svelte-echarts';
 	import { init, use } from 'echarts/core';
 	import { BarChart } from 'echarts/charts';
 	import {
@@ -12,6 +11,7 @@
 	import type { EChartsOption } from 'echarts/types/dist/echarts';
 	import type { EChartsData } from './chart-types';
 	import { onMount } from 'svelte';
+	import { Chart } from '../svelte-echarts';
 
 	let chartRef: any | undefined = $state();
 	let containerRef: HTMLDivElement | undefined = $state();

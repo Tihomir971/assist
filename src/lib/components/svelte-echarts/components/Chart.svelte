@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { EVENT_NAMES } from '../constants/events';
 	import { onMount } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
-	import { EVENT_NAMES } from '$lib/svelte-echarts/constants/events';
-	import type { ChartProps } from '$lib/svelte-echarts/types';
+	import type { ChartProps } from '../types';
 
 	let {
 		init,
