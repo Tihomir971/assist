@@ -2,7 +2,6 @@
 	import type { Product, Mapping } from './types';
 	import { browser } from '$app/environment';
 	import { onDestroy, onMount } from 'svelte';
-	import * as XLSX from 'xlsx';
 	//Components
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
@@ -11,7 +10,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { toast } from 'svelte-sonner';
 	// Import utility functions
-	import { handleFileUpload, loadSheetData } from './utils/xlsx-handlers';
+	import { handleFileUpload, loadSheetDataFromFile } from './utils/xlsx-handlers';
 	import { processExcelData } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
 	import { ComboboxZag, NumberInputZag, SelectZag } from '$lib/components/zag/index.js';
@@ -20,6 +19,7 @@
 	import PhPlus from '~icons/ph/plus';
 	import { UploadBasicDocument } from '$lib/components/ark';
 	import type { FileUpload } from '@ark-ui/svelte/file-upload';
+	import type { RawExcelRow } from './utils/xlsx-shared';
 
 	let { data } = $props();
 	let { supabase } = $derived(data);
@@ -38,7 +38,7 @@
 	let sheetNames: { value: string; label: string }[] = $state([]);
 	let selectedSheet: string = $state('');
 	let showModal = $state(false);
-	let rawData: Array<Record<string, string | number>> = $state([]); // Add state for raw data
+	let rawData: RawExcelRow[] = $state([]); // Add state for raw data (worker-compatible typing)
 	let showRawData = $state(false); // Add state for toggling raw data view
 	let mappings: Mapping = $state({
 		name: '',
@@ -72,7 +72,7 @@
 	let showNotUpdatedProducts = $state(false);
 
 	let processProgress = $derived(totalRows > 0 ? (processedRows / totalRows) * 100 : 0);
-	let importProgress = $derived(excelData.length > 0 ? (importedRows / excelData.length) * 100 : 0);
+	let importProgress = $derived(totalRows > 0 ? (importedRows / totalRows) * 100 : 0);
 
 	// Update mappings when selectedSupplier changes
 	$effect(() => {
@@ -131,30 +131,34 @@
 
 	async function handleSheetSelect() {
 		if (selectedSheet && selectedFile) {
-			const reader = new FileReader();
-			reader.onload = (e) => {
-				const data = new Uint8Array(e.target?.result as ArrayBuffer);
-				const workbook = XLSX.read(data, { type: 'array' });
-				const result = loadSheetData(workbook, selectedSheet);
-				headers = result.headers;
-				rawData = result.rawData || [];
-				showRawData = true;
-				showModal = true; // Keep this to show mapping modal after sheet selection
-			};
-			reader.readAsArrayBuffer(selectedFile);
+			const result = await loadSheetDataFromFile(selectedFile, selectedSheet);
+			headers = result.headers;
+			rawData = result.rawData || [];
+			showRawData = true;
+			showModal = true; // Keep this to show mapping modal after sheet selection
 		}
 	}
 
+	// Incremental preview rendering to avoid long 'message' handler tasks
+	async function setPreviewRows(rows: Product[], batchSize = 25) {
+		excelData = [];
+		for (let i = 0; i < rows.length; i += batchSize) {
+			// Yield back to the browser between chunks to keep UI responsive
+			await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
+			excelData = [...excelData, ...rows.slice(i, i + batchSize)];
+		}
+	}
 	async function handleMapping() {
 		showModal = false;
 		if (selectedFile) {
 			saveMappings();
 			isProcessing = true;
-			const result = await processExcelData(selectedFile, selectedSheet, headers, mappings);
+			const result = await processExcelData(selectedFile, selectedSheet, headers, mappings, {
+				sampleSize: 50
+			});
 			totalRows = result.totalRows;
 			processedRows = result.processedRows;
-			excelData = result.excelData;
-			rawData = result.rawData || [];
+			await setPreviewRows(result.excelData, 25);
 			isProcessing = false;
 			showRawData = false; // Hide raw data after processing
 		}
@@ -184,9 +188,16 @@
 
 		isImporting = true;
 		try {
+			// If preview is capped, fetch full dataset from worker without sampling (do not render it)
+			let dataToImport = excelData;
+			if (selectedFile && totalRows > excelData.length) {
+				const full = await processExcelData(selectedFile, selectedSheet, headers, mappings);
+				dataToImport = full.excelData;
+			}
+
 			const result = await importProducts(
 				supabase,
-				excelData,
+				dataToImport,
 				Number(selectedSupplier),
 				priceModificationPercentage,
 				(rows) => (importedRows = rows)
@@ -496,9 +507,15 @@
 		{#if excelData.length > 0 && !showNotUpdatedProducts}
 			<div class="flex flex-col gap-2">
 				<div>Mapped Product Data from sheet: {selectedSheet}</div>
+				{#if totalRows > excelData.length}
+					<div class="text-sm text-muted-foreground">
+						Showing first {excelData.length} of {totalRows} rows (preview). Import will process all rows.
+						For faster preview on large files, we cap the preview to 200 rows.
+					</div>
+				{/if}
 				<div
 					class="relative flex-1 overflow-auto rounded-md border"
-					style="max-height: calc(100vh - 400px);"
+					style="max-height: calc(100vh - 500px);"
 				>
 					<Table.Root>
 						<Table.Header>
@@ -534,7 +551,7 @@
 			</div>
 			{#if isImporting}
 				<div>
-					<p>Importing products: {importedRows} / {excelData.length}</p>
+					<p>Importing products: {importedRows} / {totalRows}</p>
 					<progress value={importProgress} max="100"></progress>
 				</div>
 			{:else}
@@ -547,7 +564,7 @@
 				<h2 class="text-xl font-bold">Products Not Updated</h2>
 				<div
 					class="relative flex-1 overflow-auto rounded-md border"
-					style="max-height: calc(100vh - 400px);"
+					style="max-height: calc(100vh - 500px);"
 				>
 					<Table.Root>
 						<Table.Header>

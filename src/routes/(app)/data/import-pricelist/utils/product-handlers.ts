@@ -64,23 +64,28 @@ export async function importProducts(
 		for (let i = 0; i < productsToUpdate.length; i += batchSize) {
 			const batch = productsToUpdate.slice(i, i + batchSize);
 
-			for (const product of batch) {
-				const { error } = await supabase
-					.from('m_product_po')
-					.update({
-						pricelist: modifyPrice(product.pricelist, priceModificationPercentage),
-						vendorproductno: product.normalizedVendorProductNo,
-						valid_from: product.valid_from || null,
-						valid_to: product.valid_to || null
-					})
-					.eq('id', product.id)
-					.eq('c_bpartner_id', selectedSupplier);
+			if (batch.length === 0) {
+				continue;
+			}
 
-				if (error) {
-					console.error('Error updating product:', error);
-					continue;
+			const updates = batch.map((product) => ({
+				where: { id: product.id, c_bpartner_id: selectedSupplier },
+				data: {
+					pricelist: modifyPrice(product.pricelist, priceModificationPercentage),
+					vendorproductno: product.normalizedVendorProductNo,
+					valid_from: product.valid_from || null,
+					valid_to: product.valid_to || null
 				}
+			}));
 
+			const { error } = await supabase.rpc('bulk_update_product_po', { updates });
+
+			if (error) {
+				console.error('Error updating product batch via RPC:', error);
+				continue;
+			}
+
+			for (let j = 0; j < batch.length; j++) {
 				importedRows++;
 				onProgress(importedRows);
 			}
@@ -89,7 +94,7 @@ export async function importProducts(
 		// Process products not updated
 		const barcodes = notUpdated.map((p: Product) => p.barcode);
 		const matchingProducts = [];
-		const chunkSize = 10;
+		const chunkSize = 100;
 
 		for (let i = 0; i < barcodes.length; i += chunkSize) {
 			const barcodeChunk = barcodes.slice(i, i + chunkSize);
