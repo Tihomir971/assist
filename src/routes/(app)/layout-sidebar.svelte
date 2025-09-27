@@ -12,7 +12,6 @@
 				items: [
 					{ title: 'Catalog', url: '/catalog' },
 					{ title: 'Price lists', url: '/catalog/price-lists' },
-					{ title: 'Prices', url: '/catalog/prices' },
 					{ title: 'Product Brands', url: '/catalog/product-brands' },
 					{
 						title: 'Attributes',

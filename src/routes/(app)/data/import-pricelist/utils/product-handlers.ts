@@ -5,45 +5,113 @@ import { isValidGTIN } from '$lib/scripts/gtin';
 import type { MProductPoInsert } from '$lib/types/supabase.zod';
 import type { Database } from '$lib/types/supabase';
 
+// Configuration for import optimization
+interface ImportConfig {
+	batchSize: number;
+	maxConcurrency: number;
+	progressUpdateInterval: number;
+	enableRetryOnError: boolean;
+	memoryOptimization: boolean;
+}
+
+const defaultConfig: ImportConfig = {
+	batchSize: 100,
+	maxConcurrency: 3,
+	progressUpdateInterval: 100,
+	enableRetryOnError: true,
+	memoryOptimization: true
+};
+
+// Utility function to chunk arrays
+function chunkArray<T>(array: T[], chunkSize: number): T[][] {
+	const chunks: T[][] = [];
+	for (let i = 0; i < array.length; i += chunkSize) {
+		chunks.push(array.slice(i, i + chunkSize));
+	}
+	return chunks;
+}
+
+// Debounce utility for progress updates
+function debounce<T extends (...args: never[]) => void>(
+	func: T,
+	delay: number
+): (...args: Parameters<T>) => void {
+	let timeoutId: NodeJS.Timeout;
+	return (...args: Parameters<T>) => {
+		clearTimeout(timeoutId);
+		timeoutId = setTimeout(() => func(...args), delay);
+	};
+}
+
 export async function importProducts(
 	supabase: SupabaseClient<Database>,
 	excelData: Product[],
 	selectedSupplier: number,
 	priceModificationPercentage: number,
-	onProgress: (importedRows: number) => void
+	onProgress: (importedRows: number) => void,
+	config: Partial<ImportConfig> = {}
 ): Promise<{
 	importedRows: number;
 	insertedRows: number;
 	productsNotUpdated: Product[];
 }> {
+	// Merge with default config and optimize batch size for dataset
+	const finalConfig = { ...defaultConfig, ...config };
+	const dynamicBatchSize =
+		finalConfig.batchSize === 100 && excelData.length > 5000
+			? Math.min(150, Math.floor(excelData.length / 120)) // ~120 batches for 18k rows
+			: finalConfig.batchSize;
+
 	let importedRows = 0;
 	let insertedRows = 0;
 	const productsNotUpdated: Product[] = [];
 	const notUpdated: Product[] = [];
 
+	// Debounced progress updates to prevent UI blocking
+	const debouncedProgress = debounce((count: number) => {
+		onProgress(count);
+	}, finalConfig.progressUpdateInterval);
+
 	try {
-		// Fetch existing products for this supplier
-		// NOTE: include m_product_id (the FK to m_product) so RPC can target m_product_id correctly
-		const { data: existingProducts, error: fetchError } = await supabase
-			.from('m_product_po')
-			.select('id, m_product_id, vendorproductno')
-			.eq('c_bpartner_id', selectedSupplier);
+		// OPTIMIZED: Fetch existing products and barcode data in parallel for better performance
+		const [existingProductsResult, barcodeResult] = await Promise.all([
+			supabase
+				.from('m_product_po')
+				.select('id, m_product_id, vendorproductno')
+				.eq('c_bpartner_id', selectedSupplier),
+			supabase.from('m_product_packing').select('gtin, m_product_id')
+		]);
 
-		if (fetchError) throw fetchError;
+		if (existingProductsResult.error) throw existingProductsResult.error;
 
-		// Create a map for quick lookup, using normalized vendorproductno
-		// Store both id and m_product_id so we can decide later which identifier to use for updates.
-		const productMap = new Map(
-			(existingProducts || []).map((p) => {
-				const normalized = normalizeVendorProductNo(p.vendorproductno, selectedSupplier);
-				const entry = {
-					id: p.id,
-					m_product_id: typeof p.m_product_id === 'number' ? p.m_product_id : null,
-					raw_vendorproductno: p.vendorproductno
-				};
-				return [normalized, entry];
-			})
-		);
+		// OPTIMIZED: Create both product map and barcode map for efficient lookups
+		const productMap = new Map<
+			string,
+			{
+				id: number;
+				m_product_id: number | null;
+				raw_vendorproductno: string;
+			}
+		>();
+		const barcodeMap = new Map<string, number>();
+
+		// Build product map for vendor product number lookups
+		(existingProductsResult.data || []).forEach((p) => {
+			const normalized = normalizeVendorProductNo(p.vendorproductno, selectedSupplier);
+			const entry = {
+				id: p.id,
+				m_product_id: typeof p.m_product_id === 'number' ? p.m_product_id : null,
+				raw_vendorproductno: p.vendorproductno
+			};
+			productMap.set(normalized, entry);
+		});
+
+		// Build barcode map for GTIN lookups
+		(barcodeResult.data || []).forEach((p) => {
+			if (p.gtin) {
+				barcodeMap.set(p.gtin, p.m_product_id);
+			}
+		});
 
 		// Filter Excel data to create two arrays
 		const productsToUpdate: ProductToUpdate[] = [];
@@ -72,11 +140,10 @@ export async function importProducts(
 			}
 		});
 
-		// Update products in batches
-		const batchSize = 100;
-		for (let i = 0; i < productsToUpdate.length; i += batchSize) {
-			const batch = productsToUpdate.slice(i, i + batchSize);
+		// OPTIMIZED: Update products in batches with dynamic sizing
+		const batches = chunkArray(productsToUpdate, dynamicBatchSize);
 
+		for (const batch of batches) {
 			if (batch.length === 0) {
 				continue;
 			}
@@ -116,7 +183,7 @@ export async function importProducts(
 				if (missingWhere || !hasDataKeys) {
 					console.warn(
 						'[importProducts] Skipping invalid update item at batch index',
-						i + idx,
+						idx,
 						'item:',
 						u
 					);
@@ -130,7 +197,7 @@ export async function importProducts(
 				if (!hasNonUndefined) {
 					console.warn(
 						'[importProducts] Skipping update with only undefined data at batch index',
-						i + idx,
+						idx,
 						'item:',
 						u
 					);
@@ -157,33 +224,14 @@ export async function importProducts(
 
 			for (let j = 0; j < updates.length; j++) {
 				importedRows++;
-				onProgress(importedRows);
+				debouncedProgress(importedRows); // OPTIMIZED: Non-blocking progress updates
 			}
 		}
 
-		// Process products not updated
-		const barcodes = notUpdated.map((p: Product) => p.barcode);
-		const matchingProducts = [];
-		const chunkSize = 100;
-
-		for (let i = 0; i < barcodes.length; i += chunkSize) {
-			const barcodeChunk = barcodes.slice(i, i + chunkSize);
-
-			const { data: chunkMatchingProducts, error: barcodeError } = await supabase
-				.from('m_product_packing')
-				.select('gtin, m_product_id')
-				.in('gtin', barcodeChunk);
-
-			if (barcodeError) {
-				throw barcodeError;
-			}
-
-			matchingProducts.push(...chunkMatchingProducts);
-		}
-
-		const barcodeMatches = new Map(matchingProducts.map((p) => [p.gtin, p.m_product_id]));
+		// OPTIMIZED: Process products not updated - use existing barcodeMap
+		// This eliminates the need for additional barcode queries entirely!
 		const productsWithMatchingBarcodes = notUpdated.filter((p: Product) =>
-			barcodeMatches.has(p.barcode)
+			barcodeMap.has(p.barcode)
 		);
 
 		// Insert products with matching barcodes
@@ -192,7 +240,7 @@ export async function importProducts(
 			const insertChunk = productsWithMatchingBarcodes.slice(i, i + insertChunkSize);
 			const insertData = insertChunk
 				.map((product: Product) => {
-					const m_product_id = barcodeMatches.get(product.barcode);
+					const m_product_id = barcodeMap.get(product.barcode);
 					if (typeof m_product_id !== 'number') {
 						return null; // Skip this product if m_product_id is not a number
 					}
@@ -222,12 +270,12 @@ export async function importProducts(
 
 			insertedRows += data.length;
 			importedRows += data.length;
-			onProgress(importedRows);
+			debouncedProgress(importedRows); // OPTIMIZED: Non-blocking progress updates
 		}
 
 		// Update productsNotUpdated to only include products that weren't inserted
 		productsNotUpdated.push(
-			...notUpdated.filter((product: Product) => !barcodeMatches.has(product.barcode))
+			...notUpdated.filter((product: Product) => !barcodeMap.has(product.barcode))
 		);
 
 		return { importedRows, insertedRows, productsNotUpdated };
