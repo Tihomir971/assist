@@ -116,6 +116,97 @@ const columns: ColumnDef<User>[] = [
 
 ### Using Svelte Components
 
+To render Svelte components in table cells, use the `renderComponent` helper function:
+
+```typescript
+// Create a custom action button component
+<!-- AddProductButton.svelte -->
+<script lang="ts">
+  import PhPlus from '~icons/ph/plus';
+  import { Button } from '$lib/components/ui/button';
+
+  let { product, onAdd }: { product: Product; onAdd: (product: Product) => void } = $props();
+</script>
+
+<Button
+  variant="default"
+  size="icon"
+  onclick={() => onAdd(product)}
+  class="size-8 p-0"
+>
+  <span class="sr-only">Add product</span>
+  <PhPlus />
+</Button>
+```
+
+```typescript
+// Use in column definition
+import AddProductButton from './AddProductButton.svelte';
+import { renderComponent } from '$lib/components/walker-tx';
+
+const columns: ColumnDef<Product>[] = [
+  {
+    accessorKey: 'name',
+    header: 'Name',
+  },
+  {
+    id: 'actions',
+    header: 'Actions',
+    cell: ({ row }) => renderComponent(AddProductButton, {
+      product: row.original,
+      onAdd: handleAddProduct
+    }),
+    enableColumnFilter: false,
+    enableSorting: false,
+  },
+];
+```
+
+### Action Button Components
+
+For tables with action buttons (edit, delete, add, etc.), create dedicated components:
+
+```typescript
+// DataTableActions.svelte
+<script lang="ts">
+  import PhDotsThreeBold from '~icons/ph/dots-three-bold';
+  import { Button } from '$lib/components/ui/button';
+  import { goto } from '$app/navigation';
+  import { page } from '$app/state';
+
+  let { id }: { id: string } = $props();
+</script>
+
+<Button
+  variant="ghost"
+  size="icon"
+  onclick={() => {
+    goto(`/catalog/products/edit/${id}?${page.url.searchParams}`);
+  }}
+  class="relative size-8 p-0"
+>
+  <span class="sr-only">Edit product</span>
+  <PhDotsThreeBold />
+</Button>
+```
+
+```typescript
+// Use in column definition
+const columns: ColumnDef<Product>[] = [
+  {
+    accessorKey: 'id',
+    header: '',
+    cell: ({ row }) => {
+      return renderComponent(DataTableActions, { id: row.original.id.toString() });
+    },
+    enableSorting: false,
+    enableHiding: false
+  }
+];
+```
+
+### Using Snippets
+
 ```typescript
 // Create a custom cell component
 <!-- StatusCell.svelte -->

@@ -5,5 +5,6 @@ declare module '@tanstack/table-core' {
 	interface ColumnMeta<TData, TValue> {
 		className?: string;
 		cellWrapperClass?: string;
+		filterType?: 'text' | 'select' | 'boolean';
 	}
 }

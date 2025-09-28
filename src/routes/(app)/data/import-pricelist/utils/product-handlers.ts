@@ -162,7 +162,7 @@ export async function importProducts(
 						},
 						data: {
 							// send pricelist as numeric (not string) so the DB RPC can cast/aggregate correctly
-							pricelist: modifyPrice(product.pricelist, priceModificationPercentage),
+							pricelist: modifyPrice(product.pricelist || 0, priceModificationPercentage),
 							vendorproductno: String(product.normalizedVendorProductNo ?? ''),
 							valid_from: product.valid_from || null,
 							valid_to: product.valid_to || null
@@ -254,7 +254,7 @@ export async function importProducts(
 						vendorproductno: vendorproductno,
 						manufacturer: product.manufacturer,
 						vendorcategory: product.vendorcategory,
-						pricelist: modifyPrice(product.pricelist, priceModificationPercentage),
+						pricelist: modifyPrice(product.pricelist || 0, priceModificationPercentage),
 						valid_from: product.valid_from || null,
 						valid_to: product.valid_to || null
 					};
@@ -311,7 +311,7 @@ export async function addProduct(
 		m_product_id: productId,
 		c_bpartner_id: selectedSupplier,
 		vendorproductno: normalizeVendorProductNo(product.vendorproductno, selectedSupplier),
-		pricelist: modifyPrice(product.pricelist, priceModificationPercentage),
+		pricelist: modifyPrice(product.pricelist || 0, priceModificationPercentage),
 		valid_from: product.valid_from || null,
 		valid_to: product.valid_to || null
 	});

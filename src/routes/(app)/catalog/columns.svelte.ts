@@ -3,7 +3,7 @@ import { createColumnHelper, renderComponent, renderSnippet } from '$lib/compone
 import TableCheckbox from '$lib/components/walker-tx/table-checkbox.svelte';
 import DataTableTitleCell from './data-table-title-cell.svelte';
 import DataTableActionsVendor from './data-table-actions-vendor.svelte';
-import { createRawSnippet } from 'svelte';
+
 import type {
 	CBpartnerUpdate,
 	MProductPackingUpdate,
@@ -12,6 +12,7 @@ import type {
 	MStorageonhandUpdate
 } from '$lib/types/supabase.zod';
 import { NumberFormatter } from '$lib/scripts/intl';
+import { rightAlignSnippet } from '$lib/utils/common-snippets.svelte';
 
 export interface Warehouse {
 	value: string;
@@ -75,37 +76,7 @@ export interface FlattenedProduct {
 	brand: string | null;
 }
 
-type RawSnippetParams = {
-	value: string | number | null;
-	isDanger?: boolean;
-	action?: boolean;
-};
 const numberFormatter = new NumberFormatter();
-
-const rightAlignSnippet = createRawSnippet<[RawSnippetParams]>((getValue) => {
-	function refreshDisplay(): string {
-		const { value, isDanger = false, action } = getValue();
-
-		const className = isDanger ? 'text-right text-warning' : 'text-right';
-		const dotClassName = action
-			? 'inline-block w-1.5 h-1.5 bg-warning rounded-full mr-1  align-middle'
-			: '';
-		return `
-			<div class="${className}">
-				${action ? `<span class="${dotClassName}"></span>` : ''}${value ?? ''}
-			</div>
-		`;
-	}
-
-	return {
-		render: () => refreshDisplay(),
-		setup: (node) => {
-			$effect(() => {
-				node.innerHTML = refreshDisplay();
-			});
-		}
-	};
-});
 
 // Create a column helper for the user profile data.
 const colHelp = createColumnHelper<FlattenedProduct>();

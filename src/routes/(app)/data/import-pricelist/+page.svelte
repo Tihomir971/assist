@@ -4,7 +4,6 @@
 	import { onDestroy, onMount } from 'svelte';
 	//Components
 	import { Button } from '$lib/components/ui/button/index.js';
-	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
@@ -13,18 +12,21 @@
 	import { handleFileUpload, loadSheetDataFromFile } from './utils/xlsx-handlers';
 	import { processExcelData } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
+
 	import { ComboboxZag, NumberInputZag, SelectZag } from '$lib/components/zag/index.js';
 	import { retrieveAndParseXml, type Product as XmlProductType } from '$lib/xml-parser-esm';
-	import { NumberFormatter } from '$lib/scripts/intl';
-	import PhPlus from '~icons/ph/plus';
 	import { UploadBasicDocument } from '$lib/components/ark';
 	import type { FileUpload } from '@ark-ui/svelte/file-upload';
 	import type { RawExcelRow } from './utils/xlsx-shared';
+	import AddProductButton from './AddProductButton.svelte';
+	import { tableColumns } from './table-columns';
+	import type { ColumnDef } from '@tanstack/table-core';
+	import { renderComponent } from '$lib/components/ui/data-table';
+	import { DataTable } from '$lib/components/custom-table';
 
 	let { data } = $props();
 	let { supabase } = $derived(data);
 
-	const numberFormatter = new NumberFormatter();
 	// Constants for Spektar XML Import
 	const SPEKTAR_SUPPLIER_ID = 347;
 	const SPEKTAR_XML_URL =
@@ -140,12 +142,15 @@
 	}
 
 	// Incremental preview rendering to avoid long 'message' handler tasks
-	async function setPreviewRows(rows: Product[], batchSize = 25) {
+	async function setPreviewRows(rows: Product[], batchSize = 10) {
 		excelData = [];
 		for (let i = 0; i < rows.length; i += batchSize) {
 			// Yield back to the browser between chunks to keep UI responsive
-			await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
-			excelData = [...excelData, ...rows.slice(i, i + batchSize)];
+			// Use setTimeout for CPU-intensive work to avoid requestAnimationFrame violations
+			await new Promise((resolve) => setTimeout(() => resolve(null), 0));
+			const chunk = rows.slice(i, i + batchSize);
+			// More efficient array update for large datasets
+			excelData.push(...chunk);
 		}
 	}
 	async function handleMapping() {
@@ -204,6 +209,7 @@
 			);
 
 			productsNotUpdated = result.productsNotUpdated;
+
 			showNotUpdatedProducts = true;
 
 			const selectedSupplierObj = data.c_bpartner.find((s) => s.value === selectedSupplier);
@@ -342,6 +348,18 @@
 		}
 	}
 
+	const notUpdatedProductColumns: ColumnDef<Product>[] = [
+		...tableColumns,
+		{
+			id: 'actions',
+			header: 'Actions',
+			cell: ({ row }) =>
+				renderComponent(AddProductButton, { product: row.original, onAdd: handleAddProduct }),
+			enableColumnFilter: false,
+			enableSorting: false
+		}
+	];
+
 	onMount(() => {
 		if (browser) {
 			const savedMappings = localStorage.getItem('supplierMappings');
@@ -364,77 +382,76 @@
 
 <div class="mx-auto grid h-full max-w-7xl grid-rows-[auto_1fr_auto] gap-4 p-2">
 	<!-- <h1 class="text-2xl font-bold">Product Data Upload</h1> -->
-	<div class="flex flex-col gap-4">
-		<div class="grid grid-cols-4 items-start gap-2">
-			<ComboboxZag
-				bind:value={selectedSupplier}
-				items={data.c_bpartner}
-				label="Supplier"
-				placeholder="Select supplier..."
-			/>
-			<SelectZag
-				id="dataSourceSelect"
-				bind:value={selectedDataSource}
-				items={[
-					{ value: 'excel', label: 'Excel Upload' },
-					{ value: 'spektar', label: 'Spektar XML Import' }
-				]}
-				placeholder="Select data source..."
-				label="Data Source:"
-			/>
+	<div class="grid grid-cols-5 items-start gap-2">
+		<ComboboxZag
+			bind:value={selectedSupplier}
+			items={data.c_bpartner}
+			label="Supplier"
+			placeholder="Select supplier..."
+		/>
+		<SelectZag
+			id="dataSourceSelect"
+			bind:value={selectedDataSource}
+			items={[
+				{ value: 'excel', label: 'Excel Upload' },
+				{ value: 'spektar', label: 'Spektar XML Import' }
+			]}
+			placeholder="Select data source..."
+			label="Data Source:"
+		/>
 
-			{#if selectedDataSource === 'excel'}
-				<UploadBasicDocument
-					fileType="excel"
-					onFileChange={handleFileChange}
-					disabled={selectedSupplier == null}
-					label="Select file"
-				/>
-				<div class="flex flex-col gap-2">
-					{#if sheetNames.length > 1}
-						<SelectZag
-							bind:value={selectedSheet}
-							items={sheetNames}
-							label="Select a sheet"
-							onValueChange={handleSheetSelect}
-						/>
-					{/if}
-				</div>
-			{:else if selectedDataSource === 'spektar'}
-				<div class="col-span-2 flex flex-col items-start justify-end">
-					<Button
-						onclick={handleSpektarXmlImport}
-						disabled={selectedSupplier !== SPEKTAR_SUPPLIER_ID || isProcessing || isImporting}
-						class="mt-auto"
-					>
-						Fetch Spektar XML Data
-					</Button>
-					{#if selectedSupplier !== undefined && selectedSupplier !== SPEKTAR_SUPPLIER_ID}
-						<p class="text-sm text-destructive">
-							Spektar XML import is only available when "Spektar" (ID: {SPEKTAR_SUPPLIER_ID}) is
-							selected as the supplier.
-						</p>
-					{/if}
-				</div>
-			{/if}
-
-			<div>
-				<div class="grid w-full gap-1.5">
-					<NumberInputZag
-						bind:value={priceModificationPercentage}
-						label="Price Modification (%)"
-						min={-100}
-						step={0.5}
+		{#if selectedDataSource === 'excel'}
+			<UploadBasicDocument
+				fileType="excel"
+				onFileChange={handleFileChange}
+				disabled={selectedSupplier == null}
+				label="Select file"
+			/>
+			<div class="flex flex-col gap-2">
+				{#if sheetNames.length > 1}
+					<SelectZag
+						bind:value={selectedSheet}
+						items={sheetNames}
+						label="Select a sheet"
+						onValueChange={handleSheetSelect}
 					/>
-
-					<p class="text-muted-foreground">
-						Enter a percentage to modify prices. Positive values increase prices, negative values
-						decrease prices.
+				{/if}
+			</div>
+		{:else if selectedDataSource === 'spektar'}
+			<div class="col-span-2 flex flex-col items-start justify-end">
+				<Button
+					onclick={handleSpektarXmlImport}
+					disabled={selectedSupplier !== SPEKTAR_SUPPLIER_ID || isProcessing || isImporting}
+					class="mt-auto"
+				>
+					Fetch Spektar XML Data
+				</Button>
+				{#if selectedSupplier !== undefined && selectedSupplier !== SPEKTAR_SUPPLIER_ID}
+					<p class="text-sm text-destructive">
+						Spektar XML import is only available when "Spektar" (ID: {SPEKTAR_SUPPLIER_ID}) is
+						selected as the supplier.
 					</p>
-				</div>
+				{/if}
+			</div>
+		{/if}
+
+		<div>
+			<div class="grid w-full gap-1.5">
+				<NumberInputZag
+					bind:value={priceModificationPercentage}
+					label="Price Modification (%)"
+					min={-100}
+					step={0.5}
+				/>
+
+				<p class="text-muted-foreground">
+					Enter a percentage to modify prices. Positive values increase prices, negative values
+					decrease prices.
+				</p>
 			</div>
 		</div>
-
+	</div>
+	<div class="overflow-auto">
 		{#if showModal && selectedDataSource === 'excel'}
 			<Card.Root>
 				<Card.Header>
@@ -513,40 +530,10 @@
 						For faster preview on large files, we cap the preview to 200 rows.
 					</div>
 				{/if}
-				<div
-					class="relative flex-1 overflow-auto rounded-md border"
-					style="max-height: calc(100vh - 500px);"
-				>
-					<Table.Root>
-						<Table.Header>
-							<Table.Row class="sticky top-0">
-								{#each productProperties as prop}
-									<Table.Head>{prop === 'vendorproductno' ? 'SKU' : prop}</Table.Head>
-								{/each}
-							</Table.Row>
-						</Table.Header>
-						<Table.Body>
-							{#each excelData as product}
-								<Table.Row>
-									{#each productProperties as prop}
-										<Table.Cell class={prop === 'pricelist' ? 'text-right' : ''}>
-											{#if prop === 'pricelist'}
-												{numberFormatter.format(product[prop] as number)}
-											{:else if prop === 'valid_from' || prop === 'valid_to'}
-												{#if product[prop]}
-													{new Date(product[prop] as string).toLocaleDateString('sr-RS')}
-												{:else}
-													-
-												{/if}
-											{:else}
-												{product[prop] || '-'}
-											{/if}
-										</Table.Cell>
-									{/each}
-								</Table.Row>
-							{/each}
-						</Table.Body>
-					</Table.Root>
+				<div class="relative flex-1 overflow-auto rounded-md border">
+					{#if excelData.length > 0 && !showNotUpdatedProducts}
+						<DataTable columns={tableColumns} data={excelData} />
+					{/if}
 				</div>
 			</div>
 			{#if isImporting}
@@ -566,33 +553,7 @@
 					class="relative flex-1 overflow-auto rounded-md border"
 					style="max-height: calc(100vh - 500px);"
 				>
-					<Table.Root>
-						<Table.Header>
-							<Table.Row class="sticky top-0">
-								{#each productProperties as prop}
-									<Table.Head>{prop === 'vendorproductno' ? 'SKU' : prop}</Table.Head>
-								{/each}
-							</Table.Row>
-						</Table.Header>
-						<Table.Body>
-							{#each productsNotUpdated as product}
-								<Table.Row>
-									{#each productProperties as prop}
-										<Table.Cell class={prop === 'pricelist' ? 'text-right' : ''}>
-											{prop === 'pricelist'
-												? numberFormatter.format(product[prop] as number)
-												: product[prop]}
-										</Table.Cell>
-									{/each}
-									<Table.Cell>
-										<Button variant="default" size="icon" onclick={() => handleAddProduct(product)}>
-											<PhPlus />
-										</Button>
-									</Table.Cell>
-								</Table.Row>
-							{/each}
-						</Table.Body>
-					</Table.Root>
+					<DataTable columns={notUpdatedProductColumns} data={productsNotUpdated} />
 				</div>
 			</div>
 		{/if}

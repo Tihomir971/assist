@@ -1,7 +1,7 @@
 export interface Product {
 	name: string;
 	vendorproductno: string;
-	pricelist: number;
+	pricelist: number | undefined;
 	barcode: string;
 	vendorcategory: string;
 	manufacturer: string;
