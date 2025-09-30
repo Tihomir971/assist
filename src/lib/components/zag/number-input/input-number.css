@@ -1,7 +1,7 @@
 [data-scope='number-input'][data-part='root'] {
-	display: flex;
-	flex-direction: column;
-	gap: 0.5rem;
+	/* display: flex; */
+	/* flex-direction: column; */
+	/* gap: 0.5rem; */
 }
 
 [data-scope='number-input'][data-part='scrubber'] {
@@ -11,14 +11,14 @@
 }
 
 [data-scope='number-input'][data-part='control'] {
-	position: relative;
-	display: inline-block;
+	/* position: relative; */
+	/* display: inline-block; */
 	/* border-radius: 4px; */
 	/* background-color: var(--color-surface-document); */
 	/* border: 1px solid var(--color-surface-2); */
-	&:hover {
+	/* &:hover {
 		border-color: var(--color-surface-3);
-	}
+	} */
 	&:focus-within {
 		border-color: var(--color-primary);
 		outline: none;
@@ -26,12 +26,12 @@
 }
 
 [data-scope='number-input'][data-part='input'] {
-	font-size: var(--text-sm);
-	width: 100%;
-	border: none;
-	height: 36px;
-	padding-inline: 0.75rem 2rem;
-	text-align: right;
+	/* font-size: var(--text-sm); */
+	/* width: 100%; */
+	/* border: none; */
+	/* height: 36px; */
+	/* padding-inline: 0.75rem 2rem; */
+	/* text-align: right; */
 }
 [data-scope='number-input'][data-part='input']:focus,
 [data-scope='number-input'][data-part='input']:focus-within {

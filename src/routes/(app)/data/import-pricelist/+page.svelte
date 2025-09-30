@@ -549,10 +549,7 @@
 		{#if showNotUpdatedProducts && productsNotUpdated.length > 0}
 			<div class="flex flex-col gap-2">
 				<h2 class="text-xl font-bold">Products Not Updated</h2>
-				<div
-					class="relative flex-1 overflow-auto rounded-md border"
-					style="max-height: calc(100vh - 500px);"
-				>
+				<div class="relative flex-1 overflow-auto rounded-md border">
 					<DataTable columns={notUpdatedProductColumns} data={productsNotUpdated} />
 				</div>
 			</div>

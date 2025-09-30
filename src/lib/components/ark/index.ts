@@ -2,6 +2,7 @@
 // export { default as ComboboxZag } from './combobox/combobox.svelte';
 // export { default as FileUpload } from './file-upload/file-upload.svelte';
 export { default as NumberInputArk } from './number-input/number-input.svelte';
+export { default as NumberInputDecimal } from './number-input/decimal.svelte';
 
 export { default as CheckboxArk } from './checkbox/checkbox.svelte';
 export { default as UploadBasic } from './file-upload/basic.svelte';

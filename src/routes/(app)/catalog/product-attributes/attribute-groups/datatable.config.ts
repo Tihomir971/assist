@@ -3,7 +3,8 @@ import type { Tables } from '$lib/types/supabase';
 import type { ColumnDef } from '@tanstack/svelte-table';
 import { renderComponent } from '$lib/components/walker-tx/render-component';
 import DataTableActions from '$lib/components/ui/data-table-actions.svelte';
-import Checkbox from '$lib/components/zag/checkbox/checkbox.svelte';
+// import Checkbox from '$lib/components/zag/checkbox/checkbox.svelte';
+import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 
 export type AttributeGroupType = Tables<'m_attribute_group'>;
 

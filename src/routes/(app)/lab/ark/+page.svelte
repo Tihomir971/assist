@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { NumberInputArk } from '$lib/components/ark';
+	import { NumberInputArk, NumberInputDecimal } from '$lib/components/ark';
 	import { ComboboxAsync } from '$lib/components/ark/combobox';
 	import { searchUsers } from '$lib/components/ark/combobox/async.remote';
+	import { NumberInputZag } from '$lib/components/zag/index.js';
 	import { searchCategories } from '$lib/remote/category.remote';
 	import { Field } from '@ark-ui/svelte/field';
 	// Define types for better type safety
@@ -54,6 +55,9 @@
 </script>
 
 <div class="space-y-8 p-16">
+	<NumberInputDecimal bind:value={variable} label="Label example" />
+	{JSON.stringify(variable, null, 2)}
+	<NumberInputZag />
 	<h1 class="text-2xl font-bold">Ark UI ComboboxAsync Examples</h1>
 
 	<!-- Basic User Search -->

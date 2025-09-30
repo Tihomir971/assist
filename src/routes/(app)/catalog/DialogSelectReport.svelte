@@ -4,7 +4,8 @@
 	import { Button } from '$lib/components/ui/button';
 	import type { Warehouse } from './columns.svelte';
 	import { page } from '$app/state';
-	import { CheckboxZag } from '$lib/components/zag';
+	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
 
 	type Props = {
 		showReportDialog: boolean;
@@ -54,12 +55,9 @@
 			</Select.Root>
 
 			{#if report === 'inventory'}
-				<div class="flex items-center gap-2">
-					<CheckboxZag
-						id="include-out-of-stock"
-						bind:checked={includeOutOfStock}
-						label="Include out of stock products"
-					/>
+				<div class="flex items-center gap-3">
+					<Checkbox id="include-out-of-stock" bind:checked={includeOutOfStock} />
+					<Label for="include-out-of-stock">Include out of stock products</Label>
 				</div>
 			{/if}
 		</div>

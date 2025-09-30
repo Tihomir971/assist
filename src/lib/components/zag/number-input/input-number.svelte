@@ -63,7 +63,7 @@
 	value={Number.isNaN(api.valueAsNumber) ? undefined : api.valueAsNumber}
 />
 
-<div {...api.getRootProps()}>
+<div {...api.getRootProps()} class="flex flex-col gap-2">
 	{#if label}
 		<label {...api.getLabelProps()}>
 			{label}
@@ -74,14 +74,18 @@
 	{/if}
 	<div
 		{...api.getControlProps()}
-		class="flex h-9 w-full min-w-0 rounded-md border-input bg-background shadow-xs ring-offset-background dark:bg-input/30"
+		class="relative inline-block h-9 w-full min-w-0 rounded-md border-input bg-background shadow-xs ring-offset-background hover:border-(--color-surface-3) dark:bg-input/30"
 	>
 		<div
 			class="absolute top-0 left-0 flex h-full w-8 items-center justify-center border-r text-muted-foreground"
 		>
 			<PhNumpad />
 		</div>
-		<input {...api.getInputProps()} aria-describedby={ariaDescribedBy} />
+		<input
+			{...api.getInputProps()}
+			aria-describedby={ariaDescribedBy}
+			class="h-9 w-full border-none ps-3 pe-8 text-right text-sm"
+		/>
 		<div class="absolute top-0 right-0 flex h-full w-6 flex-col items-center border-l">
 			{#if !restProps.readOnly}
 				<button {...api.getIncrementTriggerProps()}>
