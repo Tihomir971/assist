@@ -58,7 +58,7 @@
 			class="grid h-9 grid-cols-[1fr_24px] grid-rows-2 overflow-hidden rounded-lg border border-gray-200 transition-all focus-within:border-blue-500/50 focus-within:ring-2 focus-within:ring-blue-500/50 dark:border-gray-700 dark:focus-within:border-blue-400/50 dark:focus-within:ring-blue-400/50"
 		>
 			<NumberInput.Input
-				class="row-span-2 border-none  bg-background px-3 py-1 font-mono  text-sm text-foreground outline-hidden focus:outline-hidden focus-visible:outline-hidden"
+				class="row-span-2 border-none bg-background px-3 py-1 text-right text-sm text-foreground outline-hidden focus:outline-hidden focus-visible:outline-hidden"
 			/>
 			<NumberInput.IncrementTrigger
 				class="flex cursor-pointer items-center justify-center border-l border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100"
