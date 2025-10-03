@@ -6,7 +6,7 @@
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { AttributeOptionLookup } from '$lib/services/supabase/attribute-option.service';
 	import type { AttributeSetAttributeWithAttribute } from '$lib/services/supabase/attribute-set-attribute.service';
-	import { NumberInputZag } from '$lib/components/zag/index.js';
+	import { NumberInputDecimal } from '$lib/components/ark/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -248,7 +248,7 @@
 															{#if attribute.m_attribute.attribute_type === 'text'}
 																<Input name="text_value" value={(currentValue as string) ?? ''} />
 															{:else if attribute.m_attribute.attribute_type === 'number'}
-																<NumberInputZag
+																<NumberInputDecimal
 																	name="number_value"
 																	value={currentValue as number | undefined}
 																/>

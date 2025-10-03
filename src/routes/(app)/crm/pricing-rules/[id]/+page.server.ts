@@ -11,21 +11,9 @@ import {
 	BrandService
 } from '$lib/services/supabase';
 import type { PricingRule, PricingRuleCreate } from '$lib/types/pricing-rules.types';
-import { z } from 'zod';
-import { pricingConditionsSchema, pricingFormulaSchema } from '$lib/types/pricing-rules.zod';
+import { formSchema } from './schema';
 
 // Create a specific schema for the form that uses the detailed condition/formula schemas
-const formSchema = z.object({
-	id: z.number().optional(),
-	name: z.string().min(1, 'Name is required'),
-	conditions: pricingConditionsSchema.optional(),
-	formula: pricingFormulaSchema.optional(),
-	priority: z.number().optional(),
-	is_active: z.boolean().optional(),
-	target_group: z.string().nullable().optional(),
-	starts_at: z.string().nullable().optional(),
-	ends_at: z.string().nullable().optional()
-});
 
 export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
 	const pricingRulesService = new PricingRulesService(supabase);

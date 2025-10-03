@@ -12,7 +12,11 @@ const loginSchema = z.object({
 	password: z.string()
 });
 
-export const load = async () => {
+export const load = async ({ locals: { safeGetSession } }) => {
+	const session = await safeGetSession();
+	/* User is already logged in. */
+	if (session) redirect(303, '/dashboard');
+
 	const form = await superValidate(zod4(loginSchema));
 
 	// Always return { form } in load functions

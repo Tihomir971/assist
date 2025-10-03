@@ -26,6 +26,8 @@ const supabase: Handle = async ({ event, resolve }) => {
 	 * JWT before returning the session.
 	 */
 	event.locals.safeGetSession = async () => {
+		/** @ts-expect-error: suppressGetSessionWarning is not officially supported */
+		event.locals.supabase.auth.suppressGetSessionWarning = true;
 		const {
 			data: { session }
 		} = await event.locals.supabase.auth.getSession();
@@ -69,27 +71,40 @@ const authGuard: Handle = async ({ event, resolve }) => {
 		redirect(307, '/auth'); */
 
 	// Check if the request is for an API route
-	if (event.url.pathname.startsWith('/api')) {
-		// Allow access only for authenticated users
-		if (event.locals.session) {
-			//	return resolve(event);
-		} else {
-			// Redirect unauthenticated users to the auth page
-			return redirect(303, '/auth');
-		}
-	}
+	// if (event.url.pathname.startsWith('/api') || event.url.pathname === '/') {
+	// console.log('API route, checking auth...');
+	// Allow access only for authenticated users
+	// if (event.locals.session) {
+	// return resolve(event);
+	// } else {
+	// Redirect unauthenticated users to the auth page
+	// return redirect(303, '/auth');
+	// }
+	// }
+	/**
+	 * Only authenticated users can access these paths and their sub-paths.
+	 *
+	 * If you'd rather do this in your routes, see (authenticated)/app/+page.server.ts
+	 * for an example.
+	 *
+	 * If you don't use a layout group for auth-protected paths, then you can use
+	 * new Set(['app', 'self']) or whatever your top-level path segments are, and
+	 * .has(event.url.pathname.split('/')[1])
+	 */
+	const auth_protected_paths = new Set(['(app)']);
+	if (!session && auth_protected_paths.has(event.route.id?.split('/')[1] || ''))
+		redirect(307, '/auth');
 
-	if (session) {
-		if (isMobile(userAgent) && !event.url.pathname.startsWith('/mobile')) {
-			return redirect(303, '/mobile');
-		}
-		if (event.url.pathname === '/auth' || event.url.pathname === '/') {
-			// if (event.url.pathname === '/auth' || event.url.pathname === '/') {
-			return redirect(303, '/dashboard');
-		}
-	} else if (!event.url.pathname.startsWith('/auth')) {
-		return redirect(303, '/auth');
+	// if (session) {
+	if (isMobile(userAgent) && !event.url.pathname.startsWith('/mobile')) {
+		return redirect(303, '/mobile');
 	}
+	// if (event.url.pathname === '/auth' || event.url.pathname === '/') {
+	// return redirect(303, '/dashboard');
+	// }
+	// } else if (!event.url.pathname.startsWith('/auth')) {
+	// return redirect(303, '/auth');
+	// }
 
 	return resolve(event);
 };

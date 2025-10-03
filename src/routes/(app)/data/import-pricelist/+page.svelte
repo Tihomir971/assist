@@ -13,9 +13,9 @@
 	import { processExcelData } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
 
-	import { ComboboxZag, NumberInputZag, SelectZag } from '$lib/components/zag/index.js';
+	import { ComboboxZag, SelectZag } from '$lib/components/zag/index.js';
 	import { retrieveAndParseXml, type Product as XmlProductType } from '$lib/xml-parser-esm';
-	import { UploadBasicDocument } from '$lib/components/ark';
+	import { NumberInputDecimal, UploadBasicDocument } from '$lib/components/ark';
 	import type { FileUpload } from '@ark-ui/svelte/file-upload';
 	import type { RawExcelRow } from './utils/xlsx-shared';
 	import AddProductButton from './AddProductButton.svelte';
@@ -437,7 +437,7 @@
 
 		<div>
 			<div class="grid w-full gap-1.5">
-				<NumberInputZag
+				<NumberInputDecimal
 					bind:value={priceModificationPercentage}
 					label="Price Modification (%)"
 					min={-100}

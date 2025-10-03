@@ -1,5 +1,6 @@
-import { query } from '$app/server';
-import { z } from 'zod';
+import { form, query } from '$app/server';
+import * as v from 'valibot';
+import * as z from 'zod';
 
 // User type definition
 export interface User {
@@ -35,3 +36,34 @@ export const searchUsers = query(z.string(), async (input) => {
 			user.email.toLowerCase().includes(input.toLowerCase())
 	);
 });
+
+export const createPost = form(
+	/* z.object({
+		title: z.string().transform((s) => parseFloat(s)),
+		content: z.string().optional()
+	}), */
+	v.object({
+		title: v.pipe(
+			v.string(),
+			v.transform((s) => Number(s)),
+			v.number()
+		),
+		content: v.optional(v.pipe(v.string('Your email must be a string.')))
+	}),
+	async ({ title, content }) => {
+		console.log('Form data received:', { title, content });
+		// Check the user is logged in
+		// const user = await auth.getUser();
+		// if (!user) error(401, 'Unauthorized');
+
+		// Insert into the database
+		// await db.sql`
+		// 	INSERT INTO post (slug, title, content)
+		// 	VALUES (${slug}, ${title}, ${content})
+		// `;
+
+		// Redirect to the newly created page
+		return { success: true };
+		// redirect(303, `/blog/${slug}`);
+	}
+);

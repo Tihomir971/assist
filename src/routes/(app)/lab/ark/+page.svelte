@@ -1,10 +1,13 @@
 <script lang="ts">
-	import { NumberInputArk, NumberInputDecimal } from '$lib/components/ark';
+	import { NumberInputDecimal } from '$lib/components/ark';
 	import { ComboboxAsync } from '$lib/components/ark/combobox';
 	import { searchUsers } from '$lib/components/ark/combobox/async.remote';
-	import { NumberInputZag } from '$lib/components/zag/index.js';
 	import { searchCategories } from '$lib/remote/category.remote';
 	import { Field } from '@ark-ui/svelte/field';
+	import { createPost } from './data.remote';
+	import * as Card from '$lib/components/ui/card/index.js';
+
+	import * as z from 'zod';
 	// Define types for better type safety
 	interface User {
 		id: number;
@@ -21,6 +24,7 @@
 	}
 	// export let data: PageData;
 	let variable = $state(1325.53);
+
 	let selectedUser = $state<User | null>(null);
 	let { data } = $props();
 
@@ -55,13 +59,65 @@
 </script>
 
 <div class="space-y-8 p-16">
-	<NumberInputDecimal bind:value={variable} label="Label example" />
+	<pre>{JSON.stringify(createPost, null, 2)}</pre>
+	<form
+		{...createPost.enhance(async ({ form, data, submit }) => {
+			try {
+				await submit();
+				// form.reset();
+
+				console.log('Successfully published!');
+			} catch (error) {
+				console.log('Oh no! Something went wrong');
+			}
+		})}
+	>
+		{#if createPost.issues?.title}
+			<p>Title</p>
+			{#each createPost.issues.title as issue}
+				<p class="issue">{issue.message}</p>
+			{/each}
+		{/if}
+		{#if createPost.issues?.content}
+			<p>Content</p>
+			{#each createPost.issues.content as issue}
+				<p class="issue">{issue.message}</p>
+			{/each}
+		{/if}
+		<h2>H2 {createPost.input?.title}</h2>
+		<!-- <input bind:value={variable} name="title" min={0} /> -->
+		<!-- <input bind:value={variable} name="content" min={0} /> -->
+		<Card.Root>
+			<Card.Content>
+				<NumberInputDecimal
+					bind:value={variable}
+					min={0}
+					name={createPost.field('title')}
+					invalid={!!createPost.issues?.title}
+					label="Name"
+				/>
+				<NumberInputDecimal
+					bind:value={variable}
+					min={0}
+					name={createPost.field('title')}
+					invalid={!!createPost.issues?.title}
+					label="Name"
+					disabled
+				/>
+				<button>Publish!</button>
+			</Card.Content>
+		</Card.Root>
+	</form>
+	<div class="preview">
+		<h2>{createPost?.input?.title}</h2>
+		<div>{@html createPost?.input?.content}</div>
+	</div>
+
 	{JSON.stringify(variable, null, 2)}
-	<NumberInputZag />
 	<h1 class="text-2xl font-bold">Ark UI ComboboxAsync Examples</h1>
 
 	<!-- Basic User Search -->
-	<div class="space-y-2">
+	<!-- 	<div class="space-y-2">
 		<h2 class="text-lg font-semibold">User Search (Basic)</h2>
 		<ComboboxAsync
 			label="Search Users"
@@ -72,7 +128,7 @@
 			minChars={1}
 			debounceMs={200}
 		/>
-	</div>
+	</div> -->
 
 	<!-- User Search with Custom Content -->
 	<div class="space-y-2">
@@ -103,7 +159,7 @@
 	</div>
 
 	<!-- Fruit Search Example -->
-	<div class="space-y-2">
+	<!-- <div class="space-y-2">
 		<h2 class="text-lg font-semibold">Fruit Search (Custom Data)</h2>
 		<ComboboxAsync
 			label="Search Fruits"
@@ -128,14 +184,14 @@
 				</div>
 			{/snippet}
 		</ComboboxAsync>
-	</div>
+	</div> -->
 
 	<!-- Configuration Examples -->
 	<div class="space-y-2">
 		<h2 class="text-lg font-semibold">Configuration Examples</h2>
 
 		<!-- Fast search with no minimum characters -->
-		<div class="space-y-1">
+		<!-- <div class="space-y-1">
 			<h3 class="text-md font-medium">Fast Search (No minimum chars)</h3>
 			<Field.Root required>
 				<Field.Label>Country</Field.Label>
@@ -151,10 +207,10 @@
 				<Field.HelperText>Additional Info</Field.HelperText>
 				<Field.ErrorText>Error Info</Field.ErrorText>
 			</Field.Root>
-		</div>
+		</div> -->
 
 		<!-- Slow search with higher minimum -->
-		<div class="space-y-1">
+		<!-- <div class="space-y-1">
 			<h3 class="text-md font-medium">Slow Search (3+ chars required)</h3>
 			<ComboboxAsync
 				label="Detailed Search"
@@ -165,14 +221,14 @@
 				minChars={3}
 				debounceMs={500}
 			/>
-		</div>
+		</div> -->
 	</div>
 
 	<!-- Debug Info -->
-	{#if selectedUser}
+	<!-- {#if selectedUser}
 		<div class="mt-8 rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
 			<h3 class="mb-2 font-semibold">Selected User:</h3>
 			<pre class="text-sm">{JSON.stringify(selectedUser, null, 2)}</pre>
 		</div>
-	{/if}
+	{/if} -->
 </div>

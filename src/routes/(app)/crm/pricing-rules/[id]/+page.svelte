@@ -1,22 +1,13 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { enhance } from '$app/forms';
 	import { toast } from 'svelte-sonner';
 	import { superForm } from 'sveltekit-superforms';
-	import { zod4 } from 'sveltekit-superforms/adapters';
-	import {
-		CalendarDate,
-		DateFormatter,
-		type DateValue,
-		getLocalTimeZone,
-		parseDate
-	} from '@internationalized/date';
+	import { DateFormatter, getLocalTimeZone, parseDate } from '@internationalized/date';
 
 	// UI Components
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
@@ -33,7 +24,9 @@
 	import type { PricingFormula, PricingConditions } from '$lib/types/pricing-rules.types';
 	import FormulaBuilder from '$lib/components/pricing-rules/builders/FormulaBuilder.svelte';
 	import ConditionsBuilder from '$lib/components/pricing-rules/builders/ConditionsBuilder.svelte';
-	import { NumberInputZag } from '$lib/components/zag';
+	import { NumberInputDecimal } from '$lib/components/ark';
+	import { isRequired } from '$lib/types/zod-field-type';
+	import { formSchema } from './schema';
 
 	let { data }: { data: PageData } = $props();
 
@@ -140,19 +133,16 @@
 								required
 							/>
 						</div>
-						<Form.Field name="priority" {form}>
-							<Form.Control>
-								{#snippet children({ props })}
-									<NumberInputZag
-										{...props}
-										bind:value={$formData.priority}
-										label="Priority"
-										fraction={0}
-									/>
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors class="mt-1 text-sm" />
-						</Form.Field>
+						<NumberInputDecimal
+							name="priority"
+							bind:value={$formData.priority}
+							required={isRequired(formSchema, 'priority')}
+							label="Priority"
+							formatOptions={{
+								minimumFractionDigits: 0,
+								maximumFractionDigits: 0
+							}}
+						/>
 					</div>
 					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 						<div class="space-y-2">

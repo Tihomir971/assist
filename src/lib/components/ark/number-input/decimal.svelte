@@ -7,18 +7,20 @@
 
 	const localeContext = useLocaleContext();
 
-	type Props = Omit<NumberInputRootBaseProps, 'value'> & {
+	type Props = Omit<NumberInputRootBaseProps, 'value' | 'readOnly'> & {
 		value?: number | null;
+		readonly?: boolean;
 		label?: string;
 		step?: number;
 	};
 	let {
 		value = $bindable(),
+		readonly,
 		locale = localeContext().locale,
 		label,
+		name,
 		...restProps
 	}: Props = $props();
-	$inspect(value);
 
 	function getNumberRegex() {
 		const nf = new Intl.NumberFormat(locale);
@@ -33,46 +35,42 @@
 	}
 </script>
 
-<div class="flex min-h-32 items-center justify-center">
+<div class="flex items-center justify-center">
+	<input type="hidden" {name} value={Number.isNaN(value) ? undefined : value?.toString()} />
 	<NumberInput.Root
 		{...restProps}
+		{locale}
 		allowMouseWheel
 		value={value?.toLocaleString(locale)}
-		{locale}
+		readOnly={readonly}
 		pattern={getNumberRegex()}
-		formatOptions={{
-			minimumFractionDigits: 3
-		}}
 		onValueChange={(valueChangeDetails) => {
-			value = Number.isNaN(valueChangeDetails.valueAsNumber)
-				? null
-				: valueChangeDetails.valueAsNumber;
+			if (isNaN(valueChangeDetails.valueAsNumber)) {
+				return;
+			}
+			value = valueChangeDetails.valueAsNumber;
 		}}
-		class="w-64"
-		>{#if label}
-			<NumberInput.Label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+		class="flex w-full flex-col gap-2"
+	>
+		{#if label}
+			<NumberInput.Label class="peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
 				{label}
+				<span class="ml-1 text-destructive">*</span>
 			</NumberInput.Label>
 		{/if}
 		<NumberInput.Control
-			class="grid h-9 grid-cols-[1fr_24px] grid-rows-2 overflow-hidden rounded-lg border border-gray-200 transition-all focus-within:border-blue-500/50 focus-within:ring-2 focus-within:ring-blue-500/50 dark:border-gray-700 dark:focus-within:border-blue-400/50 dark:focus-within:ring-blue-400/50"
+			class="grid w-full grid-cols-[1fr_24px] grid-rows-2 overflow-hidden border shadow-sm transition-colors focus-within:ring-1 focus-within:ring-ring focus-visible:outline-none"
 		>
 			<NumberInput.Input
-				class="row-span-2 border-none bg-background px-3 py-1 text-right text-sm text-foreground outline-hidden focus:outline-hidden focus-visible:outline-hidden"
+				class="row-span-2 border-none px-3 py-1 text-right text-base text-foreground outline-hidden placeholder:text-muted-foreground focus-within:outline-hidden focus:outline-hidden focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
 			/>
-			<NumberInput.IncrementTrigger
-				class="flex cursor-pointer items-center justify-center border-l border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100"
-			>
+			<NumberInput.IncrementTrigger class="flex items-center justify-center border-l">
 				<ChevronUp class="h-3 w-3" />
 			</NumberInput.IncrementTrigger>
-			<NumberInput.DecrementTrigger
-				class="flex cursor-pointer items-center justify-center border-t border-l border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100"
-			>
+			<NumberInput.DecrementTrigger class="flex items-center justify-center border-t border-l">
 				<ChevronDown class="h-3 w-3" />
 			</NumberInput.DecrementTrigger>
 		</NumberInput.Control>
-		<div class="mt-3 text-xs text-gray-500 dark:text-gray-400">
-			Step: 0.001, up to 5 decimal places
-		</div>
+		<div class="text-xs text-gray-500 dark:text-gray-400">Step: 0.001, up to 5 decimal places</div>
 	</NumberInput.Root>
 </div>

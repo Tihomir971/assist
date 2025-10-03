@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { NumberInputZag } from '$lib/components/zag';
+	import { NumberInputDecimal } from '$lib/components/ark';
 	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer';
 
 	interface SmartNumberInputProps {
@@ -20,12 +20,12 @@
 	};
 </script>
 
-<NumberInputZag
+<NumberInputDecimal
 	{...inputAttrs}
-	value={value ?? undefined}
-	onValueChange={(details) => {
-		value = Number.isNaN(details.valueAsNumber) ? null : details.valueAsNumber;
+	bind:value
+	step={field.step}
+	formatOptions={{
+		minimumFractionDigits: field.fraction,
+		maximumFractionDigits: field.fraction
 	}}
-	step={field.step ?? 1}
-	fraction={field.fraction}
 />

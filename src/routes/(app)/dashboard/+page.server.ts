@@ -13,5 +13,5 @@ export const load: PageServerLoad = async ({ locals: { supabase, session } }) =>
 		/* .single() */
 		.maybeSingle();
 
-	return { ad_user: data ?? [] };
+	return { ad_user: data ?? {} };
 };

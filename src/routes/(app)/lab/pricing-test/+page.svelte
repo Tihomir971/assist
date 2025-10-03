@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import { superForm } from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
 	import * as Form from '$lib/components/ui/form/index.js';
@@ -18,8 +18,7 @@
 	import { pricingTestSchema } from './schema';
 	import type { PageData } from './$types';
 	import type { PricingContext, PricingRuleMatch } from '$lib/types/pricing-rules.types';
-	import { NumberInputZag } from '$lib/components/zag';
-	import { Field } from 'formsnap';
+	import { NumberInputDecimal } from '$lib/components/ark';
 
 	let { data }: { data: PageData } = $props();
 
@@ -91,30 +90,16 @@
 								<span class="text-sm text-red-500">{$errors.product_id}</span>
 							{/if}
 						</div>
-						<Form.Field {form} name="quantity">
-							<Form.Control>
-								{#snippet children({ props })}
-									<NumberInputZag {...props} bind:value={$formData.quantity} label="Quantity" />
-								{/snippet}
-							</Form.Control>
-							<Form.Description>Number of items to test pricing for.</Form.Description>
-						</Form.Field>
+						<NumberInputDecimal name="quantity" bind:value={$formData.quantity} label="Quantity" />
 					</div>
 
 					<div class="grid grid-cols-2 gap-4">
-						<Form.Field {form} name="input_price">
-							<Form.Control>
-								{#snippet children({ props })}
-									<NumberInputZag
-										{...props}
-										bind:value={$formData.input_price}
-										label="Input Price"
-										fraction={2}
-									/>
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
+						<NumberInputDecimal
+							name="input_price"
+							bind:value={$formData.input_price}
+							label="Input Price"
+							formatOptions={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
+						/>
 						<Form.Field {form} name="partner_id">
 							<Form.Control>
 								{#snippet children({ props })}
