@@ -1,12 +1,12 @@
 import type { SelectRootBaseProps } from '@ark-ui/svelte/select';
 
-export interface Item<T = number | string> {
+export interface SelectItem<T = number | string> {
 	value: T;
 	label: string;
 	disabled?: boolean;
 }
 
-export interface SelectProps<T extends Item>
+export interface SelectProps<T extends SelectItem>
 	extends Omit<SelectRootBaseProps, 'value' | 'readOnly' | 'collection'> {
 	value?: number | string | null;
 	readonly?: boolean;

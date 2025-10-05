@@ -1,9 +1,9 @@
-<script lang="ts" generics="T extends Item">
+<script lang="ts" generics="T extends SelectItem">
 	import { Portal } from '@ark-ui/svelte/portal';
 	import { Select, createListCollection } from '@ark-ui/svelte/select';
 	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
 	import CheckIcon from '@lucide/svelte/icons/check';
-	import type { Item, SelectProps } from './types';
+	import type { SelectItem, SelectProps } from './types';
 
 	let {
 		value = $bindable(),
@@ -15,7 +15,7 @@
 	}: SelectProps<T> = $props();
 
 	const collection = $derived(
-		createListCollection<Item>({
+		createListCollection<SelectItem>({
 			items: items,
 			itemToValue: (item) => item.value.toString(),
 			isItemDisabled: (item) => item.disabled === true
