@@ -13,9 +13,9 @@
 	import { processExcelData } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
 
-	import { ComboboxZag, SelectZag } from '$lib/components/zag/index.js';
+	import { ComboboxZag } from '$lib/components/zag/index.js';
 	import { retrieveAndParseXml, type Product as XmlProductType } from '$lib/xml-parser-esm';
-	import { NumberInputDecimal, UploadBasicDocument } from '$lib/components/ark';
+	import { NumberInputDecimal, SelectArk, UploadBasicDocument } from '$lib/components/ark';
 	import type { FileUpload } from '@ark-ui/svelte/file-upload';
 	import type { RawExcelRow } from './utils/xlsx-shared';
 	import AddProductButton from './AddProductButton.svelte';
@@ -389,7 +389,7 @@
 			label="Supplier"
 			placeholder="Select supplier..."
 		/>
-		<SelectZag
+		<SelectArk
 			id="dataSourceSelect"
 			bind:value={selectedDataSource}
 			items={[
@@ -409,7 +409,7 @@
 			/>
 			<div class="flex flex-col gap-2">
 				{#if sheetNames.length > 1}
-					<SelectZag
+					<SelectArk
 						bind:value={selectedSheet}
 						items={sheetNames}
 						label="Select a sheet"

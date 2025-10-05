@@ -4,12 +4,13 @@
 export { default as NumberInputArk } from './number-input/number-input.svelte';
 export { default as NumberInputDecimal } from './number-input/decimal.svelte';
 
+export { default as SelectArk } from './select/select-lookup.svelte';
+
 export { default as CheckboxArk } from './checkbox/checkbox.svelte';
 export { default as UploadBasic } from './file-upload/basic.svelte';
 export { default as UploadBasicDocument } from './file-upload/basic-document.svelte';
 export { default as UploadFileList } from './file-upload/files-list.svelte';
 // export { default as SelectSimpleZag } from './select/select-simple.svelte';
-// export { default as SelectZag } from './select/select.svelte';
 // export { default as SwitchZag } from './switch/switch.svelte';
 // export { default as TreeViewZag } from './tree-view/tree-view.svelte';
 // export * from './context-menu/index.js';

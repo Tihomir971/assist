@@ -1,8 +1,8 @@
-<script lang="ts" generics="T extends SelectItem2">
+<script lang="ts" generics="T extends SelectItem">
 	import './select.css';
 	import * as select from '@zag-js/select';
 	import { normalizeProps, portal, useMachine } from '@zag-js/svelte';
-	import type { SelectItem2, SelectProps2 } from './types';
+	import type { SelectItem, SelectProps2 } from './types';
 	import PhX from '~icons/ph/x';
 	import PhCaretDown from '~icons/ph/caret-down';
 

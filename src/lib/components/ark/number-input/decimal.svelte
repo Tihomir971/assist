@@ -53,13 +53,15 @@
 		class="flex w-full flex-col gap-2"
 	>
 		{#if label}
-			<NumberInput.Label class="peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+			<NumberInput.Label
+				class="flex items-center gap-2 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+			>
 				{label}
-				<span class="ml-1 text-destructive">*</span>
+				<span class="text-destructive">*</span>
 			</NumberInput.Label>
 		{/if}
 		<NumberInput.Control
-			class="grid w-full grid-cols-[1fr_24px] grid-rows-2 overflow-hidden border shadow-sm transition-colors focus-within:ring-1 focus-within:ring-ring focus-visible:outline-none"
+			class="grid h-9 w-full grid-cols-[1fr_24px] grid-rows-2 overflow-hidden rounded-md border border-input bg-background shadow-sm transition-colors focus-within:ring-1 focus-within:ring-ring focus-visible:outline-none"
 		>
 			<NumberInput.Input
 				class="row-span-2 border-none px-3 py-1 text-right text-base text-foreground outline-hidden placeholder:text-muted-foreground focus-within:outline-hidden focus:outline-hidden focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"

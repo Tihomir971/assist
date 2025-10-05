@@ -1,11 +1,13 @@
 <script lang="ts">
-	import { NumberInputDecimal } from '$lib/components/ark';
+	import { NumberInputDecimal, SelectArk } from '$lib/components/ark';
 	import { ComboboxAsync } from '$lib/components/ark/combobox';
 	import { searchUsers } from '$lib/components/ark/combobox/async.remote';
 	import { searchCategories } from '$lib/remote/category.remote';
 	import { Field } from '@ark-ui/svelte/field';
 	import { createPost } from './data.remote';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 
 	import * as z from 'zod';
 	// Define types for better type safety
@@ -27,7 +29,16 @@
 
 	let selectedUser = $state<User | null>(null);
 	let { data } = $props();
-
+	const items = [
+		{ label: 'United States', value: 1, flag: '🇺🇸' },
+		{ label: 'United Kingdom', value: 2, flag: '🇬🇧' },
+		{ label: 'Canada', value: 3, flag: '🇨🇦' },
+		{ label: 'Germany', value: 4, disabled: true },
+		{ label: 'France', value: 5, flag: '🇫🇷' },
+		{ label: 'Japan', value: 6, flag: '🇯🇵' },
+		{ label: 'Australia', value: 7, flag: '🇦🇺' },
+		{ label: 'Brazil', value: 8, flag: '🇧🇷' }
+	];
 	const searchUsersWrapper = async (query: string) => {
 		// const result = await searchUsers(query);
 		const result = await searchCategories(query);
@@ -61,34 +72,22 @@
 <div class="space-y-8 p-16">
 	<pre>{JSON.stringify(createPost, null, 2)}</pre>
 	<form
-		{...createPost.enhance(async ({ form, data, submit }) => {
-			try {
-				await submit();
-				// form.reset();
-
-				console.log('Successfully published!');
-			} catch (error) {
-				console.log('Oh no! Something went wrong');
+		{...createPost}
+		onfocusout={() => createPost.validate()}
+		onsubmit={(e) => {
+			e.preventDefault();
+			const formData = new FormData(e.target as HTMLFormElement);
+			for (const pair of formData.entries()) {
+				console.log(pair[0], pair[1]);
 			}
-		})}
+		}}
+		class="space-y-4"
 	>
-		{#if createPost.issues?.title}
-			<p>Title</p>
-			{#each createPost.issues.title as issue}
-				<p class="issue">{issue.message}</p>
-			{/each}
-		{/if}
-		{#if createPost.issues?.content}
-			<p>Content</p>
-			{#each createPost.issues.content as issue}
-				<p class="issue">{issue.message}</p>
-			{/each}
-		{/if}
 		<h2>H2 {createPost.input?.title}</h2>
 		<!-- <input bind:value={variable} name="title" min={0} /> -->
 		<!-- <input bind:value={variable} name="content" min={0} /> -->
 		<Card.Root>
-			<Card.Content>
+			<Card.Content class="space-y-4">
 				<NumberInputDecimal
 					bind:value={variable}
 					min={0}
@@ -96,14 +95,34 @@
 					invalid={!!createPost.issues?.title}
 					label="Name"
 				/>
-				<NumberInputDecimal
-					bind:value={variable}
-					min={0}
-					name={createPost.field('title')}
-					invalid={!!createPost.issues?.title}
-					label="Name"
-					disabled
+				{#if createPost.issues?.title}
+					<p>Title</p>
+					{#each createPost.issues.title as issue}
+						<p class="issue">{issue.message}</p>
+					{/each}
+				{/if}
+				<hr />
+				<SelectArk
+					{items}
+					name={createPost.field('content')}
+					label="Content"
+					onValueChange={(deatils) => {
+						console.log('Ovos us detaais', deatils);
+					}}
 				/>
+				{#if createPost.issues?.content}
+					{#each createPost.issues.content as issue}
+						<p class="issue">{issue.message}</p>
+					{/each}
+				{/if}
+				<hr />
+
+				<!-- <div class="flex items-center justify-between">
+					<Button size="sm">Secondary</Button>
+					<Button variant="secondary">Secondary</Button>
+					<Button size="sm" variant="outline" class="dark:bg-background">Outline</Button>
+					<Button size="sm" variant="ghost">Ghost</Button>
+				</div> -->
 				<button>Publish!</button>
 			</Card.Content>
 		</Card.Root>
@@ -131,7 +150,7 @@
 	</div> -->
 
 	<!-- User Search with Custom Content -->
-	<div class="space-y-2">
+	<!-- 	<div class="space-y-2">
 		<h2 class="text-lg font-semibold">User Search (Custom Content)</h2>
 		<ComboboxAsync
 			label="Search Users with Details"
@@ -146,17 +165,17 @@
 						<div
 							class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-sm font-medium text-white"
 						>
-							<!-- {item.avatar} -->
+							{item.avatar}
 						</div>
 						<div>
-							<!-- <div class="font-medium text-gray-900 dark:text-gray-100">{item.name}</div> -->
-							<!-- <div class="text-sm text-gray-500 dark:text-gray-400">{item.email}</div> -->
+							<div class="font-medium text-gray-900 dark:text-gray-100">{item.name}</div>
+							<div class="text-sm text-gray-500 dark:text-gray-400">{item.email}</div>
 						</div>
 					</div>
 				</div>
 			{/snippet}
 		</ComboboxAsync>
-	</div>
+	</div> -->
 
 	<!-- Fruit Search Example -->
 	<!-- <div class="space-y-2">

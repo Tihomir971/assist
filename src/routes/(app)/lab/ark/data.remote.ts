@@ -48,7 +48,7 @@ export const createPost = form(
 			v.transform((s) => Number(s)),
 			v.number()
 		),
-		content: v.optional(v.pipe(v.string('Your email must be a string.')))
+		content: v.pipe(v.string(), v.nonEmpty())
 	}),
 	async ({ title, content }) => {
 		console.log('Form data received:', { title, content });

@@ -15,7 +15,7 @@
 	import PhLetterCircleV from '~icons/ph/letter-circle-v';
 	import PhFolders from '~icons/ph/folders';
 	import PhCaretDown from '~icons/ph/caret-down';
-	import { SelectZag } from '$lib/components/zag/index.js';
+	import { SelectArk } from '$lib/components/ark';
 
 	type Props = {
 		rowSelectionState: RowSelectionState;
@@ -132,9 +132,9 @@
 
 		<Button variant="outline" onclick={addToCart}>Add to Cart</Button>
 		<Button variant="outline" onclick={handleSalesGraphClick}>Sales Graph</Button>
-		<SelectZag
-			items={reports}
+		<SelectArk
 			bind:value={inputValueReport}
+			items={reports}
 			placeholder="Select report"
 			onValueChange={(details) => {
 				const url = new URL(page.url);
@@ -147,7 +147,7 @@
 				goto(url);
 			}}
 		/>
-		<SelectZag
+		<SelectArk
 			value={inputValueWarehouse}
 			items={warehouses}
 			onValueChange={(details) => {
