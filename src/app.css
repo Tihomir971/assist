@@ -7,7 +7,6 @@
 @custom-variant dark (&:is(.dark *));
 @import './theme.solar-dusk.css';
 @import './theme.custom.css';
-@import './theme.ark.css';
 
 @plugin "@tailwindcss/typography";
 

@@ -8,7 +8,7 @@
 	import { normalizeProps, useMachine } from '@zag-js/svelte';
 	import PhCaretRight from '~icons/ph/caret-right';
 	import { page } from '$app/state';
-	import { goto, invalidate } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { untrack } from 'svelte';
 	import PhArrowsInSimple from '~icons/ph/arrows-in-simple';
 	import PhX from '~icons/ph/x';
@@ -106,6 +106,11 @@
 
 	$effect(() => {
 		debouncedUpdate(searchTerm);
+
+		// Cleanup: cancel pending debounced calls when effect is destroyed
+		/* 	return () => {
+			debouncedUpdate.cancel();
+		}; */
 	});
 
 	$effect(() => {

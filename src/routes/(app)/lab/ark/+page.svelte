@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { NumberInputDecimal, SelectArk } from '$lib/components/ark';
-	import { ComboboxAsync } from '$lib/components/ark/combobox';
-	import { searchUsers } from '$lib/components/ark/combobox/async.remote';
-	import { searchCategories } from '$lib/remote/category.remote';
-	import { Field } from '@ark-ui/svelte/field';
-	import { createPost } from './data.remote';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import * as Select from '$lib/components/ui/select/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { NumberInputDecimal, SelectArk, TreeViewArk } from '$lib/components/ark';
+	// import { ComboboxAsync } from '$lib/components/ark/combobox';
+	// import { searchUsers } from '$lib/components/ark/combobox/async.remote';
+	// import { searchCategories } from '$lib/remote/category.remote';
+	// import { Field } from '@ark-ui/svelte/field';
+	// import { createPost } from './data.remote';
+	// import * as Card from '$lib/components/ui/card/index.js';
+	// import * as Select from '$lib/components/ui/select/index.js';
+	// import { Button } from '$lib/components/ui/button/index.js';
 
-	import * as z from 'zod';
+	// import * as z from 'zod';
 	// Define types for better type safety
 	interface User {
 		id: number;
@@ -39,12 +39,11 @@
 		{ label: 'Australia', value: 7, flag: '🇦🇺' },
 		{ label: 'Brazil', value: 8, flag: '🇧🇷' }
 	];
-	const searchUsersWrapper = async (query: string) => {
-		// const result = await searchUsers(query);
+	/* 	const searchUsersWrapper = async (query: string) => {
 		const result = await searchCategories(query);
 		console.log('Search Result:', result);
 		return result;
-	};
+	}; */
 
 	const searchFruits = async (query: string): Promise<Fruit[]> => {
 		const fruits: Fruit[] = [
@@ -70,8 +69,8 @@
 </script>
 
 <div class="space-y-8 p-16">
-	<pre>{JSON.stringify(createPost, null, 2)}</pre>
-	<form
+	<!-- <pre>{JSON.stringify(createPost, null, 2)}</pre> -->
+	<!-- <form
 		{...createPost}
 		onfocusout={() => createPost.validate()}
 		onsubmit={(e) => {
@@ -83,10 +82,10 @@
 		}}
 		class="space-y-4"
 	>
-		<h2>H2 {createPost.input?.title}</h2>
-		<!-- <input bind:value={variable} name="title" min={0} /> -->
-		<!-- <input bind:value={variable} name="content" min={0} /> -->
-		<Card.Root>
+		<h2>H2 {createPost.input?.title}</h2> -->
+	<!-- <input bind:value={variable} name="title" min={0} /> -->
+	<!-- <input bind:value={variable} name="content" min={0} /> -->
+	<!-- 		<Card.Root>
 			<Card.Content class="space-y-4">
 				<NumberInputDecimal
 					bind:value={variable}
@@ -116,22 +115,15 @@
 					{/each}
 				{/if}
 				<hr />
-
-				<!-- <div class="flex items-center justify-between">
-					<Button size="sm">Secondary</Button>
-					<Button variant="secondary">Secondary</Button>
-					<Button size="sm" variant="outline" class="dark:bg-background">Outline</Button>
-					<Button size="sm" variant="ghost">Ghost</Button>
-				</div> -->
 				<button>Publish!</button>
 			</Card.Content>
 		</Card.Root>
-	</form>
-	<div class="preview">
+	</form> -->
+	<!-- 	<div class="preview">
 		<h2>{createPost?.input?.title}</h2>
 		<div>{@html createPost?.input?.content}</div>
-	</div>
-
+	</div> -->
+	<TreeViewArk />
 	{JSON.stringify(variable, null, 2)}
 	<h1 class="text-2xl font-bold">Ark UI ComboboxAsync Examples</h1>
 

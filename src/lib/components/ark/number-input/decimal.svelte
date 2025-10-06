@@ -4,15 +4,10 @@
 	import ChevronUp from '@lucide/svelte/icons/chevron-up';
 	import type { NumberInputRootBaseProps } from '@ark-ui/svelte/number-input';
 	import { useLocaleContext } from '@ark-ui/svelte/locale';
+	import type { NumberInputProps } from './types';
 
 	const localeContext = useLocaleContext();
 
-	type Props = Omit<NumberInputRootBaseProps, 'value' | 'readOnly'> & {
-		value?: number | null;
-		readonly?: boolean;
-		label?: string;
-		step?: number;
-	};
 	let {
 		value = $bindable(),
 		readonly,
@@ -20,7 +15,7 @@
 		label,
 		name,
 		...restProps
-	}: Props = $props();
+	}: NumberInputProps = $props();
 
 	function getNumberRegex() {
 		const nf = new Intl.NumberFormat(locale);
@@ -50,11 +45,11 @@
 			}
 			value = valueChangeDetails.valueAsNumber;
 		}}
-		class="flex w-full flex-col gap-2"
+		class="flex w-full flex-col gap-1"
 	>
 		{#if label}
 			<NumberInput.Label
-				class="flex items-center gap-2 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+				class="flex items-center gap-2 text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 			>
 				{label}
 				<span class="text-destructive">*</span>
@@ -66,10 +61,14 @@
 			<NumberInput.Input
 				class="row-span-2 border-none px-3 py-1 text-right text-base text-foreground outline-hidden placeholder:text-muted-foreground focus-within:outline-hidden focus:outline-hidden focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
 			/>
-			<NumberInput.IncrementTrigger class="flex items-center justify-center border-l">
+			<NumberInput.IncrementTrigger
+				class="flex cursor-pointer items-center justify-center border-l bg-background text-muted-foreground transition-colors hover:text-foreground data-[disabled]:cursor-not-allowed data-[disabled]:bg-background data-[disabled]:opacity-50"
+			>
 				<ChevronUp class="h-3 w-3" />
 			</NumberInput.IncrementTrigger>
-			<NumberInput.DecrementTrigger class="flex items-center justify-center border-t border-l">
+			<NumberInput.DecrementTrigger
+				class="flex items-center justify-center border-t border-l bg-background text-muted-foreground transition-colors hover:text-foreground data-[disabled]:cursor-not-allowed data-[disabled]:bg-background data-[disabled]:opacity-50"
+			>
 				<ChevronDown class="h-3 w-3" />
 			</NumberInput.DecrementTrigger>
 		</NumberInput.Control>

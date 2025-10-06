@@ -132,7 +132,7 @@
 
 		<Button variant="outline" onclick={addToCart}>Add to Cart</Button>
 		<Button variant="outline" onclick={handleSalesGraphClick}>Sales Graph</Button>
-		<SelectArk
+		<!-- 		<SelectArk
 			bind:value={inputValueReport}
 			items={reports}
 			placeholder="Select report"
@@ -146,7 +146,7 @@
 				}
 				goto(url);
 			}}
-		/>
+		/> -->
 		<SelectArk
 			value={inputValueWarehouse}
 			items={warehouses}
