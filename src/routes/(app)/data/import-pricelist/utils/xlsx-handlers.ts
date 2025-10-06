@@ -173,6 +173,3 @@ export async function processExcelData(
 		excelData: res.excelData
 	};
 }
-
-// Deprecated: The old main-thread helpers have been removed to prevent long tasks.
-// If you still need direct workbook parsing, use the worker-based functions above instead.

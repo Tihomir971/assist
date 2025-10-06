@@ -24,6 +24,9 @@ export interface Mapping {
 	valid_from: string;
 	valid_to: string;
 }
+export type StorageMapping = {
+	[key: string]: Mapping;
+};
 
 export interface Supplier {
 	id: number;

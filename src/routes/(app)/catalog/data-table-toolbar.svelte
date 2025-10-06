@@ -16,6 +16,7 @@
 	import PhFolders from '~icons/ph/folders';
 	import PhCaretDown from '~icons/ph/caret-down';
 	import { SelectArk } from '$lib/components/ark';
+	import { SelectZag } from '$lib/components/zag';
 
 	type Props = {
 		rowSelectionState: RowSelectionState;
@@ -132,7 +133,7 @@
 
 		<Button variant="outline" onclick={addToCart}>Add to Cart</Button>
 		<Button variant="outline" onclick={handleSalesGraphClick}>Sales Graph</Button>
-		<!-- 		<SelectArk
+		<SelectZag
 			bind:value={inputValueReport}
 			items={reports}
 			placeholder="Select report"
@@ -146,8 +147,8 @@
 				}
 				goto(url);
 			}}
-		/> -->
-		<SelectArk
+		/>
+		<SelectZag
 			value={inputValueWarehouse}
 			items={warehouses}
 			onValueChange={(details) => {

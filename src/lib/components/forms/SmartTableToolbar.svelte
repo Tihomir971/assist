@@ -14,6 +14,7 @@
 	import { goto } from '$app/navigation';
 	import { debounce } from '$lib/scripts/debounce';
 	import { SelectArk } from '$lib/components/ark';
+	import { SelectZag } from '$lib/components/zag';
 
 	type Props = {
 		table: TanstackTable<TData>;
@@ -175,7 +176,7 @@
 					placeholder={filter.placeholder || `Filter by ${filter.label.toLowerCase()}`}
 				/>
 			{:else if filter.type === 'select'}
-				<SelectArk
+				<SelectZag
 					bind:value={filterValues[filter.name]}
 					onValueChange={(detail) => handleFilterChange(filter.name, detail.value[0], 'select')}
 					items={filter.options || (lookupData ? lookupData[filter.lookupDataKey || ''] : [])}
@@ -183,7 +184,7 @@
 					placeholder={filter.placeholder || `All ${filter.label.toLowerCase()}`}
 				/>
 			{:else if filter.type === 'boolean'}
-				<SelectArk
+				<SelectZag
 					bind:value={filterValues[filter.name]}
 					onValueChange={(detail) => {
 						const value = Array.isArray(detail.value) ? detail.value[0] : detail.value;

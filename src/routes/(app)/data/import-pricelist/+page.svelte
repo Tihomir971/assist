@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Product, Mapping } from './types';
+	import type { Product, Mapping, StorageMapping } from './types';
 	import { browser } from '$app/environment';
 	import { onDestroy, onMount } from 'svelte';
 	//Components
@@ -13,7 +13,7 @@
 	import { processExcelData } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
 
-	import { ComboboxZag } from '$lib/components/zag/index.js';
+	import { ComboboxZag, SelectZag } from '$lib/components/zag/index.js';
 	import { retrieveAndParseXml, type Product as XmlProductType } from '$lib/xml-parser-esm';
 	import { NumberInputDecimal, SelectArk, UploadBasicDocument } from '$lib/components/ark';
 	import type { FileUpload } from '@ark-ui/svelte/file-upload';
@@ -23,7 +23,9 @@
 	import type { ColumnDef } from '@tanstack/table-core';
 	import { renderComponent } from '$lib/components/ui/data-table';
 	import { DataTable } from '$lib/components/custom-table';
-
+	import { PersistedState } from 'runed';
+	const storageMapping = new PersistedState<StorageMapping>('supplierMappings', {});
+	$inspect('supplierMappings:', storageMapping.current);
 	let { data } = $props();
 	let { supabase } = $derived(data);
 
@@ -79,34 +81,33 @@
 	// Update mappings when selectedSupplier changes
 	$effect(() => {
 		if (browser && selectedSupplier !== undefined) {
-			const savedMappings = localStorage.getItem('supplierMappings');
-			if (savedMappings) {
-				const parsedMappings = JSON.parse(savedMappings);
-				if (parsedMappings[selectedSupplier]) {
-					mappings = parsedMappings[selectedSupplier];
-				} else {
-					// Reset mappings if there's no saved mapping for this supplier
-					mappings = {
-						name: '',
-						vendorproductno: '',
-						pricelist: '',
-						barcode: '',
-						vendorcategory: '',
-						manufacturer: '',
-						valid_from: '',
-						valid_to: ''
-					};
-				}
+			// const parsedMappings = JSON.parse(savedMappings) as StorageMapping;
+			if (storageMapping.current[selectedSupplier]) {
+				mappings = storageMapping.current[selectedSupplier];
+			} else {
+				// Reset mappings if there's no saved mapping for this supplier
+				mappings = {
+					name: '',
+					vendorproductno: '',
+					pricelist: '',
+					barcode: '',
+					vendorcategory: '',
+					manufacturer: '',
+					valid_from: '',
+					valid_to: ''
+				};
 			}
 		}
 	});
 
 	function saveMappings() {
 		if (browser && selectedSupplier !== undefined) {
-			const savedMappings = localStorage.getItem('supplierMappings');
-			const parsedMappings = savedMappings ? JSON.parse(savedMappings) : {};
-			parsedMappings[selectedSupplier] = mappings;
-			localStorage.setItem('supplierMappings', JSON.stringify(parsedMappings));
+			// const savedMappings = localStorage.getItem('supplierMappings');
+			// const savedMappings = persistedArray.current;
+			// const parsedMappings = savedMappings ? savedMappings : {};
+			storageMapping.current[selectedSupplier] = mappings;
+			// localStorage.setItem('supplierMappings', JSON.stringify(parsedMappings));
+			// persistedArray.current = parsedMappings;
 		}
 	}
 	async function handleFileChange(details: FileUpload.FileChangeDetails) {
@@ -362,9 +363,10 @@
 
 	onMount(() => {
 		if (browser) {
-			const savedMappings = localStorage.getItem('supplierMappings');
+			// const savedMappings = localStorage.getItem('supplierMappings');
+			const savedMappings = storageMapping.current;
 			if (savedMappings) {
-				const parsedMappings = JSON.parse(savedMappings);
+				const parsedMappings = savedMappings;
 				if (selectedSupplier !== undefined && parsedMappings[selectedSupplier]) {
 					mappings = parsedMappings[selectedSupplier];
 				}
@@ -389,7 +391,7 @@
 			label="Supplier"
 			placeholder="Select supplier..."
 		/>
-		<SelectArk
+		<SelectZag
 			id="dataSourceSelect"
 			bind:value={selectedDataSource}
 			items={[
@@ -409,7 +411,7 @@
 			/>
 			<div class="flex flex-col gap-2">
 				{#if sheetNames.length > 1}
-					<SelectArk
+					<SelectZag
 						bind:value={selectedSheet}
 						items={sheetNames}
 						label="Select a sheet"

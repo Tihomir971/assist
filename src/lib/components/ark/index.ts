@@ -4,6 +4,7 @@
 export { default as NumberInputDecimal } from './number-input/decimal.svelte';
 
 export { default as SelectArk } from './select/select-lookup.svelte';
+export { default as SelectTest } from './select/select-test.svelte';
 export { default as TreeViewArk } from './tree-view/basic.svelte';
 
 export { default as CheckboxArk } from './checkbox/checkbox.svelte';
