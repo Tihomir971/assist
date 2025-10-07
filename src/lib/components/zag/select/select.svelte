@@ -5,6 +5,7 @@
 	import type { SelectItem, SelectProps2 } from './types';
 	import PhX from '~icons/ph/x';
 	import PhCaretDown from '~icons/ph/caret-down';
+	import CheckIcon from '@lucide/svelte/icons/check';
 
 	let {
 		id,
@@ -63,31 +64,33 @@
 	const api = $derived(select.connect(service, normalizeProps));
 </script>
 
-<div {...api.getRootProps()}>
+<div {...api.getRootProps()} class="grid gap-2">
 	{#if label}
 		<div class="flex items-center justify-between">
 			<label
 				{...api.getLabelProps()}
-				class="leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+				class="flex items-center gap-2 text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 			>
 				{label}
 				{#if required || ariaRequired === 'true'}
 					<span class="text-warning">*</span>
 				{/if}
 			</label>
-			<button {...api.getClearTriggerProps()}><PhX class="text-xs" /></button>
+			<button {...api.getClearTriggerProps()}>
+				<PhX class="text-xs" />
+			</button>
 		</div>
 	{/if}
 
 	<div {...api.getControlProps()}>
 		<button
 			{...api.getTriggerProps()}
-			class="flex w-fit items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[placeholder]:text-muted-foreground data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground"
+			class="flex h-9 w-full cursor-pointer items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder-muted-foreground shadow-sm focus:ring-1 focus:ring-ring focus:outline-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50"
 		>
 			<span class={api.valueAsString ? '' : 'text-muted-foreground'}>
 				{api.valueAsString || placeholder}
 			</span>
-			<span {...api.getIndicatorProps()}><PhCaretDown /></span>
+			<span {...api.getIndicatorProps()} class="h-4 w-4 opacity-50"><PhCaretDown /></span>
 		</button>
 	</div>
 
@@ -100,11 +103,22 @@
 	</select>
 
 	<div use:portal {...api.getPositionerProps()}>
-		<ul {...api.getContentProps()}>
+		<ul
+			{...api.getContentProps()}
+			class="z-50 max-h-60 min-w-(--reference-width) overflow-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95"
+		>
 			{#each items as item}
-				<li {...api.getItemProps({ item })}>
+				<li
+					{...api.getItemProps({ item })}
+					class="relative flex cursor-default items-center rounded-sm py-1.5 pr-8 pl-2 text-sm text-accent-foreground select-none data-highlighted:bg-accent data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[state=checked]:bg-accent"
+				>
 					<span {...api.getItemTextProps({ item })}>{item.label}</span>
-					<span {...api.getItemIndicatorProps({ item })}>✓</span>
+					<span
+						{...api.getItemIndicatorProps({ item })}
+						class="absolute right-2 items-center justify-center"
+					>
+						<CheckIcon class="size-3.5" />
+					</span>
 				</li>
 			{/each}
 		</ul>

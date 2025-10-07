@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { NumberInputDecimal, SelectArk, TreeViewArk } from '$lib/components/ark';
+	import { NumberInputDecimal, TreeViewArk } from '$lib/components/ark';
 	// import { ComboboxAsync } from '$lib/components/ark/combobox';
 	// import { searchUsers } from '$lib/components/ark/combobox/async.remote';
 	// import { searchCategories } from '$lib/remote/category.remote';
@@ -11,25 +11,25 @@
 
 	// import * as z from 'zod';
 	// Define types for better type safety
-	interface User {
+	/* 	interface User {
 		id: number;
 		name: string;
 		email: string;
 		avatar: string;
-	}
+	} */
 
-	interface Fruit {
+	/* 	interface Fruit {
 		id: number;
 		name: string;
 		color: string;
 		category: string;
-	}
+	} */
 	// export let data: PageData;
-	let variable = $state(1325.53);
+	/* 	let variable = $state(1325.53); */
 
-	let selectedUser = $state<User | null>(null);
-	let { data } = $props();
-	const items = [
+	// let selectedUser = $state<User | null>(null);
+	// let { data } = $props();
+	/* 	const items = [
 		{ label: 'United States', value: 1, flag: '🇺🇸' },
 		{ label: 'United Kingdom', value: 2, flag: '🇬🇧' },
 		{ label: 'Canada', value: 3, flag: '🇨🇦' },
@@ -38,34 +38,34 @@
 		{ label: 'Japan', value: 6, flag: '🇯🇵' },
 		{ label: 'Australia', value: 7, flag: '🇦🇺' },
 		{ label: 'Brazil', value: 8, flag: '🇧🇷' }
-	];
+	]; */
 	/* 	const searchUsersWrapper = async (query: string) => {
 		const result = await searchCategories(query);
 		console.log('Search Result:', result);
 		return result;
 	}; */
 
-	const searchFruits = async (query: string): Promise<Fruit[]> => {
-		const fruits: Fruit[] = [
-			{ id: 1, name: 'Apple', color: 'Red', category: 'Tree Fruit' },
-			{ id: 2, name: 'Banana', color: 'Yellow', category: 'Tropical' },
-			{ id: 3, name: 'Orange', color: 'Orange', category: 'Citrus' },
-			{ id: 4, name: 'Grape', color: 'Purple', category: 'Vine Fruit' },
-			{ id: 5, name: 'Strawberry', color: 'Red', category: 'Berry' },
-			{ id: 6, name: 'Blueberry', color: 'Blue', category: 'Berry' },
-			{ id: 7, name: 'Pineapple', color: 'Yellow', category: 'Tropical' },
-			{ id: 8, name: 'Mango', color: 'Orange', category: 'Tropical' }
-		];
-
-		// Simulate API delay
-		await new Promise((resolve) => setTimeout(resolve, 300));
-
-		return fruits.filter(
-			(fruit) =>
-				fruit.name.toLowerCase().includes(query.toLowerCase()) ||
-				fruit.category.toLowerCase().includes(query.toLowerCase())
-		);
-	};
+	//const searchFruits = async (query: string): Promise<Fruit[]> => {
+	//	const fruits: Fruit[] = [
+	//		{ id: 1, name: 'Apple', color: 'Red', category: 'Tree Fruit' },
+	//		{ id: 2, name: 'Banana', color: 'Yellow', category: 'Tropical' },
+	//		{ id: 3, name: 'Orange', color: 'Orange', category: 'Citrus' },
+	//		{ id: 4, name: 'Grape', color: 'Purple', category: 'Vine Fruit' },
+	//		{ id: 5, name: 'Strawberry', color: 'Red', category: 'Berry' },
+	//		{ id: 6, name: 'Blueberry', color: 'Blue', category: 'Berry' },
+	//		{ id: 7, name: 'Pineapple', color: 'Yellow', category: 'Tropical' },
+	//		{ id: 8, name: 'Mango', color: 'Orange', category: 'Tropical' }
+	//	];
+	//
+	//	// Simulate API delay
+	//	await new Promise((resolve) => setTimeout(resolve, 300));
+	//
+	//	return fruits.filter(
+	//		(fruit) =>
+	//			fruit.name.toLowerCase().includes(query.toLowerCase()) ||
+	//			fruit.category.toLowerCase().includes(query.toLowerCase())
+	//	);
+	//};
 </script>
 
 <div class="space-y-8 p-16">
@@ -101,14 +101,6 @@
 					{/each}
 				{/if}
 				<hr />
-				<SelectArk
-					{items}
-					name={createPost.field('content')}
-					label="Content"
-					onValueChange={(deatils) => {
-						console.log('Ovos us detaais', deatils);
-					}}
-				/>
 				{#if createPost.issues?.content}
 					{#each createPost.issues.content as issue}
 						<p class="issue">{issue.message}</p>
@@ -124,7 +116,7 @@
 		<div>{@html createPost?.input?.content}</div>
 	</div> -->
 	<!-- <TreeViewArk /> -->
-	{JSON.stringify(variable, null, 2)}
+	<!-- {JSON.stringify(variable, null, 2)} -->
 	<h1 class="text-2xl font-bold">Ark UI ComboboxAsync Examples</h1>
 
 	<!-- Basic User Search -->

@@ -108,9 +108,9 @@
 		debouncedUpdate(searchTerm);
 
 		// Cleanup: cancel pending debounced calls when effect is destroyed
-		/* 	return () => {
+		return () => {
 			debouncedUpdate.cancel();
-		}; */
+		};
 	});
 
 	$effect(() => {

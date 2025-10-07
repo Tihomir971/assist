@@ -15,7 +15,6 @@
 	import PhLetterCircleV from '~icons/ph/letter-circle-v';
 	import PhFolders from '~icons/ph/folders';
 	import PhCaretDown from '~icons/ph/caret-down';
-	import { SelectArk } from '$lib/components/ark';
 	import { SelectZag } from '$lib/components/zag';
 
 	type Props = {

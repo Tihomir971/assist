@@ -1,7 +1,6 @@
 <script lang="ts" generics="TData">
 	import type { Table as TanstackTable } from '$lib/components/walker-tx';
 	import { Button } from '$lib/components/ui/button';
-	import { SelectArk } from '$lib/components/ark';
 	import { SelectZag } from '$lib/components/zag';
 
 	type Props = {

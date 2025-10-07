@@ -15,7 +15,7 @@
 
 	import { ComboboxZag, SelectZag } from '$lib/components/zag/index.js';
 	import { retrieveAndParseXml, type Product as XmlProductType } from '$lib/xml-parser-esm';
-	import { NumberInputDecimal, SelectArk, UploadBasicDocument } from '$lib/components/ark';
+	import { NumberInputDecimal, UploadBasicDocument } from '$lib/components/ark';
 	import type { FileUpload } from '@ark-ui/svelte/file-upload';
 	import type { RawExcelRow } from './utils/xlsx-shared';
 	import AddProductButton from './AddProductButton.svelte';
@@ -24,11 +24,11 @@
 	import { renderComponent } from '$lib/components/ui/data-table';
 	import { DataTable } from '$lib/components/custom-table';
 	import { PersistedState } from 'runed';
-	const storageMapping = new PersistedState<StorageMapping>('supplierMappings', {});
-	$inspect('supplierMappings:', storageMapping.current);
+
 	let { data } = $props();
 	let { supabase } = $derived(data);
 
+	const storageMapping = new PersistedState<StorageMapping>('supplierMappings', {});
 	// Constants for Spektar XML Import
 	const SPEKTAR_SUPPLIER_ID = 347;
 	const SPEKTAR_XML_URL =
@@ -81,7 +81,6 @@
 	// Update mappings when selectedSupplier changes
 	$effect(() => {
 		if (browser && selectedSupplier !== undefined) {
-			// const parsedMappings = JSON.parse(savedMappings) as StorageMapping;
 			if (storageMapping.current[selectedSupplier]) {
 				mappings = storageMapping.current[selectedSupplier];
 			} else {
@@ -363,7 +362,6 @@
 
 	onMount(() => {
 		if (browser) {
-			// const savedMappings = localStorage.getItem('supplierMappings');
 			const savedMappings = storageMapping.current;
 			if (savedMappings) {
 				const parsedMappings = savedMappings;
@@ -375,9 +373,9 @@
 		fileInput = document.querySelector('input[type="file"]');
 	});
 
-	onDestroy(() => {
+	/* 	onDestroy(() => {
 		resetAll();
-	});
+	}); */
 
 	let selectedSupplier: number | undefined = $state();
 </script>

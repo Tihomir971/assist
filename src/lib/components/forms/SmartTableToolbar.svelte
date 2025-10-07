@@ -13,7 +13,6 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { debounce } from '$lib/scripts/debounce';
-	import { SelectArk } from '$lib/components/ark';
 	import { SelectZag } from '$lib/components/zag';
 
 	type Props = {
