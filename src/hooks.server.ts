@@ -91,7 +91,7 @@ const authGuard: Handle = async ({ event, resolve }) => {
 	 * new Set(['app', 'self']) or whatever your top-level path segments are, and
 	 * .has(event.url.pathname.split('/')[1])
 	 */
-	const auth_protected_paths = new Set(['(app)']);
+	const auth_protected_paths = new Set(['(app)', '/']);
 	if (!session && auth_protected_paths.has(event.route.id?.split('/')[1] || ''))
 		redirect(307, '/auth');
 
@@ -99,9 +99,9 @@ const authGuard: Handle = async ({ event, resolve }) => {
 	if (isMobile(userAgent) && !event.url.pathname.startsWith('/mobile')) {
 		return redirect(303, '/mobile');
 	}
-	// if (event.url.pathname === '/auth' || event.url.pathname === '/') {
-	// return redirect(303, '/dashboard');
-	// }
+	if (event.url.pathname === '/auth' || event.url.pathname === '/') {
+		return redirect(303, '/dashboard');
+	}
 	// } else if (!event.url.pathname.startsWith('/auth')) {
 	// return redirect(303, '/auth');
 	// }

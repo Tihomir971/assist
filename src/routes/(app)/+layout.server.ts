@@ -15,7 +15,7 @@ export const load: LayoutServerLoad = async ({ locals: { supabase, safeGetSessio
 	const { session } = await safeGetSession();
 
 	if (!session) {
-		redirect(303, '/');
+		redirect(303, '/auth');
 	}
 
 	const localeService = new LocaleService(supabase);
