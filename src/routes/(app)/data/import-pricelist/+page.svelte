@@ -13,7 +13,7 @@
 	import { processExcelData } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
 
-	import { ComboboxZag, SelectZag } from '$lib/components/zag/index.js';
+	import { ComboboxZag, SelectLookupZag } from '$lib/components/zag/index.js';
 	import { retrieveAndParseXml, type Product as XmlProductType } from '$lib/xml-parser-esm';
 	import { NumberInputDecimal, UploadBasicDocument } from '$lib/components/ark';
 	import type { FileUpload } from '@ark-ui/svelte/file-upload';
@@ -389,7 +389,7 @@
 			label="Supplier"
 			placeholder="Select supplier..."
 		/>
-		<SelectZag
+		<SelectLookupZag
 			id="dataSourceSelect"
 			bind:value={selectedDataSource}
 			items={[
@@ -409,7 +409,7 @@
 			/>
 			<div class="flex flex-col gap-2">
 				{#if sheetNames.length > 1}
-					<SelectZag
+					<SelectLookupZag
 						bind:value={selectedSheet}
 						items={sheetNames}
 						label="Select a sheet"

@@ -39,7 +39,13 @@
 				</div>
 				<div>
 					<Label for="password">New Password (optional)</Label>
-					<Input type="password" id="password" name="password" bind:value={$form.password} />
+					<Input
+						type="password"
+						id="password"
+						name="password"
+						autocomplete="new-password"
+						bind:value={$form.password}
+					/>
 					{#if $errors.password}<span class="text-red-500">{$errors.password}</span>{/if}
 				</div>
 				<div>
@@ -48,6 +54,7 @@
 						type="password"
 						id="confirm_password"
 						name="confirm_password"
+						autocomplete="new-password"
 						bind:value={$form.confirm_password}
 					/>
 					{#if $errors.confirm_password}<span class="text-red-500">{$errors.confirm_password}</span

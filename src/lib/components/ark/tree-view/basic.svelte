@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { TreeView, createTreeCollection } from '@ark-ui/svelte/tree-view';
 	import { SquareCheckBigIcon, ChevronRightIcon, FileIcon, FolderIcon } from '@lucide/svelte';
-	import './app.css';
 	interface Node {
 		id: string;
 		name: string;

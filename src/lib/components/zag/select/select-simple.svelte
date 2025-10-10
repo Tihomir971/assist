@@ -2,7 +2,7 @@
 	import './select.css';
 	import * as select from '@zag-js/select';
 	import { normalizeProps, portal, useMachine } from '@zag-js/svelte';
-	import type { SelectItem, SelectProps2 } from './types';
+	import type { SelectItem, SelectPropsSimple } from './types';
 	import PhX from '~icons/ph/x';
 	import PhCaretDown from '~icons/ph/caret-down';
 	import CheckIcon from '@lucide/svelte/icons/check';
@@ -21,16 +21,11 @@
 		'aria-describedby': ariaDescribedBy,
 		'aria-invalid': ariaInvalid,
 		'aria-required': ariaRequired
-	}: SelectProps2<T> = $props();
+	}: SelectPropsSimple = $props();
 
 	const collection = $derived(
 		select.collection({
-			items,
-			itemToValue: (item) => item.value.toString(),
-			itemToString: (item) => item.label,
-			isItemDisabled(item) {
-				return item.disabled || false;
-			}
+			items: items
 		})
 	);
 	const localId = $props.id();
@@ -96,8 +91,8 @@
 
 	<select {...api.getHiddenSelectProps()}>
 		{#each items as option}
-			<option value={option.value}>
-				{option.label}
+			<option value={option}>
+				{option}
 			</option>
 		{/each}
 	</select>
@@ -112,7 +107,7 @@
 					{...api.getItemProps({ item })}
 					class="relative flex cursor-default items-center rounded-sm py-1.5 pr-8 pl-2 text-sm text-accent-foreground select-none data-highlighted:bg-accent data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[state=checked]:bg-accent"
 				>
-					<span {...api.getItemTextProps({ item })}>{item.label}</span>
+					<span {...api.getItemTextProps({ item })}>{item}</span>
 					<span
 						{...api.getItemIndicatorProps({ item })}
 						class="absolute right-2 items-center justify-center"

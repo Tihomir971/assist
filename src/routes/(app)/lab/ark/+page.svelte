@@ -69,6 +69,10 @@
 </script>
 
 <div class="space-y-8 p-16">
+	<form>
+		<input type="text" name="title" placeholder="Title" value={null} />
+		<button type="submit">Submit</button>
+	</form>
 	<!-- <pre>{JSON.stringify(createPost, null, 2)}</pre> -->
 	<!-- <form
 		{...createPost}

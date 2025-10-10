@@ -66,21 +66,6 @@ const authGuard: Handle = async ({ event, resolve }) => {
 	const userAgent = event.request.headers.get('user-agent') || '';
 
 	// From: https://github.com/j4w8n/sveltekit-supabase-ssr/blob/main/src/hooks.server.ts
-	/* 	const auth_protected_paths = new Set(['(app)', 'api']);
-	if (!session && auth_protected_paths.has(event.route.id?.split('/')[1] || ''))
-		redirect(307, '/auth'); */
-
-	// Check if the request is for an API route
-	// if (event.url.pathname.startsWith('/api') || event.url.pathname === '/') {
-	// console.log('API route, checking auth...');
-	// Allow access only for authenticated users
-	// if (event.locals.session) {
-	// return resolve(event);
-	// } else {
-	// Redirect unauthenticated users to the auth page
-	// return redirect(303, '/auth');
-	// }
-	// }
 	/**
 	 * Only authenticated users can access these paths and their sub-paths.
 	 *
@@ -95,16 +80,12 @@ const authGuard: Handle = async ({ event, resolve }) => {
 	if (!session && auth_protected_paths.has(event.route.id?.split('/')[1] || ''))
 		redirect(307, '/auth');
 
-	// if (session) {
 	if (isMobile(userAgent) && !event.url.pathname.startsWith('/mobile')) {
 		return redirect(303, '/mobile');
 	}
 	if (event.url.pathname === '/auth' || event.url.pathname === '/') {
 		return redirect(303, '/dashboard');
 	}
-	// } else if (!event.url.pathname.startsWith('/auth')) {
-	// return redirect(303, '/auth');
-	// }
 
 	return resolve(event);
 };

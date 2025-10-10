@@ -8,11 +8,21 @@ export interface SelectItem<T = number | string> {
 	disabled?: boolean;
 }
 
-export interface SelectProps2<T extends SelectItem>
+export interface SelectPropsLookup<T extends SelectItem>
 	extends Pick<select.Props, 'readOnly' | 'disabled' | 'required' | 'onValueChange'>,
-		Partial<Omit<ControlAttrs, 'data-fs-control' | 'data-fs-error'>> {
+		Partial<Omit<ControlAttrs, 'data-fs-control' | 'data-fs-error' | 'aria-invalid'>> {
 	value?: number | string | null | undefined;
 	items?: T[];
 	label?: string;
 	placeholder?: string;
+	'aria-invalid'?: boolean | 'true' | 'false' | undefined;
+}
+export interface SelectPropsSimple
+	extends Pick<select.Props, 'readOnly' | 'disabled' | 'required' | 'onValueChange'>,
+		Partial<Omit<ControlAttrs, 'data-fs-control' | 'data-fs-error' | 'aria-invalid'>> {
+	value?: number | string | null | undefined;
+	items?: string[];
+	label?: string;
+	placeholder?: string;
+	'aria-invalid'?: boolean | 'true' | 'false' | undefined;
 }

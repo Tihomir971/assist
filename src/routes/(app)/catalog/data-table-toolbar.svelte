@@ -15,7 +15,7 @@
 	import PhLetterCircleV from '~icons/ph/letter-circle-v';
 	import PhFolders from '~icons/ph/folders';
 	import PhCaretDown from '~icons/ph/caret-down';
-	import { SelectZag } from '$lib/components/zag';
+	import { SelectLookupZag } from '$lib/components/zag';
 
 	type Props = {
 		rowSelectionState: RowSelectionState;
@@ -132,7 +132,7 @@
 
 		<Button variant="outline" onclick={addToCart}>Add to Cart</Button>
 		<Button variant="outline" onclick={handleSalesGraphClick}>Sales Graph</Button>
-		<SelectZag
+		<SelectLookupZag
 			bind:value={inputValueReport}
 			items={reports}
 			placeholder="Select report"
@@ -147,7 +147,7 @@
 				goto(url);
 			}}
 		/>
-		<SelectZag
+		<SelectLookupZag
 			value={inputValueWarehouse}
 			items={warehouses}
 			onValueChange={(details) => {

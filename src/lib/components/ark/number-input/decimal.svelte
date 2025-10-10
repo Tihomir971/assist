@@ -59,7 +59,7 @@
 			class="grid h-9 w-full grid-cols-[1fr_24px] grid-rows-2 overflow-hidden rounded-md border border-input bg-background shadow-sm transition-colors focus-within:ring-1 focus-within:ring-ring focus-visible:outline-none"
 		>
 			<NumberInput.Input
-				class="row-span-2 border-none px-3 py-1 text-right text-base text-foreground outline-hidden placeholder:text-muted-foreground focus-within:outline-hidden focus:outline-hidden focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+				class="row-span-2 w-full border-none px-3 py-1 text-right text-base text-foreground outline-hidden placeholder:text-muted-foreground focus-within:outline-hidden focus:outline-hidden focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
 			/>
 			<NumberInput.IncrementTrigger
 				class="flex cursor-pointer items-center justify-center border-l bg-background text-muted-foreground transition-colors hover:text-foreground data-[disabled]:cursor-not-allowed data-[disabled]:bg-background data-[disabled]:opacity-50"

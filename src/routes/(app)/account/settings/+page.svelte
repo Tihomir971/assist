@@ -1,8 +1,10 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import LocalePreferencesCard from '$lib/components/settings/LocalePreferencesCard.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import { Separator } from '$lib/components/ui/separator';
+	import { SelectLookupZag } from '$lib/components/zag';
+	import { setUserMetadata } from './data.remote';
+	import { Button } from '$lib/components/ui/button/index.js';
 
 	let { data }: { data: PageData } = $props();
 </script>
@@ -17,10 +19,29 @@
 
 	<div class="grid gap-6">
 		<!-- Localization Preferences -->
-		<LocalePreferencesCard
-			availableLocales={data.localePreferences.availableLocales}
-			bind:currentLocale={data.localePreferences.preferredDataLocale}
-		/>
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>Data Localization Preferences</Card.Title>
+				<Card.Description>
+					Choose the language for displaying data content (product names, categories, etc.)
+				</Card.Description>
+			</Card.Header>
+			<Card.Content>
+				<form {...setUserMetadata}>
+					<SelectLookupZag
+						{...setUserMetadata.fields.preferred_locale.as('text')}
+						name="preferred_locale"
+						value={data.user?.user_metadata.preferred_locale}
+						items={data.localePreferences.availableLocales}
+						label="User preferred Language"
+					/>
+					<Button type="submit" class="mt-4">Save Changes</Button>
+				</form>
+			</Card.Content>
+			<Card.Footer>
+				<p>Card Footer</p>
+			</Card.Footer>
+		</Card.Root>
 
 		<!-- Future settings cards can be added here -->
 		<Card.Root>

@@ -1,7 +1,7 @@
 // import type { Database } from '@tihomir971/assist-shared';
 import type { Database } from '$lib/types/supabase';
-import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
-
+import type { Session, SupabaseClient } from '@supabase/supabase-js';
+import type { SupabaseUser } from '$lib/types/supabase.custom-user';
 import 'unplugin-icons/types/svelte';
 
 declare global {
@@ -9,9 +9,9 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			supabase: SupabaseClient<Database>;
-			safeGetSession: () => Promise<{ session: Session | null; user: User | null }>;
+			safeGetSession: () => Promise<{ session: Session | null; user: SupabaseUser | null }>;
 			session: Session | null;
-			user: User | null;
+			user: SupabaseUser | null;
 		}
 		interface PageData {
 			session: Session | null;

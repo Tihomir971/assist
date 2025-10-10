@@ -25,10 +25,6 @@
 		background: rgb(243, 243, 243);
 	}
 
-	&[data-selected] {
-		background: rgb(226, 226, 226);
-	}
-
 	&:focus {
 		outline: 1px solid rgb(148, 148, 148);
 		outline-offset: -1px;

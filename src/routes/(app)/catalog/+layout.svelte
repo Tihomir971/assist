@@ -12,6 +12,7 @@
 	import { TreeViewZag } from '$lib/components/zag';
 	import { categoryCache } from '$lib/stores/category-cache.svelte';
 	import { getLocaleManagerContext } from '$lib/stores/locale-manager.svelte';
+	import type { TreeStructure } from '$lib/services/supabase/category.service';
 
 	let contextNode: string | null = $state(null);
 	interface Props {
@@ -23,7 +24,7 @@
 
 	let showReportDialog = $state(false);
 	// Use a plain reactive state for treeData; server may no longer provide categories
-	let treeData = $state<any[]>([]);
+	let treeData = $state<TreeStructure[]>([]);
 
 	// Load categories from cache
 	onMount(async () => {
@@ -39,8 +40,7 @@
 				// locale manager missing — fall back to default
 			}
 
-			const cats = await categoryCache.getCategories(userLocale);
-			treeData = cats;
+			treeData = await categoryCache.getCategories('sr-Latn-RS');
 		} catch (err) {
 			console.warn('Failed to load categories from cache:', err);
 		}
@@ -52,7 +52,7 @@
 	const selectedCategory = $derived(selectedValue?.[0] ? parseInt(selectedValue[0]) : undefined);
 </script>
 
-<main class="flex w-full flex-1 gap-2 overflow-hidden px-2 py-2">
+<main class="flex w-full flex-1 gap-2 overflow-y-auto px-2 py-2">
 	<Card.Root class="flex h-full w-64 flex-col gap-0 p-0">
 		<Card.Content class="h-full min-h-0 flex-1 p-0">
 			<ContextMenu.Root

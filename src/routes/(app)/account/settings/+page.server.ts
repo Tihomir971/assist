@@ -1,8 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { LocaleService } from '$lib/services/supabase/locale.service';
-import { UserPreferencesService } from '$lib/services/supabase/user-preferences.service';
 
-export const load = (async ({ locals: { supabase, session } }) => {
+export const load = (async ({ locals: { supabase, session, user } }) => {
 	if (!session?.user) {
 		return {
 			localePreferences: {
@@ -14,14 +13,11 @@ export const load = (async ({ locals: { supabase, session } }) => {
 
 	try {
 		// Load available locales and user preferences in parallel
-		const [availableLocales, userPreferences] = await Promise.all([
-			new LocaleService(supabase).getLocales(),
-			new UserPreferencesService(supabase).getUserPreferences(session.user.id)
-		]);
+		const [availableLocales] = await Promise.all([new LocaleService(supabase).getLocales()]);
 
 		return {
 			localePreferences: {
-				preferredDataLocale: userPreferences?.preferred_data_locale || 'sr-Latn-RS',
+				preferredDataLocale: user?.user_metadata.preferred_locale || 'en-US',
 				availableLocales
 			}
 		};

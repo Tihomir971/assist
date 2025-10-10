@@ -1,7 +1,7 @@
 <script lang="ts" generics="TData">
 	import type { Table as TanstackTable } from '$lib/components/walker-tx';
 	import { Button } from '$lib/components/ui/button';
-	import { SelectZag } from '$lib/components/zag';
+	import { SelectLookupZag } from '$lib/components/zag';
 
 	type Props = {
 		table: TanstackTable<TData>;
@@ -33,7 +33,7 @@
 	<div class="flex items-center space-x-6 lg:space-x-8">
 		<div class="flex items-center space-x-2">
 			<p class="text-sm font-medium">Rows per page</p>
-			<SelectZag
+			<SelectLookupZag
 				bind:value={perPage}
 				items={pageSizeOptions}
 				onValueChange={(details) => onPerPageChange(Number(details.value[0]))}
