@@ -1,6 +1,6 @@
 import { supabase } from '$lib/supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database, Tables } from '$lib/types/supabase';
+import type { Database, Tables } from '$lib/types/supabase.types';
 
 export type Locale = Tables<'l_locales'>;
 export type LocaleLookup = { value: string; label: string; isDefault: boolean };

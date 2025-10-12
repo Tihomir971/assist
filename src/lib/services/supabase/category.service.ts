@@ -1,9 +1,9 @@
-import type { Database, Tables } from '$lib/types/supabase';
+import type { Database, Tables } from '$lib/types/supabase.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service';
 import { TreeCollection } from '@zag-js/collection';
-import { getCurrentUserLocale, getDefaultLocale } from '$lib/utils/locale.utils';
-import { query } from '$app/server';
+import { getDefaultLocale } from '$lib/utils/locale.utils';
+import { getRequestEvent, query } from '$app/server';
 import { z } from 'zod';
 
 export async function getRPCLookup(
@@ -59,7 +59,9 @@ export type CategoryLookup = { value: number; label: string }; // Exported for l
  */
 export interface LocalizedTreeService {
 	getLookup(): Promise<Array<{ value: number; label: string }>>;
-	getCategoryTree(): Promise<Array<{ value: number; label: string; parent_id?: number }>>;
+	getCategoryTree(
+		preferredLocale: string
+	): Promise<Array<{ value: number; label: string; parent_id?: number }>>;
 }
 
 export class CategoryService
@@ -150,11 +152,10 @@ export class CategoryService
 	}
 
 	async getLookup(): Promise<CategoryLookup[]> {
+		const { locals } = getRequestEvent();
 		// Automatically detect user's preferred locale and get dynamic default locale
-		const [preferredLocale, fallbackLocale] = await Promise.all([
-			getCurrentUserLocale(this.supabase),
-			getDefaultLocale(this.supabase)
-		]);
+		const fallbackLocale = await getDefaultLocale(this.supabase);
+		const preferredLocale = locals.user?.user_metadata.preferred_locale || 'en-US';
 		console.log('Preferred Locale:', preferredLocale, 'Fallback Locale:', fallbackLocale);
 
 		// Using inline COALESCE for better performance and type safety
@@ -170,11 +171,10 @@ export class CategoryService
 		return data || [];
 	}
 	getLookupAsync = query(z.string(), async (query: string): Promise<CategoryLookup[]> => {
+		const { locals } = getRequestEvent();
 		// Automatically detect user's preferred locale and get dynamic default locale
-		const [preferredLocale, fallbackLocale] = await Promise.all([
-			getCurrentUserLocale(this.supabase),
-			getDefaultLocale(this.supabase)
-		]);
+		const fallbackLocale = await getDefaultLocale(this.supabase);
+		const preferredLocale = locals.user?.user_metadata.preferred_locale || 'en-US';
 		console.log('Preferred Locale:', preferredLocale, 'Fallback Locale:', fallbackLocale);
 
 		const data = await getRPCLookup(
@@ -189,12 +189,9 @@ export class CategoryService
 		return data || [];
 	});
 
-	async getCategoryTree(): Promise<TreeStructure[]> {
+	async getCategoryTree(preferredLocale: string): Promise<TreeStructure[]> {
 		// Automatically detect user's preferred locale and get dynamic default locale
-		const [preferredLocale, fallbackLocale] = await Promise.all([
-			getCurrentUserLocale(this.supabase),
-			getDefaultLocale(this.supabase)
-		]);
+		const fallbackLocale = await getDefaultLocale(this.supabase);
 
 		const data = await getRPCLookup(
 			this.supabase,
@@ -268,8 +265,8 @@ export class CategoryService
 		return result;
 	}
 
-	async getCategoryTreeCollection(): Promise<TreeCollection<TreeStructure>> {
-		const treeData = await this.getCategoryTree();
+	async getCategoryTreeCollection(preferredLocale: string): Promise<TreeCollection<TreeStructure>> {
+		const treeData = await this.getCategoryTree(preferredLocale);
 
 		return new TreeCollection<TreeStructure>({
 			rootNode: {

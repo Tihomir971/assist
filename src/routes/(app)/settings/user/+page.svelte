@@ -5,11 +5,12 @@
 	import { SelectLookupZag } from '$lib/components/zag';
 	import { setUserMetadata } from './data.remote';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { LOCALES, TIMEZONES } from '$lib/constants/locales';
 
 	let { data }: { data: PageData } = $props();
 </script>
 
-<div class="container mx-auto space-y-6 py-6">
+<div class="container mx-auto max-w-5xl space-y-6 py-6">
 	<div class="space-y-2">
 		<h1 class="text-3xl font-bold">Account Settings</h1>
 		<p class="text-muted-foreground">Manage your account preferences and settings.</p>
@@ -27,20 +28,35 @@
 				</Card.Description>
 			</Card.Header>
 			<Card.Content>
-				<form {...setUserMetadata}>
+				<form {...setUserMetadata} class="grid gap-6">
 					<SelectLookupZag
-						{...setUserMetadata.fields.preferred_locale.as('text')}
-						name="preferred_locale"
-						value={data.user?.user_metadata.preferred_locale}
-						items={data.localePreferences.availableLocales}
 						label="User preferred Language"
+						name="locale"
+						value={data.user?.user_metadata.locale}
+						items={LOCALES.map((locale) => ({
+							value: locale.code,
+							label: `${locale.name} - ${locale.nativeName}`
+						})).sort((a, b) => a.label.localeCompare(b.label))}
 					/>
+					{#each setUserMetadata.fields.locale.issues() as issue}
+						<p class="issue">{issue.message}</p>
+					{/each}
+					<SelectLookupZag
+						label="User timezone"
+						name="timezone"
+						value={data.user?.user_metadata.timezone}
+						items={TIMEZONES.map((timezone) => ({
+							value: timezone.code,
+							label: `${timezone.code} - ${timezone.offset}`
+						})).sort((a, b) => a.label.localeCompare(b.label))}
+					/>
+					{#each setUserMetadata.fields.timezone.issues() as issue}
+						<p class="issue">{issue.message}</p>
+					{/each}
 					<Button type="submit" class="mt-4">Save Changes</Button>
 				</form>
 			</Card.Content>
-			<Card.Footer>
-				<p>Card Footer</p>
-			</Card.Footer>
+			<Card.Footer></Card.Footer>
 		</Card.Root>
 
 		<!-- Future settings cards can be added here -->

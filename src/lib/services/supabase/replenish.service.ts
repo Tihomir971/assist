@@ -1,4 +1,4 @@
-import type { Database, Tables } from '$lib/types/supabase';
+import type { Database, Tables } from '$lib/types/supabase.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service';
 

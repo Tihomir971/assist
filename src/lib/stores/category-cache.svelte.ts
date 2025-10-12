@@ -1,6 +1,6 @@
 import { TreeCollection } from '@zag-js/collection';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '$lib/types/supabase';
+import type { Database } from '$lib/types/supabase.types';
 import { CategoryService, type TreeStructure } from '$lib/services/supabase/category.service';
 
 /**
@@ -142,7 +142,7 @@ class SimpleCategoryCache {
 		this.loadingPromise = (async () => {
 			try {
 				const categoryService = new CategoryService(this.supabase);
-				const data = await categoryService.getCategoryTree();
+				const data = await categoryService.getCategoryTree(userLocale);
 
 				// Cache result in-memory
 				this.cache = {

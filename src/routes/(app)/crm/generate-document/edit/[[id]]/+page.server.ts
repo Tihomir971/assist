@@ -7,14 +7,14 @@ import {
 	DocTemplateService,
 	PartnerService
 } from '$lib/services/supabase';
-import type { ContextSchemaStructure } from '$lib/types/supabase.zod.schemas';
+import type { ContextSchemaStructure } from '$lib/types/zod.schemas';
 
 type LookupData = { value: number; label: string }[];
 import { DocumentGenerationService } from '$lib/services/document-generation.service';
 import {
 	docGeneratedDocumentInsertSchema,
 	docGeneratedDocumentUpdateSchema
-} from '$lib/types/supabase.zod.schemas';
+} from '$lib/types/zod.schemas';
 import type {
 	DocGeneratedDocumentCreate,
 	DocGeneratedDocumentUpdate

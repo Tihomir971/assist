@@ -7,7 +7,7 @@
 	import type { PageData } from './$types';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
-	import { docGeneratedDocumentInsertSchema } from '$lib/types/supabase.zod.schemas';
+	import { docGeneratedDocumentInsertSchema } from '$lib/types/zod.schemas';
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 	import jsPDF from 'jspdf';

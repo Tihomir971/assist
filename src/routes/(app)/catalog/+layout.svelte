@@ -11,7 +11,6 @@
 	// Icons
 	import { TreeViewZag } from '$lib/components/zag';
 	import { categoryCache } from '$lib/stores/category-cache.svelte';
-	import { getLocaleManagerContext } from '$lib/stores/locale-manager.svelte';
 	import type { TreeStructure } from '$lib/services/supabase/category.service';
 
 	let contextNode: string | null = $state(null);
@@ -31,16 +30,7 @@
 		if (!categoryCache) return;
 
 		try {
-			// Get user's preferred locale from LocaleManager if available
-			let userLocale = 'sr-Latn-RS';
-			try {
-				const localeManager = getLocaleManagerContext();
-				userLocale = localeManager.currentDataLocale;
-			} catch {
-				// locale manager missing — fall back to default
-			}
-
-			treeData = await categoryCache.getCategories('sr-Latn-RS');
+			treeData = await categoryCache.getCategories(data.app?.userLocale);
 		} catch (err) {
 			console.warn('Failed to load categories from cache:', err);
 		}

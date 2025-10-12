@@ -9,7 +9,7 @@
 	}
 
 	let { field, value = $bindable(), ...restProps }: SmartNumberInputProps = $props();
-
+	import { appSettings } from '$lib/context';
 	const inputAttrs = {
 		...restProps,
 		...(field.placeholder && { placeholder: field.placeholder }),
@@ -23,6 +23,7 @@
 <NumberInputDecimal
 	{...inputAttrs}
 	bind:value
+	locale={appSettings.get().userLocale}
 	step={field.step}
 	formatOptions={{
 		minimumFractionDigits: field.fraction,

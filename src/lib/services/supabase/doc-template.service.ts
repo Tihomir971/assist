@@ -1,9 +1,9 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database, Tables } from '$lib/types/supabase';
+import type { Database, Tables } from '$lib/types/supabase.types';
 
-import { docTemplateInsertSchema, docTemplateUpdateSchema } from '$lib/types/supabase.zod.schemas';
+import { docTemplateInsertSchema, docTemplateUpdateSchema } from '$lib/types/zod.schemas';
 import type { z } from 'zod';
-import type { ContextSchemaStructure } from '$lib/types/supabase.zod.schemas';
+import type { ContextSchemaStructure } from '$lib/types/zod.schemas';
 
 type DocTemplate = Tables<'doc_template'>;
 type DocTemplateInsert = z.infer<typeof docTemplateInsertSchema>;

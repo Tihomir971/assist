@@ -3,7 +3,7 @@
 	import LayoutHeader from './layout-header.svelte';
 	import LayoutSidebar from './layout-sidebar.svelte';
 	import { setCartContext } from '$lib/components/cart/ctx.svelte';
-	import { LocaleManager, setLocaleManagerContext } from '$lib/stores/locale-manager.svelte';
+	import { appSettings } from '$lib/context';
 	import { initializeCategoryCache, categoryCache } from '$lib/stores/category-cache.svelte';
 
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
@@ -12,25 +12,8 @@
 	let { children, data } = $props();
 
 	setCartContext();
-
-	// Initialize LocaleManager with server data (synchronously)
-	if (data.localePreferences && data.session) {
-		try {
-			// Create LocaleManager instance
-			const manager = new LocaleManager(data.supabase, data.session.user.id, {
-				preferredDataLocale: data.localePreferences.preferredDataLocale,
-				availableLocales: data.localePreferences.availableLocales,
-				isLoading: false,
-				isUpdating: false,
-				lastUpdated: null,
-				error: null
-			});
-
-			// Set in Svelte context for child components
-			setLocaleManagerContext(manager);
-		} catch (error) {
-			console.error('Failed to initialize LocaleManager:', error);
-		}
+	if (data.app) {
+		appSettings.set(data.app);
 	}
 
 	onMount(() => {

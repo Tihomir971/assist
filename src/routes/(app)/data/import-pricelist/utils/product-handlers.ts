@@ -2,8 +2,8 @@ import type { Product, ProductToUpdate } from '../types';
 import { normalizeVendorProductNo, modifyPrice } from './data-processors';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { isValidGTIN } from '$lib/scripts/gtin';
-import type { MProductPoInsert } from '$lib/types/supabase.zod';
-import type { Database } from '$lib/types/supabase';
+import type { MProductPoInsert } from '$lib/types/supabase.zod.types';
+import type { Database } from '$lib/types/supabase.types';
 
 // Configuration for import optimization
 interface ImportConfig {

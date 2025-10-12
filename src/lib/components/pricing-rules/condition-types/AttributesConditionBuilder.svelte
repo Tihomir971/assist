@@ -10,7 +10,7 @@
 	import Trash2 from '@lucide/svelte/icons/trash-2';
 	import { onMount } from 'svelte';
 	import type { SupabaseClient } from '@supabase/supabase-js';
-	import type { Database } from '$lib/types/supabase';
+	import type { Database } from '$lib/types/supabase.types';
 
 	interface Props {
 		attributes: AttributeCondition[] | undefined;

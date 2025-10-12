@@ -18,10 +18,10 @@
 	import type {
 		MProductAttributeOptionInsert,
 		MProductAttributeValueInsert
-	} from '$lib/types/supabase.zod';
+	} from '$lib/types/supabase.zod.types';
 	import type { ProductAttributeValue } from '$lib/services/supabase/product-attribute-value.service';
 	import type { ProductAttributeOption } from '$lib/services/supabase/product-attribute-option.service';
-
+	import { appSettings } from '$lib/context';
 	type Props = {
 		supabase: SupabaseClient;
 		productId: number;
@@ -251,6 +251,7 @@
 																<NumberInputDecimal
 																	name="number_value"
 																	value={currentValue as number | undefined}
+																	locale={appSettings.get().userLocale}
 																/>
 															{:else if attribute.m_attribute.attribute_type === 'boolean'}
 																<Checkbox

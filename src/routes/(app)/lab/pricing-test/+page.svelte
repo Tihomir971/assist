@@ -90,14 +90,20 @@
 								<span class="text-sm text-red-500">{$errors.product_id}</span>
 							{/if}
 						</div>
-						<NumberInputDecimal name="quantity" bind:value={$formData.quantity} label="Quantity" />
+						<NumberInputDecimal
+							label="Quantity"
+							name="quantity"
+							bind:value={$formData.quantity}
+							locale={data.app?.userLocale}
+						/>
 					</div>
 
 					<div class="grid grid-cols-2 gap-4">
 						<NumberInputDecimal
+							label="Input Price"
 							name="input_price"
 							bind:value={$formData.input_price}
-							label="Input Price"
+							locale={data.app?.userLocale}
 							formatOptions={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
 						/>
 						<Form.Field {form} name="partner_id">

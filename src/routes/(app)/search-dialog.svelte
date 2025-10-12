@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { goto } from '$app/navigation';
-	import type { Database } from '$lib/types/supabase';
+	import type { Database } from '$lib/types/supabase.types';
 	import { page } from '$app/state';
 	type SearchProductsResult = Database['public']['Functions']['search_products']['Returns'];
 

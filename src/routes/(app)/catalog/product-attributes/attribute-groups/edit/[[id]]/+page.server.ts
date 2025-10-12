@@ -1,7 +1,7 @@
 import { createSimpleCRUD } from '$lib/utils/simple-crud.factory.js';
 import { AttributeGroupService } from '$lib/services/supabase/attribute-group.service';
 import { attributeGroupPayloadBuilder } from './entity.payload.js';
-import { mAttributeGroupInsertSchema } from '$lib/types/supabase.schemas';
+import { mAttributeGroupInsertSchema } from '$lib/types/supabase.zod.schemas.js';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 

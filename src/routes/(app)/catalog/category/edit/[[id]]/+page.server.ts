@@ -13,9 +13,9 @@ import { channelMappingPayloadBuilder } from './channel-mapping.payload';
 import {
 	cChannelMapCategoryInsertSchema,
 	mProductCategoryInsertSchema
-} from '$lib/types/supabase.schemas';
-import type { Database } from '$lib/types/supabase';
-import type { CChannelMapCategoryRow, MProductCategoryRow } from '$lib/types/supabase.zod';
+} from '$lib/types/supabase.zod.schemas';
+import type { Database } from '$lib/types/supabase.types';
+import type { CChannelMapCategoryRow, MProductCategoryRow } from '$lib/types/supabase.zod.types';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase }, depends }) => {
 	depends('app:category-page');

@@ -1,7 +1,11 @@
-import type { Database } from '$lib/types/supabase';
+import type { Database } from '$lib/types/supabase.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service';
-import type { MPricelistInsert, MPricelistRow, MPricelistUpdate } from '$lib/types/supabase.zod';
+import type {
+	MPricelistInsert,
+	MPricelistRow,
+	MPricelistUpdate
+} from '$lib/types/supabase.zod.types';
 
 export type PricelistLookup = { value: number; label: string };
 

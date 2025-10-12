@@ -1,8 +1,8 @@
 import {
 	mProductCategoryInsertSchema,
 	mProductCategoryUpdateSchema
-} from '$lib/types/supabase.schemas';
-import type { MProductCategoryInsert, MProductCategoryUpdate } from '$lib/types/supabase.zod';
+} from '$lib/types/supabase.zod.schemas';
+import type { MProductCategoryInsert, MProductCategoryUpdate } from '$lib/types/supabase.zod.types';
 import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
 
 // Helper function to ensure valid JSONB data

@@ -7,7 +7,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { z, type ZodRawShape } from 'zod';
 import { extractStructuredSupabaseError } from '$lib/server/utils/supabase-error.utils';
 import { deleteByIdSchema } from '$lib/types/zod-delete-by-id';
-import type { Database } from '$lib/types/supabase';
+import type { Database } from '$lib/types/supabase.types';
 
 // Define a more specific type for the getService function
 // TCreateInferred and TUpdateInferred will be derived from the Zod schema passed to createSimpleCRUD

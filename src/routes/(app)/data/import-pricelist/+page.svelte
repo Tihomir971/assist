@@ -438,8 +438,9 @@
 		<div>
 			<div class="grid w-full gap-1.5">
 				<NumberInputDecimal
-					bind:value={priceModificationPercentage}
 					label="Price Modification (%)"
+					bind:value={priceModificationPercentage}
+					locale={data.app?.userLocale}
 					min={-100}
 					step={0.5}
 				/>

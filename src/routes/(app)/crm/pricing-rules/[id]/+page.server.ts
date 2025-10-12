@@ -15,7 +15,7 @@ import { formSchema } from './schema';
 
 // Create a specific schema for the form that uses the detailed condition/formula schemas
 
-export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
+export const load: PageServerLoad = async ({ params, locals: { supabase, user } }) => {
 	const pricingRulesService = new PricingRulesService(supabase);
 
 	let rule: PricingRule | null = null;
@@ -60,7 +60,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 
 	const [partners, categories, attributes, brands] = await Promise.all([
 		new PartnerService(supabase).getLookup(),
-		new CategoryService(supabase).getCategoryTree(),
+		new CategoryService(supabase).getCategoryTree(user?.user_metadata.preferred_locale || 'en-US'),
 		new AttributeService(supabase).getLookup(),
 		new BrandService(supabase).getLookup()
 	]);

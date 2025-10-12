@@ -1,5 +1,5 @@
 <script lang="ts" generics="T extends SelectItem">
-	import './select.css';
+	// import './select.css';
 	import * as select from '@zag-js/select';
 	import { normalizeProps, portal, useMachine } from '@zag-js/svelte';
 	import type { SelectItem, SelectPropsLookup } from './types';
@@ -76,8 +76,8 @@
 					<span class="text-warning">*</span>
 				{/if}
 			</label>
-			<button {...api.getClearTriggerProps()}>
-				<PhX class="text-xs" />
+			<button {...api.getClearTriggerProps()} class="mr-3">
+				<PhX class="size-3.5 opacity-50" />
 			</button>
 		</div>
 	{/if}
@@ -90,7 +90,7 @@
 			<span class={api.valueAsString ? '' : 'text-muted-foreground'}>
 				{api.valueAsString || placeholder}
 			</span>
-			<span {...api.getIndicatorProps()} class="h-4 w-4 opacity-50"><PhCaretDown /></span>
+			<span {...api.getIndicatorProps()} class="opacity-50"><PhCaretDown /></span>
 		</button>
 	</div>
 

@@ -1,9 +1,9 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database, Tables } from '$lib/types/supabase';
+import type { Database, Tables } from '$lib/types/supabase.types';
 import type {
 	docGeneratedDocumentInsertSchema,
 	docGeneratedDocumentUpdateSchema
-} from '$lib/types/supabase.zod.schemas';
+} from '$lib/types/zod.schemas';
 import type { z } from 'zod';
 
 export type DocGeneratedDocument = Tables<'doc_generated_document'>;

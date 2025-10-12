@@ -3,7 +3,7 @@
 	import { processExport } from '../../export-utils';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import type { Database } from '$lib/types/supabase';
+	import type { Database } from '$lib/types/supabase.types';
 	import { getCartContext } from '../../ctx.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { CheckboxGroupArk } from '$lib/components/ark/checkbox';

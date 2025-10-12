@@ -1,7 +1,7 @@
 import { DataTableConfigBuilder, columnTypes } from '$lib/utils/data-table-config.builder';
 import DataTableActions from '$lib/components/ui/data-table-actions.svelte';
 import { RenderComponentConfig } from '$lib/components/walker-tx/render-component';
-import type { Tables } from '$lib/types/supabase';
+import type { Tables } from '$lib/types/supabase.types';
 import type { ColumnDef } from '@tanstack/svelte-table';
 
 export type BrandData = Tables<'m_product_brands'>;

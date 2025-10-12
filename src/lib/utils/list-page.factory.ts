@@ -1,4 +1,4 @@
-import type { Database } from '$lib/types/supabase';
+import type { Database } from '$lib/types/supabase.types';
 import type { DataTableConfig, SelectFilterOption } from './data-table-config.builder';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { error, fail } from '@sveltejs/kit';

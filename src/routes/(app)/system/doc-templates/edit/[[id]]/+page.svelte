@@ -1,7 +1,7 @@
 <script lang="ts">
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
-	import { docTemplateInsertSchema } from '$lib/types/supabase.zod.schemas';
+	import { docTemplateInsertSchema } from '$lib/types/zod.schemas';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';

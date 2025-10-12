@@ -4,8 +4,8 @@
 	import SmartRelatedTabs from '$lib/components/forms/SmartRelatedTabs.svelte';
 	import { createFormConfig } from '$lib/utils/form-config.builder';
 	import { splitLayoutConfig, createTabConfigs } from './related-configs';
-	import { mProductCategoryInsertSchema } from '$lib/types/supabase.schemas';
-	import type { MProductCategoryInsert } from '$lib/types/supabase.zod';
+	import { mProductCategoryInsertSchema } from '$lib/types/supabase.zod.schemas';
+	import type { MProductCategoryInsert } from '$lib/types/supabase.zod.types';
 
 	let { data } = $props();
 

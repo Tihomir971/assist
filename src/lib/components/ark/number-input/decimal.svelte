@@ -2,23 +2,12 @@
 	import { NumberInput } from '@ark-ui/svelte/number-input';
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import ChevronUp from '@lucide/svelte/icons/chevron-up';
-	import type { NumberInputRootBaseProps } from '@ark-ui/svelte/number-input';
-	import { useLocaleContext } from '@ark-ui/svelte/locale';
 	import type { NumberInputProps } from './types';
 
-	const localeContext = useLocaleContext();
-
-	let {
-		value = $bindable(),
-		readonly,
-		locale = localeContext().locale,
-		label,
-		name,
-		...restProps
-	}: NumberInputProps = $props();
+	let { value = $bindable(), readonly, label, name, ...restProps }: NumberInputProps = $props();
 
 	function getNumberRegex() {
-		const nf = new Intl.NumberFormat(locale);
+		const nf = new Intl.NumberFormat(restProps.locale);
 		const sample = nf.format(1234567.89);
 
 		// Extract decimal and group separators
@@ -34,9 +23,8 @@
 	<input type="hidden" {name} value={Number.isNaN(value) ? undefined : value?.toString()} />
 	<NumberInput.Root
 		{...restProps}
-		{locale}
 		allowMouseWheel
-		value={value?.toLocaleString(locale)}
+		value={value?.toLocaleString(restProps.locale)}
 		readOnly={readonly}
 		pattern={getNumberRegex()}
 		onValueChange={(valueChangeDetails) => {

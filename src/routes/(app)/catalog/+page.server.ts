@@ -11,8 +11,14 @@ import type {
 	MProductRow,
 	MStorageonhandInsert,
 	MStorageonhandRow
-} from '$lib/types/supabase.zod';
-import type { Database, Enums, Tables, TablesInsert, TablesUpdate } from '$lib/types/supabase';
+} from '$lib/types/supabase.zod.types';
+import type {
+	Database,
+	Enums,
+	Tables,
+	TablesInsert,
+	TablesUpdate
+} from '$lib/types/supabase.types';
 import type { ProductsResultSearch } from './types-search-vendor-products';
 import type { ApiResponse } from '$lib/types/api.types';
 import type { ProductRequest } from './types-api-market';
@@ -27,11 +33,17 @@ import { sourceId } from './types';
 import { catalogSearchParamsSchema } from './search-params.schema';
 import { ProductStatus, type ProductResultGet } from './types-get-market-info';
 import { CategoryService } from '$lib/services/supabase/category.service';
+import type { User } from '@supabase/supabase-js';
 
 // Add this export near the top or where types are defined
 export type ErrorDetails = { productId?: number; step: string; message: string };
 
-export const load: PageServerLoad = async ({ depends, parent, url, locals: { supabase } }) => {
+export const load: PageServerLoad = async ({
+	depends,
+	parent,
+	url,
+	locals: { supabase, user }
+}) => {
 	depends('catalog:products');
 	const params = catalogSearchParamsSchema.parse(Object.fromEntries(url.searchParams));
 	const {
@@ -45,7 +57,7 @@ export const load: PageServerLoad = async ({ depends, parent, url, locals: { sup
 	const { activeWarehouse } = await parent();
 
 	const [productsData, activePricelists] = await Promise.all([
-		fetchProducts(supabase, categoryId ?? null, showSubcategories),
+		fetchProducts(supabase, user, categoryId ?? null, showSubcategories),
 		getPriceLists(supabase)
 	]);
 
@@ -65,6 +77,7 @@ export const load: PageServerLoad = async ({ depends, parent, url, locals: { sup
 
 async function fetchProducts(
 	supabase: SupabaseClient<Database>,
+	user: User | null,
 	categoryId: string | null,
 	showSubcategories: boolean
 ) {
@@ -81,9 +94,6 @@ async function fetchProducts(
 			// Ensure cache singleton exists
 			initializeCategoryCache(supabase);
 
-			// Attempt to use locale from parent() merged data if available.
-			// parent() is available from the caller (PageServerLoad); here we attempt to read process.env fallback.
-			const userLocale = 'sr-Latn-RS';
 			// Attempt to read preferredDataLocale from global layout (if present)
 			try {
 				// The calling load function has already awaited parent() and may pass merged data.
@@ -93,14 +103,16 @@ async function fetchProducts(
 			}
 
 			if (categoryCache) {
-				const treeCollection = await categoryCache.getTreeCollection(userLocale);
+				const treeCollection = await categoryCache.getTreeCollection(user?.user_metadata.locale);
 				const descendantValues = treeCollection.getDescendantValues(categoryId);
 				categoryIds = descendantValues.map((value: string) => parseInt(value));
 			}
 		} catch {
 			// Fallback to legacy CategoryService behaviour if cache fails/unavailable
 			const categoryService = new CategoryService(supabase);
-			const categoryTreeCollection = await categoryService.getCategoryTreeCollection();
+			const categoryTreeCollection = await categoryService.getCategoryTreeCollection(
+				user?.user_metadata.locale || 'en-US'
+			);
 			const descendantValues = categoryTreeCollection.getDescendantValues(categoryId);
 			categoryIds = descendantValues.map((value: string) => parseInt(value));
 		}

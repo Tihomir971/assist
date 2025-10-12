@@ -7,7 +7,7 @@
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import type { Database } from '$lib/types/supabase';
+	import type { Database } from '$lib/types/supabase.types';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
@@ -78,16 +78,16 @@
 				sideOffset={4}
 			>
 				<DropdownMenu.Group>
-					<DropdownMenu.Item onSelect={() => goto('/account/profile')}>
+					<DropdownMenu.Item onSelect={() => goto('/settings/system')}>
 						<BadgeCheckIcon />
-						Profile
+						System settings
 					</DropdownMenu.Item>
 				</DropdownMenu.Group>
 				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
-					<DropdownMenu.Item onSelect={() => goto('/account/settings')}>
+					<DropdownMenu.Item onSelect={() => goto('/settings/user')}>
 						<CreditCardIcon />
-						Settings
+						User settings
 					</DropdownMenu.Item>
 
 					<DropdownMenu.Item onSelect={() => goto('/system')}>

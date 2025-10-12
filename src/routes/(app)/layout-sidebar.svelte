@@ -75,7 +75,7 @@
 	import { cn } from '$lib/utils';
 	import { page } from '$app/state';
 	import type { SupabaseClient } from '@supabase/supabase-js';
-	import type { Database } from '$lib/types/supabase';
+	import type { Database } from '$lib/types/supabase.types';
 	import LayoutSidebarNavSimple from './layout-sidebar-nav-simple.svelte';
 
 	let {

@@ -5,13 +5,20 @@
  */
 
 import { z } from 'zod';
-import * as generated from './supabase.schemas';
-export type PublicAttributeType = z.infer<typeof generated.publicAttributeTypeSchema>;
-export type PublicContinents = z.infer<typeof generated.publicContinentsSchema>;
-export type PublicEntity = z.infer<typeof generated.publicEntitySchema>;
-export type PublicPackingtype = z.infer<typeof generated.publicPackingtypeSchema>;
-export type PublicRegionType = z.infer<typeof generated.publicRegionTypeSchema>;
+import * as generated from './supabase.zod.schemas';
+export type AttributeType = z.infer<typeof generated.publicAttributeTypeSchema>;
+export type Continents = z.infer<typeof generated.publicContinentsSchema>;
+export type Entity = z.infer<typeof generated.publicEntitySchema>;
+export type Packingtype = z.infer<typeof generated.publicPackingtypeSchema>;
+export type RegionType = z.infer<typeof generated.publicRegionTypeSchema>;
 export type Json = z.infer<typeof generated.jsonSchema>;
+export type AdClientRow = z.infer<typeof generated.adClientRowSchema>;
+export type AdClientInsert = z.infer<typeof generated.adClientInsertSchema>;
+export type AdClientUpdate = z.infer<typeof generated.adClientUpdateSchema>;
+export type AdClientRelationships = z.infer<typeof generated.adClientRelationshipsSchema>;
+export type AdLanguageRow = z.infer<typeof generated.adLanguageRowSchema>;
+export type AdLanguageInsert = z.infer<typeof generated.adLanguageInsertSchema>;
+export type AdLanguageUpdate = z.infer<typeof generated.adLanguageUpdateSchema>;
 export type AdUserRow = z.infer<typeof generated.adUserRowSchema>;
 export type AdUserInsert = z.infer<typeof generated.adUserInsertSchema>;
 export type AdUserUpdate = z.infer<typeof generated.adUserUpdateSchema>;
@@ -258,45 +265,61 @@ export type WBasketlineRow = z.infer<typeof generated.wBasketlineRowSchema>;
 export type WBasketlineInsert = z.infer<typeof generated.wBasketlineInsertSchema>;
 export type WBasketlineUpdate = z.infer<typeof generated.wBasketlineUpdateSchema>;
 export type WBasketlineRelationships = z.infer<typeof generated.wBasketlineRelationshipsSchema>;
-export type BulkUpdateProductPoArgs = z.infer<typeof generated.bulkUpdateProductPoArgsSchema>;
-export type BulkUpdateProductPoReturns = z.infer<typeof generated.bulkUpdateProductPoReturnsSchema>;
-export type BulkUpdateProductpriceArgs = z.infer<typeof generated.bulkUpdateProductpriceArgsSchema>;
-export type BulkUpdateProductpriceReturns = z.infer<
-	typeof generated.bulkUpdateProductpriceReturnsSchema
+export type BulkUpdateProductPoArgs = z.infer<typeof generated.publicBulkUpdateProductPoArgsSchema>;
+export type BulkUpdateProductPoReturns = z.infer<
+	typeof generated.publicBulkUpdateProductPoReturnsSchema
 >;
-export type BulkUpdateProductsArgs = z.infer<typeof generated.bulkUpdateProductsArgsSchema>;
-export type BulkUpdateProductsReturns = z.infer<typeof generated.bulkUpdateProductsReturnsSchema>;
+export type BulkUpdateProductpriceArgs = z.infer<
+	typeof generated.publicBulkUpdateProductpriceArgsSchema
+>;
+export type BulkUpdateProductpriceReturns = z.infer<
+	typeof generated.publicBulkUpdateProductpriceReturnsSchema
+>;
+export type BulkUpdateProductsArgs = z.infer<typeof generated.publicBulkUpdateProductsArgsSchema>;
+export type BulkUpdateProductsReturns = z.infer<
+	typeof generated.publicBulkUpdateProductsReturnsSchema
+>;
 export type BulkUpdateStorageonhandArgs = z.infer<
-	typeof generated.bulkUpdateStorageonhandArgsSchema
+	typeof generated.publicBulkUpdateStorageonhandArgsSchema
 >;
 export type BulkUpdateStorageonhandReturns = z.infer<
-	typeof generated.bulkUpdateStorageonhandReturnsSchema
+	typeof generated.publicBulkUpdateStorageonhandReturnsSchema
 >;
-export type CheckAttributesMatchArgs = z.infer<typeof generated.checkAttributesMatchArgsSchema>;
+export type CheckAttributesMatchArgs = z.infer<
+	typeof generated.publicCheckAttributesMatchArgsSchema
+>;
 export type CheckAttributesMatchReturns = z.infer<
-	typeof generated.checkAttributesMatchReturnsSchema
+	typeof generated.publicCheckAttributesMatchReturnsSchema
 >;
-export type DeleteAvatarArgs = z.infer<typeof generated.deleteAvatarArgsSchema>;
-export type DeleteAvatarReturns = z.infer<typeof generated.deleteAvatarReturnsSchema>;
-export type DeleteStorageObjectArgs = z.infer<typeof generated.deleteStorageObjectArgsSchema>;
-export type DeleteStorageObjectReturns = z.infer<typeof generated.deleteStorageObjectReturnsSchema>;
+export type DeleteAvatarArgs = z.infer<typeof generated.publicDeleteAvatarArgsSchema>;
+export type DeleteAvatarReturns = z.infer<typeof generated.publicDeleteAvatarReturnsSchema>;
+export type DeleteStorageObjectArgs = z.infer<typeof generated.publicDeleteStorageObjectArgsSchema>;
+export type DeleteStorageObjectReturns = z.infer<
+	typeof generated.publicDeleteStorageObjectReturnsSchema
+>;
 export type FindApplicablePricingRulesArgs = z.infer<
-	typeof generated.findApplicablePricingRulesArgsSchema
+	typeof generated.publicFindApplicablePricingRulesArgsSchema
 >;
 export type FindApplicablePricingRulesReturns = z.infer<
-	typeof generated.findApplicablePricingRulesReturnsSchema
+	typeof generated.publicFindApplicablePricingRulesReturnsSchema
+>;
+export type GetLocalizedLookupArgs = z.infer<typeof generated.publicGetLocalizedLookupArgsSchema>;
+export type GetLocalizedLookupReturns = z.infer<
+	typeof generated.publicGetLocalizedLookupReturnsSchema
 >;
 export type GetPriceFormulaVariablesArgs = z.infer<
-	typeof generated.getPriceFormulaVariablesArgsSchema
+	typeof generated.publicGetPriceFormulaVariablesArgsSchema
 >;
 export type GetPriceFormulaVariablesReturns = z.infer<
-	typeof generated.getPriceFormulaVariablesReturnsSchema
+	typeof generated.publicGetPriceFormulaVariablesReturnsSchema
 >;
-export type GetProductAttributesArgs = z.infer<typeof generated.getProductAttributesArgsSchema>;
+export type GetProductAttributesArgs = z.infer<
+	typeof generated.publicGetProductAttributesArgsSchema
+>;
 export type GetProductAttributesReturns = z.infer<
-	typeof generated.getProductAttributesReturnsSchema
+	typeof generated.publicGetProductAttributesReturnsSchema
 >;
-export type IsValidGtinArgs = z.infer<typeof generated.isValidGtinArgsSchema>;
-export type IsValidGtinReturns = z.infer<typeof generated.isValidGtinReturnsSchema>;
-export type SearchProductsArgs = z.infer<typeof generated.searchProductsArgsSchema>;
-export type SearchProductsReturns = z.infer<typeof generated.searchProductsReturnsSchema>;
+export type IsValidGtinArgs = z.infer<typeof generated.publicIsValidGtinArgsSchema>;
+export type IsValidGtinReturns = z.infer<typeof generated.publicIsValidGtinReturnsSchema>;
+export type SearchProductsArgs = z.infer<typeof generated.publicSearchProductsArgsSchema>;
+export type SearchProductsReturns = z.infer<typeof generated.publicSearchProductsReturnsSchema>;

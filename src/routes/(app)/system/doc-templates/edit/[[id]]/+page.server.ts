@@ -1,10 +1,10 @@
 import { error, fail, json, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { docTemplateInsertSchema } from '$lib/types/supabase.zod.schemas';
+import { docTemplateInsertSchema } from '$lib/types/zod.schemas';
 import { DocTemplateService } from '$lib/services/supabase';
 import { DocumentGenerationService } from '$lib/services/document-generation.service';
-import type { Tables } from '$lib/types/supabase';
+import type { Tables } from '$lib/types/supabase.types';
 
 export const load = async ({ params, locals: { supabase } }) => {
 	const id = params.id ? parseInt(params.id) : null;

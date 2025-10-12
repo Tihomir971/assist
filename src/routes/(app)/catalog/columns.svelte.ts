@@ -10,7 +10,7 @@ import type {
 	MProductpriceUpdate,
 	MReplenishUpdate,
 	MStorageonhandUpdate
-} from '$lib/types/supabase.zod';
+} from '$lib/types/supabase.zod.types';
 import { NumberFormatter } from '$lib/scripts/intl';
 import { rightAlignSnippet } from '$lib/utils/common-snippets.svelte';
 

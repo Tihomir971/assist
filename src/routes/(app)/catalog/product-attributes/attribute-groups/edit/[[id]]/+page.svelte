@@ -1,7 +1,7 @@
 <script lang="ts">
 	import SmartForm from '$lib/components/forms/SmartForm.svelte';
 	import { createFormConfig } from '$lib/utils/form-config.builder';
-	import { mAttributeGroupInsertSchema } from '$lib/types/supabase.schemas';
+	import { mAttributeGroupInsertSchema } from '$lib/types/supabase.zod.schemas.js';
 
 	let { data } = $props();
 

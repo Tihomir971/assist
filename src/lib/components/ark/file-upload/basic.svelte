@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { FileUpload } from '@ark-ui/svelte/file-upload';
-	import User from '@lucide/svelte/icons/user';
+	import UserIcon from '@lucide/svelte/icons/user';
 </script>
 
 <FileUpload.Root maxFiles={1} accept="image/*" class="flex flex-col items-start gap-3">
@@ -20,7 +20,7 @@
 							</FileUpload.Item>
 						</FileUpload.ItemGroup>
 					{:else}
-						<User class="h-5 w-5 text-gray-400 dark:text-gray-500" />
+						<UserIcon class="h-5 w-5 text-gray-400 dark:text-gray-500" />
 					{/if}
 				</div>
 

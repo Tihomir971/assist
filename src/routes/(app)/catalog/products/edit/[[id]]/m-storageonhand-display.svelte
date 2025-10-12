@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Tables } from '$lib/types/supabase';
+	import type { Tables } from '$lib/types/supabase.types';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
 

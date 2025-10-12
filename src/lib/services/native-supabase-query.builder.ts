@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '$lib/types/supabase';
-import type { NativeContextSchemaRole } from '$lib/types/supabase.zod.schemas';
+import type { Database } from '$lib/types/supabase.types';
+import type { NativeContextSchemaRole } from '$lib/types/zod.schemas';
 
 /**
  * Native Supabase Query Builder

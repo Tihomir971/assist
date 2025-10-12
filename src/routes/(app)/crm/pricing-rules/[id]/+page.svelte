@@ -134,10 +134,11 @@
 							/>
 						</div>
 						<NumberInputDecimal
+							label="Priority"
 							name="priority"
 							bind:value={$formData.priority}
+							locale={data.app?.userLocale}
 							required={isRequired(formSchema, 'priority')}
-							label="Priority"
 							formatOptions={{
 								minimumFractionDigits: 0,
 								maximumFractionDigits: 0

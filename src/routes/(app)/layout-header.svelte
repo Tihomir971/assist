@@ -9,7 +9,7 @@
 	import HeaderShoppingCart from './layout-header-shopping-cart.svelte';
 	//Icons
 	import SidebarIcon from '@lucide/svelte/icons/sidebar';
-	import type { Database } from '$lib/types/supabase';
+	import type { Database } from '$lib/types/supabase.types';
 	import ky from 'ky';
 
 	interface Props {

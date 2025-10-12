@@ -8,7 +8,10 @@ import { UserPreferencesService } from '$lib/services/supabase/user-preferences.
  * directory. It makes the routes in this directory _dynamic_ routes, which
  * send a server request, and thus trigger `hooks.server.ts`.
  **/
-export const load: LayoutServerLoad = async ({ locals: { supabase, safeGetSession }, depends }) => {
+export const load: LayoutServerLoad = async ({
+	locals: { supabase, safeGetSession, app },
+	depends
+}) => {
 	// Keep depends for user preferences; category tree will be loaded client-side via in-memory cache
 	depends('user:preferences');
 
@@ -40,6 +43,7 @@ export const load: LayoutServerLoad = async ({ locals: { supabase, safeGetSessio
 	return {
 		session,
 		profile,
+		app,
 		// categoryTree intentionally removed — client will initialize and fetch as needed
 		localePreferences: {
 			preferredDataLocale: effectiveDataLocale,

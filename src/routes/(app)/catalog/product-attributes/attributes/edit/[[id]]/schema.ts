@@ -1,4 +1,4 @@
-import { mAttributeInsertSchema } from '$lib/types/supabase.schemas';
+import { mAttributeInsertSchema } from '$lib/types/supabase.zod.schemas';
 import { z } from 'zod';
 
 // Create a form-specific schema with coercion for the attribute group ID

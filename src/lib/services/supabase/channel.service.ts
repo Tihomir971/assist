@@ -1,4 +1,4 @@
-import type { Database } from '$lib/types/supabase';
+import type { Database } from '$lib/types/supabase.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 export type ChannelLookup = { value: number; label: string };

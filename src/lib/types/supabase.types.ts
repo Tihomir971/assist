@@ -57,6 +57,58 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_client: {
+        Row: {
+          ad_language: string | null
+          created_at: string
+          id: number
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          ad_language?: string | null
+          created_at?: string
+          id?: number
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          ad_language?: string | null
+          created_at?: string
+          id?: number
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_client_ad_language_fkey"
+            columns: ["ad_language"]
+            referencedRelation: "ad_language"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
+      ad_language: {
+        Row: {
+          code: string
+          created_at: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ad_user: {
         Row: {
           auth_user_id: string | null
@@ -126,7 +178,6 @@ export type Database = {
       }
       c_bpartner: {
         Row: {
-          ad_language: string | null
           bpartner_parent_id: number | null
           created_at: string
           display_name: string
@@ -137,6 +188,7 @@ export type Database = {
           isemployee: boolean
           issalesrep: boolean
           isvendor: boolean
+          locale: string | null
           m_pricelist_id: number | null
           po_pricelist_id: number | null
           taxid: string | null
@@ -145,7 +197,6 @@ export type Database = {
           value: string | null
         }
         Insert: {
-          ad_language?: string | null
           bpartner_parent_id?: number | null
           created_at?: string
           display_name: string
@@ -156,6 +207,7 @@ export type Database = {
           isemployee?: boolean
           issalesrep?: boolean
           isvendor?: boolean
+          locale?: string | null
           m_pricelist_id?: number | null
           po_pricelist_id?: number | null
           taxid?: string | null
@@ -164,7 +216,6 @@ export type Database = {
           value?: string | null
         }
         Update: {
-          ad_language?: string | null
           bpartner_parent_id?: number | null
           created_at?: string
           display_name?: string
@@ -175,6 +226,7 @@ export type Database = {
           isemployee?: boolean
           issalesrep?: boolean
           isvendor?: boolean
+          locale?: string | null
           m_pricelist_id?: number | null
           po_pricelist_id?: number | null
           taxid?: string | null
@@ -1977,11 +2029,11 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
-          descriptions: Json
+          descriptions: Json | null
           id: number
           is_active: boolean
           is_self_service: boolean
-          name: string
+          name: string | null
           names: Json
           parent_id: number | null
           updated_at: string
@@ -1989,11 +2041,11 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
-          descriptions?: Json
+          descriptions?: Json | null
           id?: number
           is_active?: boolean
           is_self_service?: boolean
-          name: string
+          name?: string | null
           names?: Json
           parent_id?: number | null
           updated_at?: string
@@ -2001,11 +2053,11 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
-          descriptions?: Json
+          descriptions?: Json | null
           id?: number
           is_active?: boolean
           is_self_service?: boolean
-          name?: string
+          name?: string | null
           names?: Json
           parent_id?: number | null
           updated_at?: string

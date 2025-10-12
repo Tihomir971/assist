@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { mProductInsertSchema } from '$lib/types/supabase.schemas';
+	import { mProductInsertSchema } from '$lib/types/supabase.zod.schemas';
 	import { createTabConfigs, splitLayoutConfig } from './related-configs';
 	import SmartSplitLayout from '$lib/components/forms/SmartSplitLayout.svelte';
 	import SmartRelatedTabs from '$lib/components/forms/SmartRelatedTabs.svelte';

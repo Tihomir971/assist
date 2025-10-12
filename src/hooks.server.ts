@@ -1,5 +1,5 @@
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
-import type { Database } from '$lib/types/supabase';
+import type { Database } from '$lib/types/supabase.types';
 import { createServerClient } from '@supabase/ssr';
 import { type Handle, redirect } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
@@ -53,6 +53,25 @@ const supabase: Handle = async ({ event, resolve }) => {
 	});
 };
 
+const appSettings: Handle = async ({ event, resolve }) => {
+	// Initialize app settings if not already present
+	if (!event.locals.app) {
+		const { data, error } = await event.locals.supabase
+			.from('ad_client')
+			.select('ad_language')
+			.single();
+		if (error) {
+			console.log('Error', error);
+			return resolve(event);
+		}
+		event.locals.app = {
+			systemLocale: data.ad_language || 'en',
+			userLocale: event.locals.user?.user_metadata?.locale || 'sr-Latn-RS'
+		};
+	}
+	const response = await resolve(event);
+	return response;
+};
 const authGuard: Handle = async ({ event, resolve }) => {
 	const { session, user } = await event.locals.safeGetSession();
 	event.locals.session = session;
@@ -86,8 +105,9 @@ const authGuard: Handle = async ({ event, resolve }) => {
 	if (event.url.pathname === '/auth' || event.url.pathname === '/') {
 		return redirect(303, '/dashboard');
 	}
+	const response = await resolve(event);
 
-	return resolve(event);
+	return response;
 };
 
-export const handle: Handle = sequence(supabase, authGuard);
+export const handle: Handle = sequence(supabase, authGuard, appSettings);

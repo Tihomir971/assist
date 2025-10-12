@@ -1,4 +1,4 @@
-import { mAttributesetAttributeInsertSchema } from '$lib/types/supabase.schemas';
+import { mAttributesetAttributeInsertSchema } from '$lib/types/supabase.zod.schemas';
 import { columnTypes, createRelatedTableConfig } from '$lib/utils/related-table-config.builder';
 import { createFormConfig } from '$lib/utils/form-config.builder';
 import { createSplitLayoutConfig, createTabConfig } from '$lib/utils/split-layout-config.builder';

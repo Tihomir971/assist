@@ -1,7 +1,7 @@
 import {
 	docGeneratedDocumentInsertSchema,
 	docGeneratedDocumentUpdateSchema
-} from '$lib/types/supabase.zod.schemas';
+} from '$lib/types/zod.schemas';
 import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
 
 export const docGeneratedDocumentPayloadBuilder = new SmartPayloadBuilder(

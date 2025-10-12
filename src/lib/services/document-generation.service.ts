@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database, Tables } from '$lib/types/supabase';
-import type { NativeContextSchemaStructure } from '$lib/types/supabase.zod.schemas';
+import type { Database, Tables } from '$lib/types/supabase.types';
+import type { NativeContextSchemaStructure } from '$lib/types/zod.schemas';
 import { NativeSupabaseQueryBuilder } from './native-supabase-query.builder';
 import Mustache from 'mustache';
 

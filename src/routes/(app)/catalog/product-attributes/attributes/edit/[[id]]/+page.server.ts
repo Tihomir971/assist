@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { mAttributeOptionInsertSchema } from '$lib/types/supabase.schemas';
+import { mAttributeOptionInsertSchema } from '$lib/types/supabase.zod.schemas';
 import { mAttributeFormSchema } from './schema';
 import { AttributeService } from '$lib/services/supabase/attribute.service';
 import { AttributeOptionService } from '$lib/services/supabase/attribute-option.service';
