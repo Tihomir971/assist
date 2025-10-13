@@ -2,7 +2,6 @@ import { getRequestEvent, query } from '$app/server';
 import { z } from 'zod';
 import { getRPCLookup } from '$lib/services/supabase/category.service';
 import { supabaseServer } from './supabase-client';
-import { getDefaultLocale } from '$lib/utils/locale.utils';
 
 // Remote query to search categories (safe server-side entrypoint)
 export const searchCategories = query(z.string(), async (q: string) => {
@@ -13,8 +12,8 @@ export const searchCategories = query(z.string(), async (q: string) => {
 	// For lookups that don't require per-user auth this is sufficient.
 	const event = getRequestEvent();
 	const supabase = supabaseServer(event);
-	const fallbackLocale = await getDefaultLocale(supabase);
-	const preferredLocale = locals.user?.user_metadata.preferred_locale || 'en-US';
+	const fallbackLocale = locals.app.systemLocale;
+	const preferredLocale = locals.app.userLocale;
 
 	const data = await getRPCLookup(
 		supabase,

@@ -33,8 +33,8 @@
 	const textareaAttrs = {
 		rows: 3, // Default minimum rows
 		// Add validation constraints if available
-		minlength: field.validation?.min,
-		maxlength: field.validation?.max,
+		minlength: field.componentProps?.min as number,
+		maxlength: field.componentProps?.max as number,
 		...restProps, // Spread Form.Control props first (includes name, id, aria attributes)
 		// Then override with field-specific props if needed
 		...(field.placeholder && { placeholder: field.placeholder }),
@@ -65,9 +65,9 @@
 	style="min-height: 4rem; max-height: 12rem; overflow-y: auto;"
 />
 
-{#if field.validation?.max}
+{#if field.componentProps?.max}
 	<div class="absolute right-2 bottom-2 text-xs text-muted-foreground">
-		{value?.length || 0}/{field.validation.max}
+		{value?.length || 0}/{field.componentProps.max}
 	</div>
 {/if}
 <!-- </div> -->

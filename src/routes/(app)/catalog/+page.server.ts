@@ -18,7 +18,6 @@ import type {
 } from '@tihomir971/assist-shared';
 
 import type { ProductsResultSearch } from './types-search-vendor-products';
-import type { ApiResponse } from '$lib/types/api.types';
 import type { ProductRequest } from './types-api-market';
 
 import { fail, superValidate } from 'sveltekit-superforms';
@@ -33,6 +32,7 @@ import { ProductStatus, type ProductResultGet } from './types-get-market-info';
 import { CategoryService } from '$lib/services/supabase/category.service';
 import type { User } from '@supabase/supabase-js';
 import type { BSProduct } from '$lib/types/connectors/biznisoft';
+import type { ApiResponse } from '@tihomir971/assist-shared/api/api-response.types';
 
 // Add this export near the top or where types are defined
 export type ErrorDetails = { productId?: number; step: string; message: string };
@@ -229,13 +229,14 @@ function filterAndFlattenProducts(
 				product.m_storageonhand.find(
 					(item) => item.warehouse_id === m_replenishActiveWH?.m_warehousesource_id
 				)?.qtyonhand || 0;
-
 			return (
 				m_replenishActiveWH &&
 				m_replenishActiveWH.level_max !== undefined &&
 				m_replenishActiveWH.qtybatchsize !== null &&
 				m_replenishActiveWH.qtybatchsize !== undefined &&
-				m_replenishActiveWH.level_max - activeWarehouseStock >= m_replenishActiveWH.qtybatchsize &&
+				(m_replenishActiveWH.level_max - activeWarehouseStock >= m_replenishActiveWH.qtybatchsize ||
+					m_replenishActiveWH.level_max === 0 ||
+					m_replenishActiveWH.level_max === undefined) &&
 				m_replenishActiveWH.qtybatchsize > 0 &&
 				sourceWarehouseStock > 0
 			);

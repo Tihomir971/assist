@@ -10,14 +10,20 @@
 
 	let { field, value = $bindable(), ...restProps }: SmartNumberInputProps = $props();
 	import { appSettings } from '$lib/context';
-	const inputAttrs = {
+	const inputAttrs: Record<string, any> = {
 		...restProps,
 		...(field.placeholder && { placeholder: field.placeholder }),
 		...(field.readonly && { readonly: field.readonly }),
-		...(field.disabled && { disabled: field.disabled }),
-		...(field.validation?.min !== undefined && { min: field.validation.min }),
-		...(field.validation?.max !== undefined && { max: field.validation.max })
+		...(field.disabled && { disabled: field.disabled })
 	};
+
+	// Add componentProps min/max if they exist and are valid numbers
+	if (field.componentProps?.min !== undefined && field.componentProps.min !== null) {
+		inputAttrs.min = Number(field.componentProps.min);
+	}
+	if (field.componentProps?.max !== undefined && field.componentProps.max !== null) {
+		inputAttrs.max = Number(field.componentProps.max);
+	}
 </script>
 
 <NumberInputDecimal

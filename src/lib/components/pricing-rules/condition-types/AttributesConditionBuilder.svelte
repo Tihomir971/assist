@@ -249,8 +249,7 @@
 								type: 'number' as const,
 								placeholder: 'Izaberite opcije...',
 								options: currentItemOptions,
-								required: false,
-								validation: {}
+								required: false
 							}}
 							value={attribute.option_ids?.map(String) ?? []}
 							onValueChange={(selectedStringValues: string[] | undefined) => {

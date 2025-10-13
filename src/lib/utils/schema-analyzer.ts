@@ -39,12 +39,6 @@ export interface FieldConfig {
 	disabled?: boolean;
 	hidden?: boolean;
 	options?: Array<{ value: string | number; label: string }>;
-	validation: {
-		min?: number;
-		max?: number;
-		pattern?: string;
-		custom?: string[];
-	};
 	componentProps?: Record<string, unknown>;
 	multilingualConfig?: MultilingualFieldConfig;
 }
@@ -84,7 +78,6 @@ export class SchemaAnalyzer {
 		const isSystemField = ['created_at', 'updated_at'].includes(name);
 
 		let type: FieldConfig['type'] = 'text';
-		const validation: FieldConfig['validation'] = {};
 		let options: FieldConfig['options'] = undefined;
 
 		// Simplified type detection based on _def.typeName
@@ -126,8 +119,7 @@ export class SchemaAnalyzer {
 			placeholder: this.generatePlaceholder(name, type),
 			description: (schema as ZodSchema).description,
 			readonly: isSystemField,
-			options,
-			validation
+			options
 		};
 	}
 

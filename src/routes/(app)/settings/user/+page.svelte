@@ -32,7 +32,7 @@
 					<SelectLookupZag
 						label="User preferred Language"
 						name="locale"
-						value={data.user?.user_metadata.locale}
+						value={data.app.userLocale}
 						items={LOCALES.map((locale) => ({
 							value: locale.code,
 							label: `${locale.name} - ${locale.nativeName}`

@@ -61,7 +61,6 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 	const [partners, categories, attributes, brands] = await Promise.all([
 		new PartnerService(supabase).getLookup(),
 		getCategoryTree(),
-		// new CategoryService(supabase).getCategoryTree(user?.user_metadata.preferred_locale || 'en-US'),
 		new AttributeService(supabase).getLookup(),
 		new BrandService(supabase).getLookup()
 	]);

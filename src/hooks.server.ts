@@ -64,7 +64,7 @@ const appSettings: Handle = async ({ event, resolve }) => {
 		// Always set app settings, even if there's an error
 		event.locals.app = {
 			systemLocale: data?.ad_language || 'en',
-			userLocale: event.locals.user?.user_metadata?.locale || 'sr-Latn-RS'
+			userLocale: event.locals.user?.user_metadata?.locale || data?.ad_language || 'sr-Latn-RS'
 		};
 
 		if (error) {

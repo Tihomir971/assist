@@ -173,7 +173,7 @@ export class CategoryService
 		// Automatically detect user's preferred locale and get dynamic default locale
 		const fallbackLocale = locals.app.systemLocale;
 		// const fallbackLocale = await getDefaultLocale(this.supabase);
-		const preferredLocale = locals.user?.user_metadata.preferred_locale || 'en-US';
+		const preferredLocale = locals.app.userLocale;
 		console.log('Preferred Locale:', preferredLocale, 'Fallback Locale:', fallbackLocale);
 
 		const data = await getRPCLookup(
