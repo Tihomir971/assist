@@ -1,7 +1,7 @@
-import type { Database } from '$lib/types/supabase.types';
+import type { Database } from '@tihomir971/assist-shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-export type TaxCategoryLookup = { value: number; label: string };
+type TaxCategoryLookup = { value: number; label: string };
 
 export class TaxCategoryService {
 	constructor(private supabase: SupabaseClient<Database>) {}

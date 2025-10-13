@@ -231,7 +231,7 @@ When implementing the Smart List Page Pattern, the edit/create functionality sho
 import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
 import { YourEntityService } from '$lib/services/supabase/your-entity.service';
 import { yourEntityPayloadBuilder } from './entity.payload.js';
-import { mYourEntityInsertSchema } from '$lib/types/supabase.zod.schemas';
+import { mYourEntityInsertSchema } from '@tihomir971/assist-shared';
 
 export const load = async ({ params, locals: { supabase } }) => {
   const isCreateMode = !params.id;
@@ -270,7 +270,7 @@ export const actions = {
 ```typescript
 // src/routes/(app)/your-route/edit/[[id]]/entity.payload.ts
 import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
-import { mYourEntityInsertSchema, mYourEntityUpdateSchema } from '$lib/types/supabase.zod.schemas';
+import { mYourEntityInsertSchema, mYourEntityUpdateSchema } from '@tihomir971/assist-shared';
 
 export const yourEntityPayloadBuilder = new SmartPayloadBuilder(
   { schema: mYourEntityInsertSchema, defaults: { is_active: true } },

@@ -1,12 +1,10 @@
-import type { Database, Tables } from '$lib/types/supabase.types';
+import type { Database, Tables } from '@tihomir971/assist-shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
-
-export type StorageOnHand = Tables<'m_storageonhand'>;
 
 export class StorageOnHandService {
 	constructor(private supabase: SupabaseClient<Database>) {}
 
-	async list(filters?: { m_product_id: number }): Promise<StorageOnHand[]> {
+	async list(filters?: { m_product_id: number }): Promise<Tables<'m_storageonhand'>[]> {
 		let query = this.supabase.from('m_storageonhand').select('*');
 
 		if (filters?.m_product_id) {

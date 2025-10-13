@@ -12,9 +12,8 @@
 	import SmartTextarea from './fields/SmartTextarea.svelte';
 	import SmartDatePicker from './fields/SmartDatePicker.svelte';
 	import SmartDatetime from './fields/SmartDatetime.svelte';
-	import MultilingualInput from './fields/multilingual/MultilingualInput.svelte';
-	import MultilingualTextarea from './fields/multilingual/MultilingualTextarea.svelte';
 	import type { ZodObject, z } from 'zod'; // Import z for z.infer
+	import { MultilingualInput, MultilingualTextarea } from './fields/multilingual';
 
 	interface SmartFieldProps<S extends ZodObject<any>> {
 		field: AnalyzedFieldConfig;

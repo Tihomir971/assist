@@ -1,13 +1,10 @@
-import type { Database, Tables } from '$lib/types/supabase.types';
+import type { Database, Tables } from '@tihomir971/assist-shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service';
 
 export type ProductAttributeValue = Tables<'m_product_attribute_value'>;
-export type ProductAttributeValueCreate = Omit<
-	ProductAttributeValue,
-	'id' | 'created_at' | 'updated_at'
->;
-export type ProductAttributeValueUpdate = Partial<ProductAttributeValueCreate>;
+type ProductAttributeValueCreate = Omit<ProductAttributeValue, 'id' | 'created_at' | 'updated_at'>;
+type ProductAttributeValueUpdate = Partial<ProductAttributeValueCreate>;
 
 export class ProductAttributeValueService
 	implements

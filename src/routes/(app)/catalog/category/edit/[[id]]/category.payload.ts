@@ -1,9 +1,9 @@
+import type { MProductCategoryInsert, MProductCategoryUpdate } from '@tihomir971/assist-shared';
+import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
 import {
 	mProductCategoryInsertSchema,
 	mProductCategoryUpdateSchema
-} from '$lib/types/supabase.zod.schemas';
-import type { MProductCategoryInsert, MProductCategoryUpdate } from '$lib/types/supabase.zod.types';
-import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
+} from '@tihomir971/assist-shared';
 
 // Helper function to ensure valid JSONB data
 function validateJsonbField(

@@ -1,13 +1,13 @@
-import type { Database, Tables } from '$lib/types/supabase.types';
+import type { Database, Tables } from '@tihomir971/assist-shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service';
 
 export type ProductAttributeOption = Tables<'m_product_attribute_option'>;
-export type ProductAttributeOptionCreate = Omit<
+type ProductAttributeOptionCreate = Omit<
 	ProductAttributeOption,
 	'id' | 'created_at' | 'updated_at'
 >;
-export type ProductAttributeOptionUpdate = Partial<ProductAttributeOptionCreate>;
+type ProductAttributeOptionUpdate = Partial<ProductAttributeOptionCreate>;
 
 export class ProductAttributeOptionService
 	implements

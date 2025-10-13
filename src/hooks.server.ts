@@ -1,5 +1,5 @@
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
-import type { Database } from '$lib/types/supabase.types';
+import type { Database } from '@tihomir971/assist-shared';
 import { createServerClient } from '@supabase/ssr';
 import { type Handle, redirect } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
@@ -60,14 +60,16 @@ const appSettings: Handle = async ({ event, resolve }) => {
 			.from('ad_client')
 			.select('ad_language')
 			.single();
-		if (error) {
-			console.log('Error', error);
-			return resolve(event);
-		}
+
+		// Always set app settings, even if there's an error
 		event.locals.app = {
-			systemLocale: data.ad_language || 'en',
+			systemLocale: data?.ad_language || 'en',
 			userLocale: event.locals.user?.user_metadata?.locale || 'sr-Latn-RS'
 		};
+
+		if (error) {
+			console.log('Error fetching app settings:', error);
+		}
 	}
 	const response = await resolve(event);
 	return response;

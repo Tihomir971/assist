@@ -1,5 +1,5 @@
-import MultilingualField from './MultilingualField.svelte';
 import LocaleTabs from './LocaleTabs.svelte';
-import LocaleFieldGroup from './LocaleFieldGroup.svelte';
+import MultilingualInput from './MultilingualInput.svelte';
+import MultilingualTextarea from './MultilingualTextarea.svelte';
 
-export { MultilingualField, LocaleTabs, LocaleFieldGroup };
+export { LocaleTabs, MultilingualInput, MultilingualTextarea };

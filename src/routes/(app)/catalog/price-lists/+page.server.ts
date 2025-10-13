@@ -2,9 +2,8 @@ import type { PageServerLoad, Actions } from './$types';
 import { PriceListService } from '$lib/services/supabase/pricelist.service';
 import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { mPricelistInsertSchema } from '$lib/types/supabase.zod.schemas';
-import type { MPricelistRow } from '$lib/types/supabase.zod.types';
-import type { Database } from '$lib/types/supabase.types';
+import type { Database, MPricelistRow } from '@tihomir971/assist-shared';
+import { mPricelistInsertSchema } from '@tihomir971/assist-shared';
 import { pricelistPayloadBuilder } from './pricelist.payload';
 
 export const load: PageServerLoad = async ({ locals: { supabase } }) => {

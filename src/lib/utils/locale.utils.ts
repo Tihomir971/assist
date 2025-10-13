@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '$lib/types/supabase.types';
+import type { Database } from '@tihomir971/assist-shared';
 
 // Cache for default locale to avoid repeated database queries
 let defaultLocaleCache: string | null = null;

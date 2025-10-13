@@ -2,7 +2,7 @@
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	// Utils
 	import { getCartContext } from './ctx.svelte';
-	import type { Database } from '$lib/types/supabase.types';
+	import type { Database } from '@tihomir971/assist-shared';
 	import type { CartItem } from './types';
 	// Components
 	import { Button } from '$lib/components/ui/button/index.js';

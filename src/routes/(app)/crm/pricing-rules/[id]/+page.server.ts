@@ -6,16 +6,16 @@ import { error } from '@sveltejs/kit';
 import {
 	PricingRulesService,
 	PartnerService,
-	CategoryService,
 	AttributeService,
 	BrandService
 } from '$lib/services/supabase';
 import type { PricingRule, PricingRuleCreate } from '$lib/types/pricing-rules.types';
 import { formSchema } from './schema';
+import { getCategoryTree } from '$lib/services/supabase/category.service.remote';
 
 // Create a specific schema for the form that uses the detailed condition/formula schemas
 
-export const load: PageServerLoad = async ({ params, locals: { supabase, user } }) => {
+export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
 	const pricingRulesService = new PricingRulesService(supabase);
 
 	let rule: PricingRule | null = null;
@@ -60,7 +60,8 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, user } 
 
 	const [partners, categories, attributes, brands] = await Promise.all([
 		new PartnerService(supabase).getLookup(),
-		new CategoryService(supabase).getCategoryTree(user?.user_metadata.preferred_locale || 'en-US'),
+		getCategoryTree(),
+		// new CategoryService(supabase).getCategoryTree(user?.user_metadata.preferred_locale || 'en-US'),
 		new AttributeService(supabase).getLookup(),
 		new BrandService(supabase).getLookup()
 	]);

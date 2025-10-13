@@ -1,5 +1,3 @@
-import { z } from 'zod';
-
 export interface BSProduct {
 	sifra: number;
 	naziv: string;
@@ -30,26 +28,3 @@ export interface BSProduct {
 		  }[]
 		| null;
 }
-
-export const partnerBS = z.object({
-	sifra: z.number(),
-	naziv: z.string(),
-	pbr: z.string().nullable(),
-	mesto: z.string().nullable(),
-	adresa: z.string().nullable(),
-	konosoba: z.string().nullable(),
-	telefoni: z.string().nullable(),
-	drzava: z.string().nullable(),
-	pib: z.string().nullable(),
-	matbr: z.string().nullable(),
-	pdv: z.number(),
-	tip: z.number(),
-	email: z.string().nullable(),
-	punnaziv: z.string().nullable(),
-	aktivan: z.number()
-});
-
-export const groupBS = z.object({
-	sifra: z.number(),
-	naziv: z.string()
-});

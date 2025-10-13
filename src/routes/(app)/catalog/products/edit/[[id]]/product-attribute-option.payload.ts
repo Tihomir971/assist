@@ -1,7 +1,7 @@
 import {
 	mProductAttributeOptionInsertSchema,
 	mProductAttributeOptionUpdateSchema
-} from '$lib/types/supabase.zod.schemas';
+} from '@tihomir971/assist-shared';
 import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
 
 export const productAttributeOptionPayloadBuilder = new SmartPayloadBuilder(

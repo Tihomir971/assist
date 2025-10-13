@@ -1,10 +1,10 @@
-import type { Database, Tables } from '$lib/types/supabase.types';
+import type { Database, Tables } from '@tihomir971/assist-shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service';
 
-export type Replenish = Tables<'m_replenish'>;
-export type ReplenishCreate = Omit<Replenish, 'id' | 'created_at' | 'updated_at'>;
-export type ReplenishUpdate = Partial<ReplenishCreate>;
+type Replenish = Tables<'m_replenish'>;
+type ReplenishCreate = Omit<Replenish, 'id' | 'created_at' | 'updated_at'>;
+type ReplenishUpdate = Partial<ReplenishCreate>;
 
 export class ReplenishService implements CRUDService<Replenish, ReplenishCreate, ReplenishUpdate> {
 	constructor(private supabase: SupabaseClient<Database>) {}

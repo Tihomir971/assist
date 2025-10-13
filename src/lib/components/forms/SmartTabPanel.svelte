@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { SmartTabPanelProps } from '$lib/types/split-layout-config.types';
-	import type { Snippet } from 'svelte';
 	import { cn } from '$lib/utils';
 
 	let { tabId, isActive, className, children }: SmartTabPanelProps = $props();

@@ -45,7 +45,8 @@ export function createFormConfig<T extends Record<string, unknown>>(): FormConfi
 				...options,
 				type: 'multilingual_input',
 				multilingualConfig: {
-					required: options.requiredLocales
+					required: options.requiredLocales,
+					defaultLocale: options.defaultLocale
 				}
 			});
 		},
@@ -67,7 +68,8 @@ export function createFormConfig<T extends Record<string, unknown>>(): FormConfi
 				...options,
 				type: 'multilingual_textarea',
 				multilingualConfig: {
-					required: options.requiredLocales
+					required: options.requiredLocales,
+					defaultLocale: options.defaultLocale
 				}
 			});
 		},

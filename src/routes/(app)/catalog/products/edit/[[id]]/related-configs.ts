@@ -7,7 +7,7 @@ import {
 	mProductPoInsertSchema,
 	mReplenishInsertSchema,
 	cChannelMapProductInsertSchema
-} from '$lib/types/supabase.zod.schemas';
+} from '@tihomir971/assist-shared';
 import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable.svelte';
 import StorageOnHandDisplay from './m-storageonhand-display.svelte';
 import SmartProductAttributes from './SmartProductAttributes.svelte';

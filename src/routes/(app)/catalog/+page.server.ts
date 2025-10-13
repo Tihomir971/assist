@@ -1,8 +1,12 @@
 import type { Actions, PageServerLoad } from './$types';
-import type { BSProduct } from '$lib/types/connectors/biznisoft.js';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { FlattenedProduct, ProductWithDetails } from './columns.svelte.js';
 import type {
+	Database,
+	Enums,
+	Tables,
+	TablesInsert,
+	TablesUpdate,
 	MPricelistVersionRow,
 	MProductPoInsert,
 	MProductPoRow,
@@ -11,14 +15,8 @@ import type {
 	MProductRow,
 	MStorageonhandInsert,
 	MStorageonhandRow
-} from '$lib/types/supabase.zod.types';
-import type {
-	Database,
-	Enums,
-	Tables,
-	TablesInsert,
-	TablesUpdate
-} from '$lib/types/supabase.types';
+} from '@tihomir971/assist-shared';
+
 import type { ProductsResultSearch } from './types-search-vendor-products';
 import type { ApiResponse } from '$lib/types/api.types';
 import type { ProductRequest } from './types-api-market';
@@ -34,6 +32,7 @@ import { catalogSearchParamsSchema } from './search-params.schema';
 import { ProductStatus, type ProductResultGet } from './types-get-market-info';
 import { CategoryService } from '$lib/services/supabase/category.service';
 import type { User } from '@supabase/supabase-js';
+import type { BSProduct } from '$lib/types/connectors/biznisoft';
 
 // Add this export near the top or where types are defined
 export type ErrorDetails = { productId?: number; step: string; message: string };
@@ -110,9 +109,7 @@ async function fetchProducts(
 		} catch {
 			// Fallback to legacy CategoryService behaviour if cache fails/unavailable
 			const categoryService = new CategoryService(supabase);
-			const categoryTreeCollection = await categoryService.getCategoryTreeCollection(
-				user?.user_metadata.locale || 'en-US'
-			);
+			const categoryTreeCollection = await categoryService.getCategoryTreeCollection();
 			const descendantValues = categoryTreeCollection.getDescendantValues(categoryId);
 			categoryIds = descendantValues.map((value: string) => parseInt(value));
 		}

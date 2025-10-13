@@ -1,12 +1,8 @@
 <script lang="ts">
 	import type { SuperForm } from 'sveltekit-superforms';
-	import { Label } from '$lib/components/ui/label/index.js';
-	import { Badge } from '$lib/components/ui/badge/index.js';
 	import * as Alert from '$lib/components/ui/alert/index.js';
-	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import { Ellipsis, Copy, Clipboard, Clock, CircleAlert } from '@lucide/svelte';
+	import CircleAlertIcon from '@lucide/svelte/icons/circle-alert';
 
 	import LocaleTabs from './LocaleTabs.svelte';
 	import { localeService } from '$lib/services/supabase/locale.service';
@@ -65,7 +61,9 @@
 	(async () => {
 		try {
 			availableLocales = await localeService.getLocales();
-			const defaultLocale = availableLocales.find((l) => l.isDefault)?.value || 'en-US';
+			// Use the defaultLocale from config if provided, otherwise use the system default
+			const defaultLocale =
+				config.defaultLocale || availableLocales.find((l) => l.isDefault)?.value || 'en-US';
 			if (availableLocales.length > 0) {
 				activeLocale = availableLocales.some((l) => l.value === defaultLocale)
 					? defaultLocale
@@ -180,7 +178,7 @@
 		<div class="input-errors mt-2 space-y-2">
 			{#each activeErrors as error}
 				<Alert.Root variant="destructive" class="error-alert">
-					<CircleAlert class="h-4 w-4" />
+					<CircleAlertIcon class="h-4 w-4" />
 					<Alert.Description>{error}</Alert.Description>
 				</Alert.Root>
 			{/each}

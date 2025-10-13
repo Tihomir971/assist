@@ -1,5 +1,6 @@
 export interface MultilingualFieldConfig {
 	required?: string[]; // Required locale codes
+	defaultLocale?: string; // Default locale to use
 }
 
 export interface LookupOption {

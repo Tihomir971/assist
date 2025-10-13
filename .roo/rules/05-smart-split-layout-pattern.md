@@ -203,7 +203,7 @@ To clarify the pattern, here is a complete, real-world example for an "Attribute
 This file defines the configuration for the related table, the split layout, and a helper function to generate the tab configurations.
 
 ```typescript
-import { mAttributesetAttributeInsertSchema } from '$lib/types/supabase.zod.schemas';
+import { mAttributesetAttributeInsertSchema } from '@tihomir971/assist-shared';
 import { columnTypes, createRelatedTableConfig } from '$lib/utils/related-table-config.builder';
 import { createFormConfig } from '$lib/utils/form-config.builder';
 import { createSplitLayoutConfig, createTabConfig } from '$lib/utils/split-layout-config.builder';
@@ -281,7 +281,7 @@ This Svelte page consumes the configurations and renders the layout.
 	import SmartRelatedTabs from '$lib/components/forms/SmartRelatedTabs.svelte';
 	import { createFormConfig } from '$lib/utils/form-config.builder';
 	import { splitLayoutConfig, createTabConfigs } from './related-configs';
-	import { mAttributesetInsertSchema } from '$lib/types/supabase.zod.schemas';
+	import { mAttributesetInsertSchema } from '@tihomir971/assist-shared';
 
 	let { data } = $props();
 

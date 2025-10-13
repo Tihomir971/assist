@@ -5,9 +5,12 @@ import SmartRelatedTable from '$lib/components/forms/SmartRelatedTable.svelte';
 import type { Component } from 'svelte';
 import type { SuperValidated } from 'sveltekit-superforms';
 import { invalidate } from '$app/navigation';
-import { cChannelMapCategoryInsertSchema } from '$lib/types/supabase.zod.schemas';
-import type { Tables } from '$lib/types/supabase.types';
-import type { CChannelMapCategoryInsert, MProductCategoryRow } from '$lib/types/supabase.zod.types';
+import type {
+	Tables,
+	CChannelMapCategoryInsert,
+	MProductCategoryRow
+} from '@tihomir971/assist-shared';
+import { cChannelMapCategoryInsertSchema } from '@tihomir971/assist-shared';
 
 // Channel Mapping Configuration
 export const channelMappingConfig = createRelatedTableConfig<

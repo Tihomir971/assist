@@ -2,8 +2,7 @@
 	// Libs
 	// Types
 	import type { SupabaseClient } from '@supabase/supabase-js';
-	import type { MProductpriceRow } from '$lib/types/supabase.zod.types.js';
-	import type { Database, Tables } from '$lib/types/supabase.types.js';
+	import type { Database, Tables, MProductpriceRow } from '@tihomir971/assist-shared';
 	// Components
 	import * as TableShow from '$lib/components/ui/table/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';

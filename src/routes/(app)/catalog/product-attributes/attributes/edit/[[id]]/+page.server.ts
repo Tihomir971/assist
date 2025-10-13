@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { mAttributeOptionInsertSchema } from '$lib/types/supabase.zod.schemas';
+import { mAttributeOptionInsertSchema } from '@tihomir971/assist-shared';
 import { mAttributeFormSchema } from './schema';
 import { AttributeService } from '$lib/services/supabase/attribute.service';
 import { AttributeOptionService } from '$lib/services/supabase/attribute-option.service';
@@ -9,7 +9,7 @@ import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
 import { attributePayloadBuilder } from './attribute.payload';
 import { attributeOptionPayloadBuilder } from './attribute-option.payload';
 import { AttributeGroupService } from '$lib/services/supabase/attribute-group.service';
-import { UOMService } from '$lib/services/supabase/uom.service';
+import { UOMService } from '$lib/services/supabase';
 
 export const load = async ({ depends, params, locals: { supabase } }) => {
 	depends('catalog:attributes');

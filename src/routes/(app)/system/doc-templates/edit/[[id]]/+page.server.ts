@@ -4,7 +4,7 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 import { docTemplateInsertSchema } from '$lib/types/zod.schemas';
 import { DocTemplateService } from '$lib/services/supabase';
 import { DocumentGenerationService } from '$lib/services/document-generation.service';
-import type { Tables } from '$lib/types/supabase.types';
+import type { Tables } from '@tihomir971/assist-shared';
 
 export const load = async ({ params, locals: { supabase } }) => {
 	const id = params.id ? parseInt(params.id) : null;

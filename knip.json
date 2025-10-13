@@ -1,5 +1,7 @@
 {
     "ignore": [
-        "src/lib/types/supabase/**"
+        "src/lib/types/supabase/**",
+        "src/lib/components/ui/**",
+        "src/routes/(app)/layout-*.svelte"
     ]
 }

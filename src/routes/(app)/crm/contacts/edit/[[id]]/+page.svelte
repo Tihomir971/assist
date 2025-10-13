@@ -3,7 +3,7 @@
 	import SmartForm from '$lib/components/forms/SmartForm.svelte';
 	import { createFormConfig } from '$lib/utils/form-config.builder';
 	import { splitLayoutConfig } from './related-configs';
-	import { cBpartnerInsertSchema } from '$lib/types/supabase.zod.schemas';
+	import { cBpartnerInsertSchema } from '@tihomir971/assist-shared';
 
 	let { data } = $props();
 

@@ -6,23 +6,24 @@ import type { Actions, PageServerLoad } from './$types';
 import { CategoryService } from '$lib/services/supabase/category.service';
 import { ChannelMappingCategoryService } from '$lib/services/supabase/channel-mapping-category.service';
 import { ChannelService } from '$lib/services/supabase/channel.service';
-import { LocaleService } from '$lib/services/supabase/locale.service';
+// import { LocaleService } from '$lib/services/supabase/locale.service';
 import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
 import { categoryPayloadBuilder } from './category.payload';
 import { channelMappingPayloadBuilder } from './channel-mapping.payload';
+
 import {
 	cChannelMapCategoryInsertSchema,
-	mProductCategoryInsertSchema
-} from '$lib/types/supabase.zod.schemas';
-import type { Database } from '$lib/types/supabase.types';
-import type { CChannelMapCategoryRow, MProductCategoryRow } from '$lib/types/supabase.zod.types';
+	mProductCategoryInsertSchema,
+	type Database
+} from '@tihomir971/assist-shared';
+import type { CChannelMapCategoryRow, MProductCategoryRow } from '@tihomir971/assist-shared';
 
-export const load: PageServerLoad = async ({ params, locals: { supabase }, depends }) => {
+export const load: PageServerLoad = async ({ params, locals, depends }) => {
 	depends('app:category-page');
 
-	const categoryService = new CategoryService(supabase);
-	const channelService = new ChannelService(supabase);
-	const localeService = new LocaleService(supabase);
+	const categoryService = new CategoryService(locals.supabase);
+	const channelService = new ChannelService(locals.supabase);
+	// const localeService = new LocaleService(supabase);
 
 	let categoryId: number | null = null;
 
@@ -34,13 +35,12 @@ export const load: PageServerLoad = async ({ params, locals: { supabase }, depen
 	}
 
 	try {
-		const [categoryWithRelated, lookupCategories, lookupChannels, availableLocales] =
-			await Promise.all([
-				categoryId ? categoryService.getCategoryWithRelatedData(categoryId) : Promise.resolve(null),
-				categoryService.getLookup(),
-				channelService.getChannelLookup(),
-				localeService.getLocales()
-			]);
+		const [categoryWithRelated, lookupCategories, lookupChannels] = await Promise.all([
+			categoryId ? categoryService.getCategoryWithRelatedData(categoryId) : Promise.resolve(null),
+			categoryService.getLookup(),
+			channelService.getChannelLookup()
+			// localeService.getLocales()
+		]);
 
 		if (categoryId && !categoryWithRelated?.category) {
 			throw error(404, 'Category not found');
@@ -68,14 +68,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase }, depen
 			category: categoryWithRelated?.category || null,
 			channelMapCategory: categoryWithRelated?.channelMappings || [],
 			categories: lookupCategories,
-			c_channels: lookupChannels,
-			availableLocales,
-			multilingualConfig: {
-				defaultLocale: 'en-US',
-				requiredLocales: ['en-US'],
-				enableAdvancedActions: true,
-				enableImportExport: true
-			}
+			c_channels: lookupChannels
 		};
 	} catch (err: unknown) {
 		console.error('Error loading category data:', err);

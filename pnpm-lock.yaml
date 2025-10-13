@@ -45,8 +45,8 @@ importers:
         specifier: ^8.21.3
         version: 8.21.3
       '@tihomir971/assist-shared':
-        specifier: ^2.8.0
-        version: 2.8.0
+        specifier: ^2.10.0
+        version: 2.10.0
       '@tiptap/core':
         specifier: ^3.6.6
         version: 3.6.6(@tiptap/pm@3.6.6)
@@ -141,8 +141,8 @@ importers:
         specifier: ^8.1.0
         version: 8.1.0
       mathjs:
-        specifier: ^14.8.2
-        version: 14.9.1
+        specifier: ^15.0.0
+        version: 15.0.0
       mode-watcher:
         specifier: ^1.1.0
         version: 1.1.0(svelte@5.39.11)
@@ -214,7 +214,7 @@ importers:
         specifier: ^3.7.1
         version: 3.7.1
       '@types/node':
-        specifier: ^24.7.1
+        specifier: ^24.7.2
         version: 24.7.2
       eslint:
         specifier: ^9.37.0
@@ -1352,8 +1352,8 @@ packages:
     resolution: {integrity: sha512-ldZXEhOBb8Is7xLs01fR3YEc3DERiz5silj8tnGkFZytt1abEvl/GhUmCE0PMLaMPTa3Jk4HbKmRlHmu+gCftg==}
     engines: {node: '>=12'}
 
-  '@tihomir971/assist-shared@2.8.0':
-    resolution: {integrity: sha512-UOFDb0L3H1ianJp53jFvBegwfQTf0a0m4LDCKeOTk8jaQPpV5uNEVKpVOVStMMtfPMyYMBVyT5KQQet35Oi2dw==}
+  '@tihomir971/assist-shared@2.10.0':
+    resolution: {integrity: sha512-SoAiN4nuYMG5MExoH2L+KM5/ySm/FZ5D2lqxqA8a7/68Nx4bXUcXMsunTm2evAIcg545dCI5feDDw0fp66r79A==}
 
   '@tiptap/core@3.6.6':
     resolution: {integrity: sha512-7Mx3Vc2qS9IpT6s/Xarxot1PKvbNIq6Avp3vU/BubyrH6gaGApd4UOvTMwGfS4itpradzd/DfwkmB4/r6wAjNQ==}
@@ -2507,8 +2507,8 @@ packages:
   match-sorter@8.1.0:
     resolution: {integrity: sha512-0HX3BHPixkbECX+Vt7nS1vJ6P2twPgGTU3PMXjWrl1eyVCL24tFHeyYN1FN5RKLzve0TyzNI9qntqQGbebnfPQ==}
 
-  mathjs@14.9.1:
-    resolution: {integrity: sha512-xhqv8Xjf+caWG3WlaPekg4v8QFOR3D5+8ycfcjMcPcnCNDgAONQLaLfyGgrggJrcHx2yUGCpACRpiD4GmXwX+Q==}
+  mathjs@15.0.0:
+    resolution: {integrity: sha512-eXXXRKEl/htny5T/Ce/hbmqa8WZi2RmaCEHBOVtTeYcYyyGvz1UYSdK2ypydDepFF6F7ue0OygXRRIx8lLq/uw==}
     engines: {node: '>= 18'}
     hasBin: true
 
@@ -4332,7 +4332,7 @@ snapshots:
 
   '@tanstack/table-core@8.21.3': {}
 
-  '@tihomir971/assist-shared@2.8.0':
+  '@tihomir971/assist-shared@2.10.0':
     dependencies:
       zod: 4.1.12
 
@@ -5870,7 +5870,7 @@ snapshots:
       '@babel/runtime': 7.28.4
       remove-accents: 0.5.0
 
-  mathjs@14.9.1:
+  mathjs@15.0.0:
     dependencies:
       '@babel/runtime': 7.28.4
       complex.js: 2.4.2

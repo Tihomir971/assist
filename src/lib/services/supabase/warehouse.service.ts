@@ -1,11 +1,11 @@
-import type { Database, Tables } from '$lib/types/supabase.types';
+import type { Database, Tables } from '@tihomir971/assist-shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service';
 
-export type Warehouse = Tables<'m_warehouse'>;
-export type WarehouseCreate = Omit<Warehouse, 'id' | 'created_at' | 'updated_at'>;
-export type WarehouseUpdate = Partial<WarehouseCreate>;
-export type WarehouseLookup = { value: number; label: string };
+type Warehouse = Tables<'m_warehouse'>;
+type WarehouseCreate = Omit<Warehouse, 'id' | 'created_at' | 'updated_at'>;
+type WarehouseUpdate = Partial<WarehouseCreate>;
+type WarehouseLookup = { value: number; label: string };
 
 export class WarehouseService implements CRUDService<Warehouse, WarehouseCreate, WarehouseUpdate> {
 	constructor(private supabase: SupabaseClient<Database>) {}

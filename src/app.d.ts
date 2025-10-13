@@ -1,5 +1,4 @@
-// import type { Database } from '@tihomir971/assist-shared';
-import type { Database } from '$lib/types/supabase.types';
+import type { Database } from '@tihomir971/assist-shared';
 import type { Session, SupabaseClient } from '@supabase/supabase-js';
 import type { AppSettings } from '$lib/types/app';
 
@@ -20,11 +19,11 @@ declare global {
 			safeGetSession: () => Promise<{ session: Session | null; user: User | null }>;
 			session: Session | null;
 			user: User | null;
-			app: AppSettings | undefined;
+			app: AppSettings;
 		}
 		interface PageData {
 			session: Session | null;
-			app: AppSettings | undefined;
+			app: AppSettings;
 		}
 		// interface PageState {}
 		// interface Platform {}

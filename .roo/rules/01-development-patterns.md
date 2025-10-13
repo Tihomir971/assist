@@ -42,7 +42,7 @@ src/routes/(app)/your-route/[[id]]/
 2.  **Create the Payload Builder**: In `.../[[id]]/entity.payload.ts`, create an instance of `SmartPayloadBuilder`, linking it to your Zod insert/update schemas and defining any defaults or transformers.
     ```typescript
     // src/routes/(app)/your-route/[[id]]/entity.payload.ts
-    import { yourEntityInsertSchema, yourEntityUpdateSchema } from '$lib/types/supabase.zod.schemas';
+    import { yourEntityInsertSchema, yourEntityUpdateSchema } from '@tihomir971/assist-shared';
     import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
 
     export const yourEntityPayloadBuilder = new SmartPayloadBuilder(
@@ -56,7 +56,7 @@ src/routes/(app)/your-route/[[id]]/
     import { YourEntityService } from '$lib/services/supabase/your-entity.service';
     import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
     import { yourEntityPayloadBuilder } from './entity.payload';
-    import { yourEntityInsertSchema } from '$lib/types/supabase.zod.schemas';
+    import { yourEntityInsertSchema } from '@tihomir971/assist-shared';
 
     export const load = async ({ params, locals: { supabase } }) => { /* ... load entity and return form ... */ };
 
@@ -78,7 +78,7 @@ src/routes/(app)/your-route/[[id]]/
     <script lang="ts">
         import SmartForm from '$lib/components/forms/SmartForm.svelte';
         import { createFormConfig } from '$lib/utils/form-config.builder';
-        import { yourEntityInsertSchema } from '$lib/types/supabase.zod.schemas';
+        import { yourEntityInsertSchema } from '@tihomir971/assist-shared';
 
         let { data } = $props();
 
@@ -132,7 +132,7 @@ src/routes/(app)/your-route/[[id]]/
     ```typescript
     // src/routes/(app)/your-route/[[id]]/related-configs.ts
     import { createRelatedTableConfig, columnTypes } from '$lib/utils/related-table-config.builder';
-    import { priceRulesInsertSchema } from '$lib/types/supabase.zod.schemas';
+    import { priceRulesInsertSchema } from '@tihomir971/assist-shared';
 
     export const priceRulesConfig = createRelatedTableConfig()
         .title('Price Rules')

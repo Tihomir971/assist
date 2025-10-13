@@ -4,8 +4,8 @@
 	import SmartRelatedTabs from '$lib/components/forms/SmartRelatedTabs.svelte';
 	import { createFormConfig } from '$lib/utils/form-config.builder';
 	import { splitLayoutConfig, createTabConfigs } from './related-configs';
-	import { mProductCategoryInsertSchema } from '$lib/types/supabase.zod.schemas';
-	import type { MProductCategoryInsert } from '$lib/types/supabase.zod.types';
+	import type { MProductCategoryInsert } from '@tihomir971/assist-shared';
+	import { mProductCategoryInsertSchema } from '@tihomir971/assist-shared';
 
 	let { data } = $props();
 
@@ -16,8 +16,8 @@
 		.multilingualInput('names', {
 			label: 'Name',
 			span: 12,
-			requiredLocales: ['en-US'],
-			defaultLocale: 'en-US'
+			requiredLocales: [data.app?.systemLocale || 'en-US'],
+			defaultLocale: data.app?.userLocale || data.app?.systemLocale || 'en-US'
 		})
 		.multilingualTextarea('descriptions', {
 			label: 'Description',

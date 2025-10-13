@@ -1,10 +1,10 @@
-import type { Database, Tables } from '$lib/types/supabase.types';
+import type { Database, Tables } from '@tihomir971/assist-shared';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service';
 
-export type ProductPo = Tables<'m_product_po'>;
-export type ProductPoCreate = Omit<ProductPo, 'id' | 'created_at' | 'updated_at'>;
-export type ProductPoUpdate = Partial<ProductPoCreate>;
+type ProductPo = Tables<'m_product_po'>;
+type ProductPoCreate = Omit<ProductPo, 'id' | 'created_at' | 'updated_at'>;
+type ProductPoUpdate = Partial<ProductPoCreate>;
 
 export class ProductPoService implements CRUDService<ProductPo, ProductPoCreate, ProductPoUpdate> {
 	constructor(private supabase: SupabaseClient<Database>) {}

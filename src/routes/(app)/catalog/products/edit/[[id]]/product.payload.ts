@@ -1,5 +1,5 @@
-import { mProductInsertSchema, mProductUpdateSchema } from '$lib/types/supabase.zod.schemas';
-import type { MProductInsert, MProductUpdate } from '$lib/types/supabase.zod.types';
+import { mProductInsertSchema, mProductUpdateSchema } from '@tihomir971/assist-shared';
+import type { MProductInsert, MProductUpdate } from '@tihomir971/assist-shared';
 import { SmartPayloadBuilder } from '$lib/utils/smart-payload.builder';
 
 export const productPayloadBuilder = new SmartPayloadBuilder<MProductInsert, MProductUpdate>(

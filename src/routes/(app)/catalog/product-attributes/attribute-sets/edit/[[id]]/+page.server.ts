@@ -5,12 +5,13 @@ import { createSimpleCRUD } from '$lib/utils/simple-crud.factory.js';
 import { AttributeSetService } from '$lib/services/supabase/attribute-set.service';
 import { AttributeService } from '$lib/services/supabase/attribute.service';
 import { AttributeSetAttributeService } from '$lib/services/supabase/attribute-set-attribute.service';
-import {
-	mAttributesetInsertSchema,
-	mAttributesetAttributeInsertSchema
-} from '$lib/types/supabase.zod.schemas.js';
+
 import { attributeSetPayloadBuilder } from './attribute-set.payload.js';
 import { attributeSetAttributePayloadBuilder } from './attribute-set-attribute.payload.js';
+import {
+	mAttributesetAttributeInsertSchema,
+	mAttributesetInsertSchema
+} from '@tihomir971/assist-shared';
 
 export const load = async ({ depends, params, locals: { supabase } }) => {
 	depends('catalog:attribute-sets');

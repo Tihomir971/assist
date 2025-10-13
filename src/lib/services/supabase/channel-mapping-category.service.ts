@@ -1,13 +1,13 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CRUDService } from '../base/crud.service';
-import type { Database, Tables } from '$lib/types/supabase.types';
+import type { Database, Tables } from '@tihomir971/assist-shared';
 
-export type ChannelMappingCategory = Tables<'c_channel_map_category'>;
-export type ChannelMappingCategoryCreate = Omit<
+type ChannelMappingCategory = Tables<'c_channel_map_category'>;
+type ChannelMappingCategoryCreate = Omit<
 	ChannelMappingCategory,
 	'id' | 'created_at' | 'updated_at'
 >;
-export type ChannelMappingCategoryUpdate = Partial<ChannelMappingCategoryCreate>;
+type ChannelMappingCategoryUpdate = Partial<ChannelMappingCategoryCreate>;
 
 export class ChannelMappingCategoryService
 	implements

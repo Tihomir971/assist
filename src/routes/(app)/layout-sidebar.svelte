@@ -69,14 +69,9 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import SidebarNavMain from './layout-sidebar-nav-main.svelte';
 	import SidebarNavUser from './layout-sidebar-nav-user.svelte';
-	import PhList from '~icons/ph/list';
-	import PhFolders from '~icons/ph/folders';
 	import type { ComponentProps } from 'svelte';
-	import { cn } from '$lib/utils';
-	import { page } from '$app/state';
 	import type { SupabaseClient } from '@supabase/supabase-js';
-	import type { Database } from '$lib/types/supabase.types';
-	import LayoutSidebarNavSimple from './layout-sidebar-nav-simple.svelte';
+	import type { Database } from '@tihomir971/assist-shared';
 
 	let {
 		ref = $bindable(null),
@@ -91,8 +86,6 @@
 			avatar_url: string | null;
 		} | null;
 	} = $props();
-
-	const path = $derived(page.url.pathname);
 </script>
 
 <div>
