@@ -29,13 +29,7 @@ import { CategoryService } from '$lib/services/supabase/category.service';
 import type { User } from '@supabase/supabase-js';
 import type { BSProduct } from '$lib/types/connectors/biznisoft';
 import type { ApiResponse } from '@tihomir971/assist-shared/api/api-response.types';
-import {
-	ProductStatus,
-	type ApiProductSearchResponse,
-	type ProductRequest,
-	type ProductResultGet,
-	type ProductSearchRequest
-} from '$lib/types/api/scrapper';
+import { ProductStatus, type ProductRequest, type ProductResultGet } from '$lib/types/api/scrapper';
 
 // Add this export near the top or where types are defined
 export type ErrorDetails = { productId?: number; step: string; message: string };
@@ -1128,8 +1122,8 @@ export const actions = {
 				details: errorMessages
 			};
 		}
-	},
-	searchVendorProducts: async ({ request, locals: { supabase } }) => {
+	}
+	/* searchVendorProducts: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod4(productSelectSchema));
 		if (!form.valid) return fail(400, { form });
 
@@ -1205,7 +1199,6 @@ export const actions = {
 				};
 			}
 
-			// Process and update database with results
 			for (const result of allResults) {
 				const originalProduct = products.find((p) => p.id === result.productId);
 				if (!originalProduct) {
@@ -1272,5 +1265,5 @@ export const actions = {
 				message: 'Unknown error searching by barcode'
 			};
 		}
-	}
+	} */
 } satisfies Actions;

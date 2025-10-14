@@ -8,13 +8,15 @@
 	import { toast } from 'svelte-sonner';
 	//Icons
 	import PhCaretDown from '~icons/ph/caret-down';
+	// Remote function
+	import { scrapperSearchProducts } from '$lib/remote/scrapper.remote';
 
 	let { rowSelectionState = $bindable() }: { rowSelectionState: RowSelectionState } = $props();
 	let strRowSelectionState = $derived(Object.keys(rowSelectionState).map((x) => x));
 
 	let formElErpSyncProd: HTMLFormElement;
 	let formElMarket: HTMLFormElement;
-	let formElBarcodes: HTMLFormElement;
+	// let formElBarcodes: HTMLFormElement;
 	let sourceInput: HTMLInputElement;
 	let typeInput: HTMLInputElement;
 
@@ -24,10 +26,32 @@
 			formElMarket.requestSubmit();
 		}
 	};
-	const submitSearchByBarcodes = (source: number) => {
-		if (sourceInput && formElMarket) {
-			sourceInput.value = source.toString();
-			formElBarcodes.requestSubmit();
+
+	// New function using remote command instead of form action
+	const handleSearchProducts = async () => {
+		try {
+			const result = await scrapperSearchProducts({
+				ids: strRowSelectionState.join(',')
+			});
+
+			invalidate('catalog:products');
+
+			toast.success('Cenoteka Sync', {
+				description: result.message || 'Successfully synchronized!',
+				action: {
+					label: 'Undo',
+					onClick: () => console.info('Undo')
+				}
+			});
+
+			// Clear row selection after successful operation
+			rowSelectionState = {};
+		} catch (error) {
+			console.error('Error searching by barcodes:', error);
+			const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+			toast.error('Cenoteka Sync', {
+				description: errorMessage
+			});
 		}
 	};
 </script>
@@ -52,7 +76,7 @@
 
 			<DropdownMenu.Separator />
 			<DropdownMenu.Item onSelect={() => submitMarketInfo(2)}>Get Market Info</DropdownMenu.Item>
-			<DropdownMenu.Item onSelect={() => submitSearchByBarcodes(6)}>
+			<DropdownMenu.Item onSelect={() => handleSearchProducts()}>
 				Search by Barcodes
 			</DropdownMenu.Item>
 		</DropdownMenu.Group>
@@ -125,7 +149,7 @@
 	<input type="hidden" name="source" bind:this={sourceInput} value={2} />
 	<input type="hidden" name="type" bind:this={typeInput} value="get" />
 </form>
-<form
+<!-- <form
 	bind:this={formElBarcodes}
 	method="post"
 	action="/catalog?/searchVendorProducts"
@@ -136,7 +160,6 @@
 				const data = result.data;
 				if (data && data.success) {
 					toast.success('Cenoteka Sync', {
-						/* description: data.message || 'Successfully synchronized!', */
 						action: {
 							label: 'Undo',
 							onClick: () => console.info('Undo')
@@ -144,7 +167,6 @@
 					});
 				} else {
 					toast.error('Cenoteka Sync', {
-						/* description: data?.message || 'Unknown error occurred' */
 					});
 				}
 
@@ -161,4 +183,4 @@
 	<input type="hidden" name="ids" value={strRowSelectionState} />
 	<input type="hidden" name="source" bind:this={sourceInput} value={2} />
 	<input type="hidden" name="type" bind:this={typeInput} value={'search'} />
-</form>
+</form> -->
