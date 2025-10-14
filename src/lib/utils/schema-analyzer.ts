@@ -38,7 +38,6 @@ export interface FieldConfig {
 	readonly?: boolean;
 	disabled?: boolean;
 	hidden?: boolean;
-	options?: Array<{ value: string | number; label: string }>;
 	componentProps?: Record<string, unknown>;
 	multilingualConfig?: MultilingualFieldConfig;
 }
@@ -78,7 +77,7 @@ export class SchemaAnalyzer {
 		const isSystemField = ['created_at', 'updated_at'].includes(name);
 
 		let type: FieldConfig['type'] = 'text';
-		let options: FieldConfig['options'] = undefined;
+		let componentProps: Record<string, unknown> | undefined = undefined;
 
 		// Simplified type detection based on _def.typeName
 		const typeName = (baseSchema as ZodSchema)._def.typeName;
@@ -98,17 +97,19 @@ export class SchemaAnalyzer {
 		} else if (typeName === 'ZodEnum') {
 			type = 'select';
 			const enumOptions = (baseSchema as ZodSchema)._def.values || [];
-			options = enumOptions.map((opt: string | number) => ({
+			const options = enumOptions.map((opt: string | number) => ({
 				value: opt,
 				label: this.generateLabel(String(opt))
 			}));
+			componentProps = { options };
 		} else if (typeName === 'ZodNativeEnum') {
 			type = 'select';
 			const enumValues = (baseSchema as ZodSchema)._def.values || [];
-			options = enumValues.map((opt: string | number) => ({
+			const options = enumValues.map((opt: string | number) => ({
 				value: opt,
 				label: this.generateLabel(String(opt))
 			}));
+			componentProps = { options };
 		}
 
 		return {
@@ -119,7 +120,7 @@ export class SchemaAnalyzer {
 			placeholder: this.generatePlaceholder(name, type),
 			description: (schema as ZodSchema).description,
 			readonly: isSystemField,
-			options
+			componentProps
 		};
 	}
 

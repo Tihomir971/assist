@@ -52,9 +52,9 @@
 
 			<DropdownMenu.Separator />
 			<DropdownMenu.Item onSelect={() => submitMarketInfo(2)}>Get Market Info</DropdownMenu.Item>
-			<DropdownMenu.Item onSelect={() => submitSearchByBarcodes(6)}
-				>Search by Barcodes</DropdownMenu.Item
-			>
+			<DropdownMenu.Item onSelect={() => submitSearchByBarcodes(6)}>
+				Search by Barcodes
+			</DropdownMenu.Item>
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

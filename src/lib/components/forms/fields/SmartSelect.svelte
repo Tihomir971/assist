@@ -1,9 +1,12 @@
 <script lang="ts">
 	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer';
+	import type { SelectInputProps } from '$lib/types/form-config.types';
 	import * as Select from '$lib/components/ui/select/index.js';
 
 	interface SmartSelectProps {
-		field: AnalyzedFieldConfig; // Configuration for this field
+		field: AnalyzedFieldConfig & {
+			componentProps?: Partial<SelectInputProps>;
+		}; // Configuration for this field
 		value: string | number | string[] | number[] | null | undefined; // Bound value (can be array for multiple)
 		[key: string]: any; // Allow additional props from Form.Control
 	}
@@ -25,7 +28,8 @@
 		}
 		if (!value) return field.placeholder || `Select ${field.label.toLowerCase()}...`;
 		return (
-			field.options?.find((opt) => String(opt.value) === String(value))?.label || String(value)
+			field.componentProps?.options?.find((opt) => String(opt.value) === String(value))?.label ||
+			String(value)
 		);
 	});
 
@@ -34,7 +38,8 @@
 		if (newValue !== undefined && newValue !== '') {
 			// Check if the field should return numbers based on the options having numeric values
 			const shouldReturnNumber =
-				field.options?.some((opt) => typeof opt.value === 'number') || field.type === 'number';
+				field.componentProps?.options?.some((opt) => typeof opt.value === 'number') ||
+				field.type === 'number';
 			if (shouldReturnNumber) {
 				value = Number(newValue);
 			} else {
@@ -49,13 +54,15 @@
 	function handleMultipleValueChange(newValue: string[]) {
 		// Check if the field should return numbers based on the options having numeric values
 		const shouldReturnNumber =
-			field.options?.some((opt) => typeof opt.value === 'number') || field.type === 'number';
+			field.componentProps?.options?.some((opt) => typeof opt.value === 'number') ||
+			field.type === 'number';
 		if (shouldReturnNumber) {
 			value = newValue.map((v) => Number(v)).filter((v) => !isNaN(v));
 		} else {
 			value = newValue.filter((v) => v !== '');
 		}
 	}
+	console.log('field', field);
 </script>
 
 {#if isMultiple}
@@ -64,14 +71,15 @@
 		onValueChange={handleMultipleValueChange}
 		value={Array.isArray(value) ? value.map((v) => String(v)) : []}
 		name={restProps.name}
+		{...field.componentProps}
 	>
 		<Select.Trigger {...restProps} class="w-full">
 			{displayValue()}
 		</Select.Trigger>
 		<Select.Content>
 			<Select.Group>
-				{#if field.options && field.options.length > 0}
-					{#each field.options as option (option.value)}
+				{#if field.componentProps?.options && field.componentProps?.options.length > 0}
+					{#each field.componentProps?.options as option (option.value)}
 						<Select.Item value={String(option.value)} label={option.label}>
 							{option.label}
 						</Select.Item>
@@ -90,14 +98,15 @@
 		onValueChange={handleSingleValueChange}
 		value={value ? String(value) : undefined}
 		name={restProps.name}
+		{...field.componentProps}
 	>
 		<Select.Trigger {...restProps} class="w-full">
 			{displayValue()}
 		</Select.Trigger>
 		<Select.Content>
 			<Select.Group>
-				{#if field.options && field.options.length > 0}
-					{#each field.options as option (option.value)}
+				{#if field.componentProps?.options && field.componentProps?.options.length > 0}
+					{#each field.componentProps.options as option (option.value)}
 						<Select.Item value={String(option.value)} label={option.label}>
 							{option.label}
 						</Select.Item>

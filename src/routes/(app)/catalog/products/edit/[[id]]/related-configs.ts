@@ -36,7 +36,9 @@ export function createTabConfigs(data: PageData) {
 			label: 'Partner',
 			placeholder: 'Enter Partner...',
 			span: 12,
-			options: data.lookupData.partners
+			componentProps: {
+				options: data.lookupData.partners
+			}
 		})
 		.field('vendorproductno', { label: 'Vendor PN', span: 12 })
 		.field('pricelist', { type: 'number', label: 'Price', span: 6 })
@@ -54,11 +56,13 @@ export function createTabConfigs(data: PageData) {
 			type: 'select',
 			label: 'Packing Type',
 			span: 12,
-			options: [
-				{ value: 'Individual', label: 'Individual' },
-				{ value: 'Pack', label: 'Pack' },
-				{ value: 'Pallet', label: 'Pallet' }
-			]
+			componentProps: {
+				options: [
+					{ value: 'Individual', label: 'Individual' },
+					{ value: 'Pack', label: 'Pack' },
+					{ value: 'Pallet', label: 'Pallet' }
+				]
+			}
 		})
 		.field('unitsperpack', { type: 'number', label: 'Units Per Pack', span: 6 })
 		.field('gtin', { label: 'GTIN', span: 6 })
@@ -67,38 +71,52 @@ export function createTabConfigs(data: PageData) {
 
 	const replenishFormConfig = createFormConfig()
 		.title('Replenishment Rule')
-		.field('m_warehouse_id', {
+		.fieldTyped('m_warehouse_id', {
 			type: 'select',
 			label: 'Warehouse',
 			span: 6,
-			options: data.lookupData.warehouses
+			componentProps: {
+				options: data.lookupData.warehouses,
+				searchable: false,
+				clearable: false
+			}
 		})
-		.field('m_warehousesource_id', {
+		.fieldTyped('m_warehousesource_id', {
 			type: 'select',
 			label: 'Source Warehouse',
 			span: 6,
-			options: data.lookupData.warehouses
+			componentProps: {
+				options: data.lookupData.warehouses,
+				searchable: false,
+				clearable: false
+			}
 		})
-		.field('level_min', {
+		.fieldTyped('level_min', {
 			type: 'number',
 			label: 'Min. Level',
 			span: 4,
-			fraction: 0,
-			componentProps: { min: 0 }
+			componentProps: {
+				min: 0,
+				formatOptions: { minimumFractionDigits: 0, maximumFractionDigits: 0 }
+			}
 		})
-		.field('level_max', {
+		.fieldTyped('level_max', {
 			type: 'number',
 			label: 'Max. Level',
 			span: 4,
-			fraction: 0,
-			componentProps: { min: 0 }
+			componentProps: {
+				min: 0,
+				formatOptions: { minimumFractionDigits: 0, maximumFractionDigits: 0 }
+			}
 		})
-		.field('qtybatchsize', {
+		.fieldTyped('qtybatchsize', {
 			type: 'number',
 			label: 'Batch Size',
 			span: 4,
-			fraction: 0,
-			componentProps: { min: 0 }
+			componentProps: {
+				min: 0,
+				formatOptions: { minimumFractionDigits: 0, maximumFractionDigits: 0 }
+			}
 		})
 		.build();
 
@@ -145,11 +163,13 @@ export function createTabConfigs(data: PageData) {
 
 	const channelMappingFormConfig = createFormConfig()
 		.title('Channel Product Mapping')
-		.field('c_channel_id', {
+		.fieldTyped('c_channel_id', {
 			type: 'combobox',
 			label: 'Channel',
-			options: data.lookupData.channels,
-			span: 12
+			span: 12,
+			componentProps: {
+				options: data.lookupData.channels
+			}
 		})
 		.field('external_product_id', { label: 'External ID', span: 12 })
 		.field('url', { label: 'URL', span: 12 })

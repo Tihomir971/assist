@@ -60,6 +60,5 @@
 				<ChevronDown class="h-3 w-3" />
 			</NumberInput.DecrementTrigger>
 		</NumberInput.Control>
-		<div class="text-xs text-gray-500 dark:text-gray-400">Step: 0.001, up to 5 decimal places</div>
 	</NumberInput.Root>
 </div>

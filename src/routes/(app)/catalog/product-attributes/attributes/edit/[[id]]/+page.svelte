@@ -28,30 +28,36 @@
 				span: 12,
 				placeholder: 'e.g., COLOR, SIZE, SCREEN_DIAGONAL'
 			})
-			.field('attribute_group_id', {
+			.fieldTyped('attribute_group_id', {
 				label: 'Group',
 				type: 'select',
 				span: 6,
-				options: data.attributeGroups
+				componentProps: {
+					options: data.attributeGroups
+				}
 			})
-			.field('attribute_type', {
+			.fieldTyped('attribute_type', {
 				label: 'Type',
 				type: 'select',
 				span: 6,
-				options: [
-					{ value: 'text', label: 'Text' },
-					{ value: 'number', label: 'Number' },
-					{ value: 'boolean', label: 'Boolean' },
-					{ value: 'date', label: 'Date' },
-					{ value: 'single_select', label: 'Single Select' },
-					{ value: 'multi_select', label: 'Multi Select' }
-				]
+				componentProps: {
+					options: [
+						{ value: 'text', label: 'Text' },
+						{ value: 'number', label: 'Number' },
+						{ value: 'boolean', label: 'Boolean' },
+						{ value: 'date', label: 'Date' },
+						{ value: 'single_select', label: 'Single Select' },
+						{ value: 'multi_select', label: 'Multi Select' }
+					]
+				}
 			})
-			.field('c_uom_id', {
+			.fieldTyped('c_uom_id', {
 				label: 'Unit of Measure',
 				type: 'select',
 				span: 6,
-				options: data.uoms,
+				componentProps: {
+					options: data.uoms
+				},
 				placeholder: 'Select unit (optional)',
 				description:
 					'Specify the unit for numeric values or select/multi-select options (e.g., inches, cm, kg)',

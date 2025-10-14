@@ -22,15 +22,16 @@
 		.multilingualTextarea('descriptions', {
 			label: 'Description',
 			span: 12,
-			rows: 4,
 			showAddLocale: true,
 			copyBetweenLocales: true
 		})
-		.field('parent_id', {
+		.fieldTyped('parent_id', {
 			label: 'Parent Category',
 			span: 6,
-			searchable: true,
-			options: data.categories
+			componentProps: {
+				options: data.categories,
+				searchable: true
+			}
 		})
 		.field('is_active', { label: 'Active', type: 'boolean', span: 6 })
 		.field('is_self_service', { label: 'Self Service', type: 'boolean', span: 6 })

@@ -76,17 +76,23 @@
 				return acc;
 			}
 
+			// Extract componentProps before using it
+			const { componentProps, ...overrideWithoutProps } = override;
+
 			// Determine the final field type
 			let fieldType = override.type || baseField.type;
-			if (!override.type && override.options?.length) {
-				fieldType = override.searchable !== false ? 'combobox' : 'select';
+			if (!override.type && (componentProps as any)?.options?.length) {
+				fieldType = (componentProps as any).searchable !== false ? 'combobox' : 'select';
 			}
 
+			// Merge base field with override, keeping componentProps separate
 			acc.push({
 				...baseField,
-				...override,
+				...overrideWithoutProps,
 				type: fieldType,
-				options: override.options || baseField.options
+				// options: (componentProps as any)?.options || baseField.options,
+				// Only keep componentProps as a nested object, don't spread to top level
+				componentProps
 			});
 			return acc;
 		}, [])

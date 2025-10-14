@@ -165,9 +165,17 @@
 				<div class="space-y-2">
 					<Label>Select Template</Label>
 					<SmartCombobox
-						options={data.lookups.templates}
+						field={{
+							name: 'doc_template_id',
+							label: 'Select Template',
+							type: 'combobox',
+							required: true,
+							componentProps: {
+								options: data.lookups.templates
+							},
+							placeholder: 'Choose a template...'
+						}}
 						bind:value={$formData.doc_template_id}
-						placeholder="Choose a template..."
 					/>
 				</div>
 
@@ -203,8 +211,16 @@
 						<div class="space-y-2">
 							<Label>{role.label}</Label>
 							<SmartCombobox
-								options={getLookupData(role)}
-								placeholder={`Select a ${role.label.toLowerCase()}...`}
+								field={{
+									name: `context_${role.name}`,
+									label: role.label,
+									type: 'combobox',
+									required: false,
+									componentProps: {
+										options: getLookupData(role)
+									},
+									placeholder: `Select a ${role.label.toLowerCase()}...`
+								}}
 								value={currentValue}
 								onValueChange={(value: number | string | null) => {
 									if (!$formData.data_context) {

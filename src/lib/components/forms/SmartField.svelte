@@ -45,15 +45,7 @@
 					{#if field.type === 'boolean'}
 						<SmartSwitch {field} bind:value {...props} />
 					{:else if field.type === 'combobox'}
-						<SmartCombobox
-							bind:value
-							options={field.options || []}
-							placeholder={field.placeholder}
-							readonly={field.readonly}
-							disabled={field.disabled}
-							searchable={true}
-							{...props}
-						/>
+						<SmartCombobox {field} bind:value {...props} />
 					{:else if field.type === 'select'}
 						<SmartSelect {field} bind:value {...props} />
 					{:else if field.type === 'textarea'}

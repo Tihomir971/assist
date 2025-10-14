@@ -17,9 +17,6 @@ import type {
 	MStorageonhandRow
 } from '@tihomir971/assist-shared';
 
-import type { ProductsResultSearch } from './types-search-vendor-products';
-import type { ProductRequest } from './types-api-market';
-
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { isValidGTIN } from '$lib/scripts/gtin';
@@ -28,11 +25,17 @@ import { DateTime } from 'luxon';
 import { productSelectSchema } from './schema';
 import { sourceId } from './types';
 import { catalogSearchParamsSchema } from './search-params.schema';
-import { ProductStatus, type ProductResultGet } from './types-get-market-info';
 import { CategoryService } from '$lib/services/supabase/category.service';
 import type { User } from '@supabase/supabase-js';
 import type { BSProduct } from '$lib/types/connectors/biznisoft';
 import type { ApiResponse } from '@tihomir971/assist-shared/api/api-response.types';
+import {
+	ProductStatus,
+	type ApiProductSearchResponse,
+	type ProductRequest,
+	type ProductResultGet,
+	type ProductSearchRequest
+} from '$lib/types/api/scrapper';
 
 // Add this export near the top or where types are defined
 export type ErrorDetails = { productId?: number; step: string; message: string };
@@ -1160,7 +1163,7 @@ export const actions = {
 		}
 
 		try {
-			const allResults: ProductsResultSearch[] = [];
+			const allResults: ApiProductSearchResponse[] = [];
 
 			for (const product of products) {
 				const gtins = product.m_product_packing
@@ -1168,16 +1171,16 @@ export const actions = {
 					.filter((gtin): gtin is string => gtin !== null);
 
 				for (const gtin of gtins) {
-					const barcodeSearchRequest: ProductRequest = {
+					const barcodeSearchRequest: ProductSearchRequest = {
 						productId: product.id,
-						mpn: product.mpn,
+						model: product.mpn,
 						barcodes: [gtin]
 					};
 
 					try {
 						const response = await scrapper
 							.post('api/search', { json: { ...barcodeSearchRequest, type: 'search' } })
-							.json<ApiResponse<ProductsResultSearch[]>>();
+							.json<ApiResponse<ApiProductSearchResponse[]>>();
 
 						if (response.error) {
 							console.error(`Invalid data received from API for GTIN ${gtin}:`, response.error);

@@ -6,31 +6,27 @@
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { cn } from '$lib/utils.js';
-	import type { LookupOption } from '$lib/types/form-config.types';
+	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer';
+	import type { ComboboxInputProps } from '$lib/types/form-config.types';
 
-	interface Props {
-		value?: number | string | null;
-		options: LookupOption[];
-		placeholder?: string;
-		disabled?: boolean;
-		readonly?: boolean;
-		searchable?: boolean;
-		onValueChange?: (value: number | string | null) => void;
-		// Form props passed from Form.Control
-		name?: string;
-		[key: string]: any; // For other form props
+	interface SmartComboboxProps {
+		field: AnalyzedFieldConfig & {
+			componentProps?: Partial<ComboboxInputProps>;
+		}; // Configuration for this field
+		value: string | number | null | undefined; // Bound value
+		[key: string]: any; // Allow additional props from Form.Control
 	}
 
-	let {
-		value = $bindable(),
-		options = [],
-		placeholder = 'Select an option...',
-		disabled = false,
-		readonly = false,
-		searchable = true,
-		onValueChange,
-		...formProps
-	}: Props = $props();
+	let { field, value = $bindable(), ...restProps }: SmartComboboxProps = $props();
+
+	// Extract properties from field configuration
+	const options = $derived(field.componentProps?.options || []);
+	const placeholder = $derived(
+		field.placeholder || field.componentProps?.searchPlaceholder || 'Select an option...'
+	);
+	const disabled = $derived(field.disabled || false);
+	const readonly = $derived(field.readonly || false);
+	const searchable = $derived(field.componentProps?.searchable !== false);
 
 	let open = $state(false);
 	let triggerRef = $state<HTMLButtonElement>(null!);
@@ -50,7 +46,6 @@
 
 	function selectOption(optionValue: number | string | null) {
 		value = optionValue;
-		onValueChange?.(optionValue);
 		closeAndFocusTrigger();
 	}
 
@@ -64,7 +59,7 @@
 		{#snippet child({ props })}
 			<Button
 				{...props}
-				{...formProps}
+				{...restProps}
 				variant="outline"
 				class={cn('w-full justify-between', !selectedOption && 'text-muted-foreground')}
 				role="combobox"
@@ -79,12 +74,15 @@
 	<Popover.Content class="w-full p-0">
 		<Command.Root>
 			{#if searchable}
-				<Command.Input placeholder="Search options..." class="h-9" />
+				<Command.Input
+					placeholder={field.componentProps?.searchPlaceholder || 'Search options...'}
+					class="h-9"
+				/>
 			{/if}
 			<Command.List>
-				<Command.Empty>No option found.</Command.Empty>
+				<Command.Empty>{field.componentProps?.noResultsText || 'No option found.'}</Command.Empty>
 				<Command.Group>
-					{#if value !== null && value !== undefined}
+					{#if value !== null && value !== undefined && field.componentProps?.clearable !== false}
 						<Command.Item value="__clear__" onSelect={clearSelection} class="text-muted-foreground">
 							<CheckIcon class="mr-2 size-4 opacity-0" />
 							Clear selection
@@ -110,4 +108,4 @@
 </Popover.Root>
 
 <!-- Hidden input for form submission - follows shadcn-svelte pattern -->
-<input hidden value={value ?? ''} name={formProps.name} />
+<input hidden value={value ?? ''} name={restProps.name} />

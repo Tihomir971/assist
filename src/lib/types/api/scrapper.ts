@@ -1,6 +1,34 @@
-// Vendor-specific types
+export interface ProductRequest {
+	productId: number;
+	mpn: string | null;
+	href?: string | null;
+	barcodes?: string[];
+}
+export type ProductSearchRequest = {
+	barcodes: string[];
+	productId: number;
+	model: string | null | undefined;
+};
 
-import type { VendorId } from './types-search-vendor-products';
+// Product Serach
+export type VendorId = 'idea' | 'cenoteka' | 'tehnomedia'; // Add more vendors as needed
+
+export interface ProductSearchData {
+	href: string;
+}
+
+export interface ApiProductSearchResponse {
+	productId: number;
+	vendorId: VendorId;
+	barcodes: string[];
+	data?: ProductSearchData;
+	error?: {
+		code: number | string;
+		message: string;
+	};
+}
+
+// Vendor-specific types
 
 export interface ProductResponseGet {
 	sku: string;

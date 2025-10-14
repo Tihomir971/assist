@@ -248,8 +248,10 @@
 								label: 'Opcije',
 								type: 'number' as const,
 								placeholder: 'Izaberite opcije...',
-								options: currentItemOptions,
-								required: false
+								required: false,
+								componentProps: {
+									options: currentItemOptions
+								}
 							}}
 							value={attribute.option_ids?.map(String) ?? []}
 							onValueChange={(selectedStringValues: string[] | undefined) => {
