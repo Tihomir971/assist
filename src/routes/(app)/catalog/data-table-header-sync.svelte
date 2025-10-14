@@ -8,22 +8,41 @@
 	import { toast } from 'svelte-sonner';
 	//Icons
 	import PhCaretDown from '~icons/ph/caret-down';
-	// Remote function
-	import { scrapperSearchProducts } from '$lib/remote/scrapper.remote';
+	// Remote functions
+	import { scrapperSearchProducts, scrapperGetMarketInfo } from '$lib/remote/scrapper.remote';
 
 	let { rowSelectionState = $bindable() }: { rowSelectionState: RowSelectionState } = $props();
 	let strRowSelectionState = $derived(Object.keys(rowSelectionState).map((x) => x));
 
 	let formElErpSyncProd: HTMLFormElement;
-	let formElMarket: HTMLFormElement;
 	// let formElBarcodes: HTMLFormElement;
-	let sourceInput: HTMLInputElement;
-	let typeInput: HTMLInputElement;
 
-	const submitMarketInfo = (source: number) => {
-		if (sourceInput && formElMarket) {
-			sourceInput.value = source.toString();
-			formElMarket.requestSubmit();
+	// New function using remote command instead of form action
+	const handleGetMarketInfo = async () => {
+		try {
+			const result = await scrapperGetMarketInfo({
+				ids: strRowSelectionState.join(','),
+				type: 'get'
+			});
+
+			invalidate('catalog:products');
+
+			toast.success('Cenoteka Sync', {
+				description: result.message || 'Successfully synchronized!',
+				action: {
+					label: 'Undo',
+					onClick: () => console.info('Undo')
+				}
+			});
+
+			// Clear row selection after successful operation
+			rowSelectionState = {};
+		} catch (error) {
+			console.error('Error getting market info:', error);
+			const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+			toast.error('Cenoteka Sync', {
+				description: errorMessage
+			});
 		}
 	};
 
@@ -75,7 +94,7 @@
 			</DropdownMenu.Item>
 
 			<DropdownMenu.Separator />
-			<DropdownMenu.Item onSelect={() => submitMarketInfo(2)}>Get Market Info</DropdownMenu.Item>
+			<DropdownMenu.Item onSelect={() => handleGetMarketInfo()}>Get Market Info</DropdownMenu.Item>
 			<DropdownMenu.Item onSelect={() => handleSearchProducts()}>
 				Search by Barcodes
 			</DropdownMenu.Item>
@@ -112,43 +131,6 @@
 	<input type="hidden" name="ids" value={strRowSelectionState} />
 </form>
 
-<form
-	bind:this={formElMarket}
-	method="post"
-	action="/catalog?/getMarketInfo"
-	class="hidden"
-	use:enhance={() => {
-		return async ({ result }) => {
-			if (result.type === 'success') {
-				const data = result.data;
-				if (data && data.success) {
-					toast.success('Cenoteka Sync', {
-						/* description: data.message || 'Successfully synchronized!', */
-						action: {
-							label: 'Undo',
-							onClick: () => console.info('Undo')
-						}
-					});
-				} else {
-					toast.error('Cenoteka Sync', {
-						/* description: data?.message || 'Unknown error occurred' */
-					});
-				}
-
-				rowSelectionState = {};
-				invalidate('catalog:products');
-			} else if (result.type === 'error') {
-				toast.error('Replenish ERP Sync', {
-					description: `Something is wrong ${result.error}`
-				});
-			}
-		};
-	}}
->
-	<input type="hidden" name="ids" value={strRowSelectionState} />
-	<input type="hidden" name="source" bind:this={sourceInput} value={2} />
-	<input type="hidden" name="type" bind:this={typeInput} value="get" />
-</form>
 <!-- <form
 	bind:this={formElBarcodes}
 	method="post"

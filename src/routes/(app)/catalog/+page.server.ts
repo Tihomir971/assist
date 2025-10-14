@@ -19,17 +19,13 @@ import type {
 
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { isValidGTIN } from '$lib/scripts/gtin';
-import { connector, scrapper } from '$lib/ky';
+import { connector } from '$lib/ky';
 import { DateTime } from 'luxon';
 import { productSelectSchema } from './schema';
-import { sourceId } from './types';
 import { catalogSearchParamsSchema } from './search-params.schema';
 import { CategoryService } from '$lib/services/supabase/category.service';
 import type { User } from '@supabase/supabase-js';
 import type { BSProduct } from '$lib/types/connectors/biznisoft';
-import type { ApiResponse } from '@tihomir971/assist-shared/api/api-response.types';
-import { ProductStatus, type ProductRequest, type ProductResultGet } from '$lib/types/api/scrapper';
 
 // Add this export near the top or where types are defined
 export type ErrorDetails = { productId?: number; step: string; message: string };
@@ -812,8 +808,8 @@ export const actions = {
 				});
 			}
 		}
-	},
-	getMarketInfo: async ({ request, locals: { supabase } }) => {
+	}
+	/* getMarketInfo: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod4(productSelectSchema));
 		if (!form.valid) return fail(400, { form });
 
@@ -826,7 +822,6 @@ export const actions = {
 
 		const productIds = stringToNumberArray(ids);
 
-		// Define a more specific type for the product structure returned by the initial query
 		type ProductForMarketInfo = {
 			id: number;
 			mpn: string | null;
@@ -877,7 +872,6 @@ export const actions = {
 				.filter((req) => req.href)
 		);
 
-		// --- Pre-fetch existing m_product_po data ---
 		const { data: existingProductPoData, error: existingPoError } = await supabase
 			.from('m_product_po')
 			.select('m_product_id, c_bpartner_id')
@@ -985,7 +979,6 @@ export const actions = {
 					continue;
 				}
 
-				// Update GTINs
 				if (product.barcodes) {
 					const allGtins = originalProduct.m_product_packing
 						.map((item: { gtin: string | null }) => item.gtin)
@@ -1043,10 +1036,9 @@ export const actions = {
 						c_bpartner_id: bpartnerId,
 						...poData
 					} as MProductPoInsert);
-					existingPoSet.add(poKey); // Add to set to prevent duplicate inserts in this batch
+					existingPoSet.add(poKey);
 				}
 
-				// Update net quantity
 				if (product.netQuantity && product.netQuantity !== 1) {
 					const { error: updateProductError } = await supabase
 						.from('m_product')
@@ -1067,10 +1059,9 @@ export const actions = {
 						);
 					}
 				}
-				updatedCount++; // Count successful processing of a result, not db operations yet
+				updatedCount++;
 			}
 
-			// --- Batch Product PO Inserts ---
 			if (productPoInserts.length > 0) {
 				const { error: poInsertError } = await supabase
 					.from('m_product_po')
@@ -1085,7 +1076,6 @@ export const actions = {
 					);
 				}
 			}
-			// --- Batch Product PO Updates ---
 			if (productPoUpdates.length > 0) {
 				const { error: poUpdateError } = await supabase.rpc('bulk_update_product_po', {
 					updates: productPoUpdates
@@ -1093,7 +1083,7 @@ export const actions = {
 				if (poUpdateError) {
 					console.error('Error calling bulk_update_product_po RPC:', poUpdateError);
 					errorMessages.push(`RPC bulk_update_product_po failed: ${poUpdateError.message}`);
-					errorCount += productPoUpdates.length; // Assume all failed in batch
+					errorCount += productPoUpdates.length;
 				} else {
 					console.log(
 						`Successfully batch updated ${productPoUpdates.length} m_product_po records via RPC.`
@@ -1122,7 +1112,7 @@ export const actions = {
 				details: errorMessages
 			};
 		}
-	}
+	} */
 	/* searchVendorProducts: async ({ request, locals: { supabase } }) => {
 		const form = await superValidate(request, zod4(productSelectSchema));
 		if (!form.valid) return fail(400, { form });
