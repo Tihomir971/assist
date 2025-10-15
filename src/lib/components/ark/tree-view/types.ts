@@ -1,21 +1,30 @@
 import type { TreeViewRootBaseProps } from '@ark-ui/svelte/tree-view';
+import type { Component } from 'svelte';
 
 export interface TreeViewNode<T = number | string> {
 	id: T;
 	name: string;
-	children?: TreeViewNode[] | undefined;
-}
-export interface SelectItem<T = number | string> {
-	value: T;
-	label: string;
+	children?: TreeViewNode<T>[] | undefined;
+	// Optional metadata for enhanced functionality
+	icon?: string;
 	disabled?: boolean;
+	metadata?: Record<string, unknown>;
 }
 
-export interface TreeViewProps<T extends TreeViewNode>
-	extends Omit<TreeViewRootBaseProps<TreeViewNode>, 'value' | 'readOnly' | 'collection'> {
-	value?: number | string | null;
-	readonly?: boolean;
-	items: T[];
+export interface TreeViewProps
+	extends Omit<TreeViewRootBaseProps<TreeViewNode<string | number>>, 'collection'> {
+	/** Tree data structure */
+	items: TreeViewNode<string | number>[];
+	/** Optional label for the tree */
 	label?: string;
-	placeholder?: string;
+	/** Custom icons for different node types */
+	icons?: Partial<TreeViewIcons>;
+}
+
+export interface TreeViewIcons {
+	chevronRight: Component;
+	chevronDown: Component;
+	folderClosed: Component;
+	folderOpen: Component;
+	file: Component;
 }

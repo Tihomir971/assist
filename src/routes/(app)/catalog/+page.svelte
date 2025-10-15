@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
@@ -11,16 +12,14 @@
 		type VisibilityState
 	} from '$lib/components/walker-tx';
 
+	import { LocalStorage } from '$lib/storage.svelte.js';
+	import { getCartContext } from '$lib/components/cart/ctx.svelte.js';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import DataTableToolbar from './data-table-toolbar.svelte';
 	import { Separator } from '$lib/components/ui/separator/index.js';
-
 	import { columnDefs } from './columns.svelte.js';
 
-	import DataTableToolbar from './data-table-toolbar.svelte';
-	import { browser } from '$app/environment';
-	import { LocalStorage } from '$lib/storage.svelte.js';
 	import WalkerTable from '$lib/components/walker-tx/WalkerTable.svelte';
-	import { getCartContext } from '$lib/components/cart/ctx.svelte.js';
 
 	let { data } = $props();
 

@@ -15,12 +15,12 @@
 	import PartnersSelector from '../condition-types/PartnersSelector.svelte';
 	import QuantityRangeInputs from '../condition-types/QuantityRangeInputs.svelte';
 	import { TreeViewZag } from '$lib/components/zag';
+	import { getCategoryTree } from '$lib/services/supabase/category.service.remote';
 
 	interface Props {
 		conditions: PricingConditions | undefined; // Can be undefined initially
 		lookupData: {
 			partners: PartnerLookup[];
-			categories: TreeStructure[];
 			attributes: AttributeLookup[];
 			brands: BrandLookup[];
 		};
@@ -37,10 +37,10 @@
 
 	// Ensure conditions is always an object for easier partial updates
 	let currentConditions = $derived(conditions || {});
-
+	let categoryTree = await getCategoryTree();
 	// Helper function to find category by ID for display
-	function findCategoryById(categories: TreeStructure[], id: number): TreeStructure | null {
-		for (const category of categories) {
+	function findCategoryById(categoryTree: TreeStructure[], id: number): TreeStructure | null {
+		for (const category of categoryTree) {
 			if (category.value === id) return category;
 			if (category.children) {
 				const found = findCategoryById(category.children, id);
@@ -52,7 +52,7 @@
 
 	const selectedCategories = $derived(
 		(currentConditions.category_ids || [])
-			.map((id) => findCategoryById(lookupData.categories, id))
+			.map((id) => findCategoryById(categoryTree, id))
 			.filter((cat): cat is TreeStructure => cat !== null)
 	);
 
@@ -106,7 +106,7 @@
 			<div class="space-y-4">
 				<div class="rounded-md border">
 					<TreeViewZag
-						items={lookupData.categories}
+						items={categoryTree}
 						selectionMode="multiple"
 						checkedValue={currentConditions.category_ids || []}
 						label="Kategorije proizvoda"

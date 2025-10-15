@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import type { LayoutData } from './$types';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
@@ -10,8 +9,8 @@
 	import type { Snippet } from 'svelte';
 	// Icons
 	import { TreeViewZag } from '$lib/components/zag';
-	import { categoryCache } from '$lib/stores/category-cache.svelte';
 	import type { TreeStructure } from '$lib/services/supabase/category.service';
+	import { getCategoryTree } from '$lib/services/supabase/category.service.remote';
 
 	let contextNode: string | null = $state(null);
 	interface Props {
@@ -22,19 +21,6 @@
 	let { data, children }: Props = $props();
 
 	let showReportDialog = $state(false);
-	// Use a plain reactive state for treeData; server may no longer provide categories
-	let treeData = $state<TreeStructure[]>([]);
-
-	// Load categories from cache
-	onMount(async () => {
-		if (!categoryCache) return;
-
-		try {
-			treeData = await categoryCache.getCategories(data.app?.userLocale);
-		} catch (err) {
-			console.warn('Failed to load categories from cache:', err);
-		}
-	});
 
 	const initCategory = $derived(page.url.searchParams.get('cat'));
 	let selectedValue = $derived(initCategory ? [initCategory] : []);
@@ -69,7 +55,7 @@
 			>
 				<ContextMenu.Trigger class="h-full">
 					<TreeViewZag
-						items={treeData}
+						items={await getCategoryTree()}
 						bind:contextNode
 						bind:selectedValue
 						onSelectionChange={(details) => {

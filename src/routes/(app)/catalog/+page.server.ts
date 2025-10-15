@@ -1,6 +1,8 @@
 import type { Actions, PageServerLoad } from './$types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { FlattenedProduct, ProductWithDetails } from './columns.svelte.js';
+import type { User } from '@supabase/supabase-js';
+import type { BSProduct } from '$lib/types/connectors/biznisoft';
 import type {
 	Database,
 	Enums,
@@ -22,35 +24,36 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 import { connector } from '$lib/ky';
 import { DateTime } from 'luxon';
 import { productSelectSchema } from './schema';
-import { catalogSearchParamsSchema } from './search-params.schema';
+// import { catalogSearchParamsSchema } from './search-params.schema'; // Not needed anymore
 import { CategoryService } from '$lib/services/supabase/category.service';
-import type { User } from '@supabase/supabase-js';
-import type { BSProduct } from '$lib/types/connectors/biznisoft';
 
 // Add this export near the top or where types are defined
 export type ErrorDetails = { productId?: number; step: string; message: string };
 
-export const load: PageServerLoad = async ({
-	depends,
-	parent,
-	url,
-	locals: { supabase, user }
-}) => {
+import { validateSearchParams } from 'runed/kit';
+import { catalogSearchParamsSchema } from './schema.search-params';
+
+export const load: PageServerLoad = async ({ depends, parent, url, locals }) => {
 	depends('catalog:products');
-	const params = catalogSearchParamsSchema.parse(Object.fromEntries(url.searchParams));
+
+	const { data: dataSearchParams } = validateSearchParams(url, catalogSearchParamsSchema);
+	console.log('url:', url.searchParams.toString());
+	console.log('urlParams:', dataSearchParams);
+
 	const {
 		report: selectedReport,
 		vat: checkedVat,
 		sub: showSubcategories,
-		cat: categoryId = null,
+		cat: categoryId,
 		search: searchTerm
-	} = params;
+		// wh: warehouseId
+	} = dataSearchParams;
 
 	const { activeWarehouse } = await parent();
 
 	const [productsData, activePricelists] = await Promise.all([
-		fetchProducts(supabase, user, categoryId ?? null, showSubcategories),
-		getPriceLists(supabase)
+		fetchProducts(locals.supabase, locals.user, categoryId ?? null, showSubcategories),
+		getPriceLists(locals.supabase)
 	]);
 
 	const products = filterAndFlattenProducts(
@@ -70,42 +73,15 @@ export const load: PageServerLoad = async ({
 async function fetchProducts(
 	supabase: SupabaseClient<Database>,
 	user: User | null,
-	categoryId: string | null,
+	categoryId: number | null,
 	showSubcategories: boolean
 ) {
 	let categoryIds: number[] = [];
 	if (categoryId && showSubcategories) {
-		// Try to use in-memory category cache (initialized client-side normally).
-		// On server we can still initialize/read it to avoid repeated tree queries.
-		try {
-			// Lazy import of cache utilities
-			// Note: initializeCategoryCache returns a singleton that wraps CategoryService internally.
-			const { initializeCategoryCache, categoryCache } = await import(
-				'$lib/stores/category-cache.svelte'
-			);
-			// Ensure cache singleton exists
-			initializeCategoryCache(supabase);
-
-			// Attempt to read preferredDataLocale from global layout (if present)
-			try {
-				// The calling load function has already awaited parent() and may pass merged data.
-				// We cannot call parent() from here (not in scope) so keep default.
-			} catch {
-				// ignore
-			}
-
-			if (categoryCache) {
-				const treeCollection = await categoryCache.getTreeCollection(user?.user_metadata.locale);
-				const descendantValues = treeCollection.getDescendantValues(categoryId);
-				categoryIds = descendantValues.map((value: string) => parseInt(value));
-			}
-		} catch {
-			// Fallback to legacy CategoryService behaviour if cache fails/unavailable
-			const categoryService = new CategoryService(supabase);
-			const categoryTreeCollection = await categoryService.getCategoryTreeCollection();
-			const descendantValues = categoryTreeCollection.getDescendantValues(categoryId);
-			categoryIds = descendantValues.map((value: string) => parseInt(value));
-		}
+		const categoryService = new CategoryService(supabase);
+		const categoryTreeCollection = await categoryService.getCategoryTreeCollection();
+		const descendantValues = categoryTreeCollection.getDescendantValues(categoryId.toString());
+		categoryIds = descendantValues.map((value: string) => parseInt(value));
 	}
 	let query = supabase
 		.from('m_product')
@@ -166,7 +142,7 @@ async function fetchProducts(
 		query = query.in('m_product_category_id', categoryIds);
 	} else {
 		if (categoryId) {
-			query = query.eq('m_product_category_id', parseInt(categoryId));
+			query = query.eq('m_product_category_id', categoryId);
 		} else {
 			query = query.is('m_product_category_id', null);
 		}

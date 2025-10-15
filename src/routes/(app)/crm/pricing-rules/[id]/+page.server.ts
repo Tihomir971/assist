@@ -11,7 +11,6 @@ import {
 } from '$lib/services/supabase';
 import type { PricingRule, PricingRuleCreate } from '$lib/types/pricing-rules.types';
 import { formSchema } from './schema';
-import { getCategoryTree } from '$lib/services/supabase/category.service.remote';
 
 // Create a specific schema for the form that uses the detailed condition/formula schemas
 
@@ -58,9 +57,8 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 				ends_at: null
 			};
 
-	const [partners, categories, attributes, brands] = await Promise.all([
+	const [partners, attributes, brands] = await Promise.all([
 		new PartnerService(supabase).getLookup(),
-		getCategoryTree(),
 		new AttributeService(supabase).getLookup(),
 		new BrandService(supabase).getLookup()
 	]);
@@ -71,7 +69,6 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 		formPricingRule: await superValidate(formData, zod4(formSchema)),
 		lookupData: {
 			partners,
-			categories,
 			attributes,
 			brands
 		}
