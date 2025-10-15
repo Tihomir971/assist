@@ -73,14 +73,14 @@ export const load: PageServerLoad = async ({ depends, parent, url, locals }) => 
 async function fetchProducts(
 	supabase: SupabaseClient<Database>,
 	user: User | null,
-	categoryId: number | null,
+	categoryId: string | null,
 	showSubcategories: boolean
 ) {
 	let categoryIds: number[] = [];
 	if (categoryId && showSubcategories) {
 		const categoryService = new CategoryService(supabase);
 		const categoryTreeCollection = await categoryService.getCategoryTreeCollection();
-		const descendantValues = categoryTreeCollection.getDescendantValues(categoryId.toString());
+		const descendantValues = categoryTreeCollection.getDescendantValues(categoryId);
 		categoryIds = descendantValues.map((value: string) => parseInt(value));
 	}
 	let query = supabase
@@ -142,7 +142,7 @@ async function fetchProducts(
 		query = query.in('m_product_category_id', categoryIds);
 	} else {
 		if (categoryId) {
-			query = query.eq('m_product_category_id', categoryId);
+			query = query.eq('m_product_category_id', parseInt(categoryId));
 		} else {
 			query = query.is('m_product_category_id', null);
 		}
