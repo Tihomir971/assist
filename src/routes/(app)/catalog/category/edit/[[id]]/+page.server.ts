@@ -6,7 +6,6 @@ import type { Actions, PageServerLoad } from './$types';
 import { CategoryService } from '$lib/services/supabase/category.service';
 import { ChannelMappingCategoryService } from '$lib/services/supabase/channel-mapping-category.service';
 import { ChannelService } from '$lib/services/supabase/channel.service';
-// import { LocaleService } from '$lib/services/supabase/locale.service';
 import { createSimpleCRUD } from '$lib/utils/simple-crud.factory';
 import { categoryPayloadBuilder } from './category.payload';
 import { channelMappingPayloadBuilder } from './channel-mapping.payload';
@@ -23,7 +22,6 @@ export const load: PageServerLoad = async ({ params, locals, depends }) => {
 
 	const categoryService = new CategoryService(locals.supabase);
 	const channelService = new ChannelService(locals.supabase);
-	// const localeService = new LocaleService(supabase);
 
 	let categoryId: number | null = null;
 

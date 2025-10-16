@@ -1,4 +1,5 @@
-import { Context } from 'runed';
-import type { AppSettings } from './types/app';
+import { createContext } from 'svelte';
 
-export const appSettings = new Context<AppSettings>('appContext');
+import type { AppContext } from './types/app';
+
+export const [getAppContext, setAppContext] = createContext<AppContext>();

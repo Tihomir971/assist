@@ -6,6 +6,7 @@
 	import { setUserMetadata } from './data.remote';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { LOCALES, TIMEZONES } from '$lib/constants/locales';
+	import Avatar from './Avatar.svelte';
 
 	let { data }: { data: PageData } = $props();
 </script>
@@ -15,7 +16,8 @@
 		<h1 class="text-3xl font-bold">Account Settings</h1>
 		<p class="text-muted-foreground">Manage your account preferences and settings.</p>
 	</div>
-
+	<Separator />
+	<Avatar supabase={data.supabase} url={data.profile?.avatar_url} size={5} />
 	<Separator />
 
 	<div class="grid gap-6">

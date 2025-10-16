@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { Crown } from '@lucide/svelte';
-	import type { LocaleLookup, LocaleFieldState } from '$lib/types/multilingual.types';
+	import type { LocaleFieldState } from '$lib/types/multilingual.types';
+	import type { Lookup } from '$lib/types/app';
+	import { getAppContext } from '$lib/context';
 
 	type Props = {
-		availableLocales: LocaleLookup[];
+		availableLocales: Lookup<string>[];
 		activeLocale: string;
 		fieldStates: Record<string, LocaleFieldState>;
 		onLocaleChange: (locale: string) => void;
@@ -62,7 +64,7 @@
 				onclick={() => onLocaleChange(locale.value)}
 			>
 				<span>{locale.label}</span>
-				{#if locale.isDefault}
+				{#if locale.value === getAppContext().systemLocale}
 					<Crown class="h-3 w-3" />
 				{/if}
 				<!-- Enhanced status indicator -->
@@ -77,7 +79,8 @@
 	<!-- Current locale indicator -->
 	{#if activeLocaleLookup}
 		<div class="mt-1 text-xs text-muted-foreground">
-			Currently editing: <span class="font-medium">{activeLocaleLookup?.label || activeLocale}</span>
+			Currently editing: <span class="font-medium">{activeLocaleLookup?.label || activeLocale}</span
+			>
 		</div>
 	{/if}
 </div>

@@ -11,6 +11,7 @@ import {
 import type { ApiResponse } from '@tihomir971/assist-shared/api/api-response.types';
 import { isValidGTIN } from '$lib/scripts/gtin';
 import type { Database, MProductPoInsert, MProductPoRow } from '@tihomir971/assist-shared';
+import { createSuccessResponse, createErrorResponse, createBatchResponse } from '$lib/types';
 
 const sourceId = new Map([
 	['cenoteka', 2],
@@ -61,11 +62,11 @@ export const scrapperGetMarketInfo = command(getMarketInfoSchema, async ({ ids, 
 
 	if (fetchError) {
 		console.error('Error fetching products:', fetchError);
-		throw new Error(`Error fetching products from database: ${fetchError.message}`);
+		return createErrorResponse(`Error fetching products from database: ${fetchError.message}`);
 	}
 
 	if (!products || products.length === 0) {
-		throw new Error('No products found');
+		return createErrorResponse('No products found');
 	}
 
 	const { data: allUom } = await locals.supabase.from('c_uom').select('id,uomsymbol');
@@ -94,7 +95,9 @@ export const scrapperGetMarketInfo = command(getMarketInfoSchema, async ({ ids, 
 
 	if (existingPoError) {
 		console.error('Error fetching existing m_product_po:', existingPoError);
-		throw new Error(`Error fetching existing product PO data: ${existingPoError.message}`);
+		return createErrorResponse(
+			`Error fetching existing product PO data: ${existingPoError.message}`
+		);
 	}
 	const existingPoSet = new Set(
 		existingProductPoData?.map(
@@ -143,7 +146,18 @@ export const scrapperGetMarketInfo = command(getMarketInfoSchema, async ({ ids, 
 		}
 		if (allApiResults.length === 0 && productRequests.length > 0) {
 			console.error('No results obtained from any API batch.');
-			throw new Error('Failed to obtain results from API after batching.');
+			return createBatchResponse(
+				false,
+				'Failed to obtain results from API after batching.',
+				{
+					updatedCount: 0,
+					errorCount: productRequests.length,
+					details: errorMessages
+				},
+				0,
+				productRequests.length,
+				errorMessages
+			);
 		}
 
 		for (const result of allApiResults) {
@@ -294,21 +308,24 @@ export const scrapperGetMarketInfo = command(getMarketInfoSchema, async ({ ids, 
 			}
 		}
 
-		return {
-			success: true,
-			message: `Processed ${allApiResults.length} results from ${Math.ceil(productRequests.length / batchSize)} batches. Updated/Inserted ${updatedCount - errorCount} product POs. ${errorCount} error(s).`,
-			data: {
+		return createBatchResponse(
+			true,
+			`Processed ${allApiResults.length} results from ${Math.ceil(productRequests.length / batchSize)} batches. Updated/Inserted ${updatedCount - errorCount} product POs. ${errorCount} error(s).`,
+			{
 				updatedCount: updatedCount - errorCount,
 				errorCount,
 				details: errorMessages.length > 0 ? errorMessages : undefined
-			}
-		};
+			},
+			updatedCount - errorCount,
+			errorCount,
+			errorMessages.length > 0 ? errorMessages : undefined
+		);
 	} catch (err) {
 		if (err instanceof Error) {
 			console.error('Error fetching data from API:', err);
-			throw new Error(`Error fetching data from API: ${err.message}`);
+			return createErrorResponse(`Error fetching data from API: ${err.message}`);
 		}
-		throw new Error('Unknown error fetching data from API');
+		return createErrorResponse('Unknown error fetching data from API');
 	}
 });
 
@@ -331,11 +348,11 @@ export const scrapperSearchProducts = command(searchByBarcodesSchema, async ({ i
 
 	if (fetchError) {
 		console.error('Error fetching products:', fetchError);
-		throw new Error(`Error fetching products from database: ${fetchError.message}`);
+		return createErrorResponse(`Error fetching products from database: ${fetchError.message}`);
 	}
 
 	if (!products || products.length === 0) {
-		throw new Error('No products found');
+		return createErrorResponse('No products found');
 	}
 
 	try {
@@ -374,7 +391,7 @@ export const scrapperSearchProducts = command(searchByBarcodesSchema, async ({ i
 		}
 
 		if (allResults.length === 0) {
-			throw new Error('No results found for any barcodes');
+			return createErrorResponse('No results found for any barcodes');
 		}
 
 		// Process and update database with results
@@ -422,16 +439,12 @@ export const scrapperSearchProducts = command(searchByBarcodesSchema, async ({ i
 			}
 		}
 
-		return {
-			success: true,
-			message: `Processed ${allResults.length} results`,
-			data: allResults
-		};
+		return createSuccessResponse(`Processed ${allResults.length} results`, allResults);
 	} catch (err) {
 		if (err instanceof Error) {
 			console.error('Error searching by barcode:', err);
-			throw new Error(`Error searching by barcode: ${err.message}`);
+			return createErrorResponse(`Error searching by barcode: ${err.message}`);
 		}
-		throw new Error('Unknown error searching by barcode');
+		return createErrorResponse('Unknown error searching by barcode');
 	}
 });

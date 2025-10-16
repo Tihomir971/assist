@@ -14,6 +14,8 @@
 	import SmartDatetime from './fields/SmartDatetime.svelte';
 	import type { ZodObject, z } from 'zod'; // Import z for z.infer
 	import { MultilingualInput, MultilingualTextarea } from './fields/multilingual';
+	import type { Lookup } from '$lib/types/app';
+	import { getLocales } from '$lib/services/supabase/locale.service.remote';
 
 	interface SmartFieldProps<S extends ZodObject<any>> {
 		field: AnalyzedFieldConfig;
@@ -26,6 +28,13 @@
 		superform, // Destructure superform instance
 		value = $bindable() // Use $bindable for two-way binding
 	}: SmartFieldProps<ZodObject<any>> = $props();
+
+	const isMultilingual =
+		field.type === 'multilingual_input' || field.type === 'multilingual_textarea';
+	let availableLocales: Lookup<string>[] = $state([]);
+	if (isMultilingual) {
+		getLocales().then((locales) => (availableLocales = locales));
+	}
 </script>
 
 {#if field && field.name}
@@ -62,6 +71,7 @@
 							{superform}
 							config={field.multilingualConfig || {}}
 							placeholder={field.placeholder}
+							{availableLocales}
 							{...props}
 						/>
 					{:else if field.type === 'multilingual_textarea'}
@@ -70,6 +80,7 @@
 							{superform}
 							config={field.multilingualConfig || {}}
 							placeholder={field.placeholder}
+							{availableLocales}
 							{...props}
 						/>
 					{:else}

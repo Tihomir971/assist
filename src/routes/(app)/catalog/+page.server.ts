@@ -18,7 +18,6 @@ import type {
 	MStorageonhandInsert,
 	MStorageonhandRow
 } from '@tihomir971/assist-shared';
-
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { connector } from '$lib/ky';
@@ -36,23 +35,20 @@ import { catalogSearchParamsSchema } from './schema.search-params';
 export const load: PageServerLoad = async ({ depends, parent, url, locals }) => {
 	depends('catalog:products');
 
-	const { data: dataSearchParams } = validateSearchParams(url, catalogSearchParamsSchema);
-	console.log('url:', url.searchParams.toString());
-	console.log('urlParams:', dataSearchParams);
-
 	const {
-		report: selectedReport,
-		vat: checkedVat,
-		sub: showSubcategories,
-		cat: categoryId,
-		search: searchTerm
-		// wh: warehouseId
-	} = dataSearchParams;
+		data: {
+			report: selectedReport,
+			vat: checkedVat,
+			sub: showSubcategories,
+			cat: categoryId,
+			search: searchTerm
+		}
+	} = validateSearchParams(url, catalogSearchParamsSchema);
 
 	const { activeWarehouse } = await parent();
 
 	const [productsData, activePricelists] = await Promise.all([
-		fetchProducts(locals.supabase, locals.user, categoryId ?? null, showSubcategories),
+		fetchProducts(locals.supabase, locals.user, categoryId, showSubcategories),
 		getPriceLists(locals.supabase)
 	]);
 
@@ -73,14 +69,14 @@ export const load: PageServerLoad = async ({ depends, parent, url, locals }) => 
 async function fetchProducts(
 	supabase: SupabaseClient<Database>,
 	user: User | null,
-	categoryId: string | null,
+	categoryId: number | null,
 	showSubcategories: boolean
 ) {
 	let categoryIds: number[] = [];
 	if (categoryId && showSubcategories) {
 		const categoryService = new CategoryService(supabase);
 		const categoryTreeCollection = await categoryService.getCategoryTreeCollection();
-		const descendantValues = categoryTreeCollection.getDescendantValues(categoryId);
+		const descendantValues = categoryTreeCollection.getDescendantValues(categoryId.toString());
 		categoryIds = descendantValues.map((value: string) => parseInt(value));
 	}
 	let query = supabase
@@ -142,7 +138,7 @@ async function fetchProducts(
 		query = query.in('m_product_category_id', categoryIds);
 	} else {
 		if (categoryId) {
-			query = query.eq('m_product_category_id', parseInt(categoryId));
+			query = query.eq('m_product_category_id', categoryId);
 		} else {
 			query = query.is('m_product_category_id', null);
 		}

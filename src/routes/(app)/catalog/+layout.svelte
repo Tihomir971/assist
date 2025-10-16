@@ -9,7 +9,6 @@
 	import type { Snippet } from 'svelte';
 	// Icons
 	import { TreeViewZag } from '$lib/components/zag';
-	import type { TreeStructure } from '$lib/services/supabase/category.service';
 	import { getCategoryTree } from '$lib/services/supabase/category.service.remote';
 
 	let contextNode: string | null = $state(null);

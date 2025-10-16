@@ -62,7 +62,6 @@
 			value = newValue.filter((v) => v !== '');
 		}
 	}
-	console.log('field', field);
 </script>
 
 {#if isMultiple}

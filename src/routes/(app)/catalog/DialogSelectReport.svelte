@@ -2,20 +2,19 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import * as Select from '$lib/components/ui/select';
 	import { Button } from '$lib/components/ui/button';
-	import type { Warehouse } from './columns.svelte';
 	import { page } from '$app/state';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
+	import type { Lookup } from '$lib/types/app';
 
 	type Props = {
 		showReportDialog: boolean;
-		warehouses: Warehouse[];
+		warehouses: Lookup<string>[];
 		activeCategory: string | undefined;
 	};
 	let { showReportDialog = $bindable(false), warehouses, activeCategory }: Props = $props();
 
 	let value = $state('');
-
 	const triggerContent = $derived(
 		warehouses.find((w) => w.value === value)?.label ?? 'Select warehouse'
 	);

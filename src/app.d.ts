@@ -1,6 +1,6 @@
 import type { Database } from '@tihomir971/assist-shared';
-import type { Session, SupabaseClient } from '@supabase/supabase-js';
-import type { AppSettings } from '$lib/types/app';
+import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
+import type { AppContext } from '$lib/types/app';
 
 import 'unplugin-icons/types/svelte';
 
@@ -19,11 +19,11 @@ declare global {
 			safeGetSession: () => Promise<{ session: Session | null; user: User | null }>;
 			session: Session | null;
 			user: User | null;
-			app: AppSettings;
+			app: AppContext;
 		}
 		interface PageData {
 			session: Session | null;
-			app: AppSettings;
+			app: AppContext;
 		}
 		// interface PageState {}
 		// interface Platform {}

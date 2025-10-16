@@ -203,6 +203,9 @@
 				return value ? new Date(value).toLocaleDateString() : '';
 			case 'datetime':
 				return value ? new Date(value).toLocaleString() : '';
+			case 'number':
+				// Handle the case when value is 0 or null/undefined
+				return value !== null && value !== undefined ? String(value) : '';
 			case 'lookup':
 				// Use the explicit lookupKey to find the correct dataset.
 				if (column.lookupKey && lookupData[column.lookupKey]) {
@@ -213,7 +216,8 @@
 				// Fallback to the raw value if no lookup is found.
 				return value;
 			default:
-				return value || '';
+				// Handle the case when value is 0 or null/undefined
+				return value !== null && value !== undefined ? String(value) : '';
 		}
 	}
 </script>

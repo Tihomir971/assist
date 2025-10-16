@@ -5,13 +5,10 @@
 	import CircleAlertIcon from '@lucide/svelte/icons/circle-alert';
 
 	import LocaleTabs from './LocaleTabs.svelte';
-	import { localeService } from '$lib/services/supabase/locale.service';
-	import type {
-		MultilingualData,
-		LocaleLookup,
-		LocaleFieldState
-	} from '$lib/types/multilingual.types';
+	import type { MultilingualData, LocaleFieldState } from '$lib/types/multilingual.types';
 	import type { MultilingualFieldConfig } from '$lib/types/form-config.types';
+	import { getAppContext } from '$lib/context';
+	import type { Lookup } from '$lib/types/app';
 
 	// --- PROPS ---
 	interface MultilingualInputConfig extends MultilingualFieldConfig {}
@@ -34,6 +31,7 @@
 		onChange?: (value: MultilingualData) => void;
 		onLocaleChange?: (locale: string) => void;
 		onValidate?: (locale: string, value: string) => string[];
+		availableLocales: Lookup<string>[];
 	};
 
 	let {
@@ -45,14 +43,14 @@
 		placeholder,
 		disabled = false,
 		onChange,
-		onLocaleChange
+		onLocaleChange,
+		availableLocales
 	}: Props = $props();
 
 	const { form, errors: superformErrors } = superform;
 
 	// --- STATE ---
 	let activeLocale = $state('');
-	let availableLocales = $state<LocaleLookup[]>([]);
 	let isLoading = $state(true);
 	let hasUnsavedChanges = $state(false);
 	let currentValue = $derived(value[activeLocale] || '');
@@ -60,10 +58,9 @@
 	// --- LIFECYCLE ---
 	(async () => {
 		try {
-			availableLocales = await localeService.getLocales();
 			// Use the defaultLocale from config if provided, otherwise use the system default
-			const defaultLocale =
-				config.defaultLocale || availableLocales.find((l) => l.isDefault)?.value || 'en-US';
+			const defaultLocale = getAppContext().systemLocale;
+
 			if (availableLocales.length > 0) {
 				activeLocale = availableLocales.some((l) => l.value === defaultLocale)
 					? defaultLocale
@@ -96,7 +93,7 @@
 	});
 
 	const activeErrors = $derived(fieldStates()[activeLocale]?.errors || []);
-
+	// $inspect('currentValue', value);
 	$effect(() => {
 		currentValue = value[activeLocale] || '';
 	});

@@ -14,7 +14,7 @@
 	import PhArrowUp from '~icons/ph/arrow-up';
 	import PhArrowDown from '~icons/ph/arrow-down';
 	import PhArrowsDownUp from '~icons/ph/arrows-down-up';
-	import FlexRender from '$lib/components/walker-tx/flex-render.svelte'; // Keep for now
+	// import FlexRender from '$lib/components/walker-tx/flex-render.svelte'; // Keep for now
 	import SmartTableToolbar from './SmartTableToolbar.svelte';
 	import SmartTablePagination from './SmartTablePagination.svelte';
 	import type { DataTableConfig, SelectFilterOption } from '$lib/utils/data-table-config.builder';
@@ -26,6 +26,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { toastManager } from '$lib/utils/toast-manager';
+	import { FlexRender } from '../ui/data-table';
 
 	type Props = {
 		data: TData[];

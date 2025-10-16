@@ -3,16 +3,18 @@
 	import LayoutHeader from './layout-header.svelte';
 	import LayoutSidebar from './layout-sidebar.svelte';
 	import { setCartContext } from '$lib/components/cart/ctx.svelte';
-	import { appSettings } from '$lib/context';
+	import { setAppContext } from '$lib/context';
 
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { invalidate } from '$app/navigation';
 
 	let { children, data } = $props();
 
+	// Set contexts immediately during component initialization (before any async operations)
 	setCartContext();
+
 	if (data.app) {
-		appSettings.set(data.app);
+		setAppContext(data.app);
 	}
 
 	onMount(() => {

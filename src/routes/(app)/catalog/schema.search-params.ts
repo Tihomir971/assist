@@ -1,11 +1,11 @@
 import * as z from 'zod';
 
 export const catalogSearchParamsSchema = z.object({
-	wh: z.coerce.number().optional().nullable().default(null),
-	stock: z.boolean().optional().default(false),
-	report: z.enum(['all', 'relocation', 'replenish']).optional().nullable().default(null),
-	vat: z.boolean().optional().default(false),
-	sub: z.boolean().optional().default(false),
-	cat: z.string().optional().nullable().default(null),
-	search: z.string().optional().nullable().default(null)
+	wh: z.coerce.number().nullable().default(null),
+	stock: z.boolean().default(false),
+	report: z.enum(['all', 'relocation', 'replenish']).nullable().default(null),
+	vat: z.boolean().default(false),
+	sub: z.boolean().default(false),
+	cat: z.coerce.number().nullable().default(null),
+	search: z.string().nullable().default(null)
 });

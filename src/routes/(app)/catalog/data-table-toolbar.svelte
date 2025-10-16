@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { RowSelectionState, GlobalFilterTableState, Table } from '$lib/components/walker-tx';
-	import type { FlattenedProduct, Warehouse } from './columns.svelte';
+	import type { FlattenedProduct } from './columns.svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	//Components
@@ -22,7 +22,7 @@
 		globalFilterTableState: GlobalFilterTableState | undefined;
 		table: Table<FlattenedProduct>;
 		addToCart: () => void;
-		warehouses: Warehouse[];
+		warehouses: Array<{ value: string; label: string }>;
 	};
 	let {
 		table,
@@ -31,6 +31,7 @@
 		addToCart,
 		warehouses
 	}: Props = $props();
+
 	function handleSearch(e: Event) {
 		const target = e.target as HTMLInputElement;
 		if (target) {
@@ -46,9 +47,6 @@
 		...(searchParams.get('vat') === 'true' ? ['vat'] : []),
 		...(searchParams.get('sub') === 'true' ? ['sub'] : [])
 	];
-	const triggerWarehouseLabel = $derived(
-		warehouses.find((f) => f.value === inputValueWarehouse)?.label ?? 'Select warehouse'
-	);
 
 	const reports = [
 		{ value: 'all', label: 'All Products' },

@@ -2,7 +2,7 @@
 	import { NumberInputDecimal } from '$lib/components/ark';
 	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer';
 	import type { NumberInputProps } from '$lib/components/ark/number-input/types';
-	import { appSettings } from '$lib/context';
+	import { getAppContext } from '$lib/context';
 
 	interface SmartNumberInputProps {
 		field: AnalyzedFieldConfig & {
@@ -20,12 +20,11 @@
 		...(field.readonly && { readonly: field.readonly }),
 		...(field.disabled && { disabled: field.disabled })
 	};
-	console.log('field:', field);
 </script>
 
 <NumberInputDecimal
 	{...inputAttrs}
 	{...field.componentProps}
 	bind:value
-	locale={field.locale || field.componentProps?.locale || appSettings.get().userLocale}
+	locale={field.locale || field.componentProps?.locale || getAppContext().userLocale}
 />

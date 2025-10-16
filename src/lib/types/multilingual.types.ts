@@ -1,3 +1,5 @@
+import type { Lookup } from './app';
+
 export interface MultilingualData {
 	[localeCode: string]: string | undefined;
 }
@@ -10,16 +12,10 @@ export interface LocaleFieldState {
 
 export interface MultilingualFieldState {
 	activeLocale: string;
-	availableLocales: LocaleLookup[];
+	availableLocales: Lookup<string>[];
 	fieldStates: Record<string, LocaleFieldState>;
 	isValid: boolean;
 	errors: string[];
-}
-
-export interface LocaleLookup {
-	value: string; // Locale code (e.g., "en-US")
-	label: string; // Display name (e.g., "English (US)")
-	isDefault: boolean; // Whether this is the default locale
 }
 
 // Example usage:

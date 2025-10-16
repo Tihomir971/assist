@@ -53,7 +53,7 @@ const supabase: Handle = async ({ event, resolve }) => {
 	});
 };
 
-const appSettings: Handle = async ({ event, resolve }) => {
+const appSettingsHandle: Handle = async ({ event, resolve }) => {
 	// Initialize app settings if not already present
 	if (!event.locals.app) {
 		const { data, error } = await event.locals.supabase
@@ -112,4 +112,4 @@ const authGuard: Handle = async ({ event, resolve }) => {
 	return response;
 };
 
-export const handle: Handle = sequence(supabase, authGuard, appSettings);
+export const handle: Handle = sequence(supabase, authGuard, appSettingsHandle);

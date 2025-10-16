@@ -11,6 +11,7 @@
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
 	let {
 		profile,
@@ -27,14 +28,14 @@
 	const sidebar = Sidebar.useSidebar();
 
 	let avatarUrl: string | undefined = $state();
-	$effect(() => {
+	/* 	$effect(() => {
 		if (!supabase || !profile?.avatar_url) {
 			console.warn('Supabase client or path is undefined');
 			return undefined;
 		}
 		const { data } = supabase.storage.from('avatars').getPublicUrl(profile.avatar_url);
 		avatarUrl = data.publicUrl;
-	});
+	}); */
 	function getInitials(name?: string | null) {
 		if (!name) {
 			return '';
@@ -45,6 +46,14 @@
 			.join('');
 	}
 	let fullName = $derived(`${profile?.first_name} ${profile?.last_name}`);
+	onMount(() => {
+		if (!supabase || !profile?.avatar_url) {
+			console.warn('Supabase client or path is undefined');
+			return undefined;
+		}
+		const { data } = supabase.storage.from('avatars').getPublicUrl(profile.avatar_url);
+		avatarUrl = data.publicUrl;
+	});
 </script>
 
 <Sidebar.Menu>
