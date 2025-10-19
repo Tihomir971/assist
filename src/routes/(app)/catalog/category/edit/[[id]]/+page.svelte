@@ -33,8 +33,8 @@
 				searchable: true
 			}
 		})
-		.field('is_active', { label: 'Active', type: 'boolean', span: 6 })
-		.field('is_self_service', { label: 'Self Service', type: 'boolean', span: 6 })
+		.fieldTyped('is_active', { label: 'Active', type: 'boolean', span: 6 })
+		.fieldTyped('is_self_service', { label: 'Self Service', type: 'boolean', span: 6 })
 		.build();
 
 	const tabConfigs = $derived(createTabConfigs(data));

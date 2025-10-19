@@ -132,11 +132,11 @@ export interface FieldOverride<
 	multilingualConfig?: MultilingualFieldConfig;
 }
 
-// Enhanced FieldOverride with required componentProps object
+// Enhanced FieldOverride with optional componentProps object
 export type FieldOverrideWithTypedProps<TFieldType extends keyof ComponentPropsByFieldType> = Omit<
 	FieldOverride<TFieldType>,
 	'componentProps'
-> & { componentProps: ExtractComponentProps<TFieldType> };
+> & { componentProps?: ExtractComponentProps<TFieldType> };
 
 export interface SmartFormConfig {
 	title?: string;
@@ -162,7 +162,7 @@ export interface FormConfigBuilder<T extends Record<string, unknown>> {
 		override: FieldOverrideWithTypedProps<TFieldType>
 	): FormConfigBuilder<T>;
 	// Legacy method for backward compatibility (less type-safe)
-	field<K extends keyof T>(fieldName: K, override: FieldOverride): FormConfigBuilder<T>;
+	// field<K extends keyof T>(fieldName: K, override: FieldOverride): FormConfigBuilder<T>;
 	multilingualInput<K extends keyof T>(
 		fieldName: K,
 		options: Omit<FieldOverride<'multilingual_input'>, 'type' | 'multilingualConfig'> & {

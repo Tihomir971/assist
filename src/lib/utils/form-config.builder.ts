@@ -42,13 +42,13 @@ export function createFormConfig<T extends Record<string, unknown>>(): FormConfi
 			return this;
 		},
 		// Legacy method for backward compatibility (less type-safe)
-		field<K extends keyof T>(fieldName: K, override: FieldOverride) {
+		/* 		field<K extends keyof T>(fieldName: K, override: FieldOverride) {
 			if (!config.fieldOverrides) {
 				config.fieldOverrides = {};
 			}
 			config.fieldOverrides[fieldName as string] = override;
 			return this;
-		},
+		}, */
 
 		multilingualInput<K extends keyof T>(
 			fieldName: K,
@@ -63,7 +63,7 @@ export function createFormConfig<T extends Record<string, unknown>>(): FormConfi
 				autoSaveDelay?: number;
 			} = {}
 		) {
-			return this.field(fieldName, {
+			return this.fieldTyped(fieldName, {
 				...options,
 				type: 'multilingual_input',
 				multilingualConfig: {
@@ -86,7 +86,7 @@ export function createFormConfig<T extends Record<string, unknown>>(): FormConfi
 				rows?: number;
 			} = {}
 		) {
-			return this.field(fieldName, {
+			return this.fieldTyped(fieldName, {
 				...options,
 				type: 'multilingual_textarea',
 				multilingualConfig: {

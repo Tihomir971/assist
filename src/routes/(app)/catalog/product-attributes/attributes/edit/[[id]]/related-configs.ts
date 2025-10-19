@@ -9,8 +9,8 @@ import { invalidate } from '$app/navigation';
 
 const formConfig = createFormConfig()
 	.title('Attribute Option')
-	.field('name', { label: 'Name', span: 12 })
-	.field('sort_order', { label: 'Sort Order', type: 'number', span: 12 })
+	.fieldTyped('name', { label: 'Name', span: 12 })
+	.fieldTyped('sort_order', { label: 'Sort Order', type: 'number', span: 12 })
 	.build();
 
 export const attributeOptionsConfig = createRelatedTableConfig()

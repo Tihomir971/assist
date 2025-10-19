@@ -31,23 +31,23 @@
 
 	const formConfig = createFormConfig()
 		.title('Attribute Set')
-		.field('name', {
+		.fieldTyped('name', {
 			label: 'Name',
 			span: 6,
 			placeholder: 'e.g., Electronics, Clothing'
 		})
-		.field('code', {
+		.fieldTyped('code', {
 			label: 'Code',
 			span: 6,
 			placeholder: 'e.g., ELECTRONICS, CLOTHING'
 		})
-		.field('description', {
+		.fieldTyped('description', {
 			label: 'Description',
 			type: 'textarea',
 			span: 12,
 			placeholder: 'Enter a description for the attribute set'
 		})
-		.field('is_active', {
+		.fieldTyped('is_active', {
 			label: 'Active',
 			type: 'boolean',
 			span: 12

@@ -84,8 +84,8 @@ src/routes/(app)/your-route/[[id]]/
 
         const formConfig = createFormConfig()
             .title('Entity Details')
-            .field('name', { span: 12, placeholder: 'Enter name' })
-            .field('sequence', { type: 'number', span: 6, step: 1 })
+            .fieldTyped('name', { span: 12, placeholder: 'Enter name' })
+            .fieldTyped('sequence', { type: 'number', span: 6, step: 1 })
             .build();
     </script>
 

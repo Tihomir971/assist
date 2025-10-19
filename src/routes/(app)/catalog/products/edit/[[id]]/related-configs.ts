@@ -31,7 +31,7 @@ export function createTabConfigs(data: PageData) {
 	// --- Form Configurations for Drawers ---
 	const productPoFormConfig = createFormConfig()
 		.title('Product Supplier')
-		.field('c_bpartner_id', {
+		.fieldTyped('c_bpartner_id', {
 			type: 'combobox',
 			label: 'Partner',
 			placeholder: 'Enter Partner...',
@@ -40,19 +40,35 @@ export function createTabConfigs(data: PageData) {
 				options: data.lookupData.partners
 			}
 		})
-		.field('vendorproductno', { label: 'Vendor PN', span: 12 })
-		.field('pricelist', { type: 'number', label: 'Price', span: 6 })
-		.field('order_min', { type: 'number', label: 'MOQ', span: 6 })
-		.field('valid_from', { type: 'date', label: 'Valid From', span: 6 })
-		.field('valid_to', { type: 'date', label: 'Valid To', span: 6 })
-		.field('url', { label: 'URL', span: 12 })
-		.field('created_at', { type: 'datetime', label: 'Created at', span: 6, readonly: true })
-		.field('updated_at', { type: 'datetime', label: 'Updated at', span: 6, readonly: true })
+		.fieldTyped('vendorproductno', { label: 'Vendor PN', span: 12 })
+		.fieldTyped('pricelist', {
+			type: 'number',
+			label: 'Price',
+			span: 6,
+			componentProps: {
+				min: 0,
+				formatOptions: { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+			}
+		})
+		.fieldTyped('order_min', {
+			type: 'number',
+			label: 'MOQ',
+			span: 6,
+			componentProps: {
+				min: 0,
+				formatOptions: { minimumFractionDigits: 0, maximumFractionDigits: 0 }
+			}
+		})
+		.fieldTyped('valid_from', { type: 'date', label: 'Valid From', span: 6 })
+		.fieldTyped('valid_to', { type: 'date', label: 'Valid To', span: 6 })
+		.fieldTyped('url', { label: 'URL', span: 12 })
+		.fieldTyped('created_at', { type: 'datetime', label: 'Created at', span: 6, readonly: true })
+		.fieldTyped('updated_at', { type: 'datetime', label: 'Updated at', span: 6, readonly: true })
 		.build();
 
 	const productPackingFormConfig = createFormConfig()
 		.title('Packing')
-		.field('packing_type', {
+		.fieldTyped('packing_type', {
 			type: 'select',
 			label: 'Packing Type',
 			span: 12,
@@ -64,9 +80,9 @@ export function createTabConfigs(data: PageData) {
 				]
 			}
 		})
-		.field('unitsperpack', { type: 'number', label: 'Units Per Pack', span: 6 })
-		.field('gtin', { label: 'GTIN', span: 6 })
-		.field('is_display', { type: 'boolean', label: 'Is Display Box?', span: 12 })
+		.fieldTyped('unitsperpack', { type: 'number', label: 'Units Per Pack', span: 6 })
+		.fieldTyped('gtin', { label: 'GTIN', span: 6 })
+		.fieldTyped('is_display', { type: 'boolean', label: 'Is Display Box?', span: 12 })
 		.build();
 
 	const replenishFormConfig = createFormConfig()
@@ -171,8 +187,8 @@ export function createTabConfigs(data: PageData) {
 				options: data.lookupData.channels
 			}
 		})
-		.field('external_product_id', { label: 'External ID', span: 12 })
-		.field('url', { label: 'URL', span: 12 })
+		.fieldTyped('external_product_id', { label: 'External ID', span: 12 })
+		.fieldTyped('url', { label: 'URL', span: 12 })
 		.build();
 
 	const channelMappingConfig = createRelatedTableConfig()

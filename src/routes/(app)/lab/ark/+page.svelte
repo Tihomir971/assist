@@ -2,6 +2,7 @@
 	import { TreeViewArk } from '$lib/components/ark';
 	import TreeView from '$lib/components/ark/tree-view/TreeView.svelte';
 	import type { TreeViewNode } from '$lib/components/ark/tree-view/types';
+	import { Field } from '@ark-ui/svelte/field';
 	// Sample data for the tree (same as basic.svelte)
 	const sampleData: TreeViewNode[] = [
 		{
@@ -49,6 +50,18 @@
 		<section>
 			<h2 class="mb-4 text-2xl font-semibold text-gray-800 dark:text-gray-200">Custom Label</h2>
 			<TreeViewArk />
+		</section>
+		<section>
+			<Field.Root invalid readOnly required>
+				<Field.Label>Any Control</Field.Label>
+				<Field.Context>
+					{#snippet render(field)}
+						<input {...field().getInputProps()} class="border" />
+					{/snippet}
+				</Field.Context>
+				<Field.HelperText>Uses getControlProps() for maximum flexibility</Field.HelperText>
+				<Field.ErrorText>This field has an error</Field.ErrorText>
+			</Field.Root>
 		</section>
 	</div>
 </div>

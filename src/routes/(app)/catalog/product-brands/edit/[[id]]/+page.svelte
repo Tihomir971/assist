@@ -7,28 +7,28 @@
 
 	const formConfig = createFormConfig()
 		.title('Brand Details')
-		.field('name', {
+		.fieldTyped('name', {
 			label: 'Brand Name',
 			span: 6,
 			placeholder: 'Enter brand name'
 		})
-		.field('description', {
+		.fieldTyped('description', {
 			label: 'Description',
 			type: 'textarea',
 			span: 12,
 			placeholder: 'Enter brand description (optional)'
 		})
-		.field('logo_url', {
+		.fieldTyped('logo_url', {
 			label: 'Logo URL',
 			span: 6,
 			placeholder: 'https://example.com/logo.png'
 		})
-		.field('website_url', {
+		.fieldTyped('website_url', {
 			label: 'Website URL',
 			span: 6,
 			placeholder: 'https://example.com'
 		})
-		.field('is_active', {
+		.fieldTyped('is_active', {
 			label: 'Active',
 			type: 'boolean',
 			span: 12,

@@ -7,8 +7,8 @@
 
 	const formConfig = createFormConfig()
 		.title('Attribute Group Details')
-		.field('name', { span: 12, placeholder: 'Enter name' })
-		.field('code', { span: 12, placeholder: 'Enter code' })
+		.fieldTyped('name', { span: 12, placeholder: 'Enter name' })
+		.fieldTyped('code', { span: 12, placeholder: 'Enter code' })
 		.build();
 </script>
 

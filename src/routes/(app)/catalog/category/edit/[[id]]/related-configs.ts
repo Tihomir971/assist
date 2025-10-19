@@ -43,7 +43,7 @@ export const createChannelMappingConfig = (c_channels: Array<{ value: number; la
 						searchable: true
 					}
 				})
-				.field('resource_id', {
+				.fieldTyped('resource_id', {
 					label: 'Resource ID',
 					span: 3,
 					placeholder: 'Enter resource ID'
@@ -54,17 +54,17 @@ export const createChannelMappingConfig = (c_channels: Array<{ value: number; la
 					label: 'Active',
 					componentProps: {}
 				})
-				.field('resource_name', {
+				.fieldTyped('resource_name', {
 					span: 12,
 					placeholder: 'Enter description'
 				})
 
-				.field('created_at', {
+				.fieldTyped('created_at', {
 					type: 'datetime',
 					span: 6,
 					label: 'Created at'
 				})
-				.field('updated_at', {
+				.fieldTyped('updated_at', {
 					type: 'datetime',
 					span: 6,
 					label: 'Updated at'

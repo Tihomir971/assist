@@ -214,10 +214,10 @@ import type { Component } from 'svelte';
 // Form config for the related attribute records
 const formConfig = createFormConfig()
 	.title('Attribute Set Attribute')
-	.field('attribute_id', { label: 'Attribute', type: 'select', span: 12 })
-	.field('sequence', { label: 'Sequence', type: 'number', span: 6 })
-	.field('is_required', { label: 'Required', type: 'boolean', span: 3 })
-	.field('is_active', { label: 'Active', type: 'boolean', span: 3 })
+	.fieldTyped('attribute_id', { label: 'Attribute', type: 'select', span: 12 })
+	.fieldTyped('sequence', { label: 'Sequence', type: 'number', span: 6 })
+	.fieldTyped('is_required', { label: 'Required', type: 'boolean', span: 3 })
+	.fieldTyped('is_active', { label: 'Active', type: 'boolean', span: 3 })
 	.build();
 
 // Configuration for the related attributes table
@@ -288,10 +288,10 @@ This Svelte page consumes the configurations and renders the layout.
 	// Main form configuration
 	const formConfig = createFormConfig()
 		.title('Attribute Set')
-		.field('name', { label: 'Name', span: 6 })
-		.field('code', { label: 'Code', span: 6 })
-		.field('description', { label: 'Description', type: 'textarea', span: 12 })
-		.field('is_active', { label: 'Active', type: 'boolean', span: 12 })
+		.fieldTyped('name', { label: 'Name', span: 6 })
+		.fieldTyped('code', { label: 'Code', span: 6 })
+		.fieldTyped('description', { label: 'Description', type: 'textarea', span: 12 })
+		.fieldTyped('is_active', { label: 'Active', type: 'boolean', span: 12 })
 		.build();
 
 	// Create reactive tab configurations that update when data changes

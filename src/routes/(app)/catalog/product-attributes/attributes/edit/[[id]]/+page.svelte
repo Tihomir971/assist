@@ -18,12 +18,12 @@
 
 		return createFormConfig()
 			.title('Attribute')
-			.field('name', {
+			.fieldTyped('name', {
 				label: 'Name',
 				span: 12,
 				placeholder: 'e.g., Color, Size, Screen Diagonal'
 			})
-			.field('code', {
+			.fieldTyped('code', {
 				label: 'Code',
 				span: 12,
 				placeholder: 'e.g., COLOR, SIZE, SCREEN_DIAGONAL'
@@ -63,13 +63,13 @@
 					'Specify the unit for numeric values or select/multi-select options (e.g., inches, cm, kg)',
 				hidden: !showUom
 			})
-			.field('description', {
+			.fieldTyped('description', {
 				label: 'Description',
 				type: 'textarea',
 				span: 12,
 				placeholder: 'Enter a description for the attribute'
 			})
-			.field('is_active', {
+			.fieldTyped('is_active', {
 				label: 'Active',
 				type: 'boolean',
 				span: 12

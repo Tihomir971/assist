@@ -9,27 +9,27 @@ import { invalidate } from '$app/navigation';
 
 const formConfig = createFormConfig()
 	.title('Attribute Set Attribute')
-	.field('attribute_id', {
+	.fieldTyped('attribute_id', {
 		label: 'Attribute',
 		type: 'select',
 		span: 12
 	})
-	.field('sequence', {
+	.fieldTyped('sequence', {
 		label: 'Sequence',
 		type: 'number',
 		span: 6
 	})
-	.field('is_required', {
+	.fieldTyped('is_required', {
 		label: 'Mandatory',
 		type: 'boolean',
 		span: 3
 	})
-	.field('is_searchable', {
+	.fieldTyped('is_searchable', {
 		label: 'Searchable',
 		type: 'boolean',
 		span: 3
 	})
-	.field('is_active', {
+	.fieldTyped('is_active', {
 		label: 'Active',
 		type: 'boolean',
 		span: 3

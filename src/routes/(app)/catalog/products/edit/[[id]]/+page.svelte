@@ -14,11 +14,11 @@
 
 	const formConfig = createFormConfig()
 		.title('Product Details')
-		.field('is_active', { type: 'boolean', span: 4 })
-		.field('is_self_service', { type: 'boolean', span: 4 })
-		.field('discontinued', { type: 'boolean', span: 4 })
-		.field('sku', { span: 2, label: 'SKU', readonly: !!data.entity?.id })
-		.field('name', { span: 10, placeholder: 'Enter product name' })
+		.fieldTyped('is_active', { type: 'boolean', span: 4 })
+		.fieldTyped('is_self_service', { type: 'boolean', span: 4 })
+		.fieldTyped('discontinued', { type: 'boolean', span: 4 })
+		.fieldTyped('sku', { span: 2, label: 'SKU', readonly: !!data.entity?.id })
+		.fieldTyped('name', { span: 10, placeholder: 'Enter product name' })
 		.fieldTyped('m_product_brand_id', {
 			type: 'combobox',
 			span: 6,
@@ -28,7 +28,7 @@
 				options: data.lookupData.brands
 			}
 		})
-		.field('mpn', { span: 6, label: 'MPN' })
+		.fieldTyped('mpn', { span: 6, label: 'MPN' })
 		.fieldTyped('attributeset_id', {
 			type: 'select',
 			span: 6,
@@ -82,9 +82,12 @@
 			type: 'number',
 			span: 4,
 			label: 'Shelf Life (days)',
-			componentProps: { formatOptions: { minimumFractionDigits: 4, maximumFractionDigits: 4 } }
+			componentProps: {
+				min: 0,
+				formatOptions: { minimumFractionDigits: 0, maximumFractionDigits: 0 }
+			}
 		})
-		.field('descriptionurl', { type: 'text', span: 12, label: 'Manufacturer URL' })
+		.fieldTyped('descriptionurl', { type: 'text', span: 12, label: 'Manufacturer URL' })
 		.build();
 </script>
 
