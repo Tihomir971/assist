@@ -6,6 +6,7 @@ import type {
 	ColumnDefinition,
 	BulkOperation
 } from '$lib/types/related-table-config.types';
+import { getAppContext } from '$lib/context';
 
 export function createRelatedTableConfig<
 	T extends Record<string, unknown>,
@@ -170,7 +171,8 @@ export const columnTypes = {
 		label,
 		type: 'date',
 		sortable: true,
-		formatter: (value) => (value ? new Date(value as string).toLocaleDateString() : ''),
+		formatter: (value) =>
+			value ? new Date(value as string).toLocaleDateString(getAppContext().userLocale) : '',
 		...options
 	}),
 
@@ -183,7 +185,8 @@ export const columnTypes = {
 		label,
 		type: 'datetime',
 		sortable: true,
-		formatter: (value) => (value ? new Date(value as string).toLocaleString() : ''),
+		formatter: (value) =>
+			value ? new Date(value as string).toLocaleString(getAppContext().userLocale) : '',
 		...options
 	}),
 

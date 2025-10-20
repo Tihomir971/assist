@@ -95,9 +95,9 @@
 
 			<DropdownMenu.Separator />
 			<DropdownMenu.Item onSelect={() => handleGetMarketInfo()}>Get Market Info</DropdownMenu.Item>
-			<DropdownMenu.Item onSelect={() => handleSearchProducts()}>
-				Search by Barcodes
-			</DropdownMenu.Item>
+			<DropdownMenu.Item onSelect={() => handleSearchProducts()}
+				>Search Web Product</DropdownMenu.Item
+			>
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

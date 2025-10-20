@@ -1,6 +1,6 @@
 import { DataTableConfigBuilder, columnTypes } from '$lib/utils/data-table-config.builder';
 import DataTableActions from '$lib/components/ui/data-table-actions.svelte';
-import { RenderComponentConfig } from '$lib/components/walker-tx/render-component';
+import { RenderComponentConfig } from '$lib/components/ui/data-table/render-helpers';
 import type { Tables } from '@tihomir971/assist-shared';
 import type { ColumnDef } from '@tanstack/svelte-table';
 

@@ -113,7 +113,7 @@
 		<div {...api.getPositionerProps()}>
 			<ul
 				{...api.getContentProps()}
-				class="z-50 flex h-full max-h-56 w-[200px] flex-col overflow-hidden rounded-md border bg-popover p-0 text-popover-foreground shadow-md outline-hidden"
+				class="z-50 flex h-full max-h-56 flex-col overflow-hidden rounded-md border bg-popover p-0 text-sm text-popover-foreground shadow-sm outline-hidden"
 			>
 				{#each collection.items as item (item.value)}
 					<li {...api.getItemProps({ item })} data-disabled={item.disabled}>

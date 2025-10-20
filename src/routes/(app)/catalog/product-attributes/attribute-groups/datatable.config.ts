@@ -1,7 +1,7 @@
 import { DataTableConfigBuilder, columnTypes } from '$lib/utils/data-table-config.builder';
 import type { Tables } from '@tihomir971/assist-shared';
 import type { ColumnDef } from '@tanstack/svelte-table';
-import { renderComponent } from '$lib/components/walker-tx/render-component';
+import { renderComponent } from '$lib/components/ui/data-table/render-helpers';
 import DataTableActions from '$lib/components/ui/data-table-actions.svelte';
 // import Checkbox from '$lib/components/zag/checkbox/checkbox.svelte';
 import { Checkbox } from '$lib/components/ui/checkbox/index.js';

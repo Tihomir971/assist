@@ -1,7 +1,8 @@
-import { RenderComponentConfig } from '$lib/components/walker-tx/render-component';
+import { RenderComponentConfig } from '$lib/components/ui/data-table/render-helpers';
 import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 import type { ColumnDef } from '@tanstack/svelte-table';
 import type { Snippet } from 'svelte';
+import { getAppContext } from '$lib/context';
 
 export type FilterType = 'text' | 'select' | 'boolean';
 
@@ -155,7 +156,7 @@ export const columnTypes = {
 			const value = cell.getValue() as string | null;
 			if (!value) return '';
 			try {
-				return new Date(value).toLocaleDateString();
+				return new Date(value).toLocaleDateString(getAppContext().userLocale);
 			} catch {
 				return value;
 			}
@@ -168,7 +169,7 @@ export const columnTypes = {
 			const value = cell.getValue() as string | null;
 			if (!value) return '';
 			try {
-				return new Date(value).toLocaleString();
+				return new Date(value).toLocaleString(getAppContext().userLocale);
 			} catch {
 				return value;
 			}

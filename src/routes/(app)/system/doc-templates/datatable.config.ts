@@ -2,7 +2,7 @@ import { DataTableConfigBuilder, columnTypes } from '$lib/utils/data-table-confi
 import type { Tables } from '@tihomir971/assist-shared';
 import type { ColumnDef } from '@tanstack/svelte-table';
 import DataTableActions from '$lib/components/ui/data-table-actions.svelte';
-import { renderComponent } from '$lib/components/walker-tx/render-component';
+import { renderComponent } from '$lib/components/ui/data-table/render-helpers';
 
 export type DocTemplateType = Tables<'doc_template'>;
 

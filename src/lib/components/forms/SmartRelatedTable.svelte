@@ -21,6 +21,7 @@
 	import SmartRelatedDrawer from './SmartRelatedDrawer.svelte';
 	import UrlCell from './cells/UrlCell.svelte';
 	import { CheckboxArk } from '../ark/checkbox';
+	import { getAppContext } from '$lib/context';
 
 	interface SmartRelatedTableProps<T extends Record<string, any>, S extends ZodObject<any>> {
 		config: RelatedTableConfig<T, S>;
@@ -200,9 +201,11 @@
 			case 'boolean':
 				return value ? 'Yes' : 'No';
 			case 'date':
-				return value ? new Date(value).toLocaleDateString() : '';
+				return value
+					? new Date(value).toLocaleDateString(getAppContext().userLocale, { month: '2-digit' })
+					: '222';
 			case 'datetime':
-				return value ? new Date(value).toLocaleString() : '';
+				return value ? new Date(value).toLocaleString(getAppContext().userLocale) : '';
 			case 'number':
 				// Handle the case when value is 0 or null/undefined
 				return value !== null && value !== undefined ? String(value) : '';

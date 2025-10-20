@@ -2,6 +2,7 @@
 	import type { FieldConfig as AnalyzedFieldConfig } from '$lib/utils/schema-analyzer';
 	import { Input } from '$lib/components/ui/input';
 	import { DateHelper } from '$lib/scripts/intl/DateHelper';
+	import { getAppContext } from '$lib/context';
 
 	interface SmartDatetimeProps {
 		field: AnalyzedFieldConfig;
@@ -16,11 +17,11 @@
 	}: SmartDatetimeProps = $props();
 
 	// Initialize DateHelper with Serbian locale
-	const dateHelper = new DateHelper();
+	const dateHelper = new DateHelper(getAppContext().userLocale || getAppContext().systemLocale);
 
 	// Format the datetime for display
 	const formattedValue = $derived(dateHelper.format(value));
-
+	$inspect('formattedValue', formattedValue);
 	// Combine props for the input element
 	const inputAttrs = $derived({
 		type: 'text',
