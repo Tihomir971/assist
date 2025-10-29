@@ -274,7 +274,7 @@
 			<Card.Content>
 				<div
 					bind:this={printArea}
-					class="printable prose max-w-full flex-grow overflow-auto rounded-md border p-4"
+					class="printable prose max-w-full grow overflow-auto rounded-md border p-4"
 					style="background-color: white; color: black; min-height: 200px;"
 				>
 					{@html renderedContent}
@@ -295,7 +295,7 @@
 		</Dialog.Header>
 		<div
 			bind:this={printArea}
-			class="printable prose max-w-full flex-grow overflow-auto"
+			class="printable prose max-w-full grow overflow-auto"
 			style="background-color: white; color: black; min-height: 200px; border: none; padding: 8mm; margin: 0;"
 		>
 			{@html renderedContent}

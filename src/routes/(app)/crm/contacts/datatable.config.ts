@@ -1,8 +1,8 @@
 import { DataTableConfigBuilder, columnTypes } from '$lib/utils/data-table-config.builder';
 import type { Tables } from '@tihomir971/assist-shared';
-import type { ColumnDef } from '@tanstack/svelte-table';
 import DataTableActions from '$lib/components/ui/data-table-actions.svelte';
 import { RenderComponentConfig } from '$lib/components/ui/data-table/render-helpers';
+import type { ColumnDef } from '@tanstack/table-core';
 
 export type ContactDataType = Tables<'c_bpartner'>;
 

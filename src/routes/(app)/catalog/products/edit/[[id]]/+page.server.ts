@@ -189,7 +189,7 @@ export const load: PageServerLoad = async ({ depends, params, locals: { supabase
 		new ChannelMappingProductService(supabase).list({ m_product_id: productId }),
 		new ChannelService(supabase).getChannelLookup()
 	]);
-
+	console.log('salesByWeeks:', JSON.stringify(salesByWeeks, null, 2));
 	const attributeService = new AttributeService(supabase);
 	const attributeOptionsLookup = new Map();
 

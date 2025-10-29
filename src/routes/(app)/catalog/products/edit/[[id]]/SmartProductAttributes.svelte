@@ -6,11 +6,10 @@
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { AttributeOptionLookup } from '$lib/services/supabase/attribute-option.service';
 	import type { AttributeSetAttributeWithAttribute } from '$lib/services/supabase/attribute-set-attribute.service';
-	import { NumberInputDecimal } from '$lib/components/ark/index.js';
+	import { CheckboxArk, NumberInputDecimal } from '$lib/components/ark/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
 	import ChevronsUpDown from '@lucide/svelte/icons/chevrons-up-down';
 	import { Badge } from '$lib/components/ui/badge/index.js';
@@ -254,11 +253,13 @@
 																	locale={getAppContext().userLocale}
 																/>
 															{:else if attribute.m_attribute.attribute_type === 'boolean'}
-																<Checkbox
+																<CheckboxArk
 																	name="boolean_value"
-																	checked={currentValue === true}
-																	indeterminate={currentValue === null ||
-																		currentValue === undefined}
+																	checked={currentValue === true
+																		? true
+																		: currentValue === null || currentValue === undefined
+																			? 'indeterminate'
+																			: false}
 																/>
 															{/if}
 															<Button type="submit" size="sm">Save</Button>
@@ -291,9 +292,12 @@
 														?.find((o) => o.value === currentOptionIds[0])?.label ?? 'Not Set'}
 												{/if}
 											{:else if attribute.m_attribute.attribute_type === 'boolean'}
-												<Checkbox
-													checked={currentValue === true}
-													indeterminate={currentValue === null || currentValue === undefined}
+												<CheckboxArk
+													checked={currentValue === true
+														? true
+														: currentValue === null || currentValue === undefined
+															? 'indeterminate'
+															: false}
 													disabled
 												/>
 											{:else}

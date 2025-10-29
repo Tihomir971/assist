@@ -241,8 +241,9 @@
 
 	// When a new form object is passed, reset the form to reflect the new data.
 	// This is crucial for the SmartRelatedDrawer to update the form for editing.
+	// Only reset if the form ID has changed or if form is currently pristine
 	$effect(() => {
-		if (initialForm) {
+		if (initialForm && $formData.id !== initialForm.data?.id) {
 			reset(initialForm);
 		}
 	});

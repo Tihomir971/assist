@@ -16,6 +16,7 @@
 	import { MultilingualInput, MultilingualTextarea } from './fields/multilingual';
 	import type { Lookup } from '$lib/types/app';
 	import { getLocales } from '$lib/services/supabase/locale.service.remote';
+	import SmartInputUrl from './fields/SmartInputUrl.svelte';
 
 	interface SmartFieldProps<S extends ZodObject<any>> {
 		field: AnalyzedFieldConfig;
@@ -65,6 +66,8 @@
 						<SmartDatetime {field} bind:value {...props} />
 					{:else if field.type === 'number'}
 						<SmartNumberInput {field} bind:value {...props} />
+					{:else if field.type === 'url'}
+						<SmartInputUrl {field} bind:value {...props} />
 					{:else if field.type === 'multilingual_input'}
 						<MultilingualInput
 							bind:value

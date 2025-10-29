@@ -1,6 +1,4 @@
 import DataTableActions from './data-table-actions.svelte';
-import { createColumnHelper, renderComponent, renderSnippet } from '$lib/components/walker-tx';
-import TableCheckbox from '$lib/components/walker-tx/table-checkbox.svelte';
 import DataTableTitleCell from './data-table-title-cell.svelte';
 import DataTableActionsVendor from './data-table-actions-vendor.svelte';
 
@@ -13,6 +11,9 @@ import type {
 } from '@tihomir971/assist-shared';
 import { NumberFormatter } from '$lib/scripts/intl';
 import { rightAlignSnippet } from '$lib/utils/common-snippets.svelte';
+import { type ColumnDef } from '@tanstack/table-core';
+import { renderComponent, renderSnippet } from '$lib/components/ui/data-table';
+import { Checkbox } from '$lib/components/ark/checkbox';
 
 export interface Warehouse {
 	value: string;
@@ -78,37 +79,41 @@ export interface FlattenedProduct {
 
 const numberFormatter = new NumberFormatter();
 
-// Create a column helper for the user profile data.
-const colHelp = createColumnHelper<FlattenedProduct>();
-export const columnDefs = [
-	colHelp.display({
+export const columnDefs: ColumnDef<FlattenedProduct>[] = [
+	{
 		id: 'select',
 		header: ({ table }) =>
-			renderComponent(TableCheckbox, {
+			renderComponent(Checkbox, {
 				checked:
 					table.getIsAllPageRowsSelected() ||
 					(table.getIsSomePageRowsSelected() && 'indeterminate'),
-				onchange: () => {
+				onCheckedChange: () => {
 					table.toggleAllRowsSelected();
 				}
 			}),
 		cell: ({ row }) =>
-			renderComponent(TableCheckbox, {
+			renderComponent(Checkbox, {
 				checked: row.getIsSelected(),
-				onchange: () => {
+				onCheckedChange: () => {
 					row.toggleSelected();
 				}
 			}),
+		enableSorting: false,
 		enableHiding: false
-	}),
-	colHelp.accessor('sku', {
+	},
+	{
+		accessorKey: 'sku',
 		header: 'SKU',
-		enableHiding: false
-	}),
-	colHelp.accessor('brand', { header: 'Brand' }),
-	colHelp.accessor('mpn', { header: 'MPN' }),
-	colHelp.accessor('name', {
-		header: 'Name',
+		enableSorting: true,
+		enableHiding: false,
+		meta: { filterType: 'text' }
+	},
+	{ accessorKey: 'brand', header: 'Brand' },
+	{ accessorKey: 'mpn', header: 'MPN' },
+	{
+		accessorKey: 'name',
+		header: 'Tax',
+		// header: ({ column }) => renderSnippet(sortColumnHeader, { column, title: 'Name' }),
 		enableHiding: false,
 		cell: ({ row }) => {
 			const labels: { value: string; variant?: 'outline' | 'default' }[] = [];
@@ -123,47 +128,53 @@ export const columnDefs = [
 				labels
 			});
 		}
-	}),
-	colHelp.accessor('taxRate', {
+	},
+	{
+		accessorKey: 'taxRate',
 		header: 'Tax',
-		cell: ({ cell }) => {
+		cell: ({ row }) => {
 			return renderSnippet(rightAlignSnippet, {
-				value: numberFormatter.formatPercent(cell.getValue(), {
+				value: numberFormatter.formatPercent(row.original.taxRate, {
 					fractionDigits: 0
 				})
 			});
 		},
 		enableSorting: false
-	}),
-	colHelp.accessor('unitsperpack', {
+	},
+	{
+		accessorKey: 'unitsperpack',
 		header: 'Pack',
-		cell: ({ cell }) => {
-			return renderSnippet(rightAlignSnippet, { value: cell.getValue() });
+		cell: ({ row }) => {
+			return renderSnippet(rightAlignSnippet, { value: row.original.taxRate });
 		},
 		enableSorting: false
-	}),
-	colHelp.accessor('price_uom', {
+	},
+	{
+		accessorKey: 'price_uom',
 		header: 'Unit Price',
-		cell: ({ cell }) => {
+		cell: ({ row }) => {
 			return renderSnippet(rightAlignSnippet, {
-				value: numberFormatter.formatNumber(cell.getValue())
+				value: numberFormatter.formatNumber(row.original.price_uom)
 			});
 		},
 		enableSorting: false
-	}),
-	colHelp.accessor('qtyWholesale', {
+	},
+	{
+		accessorKey: 'qtyWholesale',
 		header: 'WH',
-		cell: ({ cell }) => {
-			return renderSnippet(rightAlignSnippet, { value: cell.getValue() });
+		cell: ({ row }) => {
+			return renderSnippet(rightAlignSnippet, { value: row.original.qtyWholesale });
 		}
-	}),
-	colHelp.accessor('qtyRetail', {
+	},
+	{
+		accessorKey: 'qtyRetail',
 		header: 'RT',
-		cell: ({ cell }) => {
-			return renderSnippet(rightAlignSnippet, { value: cell.getValue() });
+		cell: ({ row }) => {
+			return renderSnippet(rightAlignSnippet, { value: row.original.qtyRetail });
 		}
-	}),
-	colHelp.accessor('levelMin', {
+	},
+	{
+		accessorKey: 'levelMin',
 		header: 'Min',
 		cell: ({ row }) => {
 			const levelMin = row.original.levelMin ?? 0;
@@ -177,8 +188,9 @@ export const columnDefs = [
 				isDanger: qtyRetail < levelMin
 			});
 		}
-	}),
-	colHelp.accessor('levelMax', {
+	},
+	{
+		accessorKey: 'levelMax',
 		header: 'Max',
 		cell: ({ row }) => {
 			// const levelMin = row.original.levelMin ?? 0;
@@ -191,28 +203,30 @@ export const columnDefs = [
 			});
 		},
 		enableSorting: true
-	}),
-	/* colHelp.accessor('pricePurchase', { header: 'Purchase' }), */
-	colHelp.accessor('pricePurchase', {
+	},
+	{
+		accessorKey: 'pricePurchase',
 		header: 'Purchase',
-		cell: ({ cell }) => {
+		cell: ({ row }) => {
 			return renderSnippet(rightAlignSnippet, {
-				value: numberFormatter.formatNumber(cell.getValue())
+				value: numberFormatter.formatNumber(row.original.pricePurchase)
 			});
 		}
-	}),
-	colHelp.accessor('ruc', {
+	},
+	{
+		accessorKey: 'ruc',
 		header: 'RuC',
-		cell: ({ cell }) => {
+		cell: ({ row }) => {
 			return renderSnippet(rightAlignSnippet, {
-				value: numberFormatter.formatPercent(cell.getValue(), {
+				value: numberFormatter.formatPercent(row.original.ruc, {
 					minimumFractionDigits: 1,
 					maximumFractionDigits: 1
 				})
 			});
 		}
-	}),
-	colHelp.accessor('priceRetail', {
+	},
+	{
+		accessorKey: 'priceRetail',
 		header: 'Retail',
 		cell: ({ row }) => {
 			const priceRetail = row.original.priceRetail ?? 0;
@@ -227,13 +241,14 @@ export const columnDefs = [
 				action: row.original.action
 			});
 		}
-	}),
-	colHelp.accessor('priceVendorBest', {
+	},
+	{
+		accessorKey: 'priceVendorBest',
 		header: 'Vendors',
-		cell: ({ row, cell }) => {
+		cell: ({ row }) => {
 			return renderComponent(DataTableActionsVendor, {
 				value:
-					numberFormatter.formatNumber(cell.getValue(), {
+					numberFormatter.formatNumber(row.original.priceVendorBest, {
 						fractionDigits: 2
 					}) ?? '',
 				iscustomer: false,
@@ -242,15 +257,16 @@ export const columnDefs = [
 		},
 		enableSorting: false,
 		enableHiding: true
-	}),
-	colHelp.accessor('priceMarketBest', {
+	},
+	{
+		accessorKey: 'priceMarketBest',
 		header: 'Market',
-		cell: ({ row, cell }) => {
+		cell: ({ row }) => {
 			const priceVendorBest = row.original.priceVendorBest ?? 0;
 			const priceMarketBest = row.original.priceMarketBest ?? 0;
 			// const qtyRetail = row.original.qtyRetail ?? 0;
 			return renderComponent(DataTableActionsVendor, {
-				value: numberFormatter.formatNumber(cell.getValue()) ?? '',
+				value: numberFormatter.formatNumber(row.original.priceMarketBest) ?? '',
 				iscustomer: true,
 				priceMarket: row.original.priceMarket,
 				isDanger:
@@ -261,13 +277,16 @@ export const columnDefs = [
 		},
 		enableSorting: false,
 		enableHiding: true
-	}),
-	colHelp.accessor('id', {
+	},
+	{
+		accessorKey: 'id',
 		header: '',
 		cell: ({ row }) => {
 			return renderComponent(DataTableActions, { id: row.original.id.toString() });
 		},
 		enableSorting: false,
 		enableHiding: false
-	})
+	}
 ];
+
+// export const customColumns = genericColumns(defaultColumns);

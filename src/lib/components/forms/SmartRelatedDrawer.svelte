@@ -34,15 +34,57 @@
 	// Determine if we're creating or editing
 	let isCreateMode = $derived(!item?.id);
 
-	// Create a reactive form object that updates when the item changes.
-	// This is the key to populating the form for editing.
-	const formToRender = $derived.by(() => {
+	// Local form state that persists while the drawer is open.
+	// This prevents losing user-entered data when the parent re-renders
+	// (e.g., after visibility change or data invalidation).
+	let localForm: typeof validatedForm | undefined = $state();
+
+	// Track current initialization key to avoid re-initializing while open
+	let lastInitKey: string | number = $state('');
+
+	// Initialize localForm only when opening or when selected item changes
+	$effect(() => {
+		if (!isOpen) return;
+
+		const key = item?.id ?? 'create';
+
+		// If already initialized for this key, don't reset user-entered data
+		if (lastInitKey === key && localForm) return;
+
+		const base = { ...validatedForm };
+		let data: Record<string, any>;
+
 		if (item) {
-			// Edit mode: Use the selected item's data.
-			// We clone the validatedForm and inject the item's data into it.
+			// Edit mode: seed with selected item's data
+			data = { ...item };
+		} else {
+			// Create mode: seed with defaults and ensure parentId is set
+			data = { ...validatedForm.data };
+			if (config.parentIdField) {
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				data[config.parentIdField] = parentId;
+			}
+		}
+
+		localForm = { ...base, data } as typeof validatedForm;
+		lastInitKey = key;
+	});
+
+	// When closing, clear local state so next open re-initializes fresh
+	$effect(() => {
+		if (!isOpen) {
+			localForm = undefined;
+			lastInitKey = '';
+		}
+	});
+
+	// Compute fallback form when localForm isn't initialized
+	const fallbackForm = $derived.by(() => {
+		if (item) {
+			// Edit mode fallback: clone validatedForm and inject item's data
 			return { ...validatedForm, data: { ...item } };
 		} else {
-			// Create mode: Use the default form data, but ensure the parent ID is set.
+			// Create mode fallback: ensure parentId is set on defaults
 			const newFormData = { ...validatedForm.data };
 			if (config.parentIdField) {
 				newFormData[config.parentIdField] = parentId;
@@ -111,7 +153,7 @@
 	<Sheet.Content class="sm:max-w-2xl">
 		<div class="flex-1 overflow-auto p-4">
 			<SmartForm
-				form={formToRender}
+				form={localForm ?? fallbackForm}
 				schema={config.formSchema}
 				action={isCreateMode
 					? config.createAction || '?/create'

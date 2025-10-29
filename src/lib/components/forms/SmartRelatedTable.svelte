@@ -8,8 +8,6 @@
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
-	// import { CheckboxZag } from '$lib/components/zag';
 
 	// Icons
 	import PhDotsThreeBold from '~icons/ph/dots-three-bold';
@@ -20,7 +18,7 @@
 	// Related Drawer
 	import SmartRelatedDrawer from './SmartRelatedDrawer.svelte';
 	import UrlCell from './cells/UrlCell.svelte';
-	import { CheckboxArk } from '../ark/checkbox';
+	import { CheckboxArk } from '$lib/components/ark/checkbox';
 	import { getAppContext } from '$lib/context';
 
 	interface SmartRelatedTableProps<T extends Record<string, any>, S extends ZodObject<any>> {
@@ -289,9 +287,12 @@
 				<Table.Row>
 					{#if tableConfig.bulkOperations?.enabled}
 						<Table.Head class="w-8">
-							<Checkbox
-								checked={allSelected}
-								indeterminate={someSelected && !allSelected}
+							<CheckboxArk
+								checked={allSelected
+									? true
+									: someSelected && !allSelected
+										? 'indeterminate'
+										: false}
 								onCheckedChange={handleSelectAll}
 							/>
 						</Table.Head>
@@ -332,7 +333,7 @@
 					<Table.Row>
 						{#if tableConfig.bulkOperations?.enabled}
 							<Table.Cell>
-								<Checkbox
+								<CheckboxArk
 									checked={selectedItems.has(row.id)}
 									onCheckedChange={() => handleSelectItem(row.id)}
 								/>

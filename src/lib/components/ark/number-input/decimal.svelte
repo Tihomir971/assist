@@ -19,46 +19,44 @@
 	}
 </script>
 
-<div class="flex items-center justify-center">
-	<input type="hidden" {name} value={Number.isNaN(value) ? undefined : value?.toString()} />
-	<NumberInput.Root
-		{...restProps}
-		allowMouseWheel
-		value={value?.toLocaleString(restProps.locale)}
-		readOnly={readonly}
-		pattern={getNumberRegex()}
-		onValueChange={(valueChangeDetails) => {
-			if (isNaN(valueChangeDetails.valueAsNumber)) {
-				return;
-			}
-			value = valueChangeDetails.valueAsNumber;
-		}}
-		class="flex w-full flex-col gap-1"
+<input type="hidden" {name} value={Number.isNaN(value) ? undefined : value?.toString()} />
+<NumberInput.Root
+	{...restProps}
+	allowMouseWheel
+	value={value?.toLocaleString(restProps.locale)}
+	readOnly={readonly}
+	pattern={getNumberRegex()}
+	onValueChange={(valueChangeDetails) => {
+		if (isNaN(valueChangeDetails.valueAsNumber)) {
+			return;
+		}
+		value = valueChangeDetails.valueAsNumber;
+	}}
+	class="flex w-full flex-col gap-1"
+>
+	{#if label}
+		<NumberInput.Label class="&[span]:text-destructive">
+			{label}
+			{#if restProps.required}
+				<span>*</span>
+			{/if}
+		</NumberInput.Label>
+	{/if}
+	<NumberInput.Control
+		class="grid h-9 w-full grid-cols-[1fr_24px] grid-rows-2 overflow-hidden rounded-md border border-input bg-background shadow-sm transition-colors focus-within:ring-1 focus-within:ring-ring focus-visible:outline-none dark:bg-input/30"
 	>
-		{#if label}
-			<NumberInput.Label
-				class="flex items-center gap-2 text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-			>
-				{label}
-				<span class="text-destructive">*</span>
-			</NumberInput.Label>
-		{/if}
-		<NumberInput.Control
-			class="grid h-9 w-full grid-cols-[1fr_24px] grid-rows-2 overflow-hidden rounded-md border border-input bg-background shadow-sm transition-colors focus-within:ring-1 focus-within:ring-ring focus-visible:outline-none"
+		<NumberInput.Input
+			class="row-span-2 w-full border-none px-3 py-1 text-right text-base text-foreground outline-hidden placeholder:text-muted-foreground focus-within:outline-hidden focus:outline-hidden focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+		/>
+		<NumberInput.IncrementTrigger
+			class="flex cursor-pointer items-center justify-center border-l text-muted-foreground transition-colors hover:text-foreground data-disabled:cursor-not-allowed data-disabled:opacity-50"
 		>
-			<NumberInput.Input
-				class="row-span-2 w-full border-none px-3 py-1 text-right text-base text-foreground outline-hidden placeholder:text-muted-foreground focus-within:outline-hidden focus:outline-hidden focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-			/>
-			<NumberInput.IncrementTrigger
-				class="flex cursor-pointer items-center justify-center border-l bg-background text-muted-foreground transition-colors hover:text-foreground data-[disabled]:cursor-not-allowed data-[disabled]:bg-background data-[disabled]:opacity-50"
-			>
-				<ChevronUp class="h-3 w-3" />
-			</NumberInput.IncrementTrigger>
-			<NumberInput.DecrementTrigger
-				class="flex items-center justify-center border-t border-l bg-background text-muted-foreground transition-colors hover:text-foreground data-[disabled]:cursor-not-allowed data-[disabled]:bg-background data-[disabled]:opacity-50"
-			>
-				<ChevronDown class="h-3 w-3" />
-			</NumberInput.DecrementTrigger>
-		</NumberInput.Control>
-	</NumberInput.Root>
-</div>
+			<ChevronUp class="h-3 w-3" />
+		</NumberInput.IncrementTrigger>
+		<NumberInput.DecrementTrigger
+			class="flex items-center justify-center border-t border-l text-muted-foreground transition-colors hover:text-foreground data-disabled:cursor-not-allowed data-disabled:opacity-50"
+		>
+			<ChevronDown class="h-3 w-3" />
+		</NumberInput.DecrementTrigger>
+	</NumberInput.Control>
+</NumberInput.Root>

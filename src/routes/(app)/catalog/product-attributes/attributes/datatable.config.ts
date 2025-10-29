@@ -5,8 +5,8 @@ import {
 	RenderComponentConfig
 } from '$lib/components/ui/data-table/render-helpers';
 import type { Tables } from '@tihomir971/assist-shared';
-import type { CellContext, ColumnDef } from '@tanstack/svelte-table';
-import { Checkbox } from '$lib/components/ui/checkbox/index.js';
+import type { CellContext, ColumnDef } from '@tanstack/table-core';
+import { CheckboxArk } from '$lib/components/ark';
 
 export type AttributeWithGroup = Tables<'m_attribute'> & {
 	m_attribute_group: { name: string };
@@ -83,7 +83,7 @@ const columns: ColumnDef<AttributeWithGroup>[] = [
 		header: 'Active',
 		enableColumnFilter: true,
 		cell: ({ cell }) =>
-			renderComponent(Checkbox, {
+			renderComponent(CheckboxArk, {
 				checked: !!cell.getValue(),
 				disabled: true
 			}),

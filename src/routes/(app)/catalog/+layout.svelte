@@ -4,12 +4,13 @@
 	import { goto } from '$app/navigation';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as ContextMenu from '$lib/components/zag/index.js';
-
 	import DialogSelectReport from './DialogSelectReport.svelte';
 	import type { Snippet } from 'svelte';
 	// Icons
 	import { TreeViewZag } from '$lib/components/zag';
 	import { getCategoryTree } from '$lib/services/supabase/category.service.remote';
+	import { useSearchParams } from 'runed/kit';
+	import { catalogSearchParamsSchema } from './schema.search-params';
 
 	let contextNode: string | null = $state(null);
 	interface Props {
@@ -19,12 +20,13 @@
 
 	let { data, children }: Props = $props();
 
+	const urlParams = useSearchParams(catalogSearchParamsSchema);
 	let showReportDialog = $state(false);
 
-	const initCategory = $derived(page.url.searchParams.get('cat'));
-	let selectedValue = $derived(initCategory ? [initCategory] : []);
+	const initCategory = $derived(urlParams.cat);
+	let selectedValue = $derived(initCategory ? [initCategory.toString()] : []);
 
-	const selectedCategory = $derived(selectedValue?.[0] ? parseInt(selectedValue[0]) : undefined);
+	const selectedCategory = $derived(selectedValue?.[0] ? selectedValue[0] : undefined);
 </script>
 
 <main class="flex w-full flex-1 gap-2 overflow-y-auto px-2 py-2">
@@ -59,14 +61,7 @@
 						bind:selectedValue
 						onSelectionChange={(details) => {
 							if (!details.focusedValue) return;
-							const newUrl = new URL(page.url);
-							newUrl.searchParams.set('cat', details.focusedValue);
-							newUrl.searchParams.delete('search');
-							goto(newUrl, {
-								invalidate: ['catalog:products'],
-								noScroll: true,
-								replaceState: false
-							});
+							urlParams.update({ cat: parseInt(details.focusedValue), search: null });
 						}}
 					/>
 				</ContextMenu.Trigger>

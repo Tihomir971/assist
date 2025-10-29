@@ -1,101 +1,53 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { onMount } from 'svelte';
 	import {
-		createSvelteTable,
-		getCoreRowModel,
-		getFilteredRowModel,
-		getSortedRowModel,
+		type ColumnDef,
 		type GlobalFilterTableState,
-		type RowSelectionState,
 		type SortingState,
-		type Updater,
 		type VisibilityState
-	} from '$lib/components/walker-tx';
-
+	} from '@tanstack/table-core';
 	import { LocalStorage } from '$lib/storage.svelte.js';
 	import { getCartContext } from '$lib/components/cart/ctx.svelte.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import DataTableToolbar from './data-table-toolbar.svelte';
 	import { Separator } from '$lib/components/ui/separator/index.js';
-	import { columnDefs } from './columns.svelte.js';
+	import { columnDefs, type FlattenedProduct } from './columns.svelte.js';
 
-	import WalkerTable from '$lib/components/walker-tx/WalkerTable.svelte';
+	import { useDataTable } from '$lib/components/tanstack/useDataTable.svelte';
+	import DataTable from '$lib/components/tanstack/data-table.svelte';
 
 	let { data } = $props();
 
 	const cartService = getCartContext();
 	// Define a reactive state to track the row selection state.
-	let rowSelectionState: RowSelectionState = $state({});
-	let sorting = $state<SortingState>([]);
-	const storageColumnVisibility = new LocalStorage<VisibilityState>('hiddenColumns', {});
-	let columnVisibility = $state<VisibilityState>(storageColumnVisibility.current);
-	let globalFilterTableState = $state<GlobalFilterTableState>();
+	let sortingState: SortingState = $state([]);
+	let globalFilterTableState: GlobalFilterTableState | undefined = $state(undefined);
 
-	function onRowSelectionChange(updater: Updater<RowSelectionState>) {
-		// Update the selection state by reassigning the $state
-		if (updater instanceof Function) {
-			rowSelectionState = updater(rowSelectionState);
-		} else {
-			rowSelectionState = updater;
-		}
-	}
+	let storageColumnVisibility = new LocalStorage<VisibilityState>('hiddenColumns', {});
+	let visibilityState: VisibilityState = $state({});
 
-	// Create the table and bind the row selection state using a getter.
-	const table = createSvelteTable({
-		get data() {
-			return data.products;
-		},
-		columns: columnDefs,
-		getCoreRowModel: getCoreRowModel(),
-		getFilteredRowModel: getFilteredRowModel(),
-		getSortedRowModel: getSortedRowModel(),
-		globalFilterFn: 'includesString',
-		onGlobalFilterChange: (updater) => {
-			if (typeof updater === 'function') {
-				globalFilterTableState = updater(globalFilterTableState);
-			} else {
-				globalFilterTableState = updater;
+	const { table } = $derived(
+		useDataTable({
+			columns: columnDefs,
+			data: data.products,
+			initialSorting: sortingState,
+			initialColumnVisibility: visibilityState,
+			initialGlobalFilter: globalFilterTableState,
+			getRowId: (row) => row.id.toString(),
+			// Add callback to save column visibility to localStorage
+			onColumnVisibilityChange: (newVisibility) => {
+				storageColumnVisibility.current = newVisibility;
 			}
-		},
-		onSortingChange: (updater) => {
-			if (typeof updater === 'function') {
-				sorting = updater(sorting);
-			} else {
-				sorting = updater;
-			}
-		},
-		onRowSelectionChange: onRowSelectionChange,
-		onColumnVisibilityChange: (updater) => {
-			if (typeof updater === 'function') {
-				columnVisibility = updater(columnVisibility);
-			} else {
-				columnVisibility = updater;
-			}
-			storageColumnVisibility.current = columnVisibility;
-		},
-		state: {
-			get rowSelection() {
-				return rowSelectionState;
-			},
-			get globalFilter() {
-				return globalFilterTableState;
-			},
-			get sorting() {
-				return sorting;
-			},
-			get columnVisibility() {
-				return columnVisibility;
-			}
-		},
-		getRowId: (originalRow) => originalRow.id.toString()
-	});
+		})
+	);
 
 	$effect(() => {
 		if (data.searchTerm) {
 			table.setGlobalFilter(data.searchTerm);
 		}
 	});
-	async function addToCart(): Promise<void> {
+	async function onAddToCart(): Promise<void> {
 		if (browser && cartService) {
 			// Get selected rows first
 			const selectedRows = table.getRowModel().rows.filter((row) => row.getIsSelected());
@@ -120,19 +72,23 @@
 				}
 			}
 
-			rowSelectionState = {};
+			/// Clear row selection after successful operation
+			table.resetRowSelection(true);
 		}
 	}
+	// Initialize from localStorage only once when component mounts
+	onMount(() => {
+		visibilityState = storageColumnVisibility.current;
+	});
 </script>
 
 <Card.Root class="flex flex-1 flex-col gap-0 overflow-hidden bg-transparent py-0">
 	<Card.Header class="bg-surface-1 p-3">
 		<DataTableToolbar
 			{table}
-			bind:rowSelectionState
 			bind:globalFilterTableState
 			warehouses={data.warehouses}
-			{addToCart}
+			{onAddToCart}
 		/>
 	</Card.Header>
 	<Separator />
@@ -140,7 +96,8 @@
 		{#await data.products}
 			<p>Loading...</p>
 		{:then}
-			<WalkerTable {table} />
+			<!-- <WalkerTable {table} /> -->
+			<DataTable {table} />
 		{/await}
 	</Card.Content>
 </Card.Root>

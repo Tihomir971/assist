@@ -1,37 +1,38 @@
-import { createColumnHelper, renderComponent } from '$lib/components/walker-tx';
-import TableCheckbox from '$lib/components/walker-tx/table-checkbox.svelte';
+import { createColumnHelper } from '@tanstack/table-core';
 import DataTableActions from './data-table-actions.svelte';
 import type { TableRow } from './table-types';
+import { renderComponent } from '$lib/components/ui/data-table';
+import { Checkbox } from '$lib/components/ark/checkbox';
 
-const colHelp = createColumnHelper<TableRow>();
+const columnHelper = createColumnHelper<TableRow>();
 export const columnDefs = [
-	colHelp.display({
+	columnHelper.display({
 		id: 'select',
 		header: ({ table }) =>
-			renderComponent(TableCheckbox, {
+			renderComponent(Checkbox, {
 				checked:
 					table.getIsAllPageRowsSelected() ||
 					(table.getIsSomePageRowsSelected() && 'indeterminate'),
-				onchange: () => {
+				onCheckedChange: () => {
 					table.toggleAllRowsSelected();
 				}
 			}),
 		cell: ({ row }) =>
-			renderComponent(TableCheckbox, {
+			renderComponent(Checkbox, {
 				checked: row.getIsSelected(),
-				onchange: () => {
+				onCheckedChange: () => {
 					row.toggleSelected();
 				}
 			}),
 		enableHiding: false
 	}),
-	colHelp.accessor('sku', { header: 'SKU' }),
-	colHelp.accessor('name', { header: 'Name' }),
-	colHelp.accessor('qty_wholesale', { header: 'Wholesale' }),
-	colHelp.accessor('qty_retail', { header: 'Retail' }),
-	colHelp.accessor('level_min', { header: 'Min Level' }),
-	colHelp.accessor('level_max', { header: 'Max Level' }),
-	colHelp.accessor('id', {
+	columnHelper.accessor('sku', { header: 'SKU' }),
+	columnHelper.accessor('name', { header: 'Name' }),
+	columnHelper.accessor('qty_wholesale', { header: 'Wholesale' }),
+	columnHelper.accessor('qty_retail', { header: 'Retail' }),
+	columnHelper.accessor('level_min', { header: 'Min Level' }),
+	columnHelper.accessor('level_max', { header: 'Max Level' }),
+	columnHelper.accessor('id', {
 		header: '',
 		cell: ({ row }) => {
 			return renderComponent(DataTableActions, { id: row.original.id.toString() });

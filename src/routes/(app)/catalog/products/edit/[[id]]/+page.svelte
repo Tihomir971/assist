@@ -5,9 +5,9 @@
 	import SmartRelatedTabs from '$lib/components/forms/SmartRelatedTabs.svelte';
 	import SmartForm from '$lib/components/forms/SmartForm.svelte';
 	import { createFormConfig } from '$lib/utils/form-config.builder';
-	// import path from 'path'; // REMOVED
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 
 	let { data } = $props();
 	const tabConfigs = $derived(createTabConfigs(data));
@@ -67,7 +67,10 @@
 		.fieldTyped('net_quantity', {
 			type: 'number',
 			span: 4,
-			componentProps: { formatOptions: { minimumFractionDigits: 4, maximumFractionDigits: 4 } }
+			componentProps: {
+				min: 0,
+				formatOptions: { minimumFractionDigits: 4, maximumFractionDigits: 4 }
+			}
 		})
 		.fieldTyped('net_qty_uom_id', {
 			type: 'select',
@@ -87,7 +90,7 @@
 				formatOptions: { minimumFractionDigits: 0, maximumFractionDigits: 0 }
 			}
 		})
-		.fieldTyped('descriptionurl', { type: 'text', span: 12, label: 'Manufacturer URL' })
+		.fieldTyped('descriptionurl', { type: 'url', span: 12, label: 'Manufacturer URL' })
 		.build();
 </script>
 
@@ -102,7 +105,8 @@
 			entityName="Product"
 			onCancel={() => {
 				const searchParam = page.url.searchParams;
-				goto(`/catalog?${searchParam.toString()}`, {
+				// @ts-expect-error - Dynamic URL construction for search params navigation
+				goto(resolve(`/catalog?${searchParam.toString()}`), {
 					invalidate: ['catalog:products']
 				});
 			}}

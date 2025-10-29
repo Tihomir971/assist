@@ -41,14 +41,6 @@ export function createFormConfig<T extends Record<string, unknown>>(): FormConfi
 			config.fieldOverrides[fieldName as string] = override;
 			return this;
 		},
-		// Legacy method for backward compatibility (less type-safe)
-		/* 		field<K extends keyof T>(fieldName: K, override: FieldOverride) {
-			if (!config.fieldOverrides) {
-				config.fieldOverrides = {};
-			}
-			config.fieldOverrides[fieldName as string] = override;
-			return this;
-		}, */
 
 		multilingualInput<K extends keyof T>(
 			fieldName: K,

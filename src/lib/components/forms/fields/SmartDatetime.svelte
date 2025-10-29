@@ -21,7 +21,6 @@
 
 	// Format the datetime for display
 	const formattedValue = $derived(dateHelper.format(value));
-	$inspect('formattedValue', formattedValue);
 	// Combine props for the input element
 	const inputAttrs = $derived({
 		type: 'text',

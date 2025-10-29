@@ -7,8 +7,9 @@
 @custom-variant dark (&:is(.dark *));
 @import './theme.solar-dusk.css';
 @import './theme.custom.css';
+@import './theme.ark-zag.css';
 
-@plugin "@tailwindcss/typography";
+@plugin '@tailwindcss/typography';
 
 :root {
 	/* --font-sans: 'Nunito Variable', sans-serif; */

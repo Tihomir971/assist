@@ -1,8 +1,8 @@
 import { RenderComponentConfig } from '$lib/components/ui/data-table/render-helpers';
-import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
-import type { ColumnDef } from '@tanstack/svelte-table';
 import type { Snippet } from 'svelte';
 import { getAppContext } from '$lib/context';
+import type { ColumnDef } from '@tanstack/table-core';
+import { CheckboxArk } from '$lib/components/ark';
 
 export type FilterType = 'text' | 'select' | 'boolean';
 
@@ -123,7 +123,7 @@ export const columnTypes = {
 		header,
 		enableSorting: sortable,
 		cell: ({ cell }) => {
-			return new RenderComponentConfig(Checkbox, {
+			return new RenderComponentConfig(CheckboxArk, {
 				checked: cell.getValue() as boolean,
 				disabled: true
 			});

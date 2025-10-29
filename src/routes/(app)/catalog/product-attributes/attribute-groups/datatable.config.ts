@@ -1,10 +1,9 @@
 import { DataTableConfigBuilder, columnTypes } from '$lib/utils/data-table-config.builder';
 import type { Tables } from '@tihomir971/assist-shared';
-import type { ColumnDef } from '@tanstack/svelte-table';
 import { renderComponent } from '$lib/components/ui/data-table/render-helpers';
 import DataTableActions from '$lib/components/ui/data-table-actions.svelte';
-// import Checkbox from '$lib/components/zag/checkbox/checkbox.svelte';
-import { Checkbox } from '$lib/components/ui/checkbox/index.js';
+import type { ColumnDef } from '@tanstack/table-core';
+import { CheckboxArk } from '$lib/components/ark';
 
 export type AttributeGroupType = Tables<'m_attribute_group'>;
 
@@ -16,7 +15,7 @@ const columns: ColumnDef<AttributeGroupType>[] = [
 		accessorKey: 'is_active',
 		header: 'Active',
 		cell: ({ cell }) =>
-			renderComponent(Checkbox, {
+			renderComponent(CheckboxArk, {
 				checked: !!cell.getValue(),
 				disabled: true
 			}),

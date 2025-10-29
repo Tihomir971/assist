@@ -22,6 +22,7 @@ export interface FieldConfig {
 	name: string;
 	type:
 		| 'text'
+		| 'url'
 		| 'number'
 		| 'boolean'
 		| 'select'

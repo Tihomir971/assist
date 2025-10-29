@@ -109,7 +109,7 @@
 						<EdraEditor
 							bind:editor
 							content={$form.content}
-							class="h-[60rem] max-h-screen overflow-y-scroll pr-2 pl-6"
+							class="h-240 max-h-screen overflow-y-scroll pr-2 pl-6"
 							onUpdate={() => {
 								if (!editor) return;
 								$form.content = editor.getHTML();

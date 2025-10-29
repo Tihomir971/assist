@@ -1,13 +1,5 @@
 /* Base Combobox Styles - Enhanced from existing combobox.css */
 
-[data-scope='combobox'][data-part='root'] {
-	display: flex;
-	flex-direction: column;
-	gap: calc(calc(var(--spacing) * 2));
-	/* margin-block-start: calc(calc(var(--spacing) * 2)); */
-	/* margin-block-end: calc(calc(var(--spacing) * 2)); */
-}
-
 /* [data-scope='combobox'][data-part='label'] {
 	font-size: 0.875rem;
 	font-weight: 400;

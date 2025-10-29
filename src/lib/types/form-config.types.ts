@@ -87,6 +87,7 @@ export interface MultilingualTextareaProps extends TextareaInputProps {
 // Type mapping for componentProps based on field type
 export type ComponentPropsByFieldType = {
 	text: TextInputProps;
+	url: TextInputProps;
 	number: NumberInputProps;
 	boolean: BooleanInputProps;
 	select: SelectInputProps;
@@ -112,6 +113,7 @@ export interface FieldOverride<
 	type?: TFieldType extends undefined
 		?
 				| 'text'
+				| 'url'
 				| 'number'
 				| 'boolean'
 				| 'select'

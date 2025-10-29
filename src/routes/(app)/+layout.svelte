@@ -44,7 +44,7 @@
 		<LayoutHeader supabase={data.supabase} />
 		<!-- <Header supabase={data.supabase} profile={data.profile}></Header> -->
 		<!-- <div class="flex flex-1"> -->
-		<div class="flex flex-1 overflow-hidden">
+		<div class="flex flex-1 overflow-auto">
 			<LayoutSidebar profile={data.profile} supabase={data.supabase} />
 			{@render children()}
 		</div>

@@ -2,7 +2,7 @@ import { DataTableConfigBuilder, columnTypes } from '$lib/utils/data-table-confi
 import DataTableActions from '$lib/components/ui/data-table-actions.svelte';
 import { RenderComponentConfig } from '$lib/components/ui/data-table/render-helpers';
 import type { Tables } from '@tihomir971/assist-shared';
-import type { ColumnDef } from '@tanstack/svelte-table';
+import type { ColumnDef } from '@tanstack/table-core';
 
 export type BrandData = Tables<'m_product_brands'>;
 

@@ -9,7 +9,7 @@
 		FilterDefinition,
 		SelectFilterOption
 	} from '$lib/utils/data-table-config.builder';
-	import type { Table as TanstackTable } from '$lib/components/walker-tx';
+	import type { Table as TanstackTable } from '@tanstack/table-core';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { debounce } from '$lib/scripts/debounce';

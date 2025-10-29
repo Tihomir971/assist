@@ -13,6 +13,9 @@ export const productPayloadBuilder = new SmartPayloadBuilder<MProductInsert, MPr
 			shelf_life: 0
 		},
 		transformers: {
+			name: (value) => (typeof value === 'string' ? value.replace(/\s+/g, ' ').trim() : value),
+			description: (value) =>
+				typeof value === 'string' ? value.replace(/\s+/g, ' ').trim() : value,
 			m_product_brand_id: (value) => (!value ? null : Number(value)),
 			m_product_category_id: (value) => (!value ? null : Number(value)),
 			attributeset_id: (value) => (!value ? null : Number(value)),
@@ -24,6 +27,9 @@ export const productPayloadBuilder = new SmartPayloadBuilder<MProductInsert, MPr
 	{
 		schema: mProductUpdateSchema,
 		transformers: {
+			name: (value) => (typeof value === 'string' ? value.replace(/\s+/g, ' ').trim() : value),
+			description: (value) =>
+				typeof value === 'string' ? value.replace(/\s+/g, ' ').trim() : value,
 			m_product_brand_id: (value) => (!value ? null : Number(value)),
 			m_product_category_id: (value) => (!value ? null : Number(value)),
 			attributeset_id: (value) => (!value ? null : Number(value)),

@@ -24,10 +24,10 @@
 	}: SelectPropsLookup<T> = $props();
 
 	const collection = $derived(
-		select.collection({
+		select.collection<SelectPropsLookup<T>>({
 			items,
-			itemToValue: (item) => item.value.toString(),
-			itemToString: (item) => item.label,
+			itemToValue: (item) => (item.value ? item.value.toString() : ''),
+			itemToString: (item) => (item.label ? item.label : ''),
 			isItemDisabled(item) {
 				return item.disabled || false;
 			}
@@ -64,13 +64,10 @@
 	const api = $derived(select.connect(service, normalizeProps));
 </script>
 
-<div {...api.getRootProps()} class="grid gap-2">
+<div {...api.getRootProps()}>
 	{#if label}
 		<div class="flex items-center justify-between">
-			<label
-				{...api.getLabelProps()}
-				class="flex items-center gap-2 text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-			>
+			<label {...api.getLabelProps()}>
 				{label}
 				{#if required || ariaRequired === 'true'}
 					<span class="text-warning">*</span>
@@ -85,7 +82,7 @@
 	<div {...api.getControlProps()}>
 		<button
 			{...api.getTriggerProps()}
-			class="flex h-9 w-full cursor-pointer items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder-muted-foreground shadow-sm focus:ring-1 focus:ring-ring focus:outline-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50"
+			class="flex h-9 w-full cursor-pointer items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder-muted-foreground shadow-sm focus:ring-1 focus:ring-ring focus:outline-none data-disabled:cursor-not-allowed data-disabled:opacity-50"
 		>
 			<span class={api.valueAsString ? '' : 'text-muted-foreground'}>
 				{api.valueAsString || placeholder}
@@ -110,7 +107,7 @@
 			{#each items as item}
 				<li
 					{...api.getItemProps({ item })}
-					class="relative flex cursor-default items-center rounded-sm py-1.5 pr-8 pl-2 text-sm text-accent-foreground select-none data-highlighted:bg-accent data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[state=checked]:bg-accent"
+					class="relative flex cursor-default items-center rounded-sm py-1.5 pr-8 pl-2 text-sm text-accent-foreground select-none data-disabled:pointer-events-none data-disabled:opacity-50 data-highlighted:bg-accent data-[state=checked]:bg-accent"
 				>
 					<span {...api.getItemTextProps({ item })}>{item.label}</span>
 					<span

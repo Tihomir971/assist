@@ -14,12 +14,112 @@ import SmartProductAttributes from './SmartProductAttributes.svelte';
 import { createFormConfig } from '$lib/utils/form-config.builder';
 import { invalidate } from '$app/navigation';
 import InTabEChart from '$lib/components/charts/InTabEChart.svelte';
+import type { EChartsData } from '$lib/components/charts/chart-types';
+import type { ApiResponse } from '@tihomir971/assist-shared/api/api-response.types';
 
 // Define the split layout configuration
 export const splitLayoutConfig = createSplitLayoutConfig()
 	.leftPanel({ width: '40%' })
 	.rightPanel({ width: '60%' })
 	.build();
+
+// Define types for sales data
+interface MonthData {
+	month: number;
+	value: number;
+}
+
+interface YearData {
+	year: number;
+	months: MonthData[];
+}
+
+interface ProductSalesData {
+	productId: string;
+	years: YearData[];
+}
+
+interface SalesApiResponse {
+	products: ProductSalesData[];
+	currentYear: number;
+}
+
+// Helper function to transform sales data to ECharts format
+function transformSalesData(salesData: ApiResponse<EChartsData> | SalesApiResponse): EChartsData {
+	// Handle the case where data is already in ECharts format (ApiResponseT<EChartsData>)
+	if ('data' in salesData && salesData.data) {
+		return salesData.data;
+	}
+
+	// Handle the case where data is in SalesApiResponse format
+	if (
+		!salesData ||
+		('products' in salesData && (!salesData.products || salesData.products.length === 0))
+	) {
+		return {
+			xAxis: { data: [] },
+			series: []
+		};
+	}
+
+	const salesDataWithProducts = salesData as SalesApiResponse;
+
+	// Get all unique months from all years across all products
+	const monthLabels = [
+		'Jan',
+		'Feb',
+		'Mar',
+		'Apr',
+		'May',
+		'Jun',
+		'Jul',
+		'Aug',
+		'Sep',
+		'Oct',
+		'Nov',
+		'Dec'
+	];
+
+	// Transform each product's data into ECharts series
+	const series = salesDataWithProducts.products.map((product: ProductSalesData) => {
+		const productData: number[] = [];
+
+		// Flatten all months from all years into a single array
+		const allMonths: { month: number; value: number; year: number }[] = [];
+		product.years.forEach((year: YearData) => {
+			year.months.forEach((monthData: MonthData) => {
+				allMonths.push({
+					month: monthData.month,
+					value: monthData.value,
+					year: year.year
+				});
+			});
+		});
+
+		// Create data array for each month (using most recent year's data if multiple years)
+		for (let month = 1; month <= 12; month++) {
+			// Find the most recent year data for this month
+			const monthEntries = allMonths.filter((m) => m.month === month);
+			if (monthEntries.length > 0) {
+				// Sort by year descending and take the most recent
+				monthEntries.sort((a, b) => b.year - a.year);
+				productData.push(monthEntries[0].value);
+			} else {
+				productData.push(0);
+			}
+		}
+
+		return {
+			name: `Product ${product.productId}`,
+			data: productData
+		};
+	});
+
+	return {
+		xAxis: { data: monthLabels },
+		series
+	};
+}
 
 // Helper function to create tab configurations
 export function createTabConfigs(data: PageData) {
@@ -278,7 +378,7 @@ export function createTabConfigs(data: PageData) {
 			'Sales Chart',
 			InTabEChart as Component,
 			{
-				data: data.salesByWeeks.data
+				data: transformSalesData(data.salesByWeeks)
 			},
 			{ order: 5 }
 		),

@@ -58,7 +58,6 @@
 					{ title: 'Shadcn', url: '/lab/shadcn' },
 					{ title: 'Color Palette', url: '/lab/color-palette' },
 					{ title: 'Price Rules', url: '/lab/pricing-test' },
-					{ title: 'tree-view-test', url: '/lab/tree-view-test' },
 					{ title: 'tree-view', url: '/lab/treview' }
 				]
 			}

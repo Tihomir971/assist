@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Product, Mapping, StorageMapping } from './types';
 	import { browser } from '$app/environment';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	//Components
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
@@ -12,11 +12,11 @@
 	import { handleFileUpload, loadSheetDataFromFile } from './utils/xlsx-handlers';
 	import { processExcelData } from './utils/data-processors';
 	import { importProducts, addProduct } from './utils/product-handlers';
+	import { setProductPoPriceToZero } from '$lib/remote/product-po.remote.js';
 
-	import { ComboboxZag, SelectLookupZag } from '$lib/components/zag/index.js';
+	import { ComboboxZag, DialogZag, SelectLookupZag } from '$lib/components/zag/index.js';
 	import { retrieveAndParseXml, type Product as XmlProductType } from '$lib/xml-parser-esm';
-	import { NumberInputDecimal, UploadBasicDocument } from '$lib/components/ark';
-	import type { FileUpload } from '@ark-ui/svelte/file-upload';
+	import { FileUpload, NumberInputDecimal } from '$lib/components/ark';
 	import type { RawExcelRow } from './utils/xlsx-shared';
 	import AddProductButton from './AddProductButton.svelte';
 	import { tableColumns } from './table-columns';
@@ -24,9 +24,10 @@
 	import { renderComponent } from '$lib/components/ui/data-table';
 	import { DataTable } from '$lib/components/custom-table';
 	import { PersistedState } from 'runed';
+	import { FileUpload as FileUploadType } from '@ark-ui/svelte/file-upload';
+	import { Field } from '@ark-ui/svelte/field';
 
 	let { data } = $props();
-	let { supabase } = $derived(data);
 
 	const storageMapping = new PersistedState<StorageMapping>('supplierMappings', {});
 	// Constants for Spektar XML Import
@@ -78,6 +79,10 @@
 	let processProgress = $derived(totalRows > 0 ? (processedRows / totalRows) * 100 : 0);
 	let importProgress = $derived(totalRows > 0 ? (importedRows / totalRows) * 100 : 0);
 
+	/* const id = $props.id();
+	const useDialogConfirm = useDialog({ id: `${id}-confirm` }); */
+	let openDialogZag = $state(false);
+
 	// Update mappings when selectedSupplier changes
 	$effect(() => {
 		if (browser && selectedSupplier !== undefined) {
@@ -109,12 +114,47 @@
 			// persistedArray.current = parsedMappings;
 		}
 	}
-	async function handleFileChange(details: FileUpload.FileChangeDetails) {
-		selectedFile = details.acceptedFiles.length > 0 ? details.acceptedFiles[0] : null;
-		if (!selectedFile) {
-			resetAll(); // Or handle no file selected case
+	async function handleFileChange(eventOrDetails: FileUploadType.FileChangeDetails | CustomEvent) {
+		// Support both direct callback invocation (details object) and dispatched CustomEvent
+		let files: FileUploadType.FileChangeDetails;
+		if ('detail' in (eventOrDetails as any) && (eventOrDetails as any).detail) {
+			files = (eventOrDetails as CustomEvent).detail as FileUploadType.FileChangeDetails;
+		} else {
+			files = eventOrDetails as FileUploadType.FileChangeDetails;
+		}
+
+		// If there are rejected files, log and notify the user about invalid type
+		if (files.rejectedFiles && files.rejectedFiles.length > 0) {
+			console.warn('Rejected files:', files.rejectedFiles);
+			const firstRejected = files.rejectedFiles[0];
+			const errors = firstRejected.errors || [];
+			if (errors.includes('FILE_INVALID_TYPE')) {
+				console.warn(
+					`Invalid file type for file: name=${firstRejected.file?.name}, type=${firstRejected.file?.type}`
+				);
+				alert(
+					`File "${firstRejected.file?.name}" was rejected due to invalid type. Please upload an Excel file (.xlsx or .xls).`
+				);
+			}
+			// Clear preview/raw data but do not fully reset mappings/state
+			selectedFile = null;
+			excelData = [];
+			headers = [];
+			rawData = [];
+			showRawData = false;
 			return;
 		}
+
+		selectedFile = files.acceptedFiles && files.acceptedFiles[0] ? files.acceptedFiles[0] : null;
+		if (!selectedFile) {
+			// No accepted file — clear preview but keep mappings
+			excelData = [];
+			headers = [];
+			rawData = [];
+			showRawData = false;
+			return;
+		}
+
 		const result = await handleFileUpload(selectedFile);
 		sheetNames = result.sheetNames.map((str) => ({
 			value: str,
@@ -180,7 +220,7 @@
 		);
 
 		if (shouldSetPricesToZero) {
-			const { error: updateError } = await supabase
+			const { error: updateError } = await data.supabase
 				.from('m_product_po')
 				.update({ pricelist: 0 })
 				.eq('c_bpartner_id', Number(selectedSupplier));
@@ -201,7 +241,7 @@
 			}
 
 			const result = await importProducts(
-				supabase,
+				data.supabase,
 				dataToImport,
 				Number(selectedSupplier),
 				priceModificationPercentage,
@@ -240,11 +280,55 @@
 		}
 
 		try {
-			await addProduct(supabase, product, Number(selectedSupplier), priceModificationPercentage);
+			await addProduct(
+				data.supabase,
+				product,
+				Number(selectedSupplier),
+				priceModificationPercentage
+			);
 			alert('Product added successfully!');
 		} catch (error) {
 			console.error('Error adding product:', error);
 			alert(error instanceof Error ? error.message : 'An error occurred while adding the product.');
+		}
+	}
+
+	async function handleSetPricesToZero() {
+		if (!selectedSupplier) {
+			alert('Please select a supplier before setting prices to zero.');
+			return;
+		}
+
+		const shouldProceed = confirm(
+			`Are you sure you want to set all prices to 0 for the selected supplier? This action cannot be undone.`
+		);
+
+		if (!shouldProceed) {
+			return;
+		}
+
+		try {
+			const result = await setProductPoPriceToZero({
+				c_bpartner_id: selectedSupplier
+			});
+
+			if (result.success) {
+				toast.success('Prices set to zero successfully', {
+					description: `Updated ${result.data?.updatedCount || 0} product records for supplier ID: ${selectedSupplier}`,
+					closeButton: true
+				});
+			} else {
+				toast.error('Failed to set prices to zero', {
+					description: result.message || 'An unknown error occurred',
+					closeButton: true
+				});
+			}
+		} catch (error) {
+			console.error('Error setting prices to zero:', error);
+			toast.error('Error setting prices to zero', {
+				description: error instanceof Error ? error.message : 'An unexpected error occurred',
+				closeButton: true
+			});
 		}
 	}
 
@@ -378,6 +462,7 @@
 	}); */
 
 	let selectedSupplier: number | undefined = $state();
+	$inspect('selectedSupplier', selectedSupplier, selectedSupplier == null);
 </script>
 
 <div class="mx-auto grid h-full max-w-7xl grid-rows-[auto_1fr_auto] gap-4 p-2">
@@ -390,7 +475,6 @@
 			placeholder="Select supplier..."
 		/>
 		<SelectLookupZag
-			id="dataSourceSelect"
 			bind:value={selectedDataSource}
 			items={[
 				{ value: 'excel', label: 'Excel Upload' },
@@ -401,18 +485,19 @@
 		/>
 
 		{#if selectedDataSource === 'excel'}
-			<UploadBasicDocument
-				fileType="excel"
-				onFileChange={handleFileChange}
-				disabled={selectedSupplier == null}
+			<FileUpload
 				label="Select file"
+				fileType="excel"
+				disabled={selectedSupplier == null}
+				onFileChange={handleFileChange}
 			/>
 			<div class="flex flex-col gap-2">
 				{#if sheetNames.length > 1}
 					<SelectLookupZag
+						label="Select a sheet"
 						bind:value={selectedSheet}
 						items={sheetNames}
-						label="Select a sheet"
+						disabled={selectedSupplier == null}
 						onValueChange={handleSheetSelect}
 					/>
 				{/if}
@@ -435,26 +520,35 @@
 			</div>
 		{/if}
 
-		<div>
-			<div class="grid w-full gap-1.5">
-				<NumberInputDecimal
-					label="Price Modification (%)"
-					bind:value={priceModificationPercentage}
-					locale={data.app?.userLocale}
-					min={-100}
-					step={0.5}
-				/>
+		<Field.Root>
+			<NumberInputDecimal
+				label="Price Modification (%)"
+				bind:value={priceModificationPercentage}
+				locale={data.app?.userLocale}
+				min={-100}
+				step={0.5}
+				required
+			/>
+			<Field.HelperText>
+				Enter a percentage to adjust prices. Positive increases, negative decreases.
+			</Field.HelperText>
+		</Field.Root>
 
-				<p class="text-muted-foreground">
-					Enter a percentage to modify prices. Positive values increase prices, negative values
-					decrease prices.
-				</p>
-			</div>
-		</div>
+		<!-- onclick={() => useDialogConfirm().setOpen(true)} -->
+		{#if selectedSupplier}
+			<Button
+				variant="outline"
+				onclick={handleSetPricesToZero}
+				disabled={isProcessing || isImporting}
+				class="mt-2"
+			>
+				Set All Prices to 0
+			</Button>
+		{/if}
 	</div>
-	<div class="overflow-auto">
+	<div class="justify-self-center overflow-auto">
 		{#if showModal && selectedDataSource === 'excel'}
-			<Card.Root>
+			<Card.Root class="w-xl">
 				<Card.Header>
 					<Card.Title>Map Columns to Product Properties</Card.Title>
 					<Card.Description
@@ -560,3 +654,8 @@
 		<Button variant="destructive" type="button" onclick={manualReset}>Reset Form</Button>
 	</div>
 </div>
+<button onclick={() => (openDialogZag = true)}>Open Zag Dialog</button>
+
+<!-- <DailogAlert bind:open={openDialog} /> -->
+<!-- <DailogConfirm value={useDialogConfirm} onConfirm={() => console.log('Confirmed')} /> -->
+<DialogZag bind:open={openDialogZag} />

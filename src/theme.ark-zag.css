@@ -1,0 +1,18 @@
+[data-scope='combobox'][data-part='root'],
+[data-scope='select'][data-part='root'] {
+	@apply flex flex-col gap-1.5;
+}
+
+[data-scope='combobox'][data-part='label'],
+[data-scope='field'][data-part='label'],
+[data-scope='file-upload'][data-part='label'],
+[data-scope='number-input'][data-part='label'],
+[data-scope='select'][data-part='label'] {
+	@apply flex items-center gap-2 text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70;
+}
+[data-scope='checkbox'][data-part='label'] {
+	@apply text-sm leading-none font-normal peer-disabled:cursor-not-allowed peer-disabled:opacity-70;
+}
+[data-scope='field'][data-part='helper-text'] {
+	@apply text-xs leading-snug text-balance text-muted-foreground;
+}

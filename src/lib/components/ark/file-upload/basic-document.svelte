@@ -6,8 +6,7 @@
 	import { getFileIcon } from './icons';
 
 	import { getAcceptAttribute } from './utils';
-
-	import { type FileUploadRootPropsExtended } from './types';
+	import type { Props } from './types';
 
 	let {
 		fileType,
@@ -15,15 +14,16 @@
 		onFileChange = $bindable(),
 		label,
 		...restProps
-	}: FileUploadRootPropsExtended = $props();
+	}: Props = $props();
 	const accept = getAcceptAttribute(fileType);
-	const id = $props.id();
+	// const id = $props.id();
 </script>
+
+<!-- {id} -->
 
 <Field.Root class="w-full max-w-sm">
 	<FileUpload.Root
 		{...restProps}
-		{id}
 		maxFiles={1}
 		{accept}
 		{acceptedFiles}

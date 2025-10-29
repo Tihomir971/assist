@@ -5,8 +5,8 @@ import {
 	RenderComponentConfig
 } from '$lib/components/ui/data-table/render-helpers';
 import DataTableActions from '$lib/components/ui/data-table-actions.svelte';
-import { Checkbox } from '$lib/components/ui/checkbox/index.js';
-import type { ColumnDef } from '$lib/components/walker-tx';
+import type { ColumnDef } from '@tanstack/table-core';
+import { CheckboxArk } from '$lib/components/ark';
 
 export type AttributeSet = Tables<'m_attributeset'>;
 
@@ -19,7 +19,7 @@ const columns: ColumnDef<AttributeSet>[] = [
 		header: 'Active',
 		enableColumnFilter: true,
 		cell: ({ cell }) =>
-			renderComponent(Checkbox, {
+			renderComponent(CheckboxArk, {
 				checked: !!cell.getValue(),
 				disabled: true
 			}),
